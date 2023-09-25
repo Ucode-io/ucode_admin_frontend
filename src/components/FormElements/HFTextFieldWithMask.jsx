@@ -22,6 +22,8 @@ const HFTextFieldWithMask = ({
   isTransparent = false,
   disabledHelperText = false,
   required = false,
+  updateObject,
+  isNewTableView = false,
   rules = {},
   mask,
   disabled,
@@ -41,7 +43,16 @@ const HFTextFieldWithMask = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <InputMask mask={mask} value={value ?? undefined} onChange={(e) => onChange(e.target.value)} disabled={disabled} {...props}>
+        <InputMask
+          mask={mask}
+          value={value ?? undefined}
+          onChange={(e) => {
+            onChange(e.target.value);
+            updateObject();
+          }}
+          disabled={disabled}
+          {...props}
+        >
           {(inputProps) => (
             <TextField
               size="small"
@@ -64,7 +75,11 @@ const HFTextFieldWithMask = ({
                   input: isBlackBg ? classes.input : "",
                 },
                 style: {
-                  background: isTransparent ? "transparent" : isBlackBg ? "#2A2D34" : "",
+                  background: isTransparent
+                    ? "transparent"
+                    : isBlackBg
+                    ? "#2A2D34"
+                    : "",
                   color: isBlackBg ? "#fff" : "",
                 },
               }}

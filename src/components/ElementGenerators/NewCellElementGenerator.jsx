@@ -26,6 +26,8 @@ import HFTextEditor from "../FormElements/HFTextEditor";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
+import MultiLineCellFormElement from "./MultiLineCellFormElement";
+import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
@@ -36,6 +38,7 @@ const NewCellElementGenerator = ({
   watch,
   columns = [],
   row,
+  updateObject,
   control,
   setFormValue,
   shouldWork = false,
@@ -47,6 +50,7 @@ const NewCellElementGenerator = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -60,7 +64,32 @@ const NewCellElementGenerator = ({
     }
   });
 
-  const computedSlug = useMemo(() => `multi.${index}.${field.slug}`, [field.slug, index]);
+  // const computedSlug = useMemo(
+  //   () => `multi.${index}.${field.slug}`,
+  //   [field.slug, index]
+  // );
+
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = field.slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = field.slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const computedSlug = useMemo(() => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${i18n}`;
+    }
+
+    if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    }
+
+    return `multi.${index}.${field.slug}`;
+  }, [field?.id, field?.slug, , i18n, field?.enable_multilanguage]);
 
   const changedValue = useWatch({
     control,
@@ -68,11 +97,15 @@ const NewCellElementGenerator = ({
   });
 
   const isDisabled = useMemo(() => {
-    return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+    return (
+      field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission
+    );
   }, [field]);
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
@@ -82,7 +115,8 @@ const NewCellElementGenerator = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
     if (!defaultValue) return undefined;
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
@@ -96,11 +130,22 @@ const NewCellElementGenerator = ({
 
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
-      columns.forEach((i, rowIndex) => selectedRow.includes(i.guid) && setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue));
+      columns.forEach(
+        (i, rowIndex) =>
+          selectedRow.includes(i.guid) &&
+          setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
+      );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
-  console.log('sssssssss', field)
+  let watchValue = useWatch({
+    control,
+    name: computedSlug,
+  });
+
+  // useEffect(() => {
+  //   updateObject();
+  // }, [changedValue])
 
   switch (field.type) {
     case "LOOKUP":
@@ -109,6 +154,8 @@ const NewCellElementGenerator = ({
           disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           field={field}
@@ -127,6 +174,8 @@ const NewCellElementGenerator = ({
         <CellManyToManyRelationElement
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -144,6 +193,8 @@ const NewCellElementGenerator = ({
         <HFTextField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -159,6 +210,8 @@ const NewCellElementGenerator = ({
         <HFPassword
           isDisabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -180,6 +233,8 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          updateObject={updateObject}
+          isNewTableView={true}
           setFormValue={setFormValue}
           required={field.required}
           placeholder={field.attributes?.placeholder}
@@ -194,6 +249,8 @@ const NewCellElementGenerator = ({
         <HFTextFieldWithMask
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -212,6 +269,9 @@ const NewCellElementGenerator = ({
         <HFFormulaField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -229,6 +289,9 @@ const NewCellElementGenerator = ({
         <CHFFormulaField
           setFormValue={setFormValue}
           control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          isTableView={true}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           name={computedSlug}
@@ -248,6 +311,8 @@ const NewCellElementGenerator = ({
           disabled={isDisabled}
           isBlackBg={isBlackBg}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           width="100%"
@@ -264,6 +329,8 @@ const NewCellElementGenerator = ({
         <HFMultipleAutocomplete
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           width="100%"
@@ -272,6 +339,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          data={data}
           {...props}
         />
       );
@@ -280,6 +348,8 @@ const NewCellElementGenerator = ({
         <HFMultipleAutocomplete
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           width="100%"
@@ -288,6 +358,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          data={data}
           {...props}
         />
       );
@@ -298,6 +369,8 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          updateObject={updateObject}
+          isNewTableView={true}
           width={"100%"}
           mask={"99.99.9999"}
           isFormEdit
@@ -316,6 +389,8 @@ const NewCellElementGenerator = ({
         <HFDateTimePicker
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           showCopyBtn={false}
           control={control}
@@ -333,6 +408,8 @@ const NewCellElementGenerator = ({
         <HFTimePicker
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -349,6 +426,8 @@ const NewCellElementGenerator = ({
         <HFNumberField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           fullWidth
@@ -365,6 +444,8 @@ const NewCellElementGenerator = ({
         <HFFloatField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           control={control}
           name={computedSlug}
           fullWidth
@@ -379,12 +460,34 @@ const NewCellElementGenerator = ({
 
     case "CHECKBOX":
       return (
-        <HFCheckbox disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
+        <HFCheckbox
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          required={field.required}
+          defaultValue={defaultValue}
+          {...props}
+        />
       );
 
     case "SWITCH":
       return (
-        <HFSwitch disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
+        <HFSwitch
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          required={field.required}
+          defaultValue={defaultValue}
+          {...props}
+        />
       );
 
     case "EMAIL":
@@ -392,6 +495,8 @@ const NewCellElementGenerator = ({
         <HFTextField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -410,34 +515,81 @@ const NewCellElementGenerator = ({
       );
 
     case "ICON":
-      return <HFIconPicker isFormEdit control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />;
+      return (
+        <HFIconPicker
+          isFormEdit
+          control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          name={computedSlug}
+          required={field.required}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
     case "MAP":
-      return <HFModalMap isTransparent={true} control={control} field={field} defaultValue={defaultValue} isFormEdit name={computedSlug} required={field?.required} />;
+      return (
+        <HFModalMap
+          isTransparent={true}
+          control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          field={field}
+          defaultValue={defaultValue}
+          isFormEdit
+          name={computedSlug}
+          required={field?.required}
+        />
+      );
 
     case "MULTI_LINE":
       return (
-        <HFTextEditor
+        // <HFTextEditor
+        //   control={control}
+        //   name={computedSlug}
+        //   tabIndex={field?.tabIndex}
+        //   fullWidth
+        //   multiline
+        //   rows={4}
+        //   defaultValue={field.defaultValue}
+        //   disabled={isDisabled}
+        //   key={computedSlug}
+        //   isTransparent={true}
+        //   {...props}
+        // />
+
+        <MultiLineCellFormElement
           control={control}
-          name={computedSlug}
-          tabIndex={field?.tabIndex}
-          fullWidth
-          multiline
-          rows={4}
-          defaultValue={field.defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          isTransparent={true}
+          updateObject={updateObject}
+          isNewTableView={true}
+          computedSlug={computedSlug}
+          field={field}
+          isDisabled={isDisabled}
           {...props}
         />
       );
 
     case "CUSTOM_IMAGE":
-      return <HFFileUpload isTransparent={true} control={control} name={computedSlug} defaultValue={defaultValue} isFormEdit required={field.required} {...props} />;
+      return (
+        <HFFileUpload
+          isTransparent={true}
+          control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          name={computedSlug}
+          defaultValue={defaultValue}
+          isFormEdit
+          required={field.required}
+          {...props}
+        />
+      );
 
     case "VIDEO":
       return (
         <HFVideoUpload
           control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
           name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit
@@ -453,6 +605,8 @@ const NewCellElementGenerator = ({
       return (
         <HFFileUpload
           control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
           name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit
@@ -468,6 +622,8 @@ const NewCellElementGenerator = ({
       return (
         <HFColorPicker
           control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
           name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit

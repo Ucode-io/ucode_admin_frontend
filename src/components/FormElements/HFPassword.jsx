@@ -9,6 +9,8 @@ function HFPassword({
   isBlackBg,
   control,
   name,
+  updateObject,
+          isNewTableView=false,
   fullWidth,
   isTransparent,
   required,
@@ -31,6 +33,8 @@ function HFPassword({
     <HFTextField
       isDisabled={isDisabled}
       isFormEdit
+      updateObject={updateObject}
+          isNewTableView={isNewTableView}
       isBlackBg={isBlackBg}
       control={control}
       name={name}

@@ -90,7 +90,7 @@ const FieldSettings = ({
     ["GET_VIEWS_AND_FIELDS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
+        data: { limit: 10, offset: 0, app_id: appId },
       });
     },
     {
@@ -146,10 +146,7 @@ const FieldSettings = ({
   };
 
   const updateField = (field) => {
-    if (!id || !menuItem?.table_id) {
-      updateFieldInform(field);
-      closeSettingsBlock();
-    } else {
+    if (id || menuItem?.table_id) {
       setFormLoader(true);
       constructorFieldService
         .update(field)
@@ -159,6 +156,9 @@ const FieldSettings = ({
           getRelationFields();
         })
         .finally(() => setFormLoader(false));
+    } else {
+      updateFieldInform(field);
+      closeSettingsBlock();
     }
   };
 
@@ -371,6 +371,26 @@ const FieldSettings = ({
                               gap: "6px",
                             }}
                           >
+                            {/* {languages?.map((language) => {
+                              // const languageFieldName = `attributes.label_${language?.slug}`;
+                              // const fieldValue = useWatch({
+                              //   control,
+                              //   name: languageFieldName,
+                              // });
+
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={fieldValue || selectedField?.label}
+                                />
+                              );
+                            })} */}
+
                             {languages?.map((language) => {
                               const languageFieldName = `attributes.label_${language?.slug}`;
                               const fieldValue = useWatch({

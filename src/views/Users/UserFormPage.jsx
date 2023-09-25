@@ -29,6 +29,8 @@ import { IconButton, InputAdornment } from "@mui/material";
 const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
   const [showPassword, setShowPassword] = useState(false);
+  const menuItem = store.getState().menu.menuItem;
+  const invite = Boolean(menuItem?.table_slug);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -101,7 +103,8 @@ const ClientUserForm = () => {
 
   const onSubmit = (data) => {
     if (userId) updateProject({ ...data, active: data.active ? 1 : 0 });
-    else createProject({ ...data, active: data.active ? 1 : 0 });
+    else
+      createProject({ ...data, active: data.active ? 1 : 0, invite: invite });
   };
 
   if (updateLoading) return <PageFallback />;

@@ -1,11 +1,11 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, InputAdornment } from "@mui/material";
+import { Button, Dialog, InputAdornment } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -24,16 +24,36 @@ import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
-import RegisterForm from "./RegisterForm";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
+import RegisterFormPage from "./RegisterFormPage";
+import companyService from "../../../services/companyService";
 
-const LoginForm = ({ setIndex, index }) => {
+const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [formType, setFormType] = useState("LOGIN");
+  const [oneLogin, setOneLogin] = useState(false);
+  const [connectionCheck, setConnectionCheck] = useState(false);
+  const [isUserId, setIsUserId] = useState();
+  const [selectedCollection, setSelectedCollection] = useState();
+
+  const { control, handleSubmit, watch, setValue, reset, getValues } =
+    useForm();
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setLoading(false);
+    setValue("username", "");
+    setValue("password", "");
+  };
 
   useEffect(() => {
     getFcmToken();
@@ -44,12 +64,38 @@ const LoginForm = ({ setIndex, index }) => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const { control, handleSubmit, watch, setValue, reset } = useForm();
-
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
+  const getFormValue = watch();
+
+  const { data: computedConnections = [], isLoading } = useQuery(
+    [
+      "GET_CONNECTION_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
+    ],
+    () => {
+      return connectionServiceV2.getList(
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+          "user-id": isUserId,
+        },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedClientTypeID,
+      select: (res) => res.data.response ?? [],
+      onSuccess: (res) => {
+        computeConnections(res);
+        setConnectionCheck(true);
+      },
+    }
+  );
 
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
@@ -94,97 +140,24 @@ const LoginForm = ({ setIndex, index }) => {
     },
   });
 
-  const { data: computedClientTypes = [] } = useQuery(
-    [
-      "GET_CLIENT_TYPE_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
-    () => {
-      return clientTypeServiceV2.getList(
-        { "project-id": selectedProjectID },
-        { "environment-id": selectedEnvID }
-      );
-    },
-    {
-      enabled: !!selectedEnvID,
-      select: (res) =>
-        res.data.response?.map((row) => ({
-          label: row.name,
-          value: row.guid,
-        })),
-    }
-  );
+  //======COMPUTE CLIENTTYPES
+  const computedClientTypes = useMemo(() => {
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
+    const companyProject = company?.projects?.find(
+      (el) => el?.id === selectedProjectID
+    );
 
-  const { data: computedConnections = [] } = useQuery(
-    [
-      "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
-    () => {
-      return connectionServiceV2.getList(
-        {
-          "project-id": selectedProjectID,
-          client_type_id: selectedClientTypeID,
-        },
-        { "environment-id": selectedEnvID }
-      );
-    },
-    {
-      enabled: !!selectedClientTypeID,
+    const companyEnvironment = companyProject?.resource_environments?.find(
+      (el) => el?.environment_id === selectedEnvID
+    );
 
-      select: (res) => res.data.response ?? [],
-    }
-  );
-
-  useEffect(() => {
-    if (computedCompanies?.length === 1) {
-      setValue("company_id", computedCompanies[0]?.value);
-    }
-  }, [computedCompanies]);
-
-  useEffect(() => {
-    if (computedProjects?.length === 1) {
-      setValue("project_id", computedProjects[0]?.value);
-    }
-  }, [computedProjects]);
-
-  useEffect(() => {
-    if (computedEnvironments?.length === 1) {
-      setValue("environment_id", computedEnvironments[0]?.value);
-    }
-  }, [computedEnvironments]);
-  useEffect(() => {
-    if (computedRoles?.length === 1) {
-      setValue("role_id", computedRoles[0]?.value);
-    }
-  }, [computedRoles]);
-
-  useEffect(() => {
-    if (computedClientTypes?.length === 1) {
-      setValue("client_type", computedClientTypes[0]?.value);
-    }
-  }, [computedClientTypes]);
-
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
-
-  const multiCompanyLogin = (data) => {
-    setLoading(true);
-
-    authService
-      .multiCompanyLogin(data)
-      .then((res) => {
-        setLoading(false);
-        setCompanies(res.companies);
-        setFormType("MULTI_COMPANY");
-        dispatch(companyActions.setCompanies(res.companies));
-      })
-      .catch(() => setLoading(false));
-  };
+    return companyEnvironment?.client_types?.response?.map((item) => ({
+      label: item?.name,
+      value: item?.guid,
+    }));
+  }, [companies, selectedCompanyID, selectedEnvID, selectedProjectID]);
 
   const register = (data) => {
     setLoading(true);
@@ -200,11 +173,179 @@ const LoginForm = ({ setIndex, index }) => {
   };
 
   const onSubmit = (values) => {
-    setLoading(true);
-    if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
-    else if (index === 1) register(values);
-    else dispatch(loginAction(values)).then(() => setLoading(false));
+    getCompany(values);
   };
+
+  const getCompany = (values) => {
+    companyService
+      .getCompanyList({
+        password: values?.password,
+        username: values?.username,
+      })
+      .then((res) => {
+        setIsUserId(res?.user_id);
+        setCompanies(res?.companies);
+        computeCompanyElement(res?.companies);
+        setLoading(true);
+
+        if (index === 1) register(values);
+        setOneLogin(true);
+      })
+      .catch((err) => {
+        setOneLogin(false);
+        setLoading(false);
+      });
+  };
+  const checkConnections = useMemo(() => {
+    if (getFormValue?.tables) {
+      const tableKeys = Object.keys(getFormValue.tables);
+      return tableKeys.every((key) => {
+        const item = getFormValue.tables[key];
+        return item?.object_id && item?.table_slug;
+      });
+    }
+    return false;
+  }, [getFormValue]);
+
+  const computeConnections = (connections) => {
+    if (
+      (Array.isArray(connections) && connections?.length === 0) ||
+      connections === undefined
+    ) {
+      if (
+        getFormValue?.username &&
+        getFormValue?.password &&
+        getFormValue?.client_type &&
+        getFormValue?.project_id &&
+        getFormValue?.environment_id
+      ) {
+        onSubmitDialog(getFormValue);
+      } else if (
+        !getFormValue?.username ||
+        !getFormValue?.password ||
+        !getFormValue?.company_id ||
+        !getFormValue?.project_id ||
+        !getFormValue?.environment_id ||
+        !getFormValue?.client_type
+      ) {
+        handleClickOpen();
+      }
+    } else if (Array.isArray(connections) && connections?.length > 1) {
+      if (checkConnections) {
+        onSubmitDialog(getFormValue);
+      } else {
+        handleClickOpen();
+      }
+    }
+  };
+
+  const onSubmitDialog = (values) => {
+    setLoading(true);
+    dispatch(loginAction(values));
+  };
+
+  const computeCompanyElement = (company) => {
+    const validLength = company?.length === 1;
+    if (validLength) {
+      setValue("company_id", company?.[0]?.id);
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        setValue("project_id", company?.[0]?.projects?.[0]?.id);
+      }
+    }
+
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          setValue(
+            "environment_id",
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.environment_id
+          );
+        }
+      }
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
+
+  useEffect(() => {
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
+    }
+  }, [computedConnections]);
+
+  useEffect(() => {
+    if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies?.[0]?.value);
+    }
+    if (computedProjects?.length === 1) {
+      setValue("project_id", computedProjects?.[0]?.value);
+    }
+    if (computedEnvironments?.length === 1) {
+      setValue("environment_id", computedEnvironments?.[0]?.value);
+    }
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes?.[0]?.value);
+    }
+  }, [
+    computedCompanies,
+    computedProjects,
+    computedEnvironments,
+    computedClientTypes,
+  ]);
+
+  useEffect(() => {
+    const shouldOpen =
+      computedCompanies?.length > 1 ||
+      computedProjects?.length > 1 ||
+      computedEnvironments?.length > 1 ||
+      computedClientTypes?.length > 1;
+
+    if (shouldOpen) {
+      handleClickOpen();
+    }
+  }, [
+    computedCompanies,
+    computedProjects,
+    computedEnvironments,
+    computedClientTypes,
+  ]);
+
+  useEffect(() => {
+    if (connectionCheck && getFormValue?.tables) {
+      computeConnections(getFormValue?.tables);
+    }
+  }, [connectionCheck, getFormValue?.tables]);
 
   return (
     <>
@@ -223,7 +364,7 @@ const LoginForm = ({ setIndex, index }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}
+                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
                 >
                   <TabPanel>
                     <div className={classes.formRow}>
@@ -363,13 +504,144 @@ const LoginForm = ({ setIndex, index }) => {
               </div>
             )}
           </Tabs>
-          <div className={classes.buttonsArea}>
-            <PrimaryButton size="large" loader={loading}>
-              {t("enter")}
-            </PrimaryButton>
-          </div>
+          {formType !== "register" && (
+            <>
+              <div className={classes.buttonsArea}>
+                <PrimaryButton size="large" loader={loading}>
+                  {t("enter")}
+                </PrimaryButton>
+                {/* <Button variant="contained" fullWidth type="submit">
+                  ENter
+                </Button> */}
+              </div>
+              <div className={classes.buttonsArea}>
+                <PrimaryButton
+                  onClick={() => setFormType("register")}
+                  size="large"
+                  type="button"
+                  loader={true}
+                  className={`${
+                    formType === "register"
+                      ? classes.registerBtnPage
+                      : classes.registerBtn
+                  }`}
+                >
+                  {t("Зарегистрироваться")}
+                </PrimaryButton>
+              </div>
+            </>
+          )}
         </form>
       )}
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <div
+          style={{
+            padding: "0 20px",
+            width: "500px",
+            maxHeight: `calc(100vh - 150px)`,
+            minHeight: "200px",
+          }}
+        >
+          <h2 className={classes.headerContent}>Multi Company</h2>
+          <div className={classes.formArea}>
+            {computedCompanies?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("company")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="company_id"
+                  size="large"
+                  fullWidth
+                  placeholder={t("enter.company")}
+                  options={computedCompanies}
+                />
+              </div>
+            )}
+            {computedProjects?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("project")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="project_id"
+                  size="large"
+                  placeholder={t("enter.project")}
+                  options={computedProjects}
+                />
+              </div>
+            )}
+            {computedEnvironments?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("environment")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="environment_id"
+                  size="large"
+                  placeholder={t("select.environment")}
+                  options={computedEnvironments}
+                />
+              </div>
+            )}
+            {computedClientTypes?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("client_type")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="client_type"
+                  size="large"
+                  placeholder={t("enter.client_type")}
+                  options={computedClientTypes}
+                />
+              </div>
+            )}
+            {computedConnections.length
+              ? computedConnections?.map((connection, idx) => (
+                  <DynamicFields
+                    key={connection?.guid}
+                    table={computedConnections}
+                    connection={connection}
+                    index={idx}
+                    control={control}
+                    setValue={setValue}
+                    watch={watch}
+                    options={connection?.options}
+                    companies={companies}
+                    selectedCollection={selectedCollection}
+                    setSelectedCollection={setSelectedCollection}
+                  />
+                ))
+              : null}
+          </div>
+          <div className={classes.footerContent}>
+            <Button
+              sx={{ marginRight: "10px" }}
+              variant="contained"
+              color="error"
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+            <div className={classes.buttonsArea}>
+              <PrimaryButton
+                onClick={handleSubmit(onSubmitDialog)}
+                size="small"
+                loader={loading}
+              >
+                {t("enter")}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      </Dialog>
 
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton

@@ -1,15 +1,15 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box } from "@mui/material";
-import { BsThreeDots } from "react-icons/bs";
+import {Box} from "@mui/material";
+import {BsThreeDots} from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import { useDispatch, useSelector } from "react-redux";
-import { mainActions } from "../../../store/main/main.slice";
-import { useTranslation } from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {mainActions} from "../../../store/main/main.slice";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -26,10 +26,11 @@ const SubMenu = ({
   isLoading,
   menuStyle,
   setSelectedApp,
+  setLinkedTableModal,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
@@ -57,45 +58,45 @@ const SubMenu = ({
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
                 selectedApp?.label}
             </h2>
-          )}{" "}
+          )}
           <Box className="buttons">
-            {selectedApp?.id !== adminId && (
-              <div className="dots">
-                <BsThreeDots
+            {/* {selectedApp?.id !== adminId && ( */}
+            <div className="dots">
+              <BsThreeDots
+                size={13}
+                onClick={(e) => {
+                  handleOpenNotify(e, "FOLDER");
+                  setElement(selectedApp);
+                }}
+                style={{
+                  color: menuStyle?.text,
+                }}
+              />
+              {selectedApp?.data?.permission?.write && (
+                <AddIcon
                   size={13}
                   onClick={(e) => {
-                    handleOpenNotify(e, "FOLDER");
+                    handleOpenNotify(e, "CREATE_TO_FOLDER");
                     setElement(selectedApp);
                   }}
                   style={{
                     color: menuStyle?.text,
                   }}
                 />
-                {selectedApp?.data?.permission?.write && (
-                  <AddIcon
-                    size={13}
-                    onClick={(e) => {
-                      handleOpenNotify(e, "CREATE_TO_FOLDER");
-                      setElement(selectedApp);
-                    }}
-                    style={{
-                      color: menuStyle?.text,
-                    }}
-                  />
-                )}
-                <PushPinIcon
-                  size={13}
-                  onClick={() => {
-                    if (!pinIsEnabled) setPinIsEnabledFunc(true);
-                    else setPinIsEnabledFunc(false);
-                  }}
-                  style={{
-                    rotate: pinIsEnabled ? "" : "45deg",
-                    color: menuStyle?.text,
-                  }}
-                />
-              </div>
-            )}
+              )}
+              <PushPinIcon
+                size={13}
+                onClick={() => {
+                  if (!pinIsEnabled) setPinIsEnabledFunc(true);
+                  else setPinIsEnabledFunc(false);
+                }}
+                style={{
+                  rotate: pinIsEnabled ? "" : "45deg",
+                  color: menuStyle?.text,
+                }}
+              />
+            </div>
+            {/* )} */}
             <div
               className="close-btn"
               onClick={() => {
@@ -141,6 +142,7 @@ const SubMenu = ({
                       setFolderModalType={setFolderModalType}
                       sidebarIsOpen={subMenuIsOpen}
                       setTableModal={setTableModal}
+                      setLinkedTableModal={setLinkedTableModal}
                       handleOpenNotify={handleOpenNotify}
                       setElement={setElement}
                       setSubMenuIsOpen={setSubMenuIsOpen}

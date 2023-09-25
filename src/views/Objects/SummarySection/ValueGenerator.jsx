@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
 import { parseBoolean } from "../../../utils/parseBoolean";
 import { formatDate } from "../../../utils/dateFormatter";
@@ -8,8 +8,11 @@ import IconGenerator from "../../../components/IconPicker";
 import LogoDisplay from "../../../components/LogoDisplay";
 import { useWatch } from "react-hook-form";
 import constructorObjectService from "../../../services/constructorObjectService";
+import InventoryBarCode from "../../../components/FormElements/InventoryBarcode";
+import { useSelector } from "react-redux";
+import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
 
-function ValueGenerator({ field, control }) {
+function ValueGenerator({ field, control, setFormValue }) {
   const [data, setData] = useState();
 
   const value = useWatch({
@@ -30,13 +33,24 @@ function ValueGenerator({ field, control }) {
   const view = field?.attributes?.view_fields;
 
   const computedSlug = view?.find((item) => item).slug;
-  console.log('eeeeeeeee', field)
+
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
       return numberWithSpaces(value);
+
+    case "SCAN_BARCODE":
+      return (
+        <FormElementGenerator
+          key={field.id}
+          field={field}
+          control={control}
+          setFormValue={setFormValue}
+          valueGenerator={true}
+        />
+      );
 
     case "DATE_TIME":
       return (
@@ -46,12 +60,8 @@ function ValueGenerator({ field, control }) {
         </span>
       );
 
-      case "FORMULA":
-      return (
-        <span className="text-nowrap">
-          {value ?? 0}
-        </span>
-      );
+    case "FORMULA":
+      return <span className="text-nowrap">{value ?? 0}</span>;
 
     case "MULTISELECT":
       return (

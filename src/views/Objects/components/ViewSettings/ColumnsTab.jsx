@@ -1,17 +1,49 @@
-import { Checkbox } from "@mui/material";
-import { useMemo } from "react";
+import { Box, Switch, Typography } from "@mui/material";
+import { useEffect, useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
-import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import { applyDrag } from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { use } from "i18next";
 import { useTranslation } from "react-i18next";
+import AppsIcon from "@mui/icons-material/Apps";
+import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import ColorizeIcon from "@mui/icons-material/Colorize";
+import EmailIcon from "@mui/icons-material/Email";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import PasswordIcon from "@mui/icons-material/Password";
+import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import MapIcon from "@mui/icons-material/Map";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import NfcIcon from "@mui/icons-material/Nfc";
 
-const ColumnsTab = ({ form }) => {
+const ColumnsTab = ({ form, updateView, isMenu }) => {
+  const { i18n } = useTranslation();
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
+    keyName: "key",
+  });
+
+  const {
+    fields: groupColumn,
+    replace: replaceGroup,
+    move: groupMove,
+  } = useFieldArray({
+    control: form.control,
+    name: "attributes.group_by_columns",
     keyName: "key",
   });
 
@@ -22,11 +54,14 @@ const ColumnsTab = ({ form }) => {
 
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
-    if (result) move(dropResult.removedIndex, dropResult.addedIndex);
+    if (result) {
+      move(dropResult.removedIndex, dropResult.addedIndex);
+      groupMove(dropResult.removedIndex, dropResult.addedIndex);
+    }
   };
 
   const isAllChecked = useMemo(() => {
-    return watchedColumns?.every((column) => column.is_checked);
+    return watchedColumns?.every((column) => column?.is_checked);
   }, [watchedColumns]);
 
   const onAllChecked = (_, val) => {
@@ -35,31 +70,108 @@ const ColumnsTab = ({ form }) => {
     columns?.forEach((column, index) => {
       form.setValue(`columns[${index}].is_checked`, val);
     });
+
+    if (isMenu) {
+      updateView();
+    }
   };
 
-  const { i18n } = useTranslation();
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
+
+  const columnIcons = useMemo(() => {
+    return {
+      SINGLE_LINE: <TextFieldsIcon />,
+      MULTI_LINE: <FormatAlignJustifyIcon />,
+      NUMBER: <LooksOneIcon />,
+      MULTISELECT: <ArrowDropDownCircleIcon />,
+      PHOTO: <PhotoSizeSelectActualIcon />,
+      VIDEO: <PlayCircleIcon />,
+      FILE: <InsertDriveFileIcon />,
+      FORMULA: <FunctionsIcon />,
+      PHONE: <LocalPhoneIcon />,
+      INTERNATION_PHONE: <LocalPhoneIcon />,
+      EMAIL: <EmailIcon />,
+      ICON: <AppsIcon />,
+      BARCODE: <QrCodeScannerIcon />,
+      QRCODE: <QrCode2Icon />,
+      COLOR: <ColorizeIcon />,
+      PASSWORD: <PasswordIcon />,
+      PICK_LIST: <ChecklistIcon />,
+      DATE: <DateRangeIcon />,
+      TIME: <AccessTimeIcon />,
+      DATE_TIME: <InsertInvitationIcon />,
+      CHECKBOX: <CheckBoxIcon />,
+      MAP: <MapIcon />,
+      SWITCH: <ToggleOffIcon />,
+      FLOAT_NOLIMIT: <LooksOneIcon />,
+      DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
+    };
+  }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        maxHeight: 300,
+        overflowY: "auto",
+      }}
+    >
       <div className={styles.table}>
         <div className={styles.row}>
           <div className={styles.cell} style={{ flex: 1 }}>
-            {" "}
-            <b>All</b>{" "}
+            <b>All</b>
           </div>
           <div className={styles.cell} style={{ width: 70 }}>
-            <Checkbox checked={isAllChecked} onChange={onAllChecked} />
+            {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
+            <Button variant="outlined" color="error">Hide All</Button> */}
+            <Switch
+              size="small"
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
           </div>
         </div>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
-                <div className={styles.cell} style={{ flex: 1 }}>
-                  {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                <div
+                  className={styles.cell}
+                  style={{ flex: 1, display: "flex", alignItems: "center" }}
+                >
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginRight: 5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {columnIcons[column.type] ?? <NfcIcon />}
+                  </div>
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column.label}
                 </div>
                 <div className={styles.cell} style={{ width: 70 }}>
-                  <HFCheckbox control={form.control} name={`columns[${index}].is_checked`} />
+                  <Switch
+                    size="small"
+                    checked={form.watch(`columns.${index}.is_checked`)}
+                    onChange={(e) => {
+                      form.setValue(
+                        `columns.${index}.is_checked`,
+                        e.target.checked
+                      );
+                      // updateView();
+                    }}
+                  />
                 </div>
               </div>
             </Draggable>

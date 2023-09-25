@@ -1,36 +1,40 @@
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs";
+import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMenuListQuery } from "../../../services/menuService";
+import pivotService from "../../../services/pivotService";
+import { store } from "../../../store";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import { updateLevel } from "../../../utils/level";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import MenuIcon from "../MenuIcon";
-import "../style.scss";
-import { useQueryClient } from "react-query";
-import { useTranslation } from "react-i18next";
-import { store } from "../../../store";
-import Users from "../Components/Users";
-import { analyticItems, folderIds } from "./mock/folders";
-import Permissions from "../Components/Permission";
+import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
-import EltResources from "../Components/Elt";
-import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import EmailSidebar from "../Components/Email/EmailSidebar";
-import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
-import Resources from "../Components/Resources";
+import Permissions from "../Components/Permission";
 import QuerySidebar from "../Components/Query/QuerySidebar";
-import ApiSidebar from "../Components/Api/ApiSidebar";
-import { updateLevel } from "../../../utils/level";
+import Resources from "../Components/Resources";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import Users from "../Components/Users";
+import DeleteIcon from "../DeleteIcon";
+import MenuIcon from "../MenuIcon";
+import "../style.scss";
+import { analyticItems, folderIds } from "./mock/folders";
+import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -56,16 +60,18 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
-  const defaultLanguage = i18n.language;
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-  const buttonPermission =
-    element?.data?.permission?.read ||
-    defaultAdmin ||
-    element?.id === analyticItems.pivot_id ||
-    element?.id === analyticItems.report_setting;
-
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
+  const readPermission = element?.data?.permission?.read;
+  const withoutPermission =
+    element?.parent_id === adminId || element?.parent_id === analyticsId
+      ? true
+      : false;
+  const permission = defaultAdmin
+    ? readPermission || withoutPermission
+    : readPermission;
   const activeStyle = {
     backgroundColor:
       menuItem?.id === element?.id
@@ -80,13 +86,28 @@ const RecursiveBlock = ({
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
+  const permissionButton =
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
-  const label =
-    (sidebarIsOpen &&
-      (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
-    element?.data?.microfrontend?.name ||
-    element?.data?.webpage?.title ||
-    element?.name;
+  const navigateAndSaveHistory = (elementItem) => {
+    const computedData = {
+      from_date: element?.data?.pivot?.from_data,
+      pivot_table_slug: element?.data?.pivot?.pivot_table_slug,
+      to_date: element?.data?.pivot?.to_date,
+      instance_id: element?.data?.pivot?.id,
+      template_name: element?.data?.pivot?.pivot_table_slug,
+      id: undefined,
+      status: "HISTORY",
+    };
+    if (elementItem?.data?.pivot?.status === "SAVED") {
+      pivotService.upsertPivotTemplate(computedData).then((res) => {
+        navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+      });
+    } else {
+      navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+    }
+  };
 
   const navigateMenu = () => {
     switch (element?.type) {
@@ -111,8 +132,16 @@ const RecursiveBlock = ({
       case "USER":
         return navigate(`/main/${appId}/user-page/${element?.guid}`);
 
+      case "REPORT_SETTING":
+        return navigate(
+          `/main/${appId}/report-setting/${element?.report_setting_id}`
+        );
+
       case "PERMISSION":
         return navigate(`/main/${appId}/permission/${element?.guid}`);
+
+      case "PIVOT":
+        return navigateAndSaveHistory(element);
 
       default:
         return navigate(`/main/${appId}`);
@@ -160,10 +189,33 @@ const RecursiveBlock = ({
     }
   }, []);
 
+  const { mutate: deleteReportSetting } = useMutation(
+    (id) => pivotService.deleteReportSetting(id),
+    {
+      onSuccess: () => {
+        dispatch(showAlert("Успешно удалено", "success"));
+        queryClient.refetchQueries(["MENU"]);
+      },
+    }
+  );
+
+  const { mutate: onDeleteTemplate } = useMutation(
+    (id) =>
+      pivotService.deletePivotTemplate({
+        id,
+      }),
+    {
+      onSuccess: () => {
+        dispatch(showAlert("Успешно удалено", "success"));
+        queryClient.refetchQueries(["MENU"]);
+      },
+    }
+  );
+
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {buttonPermission ? (
+        {permission ? (
           <Button
             key={element.id}
             style={activeStyle}
@@ -176,6 +228,12 @@ const RecursiveBlock = ({
               clickHandler(e);
             }}
           >
+            {adminId === element?.parent_id &&
+              (childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              ))}
             <div
               className="label"
               style={{
@@ -194,13 +252,34 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              <Tooltip title={label} placement="top">
-                <p>{label}</p>
-              </Tooltip>
-            </div>
-            {element?.type === "FOLDER" && sidebarIsOpen ? (
-              <Box className="icon_group">
-                {!adminId && (
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <Box>
+                  <Tooltip
+                    title={
+                      element?.attributes?.[`label_${i18n}`] ??
+                      element?.attributes?.[`title_${i18n}`] ??
+                      element?.label ??
+                      element?.name
+                    }
+                    placement="top"
+                  >
+                    <p>
+                      {element?.attributes?.[`label_${i18n}`] ??
+                        element?.attributes?.[`title_${i18n}`] ??
+                        element?.label ??
+                        element?.name}
+                    </p>
+                  </Tooltip>
+                </Box>
+                <Box>
                   <Tooltip title="Folder settings" placement="top">
                     <Box className="extra_icon">
                       <BsThreeDots
@@ -220,7 +299,41 @@ const RecursiveBlock = ({
                       />
                     </Box>
                   </Tooltip>
+                </Box>
+              </Box>
+            </div>
+            {element?.type === "FOLDER" &&
+            element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
+              <Box className="icon_group">
+                <Tooltip title="Create report settings" placement="top">
+                  <Box className="extra_icon">
+                    {element?.data?.permission?.write || permissionButton ? (
+                      <AddIcon
+                        size={13}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/main/${appId}/report-setting/create`);
+                          // handleOpenNotify(e, "CREATE_TO_REPORT_SETTING");
+                          setElement(element);
+                        }}
+                        style={{
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
+                    ) : null}
+                  </Box>
+                </Tooltip>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
                 )}
+              </Box>
+            ) : element?.type === "FOLDER" && sidebarIsOpen ? (
+              <Box className="icon_group">
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||
@@ -244,6 +357,25 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                        setElement(element);
+                        dispatch(menuActions.setMenuItem(element));
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
                 {childBlockVisible ? (
                   <KeyboardArrowDownIcon />
                 ) : (
@@ -258,6 +390,24 @@ const RecursiveBlock = ({
                   <KeyboardArrowRightIcon />
                 )}
               </>
+            ) : element?.type === "PIVOT" ? (
+              <Tooltip title="Delete Pivot" placement="top">
+                <Box className="extra_icon">
+                  <DeleteIconFromMui
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteTemplate(element.pivot_template_id);
+                    }}
+                    style={{
+                      color:
+                        menuItem?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
             ) : (
               ""
             )}
@@ -303,6 +453,23 @@ const RecursiveBlock = ({
                   handleOpenNotify(e, "WEBPAGE");
                   setElement(element);
                   dispatch(menuActions.setMenuItem(element));
+                }}
+                style={{
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+              />
+            )}
+            {element?.type === "REPORT_SETTING" && (
+              <DeleteIcon
+                title="Delete report settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteReportSetting(element?.report_setting_id);
+                  // handleOpenNotify(e, "REPORT_SETTING");
+                  // setElement(element);
                 }}
                 style={{
                   color:
@@ -359,7 +526,7 @@ const RecursiveBlock = ({
               menuItem={menuItem}
               level={2}
             />
-            <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} />
+            {/* <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} /> */}
             <MicroServiceSidebar
               menuStyle={menuStyle}
               menuItem={menuItem}
@@ -382,7 +549,12 @@ const RecursiveBlock = ({
               level={2}
             />
             <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-            <ProjectSettingSidebar
+            {/* <ProjectSettingSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            /> */}
+            <MicrofrontendSettingSidebar
               menuStyle={menuStyle}
               menuItem={menuItem}
               level={2}

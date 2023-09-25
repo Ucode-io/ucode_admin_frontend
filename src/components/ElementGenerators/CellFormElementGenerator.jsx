@@ -1,7 +1,7 @@
-import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo } from "react";
-import { useWatch } from "react-hook-form";
-import { useSelector } from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useMemo} from "react";
+import {useWatch} from "react-hook-form";
+import {useSelector} from "react-redux";
 import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -56,10 +56,16 @@ const CellFormElementGenerator = ({
     }
   });
 
-  const computedSlug = useMemo(
-    () => `multi.${index}.${field.slug}`,
-    [field.slug, index]
-  );
+  const computedSlug = useMemo(() => {
+    return `multi.${index}.${field.slug}`;
+    // if (field.enable_multilanguage) {
+
+    // } else {
+    //   return field?.slug;
+    // }
+  }, [field.slug, index]);
+
+  console.log("computedSlug", computedSlug);
 
   const changedValue = useWatch({
     control,
@@ -78,17 +84,17 @@ const CellFormElementGenerator = ({
       field.attributes?.defaultValue ?? field.attributes?.default_values;
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
-    if (field.relation_type === "Many2One" || field?.type === 'LOOKUP') {
-      if(Array.isArray(defaultValue)) {
-        return defaultValue[0]
+    if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
+      if (Array.isArray(defaultValue)) {
+        return defaultValue[0];
       } else {
-        return defaultValue
+        return defaultValue;
       }
-    };
+    }
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
-    return defaultValue;
+      return defaultValue;
     if (!defaultValue) return undefined;
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
 
@@ -107,7 +113,6 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -270,6 +275,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           width="100%"
           required={field.required}
+          setFormValue={setFormValue}
           field={field}
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
@@ -373,6 +379,22 @@ const CellFormElementGenerator = ({
           {...props}
         />
       );
+    case "FLOAT_NOLIMIT":
+    case "MONEY":
+      return (
+        <HFFloatField
+          disabled={isDisabled}
+          isFormEdit
+          control={control}
+          name={computedSlug}
+          fullWidth
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
 
     case "CHECKBOX":
       return (
@@ -449,7 +471,7 @@ const CellFormElementGenerator = ({
 
     default:
       return (
-        <div style={{ padding: "0 4px" }}>
+        <div style={{padding: "0 4px"}}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

@@ -16,16 +16,19 @@ const InventoryBarCode = ({
   watch = () => {},
   name = "",
   relatedTable,
+  updateObject,
+          isNewTableView=false,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
   withTrim = false,
   rules = {},
   defaultValue = "",
-  disabled,
+  disabled = false,
   field,
   checkRequiredField,
   setFormValue,
+  valueGenerator,
   ...props
 }) => {
   const queryClient = useQueryClient();
@@ -34,7 +37,7 @@ const InventoryBarCode = ({
   const { id } = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
-  
+
   const barcode = useWatch({
     control,
     name: name,
@@ -42,17 +45,18 @@ const InventoryBarCode = ({
 
   const sendRequestOpenFaas = () => {
     const params = {
-      form_input: true
-    }
+      form_input: true,
+    };
     constructorFunctionService
-      .invoke({
-        function_id: field?.attributes?.function,
-        object_ids: [id, elmValue],
-        attributes: {
-          barcode: elmValue.length > 0 ? elmValue : barcode,
+      .invoke(
+        {
+          function_id: field?.attributes?.function,
+          object_ids: [id, elmValue],
+          attributes: {
+            barcode: elmValue.length > 0 ? elmValue : barcode,
+          },
         },
-      },
-      params
+        params
       )
       .then((res) => {
         dispatch(showAlert("Успешно!", "success"));
@@ -81,7 +85,11 @@ const InventoryBarCode = ({
   // );
 
   useEffect(() => {
-    if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
+    if (
+      elmValue.length >= field.attributes?.length &&
+      !field.attributes?.pressEnter &&
+      field.attributes?.automatic
+    ) {
       sendRequestOpenFaas();
     }
   }, [elmValue]);
@@ -106,21 +114,28 @@ const InventoryBarCode = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <TextField
-            size="medium"
+            size="small"
             value={value}
             onChange={(e) => {
               const currentTime = new Date().getTime();
-              if (currentTime - time.current > 50 && !field.attributes?.automatic) {
-                onChange(e.target.value.substring(value.length, e.target.value.length));
+              if (
+                currentTime - time.current > 50 &&
+                !field.attributes?.automatic
+              ) {
+                onChange(
+                  e.target.value.substring(value.length, e.target.value.length)
+                );
               } else {
                 onChange(e.target.value);
               }
+              isNewTableView && updateObject();
               setElmValue(e.target.value);
               time.current = currentTime;
             }}
             onKeyDown={(e) => keyPress(e)}
             name={name}
             error={error}
+            sx={{ padding: 0 }}
             fullWidth={fullWidth}
             InputProps={{
               readOnly: disabled,
@@ -132,6 +147,8 @@ const InventoryBarCode = ({
                 : {
                     background: "#fff",
                     color: "#000",
+                    height: "25px",
+                    padding: 0,
                   },
 
               endAdornment: disabled && (

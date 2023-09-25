@@ -63,11 +63,14 @@ import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import ResourceDetail from "../views/Resources/Detail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
 import WebPage from "../views/WebPage";
 import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
 import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
+import Invite from "../views/Auth/Invite";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -114,6 +117,7 @@ const Router = () => {
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
             <Route path="login" element={<Login />} />
+            <Route path="invite-user" element={<Invite />} />
             <Route path="registration" element={<Registration />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Route>
@@ -178,6 +182,14 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+        <Route
+          path=":appId/report-setting/:reportSettingsId"
+          element={<ReportSettings />}
+        />
+        <Route
+          path=":appId/pivot-template/:pivotTemplateId"
+          element={<PivotTableView />}
+        />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

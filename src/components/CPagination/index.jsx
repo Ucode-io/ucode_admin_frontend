@@ -1,16 +1,27 @@
-import { Pagination } from "@mui/material";
+import { Button, Pagination } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import CSelect from "../CSelect";
 import styles from "./style.module.scss";
+import AddIcon from "@mui/icons-material/Add";
+import useTabRouter from "../../hooks/useTabRouter";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CPagination = ({
   setCurrentPage = () => {},
+  view,
   paginationExtraButton,
+  isTableView,
+  multipleDelete,
+  selectedObjectsForDelete,
   limit,
   setLimit = () => {},
+  disablePagination,
   ...props
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
+  const { tableSlug } = useParams();
   const options = [
     {
       value: isNaN(parseInt(props?.defaultLimit))
@@ -29,11 +40,15 @@ const CPagination = ({
     { value: 40, label: 40 },
   ];
 
+  const objectNavigate = () => {
+    navigate(view?.attributes?.url_object);
+  };
+
   return (
     <div
       style={{
         // width: "calc(100vw - 375px)",
-        width: '100%',
+        width: "100%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -41,30 +56,63 @@ const CPagination = ({
         paddingRight: "15px",
       }}
     >
-      <div>
-        {limit && (
-          <div className={styles.limitSide}>
-            {t('showing')}
-            <CSelect
-              options={options}
-              disabledHelperText
-              size="small"
-              value={limit}
-              onChange={(e) => setLimit(e.target.value)}
-              inputProps={{ style: { borderRadius: 50 } }}
-              endAdornment={null}
-              sx={null}
-            />
-          </div>
+      {!disablePagination && (
+        <div>
+          {limit && (
+            <div className={styles.limitSide}>
+              {t("showing")}
+              <CSelect
+                options={options}
+                disabledHelperText
+                size="small"
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                inputProps={{ style: { borderRadius: 50 } }}
+                endAdornment={null}
+                sx={null}
+              />
+            </div>
+          )}
+        </div>
+      )}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginLeft: "10px",
+        }}
+      >
+        {selectedObjectsForDelete?.length > 0 && !disablePagination ? (
+          <Button variant="outlined" color="error" onClick={multipleDelete}>
+            Delete all selected
+          </Button>
+        ) : null}
+
+        {isTableView && (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              if (view?.attributes?.url_object) {
+                objectNavigate();
+              } else navigateToForm(tableSlug);
+            }}
+          >
+            <AddIcon style={{ color: "#007AFF" }} />
+            Add object
+          </Button>
         )}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <Pagination
-          color="primary"
-          onChange={(e, val) => setCurrentPage(val)}
-          {...props}
-        />
-        {paginationExtraButton}
+
+        {!disablePagination && (
+          <>
+            <Pagination
+              color="primary"
+              onChange={(e, val) => setCurrentPage(val)}
+              {...props}
+            />
+            {paginationExtraButton}
+          </>
+        )}
       </div>
     </div>
   );

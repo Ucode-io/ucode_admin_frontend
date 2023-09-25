@@ -28,12 +28,10 @@ const BooleanFilter = ({
 
   const onSelectChange = (e) => {
     const value = e.target.value;
-    console.log('value', value);
     if (value === 'true') {
       onChange(true, name);
     } else if (value === 'false') {
       onChange(false, name);
-      console.log('ffff');
     } else {
       onChange(null, name);
     }

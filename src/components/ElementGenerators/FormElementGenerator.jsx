@@ -1,8 +1,8 @@
-import { Lock } from "@mui/icons-material";
-import { InputAdornment, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import {Lock} from "@mui/icons-material";
+import {InputAdornment, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useMemo} from "react";
+import {useSelector} from "react-redux";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -30,7 +30,8 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 
 const parser = new Parser();
 
@@ -45,11 +46,12 @@ const FormElementGenerator = ({
   checkPermission = true,
   isMultiLanguage,
   relatedTable,
+  valueGenerator,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -115,7 +117,7 @@ const FormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [
     field.attributes,
@@ -129,11 +131,16 @@ const FormElementGenerator = ({
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
+      !field.attributes?.field_permission?.edit_permission ||
+      field?.is_editable
     );
   }, [field]);
 
-  if (!field.attributes?.field_permission?.view_permission && checkPermission) {
+  if (
+    !field.attributes?.field_permission?.view_permission &&
+    checkPermission &&
+    field?.slug !== "default_values"
+  ) {
     return null;
   }
 
@@ -188,7 +195,24 @@ const FormElementGenerator = ({
 
   switch (field.type) {
     case "SCAN_BARCODE":
-      return (
+      return valueGenerator ? (
+        <InventoryBarCode
+          relatedTable={relatedTable}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          setFormValue={setFormValue}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          field={field}
+          disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
+          key={computedSlug}
+          valueGenerator={valueGenerator}
+          {...props}
+        />
+      ) : (
         <FRow label={label} required={field.required}>
           <InventoryBarCode
             relatedTable={relatedTable}
@@ -203,6 +227,7 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             checkRequiredField={checkRequiredField}
             key={computedSlug}
+            valueGenerator={valueGenerator}
             {...props}
           />
         </FRow>
@@ -373,6 +398,23 @@ const FormElementGenerator = ({
         </FRow>
       );
 
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFDateTimePickerWithout
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            mask={"99.99.9999"}
+            required={checkRequiredField}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+
     case "TIME":
       return (
         <FRow label={label} required={field.required}>
@@ -411,6 +453,25 @@ const FormElementGenerator = ({
         </FRow>
       );
     case "FLOAT":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFFloatField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            type="number"
+            required={checkRequiredField}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "FLOAT_NOLIMIT":
       return (
         <FRow label={label} required={field.required}>
           <HFFloatField
@@ -786,7 +847,7 @@ const FormElementGenerator = ({
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),

@@ -55,7 +55,7 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
     else if (el?.type === "NUMBER") result = numberWithSpaces(value);
     else result = value;
 
-    label += `${result ?? ""} `;
+    label += `${result ?? ""}`;
   });
 
   return label;

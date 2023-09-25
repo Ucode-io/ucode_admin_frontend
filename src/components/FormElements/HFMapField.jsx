@@ -11,6 +11,8 @@ const HFMapField = ({
   name,
   tabIndex,
   required,
+  updateObject,
+  isNewTableView=false,
   rules,
   disabledHelperText = false,
   disabled,
@@ -74,6 +76,7 @@ const HFMapField = ({
         const handleClick = (clickedLat, clickedLng) => {
           setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
           onChange(`${clickedLat},${clickedLng}`);
+          isNewTableView && updateObject();
         };
 
         return (

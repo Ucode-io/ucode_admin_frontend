@@ -14,11 +14,14 @@ const InputWithPopUp = ({
   props,
   placeholder,
   size,
+  defaultValue,
+  disabled,
   height = "32px !important",
   enableGetElement = true,
   customOnChange = () => {},
   onBlur = () => {},
   className,
+  width = "100% !important",
 }) => {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
@@ -46,7 +49,7 @@ const InputWithPopUp = ({
       }}
     >
       <Box
-        width="100%"
+        width={width}
         height={height}
         display="flex"
         alignItems="center"
@@ -57,6 +60,8 @@ const InputWithPopUp = ({
           control={form.control}
           size={size}
           name={name}
+          defaultValue={defaultValue}
+          disabled={disabled}
           fullWidth
           onFocus={() => {
             setFocused(true);

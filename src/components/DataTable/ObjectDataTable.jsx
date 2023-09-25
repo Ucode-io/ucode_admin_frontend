@@ -3,7 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { CTable, CTableBody, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
@@ -14,24 +20,34 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import { de } from "date-fns/locale";
+import { Box, Button, LinearProgress } from "@mui/material";
+import TableHeadForTableView from "./TableHeadForTableView";
+import InfiniteScroll from "react-infinite-scroll-component";
+import constructorObjectService from "../../services/constructorObjectService";
 import { useTranslation } from "react-i18next";
-import { Button } from "@mui/material";
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
+  setDrawerState,
+  setDrawerStateField,
   removableHeight,
   additionalRow,
   mainForm,
+  elementHeight,
+  selectedView,
+  isTableView = false,
   remove,
+  multipleDelete,
   openFieldSettings,
+  sortedDatas,
   fields = [],
   isRelationTable,
   disablePagination,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
+  setSortedDatas,
   columns = [],
   relatedTableSlug,
   watch,
@@ -49,6 +65,8 @@ const ObjectDataTable = ({
   tableSlug,
   isResizeble,
   paginationExtraButton,
+  selectedObjectsForDelete,
+  setSelectedObjectsForDelete,
   onCheckboxChange,
   limit,
   setLimit,
@@ -66,15 +84,17 @@ const ObjectDataTable = ({
   const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
-
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
 
+  console.log("pagesCount", pagesCount);
+
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -138,10 +158,12 @@ const ObjectDataTable = ({
     };
 
     createResizableTable(document.getElementById("resizeMe"));
-  }, [data]);
+  }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -170,49 +192,43 @@ const ObjectDataTable = ({
     setColumnId("");
   };
 
-  const pinnedColumns = useMemo(() => {
-    let outputArray = [];
-
-    for (const key in view?.attributes?.fixedColumns) {
-      if (view?.attributes?.fixedColumns.hasOwnProperty(key)) {
-        outputArray.push({ key: key, value: view?.attributes?.fixedColumns[key] });
-      }
-    }
-
-    return outputArray
-      ?.filter((item) => item?.value === true)
-      ?.map((item) => {
-        return item?.key;
-      });
-  }, [view?.attributes?.fixedColumns]);
-
   const calculateWidth = (colId, index) => {
-    if (pinnedColumns.includes(colId)) {
-      const colIdx = tableSettings?.[pageName]?.findIndex((item) => item?.id === colId);
-      if (index === 0) {
-        return 0;
-      } else if (colIdx === 0) {
-        return 0;
-      } else if (tableSettings?.[pageName]?.length === 1) {
-        return 0;
-      } else {
-        return tableSettings?.[pageName]?.slice(0, colIdx)?.reduce((acc, item) => acc + item?.colWidth, 0);
-      }
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
+
+    if (index === 0) {
+      return 0;
+    } else if (colIdx === 0) {
+      return 0;
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
+      return 0;
     } else {
-      const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
-      if (index === 0) {
-        return 0;
-      } else if (colIdx === 0) {
-        return 0;
-      } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
-        return 0;
-      } else {
-        return tableSettings?.[pageName]
-          ?.filter((item) => item?.isStiky === true)
-          ?.slice(0, colIdx)
-          ?.reduce((acc, item) => acc + item?.colWidth, 0);
-      }
+      return tableSettings?.[pageName]
+        ?.filter((item) => item?.isStiky === true)
+        ?.slice(0, colIdx)
+        ?.reduce((acc, item) => acc + item?.colWidth, 0);
     }
+  };
+
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
+
+    if (prevElementIndex === -1 || prevElementIndex === 0) {
+      return 0;
+    }
+
+    let totalWidth = 0;
+
+    for (let i = 0; i < prevElementIndex; i++) {
+      const element = document.querySelector(`[id='${columns?.[i].id}']`);
+      totalWidth += element?.offsetWidth || 0;
+    }
+
+    return totalWidth;
   };
 
   useEffect(() => {
@@ -221,92 +237,120 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const params = {
+      language_setting: i18n?.language,
+    };
+    console.log("i18n?.language", i18n?.language);
+    constructorObjectService
+      .getList(
+        tableSlug,
+        {
+          data: { limit: 0, offset: 0 },
+        },
+        params
+      )
+      .then((res) => {
+        setCount(Math.ceil(res.data?.count / limit));
+      });
+  }, [tableSlug, limit, i18n?.language]);
+
+  const hasMore = useMemo(() => {
+    return currentPage <= count;
+  }, [currentPage, pagesCount, tableSlug, data, count]);
+
   return (
     <CTable
       disablePagination={disablePagination}
       removableHeight={removableHeight}
       count={pagesCount}
       page={currentPage}
+      isTableView={isTableView}
       setCurrentPage={onPaginationChange}
       loader={loader}
+      multipleDelete={multipleDelete}
+      selectedObjectsForDelete={selectedObjectsForDelete}
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
       limit={limit}
       setLimit={setLimit}
       defaultLimit={defaultLimit}
+      view={view}
     >
+      {/* <Box
+        style={{
+          width: "100%",
+        }}
+      >
+        <InfiniteScroll
+          dataLength={data?.length}
+          next={() => {
+            if (hasMore) {
+              onPaginationChange(currentPage + 1);
+            }
+          }}
+          hasMore={hasMore}
+          loader={
+            <Box sx={{ width: "100%" }}>
+              <LinearProgress />
+            </Box>
+          }
+          // height={"calc(100vh - 170px)"}
+          height={`${elementHeight - 50}px`}
+        >
+          <table> */}
       <CTableHead>
-        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
+        {formVisible && selectedRow.length > 0 && (
+          <MultipleUpdateRow
+            columns={data}
+            fields={columns}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+          />
+        )}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
           {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
-                <CTableHeadCell
-                  id={column.id}
-                  key={index}
-                  style={{
-                    padding: "10px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    position: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
-                    }`,
-                    left: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? `${calculateWidth(column?.id, index)}px`
-                        : "0"
-                    }`,
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
-                    }`,
-                    zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
-                    // color: formVisible && column?.required === true ? "red" : "",
-                  }}
-                >
-                  <div
-                    className="table-filter-cell cell-data"
-                    onMouseEnter={(e) => {
-                      setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-                    }}
-                  >
-                    <span
-                      style={{
-                        whiteSpace: "nowrap",
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setColumnId((prev) => (prev === column.id ? "" : column.id));
-                      }}
-                    >
-                      {column.attributes?.[`label_${i18n.language}`] ?? column.label}
-                    </span>
-                    {disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
-                    {columnId === column?.id && (
-                      <div className="cell-popup" ref={popupRef}>
-                        <div className="cell-popup-item" onClick={() => handlePin(column?.id, index)}>
-                          <PinIcon pinned={tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky} />
-                          <span>Pin column</span>
-                        </div>
-                        <div className="cell-popup-item" onClick={() => handleAutoSize(column?.id, index)}>
-                          <ResizeIcon />
-                          <span>Autosize</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CTableHeadCell>
+                <TableHeadForTableView
+                  column={column}
+                  index={index}
+                  pageName={pageName}
+                  sortedDatas={sortedDatas}
+                  setSortedDatas={setSortedDatas}
+                  setDrawerState={setDrawerState}
+                  setDrawerStateField={setDrawerStateField}
+                  tableSize={tableSize}
+                  tableSettings={tableSettings}
+                  view={view}
+                  selectedView={selectedView}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  handlePin={handlePin}
+                  handleAutoSize={handleAutoSize}
+                  popupRef={popupRef}
+                  columnId={columnId}
+                  setColumnId={setColumnId}
+                  setCurrentColumnWidth={setCurrentColumnWidth}
+                  isTableView={isTableView}
+                  FilterGenerator={FilterGenerator}
+                  filterChangeHandler={filterChangeHandler}
+                  filters={filters}
+                  tableSlug={tableSlug}
+                  disableFilters={disableFilters}
+                />
               )
           )}
 
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type={["update", "delete"]}
+          >
             {(onDeleteClick || onEditClick) && (
               <CTableHeadCell width={10}>
                 <span
@@ -328,16 +372,25 @@ const ObjectDataTable = ({
           </PermissionWrapperV2>
 
           <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
-            <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
+            <Button
+              variant="text"
+              style={{ borderColor: "#F0F0F0", borderRadius: "0px" }}
+              onClick={openFieldSettings}
+            >
               <AddRoundedIcon />
-              Column
             </Button>
           </CTableHeadCell>
         </CTableRow>
       </CTableHead>
-      <CTableBody loader={loader} columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
+
+      <CTableBody
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+        title={title}
+      >
         {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
+            width={"80px"}
             remove={remove}
             watch={watch}
             control={control}
@@ -346,10 +399,14 @@ const ObjectDataTable = ({
             mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}
+            isTableView={isTableView}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
             isRelationTable={isRelationTable}
             relatedTableSlug={relatedTableSlug}
             onRowClick={onRowClick}
             isChecked={isChecked}
+            calculateWidthFixedColumn={calculateWidthFixedColumn}
             onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
             limit={limit}
@@ -368,9 +425,14 @@ const ObjectDataTable = ({
             view={view}
           />
         ))}
-        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
         {additionalRow}
       </CTableBody>
+      {/* </table>
+        </InfiniteScroll>
+      </Box> */}
     </CTable>
   );
 };

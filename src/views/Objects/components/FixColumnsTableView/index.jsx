@@ -1,11 +1,34 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import { Checkbox, Menu } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import style from "./style.module.scss";
 import constructorViewService from "../../../../services/constructorViewService";
+import style from "./style.module.scss";
+import AppsIcon from "@mui/icons-material/Apps";
+import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import ColorizeIcon from "@mui/icons-material/Colorize";
+import EmailIcon from "@mui/icons-material/Email";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import PasswordIcon from "@mui/icons-material/Password";
+import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import MapIcon from "@mui/icons-material/Map";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import NfcIcon from "@mui/icons-material/Nfc";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -26,11 +49,12 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
       views: [],
       columns: [],
     },
+    refetch,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
+        data: { limit: 10, offset: 0 },
       });
     },
     {
@@ -64,12 +88,50 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     setSelectedView(computedData);
 
     constructorViewService.update(computedData).then((res) => {
-      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS"]);
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
         setIsLoading(false);
       });
     });
   };
+
+  const visibleColumns = useMemo(() => {
+    refetch();
+    return columns.filter((column) => {
+      return views?.[selectedTabIndex]?.columns?.find(
+        (el) => el === column?.id
+      );
+    });
+  }, [views, columns, selectedTabIndex, anchorEl]);
+
+  const columnIcons = useMemo(() => {
+    return {
+      SINGLE_LINE: <TextFieldsIcon />,
+      MULTI_LINE: <FormatAlignJustifyIcon />,
+      NUMBER: <LooksOneIcon />,
+      MULTISELECT: <ArrowDropDownCircleIcon />,
+      PHOTO: <PhotoSizeSelectActualIcon />,
+      VIDEO: <PlayCircleIcon />,
+      FILE: <InsertDriveFileIcon />,
+      FORMULA: <FunctionsIcon />,
+      PHONE: <LocalPhoneIcon />,
+      INTERNATION_PHONE: <LocalPhoneIcon />,
+      EMAIL: <EmailIcon />,
+      ICON: <AppsIcon />,
+      BARCODE: <QrCodeScannerIcon />,
+      QRCODE: <QrCode2Icon />,
+      COLOR: <ColorizeIcon />,
+      PASSWORD: <PasswordIcon />,
+      PICK_LIST: <ChecklistIcon />,
+      DATE: <DateRangeIcon />,
+      TIME: <AccessTimeIcon />,
+      DATE_TIME: <InsertInvitationIcon />,
+      CHECKBOX: <CheckBoxIcon />,
+      MAP: <MapIcon />,
+      SWITCH: <ToggleOffIcon />,
+      FLOAT_NOLIMIT: <LooksOneIcon />,
+      DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
+    };
+  }, []);
 
   return (
     <>
@@ -103,7 +165,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 14,
+              left: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -113,10 +175,30 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
           },
         }}
       >
-        <div className={style.menuItems}>
-          {columns.map((column) => (
+        <div
+          className={style.menuItems}
+          style={{
+            maxHeight: 300,
+            overflowY: "auto",
+          }}
+        >
+          {visibleColumns.map((column) => (
             <div className={style.menuItem}>
-              <span>{column.label}</span>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}>
+                  {columnIcons[column.type] ?? <NfcIcon />}
+                </div>
+
+                <span>{column.label}</span>
+              </div>
 
               <Checkbox
                 onChange={(e) => {

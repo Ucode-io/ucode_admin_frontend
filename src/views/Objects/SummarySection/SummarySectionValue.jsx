@@ -7,7 +7,11 @@ const SummarySectionValue = ({ control, computedSummary }) => {
       {computedSummary?.map((field) => (
         <div className={styles.field_summary}>
           <div className={styles.field_summary_item}>
-            <span>{field?.slug !== "photo" && field?.slug !== "passport_photo" ? field?.label : ""}</span>
+            <span>
+              {field?.slug !== "photo" && field?.slug !== "passport_photo"
+                ? field?.label
+                : ""}
+            </span>
             <p>
               <ValueGenerator field={field} control={control} />
             </p>

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Dialog, TextField } from "@mui/material";
+import { Autocomplete, Popover, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
+import AddIcon from "@mui/icons-material/Add";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -30,6 +31,8 @@ const CellRelationFormElement = ({
   isFormEdit,
   control,
   name,
+  updateObject,
+  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -62,7 +65,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : field?.attributes?.cascadings?.length > 1 ? (
             <CascadingElement
@@ -76,7 +82,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : (
             <AutoCompleteElement
@@ -87,7 +96,10 @@ const CellRelationFormElement = ({
               value={value}
               classes={classes}
               name={name}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
               field={field}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}
@@ -182,7 +194,7 @@ const AutoCompleteElement = ({
     () => {
       return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
         params: {
-          from_input: true
+          from_input: true,
         },
         data: {
           table_slug: tableSlug,
@@ -209,7 +221,7 @@ const AutoCompleteElement = ({
   );
 
   const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
     () => {
       if (!tableSlug) return null;
       return constructorObjectService.getList(tableSlug, {
@@ -217,7 +229,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [defaultValue ?? id],
+            additional_values: [value],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -240,15 +252,16 @@ const AutoCompleteElement = ({
 
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
-      return optionsFromFunctions?.options ?? [];
+      return optionsFromFunctions ?? [];
+    } else {
+      return optionsFromLocale ?? [];
     }
-    return optionsFromLocale?.options ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
+  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
+    const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [options?.options, value, optionsFromFunctions, optionsFromLocale]);
+  }, [options, value]);
 
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
@@ -274,18 +287,30 @@ const AutoCompleteElement = ({
   };
 
   useEffect(() => {
-    const val = computedValue[computedValue.length - 1];
-    if (!field?.attributes?.autofill || !val) return;
+    let val;
+
+    if (Array.isArray(computedValue)) {
+      val = computedValue[computedValue.length - 1];
+    } else {
+      val = computedValue;
+    }
+
+    if (!field?.attributes?.autofill || !val) {
+      return;
+    }
+
     field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
-      const setName = name.split(".");
-      setName.pop();
-      setName.push(field_to);
-      automatic &&
+      const setName = name?.split(".");
+      setName?.pop();
+      setName?.push(field_to);
+
+      if (automatic) {
         setTimeout(() => {
           setFormValue(setName.join("."), get(val, field_from));
         }, 1);
+      }
     });
-  }, [computedValue]);
+  }, [computedValue, field]);
 
   const [open, setOpen] = useState(false);
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
@@ -302,11 +327,51 @@ const AutoCompleteElement = ({
     setTableSlugFromProps(tableSlug);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
+
   return (
-    <div className={styles.autocompleteWrapper}>
+    <div
+      className={styles.autocompleteWrapper}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        minWidth: "max-content",
+      }}
+    >
       {field.attributes.creatable && (
         <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-          Создать новый
+          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
+          <Popover
+            id="mouse-over-popover"
+            sx={{
+              pointerEvents: "none",
+            }}
+            open={openPopover}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            onClose={handlePopoverClose}
+            disableRestoreFocus
+          >
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
+          </Popover>
         </span>
       )}
 
@@ -321,7 +386,7 @@ const AutoCompleteElement = ({
           }
         }}
         disabled={disabled}
-        options={options ?? []}
+        options={options?.options ?? []}
         value={computedValue}
         popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
         onChange={(event, newValue) => {
@@ -333,6 +398,9 @@ const AutoCompleteElement = ({
           </span>
         }
         blurOnSelect
+        style={{
+          width: "100%",
+        }}
         openOnFocus
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
@@ -351,8 +419,11 @@ const AutoCompleteElement = ({
                 input: isBlackBg ? classes.input : "",
               },
               style: {
-                background: isBlackBg ? "#2A2D34" : "",
+                background: isBlackBg ? "#2A2D34" : "transparent",
                 color: isBlackBg ? "#fff" : "",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
               },
             }}
             size="small"
@@ -360,7 +431,7 @@ const AutoCompleteElement = ({
         )}
         renderTags={(value, index) => (
           <>
-            {getOptionLabel(value[0])}
+            <span>{getOptionLabel(value[0])}</span>
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
               style={{ marginLeft: "10px", cursor: "pointer" }}

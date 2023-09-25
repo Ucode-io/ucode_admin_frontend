@@ -26,8 +26,6 @@ const AppSelector = () => {
     return [...applications, ...staticApps];
   }, [applications]);
 
-  console.log("computedList", computedList);
-
   const activeApp = useMemo(() => {
     if (pathname.includes("/main")) {
       return pathname.split("/")[2];

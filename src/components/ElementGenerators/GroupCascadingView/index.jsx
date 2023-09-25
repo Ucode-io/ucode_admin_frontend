@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import {useEffect, useMemo} from "react";
+import {useState} from "react";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
 
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -9,17 +9,18 @@ import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FolderIcon from "@mui/icons-material/Folder";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import { Add, Delete } from "@mui/icons-material";
+import {Add, Delete} from "@mui/icons-material";
 import useTabRouter from "../../../hooks/useTabRouter";
 import GroupCascadingView from "./GroupCascadingView";
 import FastFilter from "../../../views/Objects/components/FastFilter";
-import { Menu, TextField, InputAdornment } from "@mui/material";
+import {Menu, TextField, InputAdornment} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SearchIcon } from "../../../assets/icons/icon.jsx";
+import {SearchIcon} from "../../../assets/icons/icon.jsx";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
-import { get } from "@ngard/tiny-get";
+import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
+import {get} from "@ngard/tiny-get";
 import SearchInput from "../../SearchInput";
+import {useTranslation} from "react-i18next";
 
 const GroupCascadingViews = ({
   field,
@@ -30,13 +31,14 @@ const GroupCascadingViews = ({
   index,
   row,
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [selectedIds, setSelectedIds] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
   const [chosenItem, setChosenItem] = useState();
+  const {i18n} = useTranslation();
 
   const [searchText, setSearchText] = useState("");
   const [menu, setMenu] = useState(null);
@@ -93,12 +95,16 @@ const GroupCascadingViews = ({
 
   const getAllData = async () => {
     setTableLoader(true);
+    const params = {
+      language_setting: i18n?.language,
+    };
     try {
-      const { data } = await constructorObjectService.getList(
+      const {data} = await constructorObjectService.getList(
         field?.attributes?.cascading_tree?.table_slug,
         {
-          data: { offset: 0, limit: 10 },
-        }
+          data: {offset: 0, limit: 10},
+        },
+        params
       );
 
       setData(data.response ?? []);
@@ -116,9 +122,12 @@ const GroupCascadingViews = ({
     }
   };
   useEffect(() => {
-    getAllData();
     setRelTableSlug(field?.table_slug);
   }, []);
+
+  useEffect(() => {
+    getAllData();
+  }, [i18n?.language]);
 
   return (
     <div>
@@ -129,7 +138,7 @@ const GroupCascadingViews = ({
           id="password"
           onClick={handleClick}
           value={chosenItem === undefined ? valuess : insideValue}
-          inputStyle={{ height: "35px" }}
+          inputStyle={{height: "35px"}}
           InputProps={{
             endAdornment: value && (
               <InputAdornment position="end">

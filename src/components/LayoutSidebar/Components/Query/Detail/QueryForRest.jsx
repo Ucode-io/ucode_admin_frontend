@@ -2,16 +2,22 @@ import { GrClose } from "react-icons/gr";
 import CodeMirror from "@uiw/react-codemirror";
 import ReactJson from "react-json-view";
 import { useFieldArray } from "react-hook-form";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Switch, Typography } from "@mui/material";
 import HFSelect from "../../../../FormElements/HFSelect";
 import { methods, typeBody } from "../mock/ApiEndpoints";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import InputWithPopUp from "./InputWithPopUp";
 import styles from "../style.module.scss";
 import QueryBodyTypes from "./QueryBodyTypes";
+import QueryRequstForm from "./QueryRequestForm";
+import { useTablesListQuery } from "../../../../../services/constructorTableService";
+import QueryResponseForm from "./QueryResponseForm";
+import { useMemo, useState } from "react";
+import Header, { HeaderExtraSide, HeaderLeftSide } from "../../Header";
 
 const QueryForRest = ({ control, form, responseQuery }) => {
   const typeOfAction = form.watch("body.action_type");
+  const [search, setSearch] = useState();
 
   const {
     fields: paramsFields,
@@ -40,9 +46,23 @@ const QueryForRest = ({ control, form, responseQuery }) => {
     name: "body.cookies",
   });
 
+  const { data: tables } = useTablesListQuery({
+    params: {
+      limit: 10,
+      search: search,
+    },
+  });
+
+  const tableOptions = useMemo(() => {
+    return tables?.tables?.map((item, index) => ({
+      label: item.label,
+      value: item.id,
+    }));
+  }, [tables]);
+
   return (
     <>
-      <Box display="flex" alignItems="flex-start">
+      <Box display="flex" alignItems="flex-start" px="16px">
         <Typography
           minWidth="110px"
           mt="5px"
@@ -105,7 +125,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
       <Box>
         {/*URL PARAMETERS START*/}
 
-        <Box display="flex" alignItems="flex-start">
+        <Box display="flex" alignItems="flex-start" px="16px">
           <Typography
             minWidth="110px"
             mt="5px"
@@ -195,7 +215,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
 
         {/*HEADERS START*/}
 
-        <Box display="flex" alignItems="flex-start" mt="12px">
+        <Box display="flex" alignItems="flex-start" mt="12px" px="16px">
           <Typography
             minWidth="110px"
             mt="5px"
@@ -284,7 +304,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         {/*HEADERS END*/}
 
         {/*COOKIES START*/}
-        <Box display="flex" alignItems="flex-start" mt="12px">
+        <Box display="flex" alignItems="flex-start" mt="12px" px="16px" mb={2}>
           <Typography
             minWidth="110px"
             mt="5px"
@@ -375,7 +395,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         {typeOfAction === "GET" ? (
           ""
         ) : (
-          <Box display="flex" alignItems="flex-start" mt="12px">
+          <Box display="flex" alignItems="flex-start" mt="12px" mb={2}>
             <Typography
               minWidth="110px"
               mt="5px"
@@ -405,7 +425,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         )}
 
         {responseQuery ? (
-          <Box mt={"50px"}>
+          <Box mt={"50px"} mb={2}>
             <Typography variant="h3" mb="10px">
               Response
             </Typography>
@@ -437,6 +457,58 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                 </TabPanel>
               </Tabs>
             </Box>
+          </Box>
+        ) : (
+          ""
+        )}
+        <Header color="#000" border="none" borderTop="1px solid #e5e9eb">
+          <HeaderLeftSide flex={1}>
+            <Typography fontSize={"18px"} fontWeight="700" textAlign="end">
+              Mapping
+            </Typography>
+          </HeaderLeftSide>
+
+          <HeaderExtraSide gap="15px">
+            <Switch
+              checked={form.watch("body.is_mapping")}
+              onChange={(e) => {
+                form.setValue("body.is_mapping", e.target.checked);
+              }}
+            />
+          </HeaderExtraSide>
+        </Header>
+        {form.watch("body.is_mapping") ? (
+          <Box width="100%">
+            <Tabs
+              onSelect={(e) => {
+                form.setValue("body.query_mapping", {});
+                form.setValue("body.query_mapping.tab", e);
+              }}
+              selectedIndex={form.watch("body.query_mapping.tab") || 0}
+              className={styles.query_tabs}
+            >
+              <TabList>
+                <Tab>Request</Tab>
+                <Tab>Response</Tab>
+              </TabList>
+
+              <TabPanel>
+                <QueryRequstForm
+                  tables={tableOptions}
+                  form={form}
+                  control={control}
+                  setSearch={setSearch}
+                />
+              </TabPanel>
+              <TabPanel>
+                <QueryResponseForm
+                  tables={tableOptions}
+                  form={form}
+                  control={control}
+                  setSearch={setSearch}
+                />
+              </TabPanel>
+            </Tabs>
           </Box>
         ) : (
           ""

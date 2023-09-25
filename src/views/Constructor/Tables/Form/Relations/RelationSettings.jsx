@@ -1,11 +1,26 @@
 import listToOptions from "@/utils/listToOptions";
-import { Close, DragIndicator, PushPin, PushPinOutlined, RemoveRedEye, VisibilityOff } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Card, Checkbox, IconButton } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {
+  Close,
+  DragIndicator,
+  PushPin,
+  PushPinOutlined,
+  RemoveRedEye,
+  VisibilityOff,
+} from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Card,
+  Checkbox,
+  IconButton,
+} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -18,8 +33,8 @@ import constructorFunctionService from "../../../../../services/constructorFunct
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import {applyDrag} from "../../../../../utils/applyDrag";
+import {relationTyes} from "../../../../../utils/constants/relationTypes";
 import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
 import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
@@ -29,13 +44,14 @@ import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BrushIcon from "@mui/icons-material/Brush";
-import { F } from "@formulajs/formulajs";
-import { useSelector } from "react-redux";
+import {F} from "@formulajs/formulajs";
+import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const relationViewTypes = [
   {
@@ -48,16 +64,25 @@ const relationViewTypes = [
   },
 ];
 
-const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelationFields, formType, height }) => {
-  const { appId, slug } = useParams();
+const RelationSettings = ({
+  closeSettingsBlock = () => {},
+  relation,
+  getRelationFields,
+  formType,
+  height,
+}) => {
+  const {appId, slug} = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const form = useForm();
-  const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] = useState(true);
-  const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] = useState(true);
+  const {i18n} = useTranslation();
+  const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
+    useState(true);
+  const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] =
+    useState(true);
   const [selectedTab, setSelectedTab] = useState(0);
   const languages = useSelector((state) => state.languages.list);
-  const { handleSubmit, control, reset, watch, setValue } = useForm({
+  const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
       table_from: slug,
       auto_filters: [],
@@ -73,7 +98,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   }, [values, slug]);
 
   const isViewFieldsVisible = useMemo(() => {
-    return (values.type === "Many2One" && values.table_from === slug) || values.type === "Many2Many" || values.type === "Recursive";
+    return (
+      (values.type === "Many2One" && values.table_from === slug) ||
+      values.type === "Many2Many" ||
+      values.type === "Recursive"
+    );
   }, [values.type, values.table_from, slug]);
 
   const computedColumnsList = useMemo(() => {
@@ -86,17 +115,25 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     else return values.filtersList?.filter((column) => column.is_checked);
   }, [values.filtersList, onlyCheckedFiltersVisible]);
 
-  const { isLoading: fieldsLoading } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", relatedTableSlug],
+  const params = {
+    language_setting: i18n?.language,
+  };
+
+  const {isLoading: fieldsLoading} = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorObjectService.getList(relatedTableSlug, {
-        data: { limit: 0, offset: 0 },
-      });
+      return constructorObjectService.getList(
+        relatedTableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      );
     },
     {
       cacheTime: 10,
-      onSuccess: ({ data }) => {
+      onSuccess: ({data}) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -113,12 +150,16 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
               return null;
             })
             .filter((field) => field) ?? [];
-        const unCheckedColumns = fields.filter((field) => !values.columns?.includes(field.id));
+        const unCheckedColumns = fields.filter(
+          (field) => !values.columns?.includes(field.id)
+        );
 
         const checkedFilters =
           values.quick_filters
             ?.map((filter) => {
-              const field = fields.find((field) => field.id === filter.field_id);
+              const field = fields.find(
+                (field) => field.id === filter.field_id
+              );
               if (field)
                 return {
                   ...field,
@@ -128,14 +169,19 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
             })
             .filter((field) => field) ?? [];
 
-        const unCheckedFilters = fields.filter((field) => !values.quick_filters?.some((filter) => filter.field_id === field.id));
+        const unCheckedFilters = fields.filter(
+          (field) =>
+            !values.quick_filters?.some(
+              (filter) => filter.field_id === field.id
+            )
+        );
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },
     }
   );
 
-  const { data: functions = [] } = useQuery(
+  const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -154,7 +200,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+  const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
   });
 
@@ -200,7 +246,9 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       ...values,
       relation_table_slug: slug,
       // compute columns
-      columns: values.columnsList?.filter((el) => el.is_checked)?.map((el) => el.id),
+      columns: values.columnsList
+        ?.filter((el) => el.is_checked)
+        ?.map((el) => el.id),
       // compute filters
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
@@ -210,7 +258,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
         })),
 
       // compute default value
-      default_values: values?.default_values ? (Array.isArray(values.default_values) ? values.default_values : [values.default_values]) : [],
+      default_values: values?.default_values
+        ? Array.isArray(values.default_values)
+          ? values.default_values
+          : [values.default_values]
+        : [],
     };
 
     // delete data?.field_name;
@@ -220,7 +272,10 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
     if (formType === "CREATE") {
       constructorRelationService
-        .create({...data, title: Object.values(data?.attributes).find((item) => item)})
+        .create({
+          ...data,
+          title: Object.values(data?.attributes).find((item) => item),
+        })
         .then((res) => {
           updateRelations();
         })
@@ -246,10 +301,9 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       editable: relation?.editable ?? false,
       summaries: relation?.summaries ?? [],
       view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
-      field_name: relation?.title
+      field_name: relation?.title,
     });
   }, [relation]);
-
 
   const computedColumns = useMemo(() => {
     return listToOptions(computedColumnsList, "label", "slug");
@@ -265,90 +319,190 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{ height }}>
-        <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
-          <Tabs direction={"ltr"} selectedIndex={selectedTab} onSelect={setSelectedTab}>
+      <div className={styles.settingsBlockBody} style={{height}}>
+        <form
+          onSubmit={handleSubmit(submitHandler)}
+          className={styles.fieldSettingsForm}
+        >
+          <Tabs
+            direction={"ltr"}
+            selectedIndex={selectedTab}
+            onSelect={setSelectedTab}
+          >
             <div>
               <Card>
-                <TabList style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: "3px solid #E5E9EB" }}>
-                  <Tab style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px" }} selectedClassName={styles.selectedTab}>
-                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
+                <TabList
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr 1fr",
+                    borderBottom: "3px solid #E5E9EB",
+                  }}
+                >
+                  <Tab
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "10px",
+                    }}
+                    selectedClassName={styles.selectedTab}
+                  >
+                    <SettingsIcon style={{width: "20px", height: "20px"}} />
                   </Tab>
-                  <Tab style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px" }} selectedClassName={styles.selectedTab}>
-                    <BrushIcon style={{ width: "20px", height: "20px" }} />
+                  <Tab
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "10px",
+                    }}
+                    selectedClassName={styles.selectedTab}
+                  >
+                    <BrushIcon style={{width: "20px", height: "20px"}} />
                   </Tab>
-                  <Tab style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px" }} selectedClassName={styles.selectedTab}>
-                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
+                  <Tab
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "10px",
+                    }}
+                    selectedClassName={styles.selectedTab}
+                  >
+                    <FlashOnIcon style={{width: "20px", height: "20px"}} />
                   </Tab>
                 </TabList>
 
                 <TabPanel>
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Relation settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         <FRow label="Label" required>
-                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                          <Box
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "6px",
+                            }}
+                          >
                             {languages?.map((lang) => (
-                              <HFTextField name={`attributes.title_${lang?.slug}`} control={control} placeholder={`Relation Label (${lang?.slug})`} fullWidth />
+                              <HFTextField
+                                name={`attributes.title_${lang?.slug}`}
+                                control={control}
+                                placeholder={`Relation Label (${lang?.slug})`}
+                                fullWidth
+                              />
                             ))}
                           </Box>
                         </FRow>
 
                         <FRow label="Table from" required>
-                          <HFSelect name="table_from" control={control} placeholder="Table from" options={computedTablesList} autoFocus required />
+                          <HFSelect
+                            name="table_from"
+                            control={control}
+                            placeholder="Table from"
+                            options={computedTablesList}
+                            autoFocus
+                            required
+                          />
                         </FRow>
 
-                        {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
-                          <FRow label="Table to" required>
-                            <HFSelect name="table_to" control={control} placeholder="Table to" options={computedTablesList} required />
-                          </FRow>
-                        )}
+                        {!isRecursiveRelation &&
+                          values.type !== "Many2Dynamic" && (
+                            <FRow label="Table to" required>
+                              <HFSelect
+                                name="table_to"
+                                control={control}
+                                placeholder="Table to"
+                                options={computedTablesList}
+                                required
+                              />
+                            </FRow>
+                          )}
 
                         <FRow label="Relation type" required>
-                          <HFSelect name="type" control={control} placeholder="Relation type" options={computedRelationsTypesList} required />
+                          <HFSelect
+                            name="type"
+                            control={control}
+                            placeholder="Relation type"
+                            options={computedRelationsTypesList}
+                            required
+                          />
                         </FRow>
                       </div>
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Additional settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         {values.type === "Many2Many" && (
                           <FRow label="Relate field type" required>
-                            <HFSelect name="view_type" control={control} placeholder="Relation field type" options={relationViewTypes} />
+                            <HFSelect
+                              name="view_type"
+                              control={control}
+                              placeholder="Relation field type"
+                              options={relationViewTypes}
+                            />
                           </FRow>
                         )}
 
                         {isViewFieldsVisible && (
                           <FRow label="View fields">
-                            <HFMultipleSelect name="view_fields" control={control} options={computedFieldsListOptions} placeholder="View fields" allowClear />
+                            <HFMultipleSelect
+                              name="view_fields"
+                              control={control}
+                              options={computedFieldsListOptions}
+                              placeholder="View fields"
+                              allowClear
+                            />
                           </FRow>
                         )}
 
-                        {values.type === "Many2Dynamic" && <DynamicRelationsBlock control={control} computedTablesList={computedTablesList} />}
+                        {values.type === "Many2Dynamic" && (
+                          <DynamicRelationsBlock
+                            control={control}
+                            computedTablesList={computedTablesList}
+                          />
+                        )}
                       </div>
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Default limit</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div>
                         {/* <div className={styles.settingsDefaultLimit}> */}
                         {/* <h2>Default limit</h2> */}
                         <div className="p-2">
                           <div className={styles.default_limit}>
                             <FRow label="Default limit">
-                              <HFTextField control={control} name="default_limit" fullWidth />
+                              <HFTextField
+                                control={control}
+                                name="default_limit"
+                                fullWidth
+                              />
                             </FRow>
                           </div>
                         </div>
@@ -383,27 +537,44 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Multiple insert</h2>
                     </AccordionSummary>
 
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div>
                         <div className={styles.section}>
                           <div className={styles.sectionHeader}>
-                            <div className={styles.sectionTitle}>Multiple insert</div>
-                            <HFSwitch control={control} name="multiple_insert" />
+                            <div className={styles.sectionTitle}>
+                              Multiple insert
+                            </div>
+                            <HFSwitch
+                              control={control}
+                              name="multiple_insert"
+                            />
                           </div>
 
                           {watch().multiple_insert && (
                             <div className={styles.sectionBody}>
                               <div className={styles.formRow}>
                                 <FRow label="Multiple insert field">
-                                  <HFSelect options={computedColumns} control={control} name="multiple_insert_field" />
+                                  <HFSelect
+                                    options={computedColumns}
+                                    control={control}
+                                    name="multiple_insert_field"
+                                  />
                                 </FRow>
 
                                 <FRow label="Fixed fields">
-                                  <HFMultipleSelect options={computedColumns} control={control} name="updated_fields" />
+                                  <HFMultipleSelect
+                                    options={computedColumns}
+                                    control={control}
+                                    name="updated_fields"
+                                  />
                                 </FRow>
                               </div>
                             </div>
@@ -416,20 +587,40 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
                 <TabPanel>
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Cascade</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <CascadingRelationSettings slug={relation?.table_to?.slug} field_slug={relation?.field_from} control={control} watch={watch} setValue={setValue} />
-                      <CascadingTreeBlock slug={relation?.table_to?.slug} field_slug={relation?.field_from} control={control} watch={watch} setValue={setValue} />
+                    <AccordionDetails style={{padding: 0}}>
+                      <CascadingRelationSettings
+                        slug={relation?.table_to?.slug}
+                        field_slug={relation?.field_from}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                      />
+                      <CascadingTreeBlock
+                        slug={relation?.table_to?.slug}
+                        field_slug={relation?.field_from}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                      />
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Columns</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div>
                         <div className={styles.settingsBlockHeader}>
                           <h2>Columns</h2>
@@ -438,23 +629,37 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                             icon={<VisibilityOff />}
                             checkedIcon={<RemoveRedEye />}
                             checked={onlyCheckedColumnsVisible}
-                            onChange={(e, val) => setOnlyCheckedColumnsVisible(val)}
+                            onChange={(e, val) =>
+                              setOnlyCheckedColumnsVisible(val)
+                            }
                           />
                         </div>
 
                         {fieldsLoading ? (
                           <RingLoaderWithWrapper />
                         ) : (
-                          <Container lockAxis="y" onDrop={onColumnsPositionChange}>
+                          <Container
+                            lockAxis="y"
+                            onDrop={onColumnsPositionChange}
+                          >
                             {computedColumnsList?.map((field, index) => (
                               <Draggable key={field.id}>
                                 <div className={styles.draggableRow}>
                                   <IconButton className={styles.dragButton}>
                                     <DragIndicator />
                                   </IconButton>
-                                  <p className={styles.label}>{field.label}</p>
+                                  <p className={styles.label}>
+                                    {field?.attributes[
+                                      `title_${i18n?.language}`
+                                    ] ?? field.label}
+                                  </p>
 
-                                  <HFCheckbox control={control} name={`columnsList[${index}].is_checked`} icon={<VisibilityOff />} checkedIcon={<RemoveRedEye />} />
+                                  <HFCheckbox
+                                    control={control}
+                                    name={`columnsList[${index}].is_checked`}
+                                    icon={<VisibilityOff />}
+                                    checkedIcon={<RemoveRedEye />}
+                                  />
                                 </div>
                               </Draggable>
                             ))}
@@ -465,25 +670,39 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Display type</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}></AccordionDetails>
+                    <AccordionDetails style={{padding: 0}}></AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Filters</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className={styles.settingsBlockHeader}>
                         <h2>Filters</h2>
 
                         <Checkbox
-                          icon={<PushPinOutlined style={{ transform: "rotate(45deg)" }} />}
+                          icon={
+                            <PushPinOutlined
+                              style={{transform: "rotate(45deg)"}}
+                            />
+                          }
                           checkedIcon={<PushPin />}
                           checked={onlyCheckedFiltersVisible}
-                          onChange={(e, val) => setOnlyCheckedFiltersVisible(val)}
+                          onChange={(e, val) =>
+                            setOnlyCheckedFiltersVisible(val)
+                          }
                         />
                       </div>
 
@@ -503,7 +722,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                                 <HFCheckbox
                                   control={control}
                                   name={`filtersList[${index}].is_checked`}
-                                  icon={<PushPinOutlined style={{ transform: "rotate(45deg)" }} />}
+                                  icon={
+                                    <PushPinOutlined
+                                      style={{transform: "rotate(45deg)"}}
+                                    />
+                                  }
                                   checkedIcon={<PushPin />}
                                 />
                               </div>
@@ -515,57 +738,124 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Summary</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
+                    <AccordionDetails style={{padding: 0}}>
+                      <SummaryBlock
+                        control={control}
+                        computedFieldsListOptions={computedFieldsListOptions}
+                      />
                     </AccordionDetails>
                   </Accordion>
                 </TabPanel>
 
                 <TabPanel>
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <HFSwitch control={control} name="is_editable" label={"Editable"} />
-                      <HFSwitch control={control} name="default_editable" label={"Default editable"} />
-                      <HFSwitch control={control} name="creatable" label={"Creatable"} />
-                      <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
-
-                      <DefaultValueBlock control={control} watch={watch} columnsList={values.columnsList} />
+                    <AccordionDetails style={{padding: "8px"}}>
+                      <HFSwitch
+                        control={control}
+                        name="is_editable"
+                        label={"Editable"}
+                      />
+                      <HFSwitch
+                        control={control}
+                        name="default_editable"
+                        label={"Default editable"}
+                      />
+                      <HFSwitch
+                        control={control}
+                        name="creatable"
+                        label={"Creatable"}
+                      />
+                      <HFSwitch
+                        control={control}
+                        name="relation_buttons"
+                        label={"Relation Buttons"}
+                      />
+                      {/* 
+                      <DefaultValueBlock
+                        control={control}
+                        watch={watch}
+                        columnsList={values.columnsList}
+                      /> */}
 
                       {/* <AutoFiltersBlock control={control} watch={watch} /> */}
-
-                      <TableActions control={control} watch={watch} setValue={setValue} />
                     </AccordionDetails>
                   </Accordion>
+
+                  <Box sx={{padding: "16px"}}>
+                    <Box
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <h2>Table Actions</h2>
+                    </Box>
+                    <Box style={{padding: 0}}>
+                      <TableActions
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                      />
+                    </Box>
+                  </Box>
 
                   <Accordion defaultExpanded>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Function</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} />
+                    <AccordionDetails style={{padding: 0}}>
+                      <FunctionPath
+                        control={control}
+                        watch={watch}
+                        functions={functions}
+                        setValue={setValue}
+                      />
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Default</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <DefaultValueBlock control={control} watch={watch} columnsList={values.columnsList} />
+                    <AccordionDetails style={{padding: 0}}>
+                      <DefaultValueBlock
+                        control={control}
+                        watch={watch}
+                        columnsList={values.columnsList}
+                      />
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Auto filter</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <AutoFiltersBlock control={control} watch={watch} />
                     </AccordionDetails>
                   </Accordion>
@@ -575,7 +865,13 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
           </Tabs>
 
           <div className={styles.settingsFooter}>
-            <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={formLoader || loader}>
+            <PrimaryButton
+              size="large"
+              className={styles.button}
+              style={{width: "100%"}}
+              onClick={handleSubmit(submitHandler)}
+              loader={formLoader || loader}
+            >
               Сохранить
             </PrimaryButton>
           </div>

@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -12,9 +12,15 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const MainInfo = ({ control }) => {
   const { slug } = useParams();
+  const { i18n } = useTranslation();
+
+  const params = {
+    language_setting: i18n?.language,
+  };
 
   const tableName = useWatch({
     control,
@@ -54,14 +60,18 @@ const MainInfo = ({ control }) => {
   });
 
   const { data: computedTableFields } = useQuery(
-    ["GET_OBJECT_LIST", slug],
+    ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
-      return constructorObjectService.getList(slug, {
-        data: {
-          limit: 0,
-          offset: 0,
+      return constructorObjectService.getList(
+        slug,
+        {
+          data: {
+            limit: 0,
+            offset: 0,
+          },
         },
-      });
+        params
+      );
     },
     {
       select: (res) => {
@@ -138,9 +148,6 @@ const MainInfo = ({ control }) => {
         </FRow>
         <FRow label="Описание">
           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {/* {languages?.map((desc) => (
-              <HFTextField control={control} name={`attributes.description_${desc?.slug}`} fullWidth placeholder={`Описание (${desc?.slug})`} multiline rows={4} />
-            ))} */}
             {languages?.map((desc) => {
               const languageFieldDesc = `attributes.description_${desc?.slug}`;
               const fieldValue = useWatch({

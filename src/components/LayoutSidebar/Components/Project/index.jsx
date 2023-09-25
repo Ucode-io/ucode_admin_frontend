@@ -115,6 +115,7 @@ const ProjectSettingPage = () => {
   );
 
   const onSubmit = (values) => {
+    console.log("Dfdfdf");
     updateProject({
       ...values,
       timezone: filteredTimezone.map((item) => ({
@@ -153,60 +154,40 @@ const ProjectSettingPage = () => {
         className="p-2"
         style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
       >
-        <FRow
-          label={"Name"}
-          componentClassName="flex gap-2 align-center"
-          required
-        >
+        <FRow label={"Name"} componentClassName="flex gap-2 align-center">
           <HFTextField
             disabledHelperText
             name="title"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <HFAvatarUpload control={control} name="logo" />
 
-        <FRow
-          label={"Language"}
-          componentClassName="flex gap-2 align-center"
-          required
-        >
+        <FRow label={"Language"} componentClassName="flex gap-2 align-center">
           <HFMultipleSelect
             options={languageOptions}
             name="language"
             control={control}
             fullWidth
-            required
           />
         </FRow>
-        <FRow
-          label={"Currency"}
-          componentClassName="flex gap-2 align-center"
-          required
-        >
+        <FRow label={"Currency"} componentClassName="flex gap-2 align-center">
           <HFAutocomplete
             disabledHelperText
             options={currencyOptions}
             name="currency"
             control={control}
             fullWidth
-            required
           />
         </FRow>
-        <FRow
-          label={"Timezone"}
-          componentClassName="flex gap-2 align-center"
-          required
-        >
+        <FRow label={"Timezone"} componentClassName="flex gap-2 align-center">
           <HFAutocomplete
             disabledHelperText
             options={timezoneOptions}
             name="timezone"
             control={control}
             fullWidth
-            required
           />
         </FRow>
       </form>

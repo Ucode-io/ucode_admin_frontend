@@ -8,17 +8,21 @@ import "./style.scss";
 export const CTable = ({
   children,
   count,
+  selectedObjectsForDelete,
   page,
   setCurrentPage,
   removableHeight = 186,
   disablePagination,
+  isTableView = false,
   loader,
+  multipleDelete,
   tableStyle = {},
   wrapperStyle = {},
   paginationExtraButton,
   limit,
   setLimit,
   defaultLimit,
+  view,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -38,12 +42,16 @@ export const CTable = ({
       {!disablePagination && (
         <CPagination
           count={count}
+          selectedObjectsForDelete={selectedObjectsForDelete}
           page={page}
+          isTableView={isTableView}
           setCurrentPage={setCurrentPage}
           paginationExtraButton={paginationExtraButton}
           limit={limit}
+          multipleDelete={multipleDelete}
           setLimit={setLimit}
           defaultLimit={defaultLimit}
+          view={view}
         />
       )}
     </Paper>
@@ -68,7 +76,18 @@ export const CTableHeadCell = ({
 };
 
 export const CTableBody = forwardRef(
-  ({ children, columnsCount, loader, title, dataLength, ...props }, ref) => {
+  (
+    {
+      children,
+      columnsCount,
+      loader,
+      title,
+      selectedObjectsForDelete,
+      dataLength,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <>
         <TableLoader

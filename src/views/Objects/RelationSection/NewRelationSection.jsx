@@ -65,6 +65,7 @@ const NewRelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const { i18n } = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -75,6 +76,8 @@ const NewRelationSection = ({
   const [moreShowButton, setMoreShowButton] = useState(false);
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [type, setType] = useState(null);
+  console.log("type", type);
 
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
@@ -107,6 +110,8 @@ const NewRelationSection = ({
     );
     setHeightControl(false);
   };
+
+  console.log("watch", watch());
 
   // const {
   //   control,
@@ -199,7 +204,7 @@ const NewRelationSection = ({
           data: {
             objects: values.multi.map((item) => ({
               ...item,
-              guid: item?.guid ?? "",
+              guid: item?.guid ?? undefined,
               doctors_id_2: getValue(item, "doctors_id_2"),
               doctors_id_3: getValue(item, "doctors_id_3"),
               specialities_id: getValue(item, "specialities_id"),
@@ -277,6 +282,7 @@ const NewRelationSection = ({
   }, [jwtObjects, tables]);
 
   const onSelect = (el) => {
+    setType(el?.type);
     setSelectTab(el ?? relations[selectedTabIndex]);
   };
 
@@ -287,6 +293,7 @@ const NewRelationSection = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         const layout = res?.layouts
@@ -303,7 +310,7 @@ const NewRelationSection = ({
           });
         setData(layout);
       });
-  }, [tableSlug, menuItem.table_id]);
+  }, [tableSlug, menuItem.table_id, i18n?.language]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -316,7 +323,6 @@ const NewRelationSection = ({
   }, [selectedTab]);
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
-  const { i18n } = useTranslation();
 
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
@@ -341,193 +347,207 @@ const NewRelationSection = ({
                 setSelectedTabIndex(index);
               }}
             >
-              <div className={styles.cardHeader}>
-                <TabList className={styles.tabList}>
-                  {relation?.tabs?.map((el, index) => (
-                    <Tab
-                      key={el.id}
-                      className={`${styles.tabs_item} ${
-                        selectedTabIndex === index
-                          ? "custom-selected-tab"
-                          : "custom-tab"
-                      }`}
-                      onClick={() => {
-                        setSelectedIndex(index);
-                        onSelect(el);
-                      }}
-                    >
-                      {relation?.view_relation_type === "FILE" && (
-                        <>
-                          <InsertDriveFile /> Файлы
-                        </>
-                      )}
-                      <div className="flex align-center gap-2 text-nowrap">
-                        {el?.attributes?.[`label_${i18n.language}`] ??
-                          el?.label ??
-                          el?.title ??
-                          el?.relation?.attributes?.[`title_${i18n.language}`]}
-                      </div>
-                    </Tab>
-                  ))}
-                </TabList>
-
-                <div className="flex gap-2">
-                  <CustomActionsButton
-                    tableSlug={selectedRelation?.relatedTable}
-                    selectedObjects={selectedObjects}
-                    setSelectedObjects={setSelectedObjects}
-                  />
-                  <RectangleIconButton
-                    color="success"
-                    size="small"
-                    onClick={navigateToCreatePage}
-                    disabled={!id}
-                  >
-                    <Add style={{ color: "#007AFF" }} />
-                  </RectangleIconButton>
-
-                  {formVisible ? (
-                    <>
-                      <RectangleIconButton
-                        color="success"
-                        size="small"
-                        onClick={handleSubmit(onSubmit)}
-                        // loader={loader}
-                      >
-                        <Save color="success" />
-                      </RectangleIconButton>
-                      <RectangleIconButton
-                        color="error"
-                        type="edit"
-                        onClick={() => {
-                          setFormVisible(false);
-                          if (fields.length > dataLength) {
-                            remove(
-                              Array(fields.length - dataLength)
-                                .fill("*")
-                                .map((i, index) => fields.length - (index + 1))
-                            );
-                          }
-                        }}
-                      >
-                        <Clear color="error" />
-                      </RectangleIconButton>
-                    </>
-                  ) : (
-                    fields.length > 0 && (
-                      <RectangleIconButton
-                        color="success"
-                        size="small"
-                        onClick={() => {
-                          setFormVisible(true);
-                        }}
-                      >
-                        <Edit color="primary" />
-                      </RectangleIconButton>
-                    )
-                  )}
-
-                  <DocumentGeneratorButton />
-
-                  {data[selectedTabIndex]?.multiple_insert && (
-                    <MultipleInsertButton
-                      view={filteredRelations[selectedTabIndex]}
-                      tableSlug={
-                        filteredRelations[selectedTabIndex].relatedTable
-                      }
-                    />
-                  )}
-
-                  <RectangleIconButton
-                    color="white"
-                    onClick={() => setHeightControl(!heightControl)}
-                  >
-                    <div style={{ position: "relative" }}>
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <FormatLineSpacingIcon color="primary" />
-                      </span>
-                      {heightControl && (
-                        <div className={style.heightControl}>
-                          {tableHeightOptions.map((el) => (
-                            <div
-                              key={el.value}
-                              className={style.heightControl_item}
-                              onClick={() => handleHeightControl(el.value)}
-                            >
-                              {el.label}
-                              {tableHeight === el.value ? (
-                                <CheckIcon color="primary" />
-                              ) : null}
+              {!relation?.is_visible_section && (
+                <div className={styles.cardHeader}>
+                  <TabList className={styles.tabList}>
+                    {relation?.tabs?.map(
+                      (el, index) => (
+                        console.log("element", el),
+                        (
+                          <Tab
+                            key={el.id}
+                            className={`${styles.tabs_item} ${
+                              selectedTabIndex === index
+                                ? "custom-selected-tab"
+                                : "custom-tab"
+                            }`}
+                            onClick={() => {
+                              setSelectedIndex(index);
+                              onSelect(el);
+                            }}
+                          >
+                            {relation?.view_relation_type === "FILE" && (
+                              <>
+                                <InsertDriveFile /> Файлы
+                              </>
+                            )}
+                            <div className="flex align-center gap-2 text-nowrap">
+                              {el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                ? el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                : el?.label ?? el?.title}
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </RectangleIconButton>
+                          </Tab>
+                        )
+                      )
+                    )}
+                  </TabList>
 
-                  <RectangleIconButton
-                    color="success"
-                    size="small"
-                    onClick={() => setMoreShowButton(!moreShowButton)}
-                  >
-                    <div style={{ position: "relative" }}>
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <MoreVertIcon color="primary" />
-                      </span>
-                      {moreShowButton && (
-                        <div
-                          className={style.heightControl}
-                          style={{ minWidth: "auto" }}
+                  <div className="flex gap-2">
+                    <CustomActionsButton
+                      tableSlug={selectedRelation?.relatedTable}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
+                    />
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={navigateToCreatePage}
+                      disabled={!id}
+                    >
+                      <Add style={{ color: "#007AFF" }} />
+                    </RectangleIconButton>
+
+                    {formVisible ? (
+                      <>
+                        <RectangleIconButton
+                          color="success"
+                          size="small"
+                          onClick={handleSubmit(onSubmit)}
+                          // loader={loader}
                         >
-                          <div
-                            className={style.heightControl_item}
-                            style={{
-                              justifyContent: "flex-start",
-                              color: "#6E8BB7",
-                              padding: "5px",
-                            }}
-                          >
-                            <ExcelUploadButton withText={true} />
-                          </div>
+                          <Save color="success" />
+                        </RectangleIconButton>
+                        <RectangleIconButton
+                          color="error"
+                          type="edit"
+                          onClick={() => {
+                            setFormVisible(false);
+                            if (fields.length > dataLength) {
+                              remove(
+                                Array(fields.length - dataLength)
+                                  .fill("*")
+                                  .map(
+                                    (i, index) => fields.length - (index + 1)
+                                  )
+                              );
+                            }
+                          }}
+                        >
+                          <Clear color="error" />
+                        </RectangleIconButton>
+                      </>
+                    ) : (
+                      fields.length > 0 && (
+                        <RectangleIconButton
+                          color="success"
+                          size="small"
+                          onClick={() => {
+                            setFormVisible(true);
+                          }}
+                        >
+                          <Edit color="primary" />
+                        </RectangleIconButton>
+                      )
+                    )}
 
-                          <div
-                            className={style.heightControl_item}
-                            style={{
-                              justifyContent: "flex-start",
-                              color: "#6E8BB7",
-                              padding: "5px",
-                            }}
-                          >
-                            <ExcelDownloadButton
-                              relatedTable={relatedTableSlug}
-                              fieldSlug={
-                                selectedTab?.type === "section"
-                                  ? relatedTableSlug
-                                  : fieldSlug
-                              }
-                              fieldSlugId={id}
-                              withText={true}
-                              sort={myRef.current?.excelSort()}
-                            />
+                    <DocumentGeneratorButton />
+
+                    {data[selectedTabIndex]?.multiple_insert && (
+                      <MultipleInsertButton
+                        view={filteredRelations[selectedTabIndex]}
+                        tableSlug={
+                          filteredRelations[selectedTabIndex].relatedTable
+                        }
+                      />
+                    )}
+
+                    <RectangleIconButton
+                      color="white"
+                      onClick={() => setHeightControl(!heightControl)}
+                    >
+                      <div style={{ position: "relative" }}>
+                        <span
+                          style={{
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FormatLineSpacingIcon color="primary" />
+                        </span>
+                        {heightControl && (
+                          <div className={style.heightControl}>
+                            {tableHeightOptions.map((el) => (
+                              <div
+                                key={el.value}
+                                className={style.heightControl_item}
+                                onClick={() => handleHeightControl(el.value)}
+                              >
+                                {el.label}
+                                {tableHeight === el.value ? (
+                                  <CheckIcon color="primary" />
+                                ) : null}
+                              </div>
+                            ))}
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  </RectangleIconButton>
+                        )}
+                      </div>
+                    </RectangleIconButton>
+
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={() => setMoreShowButton(!moreShowButton)}
+                    >
+                      <div style={{ position: "relative" }}>
+                        <span
+                          style={{
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <MoreVertIcon color="primary" />
+                        </span>
+                        {moreShowButton && (
+                          <div
+                            className={style.heightControl}
+                            style={{ minWidth: "auto" }}
+                          >
+                            <div
+                              className={style.heightControl_item}
+                              style={{
+                                justifyContent: "flex-start",
+                                color: "#6E8BB7",
+                                padding: "5px",
+                              }}
+                            >
+                              <ExcelUploadButton withText={true} />
+                            </div>
+
+                            <div
+                              className={style.heightControl_item}
+                              style={{
+                                justifyContent: "flex-start",
+                                color: "#6E8BB7",
+                                padding: "5px",
+                              }}
+                            >
+                              <ExcelDownloadButton
+                                relatedTable={relatedTableSlug}
+                                fieldSlug={
+                                  selectedTab?.type === "section"
+                                    ? relatedTableSlug
+                                    : fieldSlug
+                                }
+                                fieldSlugId={id}
+                                withText={true}
+                                sort={myRef.current?.excelSort()}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </RectangleIconButton>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {loader ? (
                 <PageFallback />
@@ -584,6 +604,7 @@ const NewRelationSection = ({
                         setSelectedObjects={setSelectedObjects}
                         tableSlug={tableSlug}
                         id={id}
+                        type={type}
                       />
                     )}
                   </TabPanel>

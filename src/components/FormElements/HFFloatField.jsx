@@ -1,6 +1,6 @@
 import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from 'react-number-format';
-import styles from './style.module.scss'
+import { NumericFormat } from "react-number-format";
+import styles from "./style.module.scss";
 
 const HFFloatField = ({
   control,
@@ -9,6 +9,8 @@ const HFFloatField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
+  updateObject,
+  isNewTableView=false,
   isTransparent = false,
   fullWidth = false,
   withTrim = false,
@@ -16,13 +18,11 @@ const HFFloatField = ({
   defaultValue = "",
   tabIndex,
   disabled,
-  type='text',
-  isFloat = false, 
-  decimalScale = 2, 
+  type = "text",
+  isFloat = false,
+  decimalScale = 50,
   ...props
 }) => {
-
-
   return (
     <Controller
       control={control}
@@ -34,7 +34,7 @@ const HFFloatField = ({
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const allowNegative = isFloat; // allow negatives only for float fields
-        const decimalSeparator = isFloat ? '.' : undefined; // set the decimal separator only for float fields
+        const decimalSeparator = isFloat ? "." : undefined; // set the decimal separator only for float fields
 
         return (
           <NumericFormat
@@ -50,13 +50,14 @@ const HFFloatField = ({
             value={value}
             onChange={(e) => {
               const val = e.target.value;
-              const valueWithoutSpaces = val.replaceAll(' ', '')
-              
-              if (!valueWithoutSpaces) onChange('');
+              const valueWithoutSpaces = val.replaceAll(" ", "");
+
+              if (!valueWithoutSpaces) onChange("");
               else {
                 if (valueWithoutSpaces.at(-1) === ".") onChange(parseFloat(valueWithoutSpaces));
                 else onChange(!isNaN(valueWithoutSpaces) ? parseFloat(valueWithoutSpaces) : valueWithoutSpaces);
               }
+              isNewTableView && updateObject()
             }}
             className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
             name={name}

@@ -1,5 +1,5 @@
 import { Description, Download, Upload } from "@mui/icons-material";
-import { useId, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -25,20 +25,15 @@ import Menu from "@mui/material/Menu";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
 
-const BoardView = ({
-  view,
-  setViews,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views,
-  fieldsMap,
-  selectedTable
-}) => {
+const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, views, fieldsMap, selectedTable }) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [selectedView, setSelectedView] = useState(null);
 
   const [columns, setColumns] = useState([]);
   const { navigateToForm } = useTabRouter();
@@ -52,6 +47,10 @@ const BoardView = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    setSelectedView(views?.[selectedTabIndex] ?? {});
+  }, [views, selectedTabIndex]);
 
   const { data = [], isLoading: dataLoader } = useQuery(
     ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
@@ -67,9 +66,7 @@ const BoardView = ({
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
-  const { data: tabs, isLoading: tabsLoader } = useQuery(
-    queryGenerator(groupField, filters)
-  );
+  const { data: tabs, isLoading: tabsLoader } = useQuery(queryGenerator(groupField, filters));
 
   const loader = dataLoader || tabsLoader;
 
@@ -129,21 +126,11 @@ const BoardView = ({
             >
               <div className={styles.menuBar}>
                 <ExcelButtons />
-                <div
-                  className={styles.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${styles.element} ${
-                      selectedTabIndex === views?.length ? styles.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={styles.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
+                <div className={styles.template} onClick={() => setSelectedTabIndex(views?.length)}>
+                  <div className={`${styles.element} ${selectedTabIndex === views?.length ? styles.active : ""}`}>
+                    <Description className={styles.icon} style={{ color: "#6E8BB7" }} />
                   </div>
-                  <span>{ t('template') }</span>
+                  <span>{t("template")}</span>
                 </div>
                 <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
@@ -162,6 +149,12 @@ const BoardView = ({
           views={views}
           setViews={setViews}
           selectedTable={selectedTable}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
         />
       </FiltersBlock>
 
@@ -182,11 +175,9 @@ const BoardView = ({
         <PageFallback />
       ) : (
         <div className={styles.wrapper}>
-          {(view?.quick_filters?.length > 0 ||
-            (new_list[tableSlug] &&
-              new_list[tableSlug].some((i) => i.checked))) && (
+          {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
             <div className={styles.filters}>
-              <p>{t('filters')}</p>
+              <p>{t("filters")}</p>
               <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
             </div>
           )}
@@ -208,14 +199,7 @@ const BoardView = ({
             >
               {tabs?.map((tab) => (
                 <Draggable key={tab.value}>
-                  <BoardColumn
-                    key={tab.value}
-                    tab={tab}
-                    data={data}
-                    fieldsMap={fieldsMap}
-                    view={view}
-                    navigateToCreatePage={navigateToCreatePage}
-                  />
+                  <BoardColumn key={tab.value} tab={tab} data={data} fieldsMap={fieldsMap} view={view} navigateToCreatePage={navigateToCreatePage} />
                 </Draggable>
               ))}
             </Container>
@@ -254,10 +238,7 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
-      ],
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

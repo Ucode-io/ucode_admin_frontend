@@ -248,6 +248,8 @@ const ViewForm = ({
       .catch(() => setDeleteBtnLoader(false));
   };
 
+  console.log("columnssssss", columns);
+
   const languages = useSelector((state) => state.languages.list);
 
   return (
@@ -340,7 +342,7 @@ const ViewForm = ({
               </TabPanel>
             )}
             <TabPanel>
-              <GroupByTab form={form} isMenu={false} />
+              <GroupByTab initialColumns={columns} form={form} isMenu={false} />
             </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />

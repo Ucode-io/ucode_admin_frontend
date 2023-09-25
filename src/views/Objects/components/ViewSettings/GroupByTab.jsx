@@ -5,7 +5,7 @@ import styles from "./style.module.scss";
 import { applyDrag } from "../../../../utils/applyDrag";
 import { Container, Draggable } from "react-smooth-dnd";
 
-const GroupByTab = ({ form, updateView, isMenu }) => {
+const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
   const {
     fields: columns,
     move,
@@ -16,9 +16,17 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     keyName: "key",
   });
 
-  const watchedMainColumns = useWatch({
-    control: form.control,
-    name: "columns",
+  const initialCheckedColumns = initialColumns.map((item) => {
+    return {
+      ...item,
+      is_checked: columns.find((el) => item.id === el.id).is_checked,
+    };
+  });
+  const initialGroupCheckedColumns = initialColumns.map((item) => {
+    return {
+      ...item,
+      is_checked: false,
+    };
   });
 
   const {
@@ -61,16 +69,8 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       is_checked: index === columnIndex ? e.target.checked : item.is_checked,
     }));
     const selectedId = updatedGroupColumn[index].id;
-    const filteredColumn = updatedColumns?.find(
-      (item) => item?.id === selectedId
-    );
-    const insertIndex = updatedColumns.findIndex(
-      (item) => item?.id === selectedId
-    );
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      //   updatedColumns.unshift(filteredColumn);
-      //   replace(updatedColumns);
       const columnIndex = updatedColumns.findIndex(
         (item) => item?.id === selectedId
       );
@@ -86,10 +86,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
 
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns[columnIndex];
-        updatedColumns.splice(columnIndex, 1);
-        updatedColumns.splice(1, 0, filteredColumn);
-        console.log("updatedColumns", updatedColumns);
+        if (isWhatChecked.length > 1) {
+          updatedColumns.splice(columnIndex, 1);
+          updatedColumns.splice(1, 0, filteredColumn);
+        }
         replace(updatedColumns);
+        if (isWhatChecked.length === 1) {
+          replace(initialCheckedColumns);
+        }
       }
     }
 
@@ -98,9 +102,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       updatedGroupColumn.unshift(groupMovedColumn);
       replaceGroup(updatedGroupColumn);
     } else {
-      const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
-      updatedGroupColumn.splice(1, 0, groupMovedColumn);
+      if (isWhatChecked.length > 1) {
+        const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
+        updatedGroupColumn.splice(1, 0, groupMovedColumn);
+      }
       replaceGroup(updatedGroupColumn);
+      if (isWhatChecked.length === 1) {
+        replaceGroup(initialGroupCheckedColumns);
+      }
     }
   };
 

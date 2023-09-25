@@ -22,11 +22,24 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
+import GroupByTab from "./GroupByTab";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 
-const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
+const ViewForm = ({
+  initialValues,
+  typeNewView,
+  closeForm,
+  defaultViewTab,
+  refetchViews,
+  setIsChanged,
+  closeModal,
+  columns,
+  relationColumns,
+  views,
+  setTab,
+}) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -34,6 +47,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
+  const group_by_columns = initialValues?.attributes?.group_by_columns;
   const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
@@ -132,7 +146,8 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
         financialFiledId,
         relationObjValue,
         numberFieldValue,
-        navigate
+        navigate,
+        group_by_columns
       ),
       filters: [],
     });
@@ -160,7 +175,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
       )
     );
   }, [type, form]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -175,10 +190,22 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
             default_value: el.default_value ?? "",
           })) ?? [],
       attributes: {
-        ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
-        ...values?.attributes
+        ...computeFinancialAcc(
+          values.chartOfAccounts,
+          values?.group_by_field_selected?.slug,
+          values
+        ),
+        ...values?.attributes,
+        group_by_columns:
+          values.attributes.group_by_columns
+            ?.filter((el) => el.is_checked)
+            .map((el) => el.id) ?? [],
       },
-      name: values?.attributes?.[`label_${i18n.language}`] ?? Object.values(values?.attributes).find(item => typeof item === "string"),
+      name:
+        values?.attributes?.[`label_${i18n.language}`] ??
+        Object.values(values?.attributes).find(
+          (item) => typeof item === "string"
+        ),
       app_id: appId,
       order: views?.length ?? 0,
     };
@@ -226,7 +253,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <Tabs defaultIndex={defaultViewTab}>
+        <Tabs defaultIndex={defaultViewTab} onSelect={(index) => setTab(index)}>
           <div className={styles.section}>
             <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
@@ -234,6 +261,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
               <Tab>Columns</Tab>
               <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
+              <Tab>Group by columns</Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
@@ -247,7 +275,12 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
                     <FRow label="Название">
                       <Box style={{ display: "flex", gap: "6px" }}>
                         {languages?.map((language) => (
-                          <HFTextField control={form.control} name={`attributes.name_${language?.slug}`} placeholder={`Название (${language?.slug})`} fullWidth />
+                          <HFTextField
+                            control={form.control}
+                            name={`attributes.name_${language?.slug}`}
+                            placeholder={`Название (${language?.slug})`}
+                            fullWidth
+                          />
                         ))}
                       </Box>
                     </FRow>
@@ -296,7 +329,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
               <QuickFiltersTab form={form} />
             </TabPanel>
             <TabPanel>
-              <ColumnsTab form={form} isMenu={false}/>
+              <ColumnsTab form={form} isMenu={false} />
             </TabPanel>
             <TabPanel>
               <NavigateSettings form={form} />
@@ -306,6 +339,9 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
                 <GroupsTab columns={computedColumns} form={form} />
               </TabPanel>
             )}
+            <TabPanel>
+              <GroupByTab form={form} isMenu={false} />
+            </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />
             </TabPanel>
@@ -341,7 +377,8 @@ const getInitialValues = (
   financialFiledId,
   relationObjValue,
   numberFieldValue,
-  navigate
+  navigate,
+  group_by_columns
 ) => {
   if (initialValues === "NEW")
     return {
@@ -372,6 +409,10 @@ const getInitialValues = (
       multiple_insert: false,
       multiple_insert_field: "",
       chartOfAccounts: [{}],
+      attributes: {
+        group_by_columns:
+          columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+      },
     };
   return {
     type: initialValues?.type ?? "TABLE",
@@ -386,8 +427,11 @@ const getInitialValues = (
       table_slug: initialValues?.disable_dates?.table_slug ?? "",
       time_from_slug: initialValues?.disable_dates?.time_from_slug ?? "",
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
-    }, 
+    },
     columns: computeColumns(initialValues?.columns, columns),
+    attributes: {
+      group_by_columns: computeGroups(group_by_columns, columns),
+    },
     quick_filters:
       computeQuickFilters(
         initialValues?.quick_filters,
@@ -427,6 +471,18 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
   const selectedColumns =
     checkedColumnsIds
       ?.filter((id) => columns.find((el) => el.id === id))
+      ?.map((id) => ({
+        ...columns.find((el) => el.id === id),
+        is_checked: true,
+      })) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  return [...selectedColumns, ...unselectedColumns];
+};
+const computeGroups = (checkedColumnsIds = [], columns) => {
+  const selectedColumns =
+    checkedColumnsIds
+      ?.filter((id) => columns.find((el) => el?.id === id))
       ?.map((id) => ({
         ...columns.find((el) => el.id === id),
         is_checked: true,

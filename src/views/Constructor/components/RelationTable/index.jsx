@@ -1,17 +1,19 @@
-import { useState } from "react";
-import { useMemo } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {useState} from "react";
+import {useMemo} from "react";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import DataTable from "../../../../components/DataTable";
 import FRow from "../../../../components/FormElements/FRow";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import { listToMap } from "../../../../utils/listToMap";
-import { Filter } from "../../../Objects/components/FilterGenerator";
+import {listToMap} from "../../../../utils/listToMap";
+import {Filter} from "../../../Objects/components/FilterGenerator";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
-const RelationTable = ({ relation = {} }) => {
-  const { slug } = useParams();
+const RelationTable = ({relation = {}}) => {
+  const {slug} = useParams();
   const [filters, setFilters] = useState([]);
+  const {i18n} = useTranslation();
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -32,13 +34,20 @@ const RelationTable = ({ relation = {} }) => {
 
   const relatedTableSlug = computedRelation?.relatedTable?.slug;
 
-  const { data: fieldsMap = {}, isLoading: dataFetchingLoading } = useQuery(
-    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
+  const params = {
+    language_setting: i18n?.language,
+  };
+  const {data: fieldsMap = {}, isLoading: dataFetchingLoading} = useQuery(
+    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return null;
-      return constructorObjectService.getList(relatedTableSlug, {
-        data: { limit: 0, offset: 0 },
-      });
+      return constructorObjectService.getList(
+        relatedTableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      );
     },
     {
       select: (res) => {
@@ -54,7 +63,7 @@ const RelationTable = ({ relation = {} }) => {
 
   const computedFilters = useMemo(() => {
     return relation.quick_filters
-      ?.map(({ field_id }) => fieldsMap[field_id])
+      ?.map(({field_id}) => fieldsMap[field_id])
       ?.filter((el) => el);
   }, [relation.quick_filters, fieldsMap]);
 

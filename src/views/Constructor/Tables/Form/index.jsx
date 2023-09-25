@@ -30,6 +30,7 @@ import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
+import {useTranslation} from "react-i18next";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,8 @@ const ConstructorTablesFormPage = () => {
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-console.log('sssssssssform', slug)
+  const {i18n} = useTranslation();
+  console.log("sssssssssform", slug);
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
@@ -72,20 +74,26 @@ console.log('sssssssssform', slug)
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
-    })
+    });
 
-    console.log('getActions', getActions)
+    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList({
         "table-slug": slug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        getTableData,
+        getActions,
+        getViewRelations,
+        getLayouts,
+      ]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -109,7 +117,10 @@ console.log('sssssssssform', slug)
         table_slug: slug,
         relation_table_slug: slug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
@@ -171,7 +182,7 @@ console.log('sssssssssform', slug)
       })
       .catch(() => setBtnLoader(false));
   };
-  
+
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);

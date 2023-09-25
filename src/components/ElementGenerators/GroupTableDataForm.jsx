@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
 
-export default function TableDataForm({
+export default function GroupTableDataForm({
   tableSlug,
   watch,
   fields,
@@ -27,27 +27,15 @@ export default function TableDataForm({
     control,
   })?.multi?.[index];
 
-  // const updateObject = () => {
-  //   constructorObjectService
-  //     .update(tableSlug, { data: { ...selectedObject } })
-  //     .then(() => {
-  //       queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
-  //       // dispatch(showAlert("Успешно обновлено", "success"));
-  //     })
-  //     .catch((e) => console.log("ERROR: ", e));
-  // };
-
-  const { mutate: updateObject } = useMutation(
-    () =>
-      constructorObjectService.update(tableSlug, {
-        data: { ...selectedObject },
-      }),
-    {
-      onSuccess: () => {
+  const updateObject = () => {
+    constructorObjectService
+      .update(tableSlug, { data: { ...selectedObject } })
+      .then(() => {
         queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
-      },
-    }
-  );
+        // dispatch(showAlert("Успешно обновлено", "success"));
+      })
+      .catch((e) => console.log("ERROR: ", e));
+  };
 
   return (
     <Box
@@ -59,16 +47,15 @@ export default function TableDataForm({
     >
       <NewCellElementGenerator
         tableSlug={tableSlug}
-        // onFocus={() => {
-        //   setFocused(true);
-        // }}
-        // onBlur={() => {
-        //   updateObject();
-        //   setFocused(false);
-        // }}
+        onFocus={() => {
+          setFocused(true);
+        }}
+        onBlur={() => {
+          updateObject();
+          setFocused(false);
+        }}
         name={`multi.${index}.${field.slug}`}
         watch={watch}
-        updateObject={updateObject}
         fields={fields}
         field={field}
         row={row}

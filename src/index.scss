@@ -121,6 +121,11 @@ html {
   text-overflow: ellipsis;
 }
 
+.text_overflow_line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .max-width-450 {
   max-width: 450px;
 }
@@ -312,7 +317,6 @@ html {
 }
 
 .multiSelectInput {
-
   .MuiAutocomplete-inputRoot {
     padding-right: 0 !important;
   }
@@ -341,6 +345,14 @@ html {
   text-overflow: ellipsis;
 }
 
+.text_overflow_line {
+  padding: 10px;
+  width: 350px;
+  overflow: hidden;
+  text-align: justify;
+  text-overflow: ellipsis;
+}
+
 #hovers {
   // fill: white;
   transition: 0.2s all;
@@ -356,7 +368,7 @@ html {
   outline: none;
   padding: 10px;
   display: none;
-  background-color: #0E73F626;
+  background-color: #0e73f626;
 
   .custom_tab {
     border-bottom: none;
@@ -364,7 +376,7 @@ html {
     padding: 10px;
     width: 34px;
     height: 34px;
-    // color:#0E73F6; 
+    // color:#0E73F6;
   }
 }
 
@@ -377,11 +389,10 @@ html {
 }
 
 .detail_selected_tab {
-  background-color: #0E73F626;
+  background-color: #0e73f626;
   border-bottom: none;
   outline: none;
   padding: 10px;
-
 
   .detail_custom_tab {
     border-bottom: none;
@@ -391,7 +402,6 @@ html {
     height: 34px;
     // color:#0E73F6;
   }
-
 }
 
 .detail_custom_tabs .react-tabs__tab-list {

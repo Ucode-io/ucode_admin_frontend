@@ -1,10 +1,9 @@
-import { Button, Drawer } from "@mui/material";
+import { Drawer } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -16,21 +15,18 @@ import { pageToOffset } from "../../../utils/pageToOffset";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { listToMap } from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import { generateGUID } from "../../../utils/generateID";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
+import GroupObjectDataTable from "../../../components/DataTable/GroupObjectDataTable";
 
-const TableView = ({
+const GroupTableView = ({
   tab,
   view,
   shouldGet,
-  isTableView = false,
   selectedView,
   reset = () => {},
   fieldsMap,
@@ -61,19 +57,15 @@ const TableView = ({
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
-  const [drawerStateField, setDrawerStateField] = useState(null);
-  const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
-
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
   //   : tableSlug;
-
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
       app_id: appId,
+      builder_service_view_id: view?.id,
       // sections: [
       //   {
       //     column: "SINGLE",
@@ -114,8 +106,8 @@ const TableView = ({
       });
 
       const getRelations = constructorRelationService.getList({
-        table_slug: tableSlug,
-        relation_table_slug: tableSlug,
+        table_slug: slug,
+        relation_table_slug: slug,
       });
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -164,8 +156,6 @@ const TableView = ({
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
     });
   };
 
@@ -239,7 +229,7 @@ const TableView = ({
     isLoading: tableLoader,
   } = useQuery({
     queryKey: [
-      "GET_OBJECTS_LIST",
+      "GET_OBJECTS_LIST_TEST",
       {
         tableSlug,
         searchText,
@@ -249,16 +239,17 @@ const TableView = ({
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
+        view,
       },
     ],
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage, limit),
-          // app_id: appId,
+          app_id: appId,
           order: computedSortColumns,
-          // with_relations: true,
           view_fields: checkedColumns,
+          builder_service_view_id: view.id,
           search:
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
@@ -352,7 +343,6 @@ const TableView = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
-        language_setting: i18n?.language,
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
@@ -361,7 +351,7 @@ const TableView = ({
             : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug, i18n?.language]);
+  }, [menuItem.id, tableSlug]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -420,10 +410,10 @@ const TableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log("tableData", tableData);
+
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
+      {/* {(view?.quick_filters?.length > 0 ||
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
@@ -435,20 +425,20 @@ const TableView = ({
             isVertical
           />
         </div>
-      )}
+      )} */}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
-          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
+          //   style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
           id="data-table"
         >
-          <ObjectDataTable
+          <GroupObjectDataTable
+            disablePagination
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}
             setSortedDatas={setSortedDatas}
             sortedDatas={sortedDatas}
             setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
             isTableView={true}
             elementHeight={elementHeight}
             setFormVisible={setFormVisible}
@@ -516,23 +506,8 @@ const TableView = ({
           getRelationFields={getRelationFields}
         />
       </Drawer>
-
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
-        <RelationSettingsTest
-          relation={drawerStateField}
-          closeSettingsBlock={() => setDrawerStateField(null)}
-          getRelationFields={getRelationFields}
-          formType={drawerStateField}
-          height={`calc(100vh - 48px)`}
-        />
-      </Drawer>
     </div>
   );
 };
 
-export default TableView;
+export default GroupTableView;

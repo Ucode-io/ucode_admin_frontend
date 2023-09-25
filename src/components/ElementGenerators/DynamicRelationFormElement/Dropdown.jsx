@@ -72,7 +72,6 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
     {
       enabled: Boolean(!field?.attributes?.function_path),
       select: (res) => {
-        console.log("resssssssss", res);
         return (
           res?.data?.response?.map((el) => ({
             value: el.guid,

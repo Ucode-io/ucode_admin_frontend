@@ -27,13 +27,24 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from '@mui/icons-material/Nfc';
+import NfcIcon from "@mui/icons-material/Nfc";
 
 const ColumnsTab = ({ form, updateView, isMenu }) => {
   const { i18n } = useTranslation();
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
+    keyName: "key",
+  });
+
+  const {
+    fields: groupColumn,
+    replace: replaceGroup,
+    move: groupMove,
+  } = useFieldArray({
+    control: form.control,
+    name: "attributes.group_by_columns",
+    keyName: "key",
   });
 
   const watchedColumns = useWatch({
@@ -41,15 +52,16 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     name: "columns",
   });
 
-  const onDrop = async (dropResult) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
     if (result) {
-      await move(dropResult.removedIndex, dropResult.addedIndex);
+      move(dropResult.removedIndex, dropResult.addedIndex);
+      groupMove(dropResult.removedIndex, dropResult.addedIndex);
     }
   };
 
   const isAllChecked = useMemo(() => {
-    return watchedColumns?.every((column) => column.is_checked);
+    return watchedColumns?.every((column) => column?.is_checked);
   }, [watchedColumns]);
 
   const onAllChecked = (_, val) => {
@@ -115,43 +127,55 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
           <div className={styles.cell} style={{ width: 70 }}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
+            <Switch
+              size="small"
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
           </div>
         </div>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
-          {columns.length ? (
-            columns.map((column, index) => (
-              <Draggable key={column.id}>
-                <div key={column.id} className={styles.row}>
-                  <div className={styles.cell} style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                    <div style={{
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
+          {columns.map((column, index) => (
+            <Draggable key={column.id}>
+              <div key={column.id} className={styles.row}>
+                <div
+                  className={styles.cell}
+                  style={{ flex: 1, display: "flex", alignItems: "center" }}
+                >
+                  <div
+                    style={{
                       width: 20,
                       height: 20,
                       marginRight: 5,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>{columnIcons[column.type] ?? <NfcIcon/>}</div>
-                    {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {columnIcons[column.type] ?? <NfcIcon />}
                   </div>
-                  <div className={styles.cell} style={{ width: 70 }}>
-                    <Switch
-                      size="small"
-                      checked={form.watch(`columns.${index}.is_checked`)}
-                      onChange={(e) => {
-                        form.setValue(`columns.${index}.is_checked`, e.target.checked);
-                        // updateView();
-                      }}
-                    />
-                  </div>
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column.label}
                 </div>
-              </Draggable>
-            ))
-          ) : (
-            <Box style={{ padding: "10px" }}>
-              <Typography>No columns to set group!</Typography>
-            </Box>
-          )}
+                <div className={styles.cell} style={{ width: 70 }}>
+                  <Switch
+                    size="small"
+                    checked={form.watch(`columns.${index}.is_checked`)}
+                    onChange={(e) => {
+                      form.setValue(
+                        `columns.${index}.is_checked`,
+                        e.target.checked
+                      );
+                      // updateView();
+                    }}
+                  />
+                </div>
+              </div>
+            </Draggable>
+          ))}
         </Container>
       </div>
     </div>

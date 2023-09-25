@@ -6,6 +6,7 @@ import "./redactorOverrides.scss";
 import { useEffect, useMemo, useRef } from "react";
 import usePaperSize from "../../../../../../hooks/usePaperSize";
 import uploadPlugin from "./UploadAdapter";
+import useDocumentPaperSize from "../../../../../../hooks/useDocumentPaperSize";
 
 const CKEditor = ({
   name,
@@ -16,7 +17,7 @@ const CKEditor = ({
 }) => {
   let size = form.watch("size");
   const ref = useRef();
-  const { selectedPaperSize } = usePaperSize(size);
+  const { selectedPaperSize } = useDocumentPaperSize(size);
   useEffect(() => {
     const editor = ref.current;
     if (!editor) return;

@@ -1,18 +1,18 @@
-import {get} from "@ngard/tiny-get";
-import {useMemo} from "react";
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
-import {numberWithSpaces} from "../../utils/formatNumbers";
-import {parseBoolean} from "../../utils/parseBoolean";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {formatDate} from "../../utils/dateFormatter";
-import LogoDisplay from "../LogoDisplay";
-import TableTag from "../TableTag";
+import { get } from "@ngard/tiny-get";
+import { useMemo } from "react";
 import DownloadIcon from "@mui/icons-material/Download";
-import Many2ManyValue from "./Many2ManyValue";
-import {generateLink} from "../../utils/generateYandexLink";
+import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
+import Many2ManyValue from "../ElementGenerators/Many2ManyValue";
+import { formatDate } from "../../utils/dateFormatter";
+import { numberWithSpaces } from "../../utils/formatNumbers";
+import MultiselectCellColoredElement from "../ElementGenerators/MultiselectCellColoredElement";
+import TableTag from "../TableTag";
+import { parseBoolean } from "../../utils/parseBoolean";
+import LogoDisplay from "../LogoDisplay";
+import { generateLink } from "../../utils/generateYandexLink";
+import IconGenerator from "../IconPicker/IconGenerator";
 
-const CellElementGenerator = ({field = {}, row}) => {
+const GroupCellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -47,7 +47,7 @@ const CellElementGenerator = ({field = {}, row}) => {
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? {...el.table, ...el} : el;
+        return el.table ? { ...el.table, ...el } : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -122,7 +122,7 @@ const CellElementGenerator = ({field = {}, row}) => {
       return (
         <div className="text-overflow">
           <span
-            dangerouslySetInnerHTML={{__html: "*".repeat(value?.length)}}
+            dangerouslySetInnerHTML={{ __html: "*".repeat(value?.length) }}
           ></span>
         </div>
       );
@@ -199,7 +199,7 @@ const CellElementGenerator = ({field = {}, row}) => {
           rel="noreferrer"
         >
           <DownloadIcon
-            style={{width: "25px", height: "25px", fontSize: "30px"}}
+            style={{ width: "25px", height: "25px", fontSize: "30px" }}
           />
         </a>
       ) : (
@@ -212,4 +212,4 @@ const CellElementGenerator = ({field = {}, row}) => {
   }
 };
 
-export default CellElementGenerator;
+export default GroupCellElementGenerator;

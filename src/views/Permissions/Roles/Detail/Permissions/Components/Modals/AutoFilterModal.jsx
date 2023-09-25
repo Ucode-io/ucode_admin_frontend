@@ -6,7 +6,14 @@ import { store } from "../../../../../../../store";
 import { useRelationsListQuery } from "../../../../../../../services/relationService";
 import { useObjectsListQuery } from "../../../../../../../services/constructorObjectService";
 
-const AutoFilterModal = ({ control, closeModal, tableIndex, type }) => {
+const AutoFilterModal = ({
+  control,
+  closeModal,
+  tableIndex,
+  type,
+  setValue,
+  watch,
+}) => {
   const basePath = `data.tables.${tableIndex}.automatic_filters.${type}`;
   const projectId = store.getState().company.projectId;
   const envId = store.getState().company.environmentId;
@@ -111,6 +118,8 @@ const AutoFilterModal = ({ control, closeModal, tableIndex, type }) => {
                 relations={relations}
                 connections={connections}
                 remove={remove}
+                setValue={setValue}
+                watch={watch}
               />
             ))}
             <Box p={1}>

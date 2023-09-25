@@ -22,6 +22,7 @@ import HFFloatField from "../FormElements/HFFloatField";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFPassword from "../FormElements/HFPassword";
 import HFModalMap from "../FormElements/HFModalMap";
+import HFFileUpload from "../FormElements/HFFileUpload";
 
 const parser = new Parser();
 
@@ -40,6 +41,7 @@ const CellFormElementGenerator = ({
   data,
   ...props
 }) => {
+  console.log("field", field);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -442,6 +444,19 @@ const CellFormElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          {...props}
+        />
+      );
+
+    case "FILE":
+      return (
+        <HFFileUpload
+          control={control}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          required={field?.required}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       );

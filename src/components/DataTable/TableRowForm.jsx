@@ -1,8 +1,8 @@
-import { Delete } from "@mui/icons-material";
-import { Checkbox } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {Checkbox} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
@@ -32,6 +32,7 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
+  console.log("columns", columns);
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -112,49 +113,28 @@ const TableRowForm = ({
             </CTableCell>
           )
       )}
-      {columns?.map(
-        (column, index) =>
-          column?.attributes?.field_permission?.view_permission && (
-            <CTableCell
-              key={column.id}
-              className={`overflow-ellipsis editable_col`}
-              style={{
-                padding: 0,
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? calculateWidth(column?.id, index)
-                  : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
-                minWidth: "max-content",
-              }}
-            >
-              <TableDataForm
-                tableSlug={tableSlug}
-                watch={watch}
-                fields={columns}
-                field={column}
-                row={row}
-                index={rowIndex}
-                control={control}
-                setFormValue={setFormValue}
-                relationfields={relationFields}
-                data={data}
-              />
-            </CTableCell>
-          )
-      )}
-      <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
+      <CTableCell
+        style={{
+          padding: 0,
+          position: tableSettings?.[pageName]?.find(
+            (item) => item?.id === column?.id
+          )?.isStiky
+            ? "sticky"
+            : "relative",
+          left: tableSettings?.[pageName]?.find(
+            (item) => item?.id === column?.id
+          )?.isStiky
+            ? calculateWidth(column?.id, index)
+            : "0",
+          backgroundColor: "#fff",
+          zIndex: tableSettings?.[pageName]?.find(
+            (item) => item?.id === column?.id
+          )?.isStiky
+            ? "1"
+            : "",
+          minWidth: "max-content",
+        }}
+      >
         <PermissionWrapperV2
           type="delete"
           tableSlug={isRelationTable ? relatedTableSlug : tableSlug}

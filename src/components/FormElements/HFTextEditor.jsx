@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import {lazy, Suspense} from "react";
+import {Controller, useWatch} from "react-hook-form";
 
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
@@ -24,6 +24,7 @@ const HFTextEditor = ({
     control,
     name,
   });
+  console.log("value", value);
 
   return (
     <Controller
@@ -34,7 +35,7 @@ const HFTextEditor = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, ref }, fieldState: { error } }) => (
+      render={({field: {onChange, ref}, fieldState: {error}}) => (
         <Suspense fallback={<RingLoaderWithWrapper />}>
           <ReactQuill
             theme="snow"
@@ -45,7 +46,7 @@ const HFTextEditor = ({
             }}
             tabIndex={tabIndex}
             autoFocus={false}
-            style={{ backgroundColor: `${isTransparent ? "transparent" : ""}` }}
+            style={{backgroundColor: `${isTransparent ? "transparent" : ""}`}}
           />
         </Suspense>
         // <TextField

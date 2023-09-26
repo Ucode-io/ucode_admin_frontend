@@ -11,6 +11,9 @@ import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
 import Many2ManyValue from "./Many2ManyValue";
 import {generateLink} from "../../utils/generateYandexLink";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -73,10 +76,21 @@ const CellElementGenerator = ({field = {}, row}) => {
     return val;
   }, [getValue, tablesList, value]);
 
+  const getFileName = (item) => {
+    const itemArray = item?.split("/");
+
+    return itemArray[itemArray?.length - 1];
+  };
+
+  const computedFileExtension = (element) => {
+    const getExten = element?.split(".");
+    return getExten?.[getExten?.length - 1];
+  };
+
   if (field.render) {
     return field.render(row);
   }
-  console.log("field", field);
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
@@ -190,18 +204,50 @@ const CellElementGenerator = ({field = {}, row}) => {
 
     case "FILE":
       return value ? (
-        <a
-          href={value}
-          className=""
-          download
-          target="_blank"
-          onClick={(e) => e.stopPropagation()}
-          rel="noreferrer"
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          <DownloadIcon
-            style={{width: "25px", height: "25px", fontSize: "30px"}}
-          />
-        </a>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <span
+              style={{
+                marginRight: "10px",
+              }}
+            >
+              {computedFileExtension(getFileName(value)) === "pdf" ? (
+                <PictureAsPdfIcon style={{color: "red"}} />
+              ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
+                <BackupTableIcon style={{color: "green"}} />
+              ) : (
+                <AttachFileIcon style={{color: "blue"}} />
+              )}
+            </span>
+            {getFileName(value)}
+          </div>
+          <div>
+            <a
+              href={value}
+              className=""
+              download
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              rel="noreferrer"
+            >
+              <DownloadIcon
+                style={{width: "25px", height: "25px", fontSize: "30px"}}
+              />
+            </a>
+          </div>
+        </div>
       ) : (
         ""
       );

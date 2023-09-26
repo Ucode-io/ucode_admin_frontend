@@ -42,7 +42,7 @@ export default function MultiLineCellFormElement({
   return (
     <>
       {stripHtmlTags(
-        `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}` ?? ""
+        `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}` ?? ""
       )}
       <Button onClick={handleOpen}>
         <ZoomOutMapIcon />

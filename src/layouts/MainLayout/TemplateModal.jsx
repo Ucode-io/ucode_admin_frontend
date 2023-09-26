@@ -45,13 +45,13 @@ const TemplateModal = ({ closeModal }) => {
 
   const { data: projects } = useProjectTemplateListQuery({
     params: {
-      company_id: "78cf41fa-cebc-4a31-84ed-6132163bc4d6",
+      company_id: "f1c0afbe-5d50-4fb0-bed5-15cd10a7b8a3",
     },
   });
 
   const { data: environments } = useEnvTemplateListQuery({
     params: {
-      company_id: "78cf41fa-cebc-4a31-84ed-6132163bc4d6",
+      company_id: "f1c0afbe-5d50-4fb0-bed5-15cd10a7b8a3",
       project_id: projectId?.project_id,
     },
     queryParams: {

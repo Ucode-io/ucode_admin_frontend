@@ -285,13 +285,6 @@ const Flow = () => {
                 onNodesDelete={deleteNodeById}
               >
                 <Background />
-                {/* <Controls /> */}
-                {/* <MiniMap
-                  nodeColor={"#007AFF"}
-                  nodeStrokeWidth={3}
-                  zoomable
-                  pannable
-                /> */}
               </ReactFlow>
             </div>
           </div>

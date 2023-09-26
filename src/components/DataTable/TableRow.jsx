@@ -1,10 +1,10 @@
-import { Delete } from "@mui/icons-material";
-import { Button, Checkbox } from "@mui/material";
+import {Delete} from "@mui/icons-material";
+import {Button, Checkbox} from "@mui/material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
@@ -132,7 +132,7 @@ const TableRow = ({
               ) : (
                 <span
                   className="data_table__row_number"
-                  style={{ display: "block", width: "35px" }}
+                  style={{display: "block", width: "35px"}}
                 >
                   {(currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
@@ -238,23 +238,25 @@ const TableRow = ({
                 justifyContent: "center",
               }}
             >
-              <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                <RectangleIconButton
-                  color="error"
-                  onClick={() =>
-                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                  }
-                >
-                  <Delete color="error" />
-                </RectangleIconButton>
-              </PermissionWrapperV2>
+              <CTableCell>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() =>
+                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                    }
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </PermissionWrapperV2>
+              </CTableCell>
 
               <GeneratePdfFromTable row={row} />
             </div>
           </td>
 
           <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
+            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
           </td>
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
@@ -310,22 +312,30 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-            <RectangleIconButton
-              color="error"
-              onClick={() => {
-                onDeleteClick(row, rowIndex);
-                // remove(rowIndex);
-                // navigate("/reloadRelations", {
-                //   state: {
-                //     redirectUrl: window.location.pathname,
-                //   },
-                // });
-              }}
-            >
-              <Delete color="error" />
-            </RectangleIconButton>
-          </PermissionWrapperV2>
+          <CTableCell
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+              <RectangleIconButton
+                color="error"
+                onClick={() => {
+                  onDeleteClick(row, rowIndex);
+                  // remove(rowIndex);
+                  // navigate("/reloadRelations", {
+                  //   state: {
+                  //     redirectUrl: window.location.pathname,
+                  //   },
+                  // });
+                }}
+              >
+                <Delete color="error" />
+              </RectangleIconButton>
+            </PermissionWrapperV2>
+          </CTableCell>
         </CTableRow>
       ) : (
         <CTableRow

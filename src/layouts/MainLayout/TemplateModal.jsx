@@ -25,6 +25,7 @@ import TemplateTreeView from "./TemplateTreeView";
 import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+export const templateId = `${import.meta.env.VITE_TEMPLATE_ID}`;
 
 const TemplateModal = ({ closeModal }) => {
   const [projectId, setProjectId] = useState(null);
@@ -45,13 +46,13 @@ const TemplateModal = ({ closeModal }) => {
 
   const { data: projects } = useProjectTemplateListQuery({
     params: {
-      company_id: "f1c0afbe-5d50-4fb0-bed5-15cd10a7b8a3",
+      company_id: templateId,
     },
   });
 
   const { data: environments } = useEnvTemplateListQuery({
     params: {
-      company_id: "f1c0afbe-5d50-4fb0-bed5-15cd10a7b8a3",
+      company_id: templateId,
       project_id: projectId?.project_id,
     },
     queryParams: {

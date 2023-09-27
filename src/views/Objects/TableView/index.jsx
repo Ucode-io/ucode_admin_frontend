@@ -254,7 +254,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          offset: pageToOffset(currentPage, limit),
+          offset: limit === "all" ? undefined : pageToOffset(currentPage, limit),
           // app_id: appId,
           order: computedSortColumns,
           // with_relations: true,
@@ -263,7 +263,7 @@ const TableView = ({
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit,
+          limit: limit === "all" ? undefined : limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -420,7 +420,7 @@ const TableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log("tableData", tableData);
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||
@@ -468,6 +468,7 @@ const TableView = ({
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}
             data={tableData}
+            summaries={view?.attributes?.summaries}
             disableFilters
             isChecked={(row) => selectedObjects?.includes(row.guid)}
             onCheckboxChange={!!customEvents?.length && onCheckboxChange}

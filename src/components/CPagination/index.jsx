@@ -23,13 +23,10 @@ const CPagination = ({
   const navigate = useNavigate();
   const { tableSlug } = useParams();
   const options = [
+    { value: "all", label: "all" },
     {
-      value: isNaN(parseInt(props?.defaultLimit))
-        ? ""
-        : parseInt(props?.defaultLimit),
-      label: isNaN(parseInt(props?.defaultLimit))
-        ? ""
-        : parseInt(props?.defaultLimit),
+      value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+      label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
     },
     { value: 10, label: 10 },
     { value: 15, label: 15 },
@@ -105,11 +102,7 @@ const CPagination = ({
 
         {!disablePagination && (
           <>
-            <Pagination
-              color="primary"
-              onChange={(e, val) => setCurrentPage(val)}
-              {...props}
-            />
+            <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
             {paginationExtraButton}
           </>
         )}

@@ -264,16 +264,16 @@ const RecursiveBlock = ({
                 <Box>
                   <Tooltip
                     title={
-                      element?.attributes?.[`label_${i18n}`] ??
-                      element?.attributes?.[`title_${i18n}`] ??
+                      element?.attributes?.[`label_${defaultLanguage}`] ??
+                      element?.attributes?.[`title_${defaultLanguage}`] ??
                       element?.label ??
                       element?.name
                     }
                     placement="top"
                   >
                     <p>
-                      {element?.attributes?.[`label_${i18n}`] ??
-                        element?.attributes?.[`title_${i18n}`] ??
+                      {element?.attributes?.[`label_${defaultLanguage}`] ??
+                        element?.attributes?.[`title_${defaultLanguage}`] ??
                         element?.label ??
                         element?.name}
                     </p>

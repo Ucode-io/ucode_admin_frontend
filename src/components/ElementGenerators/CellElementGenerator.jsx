@@ -85,7 +85,6 @@ const CellElementGenerator = ({field = {}, row}) => {
   };
 
   const computedFileExtension = (element) => {
-    console.log("elemenet", element);
     const getExten = element?.split(".");
     return getExten?.[getExten?.length - 1];
   };

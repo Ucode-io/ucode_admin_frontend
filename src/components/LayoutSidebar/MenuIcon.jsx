@@ -3,7 +3,6 @@ import {BsThreeDots} from "react-icons/bs";
 import "./style.scss";
 
 const MenuIcon = ({onClick, title, style, element}) => {
-  console.log("element", element);
   const elementPermission =
     !element?.data?.permission?.delete === true &&
     !element?.data?.permission?.menu_settings === true &&

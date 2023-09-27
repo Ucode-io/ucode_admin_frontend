@@ -12,7 +12,10 @@ import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import menuService, {useMenuListQuery} from "../../services/menuService";
+import menuService, {
+  useMenuListQuery,
+  usePlatformGetByIdQuery,
+} from "../../services/menuService";
 import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import {store} from "../../store";
@@ -83,13 +86,20 @@ const LayoutSidebar = ({appId}) => {
       },
     },
   });
+
+  const {data: menuById} = usePlatformGetByIdQuery({
+    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  });
+
   const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
-        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+        menuById?.attributes?.menu_settings_id ||
+        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
+
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
   const handleRouter = () => {

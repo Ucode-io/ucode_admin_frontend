@@ -343,6 +343,7 @@ const getInitialValues = (
       chartOfAccounts: [{}],
       attributes: {
         group_by_columns: columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+        summaries: [],
       },
     };
   return {
@@ -362,6 +363,7 @@ const getInitialValues = (
     columns: computeColumns(initialValues?.columns, columns),
     attributes: {
       group_by_columns: computeGroups(group_by_columns, columns),
+      summaries: initialValues?.attributes?.summaries ?? [],
     },
     quick_filters:
       computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],

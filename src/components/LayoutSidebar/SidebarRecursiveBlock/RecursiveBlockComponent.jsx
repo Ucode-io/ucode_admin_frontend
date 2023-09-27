@@ -2,19 +2,19 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useMutation, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMenuListQuery } from "../../../services/menuService";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useMutation, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {useMenuListQuery} from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { updateLevel } from "../../../utils/level";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {updateLevel} from "../../../utils/level";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
@@ -31,7 +31,7 @@ import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { analyticItems, folderIds } from "./mock/folders";
+import {analyticItems, folderIds} from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -51,7 +51,7 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
 }) => {
-  const { appId, tableSlug } = useParams();
+  const {appId, tableSlug} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -62,7 +62,7 @@ const RecursiveBlock = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -148,7 +148,7 @@ const RecursiveBlock = ({
     }
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -189,7 +189,7 @@ const RecursiveBlock = ({
     }
   }, []);
 
-  const { mutate: deleteReportSetting } = useMutation(
+  const {mutate: deleteReportSetting} = useMutation(
     (id) => pivotService.deleteReportSetting(id),
     {
       onSuccess: () => {
@@ -199,7 +199,7 @@ const RecursiveBlock = ({
     }
   );
 
-  const { mutate: onDeleteTemplate } = useMutation(
+  const {mutate: onDeleteTemplate} = useMutation(
     (id) =>
       pivotService.deletePivotTemplate({
         id,
@@ -264,16 +264,16 @@ const RecursiveBlock = ({
                 <Box>
                   <Tooltip
                     title={
-                      element?.attributes?.[`label_${i18n}`] ??
-                      element?.attributes?.[`title_${i18n}`] ??
+                      element?.attributes?.[`label_${defaultLanguage}`] ??
+                      element?.attributes?.[`title_${defaultLanguage}`] ??
                       element?.label ??
                       element?.name
                     }
                     placement="top"
                   >
                     <p>
-                      {element?.attributes?.[`label_${i18n}`] ??
-                        element?.attributes?.[`title_${i18n}`] ??
+                      {element?.attributes?.[`label_${defaultLanguage}`] ??
+                        element?.attributes?.[`title_${defaultLanguage}`] ??
                         element?.label ??
                         element?.name}
                     </p>

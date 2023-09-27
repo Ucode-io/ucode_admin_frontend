@@ -116,7 +116,7 @@ const FormElementGenerator = ({
     if (field.relation_type === "Many2One") return defaultValue[0];
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
-
+    if (field?.type === "SINGLE_LINE") return defaultValue;
     const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [
@@ -127,7 +127,7 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
-
+  console.log("defaultValue", defaultValue);
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
@@ -148,6 +148,8 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
+
+  console.log("field", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {

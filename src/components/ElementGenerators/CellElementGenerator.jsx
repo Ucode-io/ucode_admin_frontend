@@ -234,7 +234,8 @@ const CellElementGenerator = ({field = {}, row}) => {
                 computedFileExtension(getFileName(value)) === "jpeg" ||
                 computedFileExtension(getFileName(value)) === "jpg" ? (
                 <PhotoLibraryIcon style={{color: "green"}} />
-              ) : computedFileExtension(getFileName(value)) === "txt" ? (
+              ) : computedFileExtension(getFileName(value)) === "txt" ||
+                computedFileExtension(getFileName(value)) === "docx" ? (
                 <DescriptionIcon style={{color: "#007AFF"}} />
               ) : (
                 <AttachFileIcon style={{color: "blue"}} />

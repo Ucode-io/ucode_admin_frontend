@@ -1,23 +1,26 @@
 import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import { Box, Button, Divider } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Container } from "react-smooth-dnd";
-import { UdevsLogo } from "../../assets/icons/icon";
+import {Box, Button, Divider} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container} from "react-smooth-dnd";
+import {UdevsLogo} from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import menuService, { useMenuListQuery } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import menuService, {
+  useMenuListQuery,
+  usePlatformGetByIdQuery,
+} from "../../services/menuService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import { store } from "../../store";
-import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import SearchInput from "../SearchInput";
@@ -27,14 +30,14 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
-import { useProjectGetByIdQuery } from "../../services/projectService";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 
-const LayoutSidebar = ({ appId }) => {
+const LayoutSidebar = ({appId}) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -61,19 +64,19 @@ const LayoutSidebar = ({ appId }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
 
   const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+    setMenu({event: event?.currentTarget, type: type});
   };
 
   const handleCloseNotify = () => {
     setMenu(null);
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: appId,
       search: subSearchText,
@@ -85,13 +88,20 @@ const LayoutSidebar = ({ appId }) => {
       },
     },
   });
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+
+  const {data: menuById} = usePlatformGetByIdQuery({
+    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  });
+
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
-        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+        menuById?.attributes?.menu_settings_id ||
+        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
+
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
   const handleRouter = () => {
@@ -205,7 +215,7 @@ const LayoutSidebar = ({ appId }) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);

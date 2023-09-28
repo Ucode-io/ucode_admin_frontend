@@ -7,17 +7,18 @@ import {
   Button,
 } from "@mui/material";
 import styles from "./style.module.scss";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import ThemeCard from "./ThemeCard";
-import { Left } from "../../assets/icons/icon";
+import {Left} from "../../assets/icons/icon";
 import {
   useMenuTemplateDeleteMutation,
   useMenuTemplateListQuery,
 } from "../../services/menuTemplateService";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import RingLoader from "../Loaders/RingLoader";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
+import {useMenuUpdateMutation} from "../../services/menuService";
 
 const MenuSettingTheme = ({
   setModalType,
@@ -33,18 +34,38 @@ const MenuSettingTheme = ({
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
   };
-  const { mutate: deleteCustomError, isLoading: deleteLoading } =
+  const {mutate: deleteCustomError, isLoading: deleteLoading} =
     useMenuTemplateDeleteMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["MENU_TEMPLATE"]);
       },
     });
 
+  const {mutateAsync: updateMenu, isLoading: createLoading} =
+    useMenuUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(
+          ["MENU_GET_BY_ID"],
+          "c57eedc3-a954-4262-a0af-376c65b5a284"
+        );
+      },
+    });
+
+  const createType = (element) => {
+    updateMenu({
+      id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+      attributes: {
+        menu_settings_id: element?.id,
+      },
+      type: "FOLDER",
+    });
+  };
+
   const deleteTemplate = (id) => {
     deleteCustomError(id);
   };
 
-  const { data: templates, isLoading } = useMenuTemplateListQuery({});
+  const {data: templates, isLoading} = useMenuTemplateListQuery({});
   useEffect(() => {
     if (check) {
       setTemplate(check?.id);
@@ -97,7 +118,8 @@ const MenuSettingTheme = ({
                     }
                     onClick={() => {
                       setSelectedTemplate(item);
-                      dispatch(menuActions.setMenuLayout(item));
+                      createType(item);
+                      // dispatch(menuActions.setMenuLayout(item));
                     }}
                     className={
                       template === item?.id ? styles.active : styles.inactive

@@ -15,6 +15,7 @@ import { tableSizeReducer } from "./tableSize/tableSizeSlice";
 import { mainReducer } from "./main/main.slice";
 import { selectedRowReducer } from "./selectedRow/selectedRow.slice";
 import { languagesReducer } from "./globalLanguages/globalLanguages.slice";
+import { paginationReducer } from "./pagination/pagination.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -80,6 +81,11 @@ const selectedRowPersistConfig = {
   storage,
 };
 
+const tablePagination = {
+  key: 'selectedPagination',
+  storage
+}
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -91,6 +97,7 @@ const rootReducer = combineReducers({
   constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  pagination: persistReducer(tablePagination, paginationReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),
   company: persistReducer(companyPersistConfig, companyReducer),
   tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),

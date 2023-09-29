@@ -89,8 +89,6 @@ const ObjectDataTable = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
 
-  console.log("pagesCount", pagesCount);
-
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =

@@ -1,7 +1,6 @@
 import { add, setHours, setMinutes } from "date-fns";
 import { useMemo } from "react";
 
-
 const useTimeList = (timeInterval = 60) => {
   const timeList = useMemo(() => {
     const startTime = setMinutes(setHours(new Date(), 6), 0);
@@ -16,12 +15,12 @@ const useTimeList = (timeInterval = 60) => {
     }
 
     return timeArray;
-  }, [ timeInterval ])
+  }, [timeInterval]);
 
   return {
     timeList,
-    timeInterval
-  }
-}
+    timeInterval,
+  };
+};
 
 export default useTimeList;

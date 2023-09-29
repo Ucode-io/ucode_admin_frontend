@@ -5,9 +5,9 @@ import {
   format,
   startOfWeek,
 } from "date-fns";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQueries, useQuery } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -17,7 +17,6 @@ import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap";
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
 import ExcelButtons from "../components/ExcelButtons";
-import FastFilter from "../components/FastFilter";
 import FastFilterButton from "../components/FastFilter/FastFilterButton";
 import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
@@ -26,29 +25,51 @@ import styles from "@/views/Objects/TableView/styles.module.scss";
 import style from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
-import { Description } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, Description } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
+import CSelect from "../../../components/CSelect";
+import CalendarDay from "./CalendarDay";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import { Box } from "@mui/material";
 
 const CalendarView = ({
   view,
   selectedTabIndex,
   setSelectedTabIndex,
   views,
-  selectedTable
+  selectedTable,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { tableSlug } = useParams();
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [selectedView, setSelectedView] = useState(null);
+  const [tab, setTab] = useState();
+
+  const formatDate = [
+    {
+      value: "day",
+      label: "Today",
+    },
+    {
+      value: "week",
+      label: "Week",
+    },
+    {
+      value: "month",
+      label: "Month",
+    },
+  ];
 
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
-
   const [anchorEl, setAnchorEl] = useState(null);
+  const [date, setDate] = useState(formatDate[0].value);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,7 +77,7 @@ const CalendarView = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log("date", date);
   const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
@@ -177,6 +198,21 @@ const CalendarView = ({
     }
   );
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const goToNext = () => {
+    if (currentIndex < datesList.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const goToPrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+  console.log("object", datesList);
+
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
@@ -242,16 +278,13 @@ const CalendarView = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>{ t('template') }</span>
+                  <span>{t("template")}</span>
                 </div>
                 <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
             </Menu>
-            {/* <ExcelButtons />
-
-            <SettingsButton /> */}
           </>
         }
       >
@@ -260,37 +293,63 @@ const CalendarView = ({
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
           selectedTable={selectedTable}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          setTab={setTab}
         />
         <CRangePicker value={dateFilters} onChange={setDateFilters} />
+        <CSelect
+          value={date}
+          options={formatDate}
+          disabledHelperText
+          onChange={(e) => {
+            setDate(e.target.value);
+          }}
+        />
       </FiltersBlock>
-      <div
-        className="title"
-        style={{
-          padding: "10px",
-          background: "#fff",
-          borderBottom: "1px solid #E5E9EB",
-        }}
-      >
-        <h3>{view.table_label}</h3>
+      <div className={style.date}>
+        <RectangleIconButton onClick={goToPrevious}>
+          <ArrowLeft />
+        </RectangleIconButton>
+        <Box className={style.time}>
+          {datesList?.length
+            ? format(new Date(datesList[currentIndex]), "d MMMM yyyy")
+            : ""}
+        </Box>
+        <RectangleIconButton onClick={goToNext}>
+          <ArrowRight />
+        </RectangleIconButton>
       </div>
       {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
-        <div className={styles.wrapper}>
-          <div className={styles.filters}>
-            <p>{t('filters')}</p>
-            <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
-          </div>
-
-          <Calendar
-            data={data}
-            fieldsMap={fieldsMap}
-            datesList={datesList}
-            view={view}
-            tabs={tabs}
-            workingDays={workingDays}
-          />
-        </div>
+        <>
+          {date === "day" ? (
+            <CalendarDay
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={datesList?.length && [datesList[currentIndex]]}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          ) : (
+            <div className={styles.wrapper}>
+              <Calendar
+                data={data}
+                fieldsMap={fieldsMap}
+                datesList={datesList}
+                view={view}
+                tabs={tabs}
+                workingDays={workingDays}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

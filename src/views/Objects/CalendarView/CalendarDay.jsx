@@ -1,11 +1,17 @@
-import CalendarColumn from "./CalendarColumn";
-import styles from "./style.module.scss";
+import styles from "./day.module.scss";
 import TimesColumn from "./TimesColumns";
-import { FixedSizeList } from "react-window";
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import CalendarDayColumn from "./CalendarDayColumn";
 
-const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
+const CalendarDay = ({
+  data,
+  fieldsMap,
+  datesList,
+  view,
+  tabs,
+  workingDays,
+}) => {
   const parentRef = useRef(null);
 
   const virtualizer = useVirtualizer({
@@ -14,14 +20,13 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
-
   return (
-    <div className={styles.calendar} ref={parentRef}>
-      <TimesColumn view={view} />
+    <div className={styles.calendarday} ref={parentRef}>
+      <TimesColumn view={view} data={data} />
 
       <div
         style={{
-          width: virtualizer.getTotalSize(),
+          width: "100vw",
           height: "100%",
           position: "relative",
         }}
@@ -33,13 +38,14 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
             ref={virtualizer.measureElement}
             style={{
               position: "absolute",
+              width: "100%",
               top: 0,
               left: 0,
               height: "100%",
               transform: `translateX(${virtualColumn.start}px)`,
             }}
           >
-            <CalendarColumn
+            <CalendarDayColumn
               date={datesList[virtualColumn.index]}
               data={data}
               fieldsMap={fieldsMap}
@@ -50,19 +56,8 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
           </div>
         ))}
       </div>
-
-      {/* {datesList?.map((date) => (
-          <CalendarColumn
-          date={date}
-          data={data}
-          fieldsMap={fieldsMap}
-          view={view}
-          tabs={tabs}
-          workingDays={workingDays}
-        />
-        ))} */}
     </div>
   );
 };
 
-export default Calendar;
+export default CalendarDay;

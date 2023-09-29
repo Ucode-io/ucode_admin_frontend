@@ -143,9 +143,6 @@ const NewCellElementGenerator = ({
     name: computedSlug,
   });
 
-  // useEffect(() => {
-  //   updateObject();
-  // }, [changedValue])
   console.log("field", field);
   switch (field.type) {
     case "LOOKUP":

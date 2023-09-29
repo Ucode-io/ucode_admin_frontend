@@ -82,6 +82,8 @@ const RecursiveBlock = ({
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "10px",
+    margin: "0 0px",
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -213,7 +215,7 @@ const RecursiveBlock = ({
   );
 
   return (
-    <Box>
+    <Box sx={{padding: "0 5px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {permission ? (
           <Button
@@ -228,12 +230,6 @@ const RecursiveBlock = ({
               clickHandler(e);
             }}
           >
-            {adminId === element?.parent_id &&
-              (childBlockVisible ? (
-                <KeyboardArrowDownIcon />
-              ) : (
-                <KeyboardArrowRightIcon />
-              ))}
             <div
               className="label"
               style={{
@@ -280,7 +276,7 @@ const RecursiveBlock = ({
                   </Tooltip>
                 </Box>
                 <Box>
-                  <Tooltip title="Folder settings" placement="top">
+                  {/* <Tooltip title="Folder settings" placement="top">
                     <Box className="extra_icon">
                       <BsThreeDots
                         size={13}
@@ -298,7 +294,7 @@ const RecursiveBlock = ({
                         }}
                       />
                     </Box>
-                  </Tooltip>
+                  </Tooltip> */}
                 </Box>
               </Box>
             </div>

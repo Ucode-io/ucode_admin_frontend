@@ -60,9 +60,7 @@ const RelationFormElement = ({
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
-          defaultValue={
-            field?.attributes?.field_permission?.edit_permission && defaultValue
-          }
+          defaultValue={defaultValue}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={Array.isArray(value) ? value[0] : value}

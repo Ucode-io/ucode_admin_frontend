@@ -24,7 +24,7 @@ const ActionButton = ({ event, id, control, disable }) => {
 
     setBtnLoader(true);
     request
-      .post("/invoke_function", data)
+      .post("/invoke_function", data, {params: {use_no_limit: event?.attributes?.use_no_limit}})
       .then((res) => {
         dispatch(showAlert("Success", "success"));
         queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });

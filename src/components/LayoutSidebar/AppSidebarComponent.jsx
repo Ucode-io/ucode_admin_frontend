@@ -121,6 +121,8 @@ const AppSidebar = ({
             borderTop: favourite && "1px solid #F0F0F0",
             borderBottom: favourite && "1px solid #F0F0F0",
             padding: favourite && "18px 12px",
+            borderRadius: "10px",
+            margin: "0 5px",
           }}
         >
           <IconGenerator

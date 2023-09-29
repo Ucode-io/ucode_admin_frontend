@@ -276,7 +276,7 @@ const RecursiveBlock = ({
                   </Tooltip>
                 </Box>
                 <Box>
-                  {/* <Tooltip title="Folder settings" placement="top">
+                  <Tooltip title="Folder settings" placement="top">
                     <Box className="extra_icon">
                       <BsThreeDots
                         size={13}
@@ -294,7 +294,7 @@ const RecursiveBlock = ({
                         }}
                       />
                     </Box>
-                  </Tooltip> */}
+                  </Tooltip>
                 </Box>
               </Box>
             </div>
@@ -353,7 +353,7 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
-                <Tooltip title="Folder settings" placement="top">
+                {/* <Tooltip title="Folder settings" placement="top">
                   <Box className="extra_icon">
                     <BsThreeDots
                       size={13}
@@ -371,7 +371,7 @@ const RecursiveBlock = ({
                       }}
                     />
                   </Box>
-                </Tooltip>
+                </Tooltip> */}
                 {childBlockVisible ? (
                   <KeyboardArrowDownIcon />
                 ) : (

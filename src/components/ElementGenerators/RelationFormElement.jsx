@@ -296,6 +296,7 @@ const AutoCompleteElement = ({
       setPage(1);
     } else {
       const val = value;
+      console.log('valvalval', val?.guid)
 
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
@@ -396,7 +397,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-
+  console.log('options', options)
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

@@ -140,12 +140,16 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
             <FRow label="Method">
               <HFSelect name="method" control={control} placeholder="Redirect url" options={methodList} fullWidth />
             </FRow>
-
-            <TableActions control={control} typeList={typeList} slug={slug} watch={watch} setValue={setValue} />
+            <FRow label="No limit">
+              <HFSwitch name="attributes.use_no_limit" control={control} />
+            </FRow>
 
             <FRow label="Disabled">
               <HFSwitch name="disabled" control={control} />
             </FRow>
+
+            <TableActions control={control} typeList={typeList} slug={slug} watch={watch} setValue={setValue} />
+
           </div>
 
           <div className={styles.settingsFooter}>

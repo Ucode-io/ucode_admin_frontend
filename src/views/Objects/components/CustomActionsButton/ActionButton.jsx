@@ -7,6 +7,7 @@ import { showAlert } from "../../../../store/alert/alert.thunk";
 import request from "../../../../utils/request";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
+import useDownloader from "../../../../hooks/useDownloader";
 
 const ActionButton = ({ event, id, control, disable }) => {
   const { tableSlug } = useParams();
@@ -15,6 +16,22 @@ const ActionButton = ({ event, id, control, disable }) => {
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState(false);
   const [disabled, setDisabled] = useState();
+  const { download } = useDownloader();
+
+
+  function getLastUnderscorePart(url) {
+    let fileName = url.split('/').pop();
+    let fileNameWithoutExtension = fileName.split('.')[0];
+    let fileNameParts = fileNameWithoutExtension.split('_');
+
+    if (fileNameParts.length > 1) {
+        return fileNameParts.pop() + '.' + fileName.split('.').pop();
+    } else {
+        return fileName;
+    }
+}
+
+
 
   const invokeFunction = () => {
     const data = {
@@ -22,10 +39,13 @@ const ActionButton = ({ event, id, control, disable }) => {
       object_ids: [id],
     };
 
+    console.log('event', event)
+
     setBtnLoader(true);
     request
-      .post("/invoke_function", data)
+      .post("/invoke_function", data, {params: {use_no_limit: event?.attributes?.use_no_limit}})
       .then((res) => {
+        console.log('data', data)
         dispatch(showAlert("Success", "success"));
         queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
         let url = res?.data?.link ?? event?.url ?? "";
@@ -56,7 +76,11 @@ const ActionButton = ({ event, id, control, disable }) => {
                 redirectUrl: window.location.pathname
               },
             });
-          } else {
+          } else if(url?.includes('cdn')) {
+            download({ link: url, fileName: getLastUnderscorePart(url) })
+          }
+          
+          else {
             if (url.includes("http") || url.includes("https")) {
               window.open(url, "_blank");
             } else {

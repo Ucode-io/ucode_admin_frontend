@@ -34,6 +34,7 @@ const NewCellElementGenerator = ({
   fields,
   isBlackBg = false,
   row,
+  relationfields,
   updateObject,
   control,
   setFormValue,
@@ -126,48 +127,46 @@ const NewCellElementGenerator = ({
   //   }
   // }, [changedValue, setFormValue, columns, field, selectedRow]);
 
-  console.log('sssssss111')
-
   switch (field.type) {
-    // case "LOOKUP":
-    //   return (
-    //     <CellRelationFormElement
-    //       disabled={isDisabled}
-    //       isFormEdit
-    //       isBlackBg={isBlackBg}
-    //       updateObject={updateObject}
-    //       isNewTableView={true}
-    //       control={control}
-    //       name={computedSlug}
-    //       field={field}
-    //       row={row}
-    //       placeholder={field.attributes?.placeholder}
-    //       setFormValue={setFormValue}
-    //       index={index}
-    //       defaultValue={defaultValue}
-    //       relationfields={relationfields}
-    //       data={data}
-    //     />
-    //   );
+    case "LOOKUP":
+      return (
+        <CellRelationFormElement
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      );
 
-    // case "LOOKUPS":
-    //   return (
-    //     <CellManyToManyRelationElement
-    //       disabled={isDisabled}
-    //       isFormEdit
-    //       updateObject={updateObject}
-    //       isNewTableView={true}
-    //       isBlackBg={isBlackBg}
-    //       control={control}
-    //       name={computedSlug}
-    //       field={field}
-    //       row={row}
-    //       placeholder={field.attributes?.placeholder}
-    //       setFormValue={setFormValue}
-    //       index={index}
-    //       defaultValue={defaultValue}
-    //     />
-    //   );
+    case "LOOKUPS":
+      return (
+        <CellManyToManyRelationElement
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+        />
+      );
 
     case "SINGLE_LINE":
       return (

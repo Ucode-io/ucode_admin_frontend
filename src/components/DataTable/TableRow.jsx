@@ -1,7 +1,6 @@
 import { Delete } from "@mui/icons-material";
 import { Button, Checkbox } from "@mui/material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
@@ -9,7 +8,6 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   row,
@@ -24,6 +22,7 @@ const TableRow = ({
   onDeleteClick,
   mainForm,
   checkboxValue,
+  getValues,
   onCheckboxChange,
   currentPage,
   view,
@@ -58,37 +57,37 @@ const TableRow = ({
     }
   };
 
-  if (formVisible)
-    return (
-      <TableRowForm
-        onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
-        remove={remove}
-        watch={watch}
-        onCheckboxChange={onCheckboxChange}
-        checkboxValue={checkboxValue}
-        row={row}
-        key={key}
-        formVisible={formVisible}
-        currentPage={currentPage}
-        limit={limit}
-        control={control}
-        setFormValue={setFormValue}
-        rowIndex={rowIndex}
-        columns={columns}
-        tableHeight={tableHeight}
-        tableSettings={tableSettings}
-        pageName={pageName}
-        calculateWidth={calculateWidth}
-        tableSlug={tableSlug}
-        relationFields={relationFields}
-        data={data}
-      />
-    );
-  
+  // if (formVisible)
+  //   return (
+  //     <TableRowForm
+  //       onDeleteClick={onDeleteClick}
+  //       isTableView={isTableView}
+  //       remove={remove}
+  //       watch={watch}
+  //       onCheckboxChange={onCheckboxChange}
+  //       checkboxValue={checkboxValue}
+  //       row={row}
+  //       key={key}
+  //       formVisible={formVisible}
+  //       currentPage={currentPage}
+  //       limit={limit}
+  //       control={control}
+  //       setFormValue={setFormValue}
+  //       rowIndex={rowIndex}
+  //       columns={columns}
+  //       tableHeight={tableHeight}
+  //       tableSettings={tableSettings}
+  //       pageName={pageName}
+  //       calculateWidth={calculateWidth}
+  //       tableSlug={tableSlug}
+  //       relationFields={relationFields}
+  //       data={data}
+  //     />
+  //   );
+
   return (
     <>
-      {relationAction === undefined ? (
+      {!relationAction ? (
         <CTableRow
           // onMouseEnter={() => setHovered(true)}
           // onMouseLeave={() => setHovered(false)}
@@ -149,10 +148,10 @@ const TableRow = ({
             ) */}
 
               <Checkbox
-              className="table_multi_checkbox"
-              style={{
-                display: selectedObjectsForDelete.find((item) => item?.guid === row?.guid) && "block",
-              }}
+                className="table_multi_checkbox"
+                style={{
+                  display: selectedObjectsForDelete.find((item) => item?.guid === row?.guid) && "block",
+                }}
                 checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
                 onChange={() => {
                   changeSetDelete(row);
@@ -210,7 +209,6 @@ const TableRow = ({
                   {/* {isTableView ? (
                     <TableDataForm
                       tableSlug={tableSlug}
-                      watch={watch}
                       fields={columns}
                       field={column}
                       mainForm={mainForm}
@@ -225,11 +223,12 @@ const TableRow = ({
                   ) : (
                     <CellElementGenerator field={column} row={row} />
                   )} */}
-
+                  
                   <TableDataForm
                     tableSlug={tableSlug}
                     fields={columns}
                     field={column}
+                    getValues={getValues}
                     mainForm={mainForm}
                     row={row}
                     index={rowIndex}

@@ -41,6 +41,7 @@ const TableView = ({
   setFormVisible,
   selectedObjects,
   checkedColumns,
+  getValues,
   searchText,
   setDataLength,
   setSelectedObjects,
@@ -338,7 +339,7 @@ const TableView = ({
           layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug, i18n?.language]);
+  }, [tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -404,6 +405,7 @@ const TableView = ({
             <ObjectDataTable
               defaultLimit={view?.default_limit}
               formVisible={formVisible}
+              getValues={getValues}
               selectedView={selectedView}
               setSortedDatas={setSortedDatas}
               sortedDatas={sortedDatas}

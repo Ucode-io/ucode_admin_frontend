@@ -32,7 +32,7 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
-  console.log("columns", columns);
+  console.log("columnsbbbbbbbb", columns);
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock

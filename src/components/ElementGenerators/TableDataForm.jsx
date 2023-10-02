@@ -5,17 +5,12 @@ import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
 
-export default function TableDataForm({ tableSlug, fields, field, row, index, control, setFormValue, relationfields, data }) {
-  const selectedObject = useWatch({
-    control,
-  })?.multi?.[index];
-
+export default function TableDataForm({ tableSlug, fields, field, row, getValues, index, control, setFormValue, relationfields, data }) {
   const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {
-      data: { ...selectedObject },
+      data: { ...getValues(`multi.${index}`) },
     })
   );
-  
 
   return (
     <Box

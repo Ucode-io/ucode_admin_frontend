@@ -89,7 +89,6 @@ const ObjectDataTable = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
 
-  console.log("pagesCount", pagesCount);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -243,7 +242,7 @@ const ObjectDataTable = ({
     const params = {
       language_setting: i18n?.language,
     };
-    console.log("i18n?.language", i18n?.language);
+
     constructorObjectService
       .getList(
         tableSlug,

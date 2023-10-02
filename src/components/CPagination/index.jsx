@@ -7,6 +7,7 @@ import useTabRouter from "../../hooks/useTabRouter";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { paginationActions } from "../../store/pagination/pagination.slice";
+import { useMemo } from "react";
 
 const CPagination = ({
   setCurrentPage = () => {},
@@ -25,7 +26,14 @@ const CPagination = ({
   const navigate = useNavigate();
   const { tableSlug } = useParams();
   const dispatch = useDispatch()
-  const pagination = useSelector((state) => state?.pagination?.pagination)
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
+
+
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+
+    return getObject?.pageLimit ?? null
+  }, [paginationInfo])
 
   const options = [
     {
@@ -47,7 +55,10 @@ const CPagination = ({
 
   const getLimitValue = (item) => {
     setLimit(item)
-    dispatch(paginationActions.setTablePage(item))
+    dispatch(paginationActions.setTablePages({
+      tableSlug: tableSlug,
+      pageLimit: item,
+    }))
   }
 
   const objectNavigate = () => {
@@ -75,7 +86,7 @@ const CPagination = ({
                 options={options}
                 disabledHelperText
                 size="small"
-                value={pagination ?? limit}
+                value={paginiation ?? limit}
                 onChange={(e) => getLimitValue(e.target.value)}
                 inputProps={{ style: { borderRadius: 50 } }}
                 endAdornment={null}

@@ -766,8 +766,8 @@ const RelationSettings = ({
                     <AccordionDetails style={{padding: "8px"}}>
                       <HFSwitch
                         control={control}
-                        name="is_editable"
-                        label={"Editable"}
+                        name="attributes.is_editable"
+                        label={"Disabled"}
                       />
                       <HFSwitch
                         control={control}

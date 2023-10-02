@@ -296,6 +296,7 @@ const AutoCompleteElement = ({
       setPage(1);
     } else {
       const val = value;
+      console.log('valvalval', val?.guid)
 
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
@@ -319,7 +320,7 @@ const AutoCompleteElement = ({
       setLocalValue(value);
     }
   };
-  console.log("localValue", localValue);
+
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
       const val = options?.slugOptions?.find((item) => item?.guid === id);
@@ -396,8 +397,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-  console.log("localValue", localValue, field);
-  console.log("disabled", disabled);
+  console.log('options', options)
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

@@ -143,6 +143,7 @@ const AppSidebar = ({
             }
             className="folder-icon"
             style={{
+              marginRight: sidebarIsOpen ? '8px' : '0px',
               color:
                 selectedApp?.id === element.id
                   ? menuStyle?.active_text

@@ -35,6 +35,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const queryClient = useQueryClient();
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"

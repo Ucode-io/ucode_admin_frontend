@@ -64,7 +64,9 @@ const TableView = ({
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
+  const sortValues = useSelector(state => state.pagination.sortValues);
   const { i18n } = useTranslation();
+
 
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
@@ -192,7 +194,7 @@ const TableView = ({
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
-
+  
     let a = sortedDatas?.map((el) => {
       if (el.field) {
         return {
@@ -200,15 +202,27 @@ const TableView = ({
         };
       }
     });
-
+  
     a.forEach((obj) => {
       for (const key in obj) {
         resultObject[key] = obj[key];
       }
     });
 
-    return resultObject;
+  
+    if (sortValues && sortValues.length > 0) {
+      const matchingSort = sortValues.find(entry => entry.tableSlug === tableSlug);
+  
+      if (matchingSort) {
+        const { field, order } = matchingSort;
+        const sortKey = fieldsMap[field].slug;
+        resultObject[sortKey] = order === "ASC" ? 1 : -1;
+      }
+    }
+  
+    return resultObject
   }, [sortedDatas, fieldsMap]);
+
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {

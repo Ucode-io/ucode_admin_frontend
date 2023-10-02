@@ -143,7 +143,8 @@ const NewCellElementGenerator = ({
     name: computedSlug,
   });
 
-  console.log("field", field);
+  console.log("ssssssssss");
+  
   switch (field.type) {
     case "LOOKUP":
       return (

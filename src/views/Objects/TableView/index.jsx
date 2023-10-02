@@ -421,6 +421,8 @@ const TableView = ({
     }
   }, []);
 
+  console.log('ssssssswwwwwww', tableData)
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||

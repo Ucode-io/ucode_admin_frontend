@@ -9,22 +9,15 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({
-  closeModal,
-  setIsChanged,
-  isChanged,
-  viewData,
-  typeNewView,
-  defaultViewTab,
-  setTab,
-}) => {
+const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab, setTab }) => {
   const { tableSlug, appId } = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: { fields, views, columns, relationColumns } = {
+      fields: [],
       views: [],
       columns: [],
       relationColumns: [],
@@ -41,6 +34,7 @@ const ViewSettings = ({
     {
       select: ({ data }) => {
         return {
+          fields: data?.fields ?? [],
           views: data?.views ?? [],
           columns: data?.fields ?? [],
           relationColumns:
@@ -92,6 +86,7 @@ const ViewSettings = ({
               views={views}
               relationColumns={relationColumns}
               setTab={setTab}
+              fields={fields}
             />
           )}
         </div>

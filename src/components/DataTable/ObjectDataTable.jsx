@@ -32,6 +32,7 @@ const ObjectDataTable = ({
   setDrawerState,
   setDrawerStateField,
   removableHeight,
+  getValues,
   additionalRow,
   mainForm,
   elementHeight,
@@ -88,8 +89,6 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-
-  console.log("pagesCount", pagesCount);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -231,13 +230,13 @@ const ObjectDataTable = ({
     return totalWidth;
   };
 
-  useEffect(() => {
-    if (!formVisible) {
-      dispatch(selectedRowActions.clear());
-    }
-  }, [formVisible]);
+  // useEffect(() => {
+  //   if (!formVisible) {
+  //     dispatch(selectedRowActions.clear());
+  //   }
+  // }, [formVisible]);
 
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
 
   useEffect(() => {
     const params = {
@@ -253,13 +252,9 @@ const ObjectDataTable = ({
         params
       )
       .then((res) => {
-        setCount(Math.ceil(res.data?.count / limit));
+        // setCount(Math.ceil(res.data?.count / limit));
       });
   }, [tableSlug, limit, i18n?.language]);
-
-  const hasMore = useMemo(() => {
-    return currentPage <= count;
-  }, [currentPage, pagesCount, tableSlug, data, count]);
 
   return (
     <CTable
@@ -396,6 +391,7 @@ const ObjectDataTable = ({
             control={control}
             key={row.id}
             row={row}
+            getValues={getValues}
             mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}

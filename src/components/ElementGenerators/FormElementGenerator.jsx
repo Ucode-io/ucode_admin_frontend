@@ -127,7 +127,7 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
-  console.log("defaultValue", defaultValue);
+
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||

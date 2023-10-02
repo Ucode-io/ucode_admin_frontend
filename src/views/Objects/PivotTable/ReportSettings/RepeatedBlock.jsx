@@ -86,7 +86,7 @@ function RowItem({ form, options, idx, keyName, remove, getTables }) {
   };
 
   const onFieldChange = (values) => {
-    console.log("sssssssss", values);
+
     const getField = (slug) => fields.find((r) => r.value === slug);
 
     const key = `${keyName}.${idx}.table_field_settings`;

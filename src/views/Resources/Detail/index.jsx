@@ -41,7 +41,7 @@ const ResourceDetail = () => {
       cacheTime: false,
       enabled: isEditPage,
       onSuccess: (res) => {
-        console.log('resssssssss', res)
+
         reset(res);
         setSelectedEnvironment(
           res.environments?.filter((env) => env.is_configured)

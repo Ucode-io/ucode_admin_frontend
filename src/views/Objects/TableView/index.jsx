@@ -41,6 +41,7 @@ const TableView = ({
   setFormVisible,
   selectedObjects,
   checkedColumns,
+  getValues,
   searchText,
   setDataLength,
   setSelectedObjects,
@@ -117,15 +118,11 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -133,13 +130,11 @@ const TableView = ({
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -153,10 +148,7 @@ const TableView = ({
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -183,8 +175,7 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key])
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
     return customSortArray(
@@ -254,23 +245,15 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          offset: pageToOffset(currentPage, limit),
+          offset: limit === "all" ? undefined : pageToOffset(currentPage, limit),
           // app_id: appId,
           order: computedSortColumns,
           // with_relations: true,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
-          limit,
+          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
+          limit: limit === "all" ? undefined : limit,
           ...filters,
-          [tab?.slug]: tab
-            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${tab?.value}`]
-              : tab?.value
-            : undefined,
+          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
       });
     },
@@ -279,9 +262,7 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
     },
     onSuccess: (data) => {
@@ -325,10 +306,9 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
+  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+    tableSlug,
+  });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -356,12 +336,10 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug, i18n?.language]);
+  }, [tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -373,15 +351,7 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&&");
+      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -420,90 +390,73 @@ const TableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log("tableData", tableData);
+
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div
-          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
-          id="data-table"
-        >
-          <ObjectDataTable
-            defaultLimit={view?.default_limit}
-            formVisible={formVisible}
-            selectedView={selectedView}
-            setSortedDatas={setSortedDatas}
-            sortedDatas={sortedDatas}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-            isTableView={true}
-            elementHeight={elementHeight}
-            setFormVisible={setFormVisible}
-            setFormValue={setFormValue}
-            mainForm={mainForm}
-            isRelationTable={false}
-            removableHeight={isDocView ? 150 : 170}
-            currentPage={currentPage}
-            pagesCount={pageCount}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            columns={columns}
-            multipleDelete={multipleDelete}
-            openFieldSettings={openFieldSettings}
-            limit={limit}
-            setLimit={setLimit}
-            onPaginationChange={setCurrentPage}
-            loader={tableLoader || deleteLoader}
-            data={tableData}
-            disableFilters
-            isChecked={(row) => selectedObjects?.includes(row.guid)}
-            onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-            filters={filters}
-            filterChangeHandler={filterChangeHandler}
-            onRowClick={navigateToEditPage}
-            onDeleteClick={deleteHandler}
-            tableSlug={tableSlug}
-            view={view}
-            tableStyle={{
-              borderRadius: 0,
-              border: "none",
-              borderBottom: "1px solid #E5E9EB",
-              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
-              width: "100%",
-              margin: 0,
-            }}
-            isResizeble={true}
-            {...props}
-          />
-
-          {/* <Button variant="outlined" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
-            <AddRoundedIcon />
-            Column
-          </Button> */}
+        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
+          {tableData && (
+            <ObjectDataTable
+              defaultLimit={view?.default_limit}
+              formVisible={formVisible}
+              getValues={getValues}
+              selectedView={selectedView}
+              setSortedDatas={setSortedDatas}
+              sortedDatas={sortedDatas}
+              setDrawerState={setDrawerState}
+              setDrawerStateField={setDrawerStateField}
+              isTableView={true}
+              elementHeight={elementHeight}
+              setFormVisible={setFormVisible}
+              setFormValue={setFormValue}
+              mainForm={mainForm}
+              isRelationTable={false}
+              removableHeight={isDocView ? 150 : 170}
+              currentPage={currentPage}
+              pagesCount={pageCount}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              columns={columns}
+              multipleDelete={multipleDelete}
+              openFieldSettings={openFieldSettings}
+              limit={limit}
+              setLimit={setLimit}
+              onPaginationChange={setCurrentPage}
+              loader={tableLoader}
+              data={tableData}
+              summaries={view?.attributes?.summaries}
+              disableFilters
+              isChecked={(row) => selectedObjects?.includes(row.guid)}
+              onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+              filters={filters}
+              filterChangeHandler={filterChangeHandler}
+              onRowClick={navigateToEditPage}
+              onDeleteClick={deleteHandler}
+              tableSlug={tableSlug}
+              view={view}
+              tableStyle={{
+                borderRadius: 0,
+                border: "none",
+                borderBottom: "1px solid #E5E9EB",
+                width: "100%",
+                margin: 0,
+              }}
+              isResizeble={true}
+              {...props}
+            />
+          )}
         </div>
       </PermissionWrapperV2>
 
       <ModalDetailPage open={open} setOpen={setOpen} />
 
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -517,12 +470,7 @@ const TableView = ({
         />
       </Drawer>
 
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerStateField} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <RelationSettingsTest
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

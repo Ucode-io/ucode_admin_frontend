@@ -1,33 +1,31 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo} from "react";
-import {useWatch} from "react-hook-form";
-import {useSelector} from "react-redux";
+import { Parser } from "hot-formula-parser";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
+import HFColorPicker from "../FormElements/HFColorPicker";
 import HFDatePicker from "../FormElements/HFDatePicker";
 import HFDateTimePicker from "../FormElements/HFDateTimePicker";
+import HFFileUpload from "../FormElements/HFFileUpload";
+import HFFloatField from "../FormElements/HFFloatField";
 import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
+import HFModalMap from "../FormElements/HFModalMap";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
+import HFPassword from "../FormElements/HFPassword";
 import HFSwitch from "../FormElements/HFSwitch";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
 import HFTimePicker from "../FormElements/HFTimePicker";
-import CellElementGenerator from "./CellElementGenerator";
-import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
-import CellRelationFormElement from "./CellRelationFormElement";
-import HFFloatField from "../FormElements/HFFloatField";
-import InventoryBarCode from "../FormElements/InventoryBarcode";
-import HFPassword from "../FormElements/HFPassword";
-import HFModalMap from "../FormElements/HFModalMap";
-import HFTextEditor from "../FormElements/HFTextEditor";
-import HFColorPicker from "../FormElements/HFColorPicker";
-import HFFileUpload from "../FormElements/HFFileUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
+import InventoryBarCode from "../FormElements/InventoryBarcode";
+import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import {useTranslation} from "react-i18next";
+import CellRelationFormElement from "./CellRelationFormElement";
+import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 
 const parser = new Parser();
 
@@ -35,22 +33,18 @@ const NewCellElementGenerator = ({
   field,
   fields,
   isBlackBg = false,
-  watch,
-  columns = [],
   row,
+  relationfields,
   updateObject,
   control,
   setFormValue,
-  shouldWork = false,
   index,
-  relationfields,
-  data,
-  ...props
+  data
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -58,18 +52,15 @@ const NewCellElementGenerator = ({
     relationTableSlug = field?.id.split("#")[0];
   }
 
-  tables?.forEach((table) => {
-    if (table.table_slug === relationTableSlug) {
-      objectIdFromJWT = table.object_id;
-    }
-  });
+  useEffect(() => {
+    tables?.forEach((table) => {
+      if (table.table_slug === relationTableSlug) {
+        objectIdFromJWT = table.object_id;
+      }
+    });
+  }, [tables, relationTableSlug]);
 
-  // const computedSlug = useMemo(
-  //   () => `multi.${index}.${field.slug}`,
-  //   [field.slug, index]
-  // );
-
-  const removeLangFromSlug = (slug) => {
+  const removeLangFromSlug = useMemo(() => {
     var lastIndex = field.slug.lastIndexOf("_");
     if (lastIndex !== -1) {
       var result = field.slug.substring(0, lastIndex);
@@ -77,11 +68,11 @@ const NewCellElementGenerator = ({
     } else {
       return false;
     }
-  };
+  }, [field.slug]);
 
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return `${removeLangFromSlug(field.slug)}_${i18n}`;
+      return `${removeLangFromSlug}_${i18n}`;
     }
 
     if (field.id?.includes("@")) {
@@ -89,25 +80,21 @@ const NewCellElementGenerator = ({
     }
 
     return `multi.${index}.${field.slug}`;
-  }, [field?.id, field?.slug, , i18n, field?.enable_multilanguage]);
-
-  const changedValue = useWatch({
-    control,
-    name: computedSlug,
-  });
-
-  const isDisabled = useMemo(() => {
-    return (
-      field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
-    );
   }, [field]);
 
+  // const changedValue = useWatch({
+  //   control,
+  //   name: computedSlug,
+  // });
+
+  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+
   const defaultValue = useMemo(() => {
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
+
     if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
       if (Array.isArray(defaultValue)) {
         return defaultValue[0];
@@ -115,38 +102,31 @@ const NewCellElementGenerator = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+
     if (!defaultValue) return undefined;
-    const {error, result} = parser.parse(defaultValue);
+
+    const { error, result } = parser.parse(defaultValue);
+
     return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type]);
+  }, [field]);
 
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
-  }, [field, row, setFormValue, computedSlug]);
-
-  useEffect(() => {
-    if (columns.length && changedValue !== undefined && changedValue !== null) {
-      columns.forEach(
-        (i, rowIndex) =>
-          selectedRow.includes(i.guid) &&
-          setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
-      );
-    }
-  }, [changedValue, setFormValue, columns, field, selectedRow]);
-
-  let watchValue = useWatch({
-    control,
-    name: computedSlug,
-  });
+  }, [row, computedSlug, defaultValue]);
 
   // useEffect(() => {
-  //   updateObject();
-  // }, [changedValue])
-  console.log("field", field);
+  //   if (columns.length && changedValue !== undefined && changedValue !== null) {
+  //     columns.forEach(
+  //       (i, rowIndex) =>
+  //         selectedRow.includes(i.guid) &&
+  //         setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
+  //     );
+  //   }
+  // }, [changedValue, setFormValue, columns, field, selectedRow]);
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -201,7 +181,7 @@ const NewCellElementGenerator = ({
           fullWidth
           required={field.required}
           placeholder={field.attributes?.placeholder}
-          {...props}
+          
           defaultValue={defaultValue}
         />
       );
@@ -221,7 +201,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           type="password"
           placeholder={field.attributes?.placeholder}
-          {...props}
+          
           defaultValue={defaultValue}
         />
       );
@@ -241,7 +221,7 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           field={field}
           disabled={isDisabled}
-          {...props}
+          
         />
       );
     case "PHONE":
@@ -260,7 +240,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
 
@@ -281,7 +261,7 @@ const NewCellElementGenerator = ({
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
           isTransparent={true}
-          {...props}
+          
         />
       );
     case "FORMULA_FRONTEND":
@@ -300,7 +280,7 @@ const NewCellElementGenerator = ({
           isTransparent={true}
           field={field}
           index={index}
-          {...props}
+          
           defaultValue={defaultValue}
         />
       );
@@ -320,7 +300,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
 
@@ -340,7 +320,7 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           data={data}
-          {...props}
+          
         />
       );
     case "MULTISELECT_V2":
@@ -359,7 +339,7 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           data={data}
-          {...props}
+          
         />
       );
 
@@ -380,7 +360,7 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           disabled={isDisabled}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -399,7 +379,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -417,7 +397,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -436,7 +416,7 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
-          {...props}
+          
         />
       );
     case "FLOAT":
@@ -454,7 +434,7 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -470,7 +450,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
 
@@ -486,7 +466,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
 
@@ -510,7 +490,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
 
@@ -524,7 +504,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          {...props}
+          
         />
       );
     case "MAP":
@@ -555,7 +535,7 @@ const NewCellElementGenerator = ({
         //   disabled={isDisabled}
         //   key={computedSlug}
         //   isTransparent={true}
-        //   {...props}
+        //   
         // />
 
         <MultiLineCellFormElement
@@ -565,7 +545,7 @@ const NewCellElementGenerator = ({
           computedSlug={computedSlug}
           field={field}
           isDisabled={isDisabled}
-          {...props}
+          
         />
       );
 
@@ -580,7 +560,7 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           isFormEdit
           required={field.required}
-          {...props}
+          
         />
       );
 
@@ -597,7 +577,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -614,7 +594,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
@@ -631,13 +611,13 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          {...props}
+          
         />
       );
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

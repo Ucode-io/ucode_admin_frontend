@@ -138,33 +138,31 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false }) => 
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-  
-let i = 0;
+
   const create = (data) => {
     setBtnLoader(true);
-    for (i = 0; i < 10; i++) {
-      constructorObjectService
-        .create(tableSlug, { data })
-        .then((res) => {
-          queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-          queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
-            table_slug: tableSlug,
-            user_id: isUserId,
-          });
-          if (modal) {
-            handleClose();
-          } else {
-            navigate(-1);
-            if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
-          }
 
-          dispatch(showAlert("Успешно обновлено", "success"));
+    constructorObjectService
+      .create(tableSlug, { data })
+      .then((res) => {
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
+          table_slug: tableSlug,
+          user_id: isUserId,
+        });
+        if (modal) {
+          handleClose();
+        } else {
+          navigate(-1);
+          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
+        }
 
-          // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
-        })
-        .catch((e) => console.log("ERROR: ", e))
-        .finally(() => setBtnLoader(false));
-    }
+        dispatch(showAlert("Успешно обновлено", "success"));
+
+        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
+      })
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false));
   };
 
   const onSubmit = (data) => {

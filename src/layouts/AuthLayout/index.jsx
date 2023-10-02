@@ -30,14 +30,14 @@ const AuthLayout = () => {
 
   if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
 
-  // if (microfrontendUrl)
-  //   return (
-  //     <MicrofrontendComponent
-  //       loginAction={(authData) => dispatch(loginAction(authData))}
-  //       key={microfrontendLink}
-  //       link={microfrontendLink}
-  //     />
-  //   );
+  if (microfrontendUrl)
+    return (
+      <MicrofrontendComponent
+        loginAction={(authData) => dispatch(loginAction(authData))}
+        key={microfrontendLink}
+        link={microfrontendLink}
+      />
+    );
 
   return (
     <div className={styles.layout}>

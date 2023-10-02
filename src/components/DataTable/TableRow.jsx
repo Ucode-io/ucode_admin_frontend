@@ -8,6 +8,8 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const TableRow = ({
   row,
@@ -85,6 +87,16 @@ const TableRow = ({
   //     />
   //   );
 
+  const parentRef = useRef(null);
+
+  const virtualizer = useVirtualizer({
+    horizontal: true,
+    count: columns.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: columns.length,
+  });
+
   return (
     <>
       {!relationAction ? (
@@ -92,6 +104,7 @@ const TableRow = ({
           // onMouseEnter={() => setHovered(true)}
           // onMouseLeave={() => setHovered(false)}
           style={style}
+          ref={parentRef}
         >
           <CTableCell
             align="center"
@@ -177,7 +190,71 @@ const TableRow = ({
             )} */}
           </CTableCell>
 
-          {columns.map(
+          {virtualizer.getVirtualItems().map(
+            (virtualColumn) => (
+              console.log("sssssqqqqq", virtualColumn),
+              columns[virtualColumn.index]?.attributes?.field_permission?.view_permission && (
+                <CTableCell
+                  key={columns[virtualColumn.index].id}
+                  className={`overflow-ellipsis ${tableHeight}`}
+                  style={{
+                    minWidth: "220px",
+                    color: "#262626",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 400,
+                    lineHeight: "normal",
+                    padding: "0 5px",
+                    position: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
+                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                        ? "sticky"
+                        : "relative"
+                    }`,
+                    // left: `${
+                    //   tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    //     ? `${calculateWidth(column?.id, index)}px`
+                    //     : "0"
+                    // }`,
+                    left: view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id] ? `${calculateWidthFixedColumn(columns[virtualColumn.index].id) + 80}px` : "0",
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
+                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                        ? "#F6F6F6"
+                        : "#fff"
+                    }`,
+                    zIndex: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
+                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                        ? "1"
+                        : "0"
+                    }`,
+                  }}
+                >
+                  {isTableView ? (
+                    <TableDataForm
+                      tableSlug={tableSlug}
+                      fields={columns}
+                      field={columns[virtualColumn.index]}
+                      getValues={getValues}
+                      mainForm={mainForm}
+                      row={row}
+                      index={rowIndex}
+                      control={control}
+                      setFormValue={setFormValue}
+                      relationfields={relationFields}
+                      data={data}
+                      onRowClick={onRowClick}
+                    />
+                  ) : (
+                    <CellElementGenerator field={columns[virtualColumn.index]} row={row} />
+                  )}
+                </CTableCell>
+              )
+            )
+          )}
+
+          {/* {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
@@ -206,11 +283,12 @@ const TableRow = ({
                     zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                   }}
                 >
-                  {/* {isTableView ? (
+                  {isTableView ? (
                     <TableDataForm
                       tableSlug={tableSlug}
                       fields={columns}
                       field={column}
+                      getValues={getValues}
                       mainForm={mainForm}
                       row={row}
                       index={rowIndex}
@@ -222,25 +300,10 @@ const TableRow = ({
                     />
                   ) : (
                     <CellElementGenerator field={column} row={row} />
-                  )} */}
-                  
-                  <TableDataForm
-                    tableSlug={tableSlug}
-                    fields={columns}
-                    field={column}
-                    getValues={getValues}
-                    mainForm={mainForm}
-                    row={row}
-                    index={rowIndex}
-                    control={control}
-                    setFormValue={setFormValue}
-                    relationfields={relationFields}
-                    data={data}
-                    onRowClick={onRowClick}
-                  />
+                  )}
                 </CTableCell>
               )
-          )}
+          )} */}
           <td>
             <div
               style={{

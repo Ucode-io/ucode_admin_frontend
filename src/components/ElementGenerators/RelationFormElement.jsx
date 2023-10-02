@@ -319,7 +319,7 @@ const AutoCompleteElement = ({
       setLocalValue(value);
     }
   };
-  console.log("localValue", localValue);
+
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
       const val = options?.slugOptions?.find((item) => item?.guid === id);
@@ -396,8 +396,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-  console.log("localValue", localValue, field);
-  console.log("disabled", disabled);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

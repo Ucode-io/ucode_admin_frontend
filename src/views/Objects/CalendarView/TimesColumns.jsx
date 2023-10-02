@@ -12,19 +12,7 @@ const TimesColumn = ({ view, data }) => {
       ))}
 
       {timeList.map((time) => (
-        <div
-          key={time}
-          className={styles.timeRow}
-          style={{
-            height: data?.find(
-              (el) =>
-                format(time, "HH:mm") ===
-                format(el?.calendar?.elementFromTime, "HH:mm")
-            )
-              ? "120px"
-              : "",
-          }}
-        >
+        <div key={time} className={styles.timeRow}>
           {format(time, "HH:mm")}
         </div>
       ))}

@@ -20,19 +20,20 @@ import ExcelButtons from "../components/ExcelButtons";
 import FastFilterButton from "../components/FastFilter/FastFilterButton";
 import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
-import Calendar from "./Calendar";
 import styles from "@/views/Objects/TableView/styles.module.scss";
 import style from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
-import { ArrowLeft, ArrowRight, Description } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { Description } from "@mui/icons-material";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
 import CSelect from "../../../components/CSelect";
 import CalendarDay from "./CalendarDay";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import { Box } from "@mui/material";
+import CalendarDayRange from "./DateDayRange";
+import CalendarWeekRange from "./CalendarWeek/CalendarWeekRange";
+import CalendarWeek from "./CalendarWeek";
+import Calendar from "./Calendar";
 
 const CalendarView = ({
   view,
@@ -51,7 +52,7 @@ const CalendarView = ({
   const formatDate = [
     {
       value: "day",
-      label: "Today",
+      label: "Day",
     },
     {
       value: "week",
@@ -77,7 +78,6 @@ const CalendarView = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log("date", date);
   const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
@@ -148,7 +148,6 @@ const CalendarView = ({
       },
     }
   );
-
   const { data: workingDays } = useQuery(
     ["GET_OBJECTS_LIST", view?.disable_dates?.table_slug],
     () => {
@@ -200,18 +199,21 @@ const CalendarView = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const goToNext = () => {
-    if (currentIndex < datesList.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+  const splitArrayIntoWeeks = (data) => {
+    const weeks = [];
+    const daysPerWeek = 7;
+
+    for (let i = 0; i < data?.length; i += daysPerWeek) {
+      const week = data.slice(i, i + daysPerWeek);
+      weeks.push(week);
     }
+
+    return weeks;
   };
 
-  const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-  console.log("object", datesList);
+  const weekData = splitArrayIntoWeeks(datesList);
+
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
@@ -301,34 +303,43 @@ const CalendarView = ({
           setSelectedView={setSelectedView}
           setTab={setTab}
         />
-        <CRangePicker value={dateFilters} onChange={setDateFilters} />
-        <CSelect
-          value={date}
-          options={formatDate}
-          disabledHelperText
-          onChange={(e) => {
-            setDate(e.target.value);
-          }}
-        />
       </FiltersBlock>
-      <div className={style.date}>
-        <RectangleIconButton onClick={goToPrevious}>
-          <ArrowLeft />
-        </RectangleIconButton>
-        <Box className={style.time}>
-          {datesList?.length
-            ? format(new Date(datesList[currentIndex]), "d MMMM yyyy")
-            : ""}
+      <Box className={style.navbar}>
+        {date === "day" && (
+          <CalendarDayRange
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
+            datesList={datesList}
+            formatDate={formatDate}
+            date={date}
+          />
+        )}
+        {date === "week" && (
+          <CalendarWeekRange
+            currentWeekIndex={currentWeekIndex}
+            setCurrentWeekIndex={setCurrentWeekIndex}
+            formatDate={formatDate}
+            date={date}
+            weekData={weekData}
+          />
+        )}
+        <Box className={style.extra}>
+          <CSelect
+            value={date}
+            options={formatDate}
+            disabledHelperText
+            onChange={(e) => {
+              setDate(e.target.value);
+            }}
+          />
+          <CRangePicker value={dateFilters} onChange={setDateFilters} />
         </Box>
-        <RectangleIconButton onClick={goToNext}>
-          <ArrowRight />
-        </RectangleIconButton>
-      </div>
+      </Box>
       {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
         <>
-          {date === "day" ? (
+          {date === "day" && (
             <CalendarDay
               data={data}
               fieldsMap={fieldsMap}
@@ -337,18 +348,27 @@ const CalendarView = ({
               tabs={tabs}
               workingDays={workingDays}
             />
-          ) : (
-            <div className={styles.wrapper}>
-              <Calendar
-                data={data}
-                fieldsMap={fieldsMap}
-                datesList={datesList}
-                view={view}
-                tabs={tabs}
-                workingDays={workingDays}
-              />
-            </div>
           )}
+          {date === "week" && (
+            <CalendarWeek
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={weekData?.length && weekData[currentWeekIndex]}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          )}
+          {date !== "week" && date !== "day" && date !== "month" ? (
+            <Calendar
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={datesList}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          ) : null}
         </>
       )}
     </div>

@@ -8,10 +8,19 @@
   background-color: #fff;
 }
 
-.date {
+.navbar {
+  display: flex;
+  align-items: center;
   padding: 10px;
   background: #fff;
   border-bottom: 1px solid #E5E9EB;
+
+  .extra {
+    display: flex;
+    align-items: center;
+    column-gap: 12px;
+  }
+  .date {
   display: flex;
   align-items: center;
   column-gap: 5px;
@@ -28,6 +37,8 @@
     justify-content: center;
   }
 }
+}
+
 
 .timesColumn {
   position: sticky;

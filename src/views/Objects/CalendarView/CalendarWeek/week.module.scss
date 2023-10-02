@@ -1,6 +1,6 @@
 @use "/src/scss/colors";
 
-.calendarday {
+.calendar {
     display: flex;
     align-content: center;
     max-height: calc(100vh - 100px);
@@ -8,28 +8,38 @@
     background-color: #fff;
 }
 
-
-
-.date {
+.navbar {
+    display: flex;
+    align-items: center;
     padding: 10px;
     background: #fff;
     border-bottom: 1px solid #E5E9EB;
-    display: flex;
-    align-items: center;
-    column-gap: 5px;
-    width: 100%;
 
-    .time {
-        padding: 7px;
-        border: 1px solid #E5E9EB;
-        border-radius: 6px;
-        width: 100%;
-        max-width: 15%;
+    .extra {
         display: flex;
         align-items: center;
-        justify-content: center;
+        column-gap: 12px;
+    }
+
+    .date {
+        display: flex;
+        align-items: center;
+        column-gap: 5px;
+        width: 100%;
+
+        .time {
+            padding: 7px;
+            border: 1px solid #E5E9EB;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 15%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }
+
 
 .timesColumn {
     position: sticky;
@@ -51,12 +61,11 @@
 
 
 .dateBlock {
-    min-width: 130px;
+    width: 157px;
     min-height: 40px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-left: 15px;
+    justify-content: center;
     position: sticky;
     top: 0px;
     box-shadow: inset -1px -1px 0px #e5e9eb;
@@ -90,7 +99,7 @@
     z-index: 2;
 
     &.last {
-        width: 130px;
+        width: 157px;
     }
 
     &.before {
@@ -102,15 +111,13 @@
     }
 }
 
-.timesBlock {
-
-    width: 100%;
-    padding-left: 12px;
+.timeBlock {
+    width: 157px;
     box-shadow: inset -1px -1px 0px #e5e9eb;
     height: 40px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
 
     .addButton {
         display: none;
@@ -165,6 +172,7 @@
 
         .infoCard {
             padding: 7px;
+            // padding-top: 20px;
             overflow: hidden;
             height: 70px;
             cursor: pointer;

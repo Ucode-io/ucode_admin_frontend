@@ -8,21 +8,15 @@ import {
   setMinutes,
 } from "date-fns";
 import { useMemo, useState } from "react";
-import {
-  useParams,
-  useSearchParams,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-import constructorObjectService from "../../../services/constructorObjectService.js";
-import useTabRouter from "../../../hooks/useTabRouter";
-import useTimeList from "../../../hooks/useTimeList";
-import styles from "./day.module.scss";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import styles from "./week.module.scss";
 import { useQueryClient } from "react-query";
-import DataDayCard from "./DataDayCard.jsx";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage.jsx";
+import DataWeekCard from "./DataWeekCard.jsx";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import useTimeList from "../../../../hooks/useTimeList";
+import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 
-const DataDayColumn = ({
+const DataWeekColumn = ({
   date,
   data,
   categoriesTab,
@@ -31,7 +25,6 @@ const DataDayColumn = ({
   view,
   workingDays,
 }) => {
-  const { tableSlug } = useParams();
   const [searchParams] = useSearchParams();
   const queryGuid = searchParams.get("guid");
   const queryTableSlug = searchParams.get("tableSlug");
@@ -43,7 +36,6 @@ const DataDayColumn = ({
 
   const queryClient = useQueryClient();
 
-  const { navigateToForm } = useTabRouter();
   const { timeList, timeInterval } = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
@@ -176,7 +168,7 @@ const DataDayColumn = ({
       {timeList.map((time, index) => (
         <div
           key={time}
-          className={`${styles.timesBlock} ${
+          className={`${styles.timeBlock} ${
             isDisabled(index) ? styles.disabled : ""
           }`}
           style={{
@@ -197,7 +189,7 @@ const DataDayColumn = ({
 
       {elementsWithPosition?.map((el) => {
         return (
-          <DataDayCard
+          <DataWeekCard
             key={el.id}
             date={date}
             view={view}
@@ -218,4 +210,4 @@ const DataDayColumn = ({
   );
 };
 
-export default DataDayColumn;
+export default DataWeekColumn;

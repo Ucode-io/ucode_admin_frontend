@@ -153,7 +153,6 @@ const DataDayCard = ({
         style={{
           top: 0,
           transform: `translateY(${info.calendar?.startPosition}px)`,
-          height: info?.calendar?.height === 40 ? "40px" : "120px",
         }}
         onClick={openMenu}
         ref={ref}

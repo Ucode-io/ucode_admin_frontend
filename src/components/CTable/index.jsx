@@ -4,6 +4,7 @@ import CPagination from "../CPagination";
 import EmptyDataComponent from "../EmptyDataComponent";
 import TableLoader from "../TableLoader/index";
 import "./style.scss";
+import PageFallback from "../PageFallback";
 
 export const CTable = ({
   children,
@@ -29,14 +30,12 @@ export const CTable = ({
       <div
         className="table"
         style={{
-          height: removableHeight
-            ? `calc(100vh - ${removableHeight}px)`
-            : "auto",
+          height: removableHeight ? `calc(100vh - ${removableHeight}px)` : "auto",
           overflow: loader ? "hidden" : "auto",
           ...tableStyle,
         }}
       >
-        <table id="resizeMe">{children}</table>
+        {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
       </div>
 
       {!disablePagination && (
@@ -66,48 +65,22 @@ export const CTableHeadRow = ({ children }) => {
   return <tr className="CTableHeadRow">{children}</tr>;
 };
 
-export const CTableHeadCell = ({
-  children,
-  className = "",
-  buttonsCell = false,
-  ...props
-}) => {
+export const CTableHeadCell = ({ children, className = "", buttonsCell = false, ...props }) => {
   return <th {...props}>{children}</th>;
 };
 
-export const CTableBody = forwardRef(
-  (
-    {
-      children,
-      columnsCount,
-      loader,
-      title,
-      selectedObjectsForDelete,
-      dataLength,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <>
-        <TableLoader
-          isVisible={loader}
-          columnsCount={columnsCount}
-          rowsCount={dataLength || 3}
-        />
+export const CTableBody = forwardRef(({ children, columnsCount, loader, title, selectedObjectsForDelete, dataLength, ...props }, ref) => {
+  return (
+    <>
+      <TableLoader isVisible={loader} columnsCount={columnsCount} rowsCount={dataLength || 3} />
 
-        <tbody className="CTableBody" {...props} ref={ref}>
-          {children}
-          <EmptyDataComponent
-            columnsCount={columnsCount}
-            isVisible={!dataLength}
-            title={title}
-          />
-        </tbody>
-      </>
-    );
-  }
-);
+      <tbody className="CTableBody" {...props} ref={ref}>
+        {children}
+        <EmptyDataComponent columnsCount={columnsCount} isVisible={!dataLength} title={title} />
+      </tbody>
+    </>
+  );
+});
 
 export const CTableRow = ({ children, className, ...props }) => {
   return (
@@ -117,17 +90,9 @@ export const CTableRow = ({ children, className, ...props }) => {
   );
 };
 
-export const CTableCell = ({
-  children,
-  className = "",
-  buttonsCell = false,
-  ...props
-}) => {
+export const CTableCell = ({ children, className = "", buttonsCell = false, ...props }) => {
   return (
-    <td
-      className={`CTableCell ${className} ${buttonsCell ? "buttonsCell" : ""}`}
-      {...props}
-    >
+    <td className={`CTableCell ${className} ${buttonsCell ? "buttonsCell" : ""}`} {...props}>
       {children}
     </td>
   );

@@ -256,11 +256,6 @@ const ObjectDataTable = ({
         setCount(Math.ceil(res.data?.count / limit));
       });
   }, [tableSlug, limit, i18n?.language]);
-
-  const hasMore = useMemo(() => {
-    return currentPage <= count;
-  }, [currentPage, pagesCount, tableSlug, data, count]);
-
   return (
     <CTable
       disablePagination={disablePagination}

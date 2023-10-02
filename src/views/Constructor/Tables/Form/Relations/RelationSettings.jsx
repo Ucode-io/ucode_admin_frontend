@@ -767,7 +767,7 @@ const RelationSettings = ({
                       <HFSwitch
                         control={control}
                         name="attributes.is_editable"
-                        label={"Editable"}
+                        label={"Disabled"}
                       />
                       <HFSwitch
                         control={control}

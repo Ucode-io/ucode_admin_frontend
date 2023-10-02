@@ -229,10 +229,9 @@ const TableView = ({
       }
     }
   
-    return resultObject ?? {name: 1};
+    return resultObject
   }, [sortedDatas, fieldsMap]);
 
-  console.log('computedSortColumns', computedSortColumns)
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {

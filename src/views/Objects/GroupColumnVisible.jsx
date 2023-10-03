@@ -94,7 +94,7 @@ export default function GroupColumnVisible({
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
-        Group by columns
+        Group
       </div>
 
       <Menu

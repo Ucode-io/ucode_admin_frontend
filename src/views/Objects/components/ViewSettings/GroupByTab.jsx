@@ -28,6 +28,7 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import LinkIcon from '@mui/icons-material/Link';
 
 const GroupByTab = ({form, updateView, isMenu}) => {
   const {
@@ -156,7 +157,7 @@ const GroupByTab = ({form, updateView, isMenu}) => {
       DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
     };
   }, []);
-  console.log("groupColumn", groupColumn);
+  
   return (
     <div
       style={{
@@ -183,7 +184,7 @@ const GroupByTab = ({form, updateView, isMenu}) => {
                       justifyContent: "center",
                     }}
                   >
-                    {columnIcons[column.type] ?? <AttachFileIcon />}
+                    {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column.label}
                 </div>

@@ -36,11 +36,11 @@ const CPagination = ({
   }, [paginationInfo])
 
   const options = [
-    { value: "all", label: "all" },
-    {
-      value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-      label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    },
+    { value: "all", label: "All" },
+    // {
+    //   value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+    //   label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+    // },
     { value: 10, label: 10 },
     { value: 15, label: 15 },
     { value: 20, label: 20 },

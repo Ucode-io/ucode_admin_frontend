@@ -10,6 +10,7 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import {useDispatch, useSelector} from "react-redux";
 import {mainActions} from "../../../store/main/main.slice";
 import {useTranslation} from "react-i18next";
+import Permissions from "../Components/Permission";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -133,6 +134,12 @@ const SubMenu = ({
               <RingLoaderWithWrapper />
             ) : (
               <div className="nav-block">
+                <Permissions
+                  menuStyle={menuStyle}
+                  menuItem={menuItem}
+                  setElement={setElement}
+                  level={2}
+                />
                 <div className="menu-element">
                   {child?.map((element) => (
                     <RecursiveBlock

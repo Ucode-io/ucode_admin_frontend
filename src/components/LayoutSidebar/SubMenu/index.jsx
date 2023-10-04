@@ -134,12 +134,12 @@ const SubMenu = ({
               <RingLoaderWithWrapper />
             ) : (
               <div className="nav-block">
-                {/* <Permissions
+                <Permissions
                   menuStyle={menuStyle}
                   menuItem={menuItem}
                   setElement={setElement}
                   level={2}
-                /> */}
+                />
                 <div className="menu-element">
                   {child?.map((element) => (
                     <RecursiveBlock

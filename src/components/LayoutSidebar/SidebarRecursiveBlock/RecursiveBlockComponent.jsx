@@ -241,7 +241,7 @@ const RecursiveBlock = ({
                 opacity: element?.isChild && 0.6,
               }}
             >
-              {/* {element?.type === 'USER' && <PersonIcon style={{color:menuItem?.id === element?.id ?  '#fff' : 'rgb(45, 108, 229)'}}/>} */}
+              {element?.type === 'USER' && <PersonIcon style={{color:menuItem?.id === element?.id ?  '#fff' : 'rgb(45, 108, 229)'}}/>}
               <IconGenerator
                 icon={
                   element?.icon ||

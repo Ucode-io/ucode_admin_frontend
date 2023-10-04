@@ -14,7 +14,6 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
-
   return (
     <div className={styles.calendar} ref={parentRef}>
       <TimesColumn view={view} />

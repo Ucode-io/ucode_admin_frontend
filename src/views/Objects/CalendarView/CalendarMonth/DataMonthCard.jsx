@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import styles from "./week.module.scss";
+import { useMemo, useRef, useState } from "react";
+import styles from "./month.module.scss";
 import "../moveable.scss";
 import { Menu } from "@mui/material";
 import InfoBlock from "../InfoBlock";
@@ -8,13 +8,8 @@ import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 import CalendarStatusSelect from "../../components/CalendarStatusSelect";
-import constructorObjectService from "../../../../services/constructorObjectService";
-import { useParams } from "react-router-dom";
-import useTimeList from "../../../../hooks/useTimeList";
-import { format, setHours, setMinutes } from "date-fns";
-import Moveable from "react-moveable";
 
-const DataWeekCard = ({
+const DataMonthCard = ({
   date,
   view,
   fieldsMap,
@@ -26,19 +21,8 @@ const DataWeekCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
-  const { tableSlug } = useParams();
-  const { timeList } = useTimeList(view.time_interval);
-  const [target, setTarget] = useState();
-  const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
 
-  const [frame] = useState({
-    translate: [0, info.calendar?.startPosition ?? 0],
-  });
-
-  useEffect(() => {
-    if (!ref?.current) return null;
-    setTarget(ref.current);
-  }, [ref]);
+  console.log("info", info);
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,83 +41,6 @@ const DataWeekCard = ({
     //
   }, [view.status_field_slug, fieldsMap, info.status]);
 
-  const onPositionChange = (position, height) => {
-    if (!position || position.translate[1] < 0) return null;
-
-    const beginIndex = Math.floor((position.translate[1] + 2) / 40);
-    const endIndex = Math.ceil((position.translate[1] + height) / 40);
-
-    const startTime = computeTime(beginIndex);
-    const endTime = computeTime(endIndex);
-
-    const computedData = {
-      ...info,
-      [view.calendar_from_slug]: startTime,
-      [view.calendar_to_slug]: endTime,
-      calendar: {
-        ...info.calendar,
-        elementFromTime: startTime,
-        elementToTime: endTime,
-      },
-    };
-
-    constructorObjectService
-      .update(tableSlug, {
-        data: computedData,
-      })
-      .then((res) => {
-        setInfo(computedData);
-      });
-  };
-
-  const computeTime = (index) => {
-    const computedTime = timeList[index];
-
-    const hour = Number(format(computedTime, "H"));
-    const minute = Number(format(computedTime, "m"));
-
-    return setMinutes(setHours(date, hour), minute);
-  };
-  // ---------DRAG ACTIONS------------
-
-  const onDragStart = (e) => {
-    e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
-  };
-
-  const onDrag = ({ target, beforeTranslate }) => {
-    if (beforeTranslate[1] < 0) return null;
-    target.style.transform = `translateY(${beforeTranslate[1]}px)`;
-  };
-
-  const onDragEnd = ({ lastEvent }) => {
-    if (lastEvent) {
-      frame.translate = lastEvent.beforeTranslate;
-      onPositionChange(lastEvent, lastEvent.height);
-    }
-  };
-
-  // ----------RESIZE ACTIONS----------------------
-
-  const onResizeStart = (e) => {
-    e.setOrigin(["%", "%"]);
-    e.dragStart && e.dragStart.set(frame.translate);
-  };
-
-  const onResize = ({ target, height, drag }) => {
-    const beforeTranslate = drag.beforeTranslate;
-    if (beforeTranslate[1] < 0) return null;
-    target.style.height = `${height}px`;
-    target.style.transform = `translateY(${beforeTranslate[1]}px)`;
-    if (height <= 40) setIsSingleLine(true);
-    else setIsSingleLine(false);
-  };
-
-  const onResizeEnd = ({ lastEvent }) => {
-    if (lastEvent) {
-      frame.translate = lastEvent.drag.beforeTranslate;
-      onPositionChange(lastEvent.drag, lastEvent.height);
-    }
-  };
   const handleMouseEnter = () => {
     setIsHover(true);
   };
@@ -150,9 +57,8 @@ const DataWeekCard = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={{
-          top: 0,
+          //   top: 0,
           transform: `translateY(${info.calendar?.startPosition}px)`,
-          height: info.calendar?.height,
         }}
         onClick={openMenu}
         ref={ref}
@@ -234,26 +140,8 @@ const DataWeekCard = ({
           setInfo={setInfo}
         />
       </Menu>
-      <Moveable
-        target={target}
-        className="moveable2"
-        draggable
-        resizable
-        throttleDrag={40}
-        throttleResize={40}
-        keepRatio={false}
-        origin={false}
-        renderDirections={["s", "n"]}
-        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        onDragStart={onDragStart}
-        onDrag={onDrag}
-        onDragEnd={onDragEnd}
-        onResizeStart={onResizeStart}
-        onResize={onResize}
-        onResizeEnd={onResizeEnd}
-      />
     </>
   );
 };
 
-export default DataWeekCard;
+export default DataMonthCard;

@@ -12,6 +12,7 @@ import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import CalendarStatusSelect from "../components/CalendarStatusSelect";
 import { dateValidFormat } from "../../../utils/dateValidFormat";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
+import Moveable from "react-moveable";
 
 const DataDayCard = ({
   date,
@@ -153,6 +154,7 @@ const DataDayCard = ({
         style={{
           top: 0,
           transform: `translateY(${info.calendar?.startPosition}px)`,
+          height: info.calendar?.height,
         }}
         onClick={openMenu}
         ref={ref}
@@ -239,9 +241,8 @@ const DataDayCard = ({
         />
       </Menu>
 
-      {/* <Moveable
+      <Moveable
         target={target}
-        // container={container}
         className="moveable2"
         draggable
         resizable
@@ -257,7 +258,7 @@ const DataDayCard = ({
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeEnd={onResizeEnd}
-      /> */}
+      />
     </>
   );
 };

@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 import { dateValidFormat } from "../../../utils/dateValidFormat";
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";

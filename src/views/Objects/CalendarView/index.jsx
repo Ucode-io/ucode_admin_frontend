@@ -34,6 +34,7 @@ import CalendarDayRange from "./DateDayRange";
 import CalendarWeekRange from "./CalendarWeek/CalendarWeekRange";
 import CalendarWeek from "./CalendarWeek";
 import Calendar from "./Calendar";
+import CalendarMonth from "./CalendarMonth";
 
 const CalendarView = ({
   view,
@@ -51,15 +52,15 @@ const CalendarView = ({
 
   const formatDate = [
     {
-      value: "day",
+      value: "DAY",
       label: "Day",
     },
     {
-      value: "week",
+      value: "WEEK",
       label: "Week",
     },
     {
-      value: "month",
+      value: "MONTH",
       label: "Month",
     },
   ];
@@ -305,7 +306,7 @@ const CalendarView = ({
         />
       </FiltersBlock>
       <Box className={style.navbar}>
-        {date === "day" && (
+        {date === "DAY" && (
           <CalendarDayRange
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
@@ -314,7 +315,7 @@ const CalendarView = ({
             date={date}
           />
         )}
-        {date === "week" && (
+        {date === "WEEK" && (
           <CalendarWeekRange
             currentWeekIndex={currentWeekIndex}
             setCurrentWeekIndex={setCurrentWeekIndex}
@@ -339,7 +340,7 @@ const CalendarView = ({
         <PageFallback />
       ) : (
         <>
-          {date === "day" && (
+          {date === "DAY" && (
             <CalendarDay
               data={data}
               fieldsMap={fieldsMap}
@@ -349,7 +350,7 @@ const CalendarView = ({
               workingDays={workingDays}
             />
           )}
-          {date === "week" && (
+          {date === "WEEK" && (
             <CalendarWeek
               data={data}
               fieldsMap={fieldsMap}
@@ -359,7 +360,17 @@ const CalendarView = ({
               workingDays={workingDays}
             />
           )}
-          {date !== "week" && date !== "day" && date !== "month" ? (
+          {date === "MONTH" && (
+            <CalendarMonth
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={datesList?.length && datesList}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          )}
+          {date !== "WEEK" && date !== "DAY" && date !== "MONTH" ? (
             <Calendar
               data={data}
               fieldsMap={fieldsMap}

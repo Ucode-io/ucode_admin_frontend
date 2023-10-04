@@ -9,14 +9,15 @@ import {
 } from "date-fns";
 import { useMemo, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import styles from "./week.module.scss";
+import styles from "./month.module.scss";
 import { useQueryClient } from "react-query";
-import DataWeekCard from "./DataWeekCard.jsx";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import useTimeList from "../../../../hooks/useTimeList";
 import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
+import DataMonthCard from "./DataMonthCard";
+import CalendarTemplate from "./CalendarTemplate";
 
-const DataWeekColumn = ({
+const DataMonthColumn = ({
   date,
   data,
   categoriesTab,
@@ -24,6 +25,7 @@ const DataWeekColumn = ({
   fieldsMap,
   view,
   workingDays,
+  index,
 }) => {
   const [searchParams] = useSearchParams();
   const queryGuid = searchParams.get("guid");
@@ -33,6 +35,7 @@ const DataWeekColumn = ({
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
   const navigate = useNavigate();
+
   const queryClient = useQueryClient();
 
   const { timeList, timeInterval } = useTimeList(view.time_interval);
@@ -163,8 +166,8 @@ const DataWeekColumn = ({
   };
 
   return (
-    <div className={styles.objectColumn}>
-      {timeList.map((time, index) => (
+    <>
+      {/* {timeList.map((time, index) => (
         <div
           key={time}
           className={`${styles.timeBlock} ${
@@ -184,11 +187,13 @@ const DataWeekColumn = ({
             {queryGuid ? "Выбрать" : "Создать"}
           </div>
         </div>
-      ))}
+      ))} */}
 
-      {elementsWithPosition?.map((el) => {
+      {/* <CalendarTemplate month={date} /> */}
+
+      {/* {elementsWithPosition?.map((el) => {
         return (
-          <DataWeekCard
+          <DataMonthCard
             key={el.id}
             date={date}
             view={view}
@@ -198,15 +203,15 @@ const DataWeekColumn = ({
             navigateToEditPage={navigateToEditPage}
           />
         );
-      })}
+      })} */}
       <ModalDetailPage
         open={open}
         setOpen={setOpen}
         dateInfo={dateInfo}
         selectedRow={selectedRow}
       />
-    </div>
+    </>
   );
 };
 
-export default DataWeekColumn;
+export default DataMonthColumn;

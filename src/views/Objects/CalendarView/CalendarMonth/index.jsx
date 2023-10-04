@@ -1,0 +1,89 @@
+import styles from "../day.module.scss";
+import style from "./month.module.scss";
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import CalendarMonthColumn from "./CalendarMonthColumn";
+import CalendarTemplate from "./CalendarTemplate";
+import TimesColumnMonth from "./TimesColumnsMonth";
+import DataMonthColumn from "./DataMonthColumn";
+
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const CalendarMonth = ({
+  data,
+  fieldsMap,
+  datesList,
+  view,
+  tabs,
+  workingDays,
+}) => {
+  const parentRef = useRef(null);
+
+  const virtualizer = useVirtualizer({
+    horizontal: true,
+    count: datesList?.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 500,
+  });
+  console.log("virtualizer", virtualizer.getVirtualItems());
+  return (
+    <div className={styles.calendarmonth} ref={parentRef}>
+      {/* <TimesColumnMonth view={view} data={data} /> */}
+
+      <CalendarTemplate
+        month={datesList}
+        data={data}
+        fieldsMap={fieldsMap}
+        view={view}
+      />
+      <div
+        style={{
+          //   width: virtualizer.getTotalSize(),
+          height: "100%",
+          position: "relative",
+        }}
+      >
+        {/* {datesList?.map((item, index) => (
+          <div
+            key={index}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: "100%",
+              //   transform: `translateX(${virtualColumn.start}px)`,
+            }}
+          >
+            <CalendarMonthColumn
+              date={item}
+              data={data}
+              fieldsMap={fieldsMap}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+              index={index}
+            />
+          </div>
+        ))} */}
+        {/* <DataMonthColumn
+          date={datesList}
+          data={data}
+          fieldsMap={fieldsMap}
+          view={view}
+          tabs={tabs}
+          workingDays={workingDays}
+        /> */}
+      </div>
+    </div>
+  );
+};
+
+export default CalendarMonth;

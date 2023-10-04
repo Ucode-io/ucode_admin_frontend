@@ -13,7 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import { Button, CircularProgress, Divider, Menu } from "@mui/material";
+import { Button, CircularProgress, Divider, Menu, Switch } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -49,6 +49,7 @@ import style from "./style.module.scss";
 import SortButton from "./SortButton";
 import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const ViewsWithGroups = ({
   views,
@@ -84,10 +85,6 @@ const ViewsWithGroups = ({
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
   const groupTable = view?.attributes.group_by_columns;
-
-  console.log("tab", tab);
-  console.log("view", view);
-  console.log("groupTable", groupTable);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -295,7 +292,7 @@ const ViewsWithGroups = ({
               <ShareModal />
             </PermissionWrapperV2>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
+            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
               <LanguagesNavbar />
             </PermissionWrapperV2>
 
@@ -303,11 +300,11 @@ const ViewsWithGroups = ({
               <Button variant="outlined">
                 <HexagonIcon />
               </Button>
-            </PermissionWrapperV2>
+            </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
-                <SettingsSuggestIcon />
+                <SettingsIcon />
               </Button>
             </PermissionWrapperV2>
           </>
@@ -489,7 +486,7 @@ const ViewsWithGroups = ({
                         className={style.template}
                         onClick={() => handleHeightControl(el.value)}
                       >
-                        <div
+                        {/* <div
                           className={`${style.element} ${
                             selectedTabIndex === views?.length
                               ? style.active
@@ -499,8 +496,17 @@ const ViewsWithGroups = ({
                           {tableHeight === el.value ? (
                             <CheckIcon color="primary" />
                           ) : null}
-                        </div>
+                        </div> */}
+
                         <span>{el.label}</span>
+
+                        <Switch 
+                        size="small"
+                        checked={tableHeight === el.value} 
+                        onChange={() => handleHeightControl(el.value)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}/>
                       </div>
                     ))}
                   </div>

@@ -181,6 +181,14 @@ export default function TableHeadForTableView({
             });
           },
         },
+        // {
+        //   id: 19,
+        //   title: "Text Wrap",
+        //   icon: <WrapTextOutlinedIcon />,
+        //   onClickAction: () => {
+        //     console.log("Text Wrap");
+        //   },
+        // },
         {
           id: 10,
           title: `${
@@ -227,7 +235,8 @@ export default function TableHeadForTableView({
       ],
     },
   ];
-  console.log('column', column)
+
+
   return (
     <>
       <CTableHeadCell

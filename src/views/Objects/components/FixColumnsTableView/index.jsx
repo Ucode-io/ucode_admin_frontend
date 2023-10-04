@@ -140,7 +140,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
             color: "#A8A8A8",
           }}
         />
-        Fix columns
+        Fix col's
       </button>
 
       <Menu

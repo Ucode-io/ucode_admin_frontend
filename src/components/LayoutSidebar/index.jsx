@@ -36,8 +36,10 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
+import Users from "./Components/Users";
 
 const LayoutSidebar = ({appId}) => {
+  const menuItem = useSelector((state) => state.menu.menuItem); 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -67,9 +69,11 @@ const LayoutSidebar = ({appId}) => {
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
+
   };
 
   const handleCloseNotify = () => {
@@ -198,6 +202,14 @@ const LayoutSidebar = ({appId}) => {
       setSidebarIsOpen(true);
     }
   }, [menuTemplate]);
+
+  useEffect(() => {
+    if(!sidebarIsOpen) {
+      setChildBlockVisible(false)
+    } else {
+      setChildBlockVisible(true)
+    }
+  }, [sidebarIsOpen])
 
   useEffect(() => {
     getMenuList();
@@ -346,6 +358,20 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
+
+                  <Users
+                    menuStyle={menuStyle}
+                    menuItem={menuItem}
+                    setElement={setElement}
+                    setSelectedApp={setSelectedApp}
+                    setChildBlockVisible={setChildBlockVisible}
+                    childBlockVisible={childBlockVisible}
+                    handleOpenNotify={handleOpenNotify}
+                    sidebarIsOpen={sidebarIsOpen}
+                    setSidebarIsOpen={setSidebarIsOpen}
+                    level={2}
+                  />
+
                 <div
                   className="nav-block"
                   style={{
@@ -371,6 +397,7 @@ const LayoutSidebar = ({appId}) => {
                             setSelectedApp={setSelectedApp}
                             selectedApp={selectedApp}
                             menuTemplate={menuTemplate}
+                            setChildBlockVisible={setChildBlockVisible}
                           />
                         ))}
                     </Container>

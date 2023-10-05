@@ -102,22 +102,9 @@ const CustomPermissionRow = ({watch, setValue}) => {
           <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               isChecked={watch(
-                "data.global_permission.profile_settings_button"
+                "data.global_permission.profile_settings"
               )}
               onChange={(e) => handleChange(e, "profile_settings_button")}
-            />
-          </Box>
-        </CTableCell>
-      </CTableHeadRow>
-      <CTableHeadRow>
-        <CTableCell>Project settings button</CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <Checkbox
-              isChecked={watch(
-                "data.global_permission.project_settings_button"
-              )}
-              onChange={(e) => handleChange(e, "project_settings_button")}
             />
           </Box>
         </CTableCell>

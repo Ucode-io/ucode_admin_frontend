@@ -1,5 +1,5 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Checkbox, Menu } from "@mui/material";
+import { Checkbox, Menu, Switch } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -29,6 +29,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
+import LinkIcon from '@mui/icons-material/Link';
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,9 +98,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   const visibleColumns = useMemo(() => {
     refetch();
     return columns.filter((column) => {
-      return views?.[selectedTabIndex]?.columns?.find(
-        (el) => el === column?.id
-      );
+      return views?.[selectedTabIndex]?.columns?.find((el) => el === column?.id);
     });
   }, [views, columns, selectedTabIndex, anchorEl]);
 
@@ -184,27 +183,40 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
         >
           {visibleColumns.map((column) => (
             <div className={style.menuItem}>
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}>
-                <div style={{
+              <div
+                style={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                }}>
-                  {columnIcons[column.type] ?? <NfcIcon />}
+                  gap: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {columnIcons[column.type] ?? <LinkIcon />}
                 </div>
 
                 <span>{column.label}</span>
               </div>
 
-              <Checkbox
+              {/* <Checkbox
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
                 disabled={isLoading}
+                checked={selectedView?.attributes?.fixedColumns?.[column.id]}
+              /> */}
+
+              <Switch
+                size="small"
+                onChange={(e) => {
+                  changeHandler(column, e.target.checked);
+                }}
+                // disabled={isLoading}
                 checked={selectedView?.attributes?.fixedColumns?.[column.id]}
               />
             </div>

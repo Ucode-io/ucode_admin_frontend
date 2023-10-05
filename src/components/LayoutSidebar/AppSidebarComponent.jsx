@@ -25,6 +25,7 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
+  setChildBlockVisible
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
   const clickHandler = () => {
+    setChildBlockVisible(false)
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {

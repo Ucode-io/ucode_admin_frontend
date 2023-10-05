@@ -30,6 +30,7 @@ import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
+import PersonIcon from '@mui/icons-material/Person';
 import "../style.scss";
 import {analyticItems, folderIds} from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
@@ -73,6 +74,7 @@ const RecursiveBlock = ({
     ? readPermission || withoutPermission
     : readPermission;
   const activeStyle = {
+    height: '40px',
     backgroundColor:
       menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -213,7 +215,7 @@ const RecursiveBlock = ({
       },
     }
   );
-
+    console.log('element', element)
   return (
     <Box sx={{padding: "0 5px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -240,6 +242,7 @@ const RecursiveBlock = ({
                 opacity: element?.isChild && 0.6,
               }}
             >
+              {element?.type === 'USER' && <PersonIcon style={{color:menuItem?.id === element?.id ?  '#fff' : 'rgb(45, 108, 229)'}}/>}
               <IconGenerator
                 icon={
                   element?.icon ||
@@ -258,6 +261,7 @@ const RecursiveBlock = ({
                 }}
               >
                 <Box>
+
                   <Tooltip
                     title={
                       element?.attributes?.[`label_${defaultLanguage}`] ??
@@ -274,6 +278,7 @@ const RecursiveBlock = ({
                         element?.name}
                     </p>
                   </Tooltip>
+
                 </Box>
                 <Box>
                   <Tooltip title="Folder settings" placement="top">
@@ -498,22 +503,6 @@ const RecursiveBlock = ({
             menuItem={menuItem}
           />
         ))}
-        {element.id === folderIds.users_folder_id && (
-          <>
-            <Users
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              setElement={setElement}
-              level={2}
-            />
-            <Permissions
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              setElement={setElement}
-              level={2}
-            />
-          </>
-        )}
         {element.id === folderIds.data_base_folder_id && (
           <>
             <DataBase
@@ -530,6 +519,24 @@ const RecursiveBlock = ({
             />
           </>
         )}
+        {/* {element.id === folderIds.users_folder_id && (
+          <>
+            <Users
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+            <Permissions
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+          </>
+        )} */}
+
+        
         {element.id === folderIds.code_folder_id && (
           <>
             <ScenarioSidebar

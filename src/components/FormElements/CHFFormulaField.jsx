@@ -41,23 +41,23 @@ const CHFFormulaField = ({
   });
 
   const updateValue = () => {
-    let computedFormula = formula;
+    // let computedFormula = formula;
 
-    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
+    // const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
 
-    fieldsListSorted?.forEach((field) => {
-      let value = values?.[field?.slug] ?? 0;
+    // fieldsListSorted?.forEach((field) => {
+    //   let value = values?.[field?.slug] ?? 0;
 
-      if (typeof value === "string") value = `${value}`;
+    //   if (typeof value === "string") value = `${value}`;
 
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-    });
+    //   computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+    // });
 
-    const { error, result } = parser.parse(computedFormula);
+    // const { error, result } = parser.parse(computedFormula);
 
-    let newValue = error ?? result;
-    // const prevValue = values[name]
-    if (newValue !== currentValue) setFormValue(name, newValue);
+    // let newValue = error ?? result;
+    // // const prevValue = values[name]
+    // if (newValue !== currentValue) setFormValue(name, newValue);
   };
 
   useDebouncedWatch(updateValue, [values], 300);

@@ -28,9 +28,19 @@ const userFolder = {
   },
 };
 
-const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
+const Users = ({ 
+  level = 1, 
+  menuStyle, 
+  menuItem, 
+  setElement, 
+  setSelectedApp, 
+  setChildBlockVisible, 
+  childBlockVisible, 
+  handleOpenNotify,
+  sidebarIsOpen,
+  setSidebarIsOpen
+}) => {
   const dispatch = useDispatch();
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const queryClient = useQueryClient();
 
@@ -44,12 +54,13 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: updateLevel(level),
+    // paddingLeft: updateLevel(level),
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
   const labelStyle = {
+    flex: sidebarIsOpen ? 1 : 0,
     color:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text
@@ -83,6 +94,8 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   );
 
   const clickHandler = (e) => {
+    setSelectedApp()
+    setSidebarIsOpen(true)
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -94,9 +107,9 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     dispatch(menuActions.setMenuItem(userFolder));
   };
-
+  console.log('childBlockVisible', childBlockVisible)
   return (
-    <Box>
+    <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
@@ -105,9 +118,13 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
             clickHandler(e);
           }}
         >
-          {childBlockVisible ? (
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={"users.svg"} size={18} />
+            {sidebarIsOpen ? 'Users' : ''}
+          </div>
+          {sidebarIsOpen && childBlockVisible ? (
             <KeyboardArrowDownIcon />
-          ) : (
+          ) : !sidebarIsOpen ? ('') : (
             <KeyboardArrowRightIcon />
           )}
           <div className="label" style={labelStyle}>
@@ -129,6 +146,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
             menuStyle={menuStyle}
             menuItem={menuItem}
             setElement={setElement}
+            handleOpenNotify={handleOpenNotify}
           />
         ))}
       </Collapse>

@@ -168,6 +168,13 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
+
+  useEffect(() => {
+    if(value) {
+      onFormChange(value)
+    }
+  }, [])
+
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>

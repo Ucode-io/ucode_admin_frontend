@@ -46,6 +46,8 @@ const LayoutSidebar = ({appId}) => {
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const projectId = store.getState().company.projectId;
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -204,6 +206,14 @@ const LayoutSidebar = ({appId}) => {
   }, [menuTemplate]);
 
   useEffect(() => {
+    if(!sidebarIsOpen) {
+      setChildBlockVisible(false)
+    } else {
+      setChildBlockVisible(true)
+    }
+  }, [sidebarIsOpen])
+
+  useEffect(() => {
     getMenuList();
   }, [searchText]);
 
@@ -329,6 +339,7 @@ const LayoutSidebar = ({appId}) => {
                     icon={
                       <ChatBubbleIcon
                         style={{
+                          margin: '0 5px',
                           width:
                             menuTemplate?.icon_size === "SMALL"
                               ? 10
@@ -350,8 +361,8 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
-
-                  {/* <Users
+                {defaultAdmin &&  
+                  <Users
                     menuStyle={menuStyle}
                     menuItem={menuItem}
                     setElement={setElement}
@@ -359,8 +370,11 @@ const LayoutSidebar = ({appId}) => {
                     setChildBlockVisible={setChildBlockVisible}
                     childBlockVisible={childBlockVisible}
                     handleOpenNotify={handleOpenNotify}
+                    sidebarIsOpen={sidebarIsOpen}
+                    setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
-                  /> */}
+                  />}
+
 
                 <div
                   className="nav-block"

@@ -351,7 +351,7 @@ const LayoutSidebar = ({appId}) => {
                   />
                 )}
 
-                  <Users
+                  {/* <Users
                     menuStyle={menuStyle}
                     menuItem={menuItem}
                     setElement={setElement}
@@ -360,7 +360,7 @@ const LayoutSidebar = ({appId}) => {
                     childBlockVisible={childBlockVisible}
                     handleOpenNotify={handleOpenNotify}
                     level={2}
-                  />
+                  /> */}
 
                 <div
                   className="nav-block"

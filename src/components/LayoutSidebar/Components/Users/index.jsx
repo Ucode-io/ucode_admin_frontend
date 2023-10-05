@@ -28,8 +28,9 @@ const userFolder = {
   },
 };
 
-const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, setChildBlockVisible, childBlockVisible, handleOpenNotify}) => {
+const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const dispatch = useDispatch();
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const queryClient = useQueryClient();
 
@@ -43,7 +44,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    // paddingLeft: updateLevel(level),
+    paddingLeft: updateLevel(level),
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -82,7 +83,6 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
   );
 
   const clickHandler = (e) => {
-    setSelectedApp()
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -129,7 +129,6 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
             menuStyle={menuStyle}
             menuItem={menuItem}
             setElement={setElement}
-            handleOpenNotify={handleOpenNotify}
           />
         ))}
       </Collapse>

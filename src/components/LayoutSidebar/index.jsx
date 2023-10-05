@@ -204,6 +204,14 @@ const LayoutSidebar = ({appId}) => {
   }, [menuTemplate]);
 
   useEffect(() => {
+    if(!sidebarIsOpen) {
+      setChildBlockVisible(false)
+    } else {
+      setChildBlockVisible(true)
+    }
+  }, [sidebarIsOpen])
+
+  useEffect(() => {
     getMenuList();
   }, [searchText]);
 
@@ -359,6 +367,8 @@ const LayoutSidebar = ({appId}) => {
                     setChildBlockVisible={setChildBlockVisible}
                     childBlockVisible={childBlockVisible}
                     handleOpenNotify={handleOpenNotify}
+                    sidebarIsOpen={sidebarIsOpen}
+                    setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
                   />
 

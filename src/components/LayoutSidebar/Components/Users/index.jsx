@@ -28,7 +28,18 @@ const userFolder = {
   },
 };
 
-const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, setChildBlockVisible, childBlockVisible, handleOpenNotify}) => {
+const Users = ({ 
+  level = 1, 
+  menuStyle, 
+  menuItem, 
+  setElement, 
+  setSelectedApp, 
+  setChildBlockVisible, 
+  childBlockVisible, 
+  handleOpenNotify,
+  sidebarIsOpen,
+  setSidebarIsOpen
+}) => {
   const dispatch = useDispatch();
   const [child, setChild] = useState();
   const queryClient = useQueryClient();
@@ -49,6 +60,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
   const labelStyle = {
+    flex: sidebarIsOpen ? 1 : 0,
     color:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text
@@ -83,6 +95,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
 
   const clickHandler = (e) => {
     setSelectedApp()
+    setSidebarIsOpen(true)
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -94,7 +107,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     dispatch(menuActions.setMenuItem(userFolder));
   };
-
+  console.log('childBlockVisible', childBlockVisible)
   return (
     <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
@@ -107,11 +120,11 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement, setSelectedApp, set
         >
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"users.svg"} size={18} />
-            Users
+            {sidebarIsOpen ? 'Users' : ''}
           </div>
-          {childBlockVisible ? (
+          {sidebarIsOpen && childBlockVisible ? (
             <KeyboardArrowDownIcon />
-          ) : (
+          ) : !sidebarIsOpen ? ('') : (
             <KeyboardArrowRightIcon />
           )}
         </Button>

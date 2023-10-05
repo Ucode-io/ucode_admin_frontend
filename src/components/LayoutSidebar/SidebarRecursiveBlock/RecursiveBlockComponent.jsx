@@ -74,6 +74,7 @@ const RecursiveBlock = ({
     ? readPermission || withoutPermission
     : readPermission;
   const activeStyle = {
+    height: '40px',
     backgroundColor:
       menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -518,7 +519,7 @@ const RecursiveBlock = ({
             />
           </>
         )}
-        {element.id === folderIds.users_folder_id && (
+        {/* {element.id === folderIds.users_folder_id && (
           <>
             <Users
               menuStyle={menuStyle}
@@ -533,7 +534,7 @@ const RecursiveBlock = ({
               level={2}
             />
           </>
-        )}
+        )} */}
 
         
         {element.id === folderIds.code_folder_id && (

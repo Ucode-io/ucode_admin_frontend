@@ -17,16 +17,10 @@ const daysOfWeek = [
 ];
 
 const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
-  console.log("data", data);
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
   const navigateToCreatePage = (time) => {
-    // navigateToForm(tableSlug, "CREATE", null, {
-    //   [startTimeStampSlug]: computedDate,
-    //   [parentTab?.slug]: parentTab?.value,
-    //   specialities_id: categoriesTab?.value,
-    // });
     setOpen(true);
     setDateInfo({});
   };
@@ -41,6 +35,13 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
 
+  const dayNames = month?.map((dateString) => {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay();
+    return daysOfWeek[dayOfWeek];
+  });
+  const dayOfWeek = dayNames?.slice(0, 7);
+
   return (
     <>
       <Box className={styles.calendarTemplate}>
@@ -51,39 +52,45 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
         ))}
       </Box>
       <Box className={styles.calendarTemplate}>
+        {/* <Box className={styles.calendar}></Box> */}
         {month?.map((date, index) => (
-          <Box key={index} className={styles.calendar}>
-            <Box className={styles.desc} onClick={() => navigateToCreatePage()}>
-              <Box className={`${styles.addButton}`}>
-                <Add color="" />
-                Создать
+          <>
+            <Box key={index} className={styles.calendar}>
+              {!data?.includes(date) && (
+                <Box
+                  className={styles.desc}
+                  onClick={() => navigateToCreatePage()}
+                >
+                  <Box className={`${styles.addButton}`}>
+                    <Add color="" />
+                    Создать
+                  </Box>
+                </Box>
+              )}
+              {new Date(date).toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "short",
+              })}
+
+              <Box className={styles.card}>
+                {data?.map((el, idx) =>
+                  dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ||
+                  dateValidFormat(date, "dd.MM.yyyy") ===
+                    dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
+                    <DataMonthCard
+                      key={el.id}
+                      date={date}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                      data={el}
+                      viewFields={viewFields}
+                      navigateToEditPage={navigateToEditPage}
+                    />
+                  ) : null
+                )}
               </Box>
             </Box>
-            {new Date(date).toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "short",
-            })}
-
-            <Box className={styles.card}>
-              {data?.map((el) =>
-                // console.log(
-                //   "ddfdfdfdf",
-                //   dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date
-                // )
-                dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ? (
-                  <DataMonthCard
-                    key={el.id}
-                    date={date}
-                    view={view}
-                    fieldsMap={fieldsMap}
-                    data={el}
-                    viewFields={viewFields}
-                    navigateToEditPage={navigateToEditPage}
-                  />
-                ) : null
-              )}
-            </Box>
-          </Box>
+          </>
         ))}
       </Box>
 

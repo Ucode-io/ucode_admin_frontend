@@ -24,6 +24,7 @@
 
 .card {
   min-width: 700px;
+  margin: 0 50px;
   border: none;
   max-height: calc(100vh - 100px);
 
@@ -55,10 +56,11 @@
   min-width: 700px;
   border: none;
 
-  .wrapper{
+  .wrapper {
     display: flex;
     align-items: center;
   }
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -84,7 +86,7 @@
       padding: 16px 24px;
       gap: 8px;
 
-      button{
+      button {
         margin: 0;
         display: flex;
         align-items: center;
@@ -203,6 +205,7 @@
           display: flex;
           align-items: center;
           gap: 30px;
+
           fieldset {
             border-radius: 6px;
           }
@@ -310,11 +313,13 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    button{
+
+    button {
       margin: 0;
       z-index: 1;
     }
-    span{
+
+    span {
       display: block;
       border-radius: 50%;
       background-color: #F76659;
@@ -398,7 +403,8 @@
     display: flex;
     align-items: center;
     width: max-content;
-    svg{
+
+    svg {
       margin-right: 8px;
       width: 24px;
       height: 24px;
@@ -407,10 +413,9 @@
     p {
 
 
-      &:hover{
+      &:hover {
         color: #0e73f6;
       }
     }
   }
 }
-

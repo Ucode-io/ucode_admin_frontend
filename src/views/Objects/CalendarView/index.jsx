@@ -5,7 +5,7 @@ import {
   format,
   startOfWeek,
 } from "date-fns";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueries, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
@@ -35,6 +35,22 @@ import CalendarWeekRange from "./CalendarWeek/CalendarWeekRange";
 import CalendarWeek from "./CalendarWeek";
 import Calendar from "./Calendar";
 import CalendarMonth from "./CalendarMonth";
+import CalendarMonthRange from "./CalendarMonth/CalendarMonthRange";
+
+const formatDate = [
+  {
+    value: "DAY",
+    label: "Day",
+  },
+  {
+    value: "WEEK",
+    label: "Week",
+  },
+  {
+    value: "MONTH",
+    label: "Month",
+  },
+];
 
 const CalendarView = ({
   view,
@@ -48,23 +64,8 @@ const CalendarView = ({
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-  const [tab, setTab] = useState();
-
-  const formatDate = [
-    {
-      value: "DAY",
-      label: "Day",
-    },
-    {
-      value: "WEEK",
-      label: "Week",
-    },
-    {
-      value: "MONTH",
-      label: "Month",
-    },
-  ];
-
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -73,17 +74,75 @@ const CalendarView = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [date, setDate] = useState(formatDate[0].value);
   const open = Boolean(anchorEl);
+  const [tab, setTab] = useState();
+  const [currentDay, setCurrentDay] = useState(new Date());
+  const [weekDates, setWeekDates] = useState(new Date());
+  const [currentMonthDates, setCurrentMonthDates] = useState([]);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const { filters, dataFilters } = useFilters(tableSlug, view.id);
-  const groupFieldIds = view.group_fields;
-  const groupFields = groupFieldIds
-    .map((id) => fieldsMap[id])
-    .filter((el) => el);
+
+  const splitArrayIntoWeeks = (data) => {
+    const weeks = [];
+    const daysPerWeek = 7;
+
+    for (let i = 0; i < data?.length; i += daysPerWeek) {
+      const week = data.slice(i, i + daysPerWeek);
+      weeks.push(week);
+    }
+
+    return weeks;
+  };
+  const splitArrayIntoMonth = (data) => {
+    const weeks = [];
+    const daysPerMonth = 30;
+
+    for (let i = 0; i < data?.length; i += daysPerMonth) {
+      const week = data.slice(i, i + daysPerMonth);
+      weeks.push(week);
+    }
+
+    return weeks;
+  };
+  const startWeek = (date) => {
+    const currentDayOfWeek = date.getDay();
+    const start = new Date(date);
+    start.setDate(date.getDate() - currentDayOfWeek + 1);
+    return start;
+  };
+  const startOfMonth = (date) => {
+    const start = new Date(date.getFullYear(), date.getMonth(), 1);
+    if (start.getDay() !== 0) {
+      start.setDate(1 - start.getDay() + 7);
+    }
+    return start;
+  };
+
+  useEffect(() => {
+    const newWeekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startWeek(currentDay));
+      day.setDate(startWeek(currentDay).getDate() + i);
+      newWeekDates && newWeekDates.push(day);
+    }
+    setWeekDates(newWeekDates);
+  }, [currentDay]);
+
+  useEffect(() => {
+    const newMonthDates = [];
+    for (let i = 0; i < 35; i++) {
+      const day = new Date(startOfMonth(currentDay));
+      day.setDate(startOfMonth(currentDay).getDate() + i);
+      newMonthDates.push(day);
+    }
+    setCurrentMonthDates(newMonthDates);
+  }, [currentDay]);
+
+  console.log("currentMonthDates", currentMonthDates);
 
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return;
@@ -96,6 +155,15 @@ const CalendarView = ({
     }
     return result;
   }, [dateFilters]);
+
+  const weekData = splitArrayIntoWeeks(datesList);
+  const monthData = splitArrayIntoMonth(datesList);
+
+  const { filters, dataFilters } = useFilters(tableSlug, view.id);
+  const groupFieldIds = view.group_fields;
+  const groupFields = groupFieldIds
+    .map((id) => fieldsMap[id])
+    .filter((el) => el);
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
@@ -200,22 +268,6 @@ const CalendarView = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const splitArrayIntoWeeks = (data) => {
-    const weeks = [];
-    const daysPerWeek = 7;
-
-    for (let i = 0; i < data?.length; i += daysPerWeek) {
-      const week = data.slice(i, i + daysPerWeek);
-      weeks.push(week);
-    }
-
-    return weeks;
-  };
-
-  const weekData = splitArrayIntoWeeks(datesList);
-
-  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
@@ -313,6 +365,8 @@ const CalendarView = ({
             datesList={datesList}
             formatDate={formatDate}
             date={date}
+            currentDay={currentDay}
+            setCurrentDay={setCurrentDay}
           />
         )}
         {date === "WEEK" && (
@@ -322,6 +376,19 @@ const CalendarView = ({
             formatDate={formatDate}
             date={date}
             weekData={weekData}
+            setCurrentDay={setCurrentDay}
+            currentDay={currentDay}
+          />
+        )}
+        {date === "MONTH" && (
+          <CalendarMonthRange
+            currentMonthIndex={currentMonthIndex}
+            setCurrentMonthIndex={setCurrentMonthIndex}
+            formatDate={formatDate}
+            date={date}
+            monthData={monthData}
+            setCurrentDay={setCurrentDay}
+            currentDay={currentDay}
           />
         )}
         <Box className={style.extra}>
@@ -333,7 +400,7 @@ const CalendarView = ({
               setDate(e.target.value);
             }}
           />
-          <CRangePicker value={dateFilters} onChange={setDateFilters} />
+          {/* <CRangePicker value={dateFilters} onChange={setDateFilters} /> */}
         </Box>
       </Box>
       {isLoading || tabLoading ? (
@@ -344,7 +411,7 @@ const CalendarView = ({
             <CalendarDay
               data={data}
               fieldsMap={fieldsMap}
-              datesList={datesList?.length && [datesList[currentIndex]]}
+              datesList={[currentDay]}
               view={view}
               tabs={tabs}
               workingDays={workingDays}
@@ -354,7 +421,7 @@ const CalendarView = ({
             <CalendarWeek
               data={data}
               fieldsMap={fieldsMap}
-              datesList={weekData?.length && weekData[currentWeekIndex]}
+              datesList={weekDates?.length && weekDates}
               view={view}
               tabs={tabs}
               workingDays={workingDays}
@@ -364,7 +431,7 @@ const CalendarView = ({
             <CalendarMonth
               data={data}
               fieldsMap={fieldsMap}
-              datesList={datesList?.length && datesList}
+              datesList={currentMonthDates?.length && currentMonthDates}
               view={view}
               tabs={tabs}
               workingDays={workingDays}

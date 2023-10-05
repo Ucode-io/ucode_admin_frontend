@@ -9,22 +9,36 @@ const CalendarWeekRange = ({
   formatDate,
   date,
   weekData,
+  setCurrentDay,
+  currentDay,
 }) => {
+  //   const nextWeek = () => {
+  //     if (currentWeekIndex < weekData.length - 1) {
+  //       setCurrentWeekIndex(currentWeekIndex + 1);
+  //     }
+  //   };
+
+  //   const previousWeek = () => {
+  //     if (currentWeekIndex > 0) {
+  //       setCurrentWeekIndex(currentWeekIndex - 1);
+  //     }
+  //   };
+
   const nextWeek = () => {
-    if (currentWeekIndex < weekData.length - 1) {
-      setCurrentWeekIndex(currentWeekIndex + 1);
-    }
+    const nextMonday = new Date(currentDay);
+    nextMonday.setDate(currentDay.getDate() + 7);
+    setCurrentDay(nextMonday);
   };
 
-  const previousWeek = () => {
-    if (currentWeekIndex > 0) {
-      setCurrentWeekIndex(currentWeekIndex - 1);
-    }
+  const prevWeek = () => {
+    const prevMonday = new Date(currentDay);
+    prevMonday.setDate(currentDay.getDate() - 7);
+    setCurrentDay(prevMonday);
   };
 
   return (
     <Box className={style.date}>
-      <RectangleIconButton onClick={previousWeek}>
+      <RectangleIconButton onClick={prevWeek}>
         <ArrowLeft />
       </RectangleIconButton>
       <Box className={style.time}>
@@ -34,7 +48,7 @@ const CalendarWeekRange = ({
         <ArrowRight />
       </RectangleIconButton>
 
-      <Typography variant="h5">{currentWeekIndex + 1} - Week</Typography>
+      <Typography variant="h5"> Week</Typography>
     </Box>
   );
 };

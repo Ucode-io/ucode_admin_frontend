@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./month.module.scss";
 import "../moveable.scss";
 import { Menu } from "@mui/material";
@@ -8,6 +8,11 @@ import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 import CalendarStatusSelect from "../../components/CalendarStatusSelect";
+import { useParams } from "react-router-dom";
+import useTimeList from "../../../../hooks/useTimeList";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import { format, setHours, setMinutes } from "date-fns";
+import Moveable from "react-moveable";
 
 const DataMonthCard = ({
   date,
@@ -21,6 +26,19 @@ const DataMonthCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
+  const { tableSlug } = useParams();
+  const { timeList } = useTimeList(view.time_interval);
+  const [target, setTarget] = useState();
+  const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
+
+  useEffect(() => {
+    if (!ref?.current) return null;
+    setTarget(ref.current);
+  }, [ref]);
+
+  const [frame] = useState({
+    translate: [0, info.calendar?.startPosition ?? 0],
+  });
 
   console.log("info", info);
 
@@ -49,6 +67,84 @@ const DataMonthCard = ({
     setIsHover(false);
   };
 
+  const onPositionChange = (position, height) => {
+    if (!position || position.translate[1] < 0) return null;
+
+    const beginIndex = Math.floor((position.translate[1] + 2) / 40);
+    const endIndex = Math.ceil((position.translate[1] + height) / 40);
+
+    const startTime = computeTime(beginIndex);
+    const endTime = computeTime(endIndex);
+
+    const computedData = {
+      ...info,
+      [view.calendar_from_slug]: startTime,
+      [view.calendar_to_slug]: endTime,
+      calendar: {
+        ...info.calendar,
+        elementFromTime: startTime,
+        elementToTime: endTime,
+      },
+    };
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: computedData,
+      })
+      .then((res) => {
+        setInfo(computedData);
+      });
+  };
+
+  const computeTime = (index) => {
+    const computedTime = timeList[index];
+
+    const hour = Number(format(computedTime, "H"));
+    const minute = Number(format(computedTime, "m"));
+
+    return setMinutes(setHours(date, hour), minute);
+  };
+  // ---------DRAG ACTIONS------------
+
+  const onDragStart = (e) => {
+    e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
+  };
+
+  const onDrag = ({ target, beforeTranslate }) => {
+    if (beforeTranslate[1] < 0) return null;
+    target.style.transform = `translateX(${beforeTranslate[1]}px)`;
+  };
+
+  const onDragEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      frame.translate = lastEvent.beforeTranslate;
+      onPositionChange(lastEvent, lastEvent.height);
+    }
+  };
+
+  // ----------RESIZE ACTIONS----------------------
+
+  const onResizeStart = (e) => {
+    e.setOrigin(["%", "%"]);
+    e.dragStart && e.dragStart.set(frame.translate);
+  };
+
+  const onResize = ({ target, width, drag }) => {
+    const beforeTranslate = drag.beforeTranslate;
+    if (beforeTranslate[1] < 0) return null;
+    target.style.width = `${width}px`;
+    target.style.transform = `translateX(${beforeTranslate[1]}px)`;
+    // if (width <= 40) setIsSingleLine(true);
+    // else setIsSingleLine(false);
+  };
+
+  const onResizeEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      frame.translate = lastEvent.drag.beforeTranslate;
+      onPositionChange(lastEvent.drag, lastEvent.height);
+    }
+  };
+
   return (
     <>
       <div
@@ -58,14 +154,21 @@ const DataMonthCard = ({
         onMouseLeave={handleMouseLeave}
         style={{
           //   top: 0,
-          transform: `translateY(${info.calendar?.startPosition}px)`,
+          transform: `translateX(${info.calendar?.startPosition}px)`,
         }}
-        onClick={openMenu}
+        onClick={(e) => {
+          e.stopPropagation();
+          openMenu(e);
+        }}
         ref={ref}
       >
         <div
           className={styles.resizing}
-          style={{ background: infoBlockBg, height: "100%" }}
+          style={{
+            background: infoBlockBg,
+            height: "100%",
+            borderRadius: "6px",
+          }}
         >
           <div
             className={styles.infoCard}
@@ -140,6 +243,24 @@ const DataMonthCard = ({
           setInfo={setInfo}
         />
       </Menu>
+      {/* <Moveable
+        target={target}
+        className="moveable_horizantal"
+        draggable
+        resizable
+        throttleDrag={40}
+        throttleResize={40}
+        keepRatio={false}
+        origin={false}
+        renderDirections={["w", "e"]}
+        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        onDragStart={onDragStart}
+        onDrag={onDrag}
+        onDragEnd={onDragEnd}
+        onResizeStart={onResizeStart}
+        onResize={onResize}
+        onResizeEnd={onResizeEnd}
+      /> */}
     </>
   );
 };

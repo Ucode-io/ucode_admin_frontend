@@ -10,18 +10,23 @@ const CalendarDayRange = ({
   datesList,
   formatDate,
   date,
+  currentDay,
+  setCurrentDay,
 }) => {
   const goToNext = () => {
-    if (currentIndex < datesList.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    const nextDay = new Date(currentDay);
+    nextDay.setDate(currentDay.getDate() + 1);
+    currentDay.setDate(nextDay.getDate());
+    setCurrentDay(nextDay);
   };
 
   const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    const previousDay = new Date(currentDay);
+    previousDay.setDate(currentDay.getDate() - 1);
+    currentDay.setDate(previousDay.getDate());
+    setCurrentDay(previousDay);
   };
+
   return (
     <Box className={style.date}>
       <RectangleIconButton onClick={goToPrevious}>
@@ -35,9 +40,7 @@ const CalendarDayRange = ({
       </RectangleIconButton>
 
       <Typography variant="h5">
-        {datesList?.length
-          ? format(new Date(datesList[currentIndex]), "d MMMM yyyy")
-          : ""}
+        {datesList?.length ? format(currentDay, "d MMMM yyyy") : ""}
       </Typography>
     </Box>
   );

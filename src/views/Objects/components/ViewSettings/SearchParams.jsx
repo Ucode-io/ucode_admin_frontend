@@ -78,7 +78,7 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
       </div> */}
       <div
         style={{
-          padding: "10px",
+          padding: "10px 14px",
           minWidth: "200px",
         }}
       >
@@ -87,7 +87,7 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
             display: "flex",
             alignItems: "center",
             borderBottom: "1px solid #e0e0e0",
-            padding: "10px 0",
+            padding: "6px 0",
             justifyContent: "space-between",
           }}
         >
@@ -98,8 +98,6 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
               gap: "10px",
             }}
           >
-            <div>{}</div>
-
             <div style={{ textAlign: "end" }}>All</div>
           </div>
 
@@ -118,8 +116,8 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
             style={{
               display: "flex",
               alignItems: "center",
-              borderBottom: index === columns.length - 1 ? "none" : "1px solid #e0e0e0",
-              padding: "10px 0",
+              borderBottom: "1px solid #e0e0e0",
+              padding: "6px 0",
               justifyContent: "space-between",
             }}
           >

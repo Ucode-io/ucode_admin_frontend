@@ -87,7 +87,7 @@ const TableRow = ({
         data={data}
       />
     );
-
+    
   return (
     <>
       {relationAction === undefined ? (
@@ -216,6 +216,7 @@ const TableRow = ({
                       field={column}
                       mainForm={mainForm}
                       row={row}
+                      isWrap={view?.attributes?.textWrap}
                       index={rowIndex}
                       control={control}
                       setFormValue={setFormValue}

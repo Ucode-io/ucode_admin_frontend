@@ -38,6 +38,7 @@ const NewCellElementGenerator = ({
   watch,
   columns = [],
   row,
+  isWrapField,
   updateObject,
   control,
   setFormValue,
@@ -137,13 +138,6 @@ const NewCellElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-
-  let watchValue = useWatch({
-    control,
-    name: computedSlug,
-  });
-
-  console.log("ssssssssss");
   
   switch (field.type) {
     case "LOOKUP":
@@ -558,6 +552,7 @@ const NewCellElementGenerator = ({
 
         <MultiLineCellFormElement
           control={control}
+          isWrapField={isWrapField}
           updateObject={updateObject}
           isNewTableView={true}
           computedSlug={computedSlug}

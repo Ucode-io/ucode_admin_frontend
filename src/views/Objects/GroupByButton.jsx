@@ -1,11 +1,11 @@
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import { CircularProgress, Menu } from "@mui/material";
+import { Badge, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import GroupsTab from "./components/ViewSettings/GroupsTab";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
 import { use } from "i18next";
 
@@ -85,28 +85,34 @@ export default function GroupByButton({ selectedTabIndex }) {
       });
   };
 
+  const selectedColumns = useWatch({
+    control: form.control,
+    name: "group_fields",
+  });
+
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-          color: "#A8A8A8",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          padding: "0 10px",
-        }}
-        onClick={handleClick}
-      >
-        <LayersOutlinedIcon color={"#A8A8A8"} />
-        Tab
-      </div>
-
+      <Badge badgeContent={selectedColumns?.length} color="primary">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            color: "#A8A8A8",
+            cursor: "pointer",
+            fontSize: "13px",
+            fontWeight: 500,
+            lineHeight: "16px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            padding: "0 10px",
+          }}
+          onClick={handleClick}
+        >
+          <LayersOutlinedIcon color={"#A8A8A8"} />
+          Tab
+        </div>
+      </Badge>
       <Menu
         open={open}
         onClose={handleClose}
@@ -141,14 +147,7 @@ export default function GroupByButton({ selectedTabIndex }) {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <GroupsTab
-            columns={computedColumns}
-            isLoading={isLoading}
-            updateLoading={updateLoading}
-            updateView={updateView}
-            selectedView={views?.[selectedTabIndex]}
-            form={form}
-          />
+          <GroupsTab columns={computedColumns} isLoading={isLoading} updateLoading={updateLoading} updateView={updateView} selectedView={views?.[selectedTabIndex]} form={form} />
         )}
       </Menu>
     </div>

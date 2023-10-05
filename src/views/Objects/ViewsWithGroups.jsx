@@ -411,6 +411,9 @@ const ViewsWithGroups = ({
               sortDatas={sortedDatas}
               setSortedDatas={setSortedDatas}
             />
+
+            <Divider orientation="vertical" flexItem />
+
             <GroupColumnVisible
               selectedTabIndex={selectedTabIndex}
               views={visibleViews}

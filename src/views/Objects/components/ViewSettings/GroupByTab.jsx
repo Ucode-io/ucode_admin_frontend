@@ -41,11 +41,6 @@ const GroupByTab = ({form, updateView, isMenu}) => {
     keyName: "key",
   });
 
-  const watchedMainColumns = useWatch({
-    control: form.control,
-    name: "columns",
-  });
-
   const {
     fields: groupColumn,
     replace: replaceGroup,
@@ -161,11 +156,15 @@ const GroupByTab = ({form, updateView, isMenu}) => {
   return (
     <div
       style={{
+        minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
+        padding: '10px 14px'
       }}
     >
-      <div className={styles.table}>
+      <div className={styles.table} style={{
+        
+      }}>
         <Container
           onDrop={onDrop}
           dropPlaceholder={{className: "drag-row-drop-preview"}}
@@ -173,7 +172,7 @@ const GroupByTab = ({form, updateView, isMenu}) => {
           {groupColumn?.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
-                <div className={styles.cell} style={{flex: 1}}>
+                <div className={styles.cell} style={{flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0}}>
                   <div
                     style={{
                       width: 20,
@@ -188,7 +187,7 @@ const GroupByTab = ({form, updateView, isMenu}) => {
                   </div>
                   {column.label}
                 </div>
-                <div className={styles.cell} style={{width: 70}}>
+                <div className={styles.cell} style={{width: 70, border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0, display: 'flex', justifyContent: 'flex-end'}}>
                   <Switch
                     disabled={
                       (!form.watch(

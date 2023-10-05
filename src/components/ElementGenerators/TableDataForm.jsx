@@ -13,15 +13,20 @@ export default function TableDataForm({ tableSlug, fields, field, row, getValues
   );
 
   const isWrapField = useMemo(() => {
+    if (!isWrap || !field || !field.id) {
+      return null;
+    }
+  
     return Object.keys(isWrap)
       .map((key) => {
         return {
           id: key,
-          status: isWrap[key],
+          status: isWrap?.[key],
         };
       })
-      .find((x) => x.id === field.id)?.status;
-  }, [isWrap, field.id]);
+      .find((x) => x?.id === field?.id)?.status;
+  }, [isWrap, field?.id]);
+  
 
   return (
     <Box

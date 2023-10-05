@@ -1,18 +1,11 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { CircularProgress, Menu } from "@mui/material";
+import { Badge, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 
-export default function GroupColumnVisible({
-  selectedTabIndex,
-  views,
-  columns,
-  relationColumns,
-  isLoading,
-  form,
-}) {
+export default function GroupColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -49,9 +42,7 @@ export default function GroupColumnVisible({
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
+          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, group_by, columns]);
@@ -61,13 +52,9 @@ export default function GroupColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
         },
-        columns: watchedColumns
-          ?.filter((el) => el?.is_checked)
-          ?.map((el) => el.id),
+        columns: watchedColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -77,26 +64,27 @@ export default function GroupColumnVisible({
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-          color: "#A8A8A8",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          padding: "0 10px",
-        }}
-        onClick={handleClick}
-      >
-        <AppsIcon color={"#A8A8A8"} />
-        Group
-      </div>
-
+      <Badge badgeContent={form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length} color="primary">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            color: "#A8A8A8",
+            cursor: "pointer",
+            fontSize: "13px",
+            fontWeight: 500,
+            lineHeight: "16px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            padding: "0 10px",
+          }}
+          onClick={handleClick}
+        >
+          <AppsIcon color={"#A8A8A8"} />
+          Group
+        </div>
+      </Badge>
       <Menu
         open={open}
         onClose={handleClose}
@@ -126,11 +114,7 @@ export default function GroupColumnVisible({
           },
         }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <GroupByTab form={form} updateView={updateView} isMenu={true} />
-        )}
+        {isLoading ? <CircularProgress /> : <GroupByTab form={form} updateView={updateView} isMenu={true} />}
       </Menu>
     </div>
   );

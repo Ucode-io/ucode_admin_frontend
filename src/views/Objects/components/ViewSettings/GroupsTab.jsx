@@ -95,19 +95,24 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
   return (
     <div
       style={{
+        minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
+        padding: "10px 14px"
       }}
     >
       <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
             computedColumns.map((column) => (
-              <CTableRow key={column.id}>
+              <CTableRow key={column.id} style={{
+                // borderBottom: "1px solid #eee"
+              }}>
                 <CTableCell
                   style={{
-                    paddingTop: 0,
-                    paddingBottom: 0,
+                    padding: 0,
+                    border: 0,
+                    borderBottom: '1px solid #eee',
                   }}
                 >
                   <div
@@ -121,7 +126,7 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
                     <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
                   </div>
                 </CTableCell>
-                <CTableCell style={{ width: 20, paddingTop: "12px", paddingBottom: "12px" }}>
+                <CTableCell style={{ width: 20, borderBottom: '1px solid #eee', borderRight: 0 }}>
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}

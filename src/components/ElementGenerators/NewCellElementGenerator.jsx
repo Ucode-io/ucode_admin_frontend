@@ -35,6 +35,7 @@ const NewCellElementGenerator = ({
   isBlackBg = false,
   row,
   relationfields,
+  isWrapField,
   updateObject,
   control,
   setFormValue,
@@ -540,6 +541,7 @@ const NewCellElementGenerator = ({
 
         <MultiLineCellFormElement
           control={control}
+          isWrapField={isWrapField}
           updateObject={updateObject}
           isNewTableView={true}
           computedSlug={computedSlug}

@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import SortIcon from "@mui/icons-material/Sort";
-import { Autocomplete, Button, Menu, TextField } from "@mui/material";
+import { Autocomplete, Badge, Button, Menu, TextField } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -12,13 +12,15 @@ import SortMenuRow from "./SortMenuRow";
 export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
   const form = useForm({
     defaultValues: {
-      sort: [{
-        field: "",
-        order: "ASC",
-      }],
+      sort: [
+        {
+          field: "",
+          order: "ASC",
+        },
+      ],
     },
   });
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
@@ -94,26 +96,27 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-          color: "#A8A8A8",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          padding: "0 10px",
-        }}
-        onClick={handleClick}
-      >
-        <SortIcon color={"#A8A8A8"} />
-        Sort
-      </div>
-
+      <Badge badgeContent={watchedSorts.filter(el => el.field !== "")?.length} color="primary">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            color: "#A8A8A8",
+            cursor: "pointer",
+            fontSize: "13px",
+            fontWeight: 500,
+            lineHeight: "16px",
+            letterSpacing: "0em",
+            textAlign: "left",
+            padding: "0 10px",
+          }}
+          onClick={handleClick}
+        >
+          <SortIcon color={"#A8A8A8"} />
+          Sort
+        </div>
+      </Badge>
       <Menu
         open={open}
         onClose={handleClose}

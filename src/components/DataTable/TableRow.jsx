@@ -97,7 +97,7 @@ const TableRow = ({
         data={data}
       />
     );
-
+    
   return (
     <>
       {!relationAction ? (
@@ -291,6 +291,7 @@ const TableRow = ({
                       getValues={getValues}
                       mainForm={mainForm}
                       row={row}
+                      isWrap={view?.attributes?.textWrap}
                       index={rowIndex}
                       control={control}
                       setFormValue={setFormValue}

@@ -1,5 +1,5 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Checkbox, Menu, Switch } from "@mui/material";
+import { Badge, Checkbox, Menu, Switch } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -29,7 +29,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
-import LinkIcon from '@mui/icons-material/Link';
+import LinkIcon from "@mui/icons-material/Link";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -132,16 +132,22 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     };
   }, []);
 
+  const badgeCount = useMemo(() => {
+    return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter((key) => selectedView?.attributes?.fixedColumns?.[key]).length;
+  }, [selectedView?.attributes?.fixedColumns]);
+  
   return (
     <>
-      <button className={style.moreButton} onClick={handleClick}>
-        <ViewColumnOutlinedIcon
-          style={{
-            color: "#A8A8A8",
-          }}
-        />
-        Fix col's
-      </button>
+      <Badge badgeContent={badgeCount} color="primary">
+        <button className={style.moreButton} onClick={handleClick}>
+          <ViewColumnOutlinedIcon
+            style={{
+              color: "#A8A8A8",
+            }}
+          />
+          Fix col's
+        </button>
+      </Badge>
 
       <Menu
         open={open}

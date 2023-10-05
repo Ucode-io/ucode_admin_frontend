@@ -136,9 +136,8 @@ const ViewsWithGroups = ({
   const {
     control,
     reset,
-    handleSubmit,
-    watch,
     setValue: setFormValue,
+    getValues,
   } = useForm({
     defaultValues: {
       multi: [],
@@ -229,9 +228,9 @@ const ViewsWithGroups = ({
     navigate(url);
   };
 
-  useEffect(() => {
-    setSelectedView(views?.[selectedTabIndex] ?? {});
-  }, [views, selectedTabIndex]);
+  // useEffect(() => {
+  //   setSelectedView(views?.[selectedTabIndex] ?? {});
+  // }, [views, selectedTabIndex]);
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
@@ -755,6 +754,7 @@ const ViewsWithGroups = ({
                     ) : (
                       <TableView
                         control={control}
+                        getValues={getValues}
                         setFormVisible={setFormVisible}
                         formVisible={formVisible}
                         filters={filters}
@@ -803,6 +803,7 @@ const ViewsWithGroups = ({
                   ) : (
                     <TableView
                       setDataLength={setDataLength}
+                      getValues={getValues}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
                       isTableView={true}

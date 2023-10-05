@@ -388,11 +388,11 @@ const AutoCompleteElement = ({
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-      if (optionsFromFunctions?.length >= 10) {
+      if (optionsFromFunctions?.options?.length >= 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     } else {
-      if (optionsFromLocale?.length >= 10) {
+      if (optionsFromLocale?.options?.length >= 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     }

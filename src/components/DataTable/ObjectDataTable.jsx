@@ -387,7 +387,7 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length && (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+        {(isRelationTable ? fields : data).length > 0 ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
             width={"80px"}
             remove={remove}
@@ -423,7 +423,7 @@ const ObjectDataTable = ({
             data={data}
             view={view}
           />
-        ))}
+        )) : ""}
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}

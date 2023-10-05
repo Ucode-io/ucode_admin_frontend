@@ -10,6 +10,7 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   row,
@@ -59,34 +60,6 @@ const TableRow = ({
     }
   };
 
-  // if (formVisible)
-  //   return (
-  //     <TableRowForm
-  //       onDeleteClick={onDeleteClick}
-  //       isTableView={isTableView}
-  //       remove={remove}
-  //       watch={watch}
-  //       onCheckboxChange={onCheckboxChange}
-  //       checkboxValue={checkboxValue}
-  //       row={row}
-  //       key={key}
-  //       formVisible={formVisible}
-  //       currentPage={currentPage}
-  //       limit={limit}
-  //       control={control}
-  //       setFormValue={setFormValue}
-  //       rowIndex={rowIndex}
-  //       columns={columns}
-  //       tableHeight={tableHeight}
-  //       tableSettings={tableSettings}
-  //       pageName={pageName}
-  //       calculateWidth={calculateWidth}
-  //       tableSlug={tableSlug}
-  //       relationFields={relationFields}
-  //       data={data}
-  //     />
-  //   );
-
   const parentRef = useRef(null);
 
   const virtualizer = useVirtualizer({
@@ -96,6 +69,34 @@ const TableRow = ({
     estimateSize: () => 100,
     overscan: columns.length,
   });
+
+  if (formVisible)
+    return (
+      <TableRowForm
+        onDeleteClick={onDeleteClick}
+        isTableView={isTableView}
+        remove={remove}
+        watch={watch}
+        onCheckboxChange={onCheckboxChange}
+        checkboxValue={checkboxValue}
+        row={row}
+        key={key}
+        formVisible={formVisible}
+        currentPage={currentPage}
+        limit={limit}
+        control={control}
+        setFormValue={setFormValue}
+        rowIndex={rowIndex}
+        columns={columns}
+        tableHeight={tableHeight}
+        tableSettings={tableSettings}
+        pageName={pageName}
+        calculateWidth={calculateWidth}
+        tableSlug={tableSlug}
+        relationFields={relationFields}
+        data={data}
+      />
+    );
 
   return (
     <>
@@ -192,7 +193,6 @@ const TableRow = ({
 
           {virtualizer.getVirtualItems().map(
             (virtualColumn) => (
-              console.log("sssssqqqqq", virtualColumn),
               columns[virtualColumn.index]?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={columns[virtualColumn.index].id}

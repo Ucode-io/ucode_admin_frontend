@@ -46,6 +46,8 @@ const LayoutSidebar = ({appId}) => {
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const projectId = store.getState().company.projectId;
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -359,7 +361,7 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
-
+                {defaultAdmin &&  
                   <Users
                     menuStyle={menuStyle}
                     menuItem={menuItem}
@@ -371,7 +373,8 @@ const LayoutSidebar = ({appId}) => {
                     sidebarIsOpen={sidebarIsOpen}
                     setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
-                  />
+                  />}
+
 
                 <div
                   className="nav-block"

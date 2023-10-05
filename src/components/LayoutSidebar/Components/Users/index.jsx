@@ -109,7 +109,7 @@ const Users = ({
   };
   console.log('childBlockVisible', childBlockVisible)
   return (
-    <Box sx={{margin: '0 5px'}}>
+    <Box sx={{margin: '0 10px'}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}

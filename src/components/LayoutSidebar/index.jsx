@@ -339,7 +339,7 @@ const LayoutSidebar = ({appId}) => {
                     icon={
                       <ChatBubbleIcon
                         style={{
-                          margin: '0 5px',
+                          margin: '0 10px',
                           width:
                             menuTemplate?.icon_size === "SMALL"
                               ? 10

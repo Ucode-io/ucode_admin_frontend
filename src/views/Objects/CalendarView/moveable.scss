@@ -29,3 +29,35 @@
     z-index: 1;
   }
 }
+
+.moveable_horizantal .moveable-line {
+  display: none;
+}
+
+.moveable_horizantal .moveable-control-box {
+  z-index: 0 !important;
+}
+
+.moveable_horizantal .moveable-control {
+  // min-width: 100px !important;
+  // height: 3px !important;
+  // margin-top: -20px !important;
+  border: none !important;
+  background-color: #999999 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  // left: 30px !important;
+
+  &.moveable-n {
+    border-radius: 10px 10px 0 0 !important;
+    margin-left: -80px !important;
+    margin-top: 2px !important;
+  }
+
+  &.moveable-s {
+    border-radius: 0 0 10px 10px !important;
+    margin-left: -80px !important;
+    z-index: 1;
+  }
+}

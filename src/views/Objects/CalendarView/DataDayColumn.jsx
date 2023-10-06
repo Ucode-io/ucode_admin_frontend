@@ -7,21 +7,22 @@ import {
   setHours,
   setMinutes,
 } from "date-fns";
-import { useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
-  Navigate,
   useParams,
   useSearchParams,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService.js";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useTimeList from "../../../hooks/useTimeList";
-import DataCard from "./DataCard";
-import styles from "./style.module.scss";
+import styles from "./day.module.scss";
 import { useQueryClient } from "react-query";
+import DataDayCard from "./DataDayCard.jsx";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage.jsx";
 
-const DataColumn = ({
+const DataDayColumn = ({
   date,
   data,
   categoriesTab,
@@ -35,7 +36,11 @@ const DataColumn = ({
   const queryGuid = searchParams.get("guid");
   const queryTableSlug = searchParams.get("tableSlug");
   const querServiceTime = searchParams.get("serviceTime");
+  const [open, setOpen] = useState();
+  const [dateInfo, setDateInfo] = useState({});
+  const [selectedRow, setSelectedRow] = useState({});
   const navigate = useNavigate();
+
   const queryClient = useQueryClient();
 
   const { navigateToForm } = useTabRouter();
@@ -144,7 +149,13 @@ const DataColumn = ({
       navigate(-1);
     } else {
       const startTimeStampSlug = view?.calendar_from_slug;
-      navigateToForm(tableSlug, "CREATE", null, {
+      // navigateToForm(tableSlug, "CREATE", null, {
+      //   [startTimeStampSlug]: computedDate,
+      //   [parentTab?.slug]: parentTab?.value,
+      //   specialities_id: categoriesTab?.value,
+      // });
+      setOpen(true);
+      setDateInfo({
         [startTimeStampSlug]: computedDate,
         [parentTab?.slug]: parentTab?.value,
         specialities_id: categoriesTab?.value,
@@ -153,7 +164,9 @@ const DataColumn = ({
   };
 
   const navigateToEditPage = (el) => {
-    navigateToForm(tableSlug, "EDIT", el, {
+    setOpen(true);
+    setSelectedRow(el);
+    setDateInfo({
       [parentTab?.slug]: parentTab?.value,
     });
   };
@@ -163,8 +176,10 @@ const DataColumn = ({
       {timeList.map((time, index) => (
         <div
           key={time}
-          className={styles.timeBlock}
-          style={{ overflow: "auto" }}
+          className={styles.timesBlock}
+          style={{
+            overflow: "auto",
+          }}
         >
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
@@ -178,19 +193,27 @@ const DataColumn = ({
         </div>
       ))}
 
-      {elementsWithPosition?.map((el) => (
-        <DataCard
-          key={el.id}
-          date={date}
-          view={view}
-          fieldsMap={fieldsMap}
-          data={el}
-          viewFields={viewFields}
-          navigateToEditPage={navigateToEditPage}
-        />
-      ))}
+      {elementsWithPosition?.map((el) => {
+        return (
+          <DataDayCard
+            key={el.id}
+            date={date}
+            view={view}
+            fieldsMap={fieldsMap}
+            data={el}
+            viewFields={viewFields}
+            navigateToEditPage={navigateToEditPage}
+          />
+        );
+      })}
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        dateInfo={dateInfo}
+        selectedRow={selectedRow}
+      />
     </div>
   );
 };
 
-export default DataColumn;
+export default DataDayColumn;

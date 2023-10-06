@@ -1,11 +1,17 @@
-import CalendarColumn from "./CalendarColumn";
-import styles from "./style.module.scss";
-import TimesColumn from "./TimesColumns";
-import { FixedSizeList } from "react-window";
+import styles from "../day.module.scss";
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import CalendarWeekColumn from "./CalendarWeekColumn";
+import TimesColumn from "../TimesColumns";
 
-const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
+const CalendarWeek = ({
+  data,
+  fieldsMap,
+  datesList,
+  view,
+  tabs,
+  workingDays,
+}) => {
   const parentRef = useRef(null);
 
   const virtualizer = useVirtualizer({
@@ -15,8 +21,8 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
     estimateSize: () => 500,
   });
   return (
-    <div className={styles.calendar} ref={parentRef}>
-      <TimesColumn view={view} />
+    <div className={styles.calendarday} ref={parentRef}>
+      <TimesColumn view={view} data={data} />
 
       <div
         style={{
@@ -38,7 +44,7 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
               transform: `translateX(${virtualColumn.start}px)`,
             }}
           >
-            <CalendarColumn
+            <CalendarWeekColumn
               date={datesList[virtualColumn.index]}
               data={data}
               fieldsMap={fieldsMap}
@@ -49,19 +55,8 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
           </div>
         ))}
       </div>
-
-      {/* {datesList?.map((date) => (
-          <CalendarColumn
-          date={date}
-          data={data}
-          fieldsMap={fieldsMap}
-          view={view}
-          tabs={tabs}
-          workingDays={workingDays}
-        />
-        ))} */}
     </div>
   );
 };
 
-export default Calendar;
+export default CalendarWeek;

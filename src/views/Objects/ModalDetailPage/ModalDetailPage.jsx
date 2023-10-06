@@ -18,22 +18,32 @@ const style = {
   boxShadow: 24,
 };
 
-export default function ModalDetailPage({ open, setOpen, tableSlug }) {
+export default function ModalDetailPage({
+  open,
+  setOpen,
+  tableSlug,
+  selectedRow,
+  dateInfo,
+}) {
   const handleClose = () => setOpen(false);
   return (
     <Modal open={open} onClose={handleClose} className="child-position-center">
-      
-        <Card className={`${styles.card} PlatformModal`}>
-          <div className={styles.header}>
-            <div className={styles.cardTitle}>View settings</div>
-            <IconButton className={styles.closeButton} onClick={handleClose}>
-              <Close className={styles.closeIcon} />
-            </IconButton>
-          </div>
+      <Card className={`${styles.card} PlatformModal`}>
+        <div className={styles.header}>
+          <div className={styles.cardTitle}>View settings</div>
+          <IconButton className={styles.closeButton} onClick={handleClose}>
+            <Close className={styles.closeIcon} />
+          </IconButton>
+        </div>
 
-          <ObjectsFormPage tableSlugFromProps={tableSlug} handleClose={handleClose} modal={true}/>
-        </Card>
-      
+        <ObjectsFormPage
+          selectedRow={selectedRow}
+          tableSlugFromProps={tableSlug}
+          handleClose={handleClose}
+          modal={true}
+          dateInfo={dateInfo}
+        />
+      </Card>
     </Modal>
   );
 }

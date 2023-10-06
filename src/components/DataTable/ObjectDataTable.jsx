@@ -89,7 +89,6 @@ const ObjectDataTable = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
 
-
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
@@ -387,43 +386,44 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length && (isRelationTable ? fields : data)?.map((row, rowIndex) => (
-          <TableRow
-            width={"80px"}
-            remove={remove}
-            watch={watch}
-            control={control}
-            key={row.id}
-            row={row}
-            mainForm={mainForm}
-            formVisible={formVisible}
-            rowIndex={rowIndex}
-            isTableView={isTableView}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            isRelationTable={isRelationTable}
-            relatedTableSlug={relatedTableSlug}
-            onRowClick={onRowClick}
-            isChecked={isChecked}
-            calculateWidthFixedColumn={calculateWidthFixedColumn}
-            onCheckboxChange={onCheckboxChange}
-            currentPage={currentPage}
-            limit={limit}
-            setFormValue={setFormValue}
-            columns={columns}
-            tableHeight={tableHeight}
-            tableSettings={tableSettings}
-            pageName={pageName}
-            calculateWidth={calculateWidth}
-            tableSlug={tableSlug}
-            onDeleteClick={onDeleteClick}
-            relationAction={relationAction}
-            onChecked={onChecked}
-            relationFields={fields}
-            data={data}
-            view={view}
-          />
-        ))}
+        {(isRelationTable ? fields : data).length &&
+          (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+            <TableRow
+              width={"80px"}
+              remove={remove}
+              watch={watch}
+              control={control}
+              key={row.id}
+              row={row}
+              mainForm={mainForm}
+              formVisible={formVisible}
+              rowIndex={rowIndex}
+              isTableView={isTableView}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              isRelationTable={isRelationTable}
+              relatedTableSlug={relatedTableSlug}
+              onRowClick={onRowClick}
+              isChecked={isChecked}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              onCheckboxChange={onCheckboxChange}
+              currentPage={currentPage}
+              limit={limit}
+              setFormValue={setFormValue}
+              columns={columns}
+              tableHeight={tableHeight}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              calculateWidth={calculateWidth}
+              tableSlug={tableSlug}
+              onDeleteClick={onDeleteClick}
+              relationAction={relationAction}
+              onChecked={onChecked}
+              relationFields={fields}
+              data={data}
+              view={view}
+            />
+          ))}
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}

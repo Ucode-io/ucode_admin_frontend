@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { useMemo } from "react";
+import styles from "./week.module.scss";
+import DayMockColumn from "../DayMockColumn";
+import DataWeekColumn from "./DataWeekColumn";
 
-import DataColumn from "./DataColumn";
-import MockColumn from "./MockColumn";
-import styles from "./style.module.scss";
-
-const RecursiveBlock = ({
+const RecursiveWeekBlock = ({
   date,
   data,
   fieldsMap,
@@ -32,9 +30,8 @@ const RecursiveBlock = ({
     return computedElements;
   }, [parentTab, tabs, level]);
 
-  // if (!elements?.length)
-  //   return <MockColumn view={view} level={level} tabs={tabs} />;
-
+  if (!elements?.length)
+    return <DayMockColumn view={view} level={level} tabs={tabs} />;
   return (
     <div className={styles.row}>
       {elements?.map((tab) => (
@@ -54,7 +51,7 @@ const RecursiveBlock = ({
           </div>
 
           {tabs?.[level + 1] ? (
-            <RecursiveBlock
+            <RecursiveWeekBlock
               date={date}
               data={data}
               tabs={tabs}
@@ -65,7 +62,7 @@ const RecursiveBlock = ({
               workingDays={workingDays}
             />
           ) : (
-            <DataColumn
+            <DataWeekColumn
               date={date}
               data={data}
               parentTab={tab}
@@ -93,4 +90,4 @@ const getChildrenList = (parentTab, tabs, level) => {
   return computedElements;
 };
 
-export default RecursiveBlock;
+export default RecursiveWeekBlock;

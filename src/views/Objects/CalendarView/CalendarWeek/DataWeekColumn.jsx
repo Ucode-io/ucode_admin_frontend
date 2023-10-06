@@ -7,21 +7,16 @@ import {
   setHours,
   setMinutes,
 } from "date-fns";
-import { useEffect, useMemo } from "react";
-import {
-  Navigate,
-  useParams,
-  useSearchParams,
-  useNavigate,
-} from "react-router-dom";
-import constructorObjectService from "../../../services/constructorObjectService.js";
-import useTabRouter from "../../../hooks/useTabRouter";
-import useTimeList from "../../../hooks/useTimeList";
-import DataCard from "./DataCard";
-import styles from "./style.module.scss";
+import { useMemo, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import styles from "./week.module.scss";
 import { useQueryClient } from "react-query";
+import DataWeekCard from "./DataWeekCard.jsx";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import useTimeList from "../../../../hooks/useTimeList";
+import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 
-const DataColumn = ({
+const DataWeekColumn = ({
   date,
   data,
   categoriesTab,
@@ -30,15 +25,16 @@ const DataColumn = ({
   view,
   workingDays,
 }) => {
-  const { tableSlug } = useParams();
   const [searchParams] = useSearchParams();
   const queryGuid = searchParams.get("guid");
   const queryTableSlug = searchParams.get("tableSlug");
   const querServiceTime = searchParams.get("serviceTime");
+  const [open, setOpen] = useState();
+  const [dateInfo, setDateInfo] = useState({});
+  const [selectedRow, setSelectedRow] = useState({});
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { navigateToForm } = useTabRouter();
   const { timeList, timeInterval } = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
@@ -144,7 +140,13 @@ const DataColumn = ({
       navigate(-1);
     } else {
       const startTimeStampSlug = view?.calendar_from_slug;
-      navigateToForm(tableSlug, "CREATE", null, {
+      // navigateToForm(tableSlug, "CREATE", null, {
+      //   [startTimeStampSlug]: computedDate,
+      //   [parentTab?.slug]: parentTab?.value,
+      //   specialities_id: categoriesTab?.value,
+      // });
+      setOpen(true);
+      setDateInfo({
         [startTimeStampSlug]: computedDate,
         [parentTab?.slug]: parentTab?.value,
         specialities_id: categoriesTab?.value,
@@ -153,7 +155,9 @@ const DataColumn = ({
   };
 
   const navigateToEditPage = (el) => {
-    navigateToForm(tableSlug, "EDIT", el, {
+    setOpen(true);
+    setSelectedRow(el);
+    setDateInfo({
       [parentTab?.slug]: parentTab?.value,
     });
   };
@@ -164,7 +168,9 @@ const DataColumn = ({
         <div
           key={time}
           className={styles.timeBlock}
-          style={{ overflow: "auto" }}
+          style={{
+            overflow: "auto",
+          }}
         >
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
@@ -178,19 +184,27 @@ const DataColumn = ({
         </div>
       ))}
 
-      {elementsWithPosition?.map((el) => (
-        <DataCard
-          key={el.id}
-          date={date}
-          view={view}
-          fieldsMap={fieldsMap}
-          data={el}
-          viewFields={viewFields}
-          navigateToEditPage={navigateToEditPage}
-        />
-      ))}
+      {elementsWithPosition?.map((el) => {
+        return (
+          <DataWeekCard
+            key={el.id}
+            date={date}
+            view={view}
+            fieldsMap={fieldsMap}
+            data={el}
+            viewFields={viewFields}
+            navigateToEditPage={navigateToEditPage}
+          />
+        );
+      })}
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        dateInfo={dateInfo}
+        selectedRow={selectedRow}
+      />
     </div>
   );
 };
 
-export default DataColumn;
+export default DataWeekColumn;

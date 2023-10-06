@@ -1,11 +1,16 @@
-import CalendarColumn from "./CalendarColumn";
-import styles from "./style.module.scss";
-import TimesColumn from "./TimesColumns";
-import { FixedSizeList } from "react-window";
+import styles from "../day.module.scss";
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import CalendarTemplate from "./CalendarTemplate";
 
-const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
+const CalendarMonth = ({
+  data,
+  fieldsMap,
+  datesList,
+  view,
+  tabs,
+  workingDays,
+}) => {
   const parentRef = useRef(null);
 
   const virtualizer = useVirtualizer({
@@ -14,54 +19,57 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
+  console.log("virtualizer", virtualizer.getVirtualItems());
   return (
-    <div className={styles.calendar} ref={parentRef}>
-      <TimesColumn view={view} />
+    <div className={styles.calendarmonth} ref={parentRef}>
+      {/* <TimesColumnMonth view={view} data={data} /> */}
 
+      <CalendarTemplate
+        month={datesList}
+        data={data}
+        fieldsMap={fieldsMap}
+        view={view}
+      />
       <div
         style={{
-          width: virtualizer.getTotalSize(),
+          //   width: virtualizer.getTotalSize(),
           height: "100%",
           position: "relative",
         }}
       >
-        {virtualizer.getVirtualItems().map((virtualColumn) => (
+        {/* {datesList?.map((item, index) => (
           <div
-            key={virtualColumn.key}
-            data-index={virtualColumn.index}
-            ref={virtualizer.measureElement}
+            key={index}
             style={{
               position: "absolute",
               top: 0,
               left: 0,
               height: "100%",
-              transform: `translateX(${virtualColumn.start}px)`,
+              //   transform: `translateX(${virtualColumn.start}px)`,
             }}
           >
-            <CalendarColumn
-              date={datesList[virtualColumn.index]}
+            <CalendarMonthColumn
+              date={item}
               data={data}
               fieldsMap={fieldsMap}
               view={view}
               tabs={tabs}
               workingDays={workingDays}
+              index={index}
             />
           </div>
-        ))}
-      </div>
-
-      {/* {datesList?.map((date) => (
-          <CalendarColumn
-          date={date}
+        ))} */}
+        {/* <DataMonthColumn
+          date={datesList}
           data={data}
           fieldsMap={fieldsMap}
           view={view}
           tabs={tabs}
           workingDays={workingDays}
-        />
-        ))} */}
+        /> */}
+      </div>
     </div>
   );
 };
 
-export default Calendar;
+export default CalendarMonth;

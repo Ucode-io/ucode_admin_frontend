@@ -13,6 +13,8 @@ export default function ColumnVisible({
   relationColumns,
   isLoading,
   form,
+  text = "Columns",
+  width = "",
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -27,11 +29,7 @@ export default function ColumnVisible({
 
   const type = views?.[selectedTabIndex]?.type;
   const computedColumns = useMemo(() => {
-    if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns;
-    } else {
-      return [...columns, ...relationColumns];
-    }
+    return columns;
   }, [columns, relationColumns, type]);
 
   const watchedColumns = form.watch("columns");
@@ -82,11 +80,12 @@ export default function ColumnVisible({
           letterSpacing: "0em",
           textAlign: "left",
           padding: "0 10px",
+          width: width,
         }}
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
-        Columns
+        {text}
       </div>
 
       <Menu

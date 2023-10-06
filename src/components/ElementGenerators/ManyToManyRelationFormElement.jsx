@@ -16,6 +16,7 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
+import { useTranslation } from "react-i18next";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -35,10 +36,18 @@ const ManyToManyRelationFormElement = ({
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
+  const {i18n} = useTranslation()
 
   if (!isLayout)
     return (
-      <FRow label={field.label ?? " "} required={field.required}>
+      <FRow label={
+        field?.attributes[`title_${i18n?.language}`] ??
+        field?.attributes[`name${i18n?.language}`] ??
+        field?.attributes[`label${i18n?.language}`] ??
+        field?.label ??
+        field.title ??
+        " "
+      } required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}

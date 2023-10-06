@@ -32,8 +32,8 @@ const RecursiveBlock = ({
     return computedElements;
   }, [parentTab, tabs, level]);
 
-  if (!elements?.length)
-    return <MockColumn view={view} level={level} tabs={tabs} />;
+  // if (!elements?.length)
+  //   return <MockColumn view={view} level={level} tabs={tabs} />;
 
   return (
     <div className={styles.row}>

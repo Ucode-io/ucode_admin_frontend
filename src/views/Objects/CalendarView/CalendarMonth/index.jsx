@@ -1,21 +1,7 @@
 import styles from "../day.module.scss";
-import style from "./month.module.scss";
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import CalendarMonthColumn from "./CalendarMonthColumn";
 import CalendarTemplate from "./CalendarTemplate";
-import TimesColumnMonth from "./TimesColumnsMonth";
-import DataMonthColumn from "./DataMonthColumn";
-
-const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
 
 const CalendarMonth = ({
   data,

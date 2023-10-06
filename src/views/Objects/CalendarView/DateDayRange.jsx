@@ -5,8 +5,6 @@ import { format } from "date-fns";
 import style from "./style.module.scss";
 
 const CalendarDayRange = ({
-  currentIndex,
-  setCurrentIndex,
   datesList,
   formatDate,
   date,

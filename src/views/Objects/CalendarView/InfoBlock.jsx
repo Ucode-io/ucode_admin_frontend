@@ -1,7 +1,14 @@
+import { Box, Typography } from "@mui/material";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 import { dateValidFormat } from "../../../utils/dateValidFormat";
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
 import styles from "./style.module.scss";
+
+const flex = {
+  display: "flex",
+  alignItems: "center",
+  columnGap: "6px",
+};
 
 const InfoBlock = ({ viewFields, data, isSingleLine }) => {
   //   if (isSingleLine)
@@ -24,9 +31,23 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
       {viewFields?.map((field) => (
         <p>
           {field.type === "LOOKUP" ? (
-            getRelationFieldTableCellLabel(field, data, field.slug + "_data")
+            <Box>
+              <Typography variant="h6" fontSize={"18px"}>
+                {field.label}:
+              </Typography>{" "}
+              {getRelationFieldTableCellLabel(
+                field,
+                data,
+                field.slug + "_data"
+              )}
+            </Box>
           ) : field.type === "DATE_TIME" ? (
-            dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
+            <Box>
+              <Typography variant="h6" fontSize={"18px"}>
+                {field.label}:
+              </Typography>{" "}
+              {dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")}
+            </Box>
           ) : field.type === "MULTISELECT" ? (
             <MultiselectCellColoredElement
               style={{ padding: "2px 5px", marginBottom: 4 }}
@@ -34,7 +55,12 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
               field={field}
             />
           ) : (
-            data[field.slug]
+            <Box>
+              <Typography variant="h6" fontSize={"18px"}>
+                {field.label}:
+              </Typography>{" "}
+              {data[field.slug]}
+            </Box>
           )}
         </p>
       ))}

@@ -167,9 +167,7 @@ const DataWeekColumn = ({
       {timeList.map((time, index) => (
         <div
           key={time}
-          className={`${styles.timeBlock} ${
-            isDisabled(index) ? styles.disabled : ""
-          }`}
+          className={styles.timeBlock}
           style={{
             overflow: "auto",
           }}

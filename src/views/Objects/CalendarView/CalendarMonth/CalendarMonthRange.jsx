@@ -2,13 +2,11 @@ import { Box, Typography } from "@mui/material";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import style from "../style.module.scss";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import { format } from "date-fns";
 
 const CalendarMonthRange = ({
-  currentMonthIndex,
-  setCurrentMonthIndex,
   formatDate,
   date,
-  monthData,
   setCurrentDay,
   currentDay,
 }) => {
@@ -56,7 +54,7 @@ const CalendarMonthRange = ({
         <ArrowRight />
       </RectangleIconButton>
 
-      <Typography variant="h5">Month</Typography>
+      <Typography variant="h5">{format(currentDay, "MMMM yyyy")}</Typography>
     </Box>
   );
 };

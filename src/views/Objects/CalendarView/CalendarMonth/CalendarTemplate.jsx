@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 import DataMonthCard from "./DataMonthCard";
 import { dateValidFormat } from "../../../../utils/dateValidFormat";
-
+import AddBoxIcon from "@mui/icons-material/AddBox";
 const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -34,64 +34,87 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
   const viewFields = useMemo(() => {
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
-
-  const dayNames = month?.map((dateString) => {
-    const date = new Date(dateString);
-    const dayOfWeek = date.getDay();
-    return daysOfWeek[dayOfWeek];
-  });
-  const dayOfWeek = dayNames?.slice(0, 7);
-
   return (
     <>
       <Box className={styles.calendarTemplate}>
         {daysOfWeek?.map((date, index) => (
-          <Box key={index} className={styles.days}>
+          <Box
+            key={index}
+            className={styles.days}
+            style={{
+              borderColor: new Date().getDay() === index ? "#007AFF" : "",
+            }}
+          >
             {date}
           </Box>
         ))}
       </Box>
       <Box className={styles.calendarTemplate}>
-        {/* <Box className={styles.calendar}></Box> */}
-        {month?.map((date, index) => (
-          <>
-            <Box key={index} className={styles.calendar}>
-              {!data?.includes(date) && (
+        {month?.map(
+          (date, index) => (
+            console.log("date.getDay()", date.getDay()),
+            (
+              <>
                 <Box
-                  className={styles.desc}
-                  onClick={() => navigateToCreatePage()}
+                  key={index}
+                  className={styles.calendar}
+                  style={{
+                    borderColor:
+                      dateValidFormat(new Date(), "dd.MM.yyyy") ===
+                      dateValidFormat(date, "dd.MM.yyyy")
+                        ? "#007AFF"
+                        : "",
+                    background:
+                      date.getDay() === 0 || date.getDay() === 6
+                        ? "#f5f4f4"
+                        : "",
+                  }}
                 >
-                  <Box className={`${styles.addButton}`}>
-                    <Add color="" />
-                    Создать
+                  {!data?.includes(date) && (
+                    <Box
+                      className={styles.desc}
+                      onClick={() => navigateToCreatePage()}
+                    >
+                      <Box className={`${styles.addButton}`}>
+                        <AddBoxIcon />
+                      </Box>
+                    </Box>
+                  )}
+                  {new Date(date).toLocaleDateString(
+                    "en-US",
+                    dateValidFormat(date, "dd") === "01"
+                      ? {
+                          day: "numeric",
+                          //   month: "short",
+                        }
+                      : {
+                          day: "numeric",
+                        }
+                  )}
+
+                  <Box className={styles.card}>
+                    {data?.map((el, idx) =>
+                      dateValidFormat(date, "dd.MM.yyyy") ===
+                        el?.calendar.date ||
+                      dateValidFormat(date, "dd.MM.yyyy") ===
+                        dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
+                        <DataMonthCard
+                          key={el.id}
+                          date={date}
+                          view={view}
+                          fieldsMap={fieldsMap}
+                          data={el}
+                          viewFields={viewFields}
+                          navigateToEditPage={navigateToEditPage}
+                        />
+                      ) : null
+                    )}
                   </Box>
                 </Box>
-              )}
-              {new Date(date).toLocaleDateString("en-US", {
-                day: "numeric",
-                month: "short",
-              })}
-
-              <Box className={styles.card}>
-                {data?.map((el, idx) =>
-                  dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ||
-                  dateValidFormat(date, "dd.MM.yyyy") ===
-                    dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
-                    <DataMonthCard
-                      key={el.id}
-                      date={date}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      data={el}
-                      viewFields={viewFields}
-                      navigateToEditPage={navigateToEditPage}
-                    />
-                  ) : null
-                )}
-              </Box>
-            </Box>
-          </>
-        ))}
+              </>
+            )
+          )
+        )}
       </Box>
 
       <ModalDetailPage

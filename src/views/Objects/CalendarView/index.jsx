@@ -36,6 +36,9 @@ import CalendarWeek from "./CalendarWeek";
 import Calendar from "./Calendar";
 import CalendarMonth from "./CalendarMonth";
 import CalendarMonthRange from "./CalendarMonth/CalendarMonthRange";
+import ColumnVisible from "../ColumnVisible";
+import { useForm } from "react-hook-form";
+import CalendarSettingsVisible from "./CalendarSettings";
 
 const formatDate = [
   {
@@ -59,13 +62,12 @@ const CalendarView = ({
   views,
   selectedTable,
 }) => {
+  const visibleForm = useForm();
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-  const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -142,8 +144,6 @@ const CalendarView = ({
     setCurrentMonthDates(newMonthDates);
   }, [currentDay]);
 
-  console.log("currentMonthDates", currentMonthDates);
-
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return;
 
@@ -155,9 +155,6 @@ const CalendarView = ({
     }
     return result;
   }, [dateFilters]);
-
-  const weekData = splitArrayIntoWeeks(datesList);
-  const monthData = splitArrayIntoMonth(datesList);
 
   const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view.group_fields;
@@ -266,7 +263,35 @@ const CalendarView = ({
     }
   );
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
+      visibleViews: [],
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+    isVisibleLoading,
+    refetch: refetchViews,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { limit: 10, offset: 0 },
+      });
+    },
+    {
+      select: ({ data }) => {
+        return {
+          visibleViews: data?.views ?? [],
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
+      },
+    }
+  );
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
@@ -360,8 +385,6 @@ const CalendarView = ({
       <Box className={style.navbar}>
         {date === "DAY" && (
           <CalendarDayRange
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
             datesList={datesList}
             formatDate={formatDate}
             date={date}
@@ -371,27 +394,43 @@ const CalendarView = ({
         )}
         {date === "WEEK" && (
           <CalendarWeekRange
-            currentWeekIndex={currentWeekIndex}
-            setCurrentWeekIndex={setCurrentWeekIndex}
             formatDate={formatDate}
             date={date}
-            weekData={weekData}
             setCurrentDay={setCurrentDay}
             currentDay={currentDay}
+            weekDates={weekDates}
           />
         )}
         {date === "MONTH" && (
           <CalendarMonthRange
-            currentMonthIndex={currentMonthIndex}
-            setCurrentMonthIndex={setCurrentMonthIndex}
             formatDate={formatDate}
             date={date}
-            monthData={monthData}
             setCurrentDay={setCurrentDay}
             currentDay={currentDay}
           />
         )}
         <Box className={style.extra}>
+          <CalendarSettingsVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            relationColumns={visibleRelationColumns}
+            isLoading={isVisibleLoading}
+            visibleForm={visibleForm}
+            text={"Customize columns"}
+            width="170px"
+            initialValues={view}
+          />
+          {/* <ColumnVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            relationColumns={visibleRelationColumns}
+            isLoading={isVisibleLoading}
+            form={visibleForm}
+            text={"Customize columns"}
+            width="170px"
+          /> */}
           <CSelect
             value={date}
             options={formatDate}

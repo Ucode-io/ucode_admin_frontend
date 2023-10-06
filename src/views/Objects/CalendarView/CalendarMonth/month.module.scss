@@ -18,20 +18,21 @@
 
     .days {
         text-align: center;
-        border: 0.5px solid #ccc;
+        border: 0.5px solid #D4DAE2;
         padding: 10px;
     }
 
     .calendar {
         // position: relative;
         text-align: center;
-        border: 0.5px solid #ccc;
-        padding: 10px;
+        border: 0.5px solid #D4DAE2;
+        padding: 5px;
         height: 126px;
-        justify-content: flex-start;
-        flex-direction: column;
+        justify-content: unset;
+        flex-direction: column-reverse;
         align-items: end;
         position: relative;
+
 
 
         .card {
@@ -39,6 +40,7 @@
             width: 100%;
             top: 35px;
             right: 0;
+            cursor: pointer;
             // display: flex;
             // flex-direction: column;
             // row-gap: 10px;
@@ -76,17 +78,16 @@
             display: none;
             align-items: center;
             position: absolute;
-            top: 45%;
-            right: 30%;
-
+            bottom: 5px;
+            right: 20px;
 
             .addButton {
                 display: flex;
                 align-items: center;
+                color: #007aff;
 
                 &:hover {
                     cursor: pointer;
-                    color: #007aff;
                 }
             }
         }

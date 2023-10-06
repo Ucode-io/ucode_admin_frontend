@@ -12,7 +12,17 @@ const CalendarWeekColumn = ({
 }) => {
   return (
     <div>
-      <div className={styles.dateBlock}>{format(date, "dd MMMM yyyy")}</div>
+      <div
+        className={styles.dateBlock}
+        style={{
+          color:
+            format(date, "dd MMMM yyyy") === format(new Date(), "dd MMMM yyyy")
+              ? "#007AFF"
+              : "",
+        }}
+      >
+        {format(date, "dd MMMM yyyy")}
+      </div>
 
       <RecursiveWeekBlock
         date={date}

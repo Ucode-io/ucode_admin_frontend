@@ -176,9 +176,7 @@ const DataDayColumn = ({
       {timeList.map((time, index) => (
         <div
           key={time}
-          className={`${styles.timesBlock} ${
-            isDisabled(index) ? styles.disabled : ""
-          }`}
+          className={styles.timesBlock}
           style={{
             overflow: "auto",
           }}

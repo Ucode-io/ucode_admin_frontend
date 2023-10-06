@@ -10,7 +10,7 @@ import constructorTableService from "../../../../services/constructorTableServic
 import listToOptions from "../../../../utils/listToOptions";
 import styles from "./style.module.scss";
 
-const CalendarSettings = ({ columns, form }) => {
+const CalendarSettings = ({ columns, form, children }) => {
   const projectId = useSelector((state) => state.auth.projectId);
   const computedColumns = useMemo(() => {
     return listToOptions(columns, "label", "slug");
@@ -57,86 +57,89 @@ const CalendarSettings = ({ columns, form }) => {
   );
 
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionTitle}>Calendar settings</div>
+    <>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>Calendar settings</div>
+        </div>
+
+        <div className={styles.sectionBody}>
+          <div className={styles.formRow}>
+            <FRow label="Time from">
+              <HFSelect
+                options={computedColumns}
+                control={form.control}
+                name="calendar_from_slug"
+              />
+            </FRow>
+            <FRow label="Time to">
+              <HFSelect
+                options={computedColumns}
+                control={form.control}
+                name="calendar_to_slug"
+              />
+            </FRow>
+          </div>
+
+          <div className={styles.formRow}>
+            <FRow label="Time interval">
+              <HFSelect
+                options={timeIntervalOptions}
+                control={form.control}
+                name="time_interval"
+              />
+            </FRow>
+
+            <FRow label="Status field">
+              <HFSelect
+                options={computedPickListColumns}
+                control={form.control}
+                name="status_field_slug"
+              />
+            </FRow>
+          </div>
+
+          <Divider className="my-1" />
+          <Typography variant="h5">Schedule</Typography>
+          <Divider className="my-1" />
+
+          <div className={styles.formRow}>
+            <FRow label="Table">
+              <HFSelect
+                options={tablesList}
+                control={form.control}
+                name="disable_dates.table_slug"
+              />
+            </FRow>
+            <FRow label="Day">
+              <HFSelect
+                options={disabledDateFieldsList}
+                control={form.control}
+                name="disable_dates.day_slug"
+              />
+            </FRow>
+          </div>
+
+          <div className={styles.formRow}>
+            <FRow label="Time from">
+              <HFSelect
+                options={disabledDateFieldsList}
+                control={form.control}
+                name="disable_dates.time_from_slug"
+              />
+            </FRow>
+            <FRow label="Time to">
+              <HFSelect
+                options={disabledDateFieldsList}
+                control={form.control}
+                name="disable_dates.time_to_slug"
+              />
+            </FRow>
+          </div>
+        </div>
       </div>
-
-      <div className={styles.sectionBody}>
-        <div className={styles.formRow}>
-          <FRow label="Time from">
-            <HFSelect
-              options={computedColumns}
-              control={form.control}
-              name="calendar_from_slug"
-            />
-          </FRow>
-          <FRow label="Time to">
-            <HFSelect
-              options={computedColumns}
-              control={form.control}
-              name="calendar_to_slug"
-            />
-          </FRow>
-        </div>
-
-        <div className={styles.formRow}>
-          <FRow label="Time interval">
-            <HFSelect
-              options={timeIntervalOptions}
-              control={form.control}
-              name="time_interval"
-            />
-          </FRow>
-
-          <FRow label="Status field">
-            <HFSelect
-              options={computedPickListColumns}
-              control={form.control}
-              name="status_field_slug"
-            />
-          </FRow>
-        </div>
-
-        <Divider className="my-1" />
-        <Typography variant="h5">Schedule</Typography>
-        <Divider className="my-1" />
-
-        <div className={styles.formRow}>
-          <FRow label="Table">
-            <HFSelect
-              options={tablesList}
-              control={form.control}
-              name="disable_dates.table_slug"
-            />
-          </FRow>
-          <FRow label="Day">
-            <HFSelect
-              options={disabledDateFieldsList}
-              control={form.control}
-              name="disable_dates.day_slug"
-            />
-          </FRow>
-        </div>
-
-        <div className={styles.formRow}>
-          <FRow label="Time from">
-            <HFSelect
-              options={disabledDateFieldsList}
-              control={form.control}
-              name="disable_dates.time_from_slug"
-            />
-          </FRow>
-          <FRow label="Time to">
-            <HFSelect
-              options={disabledDateFieldsList}
-              control={form.control}
-              name="disable_dates.time_to_slug"
-            />
-          </FRow>
-        </div>
-      </div>
-    </div>
+      {children}
+    </>
   );
 };
 

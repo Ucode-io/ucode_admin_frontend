@@ -23,6 +23,7 @@ import constructorFunctionServiceV2 from "../../services/constructorFunctionServ
 import request from "../../utils/request";
 import { useSelector } from "react-redux";
 import Select from "react-select";
+import { useTranslation } from "react-i18next";
 
 const RelationFormElement = ({
   control,
@@ -45,10 +46,18 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
+  const {i18n} = useTranslation()
 
   if (!isLayout)
     return (
-      <FRow label={field?.label ?? field?.title} required={field.required}>
+      <FRow label={
+        field?.attributes[`title_${i18n?.language}`] ??
+        field?.attributes[`name${i18n?.language}`] ??
+        field?.attributes[`label${i18n?.language}`] ??
+        field?.label ??
+        field.title ??
+        " "
+      } required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}

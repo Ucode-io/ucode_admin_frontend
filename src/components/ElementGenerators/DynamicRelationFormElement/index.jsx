@@ -93,14 +93,14 @@ const DynamicRelationFormElement = ({
     if (!tableInValue || !localValue) return "";
     return `${tableInValue?.label} / ${localValue?.label}`;
   }, [tableInValue, localValue]);
-  console.log("field", field);
+
   return (
     <>
       <FEditableRow
         label={
-          field?.attributes[`title_${i18n}`] ??
-          field?.attributes[`name${i18n}`] ??
-          field?.attributes[`label${i18n}`] ??
+          field?.attributes[`title_${i18n?.language}`] ??
+          field?.attributes[`name${i18n?.language}`] ??
+          field?.attributes[`label${i18n?.language}`] ??
           field?.label ??
           field.title ??
           " "

@@ -1,10 +1,10 @@
-import { Box, Switch, Typography } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
+import {Box, Switch, Typography} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -28,10 +28,12 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import LinkIcon from '@mui/icons-material/Link';
 
-const ColumnsTab = ({ form, updateView, isMenu }) => {
-  const { i18n } = useTranslation();
-  const { fields: columns, move } = useFieldArray({
+const ColumnsTab = ({form, updateView, isMenu}) => {
+  const {i18n} = useTranslation();
+  const {fields: columns, move} = useFieldArray({
     control: form.control,
     name: "columns",
     keyName: "key",
@@ -121,10 +123,10 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     >
       <div className={styles.table}>
         <div className={styles.row}>
-          <div className={styles.cell} style={{ flex: 1 }}>
+          <div className={styles.cell} style={{flex: 1}}>
             <b>All</b>
           </div>
-          <div className={styles.cell} style={{ width: 70 }}>
+          <div className={styles.cell} style={{width: 70}}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
             <Switch
@@ -136,14 +138,14 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
         </div>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{className: "drag-row-drop-preview"}}
         >
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
                 <div
                   className={styles.cell}
-                  style={{ flex: 1, display: "flex", alignItems: "center" }}
+                  style={{flex: 1, display: "flex", alignItems: "center"}}
                 >
                   <div
                     style={{
@@ -155,12 +157,12 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                       justifyContent: "center",
                     }}
                   >
-                    {columnIcons[column.type] ?? <NfcIcon />}
+                    {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}
                 </div>
-                <div className={styles.cell} style={{ width: 70 }}>
+                <div className={styles.cell} style={{width: 70}}>
                   <Switch
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}

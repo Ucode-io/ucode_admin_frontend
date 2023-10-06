@@ -16,6 +16,8 @@ import constructorViewService from "../../services/constructorViewService";
 import constructorFieldService from "../../services/constructorFieldService";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { paginationActions } from "../../store/pagination/pagination.slice";
 
 export default function TableHeadForTableView({
   column,
@@ -47,14 +49,14 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const { i18n } = useTranslation();
-
+  const dispatch = useDispatch()
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log('sortedDatas', sortedDatas)
   const fixColumnChangeHandler = (column, e) => {
     const computedData = {
       ...selectedView,
@@ -158,6 +160,9 @@ export default function TableHeadForTableView({
           }`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
+            const field = column.id;
+            const order = sortedDatas?.find(item => item.field === column.id)?.order === "ASC" ? "DESC" : "ASC";
+            dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
               const index = newSortedDatas.findIndex(
@@ -222,6 +227,7 @@ export default function TableHeadForTableView({
       ],
     },
   ];
+
   return (
     <>
       <CTableHeadCell
@@ -280,7 +286,10 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`label_${i18n?.language}`] ?? column.label}
+            {column?.attributes?.[`label_${i18n?.language}`] 
+            ?? column?.attributes?.[`title_${i18n?.language}`] 
+            ?? column?.attributes?.[`name_${i18n?.language}`] ?? 
+            column.label}
           </span>
 
           <Button

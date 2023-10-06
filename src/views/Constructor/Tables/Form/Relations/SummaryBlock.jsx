@@ -2,7 +2,6 @@ import { Delete } from "@mui/icons-material";
 import { useFieldArray } from "react-hook-form";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import HFTextField from "../../../../../components/FormElements/HFTextField";
 import styles from "./style.module.scss";
 
 const formulaTypes = [
@@ -16,14 +15,14 @@ const formulaTypes = [
   },
 ];
 
-const SummaryBlock = ({ control, computedFieldsListOptions }) => {
+const SummaryBlock = ({ control, computedFieldsListOptions, isViewSettings = false }) => {
   const {
     fields: summaries,
     insert,
     remove,
   } = useFieldArray({
     control,
-    name: "summaries",
+    name: isViewSettings ? "attributes.summaries" : "summaries",
     keyName: "key",
   });
 
@@ -40,9 +39,11 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
 
   return (
     <>
-      {/* <div className={styles.settingsBlockHeader}>
-        <h2>Summary</h2>
-      </div> */}
+      {isViewSettings && (
+        <div className={styles.settingsBlockHeader}>
+          <h2>Summary</h2>
+        </div>
+      )}
 
       <div className="p-2">
         {summaries?.map((summary, index) => (
@@ -52,19 +53,16 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
               placeholder="Field"
               control={control}
               fullWidth
-              name={`summaries[${index}].field_name`}
+              name={isViewSettings ? `attributes.summaries[${index}].field_name` : `summaries[${index}].field_name`}
             />
             <HFSelect
               control={control}
               fullWidth
               placeholder="Formula"
-              name={`summaries[${index}].formula_name`}
+              name={isViewSettings ? `attributes.summaries[${index}].formula_name` : `summaries[${index}].formula_name`}
               options={formulaTypes}
             />
-            <RectangleIconButton
-              color="error"
-              onClick={() => deleteSummary(index)}
-            >
+            <RectangleIconButton color="error" onClick={() => deleteSummary(index)}>
               <Delete color="error" />
             </RectangleIconButton>
           </div>

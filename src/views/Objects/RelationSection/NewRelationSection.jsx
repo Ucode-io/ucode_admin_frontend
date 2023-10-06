@@ -324,6 +324,8 @@ const NewRelationSection = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
+
+
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
   return (

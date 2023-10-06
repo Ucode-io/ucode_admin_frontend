@@ -1,10 +1,13 @@
-import { Outlet } from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import styles from "./style.module.scss";
 import config from "../../../builder_config/config.json";
-import { useLoginMicrofrontendQuery } from "../../services/loginMicrofrontendService";
+import {useLoginMicrofrontendQuery} from "../../services/loginMicrofrontendService";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Microfrontend from "../../views/Microfrontend";
 import MicrofrontendComponent from "../../components/MicrofrontendComponent";
+import {useDispatch} from "react-redux";
+import {store} from "../../store";
+import {loginAction} from "../../store/auth/auth.thunk";
 
 const AuthLayout = () => {
   const subdomain =
@@ -12,20 +15,29 @@ const AuthLayout = () => {
       ? "ett.u-code.io"
       : window.location.hostname;
 
-  const { data, isLoading } = useLoginMicrofrontendQuery({
+  const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
     },
   });
+
+  const dispatch = useDispatch();
 
   const microfrontendUrl = data?.function?.url;
   const microfrontendLink = microfrontendUrl
     ? `https://${microfrontendUrl}/assets/remoteEntry.js`
     : undefined;
 
-  if (isLoading) return <RingLoaderWithWrapper style={{ height: "100vh" }} />;
+  if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
 
-  // if(microfrontendUrl) return <MicrofrontendComponent key={microfrontendLink} link={microfrontendLink} />
+  if (microfrontendUrl)
+    return (
+      <MicrofrontendComponent
+        loginAction={(authData) => dispatch(loginAction(authData))}
+        key={microfrontendLink}
+        link={microfrontendLink}
+      />
+    );
 
   return (
     <div className={styles.layout}>

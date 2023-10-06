@@ -58,12 +58,15 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
+  const sortValues = useSelector(state => state.pagination.sortValues);
   const { i18n } = useTranslation();
+
 
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
@@ -106,6 +109,14 @@ const TableView = ({
     name: "fields",
     keyName: "key",
   });
+
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+
+    return getObject?.pageLimit ?? null
+  }, [paginationInfo])
+
+  console.log('paginiation', typeof paginiation)
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -201,7 +212,7 @@ const TableView = ({
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
-
+  
     let a = sortedDatas?.map((el) => {
       if (el.field) {
         return {
@@ -209,15 +220,27 @@ const TableView = ({
         };
       }
     });
-
+  
     a.forEach((obj) => {
       for (const key in obj) {
         resultObject[key] = obj[key];
       }
     });
 
-    return resultObject;
+  
+    if (sortValues && sortValues.length > 0) {
+      const matchingSort = sortValues.find(entry => entry.tableSlug === tableSlug);
+  
+      if (matchingSort) {
+        const { field, order } = matchingSort;
+        const sortKey = fieldsMap[field].slug;
+        resultObject[sortKey] = order === "ASC" ? 1 : -1;
+      }
+    }
+  
+    return resultObject
   }, [sortedDatas, fieldsMap]);
+
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {
@@ -254,7 +277,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          offset: pageToOffset(currentPage, limit),
+          offset: paginiation ? paginiation === 'all' : limit === "all" ? undefined : pageToOffset(currentPage, limit),
           // app_id: appId,
           order: computedSortColumns,
           // with_relations: true,
@@ -263,7 +286,7 @@ const TableView = ({
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit,
+          limit: limit === "all" ? undefined : limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -420,7 +443,9 @@ const TableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log("tableData", tableData);
+
+  console.log('ssssssswwwwwww', tableData)
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||
@@ -468,6 +493,7 @@ const TableView = ({
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}
             data={tableData}
+            summaries={view?.attributes?.summaries}
             disableFilters
             isChecked={(row) => selectedObjects?.includes(row.guid)}
             onCheckboxChange={!!customEvents?.length && onCheckboxChange}

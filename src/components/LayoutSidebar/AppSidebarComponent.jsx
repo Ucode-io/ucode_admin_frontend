@@ -25,6 +25,7 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
+  setChildBlockVisible
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
   const clickHandler = () => {
+    setChildBlockVisible(false)
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {
@@ -121,6 +123,8 @@ const AppSidebar = ({
             borderTop: favourite && "1px solid #F0F0F0",
             borderBottom: favourite && "1px solid #F0F0F0",
             padding: favourite && "18px 12px",
+            borderRadius: "10px",
+            margin: "0 5px",
           }}
         >
           <IconGenerator
@@ -139,6 +143,7 @@ const AppSidebar = ({
             }
             className="folder-icon"
             style={{
+              marginRight: sidebarIsOpen ? '8px' : '0px',
               color:
                 selectedApp?.id === element.id
                   ? menuStyle?.active_text

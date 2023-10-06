@@ -5,6 +5,9 @@ import styles from "./style.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import useTabRouter from "../../hooks/useTabRouter";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import { useMemo } from "react";
 
 const CPagination = ({
   setCurrentPage = () => {},
@@ -22,15 +25,22 @@ const CPagination = ({
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const { tableSlug } = useParams();
+  const dispatch = useDispatch()
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
+
+
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+
+    return getObject?.pageLimit ?? null
+  }, [paginationInfo])
+
   const options = [
-    {
-      value: isNaN(parseInt(props?.defaultLimit))
-        ? ""
-        : parseInt(props?.defaultLimit),
-      label: isNaN(parseInt(props?.defaultLimit))
-        ? ""
-        : parseInt(props?.defaultLimit),
-    },
+    { value: "all", label: "All" },
+    // {
+    //   value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+    //   label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+    // },
     { value: 10, label: 10 },
     { value: 15, label: 15 },
     { value: 20, label: 20 },
@@ -39,6 +49,14 @@ const CPagination = ({
     { value: 35, label: 35 },
     { value: 40, label: 40 },
   ];
+
+  const getLimitValue = (item) => {
+    setLimit(item)
+    dispatch(paginationActions.setTablePages({
+      tableSlug: tableSlug,
+      pageLimit: item,
+    }))
+  }
 
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
@@ -65,8 +83,8 @@ const CPagination = ({
                 options={options}
                 disabledHelperText
                 size="small"
-                value={limit}
-                onChange={(e) => setLimit(e.target.value)}
+                value={paginiation ?? limit}
+                onChange={(e) => getLimitValue(e.target.value)}
                 inputProps={{ style: { borderRadius: 50 } }}
                 endAdornment={null}
                 sx={null}
@@ -105,11 +123,7 @@ const CPagination = ({
 
         {!disablePagination && (
           <>
-            <Pagination
-              color="primary"
-              onChange={(e, val) => setCurrentPage(val)}
-              {...props}
-            />
+            <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
             {paginationExtraButton}
           </>
         )}

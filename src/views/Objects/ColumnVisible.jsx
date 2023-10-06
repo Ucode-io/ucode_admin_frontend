@@ -56,7 +56,7 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
 
   return (
     <div>
-      <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary">
+      {/* <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary"> */}
         <div
           style={{
             display: "flex",
@@ -76,7 +76,7 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
           <AppsIcon color={"#A8A8A8"} />
           Columns
         </div>
-      </Badge>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}

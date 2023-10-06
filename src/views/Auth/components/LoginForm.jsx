@@ -265,9 +265,15 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       ) {
         handleClickOpen();
       }
-    } else if (Array.isArray(connections) && connections?.length > 1) {
-      if (checkConnections) {
-        onSubmitDialog(data);
+    } else if (Array.isArray(connections) && connections?.length > 0) {
+
+      if (     
+        getFormValue?.username &&
+        getFormValue?.password &&
+        getFormValue?.client_type &&
+        getFormValue?.project_id &&
+        getFormValue?.environment_id && checkConnections) {
+        onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();
       }
@@ -331,7 +337,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [index]);
 
   useEffect(() => {
-    if (computedConnections?.length > 1) {
+    if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
         if (connection.options.length === 1) {
           setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);

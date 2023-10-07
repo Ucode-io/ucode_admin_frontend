@@ -53,6 +53,9 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
     },
   });
 
+  const action_type = watch('action_type')
+  console.log('action_type', action_type)
+
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
@@ -141,6 +144,11 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
             <FRow label="Method">
               <HFSelect name="method" control={control} placeholder="Redirect url" options={methodList} fullWidth />
             </FRow>
+            {action_type === 'HTTP' &&            
+             <FRow label="Refresh">
+              <HFSwitch name="attributes.use_refresh" control={control} />
+            </FRow>}
+
             <FRow label="No limit">
               <HFSwitch name="attributes.use_no_limit" control={control} />
             </FRow>

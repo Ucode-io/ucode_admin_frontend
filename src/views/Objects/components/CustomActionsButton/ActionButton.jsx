@@ -39,14 +39,7 @@ const ActionButton = ({ event, id, control, disable }) => {
       object_ids: [id],
     };
 
-    if(event?.action_type === 'HTTP' && event?.attributes?.use_refresh) {
-        navigate("/reloadRelations", {
-          state: {
-            redirectUrl: window.location.pathname,
-          },
-        });
-      } else {
-        setBtnLoader(true);
+    setBtnLoader(true);
     request
       .post("/invoke_function", data, {params: {use_no_limit: event?.attributes?.use_no_limit}})
       .then((res) => {
@@ -57,6 +50,13 @@ const ActionButton = ({ event, id, control, disable }) => {
         if (res?.data?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));
         } else {
+          if(event?.action_type === 'HTTP' && event?.attributes?.use_refresh) {
+            navigate("/reloadRelations", {
+              state: {
+                redirectUrl: window.location.pathname,
+              },
+            });
+          }
           if (url) {
             Object.entries(res?.data ?? {}).forEach(([key, value]) => {
               const computedKey = "${" + key + "}";
@@ -95,7 +95,7 @@ const ActionButton = ({ event, id, control, disable }) => {
         }
       })
       .finally(() => setBtnLoader(false));
-      }
+      
 
   };
   useEffect(() => {

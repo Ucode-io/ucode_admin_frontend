@@ -42,6 +42,7 @@ const RelationFormElement = ({
   multipleInsertField,
   ...props
 }) => {
+  console.log('field', field)
   const tableSlug = useMemo(() => {
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";

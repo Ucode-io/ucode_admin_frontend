@@ -150,6 +150,7 @@ const SubMenu = ({
                       openFolderCreateModal={openFolderCreateModal}
                       setFolderModalType={setFolderModalType}
                       sidebarIsOpen={subMenuIsOpen}
+                      selectedApp={selectedApp}
                       setTableModal={setTableModal}
                       setLinkedTableModal={setLinkedTableModal}
                       handleOpenNotify={handleOpenNotify}

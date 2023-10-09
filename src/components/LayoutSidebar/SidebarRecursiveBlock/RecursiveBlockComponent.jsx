@@ -51,6 +51,7 @@ const RecursiveBlock = ({
   setSubMenuIsOpen,
   menuStyle,
   menuItem,
+  selectedApp
 }) => {
   const {appId, tableSlug} = useParams();
   const dispatch = useDispatch();
@@ -280,27 +281,29 @@ const RecursiveBlock = ({
                   </Tooltip>
 
                 </Box>
-                <Box>
-                  <Tooltip title="Folder settings" placement="top">
-                    <Box className="extra_icon">
-                      <BsThreeDots
-                        size={13}
-                        onClick={(e) => {
-                          e?.stopPropagation();
-                          handleOpenNotify(e, "FOLDER");
-                          setElement(element);
-                          dispatch(menuActions.setMenuItem(element));
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                </Box>
+                {selectedApp?.id !== adminId && (
+                    <Box>
+                      <Tooltip title="Folder settings" placement="top">
+                          <Box className="extra_icon">
+                            <BsThreeDots
+                                size={13}
+                                onClick={(e) => {
+                                  e?.stopPropagation();
+                                  handleOpenNotify(e, "FOLDER");
+                                  setElement(element);
+                                  dispatch(menuActions.setMenuItem(element));
+                                  }}
+                                  style={{
+                                    color:
+                                      menuItem?.id === element?.id
+                                        ? menuStyle?.active_text
+                                        : menuStyle?.text || "",
+                                  }}
+                                      />
+                          </Box>
+                        </Tooltip>
+                      </Box>
+                )}
               </Box>
             </div>
             {element?.type === "FOLDER" &&

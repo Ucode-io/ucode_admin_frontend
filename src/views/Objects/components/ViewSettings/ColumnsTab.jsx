@@ -29,6 +29,7 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import LinkIcon from '@mui/icons-material/Link';
 
 const ColumnsTab = ({form, updateView, isMenu}) => {
   const {i18n} = useTranslation();
@@ -156,7 +157,7 @@ const ColumnsTab = ({form, updateView, isMenu}) => {
                       justifyContent: "center",
                     }}
                   >
-                    {columnIcons[column.type] ?? <AttachFileIcon />}
+                    {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}

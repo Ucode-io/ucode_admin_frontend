@@ -39,9 +39,14 @@ const ActionButton = ({ event, id, control, disable }) => {
       object_ids: [id],
     };
 
-    console.log('event', event)
-
-    setBtnLoader(true);
+    if(event?.action_type === 'HTTP' && event?.attributes?.use_refresh) {
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname,
+          },
+        });
+      } else {
+        setBtnLoader(true);
     request
       .post("/invoke_function", data, {params: {use_no_limit: event?.attributes?.use_no_limit}})
       .then((res) => {
@@ -90,6 +95,8 @@ const ActionButton = ({ event, id, control, disable }) => {
         }
       })
       .finally(() => setBtnLoader(false));
+      }
+
   };
   useEffect(() => {
     if (event?.disable === false || event?.disable === undefined) {

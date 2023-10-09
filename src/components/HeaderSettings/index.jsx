@@ -52,7 +52,7 @@ const HeaderSettings = ({
 
       {extraButtons && <div className={styles.rightSide}>{extraButtons}</div>}
 
-      {disabledMenu && (
+      {/* {disabledMenu && (
         <div className={styles.rightSide}>
           <Tooltip title="Menu">
             <RectangleIconButton
@@ -65,10 +65,10 @@ const HeaderSettings = ({
               <MenuIcon />
             </RectangleIconButton>
           </Tooltip>
-          {/* <AppSelector /> */}
+          <AppSelector />
           <NewProfilePanel />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

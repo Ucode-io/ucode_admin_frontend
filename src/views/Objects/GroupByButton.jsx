@@ -104,7 +104,7 @@ export default function GroupByButton({ selectedTabIndex }) {
         onClick={handleClick}
       >
         <LayersOutlinedIcon color={"#A8A8A8"} />
-        Tab group
+        Tab
       </div>
 
       <Menu

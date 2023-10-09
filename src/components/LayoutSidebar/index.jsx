@@ -36,14 +36,18 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
+import Users from "./Components/Users";
 
 const LayoutSidebar = ({appId}) => {
+  const menuItem = useSelector((state) => state.menu.menuItem); 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const projectId = store.getState().company.projectId;
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,9 +71,11 @@ const LayoutSidebar = ({appId}) => {
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
+
   };
 
   const handleCloseNotify = () => {
@@ -200,6 +206,14 @@ const LayoutSidebar = ({appId}) => {
   }, [menuTemplate]);
 
   useEffect(() => {
+    if(!sidebarIsOpen) {
+      setChildBlockVisible(false)
+    } else {
+      setChildBlockVisible(true)
+    }
+  }, [sidebarIsOpen])
+
+  useEffect(() => {
     getMenuList();
   }, [searchText]);
 
@@ -325,6 +339,7 @@ const LayoutSidebar = ({appId}) => {
                     icon={
                       <ChatBubbleIcon
                         style={{
+                          margin: '0 5px',
                           width:
                             menuTemplate?.icon_size === "SMALL"
                               ? 10
@@ -346,6 +361,21 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
+                {defaultAdmin &&  
+                  <Users
+                    menuStyle={menuStyle}
+                    menuItem={menuItem}
+                    setElement={setElement}
+                    setSelectedApp={setSelectedApp}
+                    setChildBlockVisible={setChildBlockVisible}
+                    childBlockVisible={childBlockVisible}
+                    handleOpenNotify={handleOpenNotify}
+                    sidebarIsOpen={sidebarIsOpen}
+                    setSidebarIsOpen={setSidebarIsOpen}
+                    level={2}
+                  />}
+
+
                 <div
                   className="nav-block"
                   style={{
@@ -371,6 +401,7 @@ const LayoutSidebar = ({appId}) => {
                             setSelectedApp={setSelectedApp}
                             selectedApp={selectedApp}
                             menuTemplate={menuTemplate}
+                            setChildBlockVisible={setChildBlockVisible}
                           />
                         ))}
                     </Container>

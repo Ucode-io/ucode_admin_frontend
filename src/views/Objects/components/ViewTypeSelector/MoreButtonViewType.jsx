@@ -1,4 +1,10 @@
-import { Button, Card, CircularProgress, IconButton, Popover } from "@mui/material";
+import {
+  Button,
+  Card,
+  CircularProgress,
+  IconButton,
+  Popover,
+} from "@mui/material";
 import React, { useId, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -52,7 +58,7 @@ export default function MoreButtonViewType({
       >
         <Card elevation={12} className="ButtonsPopover">
           <div className={style.menuWrapper}>
-            <Button 
+            <Button
               onClick={() => {
                 onEditClick();
                 handleClose();

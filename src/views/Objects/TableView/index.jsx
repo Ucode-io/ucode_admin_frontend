@@ -59,6 +59,7 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
@@ -109,6 +110,14 @@ const TableView = ({
     name: "fields",
     keyName: "key",
   });
+
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+
+    return getObject?.pageLimit ?? null
+  }, [paginationInfo])
+
+  console.log('paginiation', typeof paginiation)
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -296,7 +305,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: limit === "all" ? undefined : pageToOffset(currentPage, limit),
+          offset: paginiation ? paginiation === 'all' : limit === "all" ? undefined : pageToOffset(currentPage, limit),
           // app_id: appId,
           order: computedSortColumns,
           // with_relations: true,
@@ -376,6 +385,7 @@ const TableView = ({
 
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
 
   useEffect(() => {
     layoutService
@@ -393,6 +403,7 @@ const TableView = ({
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
+      setSelectedRow(row);
       setOpen(true);
     } else {
       navigateToDetailPage(row);
@@ -442,6 +453,8 @@ const TableView = ({
   // }, []);
 
   console.log('sssss111')
+
+  console.log('ssssssswwwwwww', tableData)
 
   return (
     <div className={styles.wrapper}>
@@ -506,7 +519,11 @@ const TableView = ({
         </div>
       </PermissionWrapperV2>
 
-      <ModalDetailPage open={open} setOpen={setOpen} />
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+      />
 
       <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings

@@ -8,15 +8,33 @@ import "./style2.scss";
 import { locale } from "./Plugins/locale";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import CopyToClipboard from "../CopyToClipboard";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isFormEdit, isTransparent = false, tabIndex, mask, showCopyBtn = true, disabled = false }) => {
+const CDateTimePicker = ({
+  value,
+  placeholder,
+  isBlackBg,
+  classes,
+  onChange,
+  isFormEdit,
+  isTransparent = false,
+  tabIndex,
+  mask,
+  showCopyBtn = true,
+  disabled = false,
+}) => {
   return (
     <div className="main_wrapper">
       <DatePicker
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={mask} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={mask}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+              portalTarget={document.body}
+              portal={document.body}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -32,7 +50,7 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                       paddingTop: 0,
                       paddingBottom: 0,
                     },
-                    width: '150px',
+                    width: "150px",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -45,9 +63,11 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent ? {
-                      background: "transparent",
-                    } : disabled
+                    style: isTransparent
+                      ? {
+                          background: "transparent",
+                        }
+                      : disabled
                       ? {
                           background: "#c0c0c039",
                         }
@@ -63,8 +83,8 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
         }}
         plugins={[weekends()]}
         weekStartDayIndex={1}
-        portal
         locale={locale}
+        portalTarget={document}
         format="DD.MM.YYYY"
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
@@ -73,10 +93,17 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
         disableDayPicker
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={"99:99"} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={"99:99"}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
+                  portalTarget={document.body}
+                  portal={document.body}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   // size="small"
@@ -93,16 +120,18 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                       paddingTop: 0,
                       paddingBottom: 0,
                     },
-                    width: '150px'
+                    width: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent ? {
-                      background: "transparent",
-                    } : disabled
+                    style: isTransparent
+                      ? {
+                          background: "transparent",
+                        }
+                      : disabled
                       ? {
                           background: "#c0c0c039",
                         }
@@ -111,17 +140,26 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                           color: isBlackBg ? "#fff" : "",
                         },
                     endAdornment: (
-                        <InputAdornment position="end">
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <DateRange style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
-                            {disabled && (
-                              <Tooltip title="This field is disabled for this role!">
-                                <Lock style={{ fontSize: "20px" }} />
-                              </Tooltip>
-                            )}
-                          </Box>
-                        </InputAdornment>
-                      ),
+                      <InputAdornment position="end">
+                        <Box
+                          portalTarget={document.body}
+                          portal={document.body}
+                          sx={{ display: "flex", alignItems: "center" }}
+                        >
+                          <DateRange
+                            style={{
+                              color: isBlackBg ? "#fff" : "",
+                              fontSize: "20px",
+                            }}
+                          />
+                          {disabled && (
+                            <Tooltip title="This field is disabled for this role!">
+                              <Lock style={{ fontSize: "20px" }} />
+                            </Tooltip>
+                          )}
+                        </Box>
+                      </InputAdornment>
+                    ),
                   }}
                 />
               )}
@@ -129,12 +167,14 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
           );
         }}
         plugins={[<TimePicker hideSeconds />]}
-        portal
         format="HH:mm"
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
+        portalTarget={document}
       />
-      {showCopyBtn && <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />}
+      {showCopyBtn && (
+        <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      )}
     </div>
   );
 };

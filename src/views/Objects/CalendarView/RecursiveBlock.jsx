@@ -17,7 +17,6 @@ const RecursiveBlock = ({
 }) => {
   const elements = useMemo(() => {
     const computedElements = [];
-
     getChildrenList(parentTab, tabs, level)?.forEach((tab) => {
       const childrens = getChildrenList(tab, tabs, level + 1);
 
@@ -33,8 +32,8 @@ const RecursiveBlock = ({
     return computedElements;
   }, [parentTab, tabs, level]);
 
-  if (!elements?.length)
-    return <MockColumn view={view} level={level} tabs={tabs} />;
+  // if (!elements?.length)
+  //   return <MockColumn view={view} level={level} tabs={tabs} />;
 
   return (
     <div className={styles.row}>

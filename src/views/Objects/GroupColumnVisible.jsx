@@ -1,9 +1,10 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Badge, CircularProgress, Menu } from "@mui/material";
+import { Badge, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export default function GroupColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
   const queryClient = useQueryClient();
@@ -64,27 +65,53 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
 
   return (
     <div>
-      <Badge badgeContent={form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length} color="primary">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            color: "#A8A8A8",
-            cursor: "pointer",
-            fontSize: "13px",
-            fontWeight: 500,
-            lineHeight: "16px",
-            letterSpacing: "0em",
-            textAlign: "left",
-            padding: "0 10px",
-          }}
-          onClick={handleClick}
-        >
-          <AppsIcon color={"#A8A8A8"} />
-          Group
-        </div>
-      </Badge>
+      {/* <Badge badgeContent={form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length} color="primary"> */}
+      <Button
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
+        variant="outlined"
+        style={{
+          gap: "5px",
+        }}
+        onClick={handleClick}
+      >
+        <AppsIcon color={"#A8A8A8"} />
+        Group
+        {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && <span>{form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length}</span>}
+        {/* {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && (
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#007AAF",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <CloseRoundedIcon />
+          </button>
+        )} */}
+      </Button>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}

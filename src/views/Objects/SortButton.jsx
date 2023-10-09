@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import style from "./style.module.scss";
 import SortMenuRow from "./SortMenuRow";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
   const form = useForm({
@@ -96,27 +97,61 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
 
   return (
     <div>
-      <Badge badgeContent={watchedSorts.filter(el => el.field !== "")?.length} color="primary">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            color: "#A8A8A8",
-            cursor: "pointer",
-            fontSize: "13px",
-            fontWeight: 500,
-            lineHeight: "16px",
-            letterSpacing: "0em",
-            textAlign: "left",
-            padding: "0 10px",
-          }}
-          onClick={handleClick}
-        >
-          <SortIcon color={"#A8A8A8"} />
-          Sort
-        </div>
-      </Badge>
+      {/* <Badge badgeContent={watchedSorts.filter(el => el.field !== "")?.length} color="primary"> */}
+      <Button
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
+        variant="outlined"
+        style={{
+          gap: "5px",
+        }}
+        onClick={handleClick}
+      >
+        <SortIcon color={"#A8A8A8"} />
+        Sort
+        {watchedSorts.filter(el => el.field !== "")?.length > 0 && <span>{watchedSorts.filter(el => el.field !== "")?.length}</span>}
+        {watchedSorts.filter(el => el.field !== "")?.length > 0 && (
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#007AAF",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              form.reset({
+                sort: [
+                  {
+                    field: "",
+                    order: "ASC",
+                  },
+                ],
+              });
+            }}
+          >
+            <CloseRoundedIcon />
+          </button>
+        )}
+      </Button>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}

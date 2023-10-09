@@ -234,31 +234,7 @@ const ObjectDataTable = ({
     if (!formVisible) {
       dispatch(selectedRowActions.clear());
     }
-  }, [formVisible]);
-
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const params = {
-      language_setting: i18n?.language,
-    };
-
-    constructorObjectService
-      .getList(
-        tableSlug,
-        {
-          data: { limit: 0, offset: 0 },
-        },
-        params
-      )
-      .then((res) => {
-        setCount(Math.ceil(res.data?.count / limit));
-      });
-  }, [tableSlug, limit, i18n?.language]);
-
-  const hasMore = useMemo(() => {
-    return currentPage <= count;
-  }, [currentPage, pagesCount, tableSlug, data, count]);
+  }, [formVisible]);  
 
   return (
     <CTable
@@ -279,28 +255,7 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
       view={view}
     >
-      {/* <Box
-        style={{
-          width: "100%",
-        }}
-      >
-        <InfiniteScroll
-          dataLength={data?.length}
-          next={() => {
-            if (hasMore) {
-              onPaginationChange(currentPage + 1);
-            }
-          }}
-          hasMore={hasMore}
-          loader={
-            <Box sx={{ width: "100%" }}>
-              <LinearProgress />
-            </Box>
-          }
-          // height={"calc(100vh - 170px)"}
-          height={`${elementHeight - 50}px`}
-        >
-          <table> */}
+     
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -387,7 +342,7 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length && (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+        {(isRelationTable ? fields : data).length > 0 ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
             width={"80px"}
             remove={remove}
@@ -423,15 +378,12 @@ const ObjectDataTable = ({
             data={data}
             view={view}
           />
-        ))}
+        )) : ""}
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
         {additionalRow}
       </CTableBody>
-      {/* </table>
-        </InfiniteScroll>
-      </Box> */}
     </CTable>
   );
 };

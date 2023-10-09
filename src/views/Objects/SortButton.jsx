@@ -49,7 +49,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: { limit: 10, offset: 0, with_relations: true },
       });
     },

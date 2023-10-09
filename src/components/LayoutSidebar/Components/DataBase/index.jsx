@@ -225,7 +225,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     createFolder,
     openEditDrawer
   );
-  console.log("computedResourceFromUtils", computedResourceFromUtils);
+  
   const rowClickHandler = (id, element) => {
     setSelected(element);
     element.type === "FOLDER" && navigate(`/main/${adminId}`);
@@ -244,7 +244,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   return (
     <Box>
-      <div className="parent-block column-drag-handle">
+      {/* <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
           className="nav-element"
@@ -262,7 +262,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             <KeyboardArrowRightIcon />
           )}
         </Button>
-      </div>
+      </div> */}
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {computedResourceFromUtils?.map((childElement) => (

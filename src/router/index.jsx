@@ -71,6 +71,7 @@ import WebPage from "../views/WebPage";
 import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
 import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 import Invite from "../views/Auth/Invite";
+import UsersList from "../views/Users/UsersList";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -134,6 +135,16 @@ const Router = () => {
         path="/main"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
       >
+        <Route
+          path=":appId/users-list"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <UsersList />
+            </Suspense>
+          }
+        />
+
+
         <Route index element={<Navigate to={redirectLink} />} />
 
         <Route path=":appId" element={<div></div>} />
@@ -325,7 +336,6 @@ const Router = () => {
           path="constructor/apps/:appId/objects/:id/:slug"
           element={<ConstructorTablesFormPage />}
         />
-
         <Route
           path="auth/users"
           element={

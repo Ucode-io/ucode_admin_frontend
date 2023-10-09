@@ -10,6 +10,7 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
 import { updateLevel } from "../../../../utils/level";
+import { useNavigate, useParams } from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const userFolder = {
@@ -43,6 +44,8 @@ const Users = ({
   const dispatch = useDispatch();
   const [child, setChild] = useState();
   const queryClient = useQueryClient();
+  const navigate = useNavigate()
+  const {appId} = useParams()
 
   const activeStyle = {
     borderRadius: '10px',
@@ -94,6 +97,7 @@ const Users = ({
   );
 
   const clickHandler = (e) => {
+    navigate(`/main/${appId}/users-list`);
     setSelectedApp()
     setSidebarIsOpen(true)
     dispatch(menuActions.setMenuItem(userFolder));
@@ -107,7 +111,7 @@ const Users = ({
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     dispatch(menuActions.setMenuItem(userFolder));
   };
-  console.log('childBlockVisible', childBlockVisible)
+
   return (
     <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
@@ -122,15 +126,11 @@ const Users = ({
             <IconGenerator icon={"users.svg"} size={18} />
             {sidebarIsOpen ? 'Users' : ''}
           </div>
-          {sidebarIsOpen && childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : !sidebarIsOpen ? ('') : (
             <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 
-      <Collapse in={childBlockVisible} unmountOnExit>
+      {/* <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
           <RecursiveBlock
             onClick={() => {
@@ -145,7 +145,8 @@ const Users = ({
             handleOpenNotify={handleOpenNotify}
           />
         ))}
-      </Collapse>
+      </Collapse> */}
+
     </Box>
   );
 };

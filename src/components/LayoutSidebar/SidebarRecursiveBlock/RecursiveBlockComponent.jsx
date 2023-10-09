@@ -215,7 +215,7 @@ const RecursiveBlock = ({
       },
     }
   );
-    console.log('element', element)
+
   return (
     <Box sx={{padding: "0 5px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>

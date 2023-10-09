@@ -14,33 +14,58 @@ import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import { store } from "../../store";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import { showAlert } from "../../store/alert/alert.thunk";
 import {
   useUserDeleteMutation,
   useUserListQuery,
 } from "../../services/auth/userService";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import { useState } from "react";
 
-const ClientUserPage = () => {
+const UsersList = () => {
   const queryClient = useQueryClient();
+  const {appId, tableSlug, userMenuId} = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { userMenuId } = useParams();
+  const [child, setChild] = useState();
 
-  const navigateToEditForm = (id) => {
-    navigate(`${location.pathname}/${id}`);
+
+  const navigateToEditForm = (element) => {
+    navigate(`/main/${appId}/user-page/${element?.guid}`);
   };
 
   const navigateToCreateForm = () => {
     navigate(`${location.pathname}/create`);
   };
 
-  const { data: users, isLoading: projectLoading } = useUserListQuery({
-    params: {
-      "client-type-id": userMenuId,
+
+  const { isLoading } = useQuery(
+    ["GET_CLIENT_TYPE_LIST"],
+    () => {
+      return clientTypeServiceV2.getList();
     },
-  });
+    {
+      cacheTime: 10,
+      onSuccess: (res) => {
+        setChild(
+          res.data.response?.map((row) => ({
+            ...row,
+            type: "USER",
+            id: row.guid,
+            parent_id: "13",
+            data: {
+              permission: {
+                read: true,
+              },
+            },
+          }))
+        );
+      },
+    }
+  );
+
 
   const { mutateAsync: deleteProject, isLoading: createLoading } =
     useUserDeleteMutation({
@@ -69,45 +94,25 @@ const ClientUserPage = () => {
       />
 
       <TableCard type={"withoutPadding"}>
-        <CTable tableStyle={{border: 'none'}} disablePagination removableHeight={false}>
+        <CTable  tableStyle={{border: 'none'}} disablePagination removableHeight={false}>
           <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
+            <CTableCell  width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
-            <CTableCell>Login</CTableCell>
-            <CTableCell>Email</CTableCell>
-            <CTableCell>Phone</CTableCell>
-            <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
-            loader={projectLoading}
+            loader={isLoading}
             columnsCount={6}
-            dataLength={users?.users?.length}
+            dataLength={child?.length}
           >
-            {users?.users?.map((element, index) => (
+            {child?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
+                onClick={() => navigateToEditForm(element)}
               >
                 <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>{element?.name}</CTableCell>
-                <CTableCell>{element?.login}</CTableCell>
-                <CTableCell>{element?.email}</CTableCell>
-                <CTableCell>{element?.phone}</CTableCell>
-                <CTableCell>
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => {
-                      deleteProjectElement(element.id);
-                    }}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </CTableCell>
+                <CTableCell style={{height:'50px'}}>{element?.name}</CTableCell>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tabelSlug="app" type="write">
-              <TableRowButton colSpan={6} onClick={navigateToCreateForm} />
-            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>
@@ -115,4 +120,4 @@ const ClientUserPage = () => {
   );
 };
 
-export default ClientUserPage;
+export default UsersList;

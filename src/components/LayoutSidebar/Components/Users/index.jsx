@@ -99,7 +99,6 @@ const Users = ({
   const clickHandler = (e) => {
     navigate(`/main/${appId}/users-list`);
     setSelectedApp()
-    setSidebarIsOpen(true)
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -126,7 +125,7 @@ const Users = ({
             <IconGenerator icon={"users.svg"} size={18} />
             {sidebarIsOpen ? 'Users' : ''}
           </div>
-            <KeyboardArrowRightIcon />
+          {sidebarIsOpen && <KeyboardArrowRightIcon />}
         </Button>
       </div>
 

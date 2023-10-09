@@ -37,6 +37,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import Users from "./Components/Users";
+import DocumentsSidebar from "./Components/Documents/DocumentsSidebar";
 
 const LayoutSidebar = ({appId}) => {
   const menuItem = useSelector((state) => state.menu.menuItem); 
@@ -374,6 +375,20 @@ const LayoutSidebar = ({appId}) => {
                     setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
                   />}
+
+                    {/* <DocumentsSidebar
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      setElement={setElement}
+                      setSelectedApp={setSelectedApp}
+                      setChildBlockVisible={setChildBlockVisible}
+                      childBlockVisible={childBlockVisible}
+                      handleOpenNotify={handleOpenNotify}
+                      sidebarIsOpen={sidebarIsOpen}
+                      setSidebarIsOpen={setSidebarIsOpen}
+                      menuItem={menuItem}
+                      level={2}
+                    /> */}
 
 
                 <div

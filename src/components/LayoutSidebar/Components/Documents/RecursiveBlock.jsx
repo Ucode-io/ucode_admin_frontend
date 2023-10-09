@@ -20,6 +20,7 @@ const DocumentsRecursive = ({
   handleOpenNotify,
   setSelected,
   menuItem,
+  setSelectedApp
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -48,6 +49,7 @@ const DocumentsRecursive = ({
 
   const clickHandler = () => {
     setSelected(element);
+    setSelectedApp(element)
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);

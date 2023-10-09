@@ -545,13 +545,8 @@ const RecursiveBlock = ({
               menuItem={menuItem}
               level={2}
             />
-            <DocumentsSidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuItem={menuItem}
-              level={2}
-            />
-            <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
+           
+            {/* <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} /> */}
             {/* <ProjectSettingSidebar
               menuStyle={menuStyle}
               menuItem={menuItem}
@@ -569,12 +564,12 @@ const RecursiveBlock = ({
               level={2}
               integrated={false}
             />
-            <NotificationSidebar
+            {/* <NotificationSidebar
               menuStyle={menuStyle}
               setSubMenuIsOpen={setSubMenuIsOpen}
               menuItem={menuItem}
               level={2}
-            />
+            /> */}
           </>
         )}
         {element.id === folderIds.resource_folder_id && (

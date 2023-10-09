@@ -32,6 +32,7 @@ const ObjectDataTable = ({
   setDrawerState,
   setDrawerStateField,
   removableHeight,
+  getValues,
   additionalRow,
   mainForm,
   elementHeight,
@@ -349,6 +350,7 @@ const ObjectDataTable = ({
             control={control}
             key={row.id}
             row={row}
+            getValues={getValues}
             mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}

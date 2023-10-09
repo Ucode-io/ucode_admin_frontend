@@ -1,13 +1,13 @@
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import { CircularProgress, Menu } from "@mui/material";
+import { Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import GroupsTab from "./components/ViewSettings/GroupsTab";
-import { useForm } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
-import { use } from "i18next";
+import GroupsTab from "./components/ViewSettings/GroupsTab";
 
 export default function GroupByButton({ selectedTabIndex }) {
   const form = useForm();
@@ -85,28 +85,81 @@ export default function GroupByButton({ selectedTabIndex }) {
       });
   };
 
+  const selectedColumns = useWatch({
+    control: form.control,
+    name: "group_fields",
+  });
+
+  const disableAll = () => {
+    setUpdateLoading(true);
+    constructorViewService
+      .update({
+        ...views?.[selectedTabIndex],
+        group_fields: [],
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        setUpdateLoading(false);
+        form.setValue("group_fields", []);
+      });
+  };
+
   return (
     <div>
-      <div
+      {/* <Badge badgeContent={selectedColumns?.length} color="primary"> */}
+      <Button
+        variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
+          gap: "5px",
           color: "#A8A8A8",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          padding: "0 10px",
+          borderColor: "#A8A8A8",
         }}
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
         onClick={handleClick}
       >
         <LayersOutlinedIcon color={"#A8A8A8"} />
         Tab
-      </div>
-
+        {selectedColumns?.length > 0 && <span>{selectedColumns?.length}</span>}
+        {selectedColumns?.length > 0 && (
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#007AAF",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              disableAll();
+            }}
+          >
+            <CloseRoundedIcon style={{
+              color: "#A8A8A8"
+            }}/>
+          </button>
+        )}
+      </Button>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}
@@ -141,14 +194,7 @@ export default function GroupByButton({ selectedTabIndex }) {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <GroupsTab
-            columns={computedColumns}
-            isLoading={isLoading}
-            updateLoading={updateLoading}
-            updateView={updateView}
-            selectedView={views?.[selectedTabIndex]}
-            form={form}
-          />
+          <GroupsTab columns={computedColumns} isLoading={isLoading} updateLoading={updateLoading} updateView={updateView} selectedView={views?.[selectedTabIndex]} form={form} />
         )}
       </Menu>
     </div>

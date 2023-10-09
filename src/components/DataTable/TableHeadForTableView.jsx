@@ -18,6 +18,7 @@ import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { paginationActions } from "../../store/pagination/pagination.slice";
+import AlignHorizontalLeftIcon from "@mui/icons-material/AlignHorizontalLeft";
 
 export default function TableHeadForTableView({
   column,
@@ -49,14 +50,14 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const { i18n } = useTranslation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log('sortedDatas', sortedDatas)
+
   const fixColumnChangeHandler = (column, e) => {
     const computedData = {
       ...selectedView,
@@ -64,6 +65,23 @@ export default function TableHeadForTableView({
         ...selectedView?.attributes,
         fixedColumns: {
           ...selectedView?.attributes?.fixedColumns,
+          [column.id]: e,
+        },
+      },
+    };
+
+    constructorViewService.update(computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
+
+  const textWrapChangeHandler = (column, e) => {
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView?.attributes,
+        textWrap: {
+          ...selectedView?.attributes?.textWrap,
           [column.id]: e,
         },
       },
@@ -152,25 +170,17 @@ export default function TableHeadForTableView({
       children: [
         {
           id: 8,
-          title: `Sort ${
-            sortedDatas?.find((item) => item.field === column.id)?.order ===
-            "ASC"
-              ? "Z -> A"
-              : "A -> Z"
-          }`,
+          title: `Sort ${sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "Z -> A" : "A -> Z"}`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             const field = column.id;
-            const order = sortedDatas?.find(item => item.field === column.id)?.order === "ASC" ? "DESC" : "ASC";
+            const order = sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "DESC" : "ASC";
             dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
-              const index = newSortedDatas.findIndex(
-                (item) => item.field === column.id
-              );
+              const index = newSortedDatas.findIndex((item) => item.field === column.id);
               if (index !== -1) {
-                newSortedDatas[index].order =
-                  newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+                newSortedDatas[index].order = newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
               } else {
                 newSortedDatas.push({
                   field: column.id,
@@ -182,16 +192,19 @@ export default function TableHeadForTableView({
           },
         },
         {
+          id: 19,
+          title: `${view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"} text`,
+          icon: view?.attributes?.textWrap?.[column?.id] ? <WrapTextOutlinedIcon /> : <AlignHorizontalLeftIcon />,
+          onClickAction: () => {
+            textWrapChangeHandler(column, !view?.attributes?.textWrap?.[column?.id] ? true : false);
+          },
+        },
+        {
           id: 10,
-          title: `${
-            view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
-          } column`,
+          title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"} column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
-            fixColumnChangeHandler(
-              column,
-              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
-            );
+            fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
           },
         },
         // {
@@ -240,33 +253,12 @@ export default function TableHeadForTableView({
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "normal",
-          minWidth: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          width: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          position: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "sticky"
-              : "relative"
-          }`,
-          left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id) + 80}px`
-            : "0",
-          backgroundColor: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "#F6F6F6"
-              : "#fff"
-          }`,
-          zIndex: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "1"
-              : "0"
-          }`,
+          minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
+          left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
+          backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
+          zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
           // color: formVisible && column?.required === true ? "red" : "",
         }}
       >
@@ -286,10 +278,7 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`label_${i18n?.language}`] 
-            ?? column?.attributes?.[`title_${i18n?.language}`] 
-            ?? column?.attributes?.[`name_${i18n?.language}`] ?? 
-            column.label}
+            {column?.attributes?.[`label_${i18n?.language}`] ?? column?.attributes?.[`title_${i18n?.language}`] ?? column?.attributes?.[`name_${i18n?.language}`] ?? column.label}
           </span>
 
           <Button

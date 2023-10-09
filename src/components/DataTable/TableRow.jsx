@@ -97,7 +97,7 @@ const TableRow = ({
         data={data}
       />
     );
-
+    
   return (
     <>
       {!relationAction ? (
@@ -235,8 +235,8 @@ const TableRow = ({
                     <TableDataForm
                       tableSlug={tableSlug}
                       fields={columns}
-                      field={columns[virtualColumn.index]}
                       getValues={getValues}
+                      field={columns[virtualColumn.index]}
                       mainForm={mainForm}
                       row={row}
                       index={rowIndex}
@@ -291,6 +291,7 @@ const TableRow = ({
                       getValues={getValues}
                       mainForm={mainForm}
                       row={row}
+                      isWrap={view?.attributes?.textWrap}
                       index={rowIndex}
                       control={control}
                       setFormValue={setFormValue}

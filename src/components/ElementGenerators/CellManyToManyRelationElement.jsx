@@ -324,7 +324,7 @@ const AutoCompleteElement = ({
                 input: isBlackBg ? classes.input : "",
               },
               style: {
-                background: isBlackBg ? "#2A2D34" : "",
+                background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
               },
             }}

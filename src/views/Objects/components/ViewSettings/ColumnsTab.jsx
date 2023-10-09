@@ -117,16 +117,20 @@ const ColumnsTab = ({form, updateView, isMenu}) => {
   return (
     <div
       style={{
+        minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
+        padding: '10px 14px'
       }}
     >
       <div className={styles.table}>
-        <div className={styles.row}>
-          <div className={styles.cell} style={{flex: 1}}>
+        <div className={styles.row} style={{
+          borderBottom: '1px solid #eee',
+        }}>
+          <div className={styles.cell} style={{flex: 1, border: 0, paddingLeft: 0, paddingRight: 0}}>
             <b>All</b>
           </div>
-          <div className={styles.cell} style={{width: 70}}>
+          <div className={styles.cell} style={{width: 70, border: 0, paddingLeft: 0, paddingRight: 0, display: 'flex', justifyContent: 'flex-end'}}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
             <Switch
@@ -145,7 +149,7 @@ const ColumnsTab = ({form, updateView, isMenu}) => {
               <div key={column.id} className={styles.row}>
                 <div
                   className={styles.cell}
-                  style={{flex: 1, display: "flex", alignItems: "center"}}
+                  style={{flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0}}
                 >
                   <div
                     style={{
@@ -162,7 +166,7 @@ const ColumnsTab = ({form, updateView, isMenu}) => {
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}
                 </div>
-                <div className={styles.cell} style={{width: 70}}>
+                <div className={styles.cell} style={{width: 70, border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0, display: 'flex', justifyContent: 'flex-end'}}>
                   <Switch
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}

@@ -80,9 +80,11 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
         //   textAlign: "left",
         //   padding: "0 10px",
         // }}
-        variant="outlined"
+        variant={`${form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
         }}
         onClick={handleClick}
       >

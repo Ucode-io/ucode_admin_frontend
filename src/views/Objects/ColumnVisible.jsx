@@ -71,9 +71,11 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
         //   textAlign: "left",
         //   padding: "0 10px",
         // }}
-        variant="outlined"
+        variant={"text"}
         style={{
           gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
         }}
         onClick={handleClick}
       >

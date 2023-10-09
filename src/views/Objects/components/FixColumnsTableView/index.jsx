@@ -167,16 +167,17 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
       <Button
         // className={style.moreButton}
         onClick={handleClick}
-        variant="outlined"
+        variant={badgeCount > 0 ? "outlined" : "text"}
         style={{
           gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
         }}
       >
         <ViewColumnOutlinedIcon
-          // style={{
-          //   color: "#A8A8A8",
-          // }}
-          color="primary"
+          style={{
+            color: "#A8A8A8",
+          }}
         />
         Fix col's
         {badgeCount > 0 && <span>{badgeCount}</span>}
@@ -192,7 +193,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#007AAF",
+              color: "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();

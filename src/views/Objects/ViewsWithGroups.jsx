@@ -284,8 +284,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button variant="outlined" onClick={navigateToSettingsPage}>
-                <SettingsIcon />
+              <Button variant="outlined" onClick={navigateToSettingsPage} style={{
+                borderColor: "#A8A8A8",
+              }}>
+                <SettingsIcon style={{
+                  color: "#A8A8A8"
+                }}/>
               </Button>
             </PermissionWrapperV2>
           </>
@@ -397,9 +401,11 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               <>
                 <Button
                   // className={style.moreButton}
-                  variant="outlined"
+                  variant="text"
                   style={{
                     gap: "5px",
+                    color: "#A8A8A8",
+                    borderColor: "#A8A8A8",
                   }}
                   onClick={handleClickHeightControl}
                 >

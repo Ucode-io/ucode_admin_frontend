@@ -110,9 +110,11 @@ export default function GroupByButton({ selectedTabIndex }) {
     <div>
       {/* <Badge badgeContent={selectedColumns?.length} color="primary"> */}
       <Button
-        variant="outlined"
+        variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
         }}
         // style={{
         //   display: "flex",
@@ -151,7 +153,9 @@ export default function GroupByButton({ selectedTabIndex }) {
               disableAll();
             }}
           >
-            <CloseRoundedIcon />
+            <CloseRoundedIcon style={{
+              color: "#A8A8A8"
+            }}/>
           </button>
         )}
       </Button>

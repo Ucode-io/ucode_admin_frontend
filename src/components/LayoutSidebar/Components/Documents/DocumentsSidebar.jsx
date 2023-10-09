@@ -53,6 +53,10 @@ const DocumentsSidebar = ({
   menuStyle,
   setSubMenuIsOpen,
   menuItem,
+  setElement, 
+  setSelectedApp, 
+  sidebarIsOpen,
+  setSidebarIsOpen
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -97,6 +101,7 @@ const DocumentsSidebar = ({
   const closeNoteFolderModal = () => setNoteFolderModalType(false);
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -105,10 +110,11 @@ const DocumentsSidebar = ({
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: updateLevel(level),
+    // paddingLeft: updateLevel(level),
   };
 
   const labelStyle = {
+    flex: sidebarIsOpen ? 1 : 0,
     color:
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_text
@@ -371,13 +377,14 @@ const DocumentsSidebar = ({
 
   const clickHandler = (e) => {
     e.stopPropagation();
+    setSubMenuIsOpen(true);
+    setSelectedApp()
     dispatch(menuActions.setMenuItem(docsFolder));
     setSelected(docsFolder);
-    if (!pinIsEnabled && docsFolder.type !== "USER_FOLDER") {
-      setSubMenuIsOpen(false);
-    }
+    
+   
     setChildBlockVisible((prev) => !prev);
-    navigate(`/main/${adminId}`);
+    // navigate(`/main/${adminId}`);
   };
 
   // --CREATE FOLDERS--
@@ -397,7 +404,7 @@ const DocumentsSidebar = ({
   };
 
   return (
-    <Box>
+    <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
@@ -406,15 +413,12 @@ const DocumentsSidebar = ({
             clickHandler(e);
           }}
         >
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"folder.svg"} size={18} />
-            Documents
+          <IconGenerator icon={"folder.svg"} size={18} />
+            {sidebarIsOpen ? 'Documents' : ''}
+            
           </div>
+          {sidebarIsOpen && <KeyboardArrowRightIcon />}
         </Button>
       </div>
 
@@ -431,6 +435,7 @@ const DocumentsSidebar = ({
             onSelect={onSelect}
             setSelected={setSelected}
             menuItem={menuItem}
+            setSelectedApp={setSelectedApp}
           />
         ))}
       </Collapse>

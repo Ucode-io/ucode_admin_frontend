@@ -104,7 +104,7 @@ const ApiKeyPage = () => {
 
   return (
     <div>
-      <FiltersBlock>
+      {/* <FiltersBlock> */}
         <div
           className="p-1"
           style={{
@@ -116,7 +116,7 @@ const ApiKeyPage = () => {
           <h2>Api Keys</h2>
           <SearchInput />
         </div>
-      </FiltersBlock>
+      {/* </FiltersBlock> */}
 
       <TableCard>
         <CTable disablePagination removableHeight={140}>

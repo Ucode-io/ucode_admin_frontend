@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {mainActions} from "../../../store/main/main.slice";
 import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
+import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -38,10 +39,12 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-
+  
   return (
     <div
-      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
+      className={`SubMenu ${
+        !subMenuIsOpen || !selectedApp?.id || selectedApp?.id === '9e988322-cffd-484c-9ed6-460d8701551b' ? "right-side-closed" : ""
+      }`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
@@ -157,6 +160,14 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
+                 {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                   <DocumentsSidebar  
+                   menuStyle={menuStyle}
+                   setSubMenuIsOpen={setSubMenuIsOpen}
+                   menuItem={menuItem}
+                   level={2} 
+                   />
+                 )}
                 </div>
               </div>
             )}

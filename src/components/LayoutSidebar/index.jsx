@@ -362,7 +362,7 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
-                {defaultAdmin &&  
+                {/* {defaultAdmin &&  
                   <Users
                     menuStyle={menuStyle}
                     menuItem={menuItem}
@@ -374,13 +374,15 @@ const LayoutSidebar = ({appId}) => {
                     sidebarIsOpen={sidebarIsOpen}
                     setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
-                  />}
+                  />} */}
 
                     {/* <DocumentsSidebar
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
+                      subMenuIsOpen={subMenuIsOpen}
                       setElement={setElement}
                       setSelectedApp={setSelectedApp}
+                      selectedApp={selectedApp}
                       setChildBlockVisible={setChildBlockVisible}
                       childBlockVisible={childBlockVisible}
                       handleOpenNotify={handleOpenNotify}

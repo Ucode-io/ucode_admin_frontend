@@ -60,6 +60,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       permissionFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -147,7 +148,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}

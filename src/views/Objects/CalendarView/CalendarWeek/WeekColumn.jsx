@@ -1,48 +1,33 @@
 import { Add } from "@mui/icons-material";
-import {
-  addMinutes,
-  differenceInMinutes,
-  format,
-  setHours,
-  setMinutes,
-} from "date-fns";
+import { differenceInMinutes, format, setHours, setMinutes } from "date-fns";
 import { useMemo, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import constructorObjectService from "../../../services/constructorObjectService.js";
-import useTimeList from "../../../hooks/useTimeList";
-import styles from "./day.module.scss";
-import { useQueryClient } from "react-query";
-import DataDayCard from "./DataDayCard.jsx";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage.jsx";
+import { useSearchParams } from "react-router-dom";
+import styles from "./week.module.scss";
+import DataWeekCard from "./DataWeekCard.jsx";
+import useTimeList from "../../../../hooks/useTimeList";
+import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 
-const DataDayColumn = ({
+const WeekColumn = ({
   date,
   data,
   categoriesTab,
-  parentTab,
   fieldsMap,
   view,
   workingDays,
 }) => {
   const [searchParams] = useSearchParams();
   const queryGuid = searchParams.get("guid");
-  const queryTableSlug = searchParams.get("tableSlug");
-  const querServiceTime = searchParams.get("serviceTime");
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
   const { timeList, timeInterval } = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
-    if (!parentTab) return [];
     return data?.filter(
-      (el) =>
-        el[parentTab.slug] === parentTab.value &&
-        el.calendar?.date === format(date, "dd.MM.yyyy")
+      (el) => el.calendar?.date === format(date, "dd.MM.yyyy")
     );
-  }, [parentTab, data, date]);
+  }, [data, date]);
 
   const elementsWithPosition = useMemo(() => {
     const calendarStartedTime = setMinutes(setHours(date, 6), 0);
@@ -83,35 +68,19 @@ const DataDayColumn = ({
     const hour = Number(format(time, "H"));
     const minute = Number(format(time, "m"));
     const computedDate = await setHours(setMinutes(date, minute), hour);
-    if (queryTableSlug) {
-      await constructorObjectService.update(queryTableSlug, {
-        data: {
-          guid: queryGuid,
-          doctors_id: parentTab?.guid,
-          date_start: computedDate,
-          time_end: addMinutes(new Date(computedDate), querServiceTime),
-        },
-      });
+    const startTimeStampSlug = view?.calendar_from_slug;
 
-      queryClient.refetchQueries(["GET_OBJECT_LIST", queryTableSlug]);
-      navigate(-1);
-    } else {
-      const startTimeStampSlug = view?.calendar_from_slug;
-      setOpen(true);
-      setDateInfo({
-        [startTimeStampSlug]: computedDate,
-        [parentTab?.slug]: parentTab?.value,
-        specialities_id: categoriesTab?.value,
-      });
-    }
+    setOpen(true);
+    setDateInfo({
+      [startTimeStampSlug]: computedDate,
+      specialities_id: categoriesTab?.value,
+    });
   };
 
   const navigateToEditPage = (el) => {
     setOpen(true);
     setSelectedRow(el);
-    setDateInfo({
-      [parentTab?.slug]: parentTab?.value,
-    });
+    setDateInfo();
   };
 
   return (
@@ -119,7 +88,7 @@ const DataDayColumn = ({
       {timeList.map((time, index) => (
         <div
           key={time}
-          className={styles.timesBlock}
+          className={styles.timeBlock}
           style={{
             overflow: "auto",
           }}
@@ -138,7 +107,7 @@ const DataDayColumn = ({
 
       {elementsWithPosition?.map((el) => {
         return (
-          <DataDayCard
+          <DataWeekCard
             key={el.id}
             date={date}
             view={view}
@@ -159,4 +128,4 @@ const DataDayColumn = ({
   );
 };
 
-export default DataDayColumn;
+export default WeekColumn;

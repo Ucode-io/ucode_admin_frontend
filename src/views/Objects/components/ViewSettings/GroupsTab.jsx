@@ -38,6 +38,8 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
     return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
   }, [columns]);
 
+  console.log("computedColumns", computedColumns);
+
   const onCheckboxChange = async (val, id) => {
     const type = form.getValues("type");
 

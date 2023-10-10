@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import styles from "./day.module.scss";
 import DataDayColumn from "./DataDayColumn";
-import DayMockColumn from "./DayMockColumn";
+import DayColumn from "./DayColumn";
 
 const RecursiveDayBlock = ({
   date,
@@ -30,50 +30,59 @@ const RecursiveDayBlock = ({
     return computedElements;
   }, [parentTab, tabs, level]);
 
-  if (!elements?.length)
-    return <DayMockColumn view={view} level={level} tabs={tabs} />;
   return (
     <div className={styles.row}>
-      {elements?.map((tab) => (
-        <div
-          className={`${styles.block} ${
-            elements?.length === 1 && level === 1 ? styles.oneElement : ""
-          }`}
-        >
+      {elements?.length ? (
+        elements?.map((tab) => (
           <div
-            className={`${styles.blockElement}  ${
-              !tabs?.[level + 1] || tab.childrenNumber === 1
-                ? styles.last
-                : styles.before
-            } `}
+            className={`${styles.block} ${
+              elements?.length === 1 && level === 1 ? styles.oneElement : ""
+            }`}
           >
-            {tab.label}
-          </div>
+            <div
+              className={`${styles.blockElement}  ${
+                !tabs?.[level + 1] || tab.childrenNumber === 1
+                  ? styles.last
+                  : styles.before
+              } `}
+            >
+              {tab.label}
+            </div>
 
-          {tabs?.[level + 1] ? (
-            <RecursiveDayBlock
-              date={date}
-              data={data}
-              tabs={tabs}
-              parentTab={tab}
-              fieldsMap={fieldsMap}
-              view={view}
-              level={level + 1}
-              workingDays={workingDays}
-            />
-          ) : (
-            <DataDayColumn
-              date={date}
-              data={data}
-              parentTab={tab}
-              categoriesTab={parentTab}
-              fieldsMap={fieldsMap}
-              view={view}
-              workingDays={workingDays}
-            />
-          )}
-        </div>
-      ))}
+            {tabs?.[level + 1] ? (
+              <RecursiveDayBlock
+                date={date}
+                data={data}
+                tabs={tabs}
+                parentTab={tab}
+                fieldsMap={fieldsMap}
+                view={view}
+                level={level + 1}
+                workingDays={workingDays}
+              />
+            ) : (
+              <DataDayColumn
+                date={date}
+                data={data}
+                parentTab={tab}
+                categoriesTab={parentTab}
+                fieldsMap={fieldsMap}
+                view={view}
+                workingDays={workingDays}
+              />
+            )}
+          </div>
+        ))
+      ) : (
+        <DayColumn
+          date={date}
+          data={data}
+          categoriesTab={parentTab}
+          fieldsMap={fieldsMap}
+          view={view}
+          workingDays={workingDays}
+        />
+      )}
     </div>
   );
 };

@@ -10,6 +10,10 @@ const CalendarWeekColumn = ({
   tabs,
   workingDays,
 }) => {
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayOfWeekNumber = date.getDay();
+  const dayOfWeekName = daysOfWeek[dayOfWeekNumber];
+
   return (
     <div>
       <div
@@ -21,7 +25,7 @@ const CalendarWeekColumn = ({
               : "",
         }}
       >
-        {format(date, "dd MMMM yyyy")}
+        {dayOfWeekName} {format(date, "dd")}
       </div>
 
       <RecursiveWeekBlock

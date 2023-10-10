@@ -1,35 +1,30 @@
-import AppsIcon from "@mui/icons-material/Apps";
 import { Box, Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import CalendarSettings from "../components/ViewSettings/CalendarSettings";
 import constructorViewService from "../../../services/constructorViewService";
 import { useForm } from "react-hook-form";
-import ColumnsTab from "../components/ViewSettings/ColumnsTab";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 export default function CalendarSettingsVisible({
   selectedTabIndex,
   views,
   columns,
-  relationColumns,
   isLoading,
   width = "",
   text = "",
   initialValues,
-  visibleForm,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const form = useForm();
   const open = Boolean(anchorEl);
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log("form", form.watch());
   const queryClient = useQueryClient();
 
   const onSubmit = (values) => {
@@ -77,44 +72,6 @@ export default function CalendarSettingsVisible({
       status_field_slug: initialValues?.status_field_slug ?? "",
       time_interval: initialValues?.time_interval ?? 60,
     };
-  };
-
-  const type = views?.[selectedTabIndex]?.type;
-  const computedColumns = useMemo(() => {
-    return columns;
-  }, [columns, relationColumns, type]);
-
-  const watchedColumns = visibleForm.watch("columns");
-  const watchedGroupColumns = visibleForm.watch("attributes.group_by_columns");
-
-  useEffect(() => {
-    visibleForm.reset({
-      columns:
-        computedColumns?.map((el) => ({
-          ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
-        })) ?? [],
-    });
-  }, [selectedTabIndex, views, visibleForm, computedColumns]);
-
-  const updateView = () => {
-    constructorViewService
-      .update({
-        ...views?.[selectedTabIndex],
-        attributes: {
-          group_by_columns: watchedGroupColumns
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
-        },
-        columns: watchedColumns
-          ?.filter((el) => el.is_checked)
-          ?.map((el) => el.id),
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      });
   };
 
   return (
@@ -191,11 +148,6 @@ export default function CalendarSettingsVisible({
                   </Button>
                 </Box>
               }
-            />
-            <ColumnsTab
-              form={visibleForm}
-              updateView={updateView}
-              isMenu={true}
             />
           </>
         )}

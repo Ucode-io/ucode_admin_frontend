@@ -115,8 +115,8 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
         variant={watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "outlined" : "text"}
         style={{
           gap: "5px",
-          color: "#A8A8A8",
-          borderColor: "#A8A8A8",
+          color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
         onClick={handleClick}
       >
@@ -135,7 +135,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#007AAF",
+              color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -151,7 +151,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
           >
             <CloseRoundedIcon
               style={{
-                color: "#A8A8A8",
+                color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
               }}
             />
           </button>

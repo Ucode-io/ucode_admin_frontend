@@ -113,8 +113,8 @@ export default function GroupByButton({ selectedTabIndex }) {
         variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
-          color: "#A8A8A8",
-          borderColor: "#A8A8A8",
+          color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
         // style={{
         //   display: "flex",
@@ -146,7 +146,7 @@ export default function GroupByButton({ selectedTabIndex }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#007AAF",
+              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -154,7 +154,7 @@ export default function GroupByButton({ selectedTabIndex }) {
             }}
           >
             <CloseRoundedIcon style={{
-              color: "#A8A8A8"
+              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}/>
           </button>
         )}

@@ -12,9 +12,11 @@ const CalendarWeekRange = ({
   setCurrentDay,
   currentDay,
   weekDates,
+  setFirstDate,
+  firstDate,
+  setLastDate,
+  lastDate,
 }) => {
-  const [firstDate, setFirstDate] = useState();
-  const [lastDate, setLastDate] = useState();
   //   const nextWeek = () => {
   //     if (currentWeekIndex < weekData.length - 1) {
   //       setCurrentWeekIndex(currentWeekIndex + 1);

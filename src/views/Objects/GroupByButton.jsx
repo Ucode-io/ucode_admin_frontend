@@ -9,7 +9,11 @@ import { useForm } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
 import { use } from "i18next";
 
-export default function GroupByButton({ selectedTabIndex }) {
+export default function GroupByButton({
+  selectedTabIndex,
+  text = "Tab group",
+  width = "",
+}) {
   const form = useForm();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -84,7 +88,7 @@ export default function GroupByButton({ selectedTabIndex }) {
         setUpdateLoading(false);
       });
   };
-
+  console.log("computedColumns", computedColumns);
   return (
     <div>
       <div
@@ -100,11 +104,12 @@ export default function GroupByButton({ selectedTabIndex }) {
           letterSpacing: "0em",
           textAlign: "left",
           padding: "0 10px",
+          width: width,
         }}
         onClick={handleClick}
       >
         <LayersOutlinedIcon color={"#A8A8A8"} />
-        Tab group
+        {text}
       </div>
 
       <Menu

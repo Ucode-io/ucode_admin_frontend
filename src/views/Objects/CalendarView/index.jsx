@@ -8,7 +8,6 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useQueries, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
@@ -39,6 +38,9 @@ import CalendarMonthRange from "./CalendarMonth/CalendarMonthRange";
 import ColumnVisible from "../ColumnVisible";
 import { useForm } from "react-hook-form";
 import CalendarSettingsVisible from "./CalendarSettings";
+import GroupByButton from "../GroupByButton";
+import { dateFormat } from "../../../utils/dateFormat";
+import { FromDateType, ToDateType } from "../../../utils/getDateType";
 
 const formatDate = [
   {
@@ -80,6 +82,13 @@ const CalendarView = ({
   const [currentDay, setCurrentDay] = useState(new Date());
   const [weekDates, setWeekDates] = useState(new Date());
   const [currentMonthDates, setCurrentMonthDates] = useState([]);
+  const [firstDate, setFirstDate] = useState();
+  const [lastDate, setLastDate] = useState();
+
+  const currentUpdatedDate = dateFormat(currentDay, 0);
+  const tomorrow = dateFormat(currentDay, 1);
+  const lastUpdatedDate = dateFormat(lastDate, 1);
+  const firstUpdatedDate = dateFormat(firstDate, 0);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -88,28 +97,6 @@ const CalendarView = ({
     setAnchorEl(null);
   };
 
-  const splitArrayIntoWeeks = (data) => {
-    const weeks = [];
-    const daysPerWeek = 7;
-
-    for (let i = 0; i < data?.length; i += daysPerWeek) {
-      const week = data.slice(i, i + daysPerWeek);
-      weeks.push(week);
-    }
-
-    return weeks;
-  };
-  const splitArrayIntoMonth = (data) => {
-    const weeks = [];
-    const daysPerMonth = 30;
-
-    for (let i = 0; i < data?.length; i += daysPerMonth) {
-      const week = data.slice(i, i + daysPerMonth);
-      weeks.push(week);
-    }
-
-    return weeks;
-  };
   const startWeek = (date) => {
     const currentDayOfWeek = date.getDay();
     const start = new Date(date);
@@ -165,15 +152,15 @@ const CalendarView = ({
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, dataFilters, dateFilters },
+      { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate },
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
           with_relations: true,
           [view.calendar_from_slug]: {
-            $gte: dateFilters[0],
-            $lt: dateFilters[1],
+            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
           },
           ...dataFilters,
         },
@@ -215,15 +202,20 @@ const CalendarView = ({
     }
   );
   const { data: workingDays } = useQuery(
-    ["GET_OBJECTS_LIST", view?.disable_dates?.table_slug],
+    [
+      "GET_OBJECTS_LIST",
+      view?.disable_dates?.table_slug,
+      currentDay,
+      firstDate,
+    ],
     () => {
       if (!view?.disable_dates?.table_slug) return {};
 
       return constructorObjectService.getList(view?.disable_dates?.table_slug, {
         data: {
           [view.disable_dates.day_slug]: {
-            $gte: dateFilters[0],
-            $lt: dateFilters[1],
+            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
           },
         },
       });
@@ -399,6 +391,10 @@ const CalendarView = ({
             setCurrentDay={setCurrentDay}
             currentDay={currentDay}
             weekDates={weekDates}
+            setFirstDate={setFirstDate}
+            firstDate={firstDate}
+            setLastDate={setLastDate}
+            lastDate={lastDate}
           />
         )}
         {date === "MONTH" && (
@@ -410,27 +406,6 @@ const CalendarView = ({
           />
         )}
         <Box className={style.extra}>
-          <CalendarSettingsVisible
-            selectedTabIndex={selectedTabIndex}
-            views={visibleViews}
-            columns={visibleColumns}
-            relationColumns={visibleRelationColumns}
-            isLoading={isVisibleLoading}
-            visibleForm={visibleForm}
-            text={"Customize columns"}
-            width="170px"
-            initialValues={view}
-          />
-          {/* <ColumnVisible
-            selectedTabIndex={selectedTabIndex}
-            views={visibleViews}
-            columns={visibleColumns}
-            relationColumns={visibleRelationColumns}
-            isLoading={isVisibleLoading}
-            form={visibleForm}
-            text={"Customize columns"}
-            width="170px"
-          /> */}
           <CSelect
             value={date}
             options={formatDate}
@@ -439,7 +414,29 @@ const CalendarView = ({
               setDate(e.target.value);
             }}
           />
-          {/* <CRangePicker value={dateFilters} onChange={setDateFilters} /> */}
+          <ColumnVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            relationColumns={visibleRelationColumns}
+            isLoading={isVisibleLoading}
+            form={visibleForm}
+            text={"Customize columns"}
+            width="170px"
+          />
+          <CalendarSettingsVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            isLoading={isVisibleLoading}
+            text={"Settings"}
+            initialValues={view}
+          />
+          <GroupByButton
+            selectedTabIndex={selectedTabIndex}
+            text="Group by"
+            width="105px"
+          />
         </Box>
       </Box>
       {isLoading || tabLoading ? (

@@ -1,7 +1,6 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
@@ -18,7 +17,6 @@ export default function ColumnVisible({
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

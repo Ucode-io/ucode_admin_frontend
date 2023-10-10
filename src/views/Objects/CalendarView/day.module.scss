@@ -89,9 +89,7 @@
     background-color: #fff;
     z-index: 2;
 
-    &.last {
-        width: 130px;
-    }
+
 
     &.before {
         height: 40x;
@@ -156,6 +154,8 @@
 
 .objectColumn {
     position: relative;
+    width: 100%;
+
 
     .infoBlockWrapper {
         width: 100%;

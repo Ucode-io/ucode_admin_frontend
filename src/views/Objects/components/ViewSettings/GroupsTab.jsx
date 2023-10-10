@@ -55,6 +55,8 @@ const GroupsTab = ({
     );
   }, [columns]);
 
+  console.log("computedColumns", computedColumns);
+
   const onCheckboxChange = async (val, id) => {
     const type = form.getValues("type");
 

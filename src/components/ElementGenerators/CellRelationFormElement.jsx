@@ -224,7 +224,7 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...autoFiltersValue,
           additional_request: {
@@ -419,7 +419,7 @@ const AutoCompleteElement = ({
                 input: isBlackBg ? classes.input : "",
               },
               style: {
-                background: isBlackBg ? "#2A2D34" : "transparent",
+                background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
                 color: isBlackBg ? "#fff" : "",
                 width: "100%",
                 display: "flex",

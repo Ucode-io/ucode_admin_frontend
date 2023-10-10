@@ -123,7 +123,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
 
       data[`${loginTableSlug}_ids`] = [userId];
 
-      return constructorObjectService.getList("template", {
+      return constructorObjectService.getListV2("template", {
         data,
       });
     },

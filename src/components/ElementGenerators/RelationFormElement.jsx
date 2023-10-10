@@ -267,6 +267,7 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
+
   const getValueData = async () => {
     try {
       const id = value;
@@ -368,31 +369,14 @@ const AutoCompleteElement = ({
     setClientTypeValue();
   }, []);
 
-  useEffect(() => {
-    if (field?.attributes?.function_path) {
-      const newOptions = optionsFromFunctions?.options ?? [];
-      if (newOptions?.length && page > 1) {
-        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
-      } else {
-        setAllOptions(newOptions);
-      }
-    } else {
-      const newOptions = optionsFromLocale?.options ?? [];
-      if (newOptions?.length && page > 1) {
-        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
-      } else {
-        setAllOptions(newOptions);
-      }
-    }
-  }, [optionsFromFunctions, optionsFromLocale]);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-      if (optionsFromFunctions?.options?.length >= 5) {
+      if (optionsFromFunctions?.options?.length > 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     } else {
-      if (optionsFromLocale?.options?.length >= 5) {
+      if (optionsFromLocale?.options?.length > 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     }

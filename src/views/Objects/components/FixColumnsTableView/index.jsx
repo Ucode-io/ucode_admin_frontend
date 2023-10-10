@@ -1,5 +1,5 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Badge, Checkbox, Menu, Switch } from "@mui/material";
+import { Badge, Button, Checkbox, Menu, Switch } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -30,6 +30,7 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
 import LinkIcon from "@mui/icons-material/Link";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -95,6 +96,30 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     });
   };
 
+  const updateView = () => {
+    setSelectedView({
+      ...selectedView,
+      attributes: {
+        ...selectedView.attributes,
+        fixedColumns: {},
+      },
+    });
+
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView.attributes,
+        fixedColumns: {},
+      },
+    };
+
+    constructorViewService.update(computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
+        setIsLoading(false);
+      });
+    });
+  };
+
   const visibleColumns = useMemo(() => {
     refetch();
     return columns.filter((column) => {
@@ -135,19 +160,51 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   const badgeCount = useMemo(() => {
     return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter((key) => selectedView?.attributes?.fixedColumns?.[key]).length;
   }, [selectedView?.attributes?.fixedColumns]);
-  
+
   return (
     <>
-      <Badge badgeContent={badgeCount} color="primary">
-        <button className={style.moreButton} onClick={handleClick}>
-          <ViewColumnOutlinedIcon
+      {/* <Badge badgeContent={badgeCount} color="primary"> */}
+      <Button
+        // className={style.moreButton}
+        onClick={handleClick}
+        variant={badgeCount > 0 ? "outlined" : "text"}
+        style={{
+          gap: "5px",
+          color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+        }}
+      >
+        <ViewColumnOutlinedIcon
+          style={{
+            color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          }}
+        />
+        Fix col's
+        {badgeCount > 0 && <span>{badgeCount}</span>}
+        {badgeCount > 0 && (
+          <button
             style={{
-              color: "#A8A8A8",
+              border: "none", 
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
-          />
-          Fix col's
-        </button>
-      </Badge>
+            onClick={(e) => {
+              e.stopPropagation();
+              updateView();
+            }}
+          >
+            <CloseRoundedIcon />
+          </button>
+        )}
+      </Button>
+      {/* </Badge> */}
 
       <Menu
         open={open}

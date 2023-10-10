@@ -1,9 +1,9 @@
-import {Switch} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
+import { Switch } from "@mui/material";
+import { useEffect, useMemo } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
 import styles from "./style.module.scss";
-import {applyDrag} from "../../../../utils/applyDrag";
-import {Container, Draggable} from "react-smooth-dnd";
+import { applyDrag } from "../../../../utils/applyDrag";
+import { Container, Draggable } from "react-smooth-dnd";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -28,9 +28,9 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import LinkIcon from '@mui/icons-material/Link';
+import LinkIcon from "@mui/icons-material/Link";
 
-const GroupByTab = ({form, updateView, isMenu}) => {
+const GroupByTab = ({ form, updateView, isMenu }) => {
   const {
     fields: columns,
     move,
@@ -68,11 +68,11 @@ const GroupByTab = ({form, updateView, isMenu}) => {
     return watchedColumns?.filter((column) => column?.is_checked === true);
   }, [watchedColumns]);
 
-  useEffect(() => {
-    if (isMenu) {
-      updateView();
-    }
-  }, [watchedColumns]);
+  // useEffect(() => {
+  //   if (isMenu) {
+  //     updateView();
+  //   }
+  // }, [watchedColumns]);
 
   const onSwitchChange = (e, index) => {
     const updatedColumns = [...columns];
@@ -81,28 +81,20 @@ const GroupByTab = ({form, updateView, isMenu}) => {
       is_checked: index === columnIndex ? e.target.checked : item.is_checked,
     }));
     const selectedId = updatedGroupColumn[index].id;
-    const filteredColumn = updatedColumns?.find(
-      (item) => item?.id === selectedId
-    );
-    const insertIndex = updatedColumns.findIndex(
-      (item) => item?.id === selectedId
-    );
+    const filteredColumn = updatedColumns?.find((item) => item?.id === selectedId);
+    const insertIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
       //   updatedColumns.unshift(filteredColumn);
       //   replace(updatedColumns);
-      const columnIndex = updatedColumns.findIndex(
-        (item) => item?.id === selectedId
-      );
+      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns.splice(columnIndex, 1)[0];
         updatedColumns.unshift(filteredColumn);
       }
       replace(updatedColumns);
     } else {
-      const columnIndex = updatedColumns.findIndex(
-        (item) => item?.id === selectedId
-      );
+      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
 
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns[columnIndex];
@@ -152,62 +144,60 @@ const GroupByTab = ({form, updateView, isMenu}) => {
       DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
     };
   }, []);
-  
+
   return (
     <div
       style={{
         minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
-        padding: '10px 14px'
+        padding: "10px 14px",
       }}
     >
-      <div className={styles.table} style={{
-        
-      }}>
-        <Container
-          onDrop={onDrop}
-          dropPlaceholder={{className: "drag-row-drop-preview"}}
-        >
-          {groupColumn?.map((column, index) => (
-            <Draggable key={column.id}>
-              <div key={column.id} className={styles.row}>
-                <div className={styles.cell} style={{flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0}}>
+      <div className={styles.table} style={{}}>
+        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+          {groupColumn?.map((column, index) =>
+            (!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`) ? null : (
+              <Draggable key={column.id}>
+                <div key={column.id} className={styles.row}>
                   <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      marginRight: 5,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+                    className={styles.cell}
+                    style={{ flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0 }}
                   >
-                    {columnIcons[column.type] ?? <LinkIcon />}
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        marginRight: 5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {columnIcons[column.type] ?? <LinkIcon />}
+                    </div>
+                    {column.label}
                   </div>
-                  {column.label}
+                  <div
+                    className={styles.cell}
+                    style={{ width: 70, border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0, display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <Switch
+                      disabled={(!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`)}
+                      size="small"
+                      checked={form.watch(`attributes.group_by_columns.${index}.is_checked`)}
+                      onChange={(e) => {
+                        onSwitchChange(e, index);
+                        if (isMenu) {
+                          updateView();
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className={styles.cell} style={{width: 70, border: 0, borderBottom: '1px solid #eee', paddingLeft: 0, paddingRight: 0, display: 'flex', justifyContent: 'flex-end'}}>
-                  <Switch
-                    disabled={
-                      (!form.watch(
-                        `attributes.group_by_columns.${index}.is_checked`
-                      ) &&
-                        isWhatChecked?.length === 2) ||
-                      !form.watch(`columns.${index}.is_checked`)
-                    }
-                    size="small"
-                    checked={form.watch(
-                      `attributes.group_by_columns.${index}.is_checked`
-                    )}
-                    onChange={(e) => {
-                      onSwitchChange(e, index);
-                    }}
-                  />
-                </div>
-              </div>
-            </Draggable>
-          ))}
+              </Draggable>
+            )
+          )}
         </Container>
       </div>
     </div>

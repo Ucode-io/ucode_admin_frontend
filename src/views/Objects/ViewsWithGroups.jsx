@@ -2,12 +2,7 @@ import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
 import CustomActionsButton from "./components/CustomActionsButton";
-import {
-  ArrowDropDownCircleOutlined,
-  Clear,
-  Edit,
-  Save,
-} from "@mui/icons-material";
+import { ArrowDropDownCircleOutlined, Clear, Edit, Save } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
@@ -49,16 +44,9 @@ import style from "./style.module.scss";
 import SortButton from "./SortButton";
 import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from "@mui/icons-material/Settings";
 
-const ViewsWithGroups = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
-  fieldsMap,
-  menuItem,
-}) => {
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const visibleForm = useForm();
@@ -68,8 +56,7 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -234,13 +221,7 @@ const ViewsWithGroups = ({
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
-      (el) =>
-        el?.type === "SINGLE_LINE" ||
-        el?.type === "MULTI_LINE" ||
-        el?.type === "NUMBER" ||
-        el?.type === "PHONE" ||
-        el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE"
+      (el) => el?.type === "SINGLE_LINE" || el?.type === "MULTI_LINE" || el?.type === "NUMBER" || el?.type === "PHONE" || el?.type === "EMAIL" || el?.type === "INTERNATION_PHONE"
     );
   }, [view, fieldsMap]);
 
@@ -263,7 +244,7 @@ const ViewsWithGroups = ({
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: { limit: 10, offset: 0 },
       });
     },
@@ -302,8 +283,16 @@ const ViewsWithGroups = ({
             </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button variant="outlined" onClick={navigateToSettingsPage}>
-                <SettingsIcon />
+              <Button variant="outlined" onClick={navigateToSettingsPage} style={{
+                borderColor: "#A8A8A8",
+                width: '35px',
+                height: '35px',
+                padding: '0px',
+                minWidth: '35px',
+              }}>
+                <SettingsIcon style={{
+                  color: "#A8A8A8"
+                }}/>
               </Button>
             </PermissionWrapperV2>
           </>
@@ -322,9 +311,7 @@ const ViewsWithGroups = ({
           defaultViewTab={defaultViewTab}
           setTab={setTab}
         />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
+        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -332,10 +319,7 @@ const ViewsWithGroups = ({
           <div className={style.search}>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
             <Divider orientation="vertical" flexItem />
-            <SearchInput
-              placeholder={"Search"}
-              onChange={(e) => setSearchText(e)}
-            />
+            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -377,22 +361,18 @@ const ViewsWithGroups = ({
                 },
               }}
             >
-              <SearchParams
-                checkedColumns={checkedColumns}
-                setCheckedColumns={setCheckedColumns}
-                columns={columnsForSearch}
-              />
+              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
             </Menu>
           </div>
 
           <div className={style.rightExtra}>
             <FixColumnsTableView selectedTabIndex={selectedTabIndex} />
 
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
 
             <GroupByButton selectedTabIndex={selectedTabIndex} />
 
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
 
             <ColumnVisible
               selectedTabIndex={selectedTabIndex}
@@ -403,15 +383,11 @@ const ViewsWithGroups = ({
               form={visibleForm}
             />
 
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
 
-            <SortButton
-              selectedTabIndex={selectedTabIndex}
-              sortDatas={sortedDatas}
-              setSortedDatas={setSortedDatas}
-            />
+            <SortButton selectedTabIndex={selectedTabIndex} sortDatas={sortedDatas} setSortedDatas={setSortedDatas} />
 
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
 
             <GroupColumnVisible
               selectedTabIndex={selectedTabIndex}
@@ -422,17 +398,23 @@ const ViewsWithGroups = ({
               form={visibleForm}
             />
 
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
 
             {view.type === "TABLE" && (
               <>
-                <button
-                  className={style.moreButton}
+                <Button
+                  // className={style.moreButton}
+                  variant="text"
+                  style={{
+                    gap: "5px",
+                    color: "#A8A8A8",
+                    borderColor: "#A8A8A8",
+                  }}
                   onClick={handleClickHeightControl}
                 >
                   <FormatLineSpacingIcon color="#A8A8A8" />
                   Line Height
-                </button>
+                </Button>
 
                 <Menu
                   open={openHeightControl}
@@ -484,10 +466,7 @@ const ViewsWithGroups = ({
 
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
-                      <div
-                        className={style.template}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
+                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
                         {/* <div
                           className={`${style.element} ${
                             selectedTabIndex === views?.length
@@ -502,13 +481,14 @@ const ViewsWithGroups = ({
 
                         <span>{el.label}</span>
 
-                        <Switch 
-                        size="small"
-                        checked={tableHeight === el.value} 
-                        onChange={() => handleHeightControl(el.value)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}/>
+                        <Switch
+                          size="small"
+                          checked={tableHeight === el.value}
+                          onChange={() => handleHeightControl(el.value)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        />
                       </div>
                     ))}
                   </div>
@@ -584,22 +564,15 @@ const ViewsWithGroups = ({
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                <div
-                  className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${style.element} ${
-                      selectedTabIndex === views?.length ? style.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={style.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
+                {/* <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
+                  justifyContent: "flex-start",
+                  gap: "10px",
+                }}>
+                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
+                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
                   </div>
                   <span>{t("template")}</span>
-                </div>
+                </div> */}
               </div>
             </Menu>
           </div>
@@ -616,11 +589,7 @@ const ViewsWithGroups = ({
                 </div>
                 <TabList style={{ border: "none" }}>
                   {tabs?.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      selectedClassName={style.activeTab}
-                      className={`${style.disableTab} react-tabs__tab`}
-                    >
+                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
                       {tab.label}
                     </Tab>
                   ))}
@@ -736,13 +705,7 @@ const ViewsWithGroups = ({
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                      />
+                      <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} tab={tab} />
                     ) : view?.type === "FINANCE CALENDAR" ? (
                       <FinancialCalendarView
                         view={view}
@@ -786,12 +749,7 @@ const ViewsWithGroups = ({
               {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
+                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       control={control}
@@ -862,15 +820,12 @@ const queryGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(groupField.table_slug, {
+      constructorObjectService.getListV2(groupField.table_slug, {
         data: computedFilters ?? {},
       });
 
     return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
-      ],
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

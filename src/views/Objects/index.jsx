@@ -16,6 +16,7 @@ import DocView from "./DocView";
 import GanttView from "./GanttView";
 import {store} from "../../store";
 import {useTranslation} from "react-i18next";
+import constructorTableService from "../../services/constructorTableService";
 
 const ObjectsPage = () => {
   const {tableSlug, appId} = useParams();
@@ -39,10 +40,10 @@ const ObjectsPage = () => {
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
     () => {
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         tableSlug,
         {
-          data: {limit: 0, offset: 0, app_id: appId},
+          data: {},
         },
         params
       );

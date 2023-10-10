@@ -244,7 +244,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: { limit: 10, offset: 0 },
       });
     },
@@ -816,7 +816,7 @@ const queryGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(groupField.table_slug, {
+      constructorObjectService.getListV2(groupField.table_slug, {
         data: computedFilters ?? {},
       });
 

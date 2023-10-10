@@ -1,30 +1,30 @@
-import { Button, Drawer } from "@mui/material";
+import { Drawer } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import EmptyDataComponent from "../../../components/EmptyDataComponent";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
+import constructorRelationService from "../../../services/constructorRelationService";
+import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
+import { generateGUID } from "../../../utils/generateID";
 import { mergeStringAndState } from "../../../utils/jsonPath";
+import { listToMap } from "../../../utils/listToMap";
 import { pageToOffset } from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { listToMap } from "../../../utils/listToMap";
-import constructorFieldService from "../../../services/constructorFieldService";
-import constructorRelationService from "../../../services/constructorRelationService";
-import { generateGUID } from "../../../utils/generateID";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 
 const TableView = ({
   tab,
@@ -197,9 +197,9 @@ const TableView = ({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
-  const columnss = useMemo(() => {
-    return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
-  }, [view, fieldsMap]);
+  // const columnss = useMemo(() => {
+  //   return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
+  // }, [view, fieldsMap]);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
@@ -242,8 +242,45 @@ const TableView = ({
   };
   const [combinedTableData, setCombinedTableData] = useState([]);
 
+  // NEW QUERY FOR GETTING TABLE INFO
   const {
-    data: { tableData, pageCount, fiedlsarray, fieldView } = {
+    data: { fiedlsarray, fieldView } = {
+      tableData: [],
+      pageCount: 1,
+      fieldView: [],
+      fiedlsarray: [],
+    },
+    // refetch,
+    // isLoading: tableLoader,
+  } = useQuery({
+    queryKey: [
+      "GET_TABLE_INFO",
+      {
+        tableSlug,
+        // searchText,
+        // sortedDatas,
+        // currentPage,
+        // checkedColumns,
+        // limit,
+        // filters: { ...filters, [tab?.slug]: tab?.value },
+        shouldGet,
+      },
+    ],
+    queryFn: () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
+      });
+    },
+    select: (res) => {
+      return {
+        fiedlsarray: res?.data?.fields ?? [],
+        fieldView: res?.data?.views ?? [],
+      };
+    },
+  });
+
+  const {
+    data: { tableData, pageCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -266,7 +303,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
           offset: paginiation ? paginiation === 'all' : limit === "all" ? undefined : pageToOffset(currentPage, limit),
           // app_id: appId,
@@ -282,8 +319,6 @@ const TableView = ({
     },
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields ?? [],
-        fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
@@ -356,6 +391,7 @@ const TableView = ({
       .getList({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
+        "is_default": true,
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
@@ -404,15 +440,17 @@ const TableView = ({
     }
   };
 
-  const [elementHeight, setElementHeight] = useState(null);
+  // const [elementHeight, setElementHeight] = useState(null);
 
-  useEffect(() => {
-    const element = document.querySelector("#data-table");
-    if (element) {
-      const height = element.getBoundingClientRect().height;
-      setElementHeight(height);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const element = document.querySelector("#data-table");
+  //   if (element) {
+  //     const height = element.getBoundingClientRect().height;
+  //     setElementHeight(height);
+  //   }
+  // }, []);
+
+  console.log('sssss111')
 
   console.log('ssssssswwwwwww', tableData)
 
@@ -426,7 +464,7 @@ const TableView = ({
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
-          {tableData && (
+          {tableData.length > 0 ? (
             <ObjectDataTable
               defaultLimit={view?.default_limit}
               formVisible={formVisible}
@@ -437,7 +475,7 @@ const TableView = ({
               setDrawerState={setDrawerState}
               setDrawerStateField={setDrawerStateField}
               isTableView={true}
-              elementHeight={elementHeight}
+              // elementHeight={elementHeight}
               setFormVisible={setFormVisible}
               setFormValue={setFormValue}
               mainForm={mainForm}
@@ -475,7 +513,7 @@ const TableView = ({
               isResizeble={true}
               {...props}
             />
-          )}
+          ) : <EmptyDataComponent />}
         </div>
       </PermissionWrapperV2>
 

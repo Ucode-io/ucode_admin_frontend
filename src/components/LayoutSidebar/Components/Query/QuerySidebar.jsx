@@ -27,7 +27,7 @@ import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const queryFolder = {
-  label: "Queries",
+  label: "HTTP Requests",
   type: "USER_FOLDER",
   icon: "documents.svg",
   parent_id: adminId,

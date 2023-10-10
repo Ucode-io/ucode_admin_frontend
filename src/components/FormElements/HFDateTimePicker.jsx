@@ -41,6 +41,7 @@ const HFDateTimePicker = ({
             mask={mask}
             tabIndex={tabIndex}
             value={value}
+            isNewTableView={isNewTableView}
             showCopyBtn={showCopyBtn}
             onChange={(val) => {
                 onChange(val)

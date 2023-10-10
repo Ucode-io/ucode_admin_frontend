@@ -1,5 +1,5 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Badge, CircularProgress, Menu } from "@mui/material";
+import { Badge, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import constructorViewService from "../../services/constructorViewService";
@@ -57,25 +57,31 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
   return (
     <div>
       {/* <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary"> */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            color: "#A8A8A8",
-            cursor: "pointer",
-            fontSize: "13px",
-            fontWeight: 500,
-            lineHeight: "16px",
-            letterSpacing: "0em",
-            textAlign: "left",
-            padding: "0 10px",
-          }}
-          onClick={handleClick}
-        >
-          <AppsIcon color={"#A8A8A8"} />
-          Columns
-        </div>
+      <Button
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
+        variant={"text"}
+        style={{
+          gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
+        }}
+        onClick={handleClick}
+      >
+        <AppsIcon color={"#A8A8A8"} />
+        Columns
+      </Button>
       {/* </Badge> */}
       <Menu
         open={open}

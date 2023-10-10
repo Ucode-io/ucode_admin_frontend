@@ -17,10 +17,10 @@ const SettingsLayout = ({favicon}) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      {!profilePath?.pathname?.includes("profile") && (
+      {/* {!profilePath?.pathname?.includes("profile") && (
         // <Sidebar2222 favicon={favicon} />
         <LayoutSidebar appId={appId} />
-      )}
+      )} */}
       <div className={styles.content}>
         {/* <RouterTabsBlock /> */}
 

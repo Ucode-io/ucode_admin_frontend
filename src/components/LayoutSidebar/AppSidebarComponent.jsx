@@ -1,7 +1,7 @@
 import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
 import {useEffect, useMemo} from "react";
 import {BsThreeDots} from "react-icons/bs";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,6 +27,7 @@ const AppSidebar = ({
   menuTemplate,
   setChildBlockVisible
 }) => {
+  const {appId} = useParams()
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
@@ -44,9 +45,16 @@ const AppSidebar = ({
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      setElement(element);
-      setSubMenuIsOpen(true);
-      navigate(`/main/${element.id}`);
+      if(element?.id === '9e988322-cffd-484c-9ed6-460d8701551b') {
+        setSubMenuIsOpen(false);
+        navigate(`/main/${appId}/users-list`);
+        setSelectedApp(element);
+      } else {
+        setElement(element);
+        setSubMenuIsOpen(true);
+        navigate(`/main/${element.id}`);
+      }
+    
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
       navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);

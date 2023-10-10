@@ -113,7 +113,7 @@ const Users = ({
 
   return (
     <Box sx={{margin: '0 5px'}}>
-      <div className="parent-block column-drag-handle">
+      {/* <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
           className="nav-element"
@@ -127,7 +127,7 @@ const Users = ({
           </div>
           {sidebarIsOpen && <KeyboardArrowRightIcon />}
         </Button>
-      </div>
+      </div> */}
 
       {/* <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (

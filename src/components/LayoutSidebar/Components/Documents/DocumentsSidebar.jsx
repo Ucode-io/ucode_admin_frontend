@@ -346,39 +346,39 @@ const DocumentsSidebar = ({
       },
     });
 
-  const rowClickHandler = (id, element) => {
-    dispatch(menuActions.setMenuItem(element));
-    if (id === 1 || id === 2) {
-      if (element.children === null) {
-        element.name === "Templates"
-          ? setTemplateFolderModalType("CREATE")
-          : setNoteFolderModalType("CREATE");
-      } else if (element.children === null) {
-        element.name === "Notes"
-          ? setNoteFolderModalType("CREATE")
-          : setTemplateFolderModalType("CREATE");
+    const rowClickHandler = (id, element) => {
+      dispatch(menuActions.setMenuItem(element));
+      if (id === 1 || id === 2) {
+        if (element.children === null) {
+          element.name === "Templates"
+            ? setTemplateFolderModalType("CREATE")
+            : setNoteFolderModalType("CREATE");
+        } else if (element.children === null) {
+          element.name === "Notes"
+            ? setNoteFolderModalType("CREATE")
+            : setTemplateFolderModalType("CREATE");
+        }
       }
-    }
-    if (
-      element.type !== "FOLDER" ||
-      openedNoteFolders.includes(id) ||
-      openedTemplateFolders.includes(id)
-    )
-      return;
-    if (element.what_is === "template") {
-      setOpenedTemplateFolders((prev) => [...prev, id]);
-    } else if (element.what_is === "note") {
-      setOpenedNoteFolders((prev) => [...prev, id]);
-    }
-    if (element.type === "FOLDER") {
-      navigate(`/main/${adminId}`);
-    }
-  };
+      if (
+        element.type !== "FOLDER" ||
+        openedNoteFolders.includes(id) ||
+        openedTemplateFolders.includes(id)
+      )
+        return;
+      if (element.what_is === "template") {
+        setOpenedTemplateFolders((prev) => [...prev, id]);
+      } else if (element.what_is === "note") {
+        setOpenedNoteFolders((prev) => [...prev, id]);
+      }
+      if (element.type === "FOLDER") {
+        navigate(`/main/31a91a86-7ad3-47a6-a172-d33ceaebb35f`);
+      }
+    };
+  
 
   const clickHandler = (e) => {
     e.stopPropagation();
     setSubMenuIsOpen(true);
-    setSelectedApp()
     dispatch(menuActions.setMenuItem(docsFolder));
     setSelected(docsFolder);
     
@@ -404,25 +404,7 @@ const DocumentsSidebar = ({
   };
 
   return (
-    <Box sx={{margin: '0 5px'}}>
-      <div className="parent-block column-drag-handle">
-        <Button
-          style={activeStyle}
-          className="nav-element"
-          onClick={(e) => {
-            clickHandler(e);
-          }}
-        >
-          <div className="label" style={labelStyle}>
-          <IconGenerator icon={"folder.svg"} size={18} />
-            {sidebarIsOpen ? 'Documents' : ''}
-            
-          </div>
-          {sidebarIsOpen && <KeyboardArrowRightIcon />}
-        </Button>
-      </div>
-
-      <Collapse in={childBlockVisible} unmountOnExit>
+    <>
         {sidebarElements?.map((element) => (
           <DocumentsRecursive
             key={element.id}
@@ -435,10 +417,8 @@ const DocumentsSidebar = ({
             onSelect={onSelect}
             setSelected={setSelected}
             menuItem={menuItem}
-            setSelectedApp={setSelectedApp}
           />
         ))}
-      </Collapse>
 
       <DocumentButtonMenu
         selected={selected}
@@ -466,7 +446,7 @@ const DocumentsSidebar = ({
           closeModal={closeNoteFolderModal}
         />
       )}
-    </Box>
+    </>
   );
 };
 

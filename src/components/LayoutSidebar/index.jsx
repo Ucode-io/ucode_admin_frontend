@@ -74,6 +74,7 @@ const LayoutSidebar = ({appId}) => {
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const [users, setUsers] = useState()
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
@@ -205,7 +206,7 @@ const LayoutSidebar = ({appId}) => {
     {
       enabled: appId === "9e988322-cffd-484c-9ed6-460d8701551b",
       onSuccess: (res) => {
-        setChild(
+        setUsers(
           res.data.response?.map((row) => ({
             ...row,
             type: "USER",
@@ -545,6 +546,7 @@ const LayoutSidebar = ({appId}) => {
         menuStyle={menuStyle}
         setChild={setChild}
         setSelectedApp={setSelectedApp}
+        users={users}
       />
       <ButtonsMenu
         element={element}

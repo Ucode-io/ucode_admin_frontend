@@ -12,6 +12,7 @@ import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
+import { useQueryClient } from "react-query";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -31,6 +32,7 @@ const AppSidebar = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const queryClient = useQueryClient();
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -47,9 +49,10 @@ const AppSidebar = ({
     if (element.type === "FOLDER") {
 
       if(element?.id === "9e988322-cffd-484c-9ed6-460d8701551b") {
-        setSubMenuIsOpen(true)
-        navigate(`/main/${element.id}`)
         setElement(element);
+        setSubMenuIsOpen(true);
+        navigate(`/main/${element.id}`);
+        queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
       } else {
         setElement(element);
         setSubMenuIsOpen(true);

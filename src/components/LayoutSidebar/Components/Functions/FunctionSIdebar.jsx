@@ -243,6 +243,11 @@ const FunctionSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
+            {childBlockVisible ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
+            )}
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>
@@ -260,11 +265,6 @@ const FunctionSidebar = ({
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

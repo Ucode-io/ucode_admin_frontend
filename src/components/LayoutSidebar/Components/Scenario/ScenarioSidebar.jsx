@@ -194,6 +194,11 @@ const ScenarioSidebar = ({
             <KeyboardArrowRightIcon />
           )}
           <div className="label" style={labelStyle}>
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
             <PlayCircleIcon/>
             {/* <IconGenerator icon={"film.svg"} size={18} /> */}
             Scenarios

@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import Users from "../Components/Users";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -44,7 +45,7 @@ const SubMenu = ({
   return (
     <div
       className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id || selectedApp?.id === '9e988322-cffd-484c-9ed6-460d8701551b' ? "right-side-closed" : ""
+        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
       }`}
       style={{
         background: menuStyle?.background || "#fff",
@@ -168,6 +169,15 @@ const SubMenu = ({
                    menuItem={menuItem}
                    level={2} 
                    />
+                 )}
+                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                    <Users
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      menuItem={menuItem}
+                      level={2} 
+                      child={child}
+                    />
                  )}
                 </div>
               </div>

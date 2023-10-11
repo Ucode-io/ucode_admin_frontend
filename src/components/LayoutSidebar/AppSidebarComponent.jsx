@@ -25,7 +25,7 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
-  setChildBlockVisible
+  setChildBlockVisible,
 }) => {
   const {appId} = useParams()
   const navigate = useNavigate();
@@ -45,10 +45,11 @@ const AppSidebar = ({
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      if(element?.id === '9e988322-cffd-484c-9ed6-460d8701551b') {
-        setSubMenuIsOpen(false);
-        navigate(`/main/${appId}/users-list`);
-        setSelectedApp(element);
+
+      if(element?.id === "9e988322-cffd-484c-9ed6-460d8701551b") {
+        setSubMenuIsOpen(true)
+        navigate(`/main/${element.id}`)
+        setElement(element);
       } else {
         setElement(element);
         setSubMenuIsOpen(true);

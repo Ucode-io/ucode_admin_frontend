@@ -87,30 +87,14 @@ const Users = ({
 
   return (
     <Box sx={{margin: '0 5px'}}>
-      {/* <div className="parent-block column-drag-handle">
-        <Button
-          style={activeStyle}
-          className="nav-element"
-          onClick={(e) => {
-            clickHandler(e);
-          }}
-        >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"users.svg"} size={18} />
-            {sidebarIsOpen ? 'Users' : ''}
-          </div>
-          {sidebarIsOpen && <KeyboardArrowRightIcon />}
-        </Button>
-      </div> */}
 
-      <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
           <RecursiveBlock
             onClick={() => {
               handleGetClientType();
             }}
             key={childElement.id}
-            level={level + 1}
+            level={1}
             element={childElement}
             menuStyle={menuStyle}
             menuItem={menuItem}
@@ -118,7 +102,6 @@ const Users = ({
             handleOpenNotify={handleOpenNotify}
           />
         ))}
-      </Collapse>
 
     </Box>
   );

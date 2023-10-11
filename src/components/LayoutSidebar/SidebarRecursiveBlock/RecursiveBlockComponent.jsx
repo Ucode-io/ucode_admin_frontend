@@ -216,7 +216,7 @@ const RecursiveBlock = ({
       },
     }
   );
-
+    console.log('element', element)
   return (
     <Box sx={{padding: "0 5px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -244,6 +244,11 @@ const RecursiveBlock = ({
               }}
             >
               {element?.type === 'USER' && <PersonIcon style={{color:menuItem?.id === element?.id ?  '#fff' : 'rgb(45, 108, 229)'}}/>}
+              { childBlockVisible ? (
+                element?.type === 'PERMISSION'  ? '' : <KeyboardArrowDownIcon />
+              ) : (
+                element?.type === 'PERMISSION'  ? '' : <KeyboardArrowRightIcon />
+              )}
               <IconGenerator
                 icon={
                   element?.icon ||
@@ -330,11 +335,13 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
-                {childBlockVisible ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
+                {element?.type === 'FOLDER' && 
+              childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+                
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
@@ -380,11 +387,7 @@ const RecursiveBlock = ({
                     />
                   </Box>
                 </Tooltip> */}
-                {childBlockVisible ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
+                
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
               <>

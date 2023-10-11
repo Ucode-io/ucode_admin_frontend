@@ -12,6 +12,7 @@ import {mainActions} from "../../../store/main/main.slice";
 import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import Users from "../Components/Users";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -29,7 +30,9 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
+  users
 }) => {
+
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const { i18n } = useTranslation();
@@ -39,11 +42,11 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-  
+
   return (
     <div
       className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id || selectedApp?.id === '9e988322-cffd-484c-9ed6-460d8701551b' ? "right-side-closed" : ""
+        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
       }`}
       style={{
         background: menuStyle?.background || "#fff",
@@ -142,24 +145,35 @@ const SubMenu = ({
                       level={2}
                     />
                   )}
-                <div className="menu-element">
-                  {child?.map((element) => (
-                    <RecursiveBlock
-                      key={element.id}
-                      element={element}
-                      openFolderCreateModal={openFolderCreateModal}
-                      setFolderModalType={setFolderModalType}
-                      sidebarIsOpen={subMenuIsOpen}
-                      selectedApp={selectedApp}
-                      setTableModal={setTableModal}
-                      setLinkedTableModal={setLinkedTableModal}
-                      handleOpenNotify={handleOpenNotify}
-                      setElement={setElement}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
+                   {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                    <Users
                       menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
                       menuItem={menuItem}
+                      level={2} 
+                      child={users}
                     />
-                  ))}
+                 )}
+                <div className="menu-element">
+                    {selectedApp?.id !== '9e988322-cffd-484c-9ed6-460d8701551b' && (
+                      child?.map((element) => (
+                        <RecursiveBlock
+                          key={element.id}
+                          element={element}
+                          openFolderCreateModal={openFolderCreateModal}
+                          setFolderModalType={setFolderModalType}
+                          sidebarIsOpen={subMenuIsOpen}
+                          selectedApp={selectedApp}
+                          setTableModal={setTableModal}
+                          setLinkedTableModal={setLinkedTableModal}
+                          handleOpenNotify={handleOpenNotify}
+                          setElement={setElement}
+                          setSubMenuIsOpen={setSubMenuIsOpen}
+                          menuStyle={menuStyle}
+                          menuItem={menuItem}
+                        />
+                      ))
+                    )}
                  {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
                    <DocumentsSidebar  
                    menuStyle={menuStyle}

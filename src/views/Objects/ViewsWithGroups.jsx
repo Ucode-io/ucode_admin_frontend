@@ -285,6 +285,10 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage} style={{
                 borderColor: "#A8A8A8",
+                width: '35px',
+                height: '35px',
+                padding: '0px',
+                minWidth: '35px',
               }}>
                 <SettingsIcon style={{
                   color: "#A8A8A8"
@@ -560,7 +564,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
+                {/* <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
                   justifyContent: "flex-start",
                   gap: "10px",
                 }}>
@@ -568,7 +572,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                     <Description className={style.icon} style={{ color: "#6E8BB7" }} />
                   </div>
                   <span>{t("template")}</span>
-                </div>
+                </div> */}
               </div>
             </Menu>
           </div>

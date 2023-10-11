@@ -5,7 +5,20 @@ import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
 
-export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRowClick, field, row, index, control, isWrap = {}, setFormValue, relationfields, data, getValues }) {
+export default function TableDataForm({
+  tableSlug,
+  fields,
+  field,
+  row,
+  getValues,
+  index,
+  control,
+  setFormValue,
+  relationfields,
+  data,
+  isWrap,
+  watch,
+}) {
   const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {
       data: { ...getValues(`multi.${index}`) },
@@ -13,15 +26,19 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
   );
 
   const isWrapField = useMemo(() => {
+    if (!isWrap || !field || !field.id) {
+      return null;
+    }
+
     return Object.keys(isWrap)
       .map((key) => {
         return {
           id: key,
-          status: isWrap[key],
+          status: isWrap?.[key],
         };
       })
-      .find((x) => x.id === field.id)?.status;
-  }, [isWrap, field.id]);
+      .find((x) => x?.id === field?.id)?.status;
+  }, [isWrap, field?.id]);
 
   return (
     <Box

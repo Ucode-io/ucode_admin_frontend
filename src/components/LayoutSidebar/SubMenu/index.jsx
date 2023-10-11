@@ -7,9 +7,9 @@ import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
@@ -41,7 +41,7 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-  
+
   return (
     <div
       className={`SubMenu ${
@@ -59,7 +59,8 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}
           <Box className="buttons">
@@ -137,13 +138,13 @@ const SubMenu = ({
             ) : (
               <div className="nav-block">
                 {selectedApp?.id === adminId && (
-                   <Permissions
-                      menuStyle={menuStyle}
-                      menuItem={menuItem}
-                      setElement={setElement}
-                      level={2}
-                    />
-                  )}
+                  <Permissions
+                    menuStyle={menuStyle}
+                    menuItem={menuItem}
+                    setElement={setElement}
+                    level={2}
+                  />
+                )}
                 <div className="menu-element">
                   {child?.map((element) => (
                     <RecursiveBlock
@@ -162,23 +163,25 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
-                 {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                   <DocumentsSidebar  
-                   menuStyle={menuStyle}
-                   setSubMenuIsOpen={setSubMenuIsOpen}
-                   menuItem={menuItem}
-                   level={2} 
-                   />
-                 )}
-                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                  {selectedApp?.id ===
+                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                    <DocumentsSidebar
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      menuItem={menuItem}
+                      level={2}
+                    />
+                  )}
+                  {selectedApp?.id ===
+                    "9e988322-cffd-484c-9ed6-460d8701551b" && (
                     <Users
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       menuItem={menuItem}
-                      level={2} 
+                      level={2}
                       child={child}
                     />
-                 )}
+                  )}
                 </div>
               </div>
             )}

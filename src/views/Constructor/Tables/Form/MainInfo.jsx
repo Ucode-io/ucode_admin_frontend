@@ -1,8 +1,8 @@
-import {Box} from "@mui/material";
-import {useMemo} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import { Box } from "@mui/material";
+import { useMemo } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
@@ -11,12 +11,14 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
-import {useSelector} from "react-redux";
-import {useTranslation} from "react-i18next";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
+import { LoginStrategy } from "../../../../mock/FolderSettings";
 
-const MainInfo = ({control}) => {
-  const {slug} = useParams();
-  const {i18n} = useTranslation();
+const MainInfo = ({ control }) => {
+  const { slug } = useParams();
+  const { i18n } = useTranslation();
 
   const params = {
     language_setting: i18n?.language,
@@ -32,13 +34,13 @@ const MainInfo = ({control}) => {
     name: "description",
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const {fields: relations} = useFieldArray({
+  const { fields: relations } = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -54,12 +56,12 @@ const MainInfo = ({control}) => {
     name: "attributes.auth_info.login",
   });
 
-  const attributes = useWatch({
+  const authInfo = useWatch({
     control,
-    name: "attributes",
+    name: "attributes.auth_info",
   });
 
-  const {data: computedTableFields} = useQuery(
+  const { data: computedTableFields } = useQuery(
     ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
       return constructorObjectService.getList(
@@ -126,7 +128,7 @@ const MainInfo = ({control}) => {
         </div>
 
         <FRow label="Название">
-          <Box style={{display: "flex", gap: "6px"}}>
+          <Box style={{ display: "flex", gap: "6px" }}>
             {languages?.map((language) => {
               const languageFieldName = `attributes.label_${language?.slug}`;
               const fieldValue = useWatch({
@@ -147,7 +149,7 @@ const MainInfo = ({control}) => {
           </Box>
         </FRow>
         <FRow label="Описание">
-          <Box style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             {languages?.map((desc) => {
               const languageFieldDesc = `attributes.description_${desc?.slug}`;
               const fieldValue = useWatch({
@@ -187,7 +189,7 @@ const MainInfo = ({control}) => {
           />
         </FRow>
 
-        <Box sx={{display: "flex", alignItems: "center", margin: "30px 0"}}>
+        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
           <FRow label="Login Table">
             <HFSwitch control={control} name="is_login_table" required />
           </FRow>
@@ -310,6 +312,23 @@ const MainInfo = ({control}) => {
                 fullWidth
                 placeholder="phone"
                 options={computedLoginFields}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Login strategy" />
+              <HFMultipleSelect
+                control={control}
+                name="attributes.auth_info.login_strategy"
+                fullWidth
+                placeholder="Select..."
+                options={LoginStrategy}
               />
             </Box>
           </Box>

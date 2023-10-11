@@ -46,6 +46,10 @@ function ShareModal() {
     <>
       <Button onClick={handleClickOpen} variant="outlined" style={{
         borderColor: "#A8A8A8",
+        width: '35px',
+        height: '35px',
+        padding: '0px',
+        minWidth: '35px',
       }}>
         <ShareIcon style={{
           color: "#A8A8A8"

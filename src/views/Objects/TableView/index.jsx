@@ -454,8 +454,6 @@ const TableView = ({
 
   console.log('sssss111')
 
-  console.log('ssssssswwwwwww', tableData)
-
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (

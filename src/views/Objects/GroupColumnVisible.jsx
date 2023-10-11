@@ -83,12 +83,14 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
         variant={`${form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
-          color: "#A8A8A8",
-          borderColor: "#A8A8A8",
+          color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
         onClick={handleClick}
       >
-        <AppsIcon color={"#A8A8A8"} />
+        <AppsIcon style={{
+          color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+        }} />
         Group
         {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && <span>{form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length}</span>}
         {/* {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && (

@@ -91,7 +91,7 @@ function TableRow({
   const { data: values } = useQuery(
     ["GET_OBJECT_LIST", selectedTableOptions, getFilterData, debouncedValue],
     () => {
-      return constructorObjectService.getList(selectedTableOptions, {
+      return constructorObjectService.getListV2(selectedTableOptions, {
         data: {
           limit: 10,
           offset: 0,

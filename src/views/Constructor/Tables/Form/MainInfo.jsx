@@ -13,6 +13,8 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import listToOptions from "../../../../utils/listToOptions";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
+import { LoginStrategy } from "../../../../mock/FolderSettings";
 
 const MainInfo = ({ control }) => {
   const { slug } = useParams();
@@ -54,9 +56,9 @@ const MainInfo = ({ control }) => {
     name: "attributes.auth_info.login",
   });
 
-  const attributes = useWatch({
+  const authInfo = useWatch({
     control,
-    name: "attributes",
+    name: "attributes.auth_info",
   });
 
   const { data: computedTableFields } = useQuery(
@@ -310,6 +312,23 @@ const MainInfo = ({ control }) => {
                 fullWidth
                 placeholder="phone"
                 options={computedLoginFields}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Login strategy" />
+              <HFMultipleSelect
+                control={control}
+                name="attributes.auth_info.login_strategy"
+                fullWidth
+                placeholder="Select..."
+                options={LoginStrategy}
               />
             </Box>
           </Box>

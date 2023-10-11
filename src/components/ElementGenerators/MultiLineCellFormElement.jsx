@@ -1,8 +1,8 @@
 import React from "react";
 import HFTextEditor from "../FormElements/HFTextEditor";
-import {Box, Button, Modal} from "@mui/material";
+import { Box, Button, Modal } from "@mui/material";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import {useWatch} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 const style = {
   position: "absolute",
@@ -17,15 +17,7 @@ const style = {
   p: 4,
 };
 
-export default function MultiLineCellFormElement({
-  control,
-  computedSlug,
-  updateObject,
-  isNewTableView = false,
-  field,
-  isDisabled,
-  ...props
-}) {
+export default function MultiLineCellFormElement({ control, computedSlug, isWrapField, updateObject, isNewTableView = false, field, isDisabled, ...props }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -41,19 +33,28 @@ export default function MultiLineCellFormElement({
 
   return (
     <>
-      {stripHtmlTags(
-        `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}` ?? ""
-      )}
-      <Button onClick={handleOpen}>
-        <ZoomOutMapIcon />
-      </Button>
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+      <Box
+        style={{
+          display: "flex",
+        }}
       >
+        <p
+          style={
+            isWrapField
+              ? {
+                  height: "16px",
+                }
+              : {}
+          }
+        >
+          {stripHtmlTags(`${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}` ?? "")}
+        </p>
+        <Button onClick={handleOpen}>
+          <ZoomOutMapIcon />
+        </Button>
+      </Box>
+
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <HFTextEditor
             control={control}

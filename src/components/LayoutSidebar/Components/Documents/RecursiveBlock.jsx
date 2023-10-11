@@ -20,6 +20,7 @@ const DocumentsRecursive = ({
   handleOpenNotify,
   setSelected,
   menuItem,
+  setSelectedApp
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -32,6 +33,7 @@ const DocumentsRecursive = ({
     element?.what_is === "template" && element?.type !== "FOLDER";
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       element?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -40,7 +42,7 @@ const DocumentsRecursive = ({
       element?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: updateLevel(level),
+    // paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -53,7 +55,7 @@ const DocumentsRecursive = ({
     if (!element.children) onSelect(element.id, element);
   };
   return (
-    <Box>
+    <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         <Button
           key={element.id}

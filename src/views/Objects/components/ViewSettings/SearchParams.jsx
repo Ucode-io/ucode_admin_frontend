@@ -60,7 +60,7 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           display: "flex",
           alignItems: "center",
@@ -75,20 +75,49 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
         <Button variant="outlined" color="error" onClick={deselectAll}>
           Disable all
         </Button>
-      </div>
+      </div> */}
       <div
         style={{
-          padding: "10px",
+          padding: "10px 14px",
+          minWidth: "200px",
         }}
       >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #e0e0e0",
+            padding: "6px 0",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <div style={{ textAlign: "end" }}>All</div>
+          </div>
+
+          <div>
+            <Switch
+              size="small"
+              onChange={() => (checkedColumns.length === columns.length ? deselectAll() : selectAll())}
+              checked={checkedColumns.length === columns.length ? true : false}
+            />
+          </div>
+        </div>
+
         {columns.map((column, index) => (
           <div
             key={column.id}
             style={{
               display: "flex",
               alignItems: "center",
-              borderBottom: index === columns.length - 1 ? "none" : "1px solid #e0e0e0",
-              padding: "10px 0",
+              borderBottom: "1px solid #e0e0e0",
+              padding: "6px 0",
               justifyContent: "space-between",
             }}
           >

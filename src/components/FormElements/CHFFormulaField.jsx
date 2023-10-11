@@ -99,7 +99,7 @@ const CHFFormulaField = ({
           InputProps={{
             readOnly: disabled,
             style: {
-              background: isTransparent ? "transparent" : disabled ? "#c0c0c039" : "#fff",
+              background: isTransparent ? "transparent" : "#fff",
               border: "0",
               borderWidth: "0px",
             },

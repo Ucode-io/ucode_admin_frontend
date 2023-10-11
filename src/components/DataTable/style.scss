@@ -53,9 +53,25 @@
     }
   }
 
+  .first_button, .table_multi_checkbox{
+    display: none;
+  }
+
+  .data_table__row_number{
+    display: block;
+  }
+
   &:hover {
     .data_table__row_checkbox {
       display: flex;
+    }
+
+    .first_button, .table_multi_checkbox{
+      display: block;
+    }
+
+    .data_table__row_number{
+      display: none;
     }
   }
 }

@@ -10,7 +10,20 @@ import "react-multi-date-picker/styles/layouts/mobile.css";
 import CopyToClipboard from "../CopyToClipboard";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isFormEdit, isTransparent = false, tabIndex, mask, showCopyBtn = true, disabled = false }) => {
+const CDateTimePicker = ({
+  value,
+  placeholder,
+  isBlackBg,
+  isNewTableView,
+  classes,
+  onChange,
+  isFormEdit,
+  isTransparent = false,
+  tabIndex,
+  mask,
+  showCopyBtn = true,
+  disabled = false,
+}) => {
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -29,10 +42,10 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                       borderRight: 0,
                     },
                     "& .MuiInputBase-input": {
-                      paddingTop: 0,
-                      paddingBottom: 0,
+                      paddingTop: isNewTableView ? 0 : "10px",
+                      paddingBottom: isNewTableView ? 0 : "10px",
                     },
-                    width: '150px',
+                    width: "150px",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -45,9 +58,11 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent ? {
-                      background: "transparent",
-                    } : disabled
+                    style: isTransparent
+                      ? {
+                          background: "transparent",
+                        }
+                      : disabled
                       ? {
                           background: "#c0c0c039",
                         }
@@ -90,19 +105,21 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                       borderLeft: 0,
                     },
                     "& .MuiInputBase-input": {
-                      paddingTop: 0,
-                      paddingBottom: 0,
+                      paddingTop: isNewTableView ? 0 : "10px",
+                      paddingBottom: isNewTableView ? 0 : "10px",
                     },
-                    width: '150px'
+                    width: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent ? {
-                      background: "transparent",
-                    } : disabled
+                    style: isTransparent
+                      ? {
+                          background: "transparent",
+                        }
+                      : disabled
                       ? {
                           background: "#c0c0c039",
                         }
@@ -111,17 +128,17 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                           color: isBlackBg ? "#fff" : "",
                         },
                     endAdornment: (
-                        <InputAdornment position="end">
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <DateRange style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
-                            {disabled && (
-                              <Tooltip title="This field is disabled for this role!">
-                                <Lock style={{ fontSize: "20px" }} />
-                              </Tooltip>
-                            )}
-                          </Box>
-                        </InputAdornment>
-                      ),
+                      <InputAdornment position="end">
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <DateRange style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
+                          {disabled && (
+                            <Tooltip title="This field is disabled for this role!">
+                              <Lock style={{ fontSize: "20px" }} />
+                            </Tooltip>
+                          )}
+                        </Box>
+                      </InputAdornment>
+                    ),
                   }}
                 />
               )}

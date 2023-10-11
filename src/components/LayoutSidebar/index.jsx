@@ -37,6 +37,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import Users from "./Components/Users";
+import DocumentsSidebar from "./Components/Documents/DocumentsSidebar";
 
 const LayoutSidebar = ({appId}) => {
   const menuItem = useSelector((state) => state.menu.menuItem); 
@@ -339,7 +340,7 @@ const LayoutSidebar = ({appId}) => {
                     icon={
                       <ChatBubbleIcon
                         style={{
-                          margin: '0 5px',
+                          margin: '0 10px',
                           width:
                             menuTemplate?.icon_size === "SMALL"
                               ? 10
@@ -361,7 +362,7 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
-                {defaultAdmin &&  
+                {/* {defaultAdmin &&  
                   <Users
                     menuStyle={menuStyle}
                     menuItem={menuItem}
@@ -373,7 +374,23 @@ const LayoutSidebar = ({appId}) => {
                     sidebarIsOpen={sidebarIsOpen}
                     setSidebarIsOpen={setSidebarIsOpen}
                     level={2}
-                  />}
+                  />} */}
+
+                    {/* <DocumentsSidebar
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      subMenuIsOpen={subMenuIsOpen}
+                      setElement={setElement}
+                      setSelectedApp={setSelectedApp}
+                      selectedApp={selectedApp}
+                      setChildBlockVisible={setChildBlockVisible}
+                      childBlockVisible={childBlockVisible}
+                      handleOpenNotify={handleOpenNotify}
+                      sidebarIsOpen={sidebarIsOpen}
+                      setSidebarIsOpen={setSidebarIsOpen}
+                      menuItem={menuItem}
+                      level={2}
+                    /> */}
 
 
                 <div

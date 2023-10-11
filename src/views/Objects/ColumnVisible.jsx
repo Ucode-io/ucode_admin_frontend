@@ -1,19 +1,12 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { CircularProgress, Menu } from "@mui/material";
+import { Badge, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
 
-export default function ColumnVisible({
-  selectedTabIndex,
-  views,
-  columns,
-  relationColumns,
-  isLoading,
-  form,
-}) {
+export default function ColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
@@ -42,9 +35,7 @@ export default function ColumnVisible({
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
+          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -54,13 +45,9 @@ export default function ColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
         },
-        columns: watchedColumns
-          ?.filter((el) => el.is_checked)
-          ?.map((el) => el.id),
+        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -69,26 +56,33 @@ export default function ColumnVisible({
 
   return (
     <div>
-      <div
+      {/* <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary"> */}
+      <Button
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
+        variant={"text"}
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
+          gap: "5px",
           color: "#A8A8A8",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          letterSpacing: "0em",
-          textAlign: "left",
-          padding: "0 10px",
+          borderColor: "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
         Columns
-      </div>
-
+      </Button>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}
@@ -118,11 +112,7 @@ export default function ColumnVisible({
           },
         }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
-        )}
+        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} />}
       </Menu>
     </div>
   );

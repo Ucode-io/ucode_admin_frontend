@@ -30,7 +30,7 @@ const AuthLayout = () => {
 
   if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
 
-  if (microfrontendUrl)
+  if (microfrontendUrl && window.location.hostname !== "localhost")
     return (
       <MicrofrontendComponent
         loginAction={(authData) => dispatch(loginAction(authData))}

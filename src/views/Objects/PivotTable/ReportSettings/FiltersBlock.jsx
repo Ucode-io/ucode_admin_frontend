@@ -16,7 +16,7 @@ import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
 
 export default function FiltersBlock({ form, tables, getTables }) {
   const { fields: objectFields, append, remove } = useFieldArray({ control: form.control, name: "filters" });
-
+  console.log('formrmrmmmmmmmmm', form)
   const computedOptions = useMemo(() => {
     return (
       tables

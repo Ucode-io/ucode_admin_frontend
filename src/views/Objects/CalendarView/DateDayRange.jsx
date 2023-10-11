@@ -3,6 +3,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import { format } from "date-fns";
 import style from "./style.module.scss";
+import CDatePicker from "../../../components/DatePickers/CDatePicker";
 
 const CalendarDayRange = ({
   datesList,
@@ -37,9 +38,18 @@ const CalendarDayRange = ({
         <ArrowRight />
       </RectangleIconButton>
 
-      <Typography variant="h5">
+      <Typography variant="h5" mr={1} ml={1}>
         {datesList?.length ? format(currentDay, "d MMMM yyyy") : ""}
       </Typography>
+      <Box>
+        <CDatePicker
+          value={currentDay}
+          mask={"99.99.9999"}
+          onChange={(val) => {
+            setCurrentDay(val);
+          }}
+        />
+      </Box>
     </Box>
   );
 };

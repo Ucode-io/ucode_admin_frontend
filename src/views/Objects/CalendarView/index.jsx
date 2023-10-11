@@ -396,6 +396,7 @@ const CalendarView = ({
             firstDate={firstDate}
             setLastDate={setLastDate}
             lastDate={lastDate}
+            setWeekDates={setWeekDates}
           />
         )}
         {date === "MONTH" && (

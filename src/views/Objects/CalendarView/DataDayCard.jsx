@@ -30,7 +30,6 @@ const DataDayCard = ({
   const { timeList } = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
-
   const [frame] = useState({
     translate: [0, info.calendar?.startPosition ?? 0],
   });

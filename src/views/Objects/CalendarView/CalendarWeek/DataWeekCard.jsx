@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import useTimeList from "../../../../hooks/useTimeList";
 import { format, setHours, setMinutes } from "date-fns";
 import Moveable from "react-moveable";
+import InfoBlockWeek from "./InfoBlockWeek";
 
 const DataWeekCard = ({
   date,
@@ -172,7 +173,7 @@ const DataWeekCard = ({
                 : "saturate(50%) brightness(125%)",
             }}
           >
-            <InfoBlock viewFields={viewFields} data={info} />
+            <InfoBlockWeek viewFields={viewFields} data={info} />
           </div>
         </div>
       </div>

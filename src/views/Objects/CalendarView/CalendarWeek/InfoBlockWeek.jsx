@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
-import { dateValidFormat } from "../../../utils/dateValidFormat";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
-import styles from "./style.module.scss";
+import styles from "../style.module.scss";
+import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
+import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 
 const flex = {
   display: "flex",
@@ -10,7 +10,7 @@ const flex = {
   columnGap: "6px",
 };
 
-const InfoBlock = ({ viewFields, data, isSingleLine }) => {
+const InfoBlockWeek = ({ viewFields, data, isSingleLine }) => {
   //   if (isSingleLine)
   //     return (
   //       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
@@ -24,7 +24,7 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
   return (
     <div className={`${styles.infoBlock}`}>
       <div>
-        <Typography variant="h6" fontSize={"18px"}>
+        <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
           {dateValidFormat(data.calendar?.elementFromTime, "HH:mm")}-{" "}
           {dateValidFormat(data.calendar?.elementToTime, " HH:mm")}
         </Typography>
@@ -34,21 +34,25 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
         <p>
           {field.type === "LOOKUP" ? (
             <Box style={flex}>
-              <Typography variant="h6" fontSize={"18px"}>
+              <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
                 {field.label}:
               </Typography>{" "}
-              {getRelationFieldTableCellLabel(
-                field,
-                data,
-                field.slug + "_data"
-              )}
+              <Typography fontSize={"12px"}>
+                {getRelationFieldTableCellLabel(
+                  field,
+                  data,
+                  field.slug + "_data"
+                )}
+              </Typography>
             </Box>
           ) : field.type === "DATE_TIME" ? (
             <Box style={flex}>
-              <Typography variant="h6" fontSize={"18px"}>
+              <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
                 {field.label}:
               </Typography>{" "}
-              {dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")}
+              <Typography fontSize={"12px"}>
+                {dateValidFormat(data[field.slug], "dd.MM.yyyy")}
+              </Typography>
             </Box>
           ) : field.type === "MULTISELECT" ? (
             <MultiselectCellColoredElement
@@ -58,10 +62,10 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
             />
           ) : (
             <Box style={flex}>
-              <Typography variant="h6" fontSize={"18px"}>
+              <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
                 {field.label}:
               </Typography>{" "}
-              {data[field.slug]}
+              <Typography fontSize={"12px"}>{data[field.slug]}</Typography>
             </Box>
           )}
         </p>
@@ -70,4 +74,4 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
   );
 };
 
-export default InfoBlock;
+export default InfoBlockWeek;

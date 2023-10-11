@@ -3,8 +3,8 @@ import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import style from "../style.module.scss";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import { format } from "date-fns";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import CDatePicker from "../../../../components/DatePickers/CDatePicker";
 
 const CalendarWeekRange = ({
   formatDate,
@@ -16,23 +16,25 @@ const CalendarWeekRange = ({
   firstDate,
   setLastDate,
   lastDate,
+  setWeekDates,
 }) => {
-  //   const nextWeek = () => {
-  //     if (currentWeekIndex < weekData.length - 1) {
-  //       setCurrentWeekIndex(currentWeekIndex + 1);
-  //     }
-  //   };
+  useEffect(() => {
+    const currentDate = new Date(currentDay);
+    const dayOfWeek = currentDate.getDay();
+    const daysOfWeek = [];
 
-  //   const previousWeek = () => {
-  //     if (currentWeekIndex > 0) {
-  //       setCurrentWeekIndex(currentWeekIndex - 1);
-  //     }
-  //   };
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(currentDate);
+      day.setDate(currentDate.getDate() - dayOfWeek + i);
+      daysOfWeek.push(day);
+    }
+    setWeekDates(daysOfWeek);
+  }, [currentDay]);
 
   useEffect(() => {
     setFirstDate(weekDates[0]);
     setLastDate(weekDates[weekDates.length - 1]);
-  }, [weekDates]);
+  }, [weekDates, currentDay]);
 
   const nextWeek = () => {
     const nextMonday = new Date(currentDay);
@@ -63,6 +65,15 @@ const CalendarWeekRange = ({
       <Typography variant="h5">
         {firstDate && formattedDifference} {format(currentDay, "MMMM yyyy")}
       </Typography>
+      <Box>
+        <CDatePicker
+          value={currentDay}
+          mask={"99.99.9999"}
+          onChange={(val) => {
+            setCurrentDay(val);
+          }}
+        />
+      </Box>
     </Box>
   );
 };

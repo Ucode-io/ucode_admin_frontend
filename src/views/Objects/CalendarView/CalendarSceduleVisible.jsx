@@ -2,12 +2,12 @@ import { Box, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import CalendarSettings from "../components/ViewSettings/CalendarSettings";
 import constructorViewService from "../../../services/constructorViewService";
 import { useForm } from "react-hook-form";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import CalendarSetting from "./CalendarSetting";
-export default function CalendarSettingsVisible({
+import CalendarScedule from "./CalendarScedule";
+
+export default function CalendarSceduleVisible({
   selectedTabIndex,
   views,
   columns,
@@ -131,7 +131,7 @@ export default function CalendarSettingsVisible({
           <CircularProgress />
         ) : (
           <>
-            <CalendarSetting
+            <CalendarScedule
               form={form}
               columns={columns}
               children={

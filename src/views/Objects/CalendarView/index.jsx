@@ -41,6 +41,7 @@ import CalendarSettingsVisible from "./CalendarSettings";
 import GroupByButton from "../GroupByButton";
 import { dateFormat } from "../../../utils/dateFormat";
 import { FromDateType, ToDateType } from "../../../utils/getDateType";
+import CalendarSceduleVisible from "./CalendarSceduleVisible";
 
 const formatDate = [
   {
@@ -430,6 +431,14 @@ const CalendarView = ({
             columns={visibleColumns}
             isLoading={isVisibleLoading}
             text={"Settings"}
+            initialValues={view}
+          />
+          <CalendarSceduleVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            isLoading={isVisibleLoading}
+            text={"Scedule"}
             initialValues={view}
           />
           <GroupByButton

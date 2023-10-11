@@ -450,7 +450,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('sssss111')
+  console.log('tableData', tableData)
 
   return (
     <div className={styles.wrapper}>
@@ -462,7 +462,7 @@ const TableView = ({
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
-          {tableData.length > 0 ? (
+
             <ObjectDataTable
               defaultLimit={view?.default_limit}
               formVisible={formVisible}
@@ -511,7 +511,7 @@ const TableView = ({
               isResizeble={true}
               {...props}
             />
-          ) : <EmptyDataComponent />}
+          {/* ) : <EmptyDataComponent />} */}
         </div>
       </PermissionWrapperV2>
 
@@ -545,3 +545,6 @@ const TableView = ({
 };
 
 export default TableView;
+
+
+

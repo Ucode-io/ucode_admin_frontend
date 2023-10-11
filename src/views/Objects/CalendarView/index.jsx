@@ -45,7 +45,7 @@ import { FromDateType, ToDateType } from "../../../utils/getDateType";
 const formatDate = [
   {
     value: "DAY",
-    label: "Day",
+    label: "Today",
   },
   {
     value: "WEEK",

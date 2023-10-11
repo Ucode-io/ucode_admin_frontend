@@ -7,7 +7,6 @@ import constructorObjectService from "../../services/constructorObjectService";
 import GroupsTab from "./components/ViewSettings/GroupsTab";
 import { useForm } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
-import { use } from "i18next";
 
 export default function GroupByButton({
   selectedTabIndex,

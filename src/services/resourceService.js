@@ -101,3 +101,5 @@ export const useResourceConfigureMutation = (mutationSettings) => {
   );
 };
 
+
+export default  resourceService;

@@ -67,8 +67,7 @@ const ViewForm = ({
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
-    console.log('initialValue', initialValues)
-    console.log('relationObjInput', relationObjInput)
+
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -161,7 +160,7 @@ const ViewForm = ({
       filters: [],
     });
   }, [initialValues, tableSlug, form, typeNewView]);
-  console.log('formmmmmmmmmmm', form.getValues())
+
   useEffect(() => {
     form.reset({ ...form.getValues(), number_field: "" });
   }, [relationObjInput, attributes]);
@@ -211,7 +210,7 @@ const ViewForm = ({
             .map((el) => el.id) ?? [],
       },
       name:
-        values?.attributes?.[`label_${i18n.language}`] ??
+        values?.attributes?.[`name_${i18n.language}`] ??
         Object.values(values?.attributes).find(
           (item) => typeof item === "string"
         ),
@@ -265,6 +264,13 @@ const ViewForm = ({
     }));
   }, [fields]);
 
+
+  useEffect(() => {
+    if(nameMulti) {
+      form.setValue(`attributes.name_${i18n?.language}`, nameMulti)
+    }
+  }, [nameMulti])
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
@@ -289,7 +295,7 @@ const ViewForm = ({
                   <div className={styles.formRow}>
                     <FRow label="Название">
                       <Box style={{ display: "flex", gap: "6px" }}>
-                          <HFTextField control={form.control} name={`attributes.name`} placeholder={`Название (${i18n?.language})`} fullWidth />
+                          <HFTextField control={form.control} name={`attributes.name_${i18n?.language}`} placeholder={`Название (${i18n?.language})`} fullWidth />
                       </Box>
                     </FRow>
                   </div>
@@ -393,7 +399,6 @@ const getInitialValues = (
   numberFieldValue,
   navigate,
   group_by_columns,
-  nameMulti
 ) => {
   if (initialValues === "NEW")
     return {
@@ -448,7 +453,6 @@ const getInitialValues = (
     attributes: {
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
-      name: nameMulti
     },
     quick_filters:
       computeQuickFilters(

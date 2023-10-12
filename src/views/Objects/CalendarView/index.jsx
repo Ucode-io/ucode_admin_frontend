@@ -379,6 +379,23 @@ const CalendarView = ({
               setDate(e.target.value);
             }}
           />
+          <CalendarGroupByButton
+            selectedTabIndex={selectedTabIndex}
+            text="Group"
+            width="105px"
+            views={visibleViews}
+            columns={visibleColumns}
+            relationColumns={visibleRelationColumns}
+            isLoading={isVisibleLoading}
+          />
+          <CalendarSceduleVisible
+            selectedTabIndex={selectedTabIndex}
+            views={visibleViews}
+            columns={visibleColumns}
+            isLoading={isVisibleLoading}
+            text={"Schedule"}
+            initialValues={view}
+          />
           <ColumnVisible
             selectedTabIndex={selectedTabIndex}
             views={visibleViews}
@@ -396,23 +413,6 @@ const CalendarView = ({
             isLoading={isVisibleLoading}
             text={"Settings"}
             initialValues={view}
-          />
-          <CalendarSceduleVisible
-            selectedTabIndex={selectedTabIndex}
-            views={visibleViews}
-            columns={visibleColumns}
-            isLoading={isVisibleLoading}
-            text={"Schedule"}
-            initialValues={view}
-          />
-          <CalendarGroupByButton
-            selectedTabIndex={selectedTabIndex}
-            text="Group"
-            width="105px"
-            views={visibleViews}
-            columns={visibleColumns}
-            relationColumns={visibleRelationColumns}
-            isLoading={isVisibleLoading}
           />
         </Box>
       </Box>

@@ -78,7 +78,7 @@ export default function CalendarSettingsVisible({
 
   return (
     <div>
-      <div
+      <Button
         style={{
           display: "flex",
           alignItems: "center",
@@ -90,14 +90,13 @@ export default function CalendarSettingsVisible({
           lineHeight: "16px",
           letterSpacing: "0em",
           textAlign: "left",
-          padding: "0 10px",
           width: width,
         }}
         onClick={handleClick}
       >
         <SettingsIcon color={"#A8A8A8"} />
         {text}
-      </div>
+      </Button>
 
       <Menu
         open={open}

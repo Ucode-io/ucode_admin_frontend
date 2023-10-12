@@ -403,8 +403,7 @@ const CalendarView = ({
             relationColumns={visibleRelationColumns}
             isLoading={isVisibleLoading}
             form={visibleForm}
-            text={"Customize columns"}
-            width="170px"
+            text={"Columns"}
           />
           <CalendarSettingsVisible
             selectedTabIndex={selectedTabIndex}

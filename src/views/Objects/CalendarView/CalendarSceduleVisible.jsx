@@ -77,7 +77,7 @@ export default function CalendarSceduleVisible({
 
   return (
     <div>
-      <div
+      <Button
         style={{
           display: "flex",
           alignItems: "center",
@@ -89,14 +89,13 @@ export default function CalendarSceduleVisible({
           lineHeight: "16px",
           letterSpacing: "0em",
           textAlign: "left",
-          padding: "0 10px",
           width: width,
         }}
         onClick={handleClick}
       >
         <RestoreIcon color={"#A8A8A8"} />
         {text}
-      </div>
+      </Button>
 
       <Menu
         open={open}

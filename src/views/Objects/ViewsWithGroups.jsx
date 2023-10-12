@@ -226,7 +226,7 @@ const ViewsWithGroups = ({
         .finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
-
+  console.log('menuItem', menuItem)
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);

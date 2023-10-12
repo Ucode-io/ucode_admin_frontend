@@ -73,6 +73,7 @@ import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Compon
 import Invite from "../views/Auth/Invite";
 import UsersList from "../views/Users/UsersList";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
+import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -279,8 +280,8 @@ const Router = () => {
         </Route>
         <Route path=":appId/variable-resources">
           <Route index element={<VariableResources />} />
-          {/* <Route path="create" element={<ApiKeysForm />} />
-          <Route path=":apiKeyId" element={<ApiKeysForm />} /> */}
+          <Route path="create" element={<VariableResourceForm />} />
+          <Route path=":apiKeyId" element={<VariableResourceForm />} />
         </Route>
 
         <Route path=":appId/docs">

@@ -46,6 +46,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       permissionFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -54,7 +55,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
       permissionFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: updateLevel(level),
+    // paddingLeft: updateLevel(level),
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -108,7 +109,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{margin: '0 5px'}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
@@ -118,6 +119,11 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
           }}
         >
           <div className="label" style={labelStyle}>
+          {childBlockVisible ? (
+             <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
             <IconGenerator icon={"lock.svg"} size={18} />
             Permissions
           </div>
@@ -136,11 +142,11 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
+          {/* {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
-          )}
+          )} */}
         </Button>
       </div>
 

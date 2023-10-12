@@ -102,7 +102,7 @@ const ViewTabSelector = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-  console.log("sssssss", isChanged);
+
   const { i18n } = useTranslation();
 
   return (

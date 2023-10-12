@@ -28,6 +28,8 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import LinkIcon from "@mui/icons-material/Link";
 
 const ColumnsTab = ({ form, updateView, isMenu }) => {
   const { i18n } = useTranslation();
@@ -76,12 +78,6 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     }
   };
 
-  useEffect(() => {
-    if (isMenu) {
-      updateView();
-    }
-  }, [watchedColumns]);
-
   const columnIcons = useMemo(() => {
     return {
       SINGLE_LINE: <TextFieldsIcon />,
@@ -115,36 +111,33 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
   return (
     <div
       style={{
+        minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
+        padding: "10px 14px",
       }}
     >
       <div className={styles.table}>
-        <div className={styles.row}>
-          <div className={styles.cell} style={{ flex: 1 }}>
+        <div
+          className={styles.row}
+          style={{
+            borderBottom: "1px solid #eee",
+          }}
+        >
+          <div className={styles.cell} style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}>
             <b>All</b>
           </div>
-          <div className={styles.cell} style={{ width: 70 }}>
+          <div className={styles.cell} style={{ width: 70, border: 0, paddingLeft: 0, paddingRight: 0, display: "flex", justifyContent: "flex-end" }}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch
-              size="small"
-              checked={isAllChecked}
-              onChange={onAllChecked}
-            />
+            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
           </div>
         </div>
-        <Container
-          onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        >
+        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
-                <div
-                  className={styles.cell}
-                  style={{ flex: 1, display: "flex", alignItems: "center" }}
-                >
+                <div className={styles.cell} style={{ flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0 }}>
                   <div
                     style={{
                       width: 20,
@@ -155,21 +148,20 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                       justifyContent: "center",
                     }}
                   >
-                    {columnIcons[column.type] ?? <NfcIcon />}
+                    {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
-                  {column?.attributes?.[`label_${i18n.language}`] ??
-                    column.label}
+                  {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
                 </div>
-                <div className={styles.cell} style={{ width: 70 }}>
+                <div
+                  className={styles.cell}
+                  style={{ width: 70, border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0, display: "flex", justifyContent: "flex-end" }}
+                >
                   <Switch
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {
-                      form.setValue(
-                        `columns.${index}.is_checked`,
-                        e.target.checked
-                      );
-                      // updateView();
+                      form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                      if (isMenu) return updateView();
                     }}
                   />
                 </div>

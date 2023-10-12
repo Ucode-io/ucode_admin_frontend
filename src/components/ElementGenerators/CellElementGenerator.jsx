@@ -14,6 +14,8 @@ import {generateLink} from "../../utils/generateYandexLink";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -78,8 +80,8 @@ const CellElementGenerator = ({field = {}, row}) => {
 
   const getFileName = (item) => {
     const itemArray = item?.split("/");
-
-    return itemArray[itemArray?.length - 1];
+    const computedName = itemArray?.[itemArray?.length - 1].split("_");
+    return computedName.slice(1).join("");
   };
 
   const computedFileExtension = (element) => {
@@ -227,6 +229,13 @@ const CellElementGenerator = ({field = {}, row}) => {
                 <PictureAsPdfIcon style={{color: "red"}} />
               ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
                 <BackupTableIcon style={{color: "green"}} />
+              ) : computedFileExtension(getFileName(value)) === "png" ||
+                computedFileExtension(getFileName(value)) === "jpeg" ||
+                computedFileExtension(getFileName(value)) === "jpg" ? (
+                <PhotoLibraryIcon style={{color: "green"}} />
+              ) : computedFileExtension(getFileName(value)) === "txt" ||
+                computedFileExtension(getFileName(value)) === "docx" ? (
+                <DescriptionIcon style={{color: "#007AFF"}} />
               ) : (
                 <AttachFileIcon style={{color: "blue"}} />
               )}

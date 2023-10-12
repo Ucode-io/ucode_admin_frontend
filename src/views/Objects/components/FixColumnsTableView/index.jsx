@@ -1,5 +1,5 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Checkbox, Menu } from "@mui/material";
+import { Badge, Button, Checkbox, Menu, Switch } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -29,6 +29,8 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
+import LinkIcon from "@mui/icons-material/Link";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,12 +96,34 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     });
   };
 
+  const updateView = () => {
+    setSelectedView({
+      ...selectedView,
+      attributes: {
+        ...selectedView.attributes,
+        fixedColumns: {},
+      },
+    });
+
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView.attributes,
+        fixedColumns: {},
+      },
+    };
+
+    constructorViewService.update(computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
+        setIsLoading(false);
+      });
+    });
+  };
+
   const visibleColumns = useMemo(() => {
     refetch();
     return columns.filter((column) => {
-      return views?.[selectedTabIndex]?.columns?.find(
-        (el) => el === column?.id
-      );
+      return views?.[selectedTabIndex]?.columns?.find((el) => el === column?.id);
     });
   }, [views, columns, selectedTabIndex, anchorEl]);
 
@@ -133,16 +157,54 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     };
   }, []);
 
+  const badgeCount = useMemo(() => {
+    return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter((key) => selectedView?.attributes?.fixedColumns?.[key]).length;
+  }, [selectedView?.attributes?.fixedColumns]);
+
   return (
     <>
-      <button className={style.moreButton} onClick={handleClick}>
+      {/* <Badge badgeContent={badgeCount} color="primary"> */}
+      <Button
+        // className={style.moreButton}
+        onClick={handleClick}
+        variant={badgeCount > 0 ? "outlined" : "text"}
+        style={{
+          gap: "5px",
+          color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+        }}
+      >
         <ViewColumnOutlinedIcon
           style={{
-            color: "#A8A8A8",
+            color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           }}
         />
-        Fix columns
-      </button>
+        Fix col's
+        {badgeCount > 0 && <span>{badgeCount}</span>}
+        {badgeCount > 0 && (
+          <button
+            style={{
+              border: "none", 
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              updateView();
+            }}
+          >
+            <CloseRoundedIcon />
+          </button>
+        )}
+      </Button>
+      {/* </Badge> */}
 
       <Menu
         open={open}
@@ -184,27 +246,40 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
         >
           {visibleColumns.map((column) => (
             <div className={style.menuItem}>
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}>
-                <div style={{
+              <div
+                style={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                }}>
-                  {columnIcons[column.type] ?? <NfcIcon />}
+                  gap: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {columnIcons[column.type] ?? <LinkIcon />}
                 </div>
 
                 <span>{column.label}</span>
               </div>
 
-              <Checkbox
+              {/* <Checkbox
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
                 disabled={isLoading}
+                checked={selectedView?.attributes?.fixedColumns?.[column.id]}
+              /> */}
+
+              <Switch
+                size="small"
+                onChange={(e) => {
+                  changeHandler(column, e.target.checked);
+                }}
+                // disabled={isLoading}
                 checked={selectedView?.attributes?.fixedColumns?.[column.id]}
               />
             </div>

@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useQueries, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
@@ -15,20 +15,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
 import { listToMap } from "../../../utils/listToMap";
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
-import ExcelButtons from "../components/ExcelButtons";
-import FastFilterButton from "../components/FastFilter/FastFilterButton";
-import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
-import styles from "@/views/Objects/TableView/styles.module.scss";
 import style from "./style.module.scss";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import Menu from "@mui/material/Menu";
-import { Description } from "@mui/icons-material";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
+import SettingsIcon from "@mui/icons-material/Settings";
 import CSelect from "../../../components/CSelect";
 import CalendarDay from "./CalendarDay";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CalendarDayRange from "./DateDayRange";
 import CalendarWeekRange from "./CalendarWeek/CalendarWeekRange";
 import CalendarWeek from "./CalendarWeek";
@@ -38,10 +32,11 @@ import CalendarMonthRange from "./CalendarMonth/CalendarMonthRange";
 import ColumnVisible from "../ColumnVisible";
 import { useForm } from "react-hook-form";
 import CalendarSettingsVisible from "./CalendarSettings";
-import GroupByButton from "../GroupByButton";
 import { dateFormat } from "../../../utils/dateFormat";
 import { FromDateType, ToDateType } from "../../../utils/getDateType";
 import CalendarSceduleVisible from "./CalendarSceduleVisible";
+import CalendarGroupByButton from "./CalendarGroupColumns";
+import ShareModal from "../ShareModal/ShareModal";
 
 const formatDate = [
   {
@@ -64,10 +59,12 @@ const CalendarView = ({
   setSelectedTabIndex,
   views,
   selectedTable,
+  menuItem,
 }) => {
   const visibleForm = useForm();
   const { t } = useTranslation();
-  const { tableSlug } = useParams();
+  const navigate = useNavigate();
+  const { tableSlug, appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -76,9 +73,7 @@ const CalendarView = ({
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
-  const [anchorEl, setAnchorEl] = useState(null);
   const [date, setDate] = useState(formatDate[0].value);
-  const open = Boolean(anchorEl);
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());
   const [weekDates, setWeekDates] = useState(new Date());
@@ -91,11 +86,9 @@ const CalendarView = ({
   const lastUpdatedDate = dateFormat(lastDate, 1);
   const firstUpdatedDate = dateFormat(firstDate, 0);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+  const navigateToSettingsPage = () => {
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    navigate(url);
   };
 
   const startWeek = (date) => {
@@ -285,7 +278,7 @@ const CalendarView = ({
       },
     }
   );
-
+  console.log("visibleColumns", visibleColumns);
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
@@ -295,69 +288,39 @@ const CalendarView = ({
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton view={view} />
+            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+              <ShareModal />
+            </PermissionWrapperV2>
 
-            <button className={style.moreButton} onClick={handleClick}>
-              <MoreHorizIcon
+            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
+              <LanguagesNavbar />
+            </PermissionWrapperV2>
+
+            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
+              <Button variant="outlined">
+                <HexagonIcon />
+              </Button>
+            </PermissionWrapperV2> */}
+
+            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+              <Button
+                variant="outlined"
+                onClick={navigateToSettingsPage}
                 style={{
-                  color: "#888",
+                  borderColor: "#A8A8A8",
+                  width: "35px",
+                  height: "35px",
+                  padding: "0px",
+                  minWidth: "35px",
                 }}
-              />
-            </button>
-            <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <div className={styles.menuBar}>
-                <ExcelButtons />
-                <div
-                  className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${style.element} ${
-                      selectedTabIndex === views?.length ? style.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={style.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
-                  </div>
-                  <span>{t("template")}</span>
-                </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  <SettingsButton />
-                </PermissionWrapperV2>
-              </div>
-            </Menu>
+              >
+                <SettingsIcon
+                  style={{
+                    color: "#A8A8A8",
+                  }}
+                />
+              </Button>
+            </PermissionWrapperV2>
           </>
         }
       >
@@ -442,10 +405,14 @@ const CalendarView = ({
             text={"Schedule"}
             initialValues={view}
           />
-          <GroupByButton
+          <CalendarGroupByButton
             selectedTabIndex={selectedTabIndex}
             text="Group"
             width="105px"
+            views={visibleViews}
+            columns={visibleColumns}
+            relationColumns={visibleRelationColumns}
+            isLoading={isVisibleLoading}
           />
         </Box>
       </Box>

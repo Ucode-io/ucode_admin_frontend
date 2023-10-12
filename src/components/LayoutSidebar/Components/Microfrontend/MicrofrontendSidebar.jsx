@@ -43,6 +43,7 @@ const MicrofrontendSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const labelStyle = {
+    paddingLeft: '15px',
     color:
       projectFolder?.id === menuItem?.id
         ? menuStyle?.active_text

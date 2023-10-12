@@ -1,7 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
@@ -10,6 +10,7 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
 import { updateLevel } from "../../../../utils/level";
+import { useNavigate, useParams } from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const userFolder = {
@@ -28,13 +29,26 @@ const userFolder = {
   },
 };
 
-const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
+const Users = ({ 
+  level = 1, 
+  menuStyle, 
+  menuItem, 
+  setElement, 
+  setSelectedApp, 
+  setChildBlockVisible, 
+  childBlockVisible, 
+  handleOpenNotify,
+  sidebarIsOpen,
+  setSidebarIsOpen,
+  child
+}) => {
   const dispatch = useDispatch();
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [child, setChild] = useState();
   const queryClient = useQueryClient();
+  const navigate = useNavigate()
+  const {appId} = useParams()
 
   const activeStyle = {
+    borderRadius: '10px',
     backgroundColor:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -43,43 +57,20 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: updateLevel(level),
+    // paddingLeft: updateLevel(level),
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
   const labelStyle = {
+    flex: sidebarIsOpen ? 1 : 0,
     color:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
 
-  const { isLoading } = useQuery(
-    ["GET_CLIENT_TYPE_LIST"],
-    () => {
-      return clientTypeServiceV2.getList();
-    },
-    {
-      cacheTime: 10,
-      enabled: false,
-      onSuccess: (res) => {
-        setChild(
-          res.data.response?.map((row) => ({
-            ...row,
-            type: "USER",
-            id: row.guid,
-            parent_id: "13",
-            data: {
-              permission: {
-                read: true,
-              },
-            },
-          }))
-        );
-      },
-    }
-  );
+
 
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(userFolder));
@@ -95,42 +86,23 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   return (
-    <Box>
-      <div className="parent-block column-drag-handle">
-        <Button
-          style={activeStyle}
-          className="nav-element"
-          onClick={(e) => {
-            clickHandler(e);
-          }}
-        >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"users.svg"} size={18} />
-            Users
-          </div>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
-        </Button>
-      </div>
+    <Box sx={{margin: '0 5px'}}>
 
-      <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
           <RecursiveBlock
             onClick={() => {
               handleGetClientType();
             }}
             key={childElement.id}
-            level={level + 1}
+            level={1}
             element={childElement}
             menuStyle={menuStyle}
             menuItem={menuItem}
             setElement={setElement}
+            handleOpenNotify={handleOpenNotify}
           />
         ))}
-      </Collapse>
+
     </Box>
   );
 };

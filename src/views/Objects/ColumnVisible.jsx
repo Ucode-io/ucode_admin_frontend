@@ -1,5 +1,5 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { CircularProgress, Menu } from "@mui/material";
+import { Badge, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
@@ -65,11 +65,24 @@ export default function ColumnVisible({
 
   return (
     <div>
-      <div
+      {/* <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary"> */}
+      <Button
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: 5,
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        // }}
+        variant={"text"}
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
+          gap: "5px",
           color: "#A8A8A8",
           cursor: "pointer",
           fontSize: "13px",
@@ -79,13 +92,14 @@ export default function ColumnVisible({
           textAlign: "left",
           padding: "0 10px",
           width: width,
+          borderColor: "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
         {text}
-      </div>
-
+      </Button>
+      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}

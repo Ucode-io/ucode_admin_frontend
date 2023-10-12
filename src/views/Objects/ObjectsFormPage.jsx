@@ -163,6 +163,7 @@ const ObjectsFormPage = ({
 
   const create = (data) => {
     setBtnLoader(true);
+
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {

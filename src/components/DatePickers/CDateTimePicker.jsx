@@ -13,6 +13,7 @@ const CDateTimePicker = ({
   value,
   placeholder,
   isBlackBg,
+  isNewTableView,
   classes,
   onChange,
   isFormEdit,
@@ -47,8 +48,8 @@ const CDateTimePicker = ({
                       borderRight: 0,
                     },
                     "& .MuiInputBase-input": {
-                      paddingTop: 0,
-                      paddingBottom: 0,
+                      paddingTop: isNewTableView ? 0 : "10px",
+                      paddingBottom: isNewTableView ? 0 : "10px",
                     },
                     width: "150px",
                   }}
@@ -117,8 +118,8 @@ const CDateTimePicker = ({
                       borderLeft: 0,
                     },
                     "& .MuiInputBase-input": {
-                      paddingTop: 0,
-                      paddingBottom: 0,
+                      paddingTop: isNewTableView ? 0 : "10px",
+                      paddingBottom: isNewTableView ? 0 : "10px",
                     },
                     width: "150px",
                   }}
@@ -141,11 +142,7 @@ const CDateTimePicker = ({
                         },
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Box
-                          portalTarget={document.body}
-                          portal={document.body}
-                          sx={{ display: "flex", alignItems: "center" }}
-                        >
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
                           <DateRange
                             style={{
                               color: isBlackBg ? "#fff" : "",

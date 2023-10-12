@@ -1,7 +1,7 @@
 import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
 import {useEffect, useMemo} from "react";
 import {BsThreeDots} from "react-icons/bs";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,6 +12,7 @@ import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
+import { useQueryClient } from "react-query";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -25,10 +26,13 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
+  setChildBlockVisible,
 }) => {
+  const {appId} = useParams()
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const queryClient = useQueryClient();
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -39,12 +43,22 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
   const clickHandler = () => {
+    setChildBlockVisible(false)
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      setElement(element);
-      setSubMenuIsOpen(true);
-      navigate(`/main/${element.id}`);
+
+      if(element?.id === "9e988322-cffd-484c-9ed6-460d8701551b") {
+        setElement(element);
+        setSubMenuIsOpen(true);
+        navigate(`/main/${element.id}`);
+        queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
+      } else {
+        setElement(element);
+        setSubMenuIsOpen(true);
+        navigate(`/main/${element.id}`);
+      }
+    
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
       navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
@@ -121,6 +135,8 @@ const AppSidebar = ({
             borderTop: favourite && "1px solid #F0F0F0",
             borderBottom: favourite && "1px solid #F0F0F0",
             padding: favourite && "18px 12px",
+            borderRadius: "10px",
+            margin: "0 10px",
           }}
         >
           <IconGenerator
@@ -139,6 +155,7 @@ const AppSidebar = ({
             }
             className="folder-icon"
             style={{
+              marginRight: sidebarIsOpen ? '8px' : '0px',
               color:
                 selectedApp?.id === element.id
                   ? menuStyle?.active_text

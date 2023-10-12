@@ -6,6 +6,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {
   CTable,
   CTableBody,
+  CTableCell,
   CTableHead,
   CTableHeadCell,
   CTableRow,
@@ -235,30 +236,6 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const params = {
-      language_setting: i18n?.language,
-    };
-    console.log("i18n?.language", i18n?.language);
-    constructorObjectService
-      .getList(
-        tableSlug,
-        {
-          data: { limit: 0, offset: 0 },
-        },
-        params
-      )
-      .then((res) => {
-        setCount(Math.ceil(res.data?.count / limit));
-      });
-  }, [tableSlug, limit, i18n?.language]);
-
-  const hasMore = useMemo(() => {
-    return currentPage <= count;
-  }, [currentPage, pagesCount, tableSlug, data, count]);
-
   return (
     <CTable
       disablePagination={disablePagination}
@@ -278,28 +255,6 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
       view={view}
     >
-      {/* <Box
-        style={{
-          width: "100%",
-        }}
-      >
-        <InfiniteScroll
-          dataLength={data?.length}
-          next={() => {
-            if (hasMore) {
-              onPaginationChange(currentPage + 1);
-            }
-          }}
-          hasMore={hasMore}
-          loader={
-            <Box sx={{ width: "100%" }}>
-              <LinearProgress />
-            </Box>
-          }
-          // height={"calc(100vh - 170px)"}
-          height={`${elementHeight - 50}px`}
-        >
-          <table> */}
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -368,16 +323,6 @@ const ObjectDataTable = ({
               </CTableHeadCell>
             )}
           </PermissionWrapperV2>
-
-          <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
-            <Button
-              variant="text"
-              style={{ borderColor: "#F0F0F0", borderRadius: "0px" }}
-              onClick={openFieldSettings}
-            >
-              <AddRoundedIcon />
-            </Button>
-          </CTableHeadCell>
         </CTableRow>
       </CTableHead>
 
@@ -386,51 +331,76 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
-          <TableRow
-            width={"80px"}
-            remove={remove}
-            watch={watch}
-            control={control}
-            key={row.id}
-            row={row}
-            mainForm={mainForm}
-            formVisible={formVisible}
-            rowIndex={rowIndex}
-            isTableView={isTableView}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            isRelationTable={isRelationTable}
-            relatedTableSlug={relatedTableSlug}
-            onRowClick={onRowClick}
-            isChecked={isChecked}
-            calculateWidthFixedColumn={calculateWidthFixedColumn}
-            onCheckboxChange={onCheckboxChange}
-            currentPage={currentPage}
-            limit={limit}
-            setFormValue={setFormValue}
-            columns={columns}
-            tableHeight={tableHeight}
-            tableSettings={tableSettings}
-            pageName={pageName}
-            calculateWidth={calculateWidth}
-            tableSlug={tableSlug}
-            onDeleteClick={onDeleteClick}
-            relationAction={relationAction}
-            onChecked={onChecked}
-            relationFields={fields}
-            data={data}
-            view={view}
-          />
-        ))}
+        {(isRelationTable ? fields : data).length > 0
+          ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+              <TableRow
+                width={"80px"}
+                remove={remove}
+                watch={watch}
+                control={control}
+                key={row.id}
+                row={row}
+                mainForm={mainForm}
+                formVisible={formVisible}
+                rowIndex={rowIndex}
+                isTableView={isTableView}
+                selectedObjectsForDelete={selectedObjectsForDelete}
+                setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                isRelationTable={isRelationTable}
+                relatedTableSlug={relatedTableSlug}
+                onRowClick={onRowClick}
+                isChecked={isChecked}
+                calculateWidthFixedColumn={calculateWidthFixedColumn}
+                onCheckboxChange={onCheckboxChange}
+                currentPage={currentPage}
+                limit={limit}
+                setFormValue={setFormValue}
+                columns={columns}
+                tableHeight={tableHeight}
+                tableSettings={tableSettings}
+                pageName={pageName}
+                calculateWidth={calculateWidth}
+                tableSlug={tableSlug}
+                onDeleteClick={onDeleteClick}
+                relationAction={relationAction}
+                onChecked={onChecked}
+                relationFields={fields}
+                data={data}
+                view={view}
+              />
+            ))
+          : ""}
+        <CTableRow>
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0",
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#FFF",
+              zIndex: "1",
+            }}
+          >
+            <Button
+              variant="text"
+              style={{
+                borderColor: "#F0F0F0",
+                borderRadius: "0px",
+                width: "100%",
+              }}
+              onClick={openFieldSettings}
+            >
+              <AddRoundedIcon />
+            </Button>
+          </CTableCell>
+        </CTableRow>
+
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
         {additionalRow}
       </CTableBody>
-      {/* </table>
-        </InfiniteScroll>
-      </Box> */}
     </CTable>
   );
 };

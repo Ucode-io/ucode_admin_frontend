@@ -23,10 +23,15 @@ const HFNumberField = ({
   type = "text",
   ...props
 }) => {
-  const value = useWatch({
-    control,
-    name,
-  });
+  const handleChange = (value, onChange) => {
+    if (value.floatValue) {
+      onChange(value.floatValue);
+    } else {
+      onChange("");
+    }
+
+    isNewTableView && updateObject();
+  };
 
   return (
     <Controller
@@ -73,25 +78,21 @@ const HFNumberField = ({
               allowNegative
               fullWidth={fullWidth}
               value={value}
-              onChange={(e) => {
-                const val = e.target.value;
-                const valueWithoutSpaces = val.replaceAll(" ", "");
-                if (!valueWithoutSpaces) onChange("");
-                else {
-                  if (valueWithoutSpaces.at(-1) === ".")
-                    onChange(valueWithoutSpaces);
-                  else
-                    onChange(
-                      !isNaN(Number(valueWithoutSpaces))
-                        ? Number(valueWithoutSpaces)
-                        : ""
-                    );
-                }
-                isNewTableView && updateObject();
+              onValueChange={(value) => {
+                // const val = e.target.value;
+                // const valueWithoutSpaces = val.replaceAll(" ", "");
+
+                // if (!value.value) {
+                //   onChange("");
+                // } else {
+                //   if (value.value.at(-1) === ".") {
+                //     onChange(value.value);
+                //   } else onChange(!isNaN(Number(value.value)) ? Number(value.value) : "");
+                // }
+
+                handleChange(value, onChange);
               }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${
-                styles.numberField
-              }`}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
               name={name}
               readOnly={disabled}
               style={
@@ -100,12 +101,14 @@ const HFNumberField = ({
                       background: "transparent",
                       border: "none",
                       borderRadius: "0",
+                      outline: "none",
                     }
                   : disabled
-                  ? { background: "#c0c0c039", borderRight: 0 }
+                  ? { background: "#c0c0c039", borderRight: 0, outline: "none" }
                   : {
                       background: isBlackBg ? "#2A2D34" : "",
                       color: isBlackBg ? "#fff" : "",
+                      outline: "none",
                     }
               }
               {...props}

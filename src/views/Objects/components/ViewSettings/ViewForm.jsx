@@ -26,12 +26,14 @@ import GroupByTab from "./GroupByTab";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
+import SummaryBlock from "../../../Constructor/Tables/Form/Relations/SummaryBlock";
 
 const ViewForm = ({
   initialValues,
   typeNewView,
   closeForm,
   defaultViewTab,
+  fields,
   refetchViews,
   setIsChanged,
   closeModal,
@@ -250,6 +252,13 @@ const ViewForm = ({
 
   const languages = useSelector((state) => state.languages.list);
 
+  const computedFieldsListOptions = useMemo(() => {
+    return fields?.map((field) => ({
+      label: field.label,
+      value: field.id,
+    }));
+  }, [fields]);
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
@@ -310,6 +319,12 @@ const ViewForm = ({
                   </FRow>
                 </div>
               </div>
+
+              <SummaryBlock
+                control={form.control}
+                computedFieldsListOptions={computedFieldsListOptions}
+                isViewSettings={true}
+              />
 
               <MultipleInsertSettings form={form} columns={columns} />
 
@@ -412,6 +427,7 @@ const getInitialValues = (
       attributes: {
         group_by_columns:
           columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+        summaries: [],
       },
     };
   return {
@@ -431,6 +447,7 @@ const getInitialValues = (
     columns: computeColumns(initialValues?.columns, columns),
     attributes: {
       group_by_columns: computeGroups(group_by_columns, columns),
+      summaries: initialValues?.attributes?.summaries ?? [],
     },
     quick_filters:
       computeQuickFilters(

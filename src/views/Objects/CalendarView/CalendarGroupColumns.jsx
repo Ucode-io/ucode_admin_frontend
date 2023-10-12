@@ -3,16 +3,19 @@ import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import { Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
-import constructorViewService from "../../services/constructorViewService";
-import GroupsTab from "./components/ViewSettings/GroupsTab";
+import constructorViewService from "../../../services/constructorViewService";
+import GroupsTab from "../components/ViewSettings/GroupsTab";
 
-export default function GroupByButton({
+export default function CalendarGroupByButton({
   selectedTabIndex,
   text = "Tab group",
   width = "",
+  views,
+  columns,
+  relationColumns,
+  isLoading,
 }) {
   const form = useForm();
   const queryClient = useQueryClient();
@@ -25,36 +28,6 @@ export default function GroupByButton({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const {
-    data: { views, columns, relationColumns } = {
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-    isLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
 
   const type = views?.[selectedTabIndex]?.type;
 

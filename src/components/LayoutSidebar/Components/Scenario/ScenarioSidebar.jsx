@@ -24,6 +24,7 @@ import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
 import ScenarioRecursive from "./RecursiveBlock";
 import { BsTable } from "react-icons/bs";
 import { updateLevel } from "../../../../utils/level";
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const scenarioFolder = {
@@ -188,7 +189,13 @@ const ScenarioSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"film.svg"} size={18} />
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
+            <PlayCircleIcon/>
+            {/* <IconGenerator icon={"film.svg"} size={18} /> */}
             Scenarios
           </div>
           <Box className="icon_group">
@@ -205,11 +212,6 @@ const ScenarioSidebar = ({
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

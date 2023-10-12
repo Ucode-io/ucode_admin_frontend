@@ -267,6 +267,7 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
+
   const getValueData = async () => {
     try {
       const id = value;
@@ -297,6 +298,7 @@ const AutoCompleteElement = ({
     } else {
       const val = value;
 
+
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
@@ -319,7 +321,7 @@ const AutoCompleteElement = ({
       setLocalValue(value);
     }
   };
-  console.log("localValue", localValue);
+
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
       const val = options?.slugOptions?.find((item) => item?.guid === id);
@@ -367,37 +369,19 @@ const AutoCompleteElement = ({
     setClientTypeValue();
   }, []);
 
-  useEffect(() => {
-    if (field?.attributes?.function_path) {
-      const newOptions = optionsFromFunctions?.options ?? [];
-      if (newOptions?.length && page > 1) {
-        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
-      } else {
-        setAllOptions(newOptions);
-      }
-    } else {
-      const newOptions = optionsFromLocale?.options ?? [];
-      if (newOptions?.length && page > 1) {
-        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
-      } else {
-        setAllOptions(newOptions);
-      }
-    }
-  }, [optionsFromFunctions, optionsFromLocale]);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-      if (optionsFromFunctions?.length >= 10) {
+      if (optionsFromFunctions?.options?.length > 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     } else {
-      if (optionsFromLocale?.length >= 10) {
+      if (optionsFromLocale?.options?.length > 5) {
         setPage((prevPage) => prevPage + 1);
       } else return false;
     }
   }
-  console.log("localValue", localValue, field);
-  console.log("disabled", disabled);
+ 
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

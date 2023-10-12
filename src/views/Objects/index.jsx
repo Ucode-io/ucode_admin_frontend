@@ -1,28 +1,29 @@
-import {Fragment, useEffect, useState} from "react";
-import {useLocation, useParams, useSearchParams} from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
+import { Fragment, useEffect, useState } from "react";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import {useQuery} from "react-query";
+import { useQuery } from "react-query";
 import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
-import {listToMap} from "../../utils/listToMap";
+import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import styles from "./style.module.scss";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import {store} from "../../store";
-import {useTranslation} from "react-i18next";
+import { store } from "../../store";
+import { useTranslation } from "react-i18next";
+import constructorTableService from "../../services/constructorTableService";
 
 const ObjectsPage = () => {
-  const {tableSlug, appId} = useParams();
-  const {state} = useLocation();
+  const { tableSlug, appId } = useParams();
+  const { state } = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
@@ -31,7 +32,7 @@ const ObjectsPage = () => {
   };
 
   const {
-    data: {views, fieldsMap} = {
+    data: { views, fieldsMap } = {
       views: [],
       fieldsMap: {},
     },
@@ -39,16 +40,16 @@ const ObjectsPage = () => {
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
     () => {
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         tableSlug,
         {
-          data: {limit: 0, offset: 0, app_id: appId},
+          data: {},
         },
         params
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -57,7 +58,7 @@ const ObjectsPage = () => {
           fieldsMap: listToMap(data?.fields),
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -99,6 +100,7 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      menuItem={menuItem}
                     />
                   </>
                 ) : view.type === "CALENDAR HOUR" ? (

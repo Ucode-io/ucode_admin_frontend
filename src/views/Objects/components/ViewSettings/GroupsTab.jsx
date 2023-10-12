@@ -1,12 +1,7 @@
-import { Box, Checkbox, Typography } from "@mui/material";
+import { Box, Checkbox, Switch, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableRow,
-} from "../../../../components/CTable";
+import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
 import { useTranslation } from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
@@ -31,28 +26,16 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
+import LinkIcon from "@mui/icons-material/Link";
 
-const GroupsTab = ({
-  columns,
-  form,
-  selectedView,
-  updateView,
-  isLoading,
-  updateLoading,
-}) => {
+const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   });
   const { i18n } = useTranslation();
   const computedColumns = useMemo(() => {
-    return columns?.filter(
-      (column) =>
-        column.type === "LOOKUP" ||
-        column.type === "PICK_LIST" ||
-        column.type === "LOOKUPS" ||
-        column.type === "MULTISELECT"
-    );
+    return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
   }, [columns]);
 
   console.log("computedColumns", computedColumns);
@@ -114,23 +97,24 @@ const GroupsTab = ({
   return (
     <div
       style={{
+        minWidth: 200,
         maxHeight: 300,
         overflowY: "auto",
+        padding: "10px 14px"
       }}
     >
-      <CTable
-        removableHeight={false}
-        disablePagination
-        tableStyle={{ border: "none" }}
-      >
+      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
             computedColumns.map((column) => (
-              <CTableRow key={column.id}>
+              <CTableRow key={column.id} style={{
+                // borderBottom: "1px solid #eee"
+              }}>
                 <CTableCell
                   style={{
-                    paddingTop: 0,
-                    paddingBottom: 0,
+                    padding: 0,
+                    border: 0,
+                    borderBottom: '1px solid #eee',
                   }}
                 >
                   <div
@@ -140,22 +124,15 @@ const GroupsTab = ({
                       gap: "10px",
                     }}
                   >
-                    <div>{columnIcons[column.type] ?? <NfcIcon />}</div>
-                    <div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
-                        column.label}
-                    </div>
+                    <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
+                    <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
                   </div>
                 </CTableCell>
-                <CTableCell
-                  style={{ width: 20, paddingTop: "2px", paddingBottom: "2px" }}
-                >
-                  <Checkbox
+                <CTableCell style={{ width: 20, borderBottom: '1px solid #eee', borderRight: 0 }}>
+                  <Switch
+                    size="small"
                     disabled={isLoading || updateLoading}
-                    checked={
-                      selectedColumns?.includes(column?.id) ||
-                      selectedView?.group_fields?.includes(column?.id)
-                    }
+                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(val, column.id)}
                   />
                 </CTableCell>

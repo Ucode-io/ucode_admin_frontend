@@ -385,6 +385,7 @@ const TableView = ({
 
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
 
   useEffect(() => {
     layoutService
@@ -402,6 +403,7 @@ const TableView = ({
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
+      setSelectedRow(row);
       setOpen(true);
     } else {
       navigateToDetailPage(row);
@@ -515,7 +517,11 @@ const TableView = ({
         </div>
       </PermissionWrapperV2>
 
-      <ModalDetailPage open={open} setOpen={setOpen} />
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+      />
 
       <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings

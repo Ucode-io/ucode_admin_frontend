@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
@@ -85,7 +92,8 @@ const ObjectDataTable = ({
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -152,7 +160,9 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -182,13 +192,18 @@ const ObjectDataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -241,7 +256,15 @@ const ObjectDataTable = ({
       view={view}
     >
       <CTableHead>
-        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
+        {formVisible && selectedRow.length > 0 && (
+          <MultipleUpdateRow
+            columns={data}
+            fields={columns}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+          />
+        )}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
@@ -277,7 +300,10 @@ const ObjectDataTable = ({
               )
           )}
 
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type={["update", "delete"]}
+          >
             {(onDeleteClick || onEditClick) && (
               <CTableHeadCell width={10}>
                 <span
@@ -300,7 +326,11 @@ const ObjectDataTable = ({
         </CTableRow>
       </CTableHead>
 
-      <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
+      <CTableBody
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+        title={title}
+      >
         {(isRelationTable ? fields : data).length > 0
           ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
               <TableRow
@@ -352,13 +382,23 @@ const ObjectDataTable = ({
               zIndex: "1",
             }}
           >
-            <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px", width: "100%" }} onClick={openFieldSettings}>
+            <Button
+              variant="text"
+              style={{
+                borderColor: "#F0F0F0",
+                borderRadius: "0px",
+                width: "100%",
+              }}
+              onClick={openFieldSettings}
+            >
               <AddRoundedIcon />
             </Button>
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
         {additionalRow}
       </CTableBody>
     </CTable>

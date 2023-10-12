@@ -46,7 +46,7 @@ import CalendarSceduleVisible from "./CalendarSceduleVisible";
 const formatDate = [
   {
     value: "DAY",
-    label: "Today",
+    label: "Day",
   },
   {
     value: "WEEK",
@@ -439,12 +439,12 @@ const CalendarView = ({
             views={visibleViews}
             columns={visibleColumns}
             isLoading={isVisibleLoading}
-            text={"Scedule"}
+            text={"Schedule"}
             initialValues={view}
           />
           <GroupByButton
             selectedTabIndex={selectedTabIndex}
-            text="Group by"
+            text="Group"
             width="105px"
           />
         </Box>

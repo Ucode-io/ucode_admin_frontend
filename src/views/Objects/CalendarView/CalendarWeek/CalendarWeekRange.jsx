@@ -4,7 +4,7 @@ import style from "../style.module.scss";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import { format } from "date-fns";
 import { useEffect } from "react";
-import CDatePicker from "../../../../components/DatePickers/CDatePicker";
+import CalendarDatePicker from "../CalendarDatePicker";
 
 const CalendarWeekRange = ({
   formatDate,
@@ -66,9 +66,10 @@ const CalendarWeekRange = ({
         {firstDate && formattedDifference} {format(currentDay, "MMMM yyyy")}
       </Typography>
       <Box>
-        <CDatePicker
+        <CalendarDatePicker
           value={currentDay}
-          mask={"99.99.9999"}
+          currentDay={currentDay}
+          // mask={"99.99.9999"}
           onChange={(val) => {
             setCurrentDay(val);
           }}

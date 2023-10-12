@@ -143,7 +143,12 @@ const CDateTimePicker = ({
                     endAdornment: (
                       <InputAdornment position="end">
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <DateRange style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
+                          <DateRange
+                            style={{
+                              color: isBlackBg ? "#fff" : "",
+                              fontSize: "20px",
+                            }}
+                          />
                           {disabled && (
                             <Tooltip title="This field is disabled for this role!">
                               <Lock style={{ fontSize: "20px" }} />

@@ -38,7 +38,9 @@ export default function ColumnVisible({
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -48,9 +50,13 @@ export default function ColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns
+            ?.filter((el) => el?.is_checked)
+            ?.map((el) => el.id),
         },
-        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
+        columns: watchedColumns
+          ?.filter((el) => el.is_checked)
+          ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -78,12 +84,20 @@ export default function ColumnVisible({
         style={{
           gap: "5px",
           color: "#A8A8A8",
+          cursor: "pointer",
+          fontSize: "13px",
+          fontWeight: 500,
+          lineHeight: "16px",
+          letterSpacing: "0em",
+          textAlign: "left",
+          padding: "0 10px",
+          width: width,
           borderColor: "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
-        Columns
+        {text}
       </Button>
       {/* </Badge> */}
       <Menu
@@ -115,7 +129,11 @@ export default function ColumnVisible({
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} />}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
+        )}
       </Menu>
     </div>
   );

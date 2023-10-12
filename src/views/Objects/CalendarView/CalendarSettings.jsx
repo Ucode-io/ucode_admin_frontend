@@ -7,6 +7,7 @@ import constructorViewService from "../../../services/constructorViewService";
 import { useForm } from "react-hook-form";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CalendarSetting from "./CalendarSetting";
+import SettingsIcon from "@mui/icons-material/Settings";
 export default function CalendarSettingsVisible({
   selectedTabIndex,
   views,
@@ -94,7 +95,7 @@ export default function CalendarSettingsVisible({
         }}
         onClick={handleClick}
       >
-        <RemoveRedEyeIcon color={"#A8A8A8"} />
+        <SettingsIcon color={"#A8A8A8"} />
         {text}
       </div>
 

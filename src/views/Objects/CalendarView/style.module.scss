@@ -18,6 +18,10 @@
   .extra {
     display: flex;
     align-items: center;
+
+    fieldset {
+      border-radius: 6px;
+    }
   }
 
   .date {

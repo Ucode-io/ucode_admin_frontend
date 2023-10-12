@@ -26,8 +26,14 @@ const ObjectsFormPage = ({
   tableSlugFromProps,
   handleClose,
   modal = false,
+  dateInfo,
+  selectedRow,
 }) => {
-  const { id, tableSlug: tableSlugFromParam } = useParams();
+  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+
+  const id = useMemo(() => {
+    return idFromParam ?? selectedRow?.guid;
+  }, [idFromParam, selectedRow]);
 
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
@@ -58,7 +64,7 @@ const ObjectsFormPage = ({
     setValue: setFormValue,
     watch,
   } = useForm({
-    defaultValues: { ...state, invite: isInvite ? invite : false },
+    defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
 
   const tableInfo = store.getState().menu.menuItem;
@@ -213,6 +219,7 @@ const ObjectsFormPage = ({
           computedSummary={summary}
           control={control}
           sections={sections}
+          setFormValue={setFormValue}
         />
       </FiltersBlock>
       <div className={styles.formArea}>

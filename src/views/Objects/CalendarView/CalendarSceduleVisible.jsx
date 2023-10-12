@@ -6,7 +6,7 @@ import constructorViewService from "../../../services/constructorViewService";
 import { useForm } from "react-hook-form";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CalendarScedule from "./CalendarScedule";
-
+import RestoreIcon from "@mui/icons-material/Restore";
 export default function CalendarSceduleVisible({
   selectedTabIndex,
   views,
@@ -94,7 +94,7 @@ export default function CalendarSceduleVisible({
         }}
         onClick={handleClick}
       >
-        <RemoveRedEyeIcon color={"#A8A8A8"} />
+        <RestoreIcon color={"#A8A8A8"} />
         {text}
       </div>
 

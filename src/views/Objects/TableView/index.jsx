@@ -116,7 +116,7 @@ const TableView = ({
     return getObject?.pageLimit ?? null
   }, [paginationInfo])
 
-  console.log('paginiation', typeof paginiation)
+
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -249,8 +249,19 @@ const TableView = ({
       return "string";
     }
   };
-  const [combinedTableData, setCombinedTableData] = useState([]);
 
+  const limitPage = useMemo(() => {
+    if (typeof paginiation === 'number') {
+      return paginiation;
+    } else if (paginiation === 'all' && limit === 'all') {
+      return undefined;
+    } else {
+      return pageToOffset(currentPage, limit);
+    }
+  }, [paginiation, limit, currentPage]);
+
+  console.log('currentPage', currentPage, limit)
+  const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
       tableData: [],
@@ -272,21 +283,20 @@ const TableView = ({
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
+        paginiation
       },
     ],
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          offset: paginiation ? paginiation === 'all' : limit === "all" ? undefined : pageToOffset(currentPage, limit),
-          // app_id: appId,
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
-          // with_relations: true,
           view_fields: checkedColumns,
           search:
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit: limit === "all" ? undefined : limit,
+          limit: limitPage ?? limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -488,7 +498,7 @@ const TableView = ({
             columns={columns}
             multipleDelete={multipleDelete}
             openFieldSettings={openFieldSettings}
-            limit={limit}
+            limit={paginiation}
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}

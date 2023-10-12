@@ -1,8 +1,12 @@
 import { useSelector } from "react-redux";
 import requestAuth from "../utils/requestAuth";
+import { store } from "../store";
+
+
+const authStore = store.getState().auth;
 const apiKeyService = {
   getList: (projectId, params) =>
-    requestAuth.get(`/v2/api-key/${projectId}`, { params }),
+    requestAuth.get(`/v2/api-key/${projectId}`, { params: {...params, "environment-id": authStore.environmentId }}),
   getById: (projectId, id, params) =>
     requestAuth.get(`/v2/api-key/${projectId}/${id}`, { params }),
   create: (projectId, data) =>

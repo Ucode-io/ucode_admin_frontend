@@ -251,6 +251,8 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
+  console.log('limitPage', limitPage)
+
   console.log('currentPage', currentPage, limit)
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
@@ -323,7 +325,7 @@ const TableView = ({
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit: limitPage ?? limit,
+          limit: limitPage !== 0 ? limitPage :  limit,
           ...filters,
           [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
@@ -464,7 +466,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('tableData', tableData)
+  console.log('paginiation', paginiation ?? limit)
 
   return (
     <div className={styles.wrapper}>
@@ -501,7 +503,7 @@ const TableView = ({
             columns={columns}
             multipleDelete={multipleDelete}
             openFieldSettings={openFieldSettings}
-            limit={paginiation}
+            limit={paginiation ?? limit}
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}

@@ -479,54 +479,6 @@ const TableView = ({
           style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
           id="data-table"
         >
-          <ObjectDataTable
-            defaultLimit={view?.default_limit}
-            formVisible={formVisible}
-            selectedView={selectedView}
-            setSortedDatas={setSortedDatas}
-            sortedDatas={sortedDatas}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-            isTableView={true}
-            elementHeight={elementHeight}
-            setFormVisible={setFormVisible}
-            setFormValue={setFormValue}
-            mainForm={mainForm}
-            isRelationTable={false}
-            removableHeight={isDocView ? 150 : 170}
-            currentPage={currentPage}
-            pagesCount={pageCount}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            columns={columns}
-            multipleDelete={multipleDelete}
-            openFieldSettings={openFieldSettings}
-            limit={paginiation}
-            setLimit={setLimit}
-            onPaginationChange={setCurrentPage}
-            loader={tableLoader || deleteLoader}
-            data={tableData}
-            summaries={view?.attributes?.summaries}
-            disableFilters
-            isChecked={(row) => selectedObjects?.includes(row.guid)}
-            onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-            filters={filters}
-            filterChangeHandler={filterChangeHandler}
-            onRowClick={navigateToEditPage}
-            onDeleteClick={deleteHandler}
-            tableSlug={tableSlug}
-            view={view}
-            tableStyle={{
-              borderRadius: 0,
-              border: "none",
-              borderBottom: "1px solid #E5E9EB",
-              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
-              width: "100%",
-              margin: 0,
-            }}
-            isResizeble={true}
-            {...props}
-          />
 
             <ObjectDataTable
               defaultLimit={view?.default_limit}

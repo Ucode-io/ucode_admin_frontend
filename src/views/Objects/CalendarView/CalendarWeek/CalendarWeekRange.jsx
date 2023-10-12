@@ -61,10 +61,6 @@ const CalendarWeekRange = ({
       <RectangleIconButton onClick={nextWeek}>
         <ArrowRight />
       </RectangleIconButton>
-
-      <Typography variant="h5">
-        {firstDate && formattedDifference} {format(currentDay, "MMMM yyyy")}
-      </Typography>
       <Box>
         <CalendarDatePicker
           value={currentDay}

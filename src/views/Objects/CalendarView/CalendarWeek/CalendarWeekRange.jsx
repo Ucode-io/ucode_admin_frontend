@@ -65,7 +65,6 @@ const CalendarWeekRange = ({
         <CalendarDatePicker
           value={currentDay}
           currentDay={currentDay}
-          // mask={"99.99.9999"}
           onChange={(val) => {
             setCurrentDay(val);
           }}

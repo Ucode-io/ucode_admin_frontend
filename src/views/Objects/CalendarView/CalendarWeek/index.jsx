@@ -26,7 +26,8 @@ const CalendarWeek = ({
 
       <div
         style={{
-          width: virtualizer.getTotalSize(),
+          // width: virtualizer.getTotalSize(),
+          width: "100vw",
           height: "100%",
           position: "relative",
         }}
@@ -41,6 +42,7 @@ const CalendarWeek = ({
               top: 0,
               left: 0,
               height: "100%",
+              width: "14.3%",
               transform: `translateX(${virtualColumn.start}px)`,
             }}
           >

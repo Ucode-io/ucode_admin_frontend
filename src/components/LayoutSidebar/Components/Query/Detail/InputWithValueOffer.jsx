@@ -72,7 +72,7 @@ const InputWithValueOffer = ({
     getElementBetween(form)
     setValue(newValue);
   }
-
+  console.log('inputValue', inputValue)
   return (
     <div
       className={className || styles.container}
@@ -132,7 +132,7 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 1 && inputValue.trim() === '{{$$}}' ? (
+        {variables?.length > 0 && inputValue.trim() === '{{$$}}' ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (

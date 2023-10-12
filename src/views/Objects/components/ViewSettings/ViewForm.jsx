@@ -46,10 +46,12 @@ const ViewForm = ({
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
+  const { i18n } = useTranslation();
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
   const group_by_columns = initialValues?.attributes?.group_by_columns;
+  const nameMulti = initialValues?.attributes?.[`name_${i18n?.language}`];
   const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
@@ -60,10 +62,13 @@ const ViewForm = ({
     "#" +
     initialValues?.attributes?.balance?.field_id;
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
+  const attributes = initialValues?.attributes
   const form = useForm();
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
+    console.log('initialValue', initialValues)
+    console.log('relationObjInput', relationObjInput)
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -136,6 +141,7 @@ const ViewForm = ({
   };
 
   useEffect(() => {
+    console.log('ssssssssssssssssss')
     form.reset({
       ...getInitialValues(
         initialValues,
@@ -149,15 +155,16 @@ const ViewForm = ({
         relationObjValue,
         numberFieldValue,
         navigate,
-        group_by_columns
+        group_by_columns,
+        nameMulti
       ),
       filters: [],
     });
   }, [initialValues, tableSlug, form, typeNewView]);
-
+  console.log('formmmmmmmmmmm', form.getValues())
   useEffect(() => {
     form.reset({ ...form.getValues(), number_field: "" });
-  }, [relationObjInput]);
+  }, [relationObjInput, attributes]);
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
@@ -177,7 +184,7 @@ const ViewForm = ({
       )
     );
   }, [type, form]);
-  const { i18n } = useTranslation();
+
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -250,7 +257,6 @@ const ViewForm = ({
       .catch(() => setDeleteBtnLoader(false));
   };
 
-  const languages = useSelector((state) => state.languages.list);
 
   const computedFieldsListOptions = useMemo(() => {
     return fields?.map((field) => ({
@@ -283,14 +289,7 @@ const ViewForm = ({
                   <div className={styles.formRow}>
                     <FRow label="Название">
                       <Box style={{ display: "flex", gap: "6px" }}>
-                        {languages?.map((language) => (
-                          <HFTextField
-                            control={form.control}
-                            name={`attributes.name_${language?.slug}`}
-                            placeholder={`Название (${language?.slug})`}
-                            fullWidth
-                          />
-                        ))}
+                          <HFTextField control={form.control} name={`attributes.name`} placeholder={`Название (${i18n?.language})`} fullWidth />
                       </Box>
                     </FRow>
                   </div>
@@ -393,7 +392,8 @@ const getInitialValues = (
   relationObjValue,
   numberFieldValue,
   navigate,
-  group_by_columns
+  group_by_columns,
+  nameMulti
 ) => {
   if (initialValues === "NEW")
     return {
@@ -447,6 +447,7 @@ const getInitialValues = (
     attributes: {
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
+      name: nameMulti
     },
     quick_filters:
       computeQuickFilters(

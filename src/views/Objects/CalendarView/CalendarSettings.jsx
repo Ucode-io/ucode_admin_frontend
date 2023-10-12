@@ -2,12 +2,11 @@ import { Box, Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import CalendarSettings from "../components/ViewSettings/CalendarSettings";
 import constructorViewService from "../../../services/constructorViewService";
 import { useForm } from "react-hook-form";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import CalendarSetting from "./CalendarSetting";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";
 export default function CalendarSettingsVisible({
   selectedTabIndex,
   views,
@@ -94,7 +93,7 @@ export default function CalendarSettingsVisible({
         }}
         onClick={handleClick}
       >
-        <SettingsIcon color={"#A8A8A8"} />
+        <ViewWeekIcon color={"#A8A8A8"} />
         {text}
       </Button>
 

@@ -1,7 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
@@ -39,10 +39,10 @@ const Users = ({
   childBlockVisible, 
   handleOpenNotify,
   sidebarIsOpen,
-  setSidebarIsOpen
+  setSidebarIsOpen,
+  child
 }) => {
   const dispatch = useDispatch();
-  const [child, setChild] = useState();
   const queryClient = useQueryClient();
   const navigate = useNavigate()
   const {appId} = useParams()
@@ -70,35 +70,9 @@ const Users = ({
         : menuStyle?.text,
   };
 
-  const { isLoading } = useQuery(
-    ["GET_CLIENT_TYPE_LIST"],
-    () => {
-      return clientTypeServiceV2.getList();
-    },
-    {
-      cacheTime: 10,
-      enabled: false,
-      onSuccess: (res) => {
-        setChild(
-          res.data.response?.map((row) => ({
-            ...row,
-            type: "USER",
-            id: row.guid,
-            parent_id: "13",
-            data: {
-              permission: {
-                read: true,
-              },
-            },
-          }))
-        );
-      },
-    }
-  );
+
 
   const clickHandler = (e) => {
-    navigate(`/main/${appId}/users-list`);
-    setSelectedApp()
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -113,30 +87,14 @@ const Users = ({
 
   return (
     <Box sx={{margin: '0 5px'}}>
-      {/* <div className="parent-block column-drag-handle">
-        <Button
-          style={activeStyle}
-          className="nav-element"
-          onClick={(e) => {
-            clickHandler(e);
-          }}
-        >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"users.svg"} size={18} />
-            {sidebarIsOpen ? 'Users' : ''}
-          </div>
-          {sidebarIsOpen && <KeyboardArrowRightIcon />}
-        </Button>
-      </div> */}
 
-      {/* <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
           <RecursiveBlock
             onClick={() => {
               handleGetClientType();
             }}
             key={childElement.id}
-            level={level + 1}
+            level={1}
             element={childElement}
             menuStyle={menuStyle}
             menuItem={menuItem}
@@ -144,7 +102,6 @@ const Users = ({
             handleOpenNotify={handleOpenNotify}
           />
         ))}
-      </Collapse> */}
 
     </Box>
   );

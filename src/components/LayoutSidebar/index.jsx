@@ -2,7 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import {Box, Button, Divider} from "@mui/material";
 import {useEffect, useState} from "react";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {Container} from "react-smooth-dnd";
@@ -38,6 +38,7 @@ import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import Users from "./Components/Users";
 import DocumentsSidebar from "./Components/Documents/DocumentsSidebar";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 
 const LayoutSidebar = ({appId}) => {
   const menuItem = useSelector((state) => state.menu.menuItem); 
@@ -73,6 +74,7 @@ const LayoutSidebar = ({appId}) => {
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const [users, setUsers] = useState()
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
@@ -195,6 +197,33 @@ const LayoutSidebar = ({appId}) => {
       });
   };
 
+
+  const { isLoadingUser } = useQuery(
+    ["GET_CLIENT_TYPE_LIST"],
+    () => {
+      return clientTypeServiceV2.getList();
+    },
+    {
+      enabled: appId === "9e988322-cffd-484c-9ed6-460d8701551b",
+      onSuccess: (res) => {
+        setUsers(
+          res.data.response?.map((row) => ({
+            ...row,
+            type: "USER",
+            id: row.guid,
+            parent_id: "13",
+            data: {
+              permission: {
+                read: true,
+              },
+            },
+          }))
+        );
+      },
+    }
+  );
+
+
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
@@ -217,6 +246,7 @@ const LayoutSidebar = ({appId}) => {
   useEffect(() => {
     getMenuList();
   }, [searchText]);
+
 
   useEffect(() => {
     setSelectedApp(menuList?.find((item) => item?.id === appId));
@@ -362,35 +392,6 @@ const LayoutSidebar = ({appId}) => {
                     }}
                   />
                 )}
-                {/* {defaultAdmin &&  
-                  <Users
-                    menuStyle={menuStyle}
-                    menuItem={menuItem}
-                    setElement={setElement}
-                    setSelectedApp={setSelectedApp}
-                    setChildBlockVisible={setChildBlockVisible}
-                    childBlockVisible={childBlockVisible}
-                    handleOpenNotify={handleOpenNotify}
-                    sidebarIsOpen={sidebarIsOpen}
-                    setSidebarIsOpen={setSidebarIsOpen}
-                    level={2}
-                  />} */}
-
-                    {/* <DocumentsSidebar
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      subMenuIsOpen={subMenuIsOpen}
-                      setElement={setElement}
-                      setSelectedApp={setSelectedApp}
-                      selectedApp={selectedApp}
-                      setChildBlockVisible={setChildBlockVisible}
-                      childBlockVisible={childBlockVisible}
-                      handleOpenNotify={handleOpenNotify}
-                      sidebarIsOpen={sidebarIsOpen}
-                      setSidebarIsOpen={setSidebarIsOpen}
-                      menuItem={menuItem}
-                      level={2}
-                    /> */}
 
 
                 <div
@@ -545,6 +546,7 @@ const LayoutSidebar = ({appId}) => {
         menuStyle={menuStyle}
         setChild={setChild}
         setSelectedApp={setSelectedApp}
+        users={users}
       />
       <ButtonsMenu
         element={element}

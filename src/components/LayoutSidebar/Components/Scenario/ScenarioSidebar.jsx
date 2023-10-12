@@ -189,6 +189,11 @@ const ScenarioSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
             <PlayCircleIcon/>
             {/* <IconGenerator icon={"film.svg"} size={18} /> */}
             Scenarios
@@ -207,11 +212,6 @@ const ScenarioSidebar = ({
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

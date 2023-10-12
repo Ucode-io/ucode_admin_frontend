@@ -9,7 +9,11 @@ import constructorObjectService from "../../services/constructorObjectService";
 import constructorViewService from "../../services/constructorViewService";
 import GroupsTab from "./components/ViewSettings/GroupsTab";
 
-export default function GroupByButton({ selectedTabIndex }) {
+export default function GroupByButton({
+  selectedTabIndex,
+  text = "Tab group",
+  width = "",
+}) {
   const form = useForm();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -114,7 +118,8 @@ export default function GroupByButton({ selectedTabIndex }) {
         style={{
           gap: "5px",
           color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor:
+            selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
         // style={{
         //   display: "flex",
@@ -132,7 +137,7 @@ export default function GroupByButton({ selectedTabIndex }) {
         onClick={handleClick}
       >
         <LayersOutlinedIcon color={"#A8A8A8"} />
-        Tab
+        {text}
         {selectedColumns?.length > 0 && <span>{selectedColumns?.length}</span>}
         {selectedColumns?.length > 0 && (
           <button
@@ -146,16 +151,20 @@ export default function GroupByButton({ selectedTabIndex }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color:
+                selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
               disableAll();
             }}
           >
-            <CloseRoundedIcon style={{
-              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-            }}/>
+            <CloseRoundedIcon
+              style={{
+                color:
+                  selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              }}
+            />
           </button>
         )}
       </Button>
@@ -194,7 +203,14 @@ export default function GroupByButton({ selectedTabIndex }) {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <GroupsTab columns={computedColumns} isLoading={isLoading} updateLoading={updateLoading} updateView={updateView} selectedView={views?.[selectedTabIndex]} form={form} />
+          <GroupsTab
+            columns={computedColumns}
+            isLoading={isLoading}
+            updateLoading={updateLoading}
+            updateView={updateView}
+            selectedView={views?.[selectedTabIndex]}
+            form={form}
+          />
         )}
       </Menu>
     </div>

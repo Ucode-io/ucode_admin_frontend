@@ -129,12 +129,18 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
           <div
             className="label"
             style={{
+              paddingLeft: '15px',
               color:
                 selected?.id === dataBase?.id
                   ? menuStyle?.active_text
                   : menuStyle?.text,
             }}
           >
+            {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
             <IconGenerator icon={"database.svg"} size={18} />
             Resources
           </div>
@@ -201,11 +207,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
               </MenuItem>
             ))}
           </Menu>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
+        
         </Button>
       </div>
 

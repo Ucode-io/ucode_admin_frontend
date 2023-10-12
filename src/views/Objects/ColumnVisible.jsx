@@ -1,15 +1,22 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Badge, Button, CircularProgress, Menu } from "@mui/material";
+import { Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
 
-export default function ColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
+export default function ColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+  text = "Columns",
+  width = "",
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,11 +27,7 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
 
   const type = views?.[selectedTabIndex]?.type;
   const computedColumns = useMemo(() => {
-    if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns;
-    } else {
-      return [...columns, ...relationColumns];
-    }
+    return columns;
   }, [columns, relationColumns, type]);
 
   const watchedColumns = form.watch("columns");
@@ -35,7 +38,9 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -45,9 +50,13 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns
+            ?.filter((el) => el?.is_checked)
+            ?.map((el) => el.id),
         },
-        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
+        columns: watchedColumns
+          ?.filter((el) => el.is_checked)
+          ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -77,10 +86,23 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
         }}
+        // style={{
+        //   gap: "5px",
+        //   color: "#A8A8A8",
+        //   cursor: "pointer",
+        //   fontSize: "13px",
+        //   fontWeight: 500,
+        //   lineHeight: "16px",
+        //   letterSpacing: "0em",
+        //   textAlign: "left",
+        //   padding: "0 10px",
+        //   width: width,
+        //   borderColor: "#A8A8A8",
+        // }}
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
-        Columns
+        {text}
       </Button>
       {/* </Badge> */}
       <Menu
@@ -112,7 +134,11 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} />}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
+        )}
       </Menu>
     </div>
   );

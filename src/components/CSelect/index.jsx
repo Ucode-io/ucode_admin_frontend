@@ -1,4 +1,4 @@
-import { Clear } from "@mui/icons-material"
+import { Clear } from "@mui/icons-material";
 import {
   FormControl,
   FormHelperText,
@@ -6,7 +6,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@mui/material"
+} from "@mui/material";
 
 const CSelect = ({
   label,
@@ -21,7 +21,7 @@ const CSelect = ({
   ...props
 }) => {
   return (
-    <FormControl style={{ width, }}>
+    <FormControl style={{ width }}>
       <InputLabel size="small">{label}</InputLabel>
       <Select
         value={value || ""}
@@ -37,18 +37,26 @@ const CSelect = ({
         select
         displayEmpty
         onChange={onChange}
-        renderValue={value !== "" ? undefined : () => <span style={{ color: '#909EAB' }} >{placeholder}</span>}
+        renderValue={
+          value !== ""
+            ? undefined
+            : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
+        }
         endAdornment={
           <IconButton
-            sx={{ display: value ? "" : "none", transform: 'translateX(10px)' }}
-            onClick={e => onChange({ ...e, target: { value: "" } })}
+            sx={{ display: value ? "" : "none", transform: "translateX(10px)" }}
+            onClick={(e) => onChange({ ...e, target: { value: "" } })}
           >
             <Clear />
           </IconButton>
         }
         sx={{
-          "& .MuiSelect-iconOutlined": { display: value ? "none" : "" },
-          "&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
+          "& .MuiSelect-iconOutlined": {
+            display: value ? "none" : "",
+          },
+          "&.Mui-focused .MuiIconButton-root": {
+            color: "primary.main",
+          },
         }}
         {...props}
       >
@@ -62,7 +70,7 @@ const CSelect = ({
         <FormHelperText error>{error?.message ?? " "}</FormHelperText>
       )}
     </FormControl>
-  )
-}
+  );
+};
 
-export default CSelect
+export default CSelect;

@@ -301,6 +301,17 @@ html {
   }
 }
 
+.calendar_textfield {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  cursor: pointer;
+
+  div fieldset {
+    cursor: pointer;
+    border: none;
+  }
+}
+
 .editable_col {
   transition: all 0.3s ease;
   border: 1px solid transparent;

@@ -345,7 +345,7 @@ const TableView = ({
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-  console.log('pageCount',  pageCount,)
+
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =

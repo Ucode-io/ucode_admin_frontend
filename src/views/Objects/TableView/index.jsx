@@ -481,7 +481,7 @@ const TableView = ({
     }
   };
 
-  // const [elementHeight, setElementHeight] = useState(null);
+  const [elementHeight, setElementHeight] = useState(null);
 
   // useEffect(() => {
   //   const element = document.querySelector("#data-table");
@@ -536,7 +536,7 @@ const TableView = ({
             columns={columns}
             multipleDelete={multipleDelete}
             openFieldSettings={openFieldSettings}
-            limit={paginiation}
+            limit={paginiation ?? limit}
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}

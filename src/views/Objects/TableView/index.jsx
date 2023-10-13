@@ -260,7 +260,7 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
-  console.log("currentPage", currentPage, limit);
+
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -297,7 +297,7 @@ const TableView = ({
       };
     },
   });
-
+  console.log('limitPage', limitPage)
   const {
     data: { tableData, pageCount } = {
       tableData: [],
@@ -332,7 +332,7 @@ const TableView = ({
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit: limitPage ?? limit,
+          limit: limitPage && limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -491,7 +491,8 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log("tableData", tableData);
+  console.log("paginiation", paginiation);
+  console.log('limittttttt', limit)
 
   return (
     <div className={styles.wrapper}>

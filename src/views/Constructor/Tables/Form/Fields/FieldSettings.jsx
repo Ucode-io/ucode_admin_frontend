@@ -576,7 +576,7 @@ const FieldSettings = ({
             onClick={handleSubmit(submitHandler)}
             loader={formLoader}
           >
-            Сохранить
+            Save
           </PrimaryButton>
         </div>
       </div>

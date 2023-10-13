@@ -134,10 +134,10 @@ const MatrixRoles = ({ infoForm }) => {
                       reset({ name: "" })
                     }}
                   >
-                    Отменить
+                    Cancel
                   </SecondaryButton>
                   <PrimaryButton disabled={isLoading} type="submit">
-                    Сохранить
+                  Save
                   </PrimaryButton>
                 </div>
               )}

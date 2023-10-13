@@ -213,7 +213,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
               </div>
               <div className={styles.submit_btn}>
                 <PrimaryButton onClick={() => mutate(finalData)}>
-                  Сохранить
+                Save
                 </PrimaryButton>
               </div>
             </TabPanel>

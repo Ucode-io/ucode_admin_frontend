@@ -115,13 +115,13 @@ const EmailDetailPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              Close
             </SecondaryButton>
             <PrimaryButton
               loader={createLoading}
               onClick={handleSubmit(onSubmit)}
             >
-              <Save /> Сохранить
+              <Save /> Save
             </PrimaryButton>
           </>
         }

@@ -143,6 +143,7 @@ const AutoCompleteElement = ({
   multipleInsertField,
   setFormValue = () => {},
 }) => {
+  console.log('disabled', )
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const {id} = useParams();

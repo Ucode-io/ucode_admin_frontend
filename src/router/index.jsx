@@ -74,6 +74,7 @@ import Invite from "../views/Auth/Invite";
 import UsersList from "../views/Users/UsersList";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
+import TablesPage from "../views/Constructor/AllTables";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -145,7 +146,6 @@ const Router = () => {
             </Suspense>
           }
         />
-
 
         <Route index element={<Navigate to={redirectLink} />} />
 
@@ -334,13 +334,27 @@ const Router = () => {
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
         </Route>
 
+        <Route path="constructor/tables">
+          <Route index element={<TablesPage />} />
+          {/* <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+        </Route>
+
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route
           path="constructor/apps/:appId/objects/create"
           element={<ConstructorTablesFormPage />}
         />
         <Route
+          path="constructor/tables/create"
+          element={<ConstructorTablesFormPage />}
+        />
+        <Route
           path="constructor/apps/:appId/objects/:id/:slug"
+          element={<ConstructorTablesFormPage />}
+        />
+        <Route
+          path="constructor/tables/:id/:slug"
           element={<ConstructorTablesFormPage />}
         />
         <Route

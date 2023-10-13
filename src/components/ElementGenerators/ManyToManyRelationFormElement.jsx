@@ -12,9 +12,6 @@ import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import constructorFunctionService from "../../services/constructorFunctionService";
-import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
 import { useTranslation } from "react-i18next";
 
@@ -36,18 +33,21 @@ const ManyToManyRelationFormElement = ({
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
-  const {i18n} = useTranslation()
+  const { i18n } = useTranslation();
 
   if (!isLayout)
     return (
-      <FRow label={
-        field?.attributes[`title_${i18n?.language}`] ??
-        field?.attributes[`name${i18n?.language}`] ??
-        field?.attributes[`label${i18n?.language}`] ??
-        field?.label ??
-        field.title ??
-        " "
-      } required={field.required}>
+      <FRow
+        label={
+          field?.attributes[`title_${i18n?.language}`] ??
+          field?.attributes[`name${i18n?.language}`] ??
+          field?.attributes[`label${i18n?.language}`] ??
+          field?.label ??
+          field.title ??
+          " "
+        }
+        required={field.required}
+      >
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
@@ -132,6 +132,8 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
 
+  console.log("AutoCompleteElement", field);
+
   const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {
@@ -159,7 +161,7 @@ const AutoCompleteElement = ({
         `/invoke_function/${field?.attributes?.function_path}`,
         {
           params: {
-            from_input: true
+            from_input: true,
           },
           data: {
             ...autoFiltersValue,
@@ -184,7 +186,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-  
+
   const { data: fromObjectList } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
@@ -212,10 +214,10 @@ const AutoCompleteElement = ({
     }
   );
 
-const options = useMemo(() => {
-  return fromObjectList ?? fromInvokeList
-}, [fromInvokeList, fromObjectList])
-  
+  const options = useMemo(() => {
+    return fromObjectList ?? fromInvokeList;
+  }, [fromInvokeList, fromObjectList]);
+
   const computedValue = useMemo(() => {
     if (!value) return undefined;
 

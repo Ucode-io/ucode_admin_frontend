@@ -18,14 +18,14 @@ const DeleteWrapperModal = ({ children, onDelete, id }) => {
       <Modal open={modalIsVisible} disableAutoFocus className={styles.modal} onClose={closeModal} onClick={e => e.stopPropagation()} >
         <Card className={styles.card}>
 
-          <div className={styles.body}>Вы действительно хотите удалить</div>
+          <div className={styles.body}>Are you sure you want to delete?</div>
 
           <div className={styles.footer}>
             <SecondaryButton
               className={styles.button}
               onClick={closeModal}
             >
-              Отменить
+              Cancel
             </SecondaryButton>
             <PrimaryButton
               className={styles.button}
@@ -35,7 +35,7 @@ const DeleteWrapperModal = ({ children, onDelete, id }) => {
                 closeModal()
               }}
             >
-              Да
+              Yes
             </PrimaryButton>
           </div>
         </Card>

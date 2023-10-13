@@ -63,6 +63,7 @@
   border-radius: 4px;
   font-weight: 700;
   border: 1px solid #30824E;
+  padding: 0;
 
   &.codeMirror {
     bottom: -55px;
@@ -72,12 +73,33 @@
   .wrapper {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
     padding: 5px;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    // overflow-wrap: break-word;
+    // word-break: break-word;
 
     .paragraph {
       font-weight: 400;
+    }
+  }
+}
+.variable_wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 5px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 200px;
+
+  .wrapper_item {
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    
+    &:hover {
+      background: #30824E;
+      color: #fff;
     }
   }
 }

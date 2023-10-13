@@ -118,8 +118,6 @@ const TableView = ({
     return getObject?.pageLimit ?? null;
   }, [paginationInfo]);
 
-  console.log("paginiation", typeof paginiation);
-
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({
@@ -251,9 +249,21 @@ const TableView = ({
       return "string";
     }
   };
-  const [combinedTableData, setCombinedTableData] = useState([]);
 
-  // NEW QUERY FOR GETTING TABLE INFO
+  const limitPage = useMemo(() => {
+    if (typeof paginiation === "number") {
+      return paginiation;
+    } else if (paginiation === "all" && limit === "all") {
+      return undefined;
+    } else {
+      return pageToOffset(currentPage, limit);
+    }
+  }, [paginiation, limit, currentPage]);
+
+  console.log("limitPage", limitPage);
+
+  console.log("currentPage", currentPage, limit);
+  const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
       tableData: [],
@@ -311,25 +321,20 @@ const TableView = ({
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
+        paginiation,
       },
     ],
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: paginiation
-            ? paginiation === "all"
-            : limit === "all"
-            ? undefined
-            : pageToOffset(currentPage, limit),
-          // app_id: appId,
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
-          // with_relations: true,
           view_fields: checkedColumns,
           search:
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
               : searchText,
-          limit: limit === "all" ? undefined : limit,
+          limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -478,7 +483,7 @@ const TableView = ({
     }
   };
 
-  // const [elementHeight, setElementHeight] = useState(null);
+  const [elementHeight, setElementHeight] = useState(null);
 
   // useEffect(() => {
   //   const element = document.querySelector("#data-table");
@@ -489,6 +494,7 @@ const TableView = ({
   // }, []);
 
   console.log("tableData", tableData);
+  console.log("paginiation", paginiation ?? limit);
 
   return (
     <div className={styles.wrapper}>
@@ -520,7 +526,7 @@ const TableView = ({
             setDrawerState={setDrawerState}
             setDrawerStateField={setDrawerStateField}
             isTableView={true}
-            // elementHeight={elementHeight}
+            elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}
@@ -533,10 +539,10 @@ const TableView = ({
             columns={columns}
             multipleDelete={multipleDelete}
             openFieldSettings={openFieldSettings}
-            limit={limit}
+            limit={paginiation ?? limit}
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
-            loader={tableLoader}
+            loader={tableLoader || deleteLoader}
             data={tableData}
             summaries={view?.attributes?.summaries}
             disableFilters
@@ -552,11 +558,11 @@ const TableView = ({
               borderRadius: 0,
               border: "none",
               borderBottom: "1px solid #E5E9EB",
+              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
               width: "100%",
               margin: 0,
             }}
             isResizeble={true}
-            navigateToForm={navigateToForm}
             {...props}
           />
           {/* ) : <EmptyDataComponent />} */}

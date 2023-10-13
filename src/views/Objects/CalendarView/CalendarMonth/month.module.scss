@@ -6,6 +6,7 @@
     max-height: calc(100vh - 100px);
     overflow: auto;
     background-color: #fff;
+
 }
 
 
@@ -32,7 +33,11 @@
         flex-direction: column-reverse;
         align-items: end;
         position: relative;
+        scrollbar-width: none;
 
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
 
         .card {
@@ -61,6 +66,11 @@
                     height: 70px;
                     cursor: pointer;
                     transition-duration: 0.3s;
+                    scrollbar-width: none;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                 }
 
                 .infoBlock {

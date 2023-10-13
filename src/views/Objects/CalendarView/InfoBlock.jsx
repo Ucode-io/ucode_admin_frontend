@@ -3,6 +3,7 @@ import MultiselectCellColoredElement from "../../../components/ElementGenerators
 import { dateValidFormat } from "../../../utils/dateValidFormat";
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
 import styles from "./style.module.scss";
+import { format } from "date-fns";
 
 const flex = {
   display: "flex",
@@ -11,15 +12,18 @@ const flex = {
 };
 
 const InfoBlock = ({ viewFields, data, isSingleLine }) => {
-  //   if (isSingleLine)
-  //     return (
-  //       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
-  //         {data.calendar?.elementFromTime
-  //           ? format(data.calendar?.elementFromTime, "HH:mm")
-  //           : ""}
-  //         - {data.patients_id_data?.name + data.patients_id_data?.second_name}
-  //       </div>
-  //     );
+  if (isSingleLine)
+    return (
+      <div className={`${styles.infoBlock} ${styles.singleLine}`}>
+        {data.calendar?.elementFromTime
+          ? format(data.calendar?.elementFromTime, "HH:mm")
+          : ""}
+        -
+        {data.calendar?.elementToTime
+          ? format(data.calendar?.elementToTime, "HH:mm")
+          : ""}
+      </div>
+    );
 
   return (
     <div className={`${styles.infoBlock}`}>

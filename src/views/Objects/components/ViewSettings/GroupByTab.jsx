@@ -26,8 +26,6 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
 const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
@@ -41,13 +39,13 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
     keyName: "key",
   });
 
-  const initialCheckedColumns = initialColumns.map((item) => {
+  const initialCheckedColumns = initialColumns?.map((item) => {
     return {
       ...item,
       is_checked: columns.find((el) => item.id === el.id).is_checked,
     };
   });
-  const initialGroupCheckedColumns = initialColumns.map((item) => {
+  const initialGroupCheckedColumns = initialColumns?.map((item) => {
     return {
       ...item,
       is_checked: false,
@@ -81,11 +79,11 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
     return watchedColumns?.filter((column) => column?.is_checked === true);
   }, [watchedColumns]);
 
-  // useEffect(() => {
-  //   if (isMenu) {
-  //     updateView();
-  //   }
-  // }, [watchedColumns]);
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
 
   const onSwitchChange = (e, index) => {
     const updatedColumns = [...columns];
@@ -239,9 +237,6 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
                       )}
                       onChange={(e) => {
                         onSwitchChange(e, index);
-                        if (isMenu) {
-                          updateView();
-                        }
                       }}
                     />
                   </div>

@@ -124,7 +124,7 @@ const SubMenu = ({
           }}
         >
           <div>
-            <Box className="search">
+            {/* <Box className="search">
               <SearchInput
                 style={{
                   borderRadius: "8px",
@@ -134,7 +134,7 @@ const SubMenu = ({
                   setSubSearchText(e);
                 }}
               />
-            </Box>
+            </Box> */}
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (

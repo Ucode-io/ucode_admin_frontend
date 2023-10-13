@@ -113,10 +113,11 @@ const TableView = ({
   });
 
   const paginiation = useMemo(() => {
-    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
 
-    return getObject?.pageLimit ?? null;
-  }, [paginationInfo]);
+    return getObject?.pageLimit ?? null
+  }, [paginationInfo, tableSlug])
+
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -260,7 +261,6 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
-
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -346,9 +346,7 @@ const TableView = ({
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / (paginiation ?? limit)),
       };
     },
     onSuccess: (data) => {
@@ -491,8 +489,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log("paginiation", paginiation);
-  console.log('limittttttt', limit)
+  console.log('currentPage', currentPage)
 
   return (
     <div className={styles.wrapper}>

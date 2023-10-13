@@ -153,7 +153,7 @@ export default function PivotTableView() {
             : undefined,
       })
       .then((res) => {
-        dispatch(showAlert("Успешно обновлено", "success"));
+        dispatch(showAlert("Successfully Updated!", "success"));
         setExpandedRows((p) => ({ ...p, [res.id]: [] }));
         pivotTemplatesHistory.refetch().then(() => {
           setActiveClickActionTabId(res.id);

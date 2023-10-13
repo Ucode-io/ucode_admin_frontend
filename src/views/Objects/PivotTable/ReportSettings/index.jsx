@@ -118,7 +118,7 @@ function Item(props) {
         filters: values.filters?.filter((i) => i.label),
       })
       .then(() => {
-        dispatch(showAlert("Успешно обновлено!", "success"));
+        dispatch(showAlert("Successfully updated!", "success"));
         queryClient.refetchQueries(["GET_REPORT_SETTINGS_LIST"]);
       })
       .finally(() => {
@@ -192,7 +192,7 @@ function Item(props) {
           extra={
             <>
               <PrimaryButton loader={upsertLoading} onClick={() => form.handleSubmit(onSubmit)()}>
-                <Save /> Сохранить
+                <Save /> Save
               </PrimaryButton>
             </>
           }

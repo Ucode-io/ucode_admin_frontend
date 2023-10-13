@@ -41,18 +41,16 @@ const DrawerCard = ({
         {children}
       </div>
 
-      {footer && (
-        <dir className={styles.footer}>
-          <PrimaryButton
-            size="large"
-            className={styles.button}
-            onClick={onSaveButtonClick}
-            loader={loader}
-          >
-            Сохранить
-          </PrimaryButton>
-        </dir>
-      )}
+      <dir className={styles.footer}>
+        <PrimaryButton
+          size="large"
+          className={styles.button}
+          onClick={onSaveButtonClick}
+          loader={loader}
+        >
+          Save
+        </PrimaryButton>
+      </dir>
     </Drawer>
   );
 };

@@ -136,7 +136,7 @@ const Form = ({ view = {}, onClose, tableSlug }) => {
           onClick={handleSubmit(onSubmit)}
           loader={btnLoader}
         >
-          Сохранить
+          Save
         </PrimaryButton>
       </div>
     </>

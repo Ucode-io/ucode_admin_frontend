@@ -166,14 +166,14 @@ const SmsFormPage = () => {
           extra={
             <>
               <SecondaryButton onClick={() => navigate(-1)} color="error">
-                Закрыть
+                Close
               </SecondaryButton>
 
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save /> Save
               </PrimaryButton>
             </>
           }

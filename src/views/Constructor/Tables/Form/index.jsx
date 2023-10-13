@@ -343,14 +343,14 @@ const ConstructorTablesFormPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              Close
             </SecondaryButton>
             <PrimaryButton
               loader={btnLoader}
               onClick={mainForm.handleSubmit(onSubmit)}
               loading={btnLoader}
             >
-              <Save /> Сохранить
+              <Save /> Save
             </PrimaryButton>
           </>
         }

@@ -160,14 +160,14 @@ const RedirectFormPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              Close
             </SecondaryButton>
             <PermissionWrapperV2 tabelSlug="app" type="update">
               <PrimaryButton
                 loader={createLoading || updateLoading}
                 onClick={mainForm.handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

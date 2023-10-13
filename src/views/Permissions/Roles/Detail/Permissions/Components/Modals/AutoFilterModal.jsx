@@ -130,7 +130,7 @@ const AutoFilterModal = ({
             <div className="modal-header silver-bottom-border">
               <div></div>
               <Button variant="contained" onClick={closeModal}>
-                Сохранить
+              Save
               </Button>
             </div>
           </Box>

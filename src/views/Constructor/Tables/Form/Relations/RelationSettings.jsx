@@ -872,7 +872,7 @@ const RelationSettings = ({
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || loader}
             >
-              Сохранить
+              Save
             </PrimaryButton>
           </div>
         </form>

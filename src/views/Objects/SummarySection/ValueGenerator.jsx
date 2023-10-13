@@ -11,6 +11,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import InventoryBarCode from "../../../components/FormElements/InventoryBarcode";
 import { useSelector } from "react-redux";
 import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
+import styles from './style.module.scss'
 
 function ValueGenerator({ field, control, setFormValue }) {
   const [data, setData] = useState();
@@ -98,6 +99,14 @@ function ValueGenerator({ field, control, setFormValue }) {
 
     case "ICO":
       return <IconGenerator icon={value} />;
+
+    case "INCREMENT_ID":
+        
+        return (
+          <div className={styles.incrementVal}>
+            {value}
+          </div>
+        ); 
 
     case "PHOTO":
       return (

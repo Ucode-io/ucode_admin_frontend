@@ -39,21 +39,21 @@ const dataBases = [
       },
     },
   },
-  // {
-  //   label: "Variable Resources",
-  //   type: "USER_FOLDER",
-  //   icon: "database.svg",
-  //   parent_id: adminId,
-  //   id: "10",
-  //   data: {
-  //     permission: {
-  //       read: true,
-  //       write: true,
-  //       delete: true,
-  //       update: true,
-  //     },
-  //   },
-  // }
+  {
+    label: "Variable Resources",
+    type: "USER_FOLDER",
+    icon: "database.svg",
+    parent_id: adminId,
+    id: "10",
+    data: {
+      permission: {
+        read: true,
+        write: true,
+        delete: true,
+        update: true,
+      },
+    },
+  }
 ];
 
 const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {

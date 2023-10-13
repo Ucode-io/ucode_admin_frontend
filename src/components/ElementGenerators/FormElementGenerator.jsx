@@ -150,7 +150,6 @@ const FormElementGenerator = ({
   //   field.required = false
   // }
 
-  console.log("field", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {

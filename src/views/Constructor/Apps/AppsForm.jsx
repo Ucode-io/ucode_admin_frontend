@@ -266,7 +266,7 @@ const AppsForm = () => {
                   onClick={() => navigate(applicationListPageLink)}
                   color="error"
                 >
-                  Закрыть
+                  Close
                 </SecondaryButton>
                 <PermissionWrapperV2 tableSlug="app" type="update">
                   <PermissionWrapperApp
@@ -280,7 +280,7 @@ const AppsForm = () => {
                       loader={btnLoader}
                       onClick={mainForm.handleSubmit(onSubmit)}
                     >
-                      <Save /> Сохранить
+                      <Save /> Save
                     </PrimaryButton>
                   </PermissionWrapperApp>
                 </PermissionWrapperV2>

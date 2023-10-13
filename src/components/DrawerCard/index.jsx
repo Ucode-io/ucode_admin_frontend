@@ -44,7 +44,7 @@ const DrawerCard = ({
           onClick={onSaveButtonClick}
           loader={loader}
         >
-          Сохранить
+          Save
         </PrimaryButton>
       </dir>
     </Drawer>

@@ -116,7 +116,7 @@ const ApiEndpoint = () => {
     });
   const { mutate: updateApi } = useApiEndpointUpdateMutation({
     onSuccess: (res) => {
-      dispatch(showAlert("Successfully update", "success"));
+      dispatch(showAlert("Successfully Updated!", "success"));
       queryClient.refetchQueries(["API_ENDPOINT"]);
       queryClient.refetchQueries(["API_ENDPOINTS_HISTORY"]);
       refetch();

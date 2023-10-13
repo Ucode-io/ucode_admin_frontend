@@ -125,7 +125,7 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
         })
         .then((res) => {
           if (res === "Updated successfully!") {
-            console.log("Успешно обновлено!", "success");
+            console.log("Successfully updated!", "success");
           }
         })
         .finally(() => {

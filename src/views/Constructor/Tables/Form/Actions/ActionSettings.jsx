@@ -162,7 +162,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
 
           <div className={styles.settingsFooter}>
             <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={loader}>
-              Сохранить
+              Save
             </PrimaryButton>
           </div>
         </form>

@@ -61,7 +61,7 @@
 
 
 .dateBlock {
-    min-width: 157px;
+    // min-width: 157px;
     min-height: 40px;
     display: flex;
     align-items: center;
@@ -99,7 +99,7 @@
     z-index: 2;
 
     &.last {
-        width: 157px;
+        // width: 157px;
     }
 
     &.before {
@@ -112,7 +112,8 @@
 }
 
 .timeBlock {
-    width: 157px;
+    // width: 157px;
+    width: 100%;
     box-shadow: inset -1px -1px 0px #e5e9eb;
     height: 40px;
     display: flex;
@@ -163,6 +164,7 @@
 
 .objectColumn {
     position: relative;
+    width: 100%;
 
     .infoBlockWrapper {
         width: 100%;
@@ -180,8 +182,6 @@
         }
 
         .infoBlock {
-            height: 40px;
-
             &.singleLine {
                 white-space: nowrap;
                 text-overflow: ellipsis;

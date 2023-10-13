@@ -118,7 +118,10 @@ const TableView = ({
     return getObject?.pageLimit ?? null
   }, [paginationInfo, tableSlug])
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> new_calendar_bug
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({
@@ -261,6 +264,9 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
+  console.log("limitPage", limitPage);
+
+  console.log("currentPage", currentPage, limit);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -489,7 +495,8 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('currentPage', currentPage)
+  console.log("paginiation", paginiation ?? limit);
+  console.log("tableData", tableData);
 
   return (
     <div className={styles.wrapper}>
@@ -514,7 +521,6 @@ const TableView = ({
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
-            getValues={getValues}
             selectedView={selectedView}
             setSortedDatas={setSortedDatas}
             sortedDatas={sortedDatas}
@@ -553,6 +559,7 @@ const TableView = ({
               borderRadius: 0,
               border: "none",
               borderBottom: "1px solid #E5E9EB",
+              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
               width: "100%",
               margin: 0,
             }}

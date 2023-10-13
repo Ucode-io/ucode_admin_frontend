@@ -118,10 +118,6 @@ const TableView = ({
     return getObject?.pageLimit ?? null
   }, [paginationInfo, tableSlug])
 
-<<<<<<< HEAD
-
-=======
->>>>>>> new_calendar_bug
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({

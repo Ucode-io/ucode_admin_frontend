@@ -115,7 +115,7 @@ const TableView = ({
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
 
     return getObject?.pageLimit ?? null
-  }, [paginationInfo])
+  }, [paginationInfo, tableSlug])
 
 
 
@@ -252,8 +252,6 @@ const TableView = ({
   }, [paginiation, limit, currentPage]);
 
   console.log('limitPage', limitPage)
-
-  console.log('currentPage', currentPage, limit)
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -334,7 +332,7 @@ const TableView = ({
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / (paginiation ?? limit)),
       };
     },
     onSuccess: (data) => {
@@ -347,7 +345,7 @@ const TableView = ({
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-
+  console.log('pageCount',  pageCount,)
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
@@ -466,7 +464,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('paginiation', paginiation ?? limit)
+  console.log('currentPage', currentPage)
 
   return (
     <div className={styles.wrapper}>

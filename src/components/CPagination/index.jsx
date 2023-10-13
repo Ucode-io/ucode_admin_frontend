@@ -28,12 +28,14 @@ const CPagination = ({
   const dispatch = useDispatch()
   const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
 
-
+  console.log('count', props.count)
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
 
     return getObject?.pageLimit ?? null
   }, [paginationInfo])
+
+  console.log('paginiation', paginiation)
 
   const options = [
     { value: "all", label: "All" },

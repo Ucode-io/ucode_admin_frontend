@@ -131,15 +131,16 @@ const FormElementGenerator = ({
   const isDisabled = useMemo(() => {
   const { attributes } = field;
 
-  if (!window.location.pathname.includes('create')) {
+  if (window.location.pathname.includes('create') &&  !attributes?.disabled) {
     return false;
+  }else {
+    return (
+      attributes?.disabled ||
+      !attributes?.field_permission?.edit_permission ||
+      attributes?.is_editable
+    );
   }
 
-  return (
-    attributes?.disabled ||
-    !attributes?.field_permission?.edit_permission ||
-    attributes?.is_editable
-  );
 }, [field]);
 
   

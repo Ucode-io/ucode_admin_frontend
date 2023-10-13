@@ -45,6 +45,9 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [selectedColumn, setSelectedColumn] = useState();
+  const [updatedColumns, setUpdatedColumns] = useState();
+  const [selectedColumns, setSelectedColumns] = useState([]);
 
   const {
     data: { views, columns } = {
@@ -75,6 +78,17 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   }, [views, selectedTabIndex]);
 
   const changeHandler = (column, e) => {
+    const updatedColumns = [...selectedColumns];
+
+    if (updatedColumns.includes(column)) {
+      updatedColumns.splice(updatedColumns.indexOf(column), 1);
+    } else {
+      updatedColumns.unshift(column);
+    }
+
+    setSelectedColumns(updatedColumns);
+
+    setSelectedColumn(column);
     setIsLoading(true);
     const computedData = {
       ...selectedView,
@@ -120,12 +134,31 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     });
   };
 
-  const visibleColumns = useMemo(() => {
+  useEffect(() => {
     refetch();
-    return columns.filter((column) => {
-      return views?.[selectedTabIndex]?.columns?.find((el) => el === column?.id);
-    });
+    setUpdatedColumns(
+      columns.filter((column) => {
+        return views?.[selectedTabIndex]?.columns?.find(
+          (el) => el === column?.id
+        );
+      })
+    );
   }, [views, columns, selectedTabIndex, anchorEl]);
+
+  useEffect(() => {
+    if (selectedColumn) {
+      const updatedArr = [...updatedColumns];
+      const index = updatedArr.indexOf(selectedColumn);
+
+      if (index !== -1) {
+        updatedArr.splice(index, 1);
+      }
+
+      updatedArr.splice(0, 0, selectedColumn);
+
+      setUpdatedColumns(updatedArr);
+    }
+  }, [selectedColumn]);
 
   const columnIcons = useMemo(() => {
     return {
@@ -158,7 +191,9 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   }, []);
 
   const badgeCount = useMemo(() => {
-    return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter((key) => selectedView?.attributes?.fixedColumns?.[key]).length;
+    return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter(
+      (key) => selectedView?.attributes?.fixedColumns?.[key]
+    ).length;
   }, [selectedView?.attributes?.fixedColumns]);
 
   return (
@@ -184,7 +219,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
         {badgeCount > 0 && (
           <button
             style={{
-              border: "none", 
+              border: "none",
               background: "none",
               outline: "none",
               cursor: "pointer",
@@ -244,7 +279,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
             overflowY: "auto",
           }}
         >
-          {visibleColumns.map((column) => (
+          {updatedColumns?.map((column) => (
             <div className={style.menuItem}>
               <div
                 style={{
@@ -280,7 +315,11 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
                   changeHandler(column, e.target.checked);
                 }}
                 // disabled={isLoading}
-                checked={selectedView?.attributes?.fixedColumns?.[column.id]}
+                checked={
+                  selectedColumns.find((el) => el.id === column.id)
+                    ? true
+                    : false
+                }
               />
             </div>
           ))}

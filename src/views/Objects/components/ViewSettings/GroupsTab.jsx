@@ -1,5 +1,5 @@
-import { Box, Checkbox, Switch, Typography } from "@mui/material";
-import { useMemo } from "react";
+import { Box, Switch, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import {
   CTable,
@@ -30,7 +30,6 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
 import LinkIcon from "@mui/icons-material/Link";
 
 const GroupsTab = ({
@@ -46,19 +45,33 @@ const GroupsTab = ({
     name: "group_fields",
   });
   const { i18n } = useTranslation();
-  const computedColumns = useMemo(() => {
-    return columns?.filter(
-      (column) =>
-        column.type === "LOOKUP" ||
-        column.type === "PICK_LIST" ||
-        column.type === "LOOKUPS" ||
-        column.type === "MULTISELECT"
+
+  const [selectedColumn, setSelectedColumn] = useState();
+  const [updatedColumns, setUpdatedColumns] = useState();
+  useEffect(() => {
+    setUpdatedColumns(
+      columns?.filter(
+        (column) =>
+          column.type === "LOOKUP" ||
+          column.type === "PICK_LIST" ||
+          column.type === "LOOKUPS" ||
+          column.type === "MULTISELECT"
+      )
     );
   }, [columns]);
 
-  console.log("selectedColumns", selectedColumns);
+  useEffect(() => {
+    if (selectedColumn) {
+      const updatedArr = [
+        selectedColumn,
+        ...updatedColumns.filter((item) => item !== selectedColumn),
+      ];
+      setUpdatedColumns(updatedArr);
+    }
+  }, [selectedColumn]);
 
-  const onCheckboxChange = async (val, id) => {
+  const onCheckboxChange = async (val, id, column) => {
+    setSelectedColumn(column);
     const type = form.getValues("type");
 
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -77,8 +90,8 @@ const GroupsTab = ({
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
 
-  const changeHandler = async (val, id) => {
-    await onCheckboxChange(val, id);
+  const changeHandler = async (val, id, column) => {
+    await onCheckboxChange(val, id, column);
     updateView();
   };
 
@@ -127,8 +140,8 @@ const GroupsTab = ({
         tableStyle={{ border: "none" }}
       >
         <CTableBody dataLength={1}>
-          {computedColumns.length ? (
-            computedColumns.map((column) => (
+          {updatedColumns?.length ? (
+            updatedColumns?.map((column) => (
               <CTableRow
                 key={column.id}
                 onClick={(val) => {
@@ -170,7 +183,7 @@ const GroupsTab = ({
                       selectedColumns?.includes(column?.id) ||
                       selectedView?.group_fields?.includes(column?.id)
                     }
-                    onChange={(e, val) => changeHandler(val, column.id)}
+                    onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
                 </CTableCell>
               </CTableRow>

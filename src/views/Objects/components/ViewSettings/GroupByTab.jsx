@@ -94,16 +94,8 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
       is_checked: index === columnIndex ? e.target.checked : item.is_checked,
     }));
     const selectedId = updatedGroupColumn[index].id;
-    const filteredColumn = updatedColumns?.find(
-      (item) => item?.id === selectedId
-    );
-    const insertIndex = updatedColumns.findIndex(
-      (item) => item?.id === selectedId
-    );
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      //   updatedColumns.unshift(filteredColumn);
-      //   replace(updatedColumns);
       const columnIndex = updatedColumns.findIndex(
         (item) => item?.id === selectedId
       );

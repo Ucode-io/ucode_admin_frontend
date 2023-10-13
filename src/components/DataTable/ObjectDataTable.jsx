@@ -80,6 +80,7 @@ const ObjectDataTable = ({
   defaultLimit,
   title,
   view,
+  navigateToForm,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -390,7 +391,9 @@ const ObjectDataTable = ({
                 borderRadius: "0px",
                 width: "100%",
               }}
-              onClick={openFieldSettings}
+              onClick={() => {
+                navigateToForm(tableSlug);
+              }}
             >
               <AddRoundedIcon />
             </Button>

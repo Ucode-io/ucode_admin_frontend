@@ -42,7 +42,7 @@ const CalendarWeek = ({
               top: 0,
               left: 0,
               height: "100%",
-              width: "14.3%",
+              width: view?.group_fields?.length ? "100%" : "14.3%",
               transform: `translateX(${virtualColumn.start}px)`,
             }}
           >

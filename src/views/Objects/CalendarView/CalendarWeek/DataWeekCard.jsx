@@ -165,7 +165,7 @@ const DataWeekCard = ({
           <div
             className={styles.infoCard}
             style={{
-              height: "100%",
+              height: isSingleLine ? "30px" : "100%",
               background: infoBlockBg,
               overflow: "auto",
               filter: isHover
@@ -173,7 +173,11 @@ const DataWeekCard = ({
                 : "saturate(50%) brightness(125%)",
             }}
           >
-            <InfoBlockWeek viewFields={viewFields} data={info} />
+            <InfoBlockWeek
+              isSingleLine={isSingleLine}
+              viewFields={viewFields}
+              data={info}
+            />
           </div>
         </div>
       </div>

@@ -25,15 +25,16 @@ const CPagination = ({
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const { tableSlug } = useParams();
-  const dispatch = useDispatch()
-  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo)
-
+  const dispatch = useDispatch();
+  const paginationInfo = useSelector(
+    (state) => state?.pagination?.paginationInfo
+  );
 
   const paginiation = useMemo(() => {
-    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
 
-    return getObject?.pageLimit ?? null
-  }, [paginationInfo])
+    return getObject?.pageLimit ?? null;
+  }, [paginationInfo]);
 
   const options = [
     { value: "all", label: "All" },
@@ -51,12 +52,14 @@ const CPagination = ({
   ];
 
   const getLimitValue = (item) => {
-    setLimit(item)
-    dispatch(paginationActions.setTablePages({
-      tableSlug: tableSlug,
-      pageLimit: item,
-    }))
-  }
+    setLimit(item);
+    dispatch(
+      paginationActions.setTablePages({
+        tableSlug: tableSlug,
+        pageLimit: item,
+      })
+    );
+  };
 
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
@@ -65,8 +68,7 @@ const CPagination = ({
   return (
     <div
       style={{
-        // width: "calc(100vw - 375px)",
-        width: "100%",
+        width: view.quick_filters.length ? "83%" : "100%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -123,7 +125,11 @@ const CPagination = ({
 
         {!disablePagination && (
           <>
-            <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
+            <Pagination
+              color="primary"
+              onChange={(e, val) => setCurrentPage(val)}
+              {...props}
+            />
             {paginationExtraButton}
           </>
         )}

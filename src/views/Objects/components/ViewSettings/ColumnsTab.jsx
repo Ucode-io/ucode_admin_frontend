@@ -108,6 +108,12 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
+
   return (
     <div
       style={{
@@ -124,20 +130,51 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
             borderBottom: "1px solid #eee",
           }}
         >
-          <div className={styles.cell} style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}>
+          <div
+            className={styles.cell}
+            style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}
+          >
             <b>All</b>
           </div>
-          <div className={styles.cell} style={{ width: 70, border: 0, paddingLeft: 0, paddingRight: 0, display: "flex", justifyContent: "flex-end" }}>
+          <div
+            className={styles.cell}
+            style={{
+              width: 70,
+              border: 0,
+              paddingLeft: 0,
+              paddingRight: 0,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
+            <Switch
+              size="small"
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
           </div>
         </div>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
-                <div className={styles.cell} style={{ flex: 1, display: "flex", alignItems: "center", border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0 }}>
+                <div
+                  className={styles.cell}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    border: 0,
+                    borderBottom: "1px solid #eee",
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}
+                >
                   <div
                     style={{
                       width: 20,
@@ -150,17 +187,29 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                   >
                     {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
-                  {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column.label}
                 </div>
                 <div
                   className={styles.cell}
-                  style={{ width: 70, border: 0, borderBottom: "1px solid #eee", paddingLeft: 0, paddingRight: 0, display: "flex", justifyContent: "flex-end" }}
+                  style={{
+                    width: 70,
+                    border: 0,
+                    borderBottom: "1px solid #eee",
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
                 >
                   <Switch
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {
-                      form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                      form.setValue(
+                        `columns.${index}.is_checked`,
+                        e.target.checked
+                      );
                       if (isMenu) return updateView();
                     }}
                   />

@@ -64,9 +64,9 @@ const InfoBlockMonth = ({ viewFields, data, isSingleLine }) => {
         ) : (
           <Box style={flex}>
             <Typography variant="h6" fontSize={"18px"}>
-              {viewFields[0]?.label}:
+              {/* {viewFields[0]?.label}: */}
+              {data[viewFields[0]?.slug]}
             </Typography>{" "}
-            {data[viewFields[0]?.slug]}
           </Box>
         )}
       </>

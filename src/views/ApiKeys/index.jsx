@@ -32,6 +32,7 @@ const ApiKeyPage = () => {
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
   const clientTypeId = useSelector((state) => state.auth.clientType.id);
+  const envId = useSelector((state) => state?.auth?.environmentId);
   const roleId = useSelector((state) => state.auth.roleInfo.id);
   const inputRef = useRef();
   const [apiKeys, setApiKeys] = useState();
@@ -69,6 +70,7 @@ const ApiKeyPage = () => {
     const params = {
       client_type_id: clientTypeId,
       role_id: roleId,
+      'environment-id': envId
     };
     apiKeyService
       .getList(projectId, params)

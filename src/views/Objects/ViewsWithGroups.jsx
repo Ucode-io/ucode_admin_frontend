@@ -240,7 +240,8 @@ const ViewsWithGroups = ({
         el?.type === "NUMBER" ||
         el?.type === "PHONE" ||
         el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE"
+        el?.type === "INTERNATION_PHONE" ||
+        el?.type === "INCREMENT_ID"
     );
   }, [view, fieldsMap]);
 

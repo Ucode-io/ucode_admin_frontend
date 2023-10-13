@@ -245,9 +245,9 @@ const RecursiveBlock = ({
             >
               {element?.type === 'USER' && <PersonIcon style={{color:menuItem?.id === element?.id ?  '#fff' : 'rgb(45, 108, 229)'}}/>}
               { childBlockVisible ? (
-                element?.type === 'PERMISSION'  ? '' : <KeyboardArrowDownIcon />
+                element?.type === 'PERMISSION' || element?.type !== 'FOLDER'  ? '' : <KeyboardArrowDownIcon />
               ) : (
-                element?.type === 'PERMISSION'  ? '' : <KeyboardArrowRightIcon />
+                element?.type === 'PERMISSION' || element?.type !== 'FOLDER'  ? '' : <KeyboardArrowRightIcon />
               )}
               <IconGenerator
                 icon={

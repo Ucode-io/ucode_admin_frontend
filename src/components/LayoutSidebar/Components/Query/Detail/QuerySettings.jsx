@@ -56,7 +56,7 @@ const QuerySettings = ({ form }) => {
     setExpanded(newExpanded ? panel : false);
   };
   const variables = form.watch("variables") ?? [];
-
+  console.log('variables', variables)
   return (
     <Box className={styles.accordion}>
       <SidebarBody h="calc(100vh - 100px)">
@@ -97,6 +97,7 @@ const QuerySettings = ({ form }) => {
                           onChange={onChange}
                           value={value}
                           fullWidth
+                          disabled={variable?.key?.includes('$$') ? true : false}
                         />
                       )}
                     />

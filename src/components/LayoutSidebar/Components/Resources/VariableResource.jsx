@@ -14,15 +14,68 @@ import TableRowButton from "../../../TableRowButton";
 import { useVariableResourceListQuery } from "../../../../services/resourceService";
 import { Box } from "@mui/material";
 import FiltersBlock from "../../../FiltersBlock";
+import resourceVariableService from "../../../../services/resourceVariableService";
+import queryClient from "../../../../queries";
+import { useQuery, useQueryClient } from "react-query";
 
 
 const VariableResources = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { appId, apiKeyId } = useParams();
+  const queryClient = useQueryClient();
+
 
   const { data: { variables } = {} } = useVariableResourceListQuery({
     params: {},
   });
+
+
+  const navigateToEditForm = (id) => {
+    navigate(`${location.pathname}/${id}`);
+  };
+
+  const navigateToCreateForm = () => {
+    navigate(`${location.pathname}/create`);
+  };
+
+  const getById = () => {
+    apiKeyService
+      .getById(authStore.projectId, apiKeyId)
+      .then((res) => {
+        mainForm.reset(res);
+      })
+      .catch((err) => {
+        console.log("exportToJson error", err);
+      });
+  };
+
+  const getList = () => {
+    resourceVariableService
+      .getList()
+      .then((res) => {
+        setApiKeys(res.data);
+      })
+      .catch((err) => {
+        console.log("exportToJson error", err);
+      });
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
+
+  const deleteTable = (id) => {
+    resourceVariableService.delete(id).then(() => {
+      queryClient.refetchQueries('RESOURCES_VARIABLE')
+    });
+  };
+
+  useEffect(() => {
+    if (apiKeyId) {
+      getById();
+    }
+  }, [apiKeyId]);
 
 
   return (
@@ -48,19 +101,28 @@ const VariableResources = () => {
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Key</CTableCell>
             <CTableCell>Value</CTableCell>
+            <CTableCell width={60}></CTableCell>
           </CTableHead>
 
           <CTableBody loader={''} columnsCount={4} dataLength={2}>
               {variables?.map((element, index) => (
                 <CTableRow 
                 key={element.id}
-                // onClick={() => navigateToEditForm(element.id)}
+                onClick={() => navigateToEditForm(element.id)}
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.key}</CTableCell>
                 <CTableCell>{element?.value}</CTableCell>
+                <CTableCell>
+                  <RectangleIconButton color="error" onClick={() => deleteTable(element?.id)}>
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </CTableCell>
               </CTableRow>
               ))}
+              <PermissionWrapperV2 tableSlug="app" type="write">
+              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>

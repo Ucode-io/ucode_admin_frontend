@@ -14,6 +14,7 @@ import { useTablesListQuery } from "../../../../../services/constructorTableServ
 import QueryResponseForm from "./QueryResponseForm";
 import { useMemo, useState } from "react";
 import Header, { HeaderExtraSide, HeaderLeftSide } from "../../Header";
+import InputWithValueOffer from "./InputWithValueOffer";
 
 const QueryForRest = ({ control, form, responseQuery }) => {
   const typeOfAction = form.watch("body.action_type");
@@ -112,7 +113,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
               paddingLeft="10px"
               height="30px"
             >
-              <InputWithPopUp
+              <InputWithValueOffer
                 name={"body.path"}
                 form={form}
                 placeholder={"?example=1&example=2"}
@@ -153,7 +154,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         pl="5px"
                         maxHeight="32px !important"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.params.${index}.key`}
                           form={form}
                           placeholder={"key"}
@@ -168,7 +169,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         pl="5px"
                         maxHeight="32px !important"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.params.${index}.value`}
                           form={form}
                           placeholder={"value"}
@@ -243,7 +244,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         pl="5px"
                         maxHeight="32px !important"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.headers.${index}.key`}
                           form={form}
                           placeholder={"key"}
@@ -258,7 +259,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         maxHeight="32px !important"
                         borderLeft="1px solid #E2E8F0"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.headers.${index}.value`}
                           form={form}
                           placeholder={"value"}
@@ -332,7 +333,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         pl="5px"
                         maxHeight="32px !important"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.cookies.${index}.key`}
                           form={form}
                           placeholder={"key"}
@@ -347,7 +348,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                         maxHeight="32px !important"
                         borderLeft="1px solid #E2E8F0"
                       >
-                        <InputWithPopUp
+                        <InputWithValueOffer
                           name={`body.cookies.${index}.value`}
                           form={form}
                           placeholder={"value"}

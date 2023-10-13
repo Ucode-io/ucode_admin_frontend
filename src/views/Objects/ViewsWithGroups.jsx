@@ -222,7 +222,7 @@ const ViewsWithGroups = ({
         .finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
-
+  console.log('menuItem', menuItem)
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
@@ -240,7 +240,8 @@ const ViewsWithGroups = ({
         el?.type === "NUMBER" ||
         el?.type === "PHONE" ||
         el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE"
+        el?.type === "INTERNATION_PHONE" ||
+        el?.type === "INCREMENT_ID"
     );
   }, [view, fieldsMap]);
 

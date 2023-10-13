@@ -117,7 +117,7 @@ const TableView = ({
     return getObject?.pageLimit ?? null
   }, [paginationInfo])
 
-  console.log('paginiation', typeof paginiation)
+
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -240,9 +240,21 @@ const TableView = ({
       return "string";
     }
   };
-  const [combinedTableData, setCombinedTableData] = useState([]);
 
-  // NEW QUERY FOR GETTING TABLE INFO
+  const limitPage = useMemo(() => {
+    if (typeof paginiation === 'number') {
+      return paginiation;
+    } else if (paginiation === 'all' && limit === 'all') {
+      return undefined;
+    } else {
+      return pageToOffset(currentPage, limit);
+    }
+  }, [paginiation, limit, currentPage]);
+
+  console.log('limitPage', limitPage)
+
+  console.log('currentPage', currentPage, limit)
+  const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
       tableData: [],
@@ -300,18 +312,20 @@ const TableView = ({
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
+        paginiation
       },
     ],
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: paginiation ? paginiation === 'all' : limit === "all" ? undefined : pageToOffset(currentPage, limit),
-          // app_id: appId,
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
-          // with_relations: true,
           view_fields: checkedColumns,
-          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
-          limit: limit === "all" ? undefined : limit,
+          search:
+            detectStringType(searchText) === "number"
+              ? parseInt(searchText)
+              : searchText,
+          limit: limitPage !== 0 ? limitPage :  limit,
           ...filters,
           [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
@@ -442,7 +456,7 @@ const TableView = ({
     }
   };
 
-  // const [elementHeight, setElementHeight] = useState(null);
+  const [elementHeight, setElementHeight] = useState(null);
 
   // useEffect(() => {
   //   const element = document.querySelector("#data-table");
@@ -452,7 +466,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('tableData', tableData)
+  console.log('paginiation', paginiation ?? limit)
 
   return (
     <div className={styles.wrapper}>
@@ -463,56 +477,58 @@ const TableView = ({
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
-
-            <ObjectDataTable
-              defaultLimit={view?.default_limit}
-              formVisible={formVisible}
-              getValues={getValues}
-              selectedView={selectedView}
-              setSortedDatas={setSortedDatas}
-              sortedDatas={sortedDatas}
-              setDrawerState={setDrawerState}
-              setDrawerStateField={setDrawerStateField}
-              isTableView={true}
-              // elementHeight={elementHeight}
-              setFormVisible={setFormVisible}
-              setFormValue={setFormValue}
-              mainForm={mainForm}
-              isRelationTable={false}
-              removableHeight={isDocView ? 150 : 170}
-              currentPage={currentPage}
-              pagesCount={pageCount}
-              selectedObjectsForDelete={selectedObjectsForDelete}
-              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-              columns={columns}
-              multipleDelete={multipleDelete}
-              openFieldSettings={openFieldSettings}
-              limit={limit}
-              setLimit={setLimit}
-              onPaginationChange={setCurrentPage}
-              loader={tableLoader}
-              data={tableData}
-              summaries={view?.attributes?.summaries}
-              disableFilters
-              isChecked={(row) => selectedObjects?.includes(row.guid)}
-              onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-              filters={filters}
-              filterChangeHandler={filterChangeHandler}
-              onRowClick={navigateToEditPage}
-              onDeleteClick={deleteHandler}
-              tableSlug={tableSlug}
-              view={view}
-              tableStyle={{
-                borderRadius: 0,
-                border: "none",
-                borderBottom: "1px solid #E5E9EB",
-                width: "100%",
-                margin: 0,
-              }}
-              isResizeble={true}
-              {...props}
-            />
+        <div
+          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
+          id="data-table"
+        >
+          <ObjectDataTable
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            elementHeight={elementHeight}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            {...props}
+          />
           {/* ) : <EmptyDataComponent />} */}
         </div>
       </PermissionWrapperV2>

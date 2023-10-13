@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
 import requestAuth from "../utils/requestAuth";
+
+
 const apiKeyService = {
   getList: (projectId, params) =>
-    requestAuth.get(`/v2/api-key/${projectId}`, { params }),
+    requestAuth.get(`/v2/api-key/${projectId}`, {params}),
   getById: (projectId, id, params) =>
     requestAuth.get(`/v2/api-key/${projectId}/${id}`, { params }),
   create: (projectId, data) =>

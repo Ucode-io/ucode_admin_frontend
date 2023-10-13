@@ -130,8 +130,9 @@ const FormElementGenerator = ({
 
   const isDisabled = useMemo(() => {
   const { attributes } = field;
+  console.log('fieldfield', field)
 
-  if (window.location.pathname.includes('create') &&  !attributes?.disabled) {
+  if (window.location.pathname.includes('create') &&  !attributes?.disabled && !attributes?.is_editable) {
     return false;
   }else {
     return (

@@ -1,14 +1,22 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Badge, Button, CircularProgress, Menu } from "@mui/material";
+import { Button, CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
-export default function GroupColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
+export default function GroupColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [checkedColumns, setCheckedColumns] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -16,11 +24,16 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const watchedGroupColumns = form.watch("attributes.group_by_columns");
   const watchedColumns = form.watch("columns");
   const group_by = views?.[selectedTabIndex]?.attributes.group_by_columns;
   const type = views?.[selectedTabIndex]?.type;
+
+  useEffect(() => {
+    setCheckedColumns(
+      watchedGroupColumns?.filter((item) => item.is_checked === true)
+    );
+  }, [watchedGroupColumns]);
 
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -43,19 +56,60 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, group_by, columns]);
+
+  const disableAll = () => {
+    constructorViewService
+      .update({
+        ...views?.[selectedTabIndex],
+        attributes: {
+          group_by_columns: [],
+        },
+        columns: watchedColumns
+          ?.filter((el) => el?.is_checked)
+          ?.map((el) => el.id),
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+        setCheckedColumns(null);
+        form.reset({
+          attributes: {
+            group_by_columns: columns?.map((item) => {
+              return {
+                ...item,
+                is_checked: false,
+              };
+            }),
+          },
+          columns:
+            computedColumns?.map((el) => ({
+              ...el,
+              is_checked: views?.[selectedTabIndex]?.columns?.find(
+                (column) => column === el.id
+              ),
+            })) ?? [],
+        });
+      });
+  };
 
   const updateView = () => {
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns
+            ?.filter((el) => el?.is_checked)
+            ?.map((el) => el.id),
         },
-        columns: watchedColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
+        columns: watchedColumns
+          ?.filter((el) => el?.is_checked)
+          ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -65,35 +119,44 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
 
   return (
     <div>
-      {/* <Badge badgeContent={form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length} color="primary"> */}
       <Button
-        // style={{
-        //   display: "flex",
-        //   alignItems: "center",
-        //   gap: 5,
-        //   color: "#A8A8A8",
-        //   cursor: "pointer",
-        //   fontSize: "13px",
-        //   fontWeight: 500,
-        //   lineHeight: "16px",
-        //   letterSpacing: "0em",
-        //   textAlign: "left",
-        //   padding: "0 10px",
-        // }}
-        variant={`${form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "outlined" : "text"}`}
+        variant={`${
+          form
+            .watch("attributes.group_by_columns")
+            ?.filter((el) => el?.is_checked)?.length > 0
+            ? "outlined"
+            : "text"
+        }`}
         style={{
           gap: "5px",
-          color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            form
+              .watch("attributes.group_by_columns")
+              ?.filter((el) => el?.is_checked)?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
+          borderColor:
+            form
+              .watch("attributes.group_by_columns")
+              ?.filter((el) => el?.is_checked)?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
         onClick={handleClick}
       >
-        <AppsIcon style={{
-          color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-        }} />
+        <AppsIcon
+          style={{
+            color:
+              form
+                .watch("attributes.group_by_columns")
+                ?.filter((el) => el?.is_checked)?.length > 0
+                ? "rgb(0, 122, 255)"
+                : "#A8A8A8",
+          }}
+        />
         Group
-        {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && <span>{form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length}</span>}
-        {/* {form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 && (
+        {checkedColumns?.length > 0 && <span>{checkedColumns?.length}</span>}
+        {checkedColumns?.length > 0 && (
           <button
             style={{
               border: "none",
@@ -105,17 +168,23 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#007AAF",
+              color:
+                checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
+              disableAll();
             }}
           >
-            <CloseRoundedIcon />
+            <CloseRoundedIcon
+              style={{
+                color:
+                  checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              }}
+            />
           </button>
-        )} */}
+        )}
       </Button>
-      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}
@@ -145,7 +214,11 @@ export default function GroupColumnVisible({ selectedTabIndex, views, columns, r
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <GroupByTab form={form} updateView={updateView} isMenu={true} />}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <GroupByTab form={form} updateView={updateView} isMenu={true} />
+        )}
       </Menu>
     </div>
   );

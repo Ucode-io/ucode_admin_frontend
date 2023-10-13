@@ -26,8 +26,6 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
 const GroupByTab = ({ form, updateView, isMenu }) => {
@@ -68,11 +66,11 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     return watchedColumns?.filter((column) => column?.is_checked === true);
   }, [watchedColumns]);
 
-  // useEffect(() => {
-  //   if (isMenu) {
-  //     updateView();
-  //   }
-  // }, [watchedColumns]);
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
 
   const onSwitchChange = (e, index) => {
     const updatedColumns = [...columns];
@@ -217,9 +215,6 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
                       )}
                       onChange={(e) => {
                         onSwitchChange(e, index);
-                        if (isMenu) {
-                          updateView();
-                        }
                       }}
                     />
                   </div>

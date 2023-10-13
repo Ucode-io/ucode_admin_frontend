@@ -381,7 +381,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
- 
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -439,7 +439,8 @@ const AutoCompleteElement = ({
           defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
-            setLocalValue(e);
+            // console.log('eeeeeeeeeeee', e.guid)
+            // setLocalValue(e.guid);
           }}
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => inputChangeHandler(e)}

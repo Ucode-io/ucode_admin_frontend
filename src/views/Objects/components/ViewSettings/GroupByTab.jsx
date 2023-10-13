@@ -26,8 +26,6 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
 const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
@@ -81,11 +79,11 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
     return watchedColumns?.filter((column) => column?.is_checked === true);
   }, [watchedColumns]);
 
-  // useEffect(() => {
-  //   if (isMenu) {
-  //     updateView();
-  //   }
-  // }, [watchedColumns]);
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
 
   const onSwitchChange = (e, index) => {
     const updatedColumns = [...columns];
@@ -94,16 +92,8 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
       is_checked: index === columnIndex ? e.target.checked : item.is_checked,
     }));
     const selectedId = updatedGroupColumn[index].id;
-    const filteredColumn = updatedColumns?.find(
-      (item) => item?.id === selectedId
-    );
-    const insertIndex = updatedColumns.findIndex(
-      (item) => item?.id === selectedId
-    );
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      //   updatedColumns.unshift(filteredColumn);
-      //   replace(updatedColumns);
       const columnIndex = updatedColumns.findIndex(
         (item) => item?.id === selectedId
       );
@@ -247,9 +237,6 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
                       )}
                       onChange={(e) => {
                         onSwitchChange(e, index);
-                        if (isMenu) {
-                          updateView();
-                        }
                       }}
                     />
                   </div>

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./month.module.scss";
 import "../moveable.scss";
 import { Menu } from "@mui/material";
-import InfoBlock from "../InfoBlock";
 import { dateValidFormat } from "../../../../utils/dateValidFormat";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
@@ -12,7 +11,8 @@ import { useParams } from "react-router-dom";
 import useTimeList from "../../../../hooks/useTimeList";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import { format, setHours, setMinutes } from "date-fns";
-import Moveable from "react-moveable";
+import InfoBlockMonth from "./InfoBlockMonth";
+import InfoBlock from "../InfoBlock";
 
 const DataMonthCard = ({
   date,
@@ -29,7 +29,6 @@ const DataMonthCard = ({
   const { tableSlug } = useParams();
   const { timeList } = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
-  const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
 
   useEffect(() => {
     if (!ref?.current) return null;
@@ -39,8 +38,6 @@ const DataMonthCard = ({
   const [frame] = useState({
     translate: [0, info.calendar?.startPosition ?? 0],
   });
-
-  console.log("info", info);
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -181,7 +178,7 @@ const DataMonthCard = ({
                 : "saturate(50%) brightness(125%)",
             }}
           >
-            <InfoBlock viewFields={viewFields} data={info} />
+            <InfoBlockMonth viewFields={viewFields} data={info} />
           </div>
         </div>
       </div>

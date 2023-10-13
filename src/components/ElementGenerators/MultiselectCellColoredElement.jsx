@@ -9,18 +9,18 @@ const MultiselectCellColoredElement = ({
   ...props
 }) => {
   const tags = useMemo(() => {
-    if (typeof value === "string" || typeof value === 'number')
+    if (typeof value === "string" || typeof value === "number")
       return [
         {
           value,
         },
       ];
-    if(Array.isArray(value)) {
+    if (Array.isArray(value)) {
       return value
-      ?.map((tagValue) =>
-        field.attributes?.options?.find((option) => option.value === tagValue)
-      )
-      ?.filter((el) => el);
+        ?.map((tagValue) =>
+          field.attributes?.options?.find((option) => option.value === tagValue)
+        )
+        ?.filter((el) => el);
     }
   }, [value, field?.attributes?.options]);
 
@@ -29,7 +29,14 @@ const MultiselectCellColoredElement = ({
 
   if (!value?.length) return "";
   return (
-    <div className="flex align-center gap-1" style={{ flexWrap: "wrap" }}>
+    <div
+      className="flex align-center gap-1"
+      style={{
+        flexWrap: "wrap",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {tags?.map((tag) => (
         <div
           style={{

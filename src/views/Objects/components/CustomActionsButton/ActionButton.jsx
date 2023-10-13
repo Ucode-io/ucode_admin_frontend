@@ -18,20 +18,17 @@ const ActionButton = ({ event, id, control, disable }) => {
   const [disabled, setDisabled] = useState();
   const { download } = useDownloader();
 
-
   function getLastUnderscorePart(url) {
-    let fileName = url.split('/').pop();
-    let fileNameWithoutExtension = fileName.split('.')[0];
-    let fileNameParts = fileNameWithoutExtension.split('_');
+    let fileName = url.split("/").pop();
+    let fileNameWithoutExtension = fileName.split(".")[0];
+    let fileNameParts = fileNameWithoutExtension.split("_");
 
     if (fileNameParts.length > 1) {
-        return fileNameParts.pop() + '.' + fileName.split('.').pop();
+      return fileNameParts.pop() + "." + fileName.split(".").pop();
     } else {
-        return fileName;
+      return fileName;
     }
-}
-
-
+  }
 
   const invokeFunction = () => {
     const data = {
@@ -41,16 +38,18 @@ const ActionButton = ({ event, id, control, disable }) => {
 
     setBtnLoader(true);
     request
-      .post("/invoke_function", data, {params: {use_no_limit: event?.attributes?.use_no_limit}})
+      .post("/invoke_function", data, {
+        params: { use_no_limit: event?.attributes?.use_no_limit },
+      })
       .then((res) => {
-        console.log('data', data)
         dispatch(showAlert("Success", "success"));
-        queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
+        // queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
+        console.log("window.location.pathname", window.location.pathname);
         let url = res?.data?.link ?? event?.url ?? "";
         if (res?.data?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));
         } else {
-          if(event?.action_type === 'HTTP' && event?.attributes?.use_refresh) {
+          if (event?.action_type === "HTTP" && event?.attributes?.use_refresh) {
             navigate("/reloadRelations", {
               state: {
                 redirectUrl: window.location.pathname,
@@ -66,26 +65,24 @@ const ActionButton = ({ event, id, control, disable }) => {
           if (url.includes("reload:")) {
             navigate("/reload", {
               state: {
-                redirectUrl: url
+                redirectUrl: url,
               },
             });
           } else if (url === "" || url === "reload") {
             navigate("/reload", {
               state: {
-                redirectUrl: window.location.pathname
+                redirectUrl: window.location.pathname,
               },
             });
           } else if (url === "reloadRelations") {
             navigate("/reloadRelations", {
               state: {
-                redirectUrl: window.location.pathname
+                redirectUrl: window.location.pathname,
               },
             });
-          } else if(url?.includes('cdn')) {
-            download({ link: url, fileName: getLastUnderscorePart(url) })
-          }
-          
-          else {
+          } else if (url?.includes("cdn")) {
+            download({ link: url, fileName: getLastUnderscorePart(url) });
+          } else {
             if (url.includes("http") || url.includes("https")) {
               window.open(url, "_blank");
             } else {
@@ -95,8 +92,6 @@ const ActionButton = ({ event, id, control, disable }) => {
         }
       })
       .finally(() => setBtnLoader(false));
-      
-
   };
   useEffect(() => {
     if (event?.disable === false || event?.disable === undefined) {

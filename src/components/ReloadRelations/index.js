@@ -1,18 +1,19 @@
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect} from "react";
-import {useAliveController} from "react-activation";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAliveController } from "react-activation";
 
 const ReloadRelations = ({}) => {
   const location = useLocation();
+  console.log("location", location);
   const navigate = useNavigate();
-  const {drop, getCachingNodes} = useAliveController()
-  const url = location.state.redirectUrl.replace('reload:', '')
+  const { drop } = useAliveController();
+  const url = location?.state?.redirectUrl.replace("reload:", "");
 
   useEffect(() => {
     drop(url).then(() => {
-      navigate(url)
-    })
-  }, [])
-}
+      navigate(url);
+    });
+  }, []);
+};
 
-export default ReloadRelations
+export default ReloadRelations;

@@ -189,9 +189,12 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    if (id) update(data);
-    else {
+    if (id) {
+      update(data);
+      navigate(-1);
+    } else {
       create(data);
+      navigate(-1);
     }
   };
 

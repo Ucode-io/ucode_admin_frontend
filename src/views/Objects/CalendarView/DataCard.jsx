@@ -166,7 +166,7 @@ const DataCard = ({
           <div
             className={styles.infoCard}
             style={{
-              height: "100%",
+              height: isSingleLine ? "30px" : "100%",
               background: infoBlockBg,
               filter: isHover
                 ? "saturate(100%)"

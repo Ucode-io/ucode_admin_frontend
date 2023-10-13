@@ -165,7 +165,7 @@ const DataDayCard = ({
           <div
             className={styles.infoCard}
             style={{
-              height: "100%",
+              height: isSingleLine ? "30px" : "100%",
               background: infoBlockBg,
               overflow: "auto",
               filter: isHover

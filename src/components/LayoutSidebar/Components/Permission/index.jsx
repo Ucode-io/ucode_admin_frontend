@@ -157,11 +157,6 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
             clickHandler(e);
           }}
         >
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
           <div className="label" style={labelStyle}>
           {childBlockVisible ? (
              <KeyboardArrowDownIcon />

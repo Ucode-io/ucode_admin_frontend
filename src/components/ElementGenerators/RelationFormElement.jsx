@@ -42,6 +42,7 @@ const RelationFormElement = ({
   multipleInsertField,
   checkRequiredField,
   rules,
+  errors,
   ...props
 }) => {
   const {i18n} = useTranslation();
@@ -79,6 +80,7 @@ const RelationFormElement = ({
               control={control}
               name={name}
               multipleInsertField={multipleInsertField}
+              errors={errors}
             />
           )}
         />
@@ -147,6 +149,7 @@ const AutoCompleteElement = ({
   name,
   multipleInsertField,
   setFormValue = () => {},
+  errors
 }) => {
 
   const [inputValue, setInputValue] = useState("");
@@ -163,6 +166,13 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+        border: `1px solid ${errors?.[field?.slug] ? 'red' : '#d4d2d2'}`,
+    }),
+  };
 
   const computedIds = useMemo(() => {
     if (
@@ -387,7 +397,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-
+  console.log('errors', errors)
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -431,7 +441,8 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-        <Select
+       <>
+         <Select
           isDisabled={
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
@@ -441,6 +452,7 @@ const AutoCompleteElement = ({
           }
           options={options?.options ?? []}
           isClearable={true}
+          styles={customStyles}
           value={localValue ?? []}
           required={field?.required}
           defaultValue={value ?? ""}
@@ -475,6 +487,8 @@ const AutoCompleteElement = ({
             ),
           }}
         />
+        {errors?.[field?.slug] && <div style={{ color: 'red', fontSize:'10px', textAlign: 'center', marginTop: '5px' }}>{'This field is required!'}</div>}
+       </>
       )}
     </div>
   );

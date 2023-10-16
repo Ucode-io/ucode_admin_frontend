@@ -63,6 +63,7 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
+    formState: { errors }
   } = useForm({
     defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
@@ -240,6 +241,7 @@ const ObjectsFormPage = ({
           loader={loader}
           setSelectTab={setSelectTab}
           selectedTab={selectedTab}
+          errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
         />

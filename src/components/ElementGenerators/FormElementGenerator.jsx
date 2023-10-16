@@ -132,7 +132,7 @@ const FormElementGenerator = ({
   const { attributes } = field;
 
 
-  if (window.location.pathname.includes('create') &&  !attributes?.disabled && !attributes?.is_editable && attributes?.field_permission?.edit_permission ) {
+  if (window.location.pathname.includes('create') &&  !attributes?.disabled && !attributes?.is_editable && !attributes?.field_permission?.edit_permission ) {
     return false;
   }else {
     return (

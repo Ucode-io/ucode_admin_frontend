@@ -132,9 +132,10 @@ const FormElementGenerator = ({
   const { attributes } = field;
 
 
-  if (window.location.pathname.includes('create') &&  !attributes?.disabled && !attributes?.is_editable && attributes?.field_permission?.edit_permission ) {
-    return false;
-  }else {
+  if (window.location.pathname.includes('create' )) {
+      if(attributes?.disabled && attributes?.is_editable) return true;
+      else return false;
+  } else {
     return (
       attributes?.disabled ||
       !attributes?.field_permission?.edit_permission ||
@@ -198,6 +199,12 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           key={computedSlug}
           checkRequiredField={checkRequiredField}
+          rules={{
+            pattern: {
+              value: new RegExp(field?.attributes?.validation),
+              message: field?.attributes?.validation_message,
+            },
+          }}
           {...props}
         />
       );

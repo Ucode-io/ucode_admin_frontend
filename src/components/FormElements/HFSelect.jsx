@@ -52,7 +52,7 @@ const HFSelect = ({
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
-              value={selectedValue || ""}
+              value={value || selectedValue}
               label={label}
               size="small"
               error={error}

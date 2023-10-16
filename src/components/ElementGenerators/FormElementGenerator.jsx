@@ -199,6 +199,12 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           key={computedSlug}
           checkRequiredField={checkRequiredField}
+          rules={{
+            pattern: {
+              value: new RegExp(field?.attributes?.validation),
+              message: field?.attributes?.validation_message,
+            },
+          }}
           {...props}
         />
       );

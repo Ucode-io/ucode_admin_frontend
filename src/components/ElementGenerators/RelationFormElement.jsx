@@ -41,6 +41,7 @@ const RelationFormElement = ({
   defaultValue = null,
   multipleInsertField,
   checkRequiredField,
+  rules,
   ...props
 }) => {
   const {i18n} = useTranslation();
@@ -48,7 +49,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-
+  
   const computedLabel =
     field?.attributes?.[`title_${i18n?.language}`] ??
     field?.label ??
@@ -61,6 +62,10 @@ const RelationFormElement = ({
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
+          rules={{
+            required: field?.required ? 'This field is required!' : '',
+            ...rules
+          }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={Array.isArray(value) ? value[0] : value}
@@ -143,7 +148,7 @@ const AutoCompleteElement = ({
   multipleInsertField,
   setFormValue = () => {},
 }) => {
-  console.log('disabled', )
+
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const {id} = useParams();
@@ -437,6 +442,7 @@ const AutoCompleteElement = ({
           options={options?.options ?? []}
           isClearable={true}
           value={localValue ?? []}
+          required={field?.required}
           defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);

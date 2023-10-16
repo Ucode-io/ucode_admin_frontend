@@ -25,6 +25,7 @@ const MainInfo = ({
   selectedTab,
   selectedIndex,
   isMultiLanguage,
+  errors
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -94,6 +95,7 @@ const MainInfo = ({
                       formTableSlug={tableSlug}
                       relatedTable={relatedTable}
                       activeLang={activeLang}
+                      errors={errors}
                     />
                   </Box>
                 ))}

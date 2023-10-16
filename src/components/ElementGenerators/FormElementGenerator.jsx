@@ -47,6 +47,7 @@ const FormElementGenerator = ({
   isMultiLanguage,
   relatedTable,
   valueGenerator,
+  errors,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -199,6 +200,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           key={computedSlug}
           checkRequiredField={checkRequiredField}
+          errors={errors}
           rules={{
             pattern: {
               value: new RegExp(field?.attributes?.validation),

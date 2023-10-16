@@ -127,7 +127,7 @@ const NewCellElementGenerator = ({
   //     );
   //   }
   // }, [changedValue, setFormValue, columns, field, selectedRow]);
-  
+  console.log('fieldddddddd', field)
   switch (field.type) {
     case "LOOKUP":
       return (

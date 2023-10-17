@@ -2,7 +2,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { store } from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -11,6 +11,7 @@ import {
   useResourceCreateFromClusterMutation,
   useResourceDeleteMutation,
   useResourceListQuery,
+  useResourceListQueryV2,
 } from "../../../../services/resourceService";
 import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
@@ -39,6 +40,9 @@ const dataBases = [
       },
     },
   },
+];
+
+const dataBaseVariable = 
   {
     label: "Variable Resources",
     type: "USER_FOLDER",
@@ -54,7 +58,6 @@ const dataBases = [
       },
     },
   }
-];
 
 const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const navigate = useNavigate();
@@ -73,6 +76,24 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       project_id: company?.projectId,
     },
   });
+
+  const { data = {} } = useResourceListQueryV2({
+    params: {
+      project_id: company?.projectId,
+    },
+  });
+
+
+  const computedResources = useMemo(() => {
+    return [
+        ...(data?.resources || []),
+        ...(resources || []) 
+    ];
+}, [data, resources]);
+
+
+
+  console.log('computedResources', computedResources)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -142,7 +163,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             <Button
                   className={`nav-element`}
                   onClick={(e) => {
-                    navigate(`${appId}/variable-resources`)
+                    clickHandler(e);
                   }}
                 >
                   <div
@@ -188,6 +209,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
                       <AddIcon
                         size={13}
                         onClick={(e) => {
+                          navigateToCreateForm()
                           navigate("/main/resources/create");
                           e.stopPropagation();
                           handleOpenNotify(e, "CREATE_FOLDER");
@@ -236,7 +258,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {resources?.map((childElement) => (
+        {computedResources?.map((childElement) => (
           <RecursiveBlock
             key={childElement.id}
             level={level + 1}
@@ -251,6 +273,83 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
           />
         ))}
       </Collapse>
+
+
+      <div className="parent-block column-drag-handle">
+            <Button
+                  className={`nav-element`}
+                  onClick={(e) => {
+                    navigate(`${appId}/variable-resources`)
+                  }}
+                >
+                  <div
+                    className="label"
+                    style={{
+                      color:
+                        selected?.id === dataBaseVariable?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text,
+                    }}
+                  >
+                    <IconGenerator icon={"database.svg"} size={18} />
+                    {dataBaseVariable?.label}
+                  </div>
+        
+                {dataBaseVariable?.id === '15' && (
+                    <Box mt={1} sx={{ cursor: "pointer" }}>
+                    <Tooltip title="Add resource" placement="top">
+                      <Box className="">
+                        <StorageIcon
+                          size={13}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClick(e);
+                            handleOpenNotify(e, "CREATE_FOLDER");
+                          }}
+                          style={{
+                            color:
+                              selected?.id === dataBaseVariable?.id
+                                ? menuStyle?.active_text
+                                : menuStyle?.text || "",
+                          }}
+                        />
+                      </Box>
+                    </Tooltip>
+                  </Box>
+                )}
+
+                {dataBaseVariable?.id === '15' && (
+                  <Box mt={1} sx={{ cursor: "pointer" }}>
+                  <Tooltip title="Add resource" placement="top">
+                    <Box className="">
+                      <AddIcon
+                        size={13}
+                        onClick={(e) => {
+                          navigate("/main/resources/create");
+                          e.stopPropagation();
+                          handleOpenNotify(e, "CREATE_FOLDER");
+                        }}
+                        style={{
+                          color:
+                            selected?.id === dataBaseVariable?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                </Box>
+                )}
+                  {/* {childBlockVisible ? (
+                    <KeyboardArrowDownIcon />
+                  ) : (
+                    <KeyboardArrowRightIcon />
+                  )} */}
+              </Button>
+          </div>    
+
+     
+      
     </Box>
   );
 };

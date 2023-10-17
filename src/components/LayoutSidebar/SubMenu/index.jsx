@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
+import { Container, Draggable } from "react-smooth-dnd";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -42,6 +43,11 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
+
+  const onDrop = (dropResult, index) => {
+
+  };
+
 
   return (
     <div
@@ -155,25 +161,39 @@ const SubMenu = ({
                     />
                  )}
                 <div className="menu-element">
+                <Container
+                    style={{
+                      height: "calc(100vh - 170px)",
+                      overflow: "auto",
+                      borderRadius: "6px",
+                    }}
+                    groupName="subtask"
+                    onDrop={onDrop}
+                    dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                  >
                     {selectedApp?.id !== '9e988322-cffd-484c-9ed6-460d8701551b' && (
                       child?.map((element) => (
-                        <RecursiveBlock
-                          key={element.id}
-                          element={element}
-                          openFolderCreateModal={openFolderCreateModal}
-                          setFolderModalType={setFolderModalType}
-                          sidebarIsOpen={subMenuIsOpen}
-                          selectedApp={selectedApp}
-                          setTableModal={setTableModal}
-                          setLinkedTableModal={setLinkedTableModal}
-                          handleOpenNotify={handleOpenNotify}
-                          setElement={setElement}
-                          setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyle}
-                          menuItem={menuItem}
-                        />
+                        <Draggable key={element.id}>
+                          <RecursiveBlock
+                            key={element.id}
+                            element={element}
+                            openFolderCreateModal={openFolderCreateModal}
+                            setFolderModalType={setFolderModalType}
+                            sidebarIsOpen={subMenuIsOpen}
+                            selectedApp={selectedApp}
+                            setTableModal={setTableModal}
+                            setLinkedTableModal={setLinkedTableModal}
+                            handleOpenNotify={handleOpenNotify}
+                            setElement={setElement}
+                            setSubMenuIsOpen={setSubMenuIsOpen}
+                            menuStyle={menuStyle}
+                            menuItem={menuItem}
+                          />
+                        </Draggable>
                       ))
                     )}
+
+                </Container>
                  {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
                    <DocumentsSidebar  
                    menuStyle={menuStyle}

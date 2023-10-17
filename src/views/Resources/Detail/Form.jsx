@@ -34,7 +34,7 @@ const Form = ({
     }));
   }, [projectEnvironments]);
 
-  console.log('environments', environments)
+  console.log('resourceTypes', resourceTypes)
   return (
     <Box flex={1} sx={{borderRight: '1px solid #e5e9eb'}}>
       <Box sx={headerStyle}>

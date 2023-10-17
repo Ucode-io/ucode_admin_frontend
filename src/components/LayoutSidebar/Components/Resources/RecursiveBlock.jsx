@@ -35,7 +35,44 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        <Button
+        {element?.type === 'REST' ? (
+          <Button
+          key={element.id}
+          style={activeStyle}
+          className={`nav-element ${
+            element.isChild &&
+            (tableSlug !== element.slug ? "active-with-child" : "active")
+          }`}
+          onClick={() => console.log('sssssss')}
+        >
+          <div
+            className="label"
+            style={{
+              color:
+                selected?.id === element?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text,
+              opacity: element?.isChild && 0.6,
+            }}
+            onClick={() => 'das'}
+          >
+            <IconGenerator icon={element?.icon} size={18} />
+            {element?.title ?? element?.name}
+          </div>
+          <Box
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteResource({
+                id: element?.id,
+              });
+            }}
+            sx={{ cursor: "pointer" }}
+          >
+            <DeleteIcon />
+          </Box>
+        </Button>
+        ) : (
+          <Button
           key={element.id}
           style={activeStyle}
           className={`nav-element ${
@@ -56,7 +93,7 @@ const RecursiveBlock = ({
             onClick={() => navigate(`/main/resources/${element?.id}`)}
           >
             <IconGenerator icon={element?.icon} size={18} />
-            {element?.title}
+            {element?.title ?? element?.name}
           </div>
           <Box
             onClick={(e) => {
@@ -118,6 +155,7 @@ const RecursiveBlock = ({
               <KeyboardArrowRightIcon />
             ))}
         </Button>
+        )}
       </div>
     </Box>
   );

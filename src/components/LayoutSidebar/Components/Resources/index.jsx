@@ -10,6 +10,7 @@ import "../../style.scss";
 import {
   useResourceCreateFromClusterMutation,
   useResourceDeleteMutation,
+  useResourceDeleteMutationV2,
   useResourceListQuery,
   useResourceListQueryV2,
 } from "../../../../services/resourceService";
@@ -21,6 +22,7 @@ import { BiGitCompare } from "react-icons/bi";
 import { IoEnter, IoExit } from "react-icons/io5";
 // import { resourceTypes } from "utils/resourceConstants";
 import { resourceTypes } from "../../../../utils/resourceConstants";
+import { useQueryClient } from "react-query";
 // import environmentStore from "../../../../store/environment";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -42,22 +44,22 @@ const dataBases = [
   },
 ];
 
-const dataBaseVariable = 
-  {
-    label: "Variable Resources",
-    type: "USER_FOLDER",
-    icon: "database.svg",
-    parent_id: adminId,
-    id: "10",
-    data: {
-      permission: {
-        read: true,
-        write: true,
-        delete: true,
-        update: true,
-      },
-    },
-  }
+// const dataBaseVariable = 
+//   {
+//     label: "Variable Resources",
+//     type: "USER_FOLDER",
+//     icon: "database.svg",
+//     parent_id: adminId,
+//     id: "10",
+//     data: {
+//       permission: {
+//         read: true,
+//         write: true,
+//         delete: true,
+//         update: true,
+//       },
+//     },
+//   }
 
 const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const navigate = useNavigate();
@@ -69,6 +71,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const authStore = store.getState().auth;
+  const queryClient = useQueryClient();
 
 
   const { data: { resources } = {} } = useResourceListQuery({
@@ -89,7 +92,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         ...(data?.resources || []),
         ...(resources || []) 
     ];
-}, [data, resources]);
+  }, [data, resources]);
 
 
 
@@ -109,6 +112,15 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         handleClose();
       },
     });
+
+
+  const { mutate: deleteResourceV2, isLoading: deleteLoadingV2 } =
+  useResourceDeleteMutationV2({
+    onSuccess: () => {
+      queryClient.refetchQueries(["RESOURCESV2"]);
+      handleClose();
+    },
+  });
 
   const { mutate: addResourceFromCluster, isLoading: clusterLoading } =
     useResourceCreateFromClusterMutation({
@@ -269,87 +281,13 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             selected={selected}
             resourceId={resourceId}
             deleteResource={deleteResource}
+            deleteResourceV2={deleteResourceV2}
             childBlockVisible={childBlockVisible}
+            setSubMenuIsOpen={setSubMenuIsOpen}
           />
         ))}
       </Collapse>
 
-
-      <div className="parent-block column-drag-handle">
-            <Button
-                  className={`nav-element`}
-                  onClick={(e) => {
-                    navigate(`${appId}/variable-resources`)
-                  }}
-                >
-                  <div
-                    className="label"
-                    style={{
-                      color:
-                        selected?.id === dataBaseVariable?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text,
-                    }}
-                  >
-                    <IconGenerator icon={"database.svg"} size={18} />
-                    {dataBaseVariable?.label}
-                  </div>
-        
-                {dataBaseVariable?.id === '15' && (
-                    <Box mt={1} sx={{ cursor: "pointer" }}>
-                    <Tooltip title="Add resource" placement="top">
-                      <Box className="">
-                        <StorageIcon
-                          size={13}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClick(e);
-                            handleOpenNotify(e, "CREATE_FOLDER");
-                          }}
-                          style={{
-                            color:
-                              selected?.id === dataBaseVariable?.id
-                                ? menuStyle?.active_text
-                                : menuStyle?.text || "",
-                          }}
-                        />
-                      </Box>
-                    </Tooltip>
-                  </Box>
-                )}
-
-                {dataBaseVariable?.id === '15' && (
-                  <Box mt={1} sx={{ cursor: "pointer" }}>
-                  <Tooltip title="Add resource" placement="top">
-                    <Box className="">
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          navigate("/main/resources/create");
-                          e.stopPropagation();
-                          handleOpenNotify(e, "CREATE_FOLDER");
-                        }}
-                        style={{
-                          color:
-                            selected?.id === dataBaseVariable?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                </Box>
-                )}
-                  {/* {childBlockVisible ? (
-                    <KeyboardArrowDownIcon />
-                  ) : (
-                    <KeyboardArrowRightIcon />
-                  )} */}
-              </Button>
-          </div>    
-
-     
-      
     </Box>
   );
 };

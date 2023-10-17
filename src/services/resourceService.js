@@ -5,7 +5,7 @@ import requestV2 from "../utils/requestV2";
 const resourceService = {
   getList: (params) => request.get(`/company/project/resource`, { params }),
   getListV2: (params) => requestV2.get(`/company/project/resource`, { params }),
-  getVariableResources: () => request.get('/company/project/resource-variable'),
+  getVariableResources: (id) => request.get(`/company/project/resource-variable/${id}`),
   getByID: (id) => request.get(`/company/project/resource/${id}`),
   create: (data) => request.post(`/company/project/resource`, data),
   createV2: (data) => requestV2.post(`/company/project/resource`, data),
@@ -17,6 +17,7 @@ const resourceService = {
   configureResource: (data) =>
   request.post("/v1/company/project/configure-resource", data),
   delete: (data) => request.delete(`v1/company/project/resource`, { data }),
+  deleteV2: ({id}) => requestV2.delete(`/company/project/resource/${id}`),
   reconnect: ({ data, projectId }) => {
     return request.post(`v1/company/project/resource/reconnect`, data, {
       params: { "project-id": projectId },
@@ -44,11 +45,11 @@ export const useResourceListQueryV2 = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useVariableResourceListQuery = ({ queryParams } = {}) => {
+export const useVariableResourceListQuery = ({ id, queryParams } = {}) => {
   return useQuery(
     ["RESOURCES_VARIABLE"],
     () => {
-      return resourceService.getVariableResources();
+      return resourceService.getVariableResources(id);
     },
     queryParams
   );
@@ -97,6 +98,10 @@ export const useResourceEnvironmentGetByIdQuery = ({
 
 export const useResourceDeleteMutation = (mutationSettings) => {
   return useMutation((data) => resourceService.delete(data), mutationSettings);
+};
+
+export const useResourceDeleteMutationV2 = (mutationSettings) => {
+  return useMutation(({id}) => resourceService.deleteV2({id}), mutationSettings);
 };
 
 export const useResourceCreateMutation = (mutationSettings) => {

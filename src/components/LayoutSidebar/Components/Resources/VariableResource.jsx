@@ -27,6 +27,7 @@ const VariableResources = () => {
 
 
   const { data: { variables } = {} } = useVariableResourceListQuery({
+    id: appId,
     params: {},
   });
 

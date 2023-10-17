@@ -116,7 +116,10 @@ const HFSelect = ({
             )}
             {selectedValue && (
               <Box sx={{position: 'absolute', right: '20px', top: '3px'}}>
-                <IconButton onClick={handleClear} size="small">
+                <IconButton onClick={() => {
+                  onFormChange('')
+                  handleClear()
+                  }} size="small">
                     <ClearIcon />
                  </IconButton>
               </Box>

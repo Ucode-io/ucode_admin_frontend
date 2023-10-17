@@ -4,6 +4,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { updateLevel } from "../../../../utils/level";
+import { useQueryClient } from "react-query";
 
 const RecursiveBlock = ({
   element,
@@ -13,6 +14,8 @@ const RecursiveBlock = ({
   clickHandler,
   childBlockVisible,
   deleteResource,
+  setSubMenuIsOpen,
+  deleteResourceV2
 }) => {
   const { tableSlug } = useParams();
   const navigate = useNavigate();
@@ -43,7 +46,11 @@ const RecursiveBlock = ({
             element.isChild &&
             (tableSlug !== element.slug ? "active-with-child" : "active")
           }`}
-          onClick={() => console.log('sssssss')}
+          onClick={(e) =>  {
+            e.stopPropagation()
+            navigate(`${element?.id}/variable-resources`)
+            setSubMenuIsOpen(false)
+          }}
         >
           <div
             className="label"
@@ -54,7 +61,6 @@ const RecursiveBlock = ({
                   : menuStyle?.text,
               opacity: element?.isChild && 0.6,
             }}
-            onClick={() => 'das'}
           >
             <IconGenerator icon={element?.icon} size={18} />
             {element?.title ?? element?.name}
@@ -62,7 +68,7 @@ const RecursiveBlock = ({
           <Box
             onClick={(e) => {
               e.stopPropagation();
-              deleteResource({
+              deleteResourceV2({
                 id: element?.id,
               });
             }}

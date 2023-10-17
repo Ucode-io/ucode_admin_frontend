@@ -260,9 +260,7 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
-  console.log("limitPage", limitPage);
-
-  console.log("currentPage", currentPage, limit);
+  console.log('limitPage', limitPage)
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -491,8 +489,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log("paginiation", paginiation ?? limit);
-  console.log("tableData", tableData);
+  console.log('currentPage', currentPage)
 
   return (
     <div className={styles.wrapper}>

@@ -53,7 +53,6 @@ const ObjectDataTable = ({
   columns = [],
   relatedTableSlug,
   watch,
-  getValues,
   control,
   setFormValue,
   dataLength,

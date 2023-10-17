@@ -40,7 +40,7 @@ const NewCellElementGenerator = ({
   control,
   setFormValue,
   index,
-  data
+  data,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
@@ -88,10 +88,13 @@ const NewCellElementGenerator = ({
   //   name: computedSlug,
   // });
 
-  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+  const isDisabled =
+    field.attributes?.disabled ||
+    !field.attributes?.field_permission?.edit_permission;
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -103,7 +106,8 @@ const NewCellElementGenerator = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     if (!defaultValue) return undefined;
 
@@ -127,7 +131,7 @@ const NewCellElementGenerator = ({
   //     );
   //   }
   // }, [changedValue, setFormValue, columns, field, selectedRow]);
-  
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -182,7 +186,6 @@ const NewCellElementGenerator = ({
           fullWidth
           required={field.required}
           placeholder={field.attributes?.placeholder}
-          
           defaultValue={defaultValue}
         />
       );
@@ -202,7 +205,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           type="password"
           placeholder={field.attributes?.placeholder}
-          
           defaultValue={defaultValue}
         />
       );
@@ -222,7 +224,6 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           field={field}
           disabled={isDisabled}
-          
         />
       );
     case "PHONE":
@@ -241,7 +242,6 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
-          
         />
       );
 
@@ -262,7 +262,6 @@ const NewCellElementGenerator = ({
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
           isTransparent={true}
-          
         />
       );
     case "FORMULA_FRONTEND":
@@ -281,7 +280,6 @@ const NewCellElementGenerator = ({
           isTransparent={true}
           field={field}
           index={index}
-          
           defaultValue={defaultValue}
         />
       );
@@ -301,7 +299,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
-          
         />
       );
 
@@ -321,7 +318,6 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           data={data}
-          
         />
       );
     case "MULTISELECT_V2":
@@ -340,7 +336,6 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           data={data}
-          
         />
       );
 
@@ -361,7 +356,6 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           disabled={isDisabled}
           isTransparent={true}
-          
         />
       );
 
@@ -380,7 +374,6 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
-          
         />
       );
 
@@ -398,7 +391,6 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
-          
         />
       );
 
@@ -417,7 +409,6 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
-          
         />
       );
     case "FLOAT":
@@ -435,7 +426,6 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
-          
         />
       );
 
@@ -451,7 +441,6 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          
         />
       );
 
@@ -467,7 +456,6 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          
         />
       );
 
@@ -491,7 +479,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
-          
         />
       );
 
@@ -505,7 +492,6 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
-          
         />
       );
     case "MAP":
@@ -536,7 +522,7 @@ const NewCellElementGenerator = ({
         //   disabled={isDisabled}
         //   key={computedSlug}
         //   isTransparent={true}
-        //   
+        //
         // />
 
         <MultiLineCellFormElement
@@ -547,7 +533,6 @@ const NewCellElementGenerator = ({
           computedSlug={computedSlug}
           field={field}
           isDisabled={isDisabled}
-          
         />
       );
 
@@ -562,7 +547,6 @@ const NewCellElementGenerator = ({
           defaultValue={defaultValue}
           isFormEdit
           required={field.required}
-          
         />
       );
 
@@ -579,7 +563,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          
         />
       );
 
@@ -596,7 +579,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          
         />
       );
 
@@ -613,7 +595,6 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
-          
         />
       );
 

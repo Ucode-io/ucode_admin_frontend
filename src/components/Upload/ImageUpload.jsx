@@ -9,7 +9,14 @@ import fileService from "../../services/fileService";
 import { useNavigate } from "react-router-dom";
 import { Lock } from "@mui/icons-material";
 
-const ImageUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
+const ImageUpload = ({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  tabIndex,
+  field,
+}) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,7 +34,9 @@ const ImageUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
     data.append("file", file);
 
     fileService
-      .upload(data)
+      .folderUpload(data, {
+        folder_name: field?.attributes?.minio_folder,
+      })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
       })
@@ -47,7 +56,11 @@ const ImageUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          <button className="close-btn" type="button" onClick={(e) => closeButtonHandler(e)}>
+          <button
+            className="close-btn"
+            type="button"
+            onClick={(e) => closeButtonHandler(e)}
+          >
             <CancelIcon />
           </button>
           <img src={value} className="img" alt="" />
@@ -88,7 +101,15 @@ const ImageUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
             )}
           </div>
 
-          <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
+          <input
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
+            onChange={inputChangeHandler}
+            disabled={disabled}
+          />
         </div>
       )}
 

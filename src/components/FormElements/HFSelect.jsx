@@ -52,7 +52,7 @@ const HFSelect = ({
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
-              value={selectedValue || ""}
+              value={value || selectedValue}
               label={label}
               size="small"
               error={error}
@@ -115,10 +115,16 @@ const HFSelect = ({
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
             {selectedValue && (
-              <Box sx={{position: 'absolute', right: '20px', top: '3px'}}>
-                <IconButton onClick={handleClear} size="small">
-                    <ClearIcon />
-                 </IconButton>
+              <Box sx={{ position: "absolute", right: "20px", top: "3px" }}>
+                <IconButton
+                  onClick={() => {
+                    onFormChange("");
+                    handleClear();
+                  }}
+                  size="small"
+                >
+                  <ClearIcon />
+                </IconButton>
               </Box>
             )}
           </FormControl>

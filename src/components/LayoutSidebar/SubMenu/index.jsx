@@ -7,9 +7,9 @@ import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
@@ -30,9 +30,8 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
-  users
+  users,
 }) => {
-
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const { i18n } = useTranslation();
@@ -41,6 +40,15 @@ const SubMenu = ({
 
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
+  };
+
+  const clickHandler = (e) => {
+    if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
+      handleOpenNotify(e, "CREATE_TO_MINIO");
+    } else {
+      handleOpenNotify(e, "CREATE_TO_FOLDER");
+    }
+    setElement(selectedApp);
   };
 
   return (
@@ -60,7 +68,8 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}
           <Box className="buttons">
@@ -80,8 +89,7 @@ const SubMenu = ({
                 <AddIcon
                   size={13}
                   onClick={(e) => {
-                    handleOpenNotify(e, "CREATE_TO_FOLDER");
-                    setElement(selectedApp);
+                    clickHandler(e);
                   }}
                   style={{
                     color: menuStyle?.text,
@@ -138,50 +146,50 @@ const SubMenu = ({
             ) : (
               <div className="nav-block">
                 {selectedApp?.id === adminId && (
-                   <Permissions
-                      menuStyle={menuStyle}
-                      menuItem={menuItem}
-                      setElement={setElement}
-                      level={2}
-                    />
-                  )}
-                   {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
-                    <Users
+                  <Permissions
+                    menuStyle={menuStyle}
+                    menuItem={menuItem}
+                    setElement={setElement}
+                    level={2}
+                  />
+                )}
+                {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                  <Users
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    menuItem={menuItem}
+                    level={2}
+                    child={users}
+                  />
+                )}
+                <div className="menu-element">
+                  {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
+                    child?.map((element) => (
+                      <RecursiveBlock
+                        key={element.id}
+                        element={element}
+                        openFolderCreateModal={openFolderCreateModal}
+                        setFolderModalType={setFolderModalType}
+                        sidebarIsOpen={subMenuIsOpen}
+                        selectedApp={selectedApp}
+                        setTableModal={setTableModal}
+                        setLinkedTableModal={setLinkedTableModal}
+                        handleOpenNotify={handleOpenNotify}
+                        setElement={setElement}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuStyle={menuStyle}
+                        menuItem={menuItem}
+                      />
+                    ))}
+                  {selectedApp?.id ===
+                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                    <DocumentsSidebar
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       menuItem={menuItem}
-                      level={2} 
-                      child={users}
+                      level={2}
                     />
-                 )}
-                <div className="menu-element">
-                    {selectedApp?.id !== '9e988322-cffd-484c-9ed6-460d8701551b' && (
-                      child?.map((element) => (
-                        <RecursiveBlock
-                          key={element.id}
-                          element={element}
-                          openFolderCreateModal={openFolderCreateModal}
-                          setFolderModalType={setFolderModalType}
-                          sidebarIsOpen={subMenuIsOpen}
-                          selectedApp={selectedApp}
-                          setTableModal={setTableModal}
-                          setLinkedTableModal={setLinkedTableModal}
-                          handleOpenNotify={handleOpenNotify}
-                          setElement={setElement}
-                          setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyle}
-                          menuItem={menuItem}
-                        />
-                      ))
-                    )}
-                 {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                   <DocumentsSidebar  
-                   menuStyle={menuStyle}
-                   setSubMenuIsOpen={setSubMenuIsOpen}
-                   menuItem={menuItem}
-                   level={2} 
-                   />
-                 )}
+                  )}
                 </div>
               </div>
             )}

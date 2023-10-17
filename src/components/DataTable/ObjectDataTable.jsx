@@ -53,6 +53,7 @@ const ObjectDataTable = ({
   columns = [],
   relatedTableSlug,
   watch,
+  getValues,
   control,
   setFormValue,
   dataLength,
@@ -339,6 +340,7 @@ const ObjectDataTable = ({
                 width={"80px"}
                 remove={remove}
                 watch={watch}
+                getValues={getValues}
                 control={control}
                 key={row.id}
                 row={row}

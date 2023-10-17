@@ -520,6 +520,7 @@ const TableView = ({
             setDrawerState={setDrawerState}
             setDrawerStateField={setDrawerStateField}
             isTableView={true}
+            getValues={getValues}
             // elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}

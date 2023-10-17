@@ -21,8 +21,8 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
     return columns;
   }, [columns, relationColumns, type]);
 
-  const watchedColumns = form.watch("columns");
-  const watchedGroupColumns = form.watch("attributes.group_by_columns");
+  // const watchedColumns = form.watch("columns");
+  // const watchedGroupColumns = form.watch("attributes.group_by_columns");
 
   useEffect(() => {
     form.reset({
@@ -39,35 +39,16 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
+          group_by_columns: form.getValues('attributes.group_by_columns')?.filter((el) => el?.is_checked)?.map((el) => el.id),
         },
-        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
+        columns: form.getValues('columns')?.filter((el) => el.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
   };
 
-  const computeColumns = (checkedColumnsIds = [], columns) => {
-    const selectedColumns =
-      checkedColumnsIds
-        ?.filter((id) => columns.find((el) => el.id === id))
-        ?.map((id) => ({
-          ...columns.find((el) => el.id === id),
-          is_checked: true,
-        })) ?? [];
-    const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
-    return [...selectedColumns, ...unselectedColumns];
-  };
   
-  useEffect(() => {
-    if (views?.[selectedTabIndex]?.columns) {
-      form.reset({
-        ...form.getValues(),
-        columns: computeColumns(views?.[selectedTabIndex]?.columns, computedColumns),
-      });
-    }
-  }, [views, selectedTabIndex, computedColumns, form]);
 
   return (
     <div>
@@ -140,7 +121,7 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} />}
+        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} views={views} selectedTabIndex={selectedTabIndex} computedColumns={computedColumns}/>}
       </Menu>
     </div>
   );

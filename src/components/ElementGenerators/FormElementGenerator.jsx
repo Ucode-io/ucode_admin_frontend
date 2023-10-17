@@ -130,21 +130,20 @@ const FormElementGenerator = ({
   ]);
 
   const isDisabled = useMemo(() => {
-  const { attributes } = field;
+    const { attributes } = field;
 
+    if (window.location.pathname.includes('create' )) {
+        if(attributes?.disabled) return true;
+        else return false;
+    } else {
+      return (
+        attributes?.disabled ||
+        !attributes?.field_permission?.edit_permission ||
+        attributes?.is_editable
+      );
+    }
 
-  if (window.location.pathname.includes('create' )) {
-      if(attributes?.disabled && attributes?.is_editable) return true;
-      else return false;
-  } else {
-    return (
-      attributes?.disabled ||
-      !attributes?.field_permission?.edit_permission ||
-      attributes?.is_editable
-    );
-  }
-
-}, [field]);
+  }, [field]);
 
   
 

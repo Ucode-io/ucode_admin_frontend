@@ -39,12 +39,15 @@ const VariableResourceForm = () => {
     },
   });
 
-  console.log('apiKeyId', apiKeyId)
+
 
   const createApp = (data) => {
     setBtnLoader(true);
 
-    resourceVariableService.createVariable(data)
+    resourceVariableService.createVariable({
+      ...data,
+      project_resource_id: appId
+    })
       .then(() => {
         navigate(-1);
         getRoleList();

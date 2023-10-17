@@ -36,10 +36,13 @@ const InputWithValueOffer = ({
     return /^[0-9]+$/.test(str);
   };
 
+  const queryVairables = form.watch('query_variables')
+
   const { data: { variables } = {} } = useVariableResourceListQuery({
+    id: queryVairables,
     params: {},
     queryParams: {
-      enabled: inputValue.trim() === '{{$$}}',
+      enabled: inputValue.trim() === '{{}}' && Boolean(queryVairables),
       onSuccess: (res) => {
         console.log('res', res)
       },
@@ -68,11 +71,11 @@ const InputWithValueOffer = ({
 
 
   const getVariableValue = (element) => {
-    form.setValue(name, `{{$$${element?.key}}}`)
+    form.setValue(name, `{{${element?.key}}}`)
     getElementBetween(form)
     setValue(newValue);
   }
-  console.log('inputValue', inputValue)
+
   return (
     <div
       className={className || styles.container}
@@ -108,7 +111,7 @@ const InputWithValueOffer = ({
           onBlur={onBlur}
         />
 
-        {focused && inputValue.trim() !== '{{$$}}' ? (
+        {focused && inputValue.trim() !== '{{}}' ? (
           <div className={styles.prompt}>
             <div className={styles.wrapper}>
               <div>
@@ -132,7 +135,7 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 0 && inputValue.trim() === '{{$$}}' ? (
+        {variables?.length > 0 && inputValue.trim() === '{{}}' ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (

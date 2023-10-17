@@ -4,6 +4,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { updateLevel } from "../../../../utils/level";
+import { useQueryClient } from "react-query";
 
 const RecursiveBlock = ({
   element,
@@ -13,6 +14,8 @@ const RecursiveBlock = ({
   clickHandler,
   childBlockVisible,
   deleteResource,
+  setSubMenuIsOpen,
+  deleteResourceV2
 }) => {
   const { tableSlug } = useParams();
   const navigate = useNavigate();
@@ -35,7 +38,47 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        <Button
+        {element?.type === 'REST' ? (
+          <Button
+          key={element.id}
+          style={activeStyle}
+          className={`nav-element ${
+            element.isChild &&
+            (tableSlug !== element.slug ? "active-with-child" : "active")
+          }`}
+          onClick={(e) =>  {
+            e.stopPropagation()
+            navigate(`${element?.id}/variable-resources`)
+            setSubMenuIsOpen(false)
+          }}
+        >
+          <div
+            className="label"
+            style={{
+              color:
+                selected?.id === element?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text,
+              opacity: element?.isChild && 0.6,
+            }}
+          >
+            <IconGenerator icon={element?.icon} size={18} />
+            {element?.title ?? element?.name}
+          </div>
+          <Box
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteResourceV2({
+                id: element?.id,
+              });
+            }}
+            sx={{ cursor: "pointer" }}
+          >
+            <DeleteIcon />
+          </Box>
+        </Button>
+        ) : (
+          <Button
           key={element.id}
           style={activeStyle}
           className={`nav-element ${
@@ -56,7 +99,7 @@ const RecursiveBlock = ({
             onClick={() => navigate(`/main/resources/${element?.id}`)}
           >
             <IconGenerator icon={element?.icon} size={18} />
-            {element?.title}
+            {element?.title ?? element?.name}
           </div>
           <Box
             onClick={(e) => {
@@ -118,6 +161,7 @@ const RecursiveBlock = ({
               <KeyboardArrowRightIcon />
             ))}
         </Button>
+        )}
       </div>
     </Box>
   );

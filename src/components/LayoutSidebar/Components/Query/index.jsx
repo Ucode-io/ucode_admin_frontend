@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useResourceListQuery } from "../../../../services/resourceService";
+import { useResourceListQuery, useResourceListQueryV2 } from "../../../../services/resourceService";
 import {
   useQueryByIdQuery,
   useQueryCreateMutation,
@@ -153,6 +153,10 @@ const Queries = () => {
     }
   }, [queryId]);
 
+  const { data: { resources } = {} } = useResourceListQueryV2({
+    params: {},
+  });
+
   const { mutate: updateQuery } = useQueryUpdateMutation({
     onSuccess: (res) => {
       dispatch(showAlert("Success", "success"));
@@ -298,9 +302,10 @@ const Queries = () => {
                     (item) => item.value === form.getValues("query_type")
                   ).label,
                   title: form.getValues("title"),
+                  project_resource_id: form.getValues("query_type"),
                   variables: form.getValues("variables")?.map((variable) => {
                     return {
-                      key: variable.key,
+                      key: `$$${variable.key}`,
                       value: variable.value,
                     };
                   }),
@@ -328,6 +333,7 @@ const Queries = () => {
                 form={form}
                 control={form.control}
                 responseQuery={responseQuery}
+                resources={resources}
               />
             )}
           </Box>
@@ -349,7 +355,7 @@ const Queries = () => {
             </DrawerCard>
           ) : (
             <Box height="calc(100vh - 50px)" width="300px" minWidth="300px">
-              <QuerySettings form={form} />
+              <QuerySettings form={form} resources={resources} />
             </Box>
           )}
         </Box>

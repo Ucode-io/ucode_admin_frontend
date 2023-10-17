@@ -34,7 +34,7 @@ const Form = ({
     }));
   }, [projectEnvironments]);
 
-  console.log('environments', environments)
+
   return (
     <Box flex={1} sx={{borderRight: '1px solid #e5e9eb'}}>
       <Box sx={headerStyle}>
@@ -48,7 +48,7 @@ const Form = ({
             <HFTextField
               control={control}
               required
-              name="title"
+              name="name"
               fullWidth
               inputProps={{
                 placeholder: "Resource name",

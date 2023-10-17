@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 import { useEnvironmentsListQuery } from "../../../services/environmentService";
-import { useResourceConfigureMutation, useResourceCreateMutation, useResourceEnvironmentGetByIdQuery, useResourceGetByIdQuery, useResourceReconnectMutation, useResourceUpdateMutation } from "../../../services/resourceService";
+import { useResourceConfigureMutation, useResourceCreateMutation, useResourceCreateMutationV2, useResourceEnvironmentGetByIdQuery, useResourceGetByIdQuery, useResourceReconnectMutation, useResourceUpdateMutation } from "../../../services/resourceService";
 import { store } from "../../../store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
@@ -95,6 +95,14 @@ const ResourceDetail = () => {
       },
     });
 
+    const { mutate: createResourceV2, isLoading: createLoadingV2 } =
+    useResourceCreateMutationV2({
+      onSuccess: () => {
+        // successToast();
+        navigate(-1);
+      },
+    });
+
   const { mutate: configureResource, isLoading: configureLoading } =
     useResourceConfigureMutation({////////////////
       onSuccess: () => {
@@ -121,26 +129,34 @@ const ResourceDetail = () => {
       }
     );
 
-  const onSubmit = (values) => {
-    const computedValues2 = {
-      ...values,
-      company_id: company?.companyId,
-      project_id: projectId,
-      resource_id: resourceId,
-      user_id:  authStore.userId,
-      environment_id: selectedEnvironment?.[0].id,
-      is_configured: true,
-      id: selectedEnvironment?.[0].resource_environment_id,
-    };
-    if (!isEditPage) createResource(computedValues2);
-    else {
-      if (!selectedEnvironment?.[0].is_configured) {
-        configureResource(computedValues2);
-      } else {
-        updateResource(computedValues2);
+    const onSubmit = (values) => {
+      const computedValues2 = {
+        ...values,
+        type: values?.resource_type,
+        company_id: company?.companyId,
+        project_id: projectId,
+        resource_id: resourceId,
+        user_id:  authStore.userId,
+        environment_id: selectedEnvironment?.[0].id,
+        is_configured: true,
+        id: selectedEnvironment?.[0].resource_environment_id,
+      };
+      if(values?.resource_type === 4) {
+
+        delete computedValues2.resource_type;
+  
+        createResourceV2(computedValues2);
+      } else if (!isEditPage) createResource(computedValues2);
+      
+      else {
+        if (!selectedEnvironment?.[0].is_configured) {
+          configureResource(computedValues2);
+        } else {
+          updateResource(computedValues2);
+        }
       }
-    }
   };
+  
 
   useEffect(() => {
     if (!selectedEnvironment?.length) return;

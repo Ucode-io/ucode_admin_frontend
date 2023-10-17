@@ -22,6 +22,11 @@ export const resourceTypes = [
     label: 'PosgreSQL',
     value: 3,
     icon: SiPostgresql
+  },
+  {
+    label: 'Rest',
+    value: 4,
+    icon: SiPostgresql
   }
 ]
 

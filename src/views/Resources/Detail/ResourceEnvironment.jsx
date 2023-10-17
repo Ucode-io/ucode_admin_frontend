@@ -29,6 +29,7 @@ const ResourceeEnvironments = ({
     control,
     name: "environments",
   });
+  console.log('environments', environments)
 
   const { data: projectEnvironments } = useEnvironmentsListQuery({
     params: {
@@ -48,7 +49,7 @@ const ResourceeEnvironments = ({
     else return projectEnvironments;
   }, [environments, projectEnvironments]);
 
-  console.log('computedEnvironments', computedEnvironments)
+  console.log('projectEnvironments', projectEnvironments)
 
   return (
       <Box sx={{width: '250px', borderRight: '1px solid #e5e9eb', padding: '15px'}}>

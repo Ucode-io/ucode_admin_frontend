@@ -41,6 +41,8 @@ const RelationFormElement = ({
   defaultValue = null,
   multipleInsertField,
   checkRequiredField,
+  rules,
+  errors,
   ...props
 }) => {
   const {i18n} = useTranslation();
@@ -48,7 +50,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-
+  
   const computedLabel =
     field?.attributes?.[`title_${i18n?.language}`] ??
     field?.label ??
@@ -61,6 +63,10 @@ const RelationFormElement = ({
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
+          rules={{
+            required: field?.required ? 'This field is required!' : '',
+            ...rules
+          }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={Array.isArray(value) ? value[0] : value}
@@ -74,6 +80,7 @@ const RelationFormElement = ({
               control={control}
               name={name}
               multipleInsertField={multipleInsertField}
+              errors={errors}
             />
           )}
         />
@@ -142,7 +149,9 @@ const AutoCompleteElement = ({
   name,
   multipleInsertField,
   setFormValue = () => {},
+  errors
 }) => {
+
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const {id} = useParams();
@@ -157,6 +166,13 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+        border: `1px solid ${errors?.[field?.slug] ? 'red' : '#d4d2d2'}`,
+    }),
+  };
 
   const computedIds = useMemo(() => {
     if (
@@ -381,7 +397,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
- 
+  console.log('errors', errors)
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -425,7 +441,8 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-        <Select
+       <>
+         <Select
           isDisabled={
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
@@ -435,11 +452,14 @@ const AutoCompleteElement = ({
           }
           options={options?.options ?? []}
           isClearable={true}
+          styles={customStyles}
           value={localValue ?? []}
+          required={field?.required}
           defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
-            setLocalValue(e);
+            // console.log('eeeeeeeeeeee', e.guid)
+            // setLocalValue(e.guid);
           }}
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => inputChangeHandler(e)}
@@ -467,6 +487,8 @@ const AutoCompleteElement = ({
             ),
           }}
         />
+        {errors?.[field?.slug] && <div style={{ color: 'red', fontSize:'10px', textAlign: 'center', marginTop: '5px' }}>{'This field is required!'}</div>}
+       </>
       )}
     </div>
   );

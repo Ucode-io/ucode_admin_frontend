@@ -63,6 +63,7 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
+    formState: { errors }
   } = useForm({
     defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
@@ -154,7 +155,7 @@ const ObjectsFormPage = ({
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        dispatch(showAlert("Успешно обновлено", "success"));
+        dispatch(showAlert("Successfully updated", "success"));
         handleClose();
       })
       .catch((e) => console.log("ERROR: ", e))
@@ -180,7 +181,7 @@ const ObjectsFormPage = ({
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
 
-        dispatch(showAlert("Успешно обновлено", "success"));
+        dispatch(showAlert("Successfully updated!", "success"));
 
         // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
@@ -240,6 +241,7 @@ const ObjectsFormPage = ({
           loader={loader}
           setSelectTab={setSelectTab}
           selectedTab={selectedTab}
+          errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
         />
@@ -248,7 +250,7 @@ const ObjectsFormPage = ({
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              Close
             </SecondaryButton>
             <FormCustomActionButton
               control={control?._formValues}
@@ -265,7 +267,7 @@ const ObjectsFormPage = ({
                 onClick={handleSubmit(onSubmit)}
               >
                 <Save />
-                Сохранить
+                Save
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

@@ -47,6 +47,7 @@ const FormElementGenerator = ({
   isMultiLanguage,
   relatedTable,
   valueGenerator,
+  errors,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -129,12 +130,22 @@ const FormElementGenerator = ({
   ]);
 
   const isDisabled = useMemo(() => {
-    return (
-      field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission ||
-      field?.attributes?.is_editable
-    );
+    const { attributes } = field;
+
+    if (window.location.pathname.includes('create' )) {
+        if(attributes?.disabled) return true;
+        else return false;
+    } else {
+      return (
+        attributes?.disabled ||
+        !attributes?.field_permission?.edit_permission ||
+        attributes?.is_editable
+      );
+    }
+
   }, [field]);
+
+  
 
   if (
     !field.attributes?.field_permission?.view_permission &&
@@ -188,6 +199,13 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           key={computedSlug}
           checkRequiredField={checkRequiredField}
+          errors={errors}
+          rules={{
+            pattern: {
+              value: new RegExp(field?.attributes?.validation),
+              message: field?.attributes?.validation_message,
+            },
+          }}
           {...props}
         />
       );

@@ -42,7 +42,7 @@ const LargeModalCard = ({
               className={styles.button}
               onClick={onClose}
             >
-              Отменить
+              Cancel
             </SecondaryButton>
             <PrimaryButton
               size="large"
@@ -50,7 +50,7 @@ const LargeModalCard = ({
               onClick={onSaveButtonClick}
               loader={btnLoader}
             >
-              Сохранить
+              Save
             </PrimaryButton>
           </dir>
         </Card>

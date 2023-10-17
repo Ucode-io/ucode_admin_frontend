@@ -136,14 +136,14 @@ const MicrofrontendForm = () => {
               onClick={() => navigate(microfrontendListPageLink)}
               color="error"
             >
-              Закрыть
+              Close
             </SecondaryButton>
             <PermissionWrapperV2 tableSlug="app" type="update">
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

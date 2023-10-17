@@ -1,12 +1,16 @@
+import React, { useState } from "react";
 import {
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
+  IconButton,
+  Box,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
+import ClearIcon from "@mui/icons-material/Clear"; // Import the clear icon
 
 const HFSelect = ({
   control,
@@ -24,6 +28,13 @@ const HFSelect = ({
   rules = {},
   ...props
 }) => {
+  const [selectedValue, setSelectedValue] = useState(defaultValue || "");
+
+  const handleClear = () => {
+    setSelectedValue("");
+    onChange("");
+  };
+
   return (
     <Controller
       control={control}
@@ -41,7 +52,7 @@ const HFSelect = ({
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
-              value={value || ""}
+              value={value || selectedValue}
               label={label}
               size="small"
               error={error}
@@ -61,6 +72,7 @@ const HFSelect = ({
                     )
               }
               onChange={(e) => {
+                setSelectedValue(e.target.value);
                 onChange(e.target.value);
                 onFormChange(e.target.value);
               }}
@@ -101,6 +113,13 @@ const HFSelect = ({
             </Select>
             {!disabledHelperText && error?.message && (
               <FormHelperText error>{error?.message}</FormHelperText>
+            )}
+            {selectedValue && (
+              <Box sx={{position: 'absolute', right: '20px', top: '3px'}}>
+                <IconButton onClick={handleClear} size="small">
+                    <ClearIcon />
+                 </IconButton>
+              </Box>
             )}
           </FormControl>
         );

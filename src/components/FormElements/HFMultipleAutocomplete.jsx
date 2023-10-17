@@ -223,10 +223,10 @@ const AutoCompleteElement = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039",
+                    background: "inherit",
                   }
                 : {
-                    background: isBlackBg ? "#2A2D34" : "inherit",
+                    background:  "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
                   },
 

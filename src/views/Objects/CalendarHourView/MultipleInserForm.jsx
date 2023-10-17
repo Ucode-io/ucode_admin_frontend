@@ -100,7 +100,7 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
           onClick={handleSubmit(onSubmit)}
           loader={btnLoader}
         >
-          Сохранить
+          Save
         </PrimaryButton>
       </div>
     </>

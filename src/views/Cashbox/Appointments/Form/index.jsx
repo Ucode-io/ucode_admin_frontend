@@ -124,14 +124,14 @@ const AppointmentsForm = () => {
         extra={
           <>
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
-              Закрыть
+              Clsoe
             </SecondaryButton>
             {!isUpdated && (
               <PrimaryButton
                 loader={btnLoader}
                 onClick={form.handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save /> Save
               </PrimaryButton>
             )}
           </>

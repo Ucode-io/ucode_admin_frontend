@@ -98,7 +98,7 @@ const HFFormulaField = ({
             readOnly: disabled,
             style: disabled
               ? {
-                  background: "#c0c0c039",
+                  background: "inherit",
                   paddingRight: "0",
                 }
               : {

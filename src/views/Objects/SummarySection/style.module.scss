@@ -36,7 +36,7 @@
     }
   }
   .field_summary_item {
-    min-width: 50px;
+    min-width: 125px;
     box-sizing: border-box;
     min-height: 45px;
     margin-top: 0px;
@@ -81,4 +81,8 @@
       outline: none;
     }
   }
+}
+
+.incrementVal {
+  width: 160px;
 }

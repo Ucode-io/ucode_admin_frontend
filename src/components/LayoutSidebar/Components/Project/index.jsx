@@ -196,10 +196,10 @@ const ProjectSettingPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              Close
             </SecondaryButton>
             <PrimaryButton loader={btnLoading} onClick={handleSubmit(onSubmit)}>
-              <Save /> Сохранить
+              <Save /> Save
             </PrimaryButton>
           </>
         }

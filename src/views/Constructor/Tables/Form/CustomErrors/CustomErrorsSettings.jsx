@@ -224,7 +224,7 @@ const CustomErrorsSettings = ({
               onClick={handleSubmit(submitHandler)}
               loader={createLoading || updateLoading}
             >
-              Сохранить
+              Save
             </PrimaryButton>
           </div>
         </form>

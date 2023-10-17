@@ -748,7 +748,7 @@ const MatrixRolePage = () => {
                                     style={{ width: "50%" }}
                                     type="submit"
                                   >
-                                    Сохранить
+                                    Save
                                   </PrimaryButton>
                                 </div>
                               </div>

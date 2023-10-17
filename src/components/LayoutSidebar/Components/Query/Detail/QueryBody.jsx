@@ -1,10 +1,19 @@
 import { Box, Typography } from "@mui/material";
 import { FormProvider } from "react-hook-form";
 import HFSelect from "../../../../FormElements/HFSelect";
+import { useResourceListQueryV2 } from "../../../../../services/resourceService";
+import { useMemo } from "react";
 
-const QueryBody = ({ form, control, responseQuery, resourcesList, types }) => {
+const QueryBody = ({ form, control, responseQuery, resourcesList, types, resources }) => {
   const queryType = form.watch("query_type");
 
+  const computedOptions = useMemo(() => {
+    return resources?.map((el) => ({
+      label: el?.name,
+      value: el?.id
+    }))
+  }, [resources])
+  
   return (
     <FormProvider {...form}>
       <Box display="flex" flexDirection="column" gap="12px">
@@ -19,7 +28,7 @@ const QueryBody = ({ form, control, responseQuery, resourcesList, types }) => {
             Resource
           </Typography>
 
-          <Box width="100%">
+          <Box width="50%">
             <HFSelect
               options={resourcesList ? types : []}
               control={control}
@@ -27,6 +36,18 @@ const QueryBody = ({ form, control, responseQuery, resourcesList, types }) => {
               name="query_type"
               placeholder={"Select..."}
               customOnChange={(e) => form.setValue("body.body", "")}
+            />
+          </Box>
+
+          <Box width="50%">
+            <HFSelect
+              options={computedOptions ?? []}
+              control={control}
+              clearable
+              required
+              name="query_variables"
+              placeholder={"Select..."}
+              // customOnChange={(e) => form.setValue("body.body", "")}
             />
           </Box>
         </Box>

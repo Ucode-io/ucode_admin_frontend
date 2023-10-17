@@ -2,7 +2,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { store } from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -10,7 +10,9 @@ import "../../style.scss";
 import {
   useResourceCreateFromClusterMutation,
   useResourceDeleteMutation,
+  useResourceDeleteMutationV2,
   useResourceListQuery,
+  useResourceListQueryV2,
 } from "../../../../services/resourceService";
 import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,6 +22,7 @@ import { BiGitCompare } from "react-icons/bi";
 import { IoEnter, IoExit } from "react-icons/io5";
 // import { resourceTypes } from "utils/resourceConstants";
 import { resourceTypes } from "../../../../utils/resourceConstants";
+import { useQueryClient } from "react-query";
 // import environmentStore from "../../../../store/environment";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -39,22 +42,24 @@ const dataBases = [
       },
     },
   },
-  {
-    label: "Variable Resources",
-    type: "USER_FOLDER",
-    icon: "database.svg",
-    parent_id: adminId,
-    id: "10",
-    data: {
-      permission: {
-        read: true,
-        write: true,
-        delete: true,
-        update: true,
-      },
-    },
-  }
 ];
+
+// const dataBaseVariable = 
+//   {
+//     label: "Variable Resources",
+//     type: "USER_FOLDER",
+//     icon: "database.svg",
+//     parent_id: adminId,
+//     id: "10",
+//     data: {
+//       permission: {
+//         read: true,
+//         write: true,
+//         delete: true,
+//         update: true,
+//       },
+//     },
+//   }
 
 const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const navigate = useNavigate();
@@ -66,6 +71,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const authStore = store.getState().auth;
+  const queryClient = useQueryClient();
 
 
   const { data: { resources } = {} } = useResourceListQuery({
@@ -73,6 +79,24 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       project_id: company?.projectId,
     },
   });
+
+  const { data = {} } = useResourceListQueryV2({
+    params: {
+      project_id: company?.projectId,
+    },
+  });
+
+
+  const computedResources = useMemo(() => {
+    return [
+        ...(data?.resources || []),
+        ...(resources || []) 
+    ];
+  }, [data, resources]);
+
+
+
+  console.log('computedResources', computedResources)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -88,6 +112,15 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         handleClose();
       },
     });
+
+
+  const { mutate: deleteResourceV2, isLoading: deleteLoadingV2 } =
+  useResourceDeleteMutationV2({
+    onSuccess: () => {
+      queryClient.refetchQueries(["RESOURCESV2"]);
+      handleClose();
+    },
+  });
 
   const { mutate: addResourceFromCluster, isLoading: clusterLoading } =
     useResourceCreateFromClusterMutation({
@@ -142,7 +175,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             <Button
                   className={`nav-element`}
                   onClick={(e) => {
-                    navigate(`${appId}/variable-resources`)
+                    clickHandler(e);
                   }}
                 >
                   <div
@@ -188,6 +221,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
                       <AddIcon
                         size={13}
                         onClick={(e) => {
+                          navigateToCreateForm()
                           navigate("/main/resources/create");
                           e.stopPropagation();
                           handleOpenNotify(e, "CREATE_FOLDER");
@@ -236,7 +270,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {resources?.map((childElement) => (
+        {computedResources?.map((childElement) => (
           <RecursiveBlock
             key={childElement.id}
             level={level + 1}
@@ -247,10 +281,13 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             selected={selected}
             resourceId={resourceId}
             deleteResource={deleteResource}
+            deleteResourceV2={deleteResourceV2}
             childBlockVisible={childBlockVisible}
+            setSubMenuIsOpen={setSubMenuIsOpen}
           />
         ))}
       </Collapse>
+
     </Box>
   );
 };

@@ -46,6 +46,7 @@ const NewRelationSection = ({
   watch,
   setSelectTab,
   selectedTab,
+  errors
 }) => {
   const [data, setData] = useState([]);
 
@@ -564,6 +565,7 @@ const NewRelationSection = ({
                         relatedTable={relatedTable}
                         relation={relation}
                         selectedIndex={selectedIndex}
+                        errors={errors}
                       />
                     ) : relation?.relatedTable === "file" ? (
                       <FilesSection

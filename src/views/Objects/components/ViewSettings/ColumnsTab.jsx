@@ -31,8 +31,31 @@ import NfcIcon from "@mui/icons-material/Nfc";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
-const ColumnsTab = ({ form, updateView, isMenu }) => {
+const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, computedColumns }) => {
   const { i18n } = useTranslation();
+
+  const computeColumns = (checkedColumnsIds = [], columns) => {
+    const selectedColumns =
+      checkedColumnsIds
+        ?.filter((id) => columns.find((el) => el.id === id))
+        ?.map((id) => ({
+          ...columns.find((el) => el.id === id),
+          is_checked: true,
+        })) ?? [];
+    const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+    return [...selectedColumns, ...unselectedColumns];
+  };
+  
+  useEffect(() => {
+    if (views?.[selectedTabIndex]?.columns) {
+      form.reset({
+        ...form.getValues(),
+        columns: computeColumns(views?.[selectedTabIndex]?.columns, computedColumns),
+      });
+    }
+  }, [views, selectedTabIndex, computedColumns, form]);
+
+
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",

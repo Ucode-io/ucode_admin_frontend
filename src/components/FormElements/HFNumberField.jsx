@@ -29,8 +29,6 @@ const HFNumberField = ({
     } else {
       onChange("");
     }
-
-    isNewTableView && updateObject();
   };
 
   return (
@@ -89,7 +87,7 @@ const HFNumberField = ({
                 //     onChange(value.value);
                 //   } else onChange(!isNaN(Number(value.value)) ? Number(value.value) : "");
                 // }
-
+                // isNewTableView && updateObject();
                 handleChange(value, onChange);
               }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}

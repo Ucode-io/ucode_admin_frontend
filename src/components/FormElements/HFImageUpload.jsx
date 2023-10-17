@@ -1,6 +1,6 @@
-import { FormHelperText } from "@mui/material"
-import { Controller } from "react-hook-form"
-import ImageUpload from "../Upload/ImageUpload"
+import { FormHelperText } from "@mui/material";
+import { Controller } from "react-hook-form";
+import ImageUpload from "../Upload/ImageUpload";
 
 const HFImageUpload = ({
   control,
@@ -10,9 +10,10 @@ const HFImageUpload = ({
   rules,
   disabledHelperText = false,
   disabled,
+  field,
   ...props
 }) => {
-
+  console.log("field", field);
   return (
     <Controller
       control={control}
@@ -30,6 +31,7 @@ const HFImageUpload = ({
             tabIndex={tabIndex}
             onChange={onChange}
             disabled={disabled}
+            field={field}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
@@ -39,7 +41,7 @@ const HFImageUpload = ({
         </>
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFImageUpload
+export default HFImageUpload;

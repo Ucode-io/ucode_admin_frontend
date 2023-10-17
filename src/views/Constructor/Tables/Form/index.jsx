@@ -1,9 +1,9 @@
-import {Save} from "@mui/icons-material";
-import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Save } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
@@ -17,10 +17,10 @@ import constructorTableService, {
 } from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
-import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
-import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
-import {generateGUID} from "../../../../utils/generateID";
-import {listToMap} from "../../../../utils/listToMap";
+import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
+import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
+import { generateGUID } from "../../../../utils/generateID";
+import { listToMap } from "../../../../utils/listToMap";
 import {
   computeSectionsOnSubmit,
   computeViewRelations,
@@ -32,16 +32,17 @@ import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {id, slug, appId} = useParams();
+  const { id, slug, appId } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
+  console.log("slug", slug);
 
   const mainForm = useForm({
     defaultValues: {
@@ -91,7 +92,7 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, {custom_events: actions = []}] = await Promise.all([
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
         getTableData,
         getActions,
         getViewRelations,
@@ -114,13 +115,13 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList({table_id: id});
+      const getFieldsData = constructorFieldService.getList({ table_id: id });
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
       });
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -315,7 +316,11 @@ const ConstructorTablesFormPage = () => {
           </TabPanel>
 
           <TabPanel>
-            <Fields getRelationFields={getRelationFields} mainForm={mainForm} />
+            <Fields
+              getRelationFields={getRelationFields}
+              mainForm={mainForm}
+              slug={slug}
+            />
           </TabPanel>
 
           {id && (

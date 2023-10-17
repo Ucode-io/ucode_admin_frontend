@@ -32,6 +32,7 @@ import { add } from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
+import { useMenuListQuery } from "../../../../../services/menuService";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -44,6 +45,7 @@ const FieldSettings = ({
   isTableView = false,
   onSubmit = () => {},
   getRelationFields,
+  slug,
 }) => {
   const { id, tableSlug, appId } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
@@ -52,7 +54,6 @@ const FieldSettings = ({
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -90,7 +91,7 @@ const FieldSettings = ({
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getList(slug, {
         data: { limit: 10, offset: 0, app_id: appId },
       });
     },
@@ -146,6 +147,19 @@ const FieldSettings = ({
     }
   };
 
+  const { data: backetOptions, isBacketLoading } = useMenuListQuery({
+    params: {
+      parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
+    },
+    queryParams: {
+      select: (data) => {
+        return data?.menus?.map((item) => ({
+          label: item.label,
+          value: item.label,
+        }));
+      },
+    },
+  });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
       setFormLoader(true);
@@ -225,7 +239,6 @@ const FieldSettings = ({
       },
     }
   );
-
   useEffect(() => {
     const values = {
       attributes: {},
@@ -238,7 +251,6 @@ const FieldSettings = ({
       type: "",
       relation_field: selectedAutofillFieldSlug,
     };
-
     if (formType !== "CREATE") {
       reset({
         ...values,
@@ -407,8 +419,25 @@ const FieldSettings = ({
                             optionType="GROUP"
                             placeholder="Type"
                             required
+                            defaultValue={fieldType}
                           />
                         </FRow>
+
+                        {(fieldType === "FILE" ||
+                          fieldType === "VIDEO" ||
+                          fieldType === "PHOTO" ||
+                          fieldType === "CUSTOM_IMAGE") && (
+                          <FRow label="Backet" required>
+                            <HFSelect
+                              disabledHelperText
+                              name="attributes.minio_folder"
+                              control={control}
+                              options={backetOptions}
+                              placeholder="Backet"
+                              required
+                            />
+                          </FRow>
+                        )}
 
                         {(fieldType === "SINGLE_LINE" ||
                           fieldType === "MULTI_LINE") && (

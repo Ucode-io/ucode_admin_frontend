@@ -5,16 +5,7 @@ import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
 
-export default function ColumnVisible({
-  selectedTabIndex,
-  views,
-  columns,
-  relationColumns,
-  isLoading,
-  form,
-  text = "Columns",
-  width = "",
-}) {
+export default function ColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form, text = "Columns", width = "" }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -38,9 +29,7 @@ export default function ColumnVisible({
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
+          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -50,18 +39,35 @@ export default function ColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
         },
-        columns: watchedColumns
-          ?.filter((el) => el.is_checked)
-          ?.map((el) => el.id),
+        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
   };
+
+  const computeColumns = (checkedColumnsIds = [], columns) => {
+    const selectedColumns =
+      checkedColumnsIds
+        ?.filter((id) => columns.find((el) => el.id === id))
+        ?.map((id) => ({
+          ...columns.find((el) => el.id === id),
+          is_checked: true,
+        })) ?? [];
+    const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+    return [...selectedColumns, ...unselectedColumns];
+  };
+  
+  useEffect(() => {
+    if (views?.[selectedTabIndex]?.columns) {
+      form.reset({
+        ...form.getValues(),
+        columns: computeColumns(views?.[selectedTabIndex]?.columns, computedColumns),
+      });
+    }
+  }, [views, selectedTabIndex, computedColumns, form]);
 
   return (
     <div>
@@ -134,11 +140,7 @@ export default function ColumnVisible({
           },
         }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
-        )}
+        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} />}
       </Menu>
     </div>
   );

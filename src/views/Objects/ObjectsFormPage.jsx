@@ -154,6 +154,7 @@ const ObjectsFormPage = ({
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
+        navigate(-1);
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
@@ -176,13 +177,12 @@ const ObjectsFormPage = ({
         if (modal) {
           handleClose();
         } else {
-          handleClose();
           navigate(-1);
+          handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-
         // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
@@ -192,10 +192,8 @@ const ObjectsFormPage = ({
   const onSubmit = (data) => {
     if (id) {
       update(data);
-      navigate(-1);
     } else {
       create(data);
-      navigate(-1);
     }
   };
 

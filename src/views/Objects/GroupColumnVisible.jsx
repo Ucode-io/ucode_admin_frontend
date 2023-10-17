@@ -31,7 +31,7 @@ export default function GroupColumnVisible({
 
   useEffect(() => {
     setCheckedColumns(
-      watchedGroupColumns?.filter((item) => item.is_checked === true)
+      watchedGroupColumns?.filter((item) => item?.is_checked === true)
     );
   }, [watchedGroupColumns]);
 

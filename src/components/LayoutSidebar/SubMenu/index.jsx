@@ -50,7 +50,7 @@ const SubMenu = ({
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
     } else {
-      handleOpenNotify(e, "CREATE_TO_FOLDER");
+      handleOpenNotify(e, "ROOT");
     }
     setElement(selectedApp);
   };
@@ -201,10 +201,7 @@ const SubMenu = ({
             {selectedApp?.data?.permission?.write && (
               <Button
                 className="menu-button active-with-child"
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE_TO_FOLDER");
-                  setElement(selectedApp);
-                }}
+                onClick={clickHandler}
                 openFolderCreateModal={openFolderCreateModal}
                 style={{
                   background: menuStyle?.background || "#fff",

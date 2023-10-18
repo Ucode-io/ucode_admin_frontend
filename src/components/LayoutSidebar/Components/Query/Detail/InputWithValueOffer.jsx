@@ -92,7 +92,7 @@ const InputWithValueOffer = ({
         alignItems="center"
         position="relative"
         className={styles.inputWithPopUp}
-        sx={{border: `1px solid  ${!inputValue || getValueMatch ? 'none' : 'red'}`, paddingLeft: '5px'}}
+        // sx={{border: `1px solid  ${!inputValue || getValueMatch ? 'none' : 'red'}`, paddingLeft: '5px'}}
       >
         <HFTextField
           control={form.control}

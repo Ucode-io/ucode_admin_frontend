@@ -1,14 +1,14 @@
 import styles from "../style.module.scss";
-import { MdContentCopy } from "react-icons/md";
-import { useMemo, useState } from "react";
+import {MdContentCopy} from "react-icons/md";
+import {useMemo, useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
-import { Box, Button } from "@mui/material";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
+import {Box, Button} from "@mui/material";
 import HFTextField from "../../../../FormElements/HFTextField";
 import getElementBetween from "../../../../../utils/getElementBetween";
-import { useVariableResourceListQuery } from "../../../../../services/resourceService";
-import { useWatch } from "react-hook-form";
+import {useVariableResourceListQuery} from "../../../../../services/resourceService";
+import {useWatch} from "react-hook-form";
 
 const InputWithValueOffer = ({
   name,
@@ -29,27 +29,27 @@ const InputWithValueOffer = ({
   const [focused, setFocused] = useState(false);
   const inputValue = useWatch({
     control: form.control,
-    name
-  })
-  const dispatch = useDispatch(); 
+    name,
+  });
+  const dispatch = useDispatch();
   const containsOnlyNumbers = (str) => {
     return /^[0-9]+$/.test(str);
   };
 
-  const queryVairables = form.watch('query_variables')
+  const queryVairables = form.watch("query_variables");
 
-  const { data: { variables } = {} } = useVariableResourceListQuery({
+  const {data: {variables} = {}} = useVariableResourceListQuery({
     id: queryVairables,
     params: {},
     queryParams: {
-      enabled: inputValue.trim() === '{{}}' && Boolean(queryVairables),
+      enabled: inputValue.trim() === "{{}}" && Boolean(queryVairables),
       onSuccess: (res) => {
-        console.log('res', res)
+        console.log("res", res);
       },
-    }
+    },
   });
 
-  console.log('queryVairables', queryVairables)
+  console.log("queryVairables", queryVairables);
 
   let typeOfElement = containsOnlyNumbers(form.watch(name));
 
@@ -64,19 +64,22 @@ const InputWithValueOffer = ({
 
   const getValueMatch = useMemo(() => {
     if (!inputValue || !variables) return false;
-  
-    const variableNames = inputValue?.match(/{{\$\$(.*?)}}/g)?.map(match => match?.slice(4, -2));
-  
-    return variableNames?.every(variableName => variables?.some(item => item?.key === variableName));
-  }, [inputValue, variables]);
-  
 
+    const variableNames = inputValue
+      ?.match(/{{\$\$(.*?)}}/g)
+      ?.map((match) => match?.slice(4, -2));
+
+    return variableNames?.every((variableName) =>
+      variables?.some((item) => item?.key === variableName)
+    );
+  }, [inputValue, variables]);
 
   const getVariableValue = (element) => {
-    form.setValue(name, `{{${element?.key}}}`)
-    getElementBetween(form)
+    console.log("elemenet", element);
+    form.setValue(name, `{{${element?.key}}}`);
+    getElementBetween(form);
     setValue(newValue);
-  }
+  };
 
   return (
     <div
@@ -104,16 +107,16 @@ const InputWithValueOffer = ({
           onFocus={() => {
             setFocused(true);
           }}
-          
           placeholder={placeholder}
           customOnChange={(value) => {
+            detectVariables(value.target.value);
             enableGetElement && getElementBetween(form);
             customOnChange();
           }}
           onBlur={onBlur}
         />
 
-        {focused && inputValue.trim() !== '{{}}' ? (
+        {focused && inputValue.trim() !== "{{}}" ? (
           <div className={styles.prompt}>
             <div className={styles.wrapper}>
               <div>
@@ -137,17 +140,22 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 0 && inputValue.trim() === '{{}}' && Boolean(queryVairables) ? (
+        {variables?.length > 0 &&
+        inputValue.trim() === "{{}}" &&
+        Boolean(queryVairables) ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (
-                  <div onClick={(e) => {
-                    e.stopPropagation()
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
                     detectVariables(element);
-                    getVariableValue(element)
-                  }} className={styles.wrapper_item}>
-                    {element?.key}
-                  </div>
+                    getVariableValue(element);
+                  }}
+                  className={styles.wrapper_item}
+                >
+                  {element?.key}
+                </div>
               ))}
             </div>
           </div>

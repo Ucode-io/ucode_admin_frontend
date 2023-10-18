@@ -486,7 +486,7 @@ const ButtonsMenu = ({
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", {
-                id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
+                id: element?.id,
                 type: "MINIO_FOLDER",
               });
               handleCloseNotify();

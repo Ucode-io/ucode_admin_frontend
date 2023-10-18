@@ -3,8 +3,9 @@ import style from "../style.module.scss";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-const MinioHeader = ({ menuItem, openModal, minios }) => {
+const MinioHeader = ({ menuItem, openModal, minios, selectedCards }) => {
   return (
     <>
       <Box className={style.header}>
@@ -23,6 +24,13 @@ const MinioHeader = ({ menuItem, openModal, minios }) => {
               <CreateNewFolderIcon />
             </div>
           </Tooltip>
+          {selectedCards?.length ? (
+            <Tooltip title="Delete">
+              <div className={style.deleteicon}>
+                <DeleteOutlineIcon />
+              </div>
+            </Tooltip>
+          ) : null}
           <Tooltip title="Create item">
             <div className={style.addicon} onClick={openModal}>
               <AddIcon />

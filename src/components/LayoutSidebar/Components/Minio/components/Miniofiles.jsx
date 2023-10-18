@@ -2,6 +2,7 @@ import { Box, Tooltip, Typography } from "@mui/material";
 import style from "../style.module.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import DescriptionIcon from "@mui/icons-material/Description";
+import FileTypes from "./FileType";
 const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
 const Card = ({ item, selected, onSelect }) => {
@@ -9,7 +10,7 @@ const Card = ({ item, selected, onSelect }) => {
 
   const parts = item?.object_name?.split(".");
   const extension = parts[parts.length - 1];
-
+  const size = item.object_size / 1048576;
   return (
     <Box className={style.card} key={item?.id}>
       <span
@@ -31,7 +32,11 @@ const Card = ({ item, selected, onSelect }) => {
         </Tooltip>
       </Typography>
       <Typography variant="h6" className={style.text}>
-        {extension === "png" ? extension?.toUpperCase() : "DOC"}
+        <FileTypes item={extension.toUpperCase()} />
+        {" • "}
+        <Tooltip title={`${Math.round(size * 100) / 100} MB`}>
+          {Math.round(size * 100) / 100}
+        </Tooltip>
       </Typography>
     </Box>
   );

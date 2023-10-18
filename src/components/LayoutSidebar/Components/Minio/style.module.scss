@@ -57,6 +57,28 @@
                 }
             }
 
+            .deleteicon {
+                width: 44px;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #F5F6FA;
+                border-radius: 50%;
+                cursor: pointer;
+
+                &:hover {
+                    background: #e35169;
+                    color: #fff;
+                    transition: 0.5s;
+                }
+
+                svg {
+                    width: 24px;
+                    height: 24px;
+                }
+            }
+
             .addicon {
                 width: 44px;
                 height: 44px;
@@ -133,8 +155,8 @@
 
     .miniocontainer {
         display: grid;
-        grid-template-columns: repeat(auto-fit, 80px);
-        gap: 32px 24px;
+        grid-template-columns: repeat(auto-fit, 100px);
+        gap: 32px 16px;
 
         .card {
             display: flex;

@@ -51,6 +51,7 @@ const MinioPage = () => {
           menuItem={menuItem}
           openModal={openModal}
           minios={minios}
+          selectedCards={selectedCards}
         />
 
         <MinioFilterBlock

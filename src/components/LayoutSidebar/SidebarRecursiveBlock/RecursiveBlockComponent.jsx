@@ -274,6 +274,11 @@ const RecursiveBlock = ({
               ) : (
                 <KeyboardArrowRightIcon />
               )}
+              {childBlockVisible && element?.type === "MINIO_FOLDER" ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                element?.type === "MINIO_FOLDER" && <KeyboardArrowRightIcon />
+              )}
               <IconGenerator
                 icon={
                   element?.icon ||

@@ -197,10 +197,7 @@ const SubMenu = ({
             {selectedApp?.data?.permission?.write && (
               <Button
                 className="menu-button active-with-child"
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE_TO_FOLDER");
-                  setElement(selectedApp);
-                }}
+                onClick={clickHandler}
                 openFolderCreateModal={openFolderCreateModal}
                 style={{
                   background: menuStyle?.background || "#fff",

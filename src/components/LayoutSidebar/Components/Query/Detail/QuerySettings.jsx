@@ -49,20 +49,13 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   boxShadow: "none",
 }));
 
-const QuerySettings = ({ form, resources }) => {
+const QuerySettings = ({ form, queryVariables }) => {
   const [expanded, setExpanded] = useState("panel1");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
   const variables = form.watch("variables") ?? [];
-  const queryVariables = form.getValues('query_variables')
-
-
-  const conmputedResource = useMemo(() => {
-    return resources?.find((item) => item?.id === queryVariables)
-  }, [variables, queryVariables])
-
 
   return (
     <Box className={styles.accordion}>
@@ -72,9 +65,10 @@ const QuerySettings = ({ form, resources }) => {
           onChange={handleChange("panel1")}
         >
           <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-            <Typography>Variables</Typography>
+            <Typography>Resource Variables</Typography>
           </AccordionSummary>
           <AccordionDetails>
+            {queryVariables?.map((item) => (
               <Box
                 display="flex"
                 height="max-content"
@@ -82,18 +76,19 @@ const QuerySettings = ({ form, resources }) => {
                 colorScheme="gray"
                 variant="ghost"
                 justifyContent="flex-start"
-              >
+                  >
                 <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="flex-start"
-                  width="100%"
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-start"
+                width="100%"
                 >
                   <Typography mb={2} color="#000">
-                    {conmputedResource?.name}
+                    {item?.key}
                   </Typography>
                 </Box>
               </Box>
+            ))}
           </AccordionDetails>
         </Accordion>
         <Accordion

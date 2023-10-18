@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useResourceListQuery, useResourceListQueryV2 } from "../../../../services/resourceService";
+import { useResourceListQuery, useResourceListQueryV2, useVariableResourceListQuery } from "../../../../services/resourceService";
 import {
   useQueryByIdQuery,
   useQueryCreateMutation,
@@ -32,7 +32,9 @@ const flex = {
 const Queries = () => {
   const [queryParams] = useSearchParams();
   const [commitViewIsOpen, setCommitViewIsOpen] = useState(false);
-  const { queryId } = useParams();
+  const { queryId, appId } = useParams();
+  const test = useParams();
+  console.log('tessstttttt', test)
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [responseQuery, setResponseQuery] = useState();
@@ -150,6 +152,8 @@ const Queries = () => {
     }
   }, [queryId]);
 
+  const queryVariables = form.getValues('query_variables')
+
   const { data: { resources } = {} } = useResourceListQueryV2({
     params: {},
   });
@@ -174,6 +178,17 @@ const Queries = () => {
       dispatch(showAlert("Success", "success"));
       queryClient.refetchQueries(["QUERIES"]);
     },
+  });
+
+  const { data: { variables } = {} } = useVariableResourceListQuery({
+    id: queryVariables,
+    params: {},
+    queryParams: {
+      enabled: Boolean(queryVariables),
+      onSuccess: (res) => {
+        console.log('res', res)
+      },
+    }
   });
 
   const onSubmit = (values) => {
@@ -212,6 +227,61 @@ const Queries = () => {
   const closeCommitView = () => {
     setCommitViewIsOpen(false);
   };
+
+  const updatedHeaders = useMemo(() => {
+    const mainVariables = form.getValues("body.headers");
+  
+    return mainVariables?.map((variable) => {
+      const computedVar = variable.value.replace(/{{(.+?)}}/, '$1')
+      const matchingObject = variables?.find((obj) => obj.key === variable.value.replace(/{{(.+?)}}/, '$1'));
+  
+      return {
+        key: variable?.key,
+        value: matchingObject ? `{{$$${computedVar}}}` : `${variable.value}`,
+      };
+    });
+  }, [form.watch("body.headers"), form.getValues("variables"), variables]);
+
+  const updatedCookies = useMemo(() => {
+    const mainVariables = form.getValues("body.cookies");
+  
+    return mainVariables?.map((variable) => {
+      const computedVar = variable.value.replace(/{{(.+?)}}/, '$1')
+      const matchingObject = variables?.find((obj) => obj.key === variable.value.replace(/{{(.+?)}}/, '$1'));
+  
+      return {
+        key: variable?.key,
+        value: matchingObject ? `{{$$${computedVar}}}` : `${variable.value}`,
+      };
+    });
+  }, [form.watch("body.cookies"), form.getValues("variables"), variables]);
+
+  const updatedParams = useMemo(() => {
+    const mainVariables = form.getValues("body.params");
+  
+    return mainVariables?.map((variable) => {
+      const computedVar = variable.value.replace(/{{(.+?)}}/, '$1')
+      const matchingObject = variables?.find((obj) => obj.key === variable.value.replace(/{{(.+?)}}/, '$1'));
+  
+      return {
+        key: variable?.key,
+        value: matchingObject ? `{{$$${computedVar}}}` : `${variable.value}`,
+      };
+    });
+  }, [form.watch("body.params"), form.getValues("variables"), variables]);
+
+  const updatedVariables = useMemo(() => {
+    const mainVariables = form.getValues("variables");
+  
+    return mainVariables?.map((variable) => {
+      const matchingObject = variables?.find((obj) => obj.key === variable.key);
+  
+      return {
+        key: matchingObject ? `$$${variable.key}` : variable.key,
+        value: variable.value,
+      };
+    });
+  }, [form.getValues("variables"), variables]);
 
   return (
     <FormProvider {...form}>
@@ -261,7 +331,12 @@ const Queries = () => {
               isLoading={runLoading}
               onClick={() =>
                 runQuery({
-                  body: form.getValues("body"),
+                  // body: form.getValues("body"),
+                  body: {
+                    ...form.getValues("body"),
+                    headers: updatedHeaders,
+                    cookies: updatedCookies,
+                  },
                   commit_id: "",
                   commit_info: {
                     author_id: "string",
@@ -294,13 +369,8 @@ const Queries = () => {
                     (item) => item.value === form.getValues("query_type")
                   ).label,
                   title: form.getValues("title"),
-                  project_resource_id: form.getValues("query_type"),
-                  variables: form.getValues("variables")?.map((variable) => {
-                    return {
-                      key: `$$${variable.key}`,
-                      value: variable.value,
-                    };
-                  }),
+                  project_resource_id: form.getValues('query_variables'),
+                  variables: updatedVariables,
                   version_id: "",
                 })
               }
@@ -331,7 +401,7 @@ const Queries = () => {
           </Box>
 
           <Box height="calc(100vh - 50px)" width="300px" minWidth="300px">
-            <QuerySettings form={form} resources={resources} />
+            <QuerySettings form={form} queryVariables={variables} />
           </Box>
         </Box>
       </Box>

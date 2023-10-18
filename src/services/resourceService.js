@@ -47,7 +47,7 @@ export const useResourceListQueryV2 = ({ params = {}, queryParams } = {}) => {
 
 export const useVariableResourceListQuery = ({ id, queryParams } = {}) => {
   return useQuery(
-    ["RESOURCES_VARIABLE"],
+    ["RESOURCES_VARIABLE", id],
     () => {
       return resourceService.getVariableResources(id);
     },

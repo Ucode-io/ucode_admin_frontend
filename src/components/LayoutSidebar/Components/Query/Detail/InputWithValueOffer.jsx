@@ -49,6 +49,8 @@ const InputWithValueOffer = ({
     }
   });
 
+  console.log('queryVairables', queryVairables)
+
   let typeOfElement = containsOnlyNumbers(form.watch(name));
 
   const copyToClipboard = () => {
@@ -135,7 +137,7 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 0 && inputValue.trim() === '{{}}' ? (
+        {variables?.length > 0 && inputValue.trim() === '{{}}' && Boolean(queryVairables) ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (

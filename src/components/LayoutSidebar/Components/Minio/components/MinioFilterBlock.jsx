@@ -2,8 +2,9 @@ import { Box, Tooltip, Typography } from "@mui/material";
 import style from "../style.module.scss";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SortIcon from "@mui/icons-material/Sort";
-import AppsIcon from "@mui/icons-material/Apps";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { SizeType, onSizeChange } from "./FileType";
+
 const MinioFilterBlock = ({
   selectAllCards,
   selectedCards,
@@ -13,20 +14,6 @@ const MinioFilterBlock = ({
   setSize,
   size,
 }) => {
-  const changeSize = () => {
-    if (size?.includes("small")) {
-      setSize(style.miniocontainermiddle);
-    }
-    if (size?.includes("middle")) {
-      setSize(style.miniocontainerbig);
-    }
-    if (size?.includes("big")) {
-      setSize(style.miniocontainerbiggest);
-    }
-    if (size?.includes("biggest")) {
-      setSize(style.miniocontainersmall);
-    }
-  };
   return (
     <>
       <Box className={style.filterblock}>
@@ -52,7 +39,9 @@ const MinioFilterBlock = ({
           </Box>
           <Box className={style.filter}>
             <Tooltip title="Card size">
-              <AppsIcon onClick={changeSize} />
+              <Box onClick={() => onSizeChange(size, setSize, style)}>
+                <SizeType item={size} />
+              </Box>
             </Tooltip>
             <Tooltip title="Sort description">
               {sort === "asc" ? (

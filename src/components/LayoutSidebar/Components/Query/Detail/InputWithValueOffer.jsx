@@ -49,8 +49,6 @@ const InputWithValueOffer = ({
     },
   });
 
-  console.log("queryVairables", queryVairables);
-
   let typeOfElement = containsOnlyNumbers(form.watch(name));
 
   const copyToClipboard = () => {

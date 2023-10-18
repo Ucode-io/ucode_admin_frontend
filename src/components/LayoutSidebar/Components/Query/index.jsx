@@ -293,7 +293,7 @@ const Queries = () => {
       };
     });
   }, [form.watch("variables"), variables]);
-
+  console.log("bodyyyyyyyyyyyy", form.watch("body"));
   return (
     <FormProvider {...form}>
       <Box className={styles.query}>

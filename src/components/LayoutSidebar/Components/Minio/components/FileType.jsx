@@ -1,3 +1,10 @@
+import {
+  TfiLayoutGrid2Alt,
+  TfiLayoutGrid3Alt,
+  TfiLayoutGrid4,
+  TfiLayoutGrid4Alt,
+} from "react-icons/tfi";
+
 const FileTypes = ({ item }) => {
   switch (item) {
     case "PNG":
@@ -32,6 +39,35 @@ const FileTypes = ({ item }) => {
       return "TORRENT";
     default:
       return "DOC";
+  }
+};
+
+export const SizeType = ({ item }) => {
+  switch (true) {
+    case item?.includes("small"):
+      return <TfiLayoutGrid4 />;
+    case item?.includes("middle"):
+      return <TfiLayoutGrid4Alt />;
+    case item?.includes("biggest"):
+      return <TfiLayoutGrid2Alt />;
+    case item?.includes("big"):
+      return <TfiLayoutGrid3Alt />;
+    default:
+      return <TfiLayoutGrid4 />;
+  }
+};
+export const onSizeChange = (item, setSize, style) => {
+  switch (true) {
+    case item?.includes("small"):
+      return setSize(style.miniocontainermiddle);
+    case item?.includes("middle"):
+      return setSize(style.miniocontainerbig);
+    case item?.includes("biggest"):
+      return setSize(style.miniocontainersmall);
+    case item?.includes("big"):
+      return setSize(style.miniocontainerbiggest);
+    default:
+      return <TfiLayoutGrid4 />;
   }
 };
 

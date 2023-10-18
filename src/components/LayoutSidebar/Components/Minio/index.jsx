@@ -13,6 +13,7 @@ const MinioPage = () => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [fileModalIsOpen, setFileModalIsOpen] = useState(null);
+  const [size, setSize] = useState(style.miniocontainersmall);
   const [sort, setSort] = useState("asc");
 
   const { data: minios, isLoading } = useMinioObjectListQuery({
@@ -61,11 +62,14 @@ const MinioPage = () => {
           removeCards={removeCards}
           setSort={setSort}
           sort={sort}
+          setSize={setSize}
+          size={size}
         />
         <MinioFiles
           minios={minios}
           setSelectedCards={setSelectedCards}
           selectedCards={selectedCards}
+          size={size}
         />
       </Box>
 

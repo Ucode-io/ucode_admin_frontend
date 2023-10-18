@@ -7,10 +7,10 @@ const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
 const Card = ({ item, selected, onSelect }) => {
   const url = `${cdnURL}${item.object_name}`;
-
   const parts = item?.object_name?.split(".");
   const extension = parts[parts.length - 1];
   const size = item.object_size / 1048576;
+
   return (
     <Box className={style.card} key={item?.id}>
       <span
@@ -42,7 +42,7 @@ const Card = ({ item, selected, onSelect }) => {
   );
 };
 
-const MinioFiles = ({ minios, setSelectedCards, selectedCards }) => {
+const MinioFiles = ({ minios, setSelectedCards, selectedCards, size }) => {
   const toggleSelectCard = (item) => {
     if (selectedCards?.includes(item)) {
       setSelectedCards(selectedCards?.filter((card) => card !== item));
@@ -53,7 +53,7 @@ const MinioFiles = ({ minios, setSelectedCards, selectedCards }) => {
 
   return (
     <>
-      <Box className={style.miniocontainer}>
+      <Box className={size}>
         {minios?.objects?.map((item) => (
           <Card
             key={item}

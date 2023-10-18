@@ -10,7 +10,23 @@ const MinioFilterBlock = ({
   removeCards,
   setSort,
   sort,
+  setSize,
+  size,
 }) => {
+  const changeSize = () => {
+    if (size?.includes("small")) {
+      setSize(style.miniocontainermiddle);
+    }
+    if (size?.includes("middle")) {
+      setSize(style.miniocontainerbig);
+    }
+    if (size?.includes("big")) {
+      setSize(style.miniocontainerbiggest);
+    }
+    if (size?.includes("biggest")) {
+      setSize(style.miniocontainersmall);
+    }
+  };
   return (
     <>
       <Box className={style.filterblock}>
@@ -36,7 +52,7 @@ const MinioFilterBlock = ({
           </Box>
           <Box className={style.filter}>
             <Tooltip title="Card size">
-              <AppsIcon />
+              <AppsIcon onClick={changeSize} />
             </Tooltip>
             <Tooltip title="Sort description">
               {sort === "asc" ? (

@@ -146,7 +146,7 @@ const ButtonsMenu = ({
           )}
         </Box>
       )}
-      {menuType === "CREATE_TO_FOLDER" && (
+      {menuType === "CREATE_TO_FOLDER" || menuType === "ROOT" && (
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}

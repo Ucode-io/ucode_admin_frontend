@@ -169,8 +169,6 @@ const QueryLogs = ({}) => {
     );
   }
 
-  console.log("selectedRow?.request");
-
   return (
     <>
       <Box p="16px">
@@ -285,7 +283,7 @@ const QueryLogs = ({}) => {
                       }}
                       align="right"
                     >
-                      {row?.duration}
+                      {row?.duration} s
                     </TableCell>
                   </TableRow>
                 ))}
@@ -395,7 +393,7 @@ const QueryLogs = ({}) => {
             {selectedRow && (
               <Box>
                 <Typography fontSize={"15px"}>
-                  {selectedRow.duration}
+                  {selectedRow.duration} s
                 </Typography>
               </Box>
             )}

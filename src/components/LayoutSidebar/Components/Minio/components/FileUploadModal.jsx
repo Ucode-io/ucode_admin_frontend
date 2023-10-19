@@ -15,7 +15,7 @@ const FileUploadModal = ({ closeModal, menuItem }) => {
   const onUpload = (data) => {
     setLoader(true);
     fileService
-      .folderUpload(data, { folder_name: menuItem?.label })
+      .folderUpload(data, { folder_name: menuItem?.attributes?.path })
       .then((res) => {
         setLoader(false);
         closeModal();

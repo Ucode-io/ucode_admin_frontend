@@ -7,6 +7,7 @@ import { useMinioObjectListQuery } from "../../../../services/fileService";
 import FileUploadModal from "./components/FileUploadModal";
 import { useState } from "react";
 import MinioFiles from "./components/Miniofiles";
+import { store } from "../../../../store";
 
 const MinioPage = () => {
   const menuItem = useSelector((state) => state.menu.menuItem);
@@ -15,12 +16,18 @@ const MinioPage = () => {
   const [fileModalIsOpen, setFileModalIsOpen] = useState(null);
   const [size, setSize] = useState(style.miniocontainersmall);
   const [sort, setSort] = useState("asc");
+  const company = store.getState().company;
 
   const { data: minios, isLoading } = useMinioObjectListQuery({
-    folderName: menuItem?.label,
     params: {
-      folder_name: menuItem?.label,
-      sort: sort,
+      folder_name: menuItem?.attributes?.path,
+      // sort: sort,
+      project_id: company.projectId,
+    },
+    queryParams: {
+      onSuccess: (res) => {
+        console.log("res", res);
+      },
     },
   });
 

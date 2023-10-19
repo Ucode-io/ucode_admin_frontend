@@ -31,6 +31,7 @@ const InputWithValueOffer = ({
     control: form.control,
     name,
   });
+  console.log("name", name);
   const dispatch = useDispatch();
   const containsOnlyNumbers = (str) => {
     return /^[0-9]+$/.test(str);
@@ -60,20 +61,19 @@ const InputWithValueOffer = ({
     setValue(newValue);
   };
 
-  const getValueMatch = useMemo(() => {
-    if (!inputValue || !variables) return false;
+  // const getValueMatch = useMemo(() => {
+  //   if (!inputValue || !variables) return false;
 
-    const variableNames = inputValue
-      ?.match(/{{\$\$(.*?)}}/g)
-      ?.map((match) => match?.slice(4, -2));
+  //   const variableNames = inputValue
+  //     ?.match(/{{\$\$(.*?)}}/g)
+  //     ?.map((match) => match?.slice(4, -2));
 
-    return variableNames?.every((variableName) =>
-      variables?.some((item) => item?.key === variableName)
-    );
-  }, [inputValue, variables]);
+  //   return variableNames?.every((variableName) =>
+  //     variables?.some((item) => item?.key === variableName)
+  //   );
+  // }, [inputValue, variables]);
 
   const getVariableValue = (element) => {
-    console.log("elemenet", element);
     form.setValue(name, `{{${element?.key}}}`);
     getElementBetween(form);
     setValue(newValue);

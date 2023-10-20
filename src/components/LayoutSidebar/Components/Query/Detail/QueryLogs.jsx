@@ -14,11 +14,14 @@ import {
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ViewInArIcon from "@mui/icons-material/ViewInAr";
 import ClearIcon from "@mui/icons-material/Clear";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useQueryLogById} from "../../../../../services/queryService";
 import {useParams} from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import ReactJson from "react-json-view";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import QueryLogBody from "./QueryLogBody";
 
 const tableStyles = {
   borderRadius: "0px",
@@ -29,12 +32,61 @@ const tableStyles = {
   overflow: "hidden",
 };
 
+const codeMirrorStyles = {
+  height: "250px",
+  overflow: "scroll",
+  borderBottomRightRadius: "8px",
+  borderBottomLeftRadius: "8px",
+};
+
+const labelStyles = {
+  width: "100%",
+  background: "#272822",
+  borderBottom: "0.5px solid #eee",
+  borderTopLeftRadius: "8px",
+  borderTopRightRadius: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "5px",
+};
+
 const QueryLogs = ({}) => {
   const {queryId} = useParams();
-
+  const jsonRef = useRef();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  console.log("selectedRow", selectedRow);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [responseSuccess, setResponseSuccess] = useState(false);
+
+  const handleCopy = (item, type) => {
+    let jsonString = "";
+    if (typeof item !== "string") {
+      jsonString = JSON.stringify(item, null, 2);
+    } else {
+      jsonString = item;
+    }
+
+    navigator.clipboard
+      .writeText(jsonString)
+      .then(() => {
+        if (type === "request") {
+          setRequestSuccess(true);
+          setTimeout(() => {
+            setRequestSuccess(false);
+          }, 500);
+        } else if (type === "response") {
+          setResponseSuccess(true);
+          setTimeout(() => {
+            setResponseSuccess(false);
+          }, 500);
+        }
+      })
+      .catch((error) => {
+        console.error("Error copying to clipboard:", error);
+      });
+  };
+
   const handleRowClick = (row) => {
     setIsDrawerOpen(true);
     setSelectedRow(row);
@@ -44,92 +96,6 @@ const QueryLogs = ({}) => {
     setIsDrawerOpen(false);
     setSelectedRow(null);
   };
-  const rows = [
-    {
-      id: 1,
-      request: "John Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 2,
-      request: "John Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 3,
-      request: "John Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 4,
-      request: "Jonathan Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 5,
-      request: "Lucy Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 6,
-      request: "Gearge Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-    {
-      id: 7,
-      request: "Benjamin Doe",
-      response: 30,
-      userData: {
-        login: "login",
-        email: "email",
-        phone: "phone",
-        name: "name",
-      },
-      duration: "Admin User",
-    },
-  ];
 
   const {data: logs} = useQueryLogById({
     id: queryId,
@@ -140,34 +106,6 @@ const QueryLogs = ({}) => {
       },
     },
   });
-
-  function syntaxHighlight(json) {
-    if (typeof json != "string") {
-      json = JSON.stringify(json, undefined, 2);
-    }
-    json = json
-      ?.replace(/&/g, "&amp;")
-      ?.replace(/</g, "&lt;")
-      ?.replace(/>/g, "&gt;");
-    return json?.replace(
-      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-      function (match) {
-        var cls = "number";
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = "key";
-          } else {
-            cls = "string";
-          }
-        } else if (/true|false/.test(match)) {
-          cls = "boolean";
-        } else if (/null/.test(match)) {
-          cls = "null";
-        }
-        return '<span class="' + cls + '">' + match + "</span>";
-      }
-    );
-  }
 
   return (
     <>
@@ -224,7 +162,7 @@ const QueryLogs = ({}) => {
                     width={100}
                     align="right"
                   >
-                    User Data
+                    User
                   </TableCell>
                   <TableCell
                     sx={{
@@ -240,52 +178,11 @@ const QueryLogs = ({}) => {
               </TableHead>
               <TableBody>
                 {logs?.logs?.map((row) => (
-                  <TableRow
-                    sx={{cursor: "pointer"}}
-                    key={row.id}
-                    onClick={() => handleRowClick(row)}
-                  >
-                    <TableCell
-                      key={row.id}
-                      align={row.align}
-                      component="th"
-                      scope="row"
-                      sx={{
-                        ...tableStyles,
-                      }}
-                    >
-                      {row.request?.action_type}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...tableStyles,
-                      }}
-                      align="right"
-                    >
-                      {row.response?.length > 10
-                        ? `${row?.response?.substring(0, 25)}...`
-                        : row?.response}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...tableStyles,
-                      }}
-                      align="right"
-                    >
-                      {row.user_data?.login ??
-                        row?.user_data?.email ??
-                        row?.user_data?.phone ??
-                        row?.user_data?.name}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...tableStyles,
-                      }}
-                      align="right"
-                    >
-                      {row?.duration} s
-                    </TableCell>
-                  </TableRow>
+                  <QueryLogBody
+                    row={row}
+                    tableStyles={tableStyles}
+                    handleRowClick={handleRowClick}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -306,75 +203,100 @@ const QueryLogs = ({}) => {
             <Typography fontSize={"24px"} fontWeight="600" textAlign="end">
               Activity Feed
             </Typography>
-            <Button sx={{background: "none"}} onClick={handleCloseDrawer}>
+            <Button
+              sx={{background: "none", padding: 0}}
+              onClick={handleCloseDrawer}
+            >
               <ClearIcon
                 sx={{width: "40px", fontSize: "24px", color: "#000"}}
               />
             </Button>
           </Box>
           <Box sx={{padding: "20px 0px 0 0"}}>
-            <Typography fontSize={"16px"} fontWeight="600">
-              Request:
-            </Typography>
             <Box>
-              {/* <CodeMirror
-                style={{borderRadius: "10px", overflow: "hidden"}}
-                value={JSON.stringify(selectedRow?.request, null, 2)}
-                height="200px"
-                width="100%"
-                color="#00C387"
-                theme={"dark"}
-              /> */}
+              <Box
+                sx={{
+                  ...labelStyles,
+                }}
+              >
+                <Typography
+                  fontSize={"16px"}
+                  fontWeight="600"
+                  style={{color: "#fff", marginLeft: "10px"}}
+                >
+                  Request:
+                </Typography>
+                <Button
+                  onClick={() => {
+                    handleCopy(selectedRow?.request, "request");
+                  }}
+                >
+                  {requestSuccess ? <DoneAllIcon /> : <ContentCopyIcon />}
+                </Button>
+              </Box>
 
               <ReactJson
-                src={selectedRow?.request}
+                src={selectedRow?.request ? selectedRow?.request : {}}
+                ref={jsonRef}
                 style={{
-                  height: "250px",
-                  overflow: "scroll",
-                  borderRadius: "8px",
+                  ...codeMirrorStyles,
                 }}
                 theme="monokai"
                 collapsed={false}
-                enableClipboard={true}
+                enableClipboard={false}
               />
-              {/* <Typography>{}</Typography> */}
             </Box>
           </Box>
           <Box sx={{padding: "20px 0px 0 0"}}>
-            <Typography fontSize={"16px"} fontWeight="600">
-              Response:
-            </Typography>
             {selectedRow && (
               <Box>
-                {/* <CodeMirror
-                  style={{borderRadius: "10px", overflow: "hidden"}}
-                  value={JSON.stringify(
-                    JSON.parse(selectedRow?.response),
-                    undefined,
-                    2
-                  )}
-                  width="100%"
-                  height="200px"
-                  color="#00C387"
-                  theme={"dark"}
-                /> */}
+                <Box
+                  sx={{
+                    ...labelStyles,
+                  }}
+                >
+                  <Typography
+                    fontSize={"16px"}
+                    fontWeight="600"
+                    style={{color: "#fff", marginLeft: "10px"}}
+                  >
+                    Response:
+                  </Typography>
+                  <Button
+                    onClick={() => {
+                      handleCopy(selectedRow?.response, "response");
+                    }}
+                  >
+                    {responseSuccess ? <DoneAllIcon /> : <ContentCopyIcon />}
+                  </Button>
+                </Box>
                 <ReactJson
-                  src={JSON.parse(selectedRow?.response)}
+                  src={
+                    selectedRow?.response
+                      ? JSON.parse(selectedRow?.response)
+                      : ""
+                  }
+                  ref={jsonRef}
                   style={{
-                    height: "250px",
-                    overflow: "scroll",
-                    borderRadius: "8px",
+                    ...codeMirrorStyles,
                   }}
                   theme="monokai"
                   collapsed={false}
-                  enableClipboard={true}
+                  enableClipboard={false}
                 />
               </Box>
             )}
           </Box>
-          <Box sx={{padding: "20px 0px 0 0"}}>
+          <Box
+            sx={{
+              padding: "20px 0px 0 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
             <Typography fontSize={"16px"} fontWeight="600">
-              UserData:
+              User:
             </Typography>
             {selectedRow && (
               <Box>
@@ -386,16 +308,21 @@ const QueryLogs = ({}) => {
               </Box>
             )}
           </Box>
-          <Box sx={{padding: "20px 0px 0 0"}}>
+          <Box
+            sx={{
+              padding: "20px 0px 0 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
             <Typography fontSize={"16px"} fontWeight="600">
               Duration:
             </Typography>
             {selectedRow && (
-              <Box>
-                <Typography fontSize={"15px"}>
-                  {selectedRow.duration} s
-                </Typography>
-              </Box>
+              <Typography fontSize={"15px"}>
+                {selectedRow.duration} s
+              </Typography>
             )}
           </Box>
         </Box>

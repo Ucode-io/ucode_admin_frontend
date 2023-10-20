@@ -17,6 +17,7 @@ import GanttView from "./GanttView";
 import { store } from "../../store";
 import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
+import TimeLineView from "./TimeLineView";
 
 const ObjectsPage = () => {
   const { tableSlug, appId } = useParams();
@@ -51,10 +52,7 @@ const ObjectsPage = () => {
     {
       select: ({ data }) => {
         return {
-          views:
-            data?.views?.filter(
-              (view) => view?.attributes?.view_permission?.view === true
-            ) ?? [],
+          views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
           fieldsMap: listToMap(data?.fields),
         };
       },
@@ -64,9 +62,7 @@ const ObjectsPage = () => {
     }
   );
   useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab - 1))
-      : setSelectedTabIndex(0);
+    queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const menuItem = store.getState().menu.menuItem;
@@ -82,14 +78,7 @@ const ObjectsPage = () => {
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
                   <>
-                    <BoardView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
+                    <BoardView view={view} setViews={setViews} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} fieldsMap={fieldsMap} />
                   </>
                 ) : view.type === "CALENDAR" ? (
                   <>
@@ -116,7 +105,11 @@ const ObjectsPage = () => {
                   </>
                 ) : view.type === "GANTT" ? (
                   <>
-                    <GanttView
+                    <GanttView view={view} setViews={setViews} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} fieldsMap={fieldsMap} />
+                  </>
+                ) : view.type === "TIMELINE" ? (
+                  <>
+                    <TimeLineView
                       view={view}
                       setViews={setViews}
                       selectedTabIndex={selectedTabIndex}
@@ -141,23 +134,14 @@ const ObjectsPage = () => {
             );
           })}
           <TabPanel>
-            <DocView
-              views={views}
-              fieldsMap={fieldsMap}
-              selectedTabIndex={selectedTabIndex}
-              setSelectedTabIndex={setSelectedTabIndex}
-            />
+            <DocView views={views} fieldsMap={fieldsMap} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} />
           </TabPanel>
         </div>
       </Tabs>
 
       {!views?.length && (
         <FiltersBlock>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-          />
+          <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
         </FiltersBlock>
       )}
     </>

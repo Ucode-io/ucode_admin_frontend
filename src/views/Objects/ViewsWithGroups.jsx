@@ -2,12 +2,7 @@ import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
 import CustomActionsButton from "./components/CustomActionsButton";
-import {
-  ArrowDropDownCircleOutlined,
-  Clear,
-  Edit,
-  Save,
-} from "@mui/icons-material";
+import { ArrowDropDownCircleOutlined, Clear, Edit, Save } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
@@ -51,14 +46,7 @@ import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
 import SettingsIcon from "@mui/icons-material/Settings";
 
-const ViewsWithGroups = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
-  fieldsMap,
-  menuItem,
-}) => {
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const visibleForm = useForm();
@@ -66,11 +54,8 @@ const ViewsWithGroups = ({
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [shouldGet, setShouldGet] = useState(false);
-  const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
-  const { navigateToForm } = useTabRouter();
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -149,51 +134,12 @@ const ViewsWithGroups = ({
     name: "multi",
   });
 
-  const getValue = useCallback((item, key) => {
-    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
-  }, []);
-
-  const { mutate: updateMultipleObject, isLoading } = useMutation(
-    (values) =>
-      constructorObjectService.updateMultipleObject(tableSlug, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-          })),
-        },
-      }),
-    {
-      onSuccess: () => {
-        setShouldGet((p) => !p);
-        setFormVisible(false);
-      },
-    }
-  );
-
-  const onSubmit = (data) => {
-    updateMultipleObject(data);
-  };
-
   const handleHeightControl = (val) => {
     dispatch(
       tableSizeAction.setTableHeight({
         tableHeight: val,
       })
     );
-    setHeightControl(false);
-  };
-
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug);
-  };
-
-  const navigateToCreatePageWithInvite = () => {
-    navigateToForm(tableSlug);
-    dispatch(menuActions.setInvite(true));
   };
 
   function dateIsValid(date) {
@@ -222,15 +168,11 @@ const ViewsWithGroups = ({
         .finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
-  console.log('menuItem', menuItem)
+
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
-
-  // useEffect(() => {
-  //   setSelectedView(views?.[selectedTabIndex] ?? {});
-  // }, [views, selectedTabIndex]);
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
@@ -337,9 +279,7 @@ const ViewsWithGroups = ({
           defaultViewTab={defaultViewTab}
           setTab={setTab}
         />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
+        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -347,10 +287,7 @@ const ViewsWithGroups = ({
           <div className={style.search}>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
             <Divider orientation="vertical" flexItem />
-            <SearchInput
-              placeholder={"Search"}
-              onChange={(e) => setSearchText(e)}
-            />
+            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -392,11 +329,7 @@ const ViewsWithGroups = ({
                 },
               }}
             >
-              <SearchParams
-                checkedColumns={checkedColumns}
-                setCheckedColumns={setCheckedColumns}
-                columns={columnsForSearch}
-              />
+              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
             </Menu>
           </div>
 
@@ -420,11 +353,7 @@ const ViewsWithGroups = ({
 
             {/* <Divider orientation="vertical" flexItem /> */}
 
-            <SortButton
-              selectedTabIndex={selectedTabIndex}
-              sortDatas={sortedDatas}
-              setSortedDatas={setSortedDatas}
-            />
+            <SortButton selectedTabIndex={selectedTabIndex} sortDatas={sortedDatas} setSortedDatas={setSortedDatas} />
 
             {/* <Divider orientation="vertical" flexItem /> */}
 
@@ -505,10 +434,7 @@ const ViewsWithGroups = ({
 
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
-                      <div
-                        className={style.template}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
+                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
                         {/* <div
                           className={`${style.element} ${
                             selectedTabIndex === views?.length
@@ -631,11 +557,7 @@ const ViewsWithGroups = ({
                 </div>
                 <TabList style={{ border: "none" }}>
                   {tabs?.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      selectedClassName={style.activeTab}
-                      className={`${style.disableTab} react-tabs__tab`}
-                    >
+                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
                       {tab.label}
                     </Tab>
                   ))}
@@ -751,13 +673,7 @@ const ViewsWithGroups = ({
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                      />
+                      <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} tab={tab} />
                     ) : view?.type === "FINANCE CALENDAR" ? (
                       <FinancialCalendarView
                         view={view}
@@ -801,12 +717,7 @@ const ViewsWithGroups = ({
               {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
+                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       control={control}
@@ -882,10 +793,7 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
-      ],
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

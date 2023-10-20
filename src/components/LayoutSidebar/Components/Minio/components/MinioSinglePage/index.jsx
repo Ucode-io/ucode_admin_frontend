@@ -83,7 +83,7 @@ const MinioSinglePage = () => {
             <DescriptionIcon />
           </Box>
         )}
-        <MinioForm control={control} />
+        <MinioForm control={control} file={file} />
       </Box>
     </>
   );

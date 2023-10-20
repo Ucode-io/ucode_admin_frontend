@@ -39,7 +39,8 @@ const ConstructorTablesFormPage = () => {
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
+  console.log("slug", slug);
 
   const mainForm = useForm({
     defaultValues: {
@@ -312,7 +313,11 @@ const ConstructorTablesFormPage = () => {
           </TabPanel>
 
           <TabPanel>
-            <Fields getRelationFields={getRelationFields} mainForm={mainForm} />
+            <Fields
+              getRelationFields={getRelationFields}
+              mainForm={mainForm}
+              slug={slug}
+            />
           </TabPanel>
 
           {id && (

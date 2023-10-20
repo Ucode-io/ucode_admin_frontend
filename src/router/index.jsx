@@ -74,6 +74,9 @@ import Invite from "../views/Auth/Invite";
 import UsersList from "../views/Users/UsersList";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
+import TablesPage from "../views/Constructor/AllTables";
+import MinioPage from "../components/LayoutSidebar/Components/Minio";
+import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -146,13 +149,16 @@ const Router = () => {
           }
         />
 
-
         <Route index element={<Navigate to={redirectLink} />} />
 
         <Route path=":appId" element={<div></div>} />
 
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
+        </Route>
+        <Route path=":appId/backet/:minioId">
+          <Route index element={<MinioPage />} />
+          <Route path=":fileId" element={<MinioSinglePage />} />
         </Route>
         <Route path=":appId/projects">
           <Route index element={<ProjectPage />} />
@@ -334,13 +340,27 @@ const Router = () => {
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
         </Route>
 
+        <Route path="constructor/tables">
+          <Route index element={<TablesPage />} />
+          {/* <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+        </Route>
+
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route
           path="constructor/apps/:appId/objects/create"
           element={<ConstructorTablesFormPage />}
         />
         <Route
+          path="constructor/tables/create"
+          element={<ConstructorTablesFormPage />}
+        />
+        <Route
           path="constructor/apps/:appId/objects/:id/:slug"
+          element={<ConstructorTablesFormPage />}
+        />
+        <Route
+          path="constructor/tables/:id/:slug"
           element={<ConstructorTablesFormPage />}
         />
         <Route

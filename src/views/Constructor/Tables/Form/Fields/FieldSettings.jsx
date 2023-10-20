@@ -9,6 +9,7 @@ import {
   Box,
   Card,
   IconButton,
+  Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -32,6 +33,10 @@ import { add } from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
+import { useMenuListQuery } from "../../../../../services/menuService";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { TreeView } from "@mui/lab";
+import FieldTreeView from "./FieldTreeView";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -44,14 +49,17 @@ const FieldSettings = ({
   isTableView = false,
   onSubmit = () => {},
   getRelationFields,
+  slug,
 }) => {
   const { id, tableSlug, appId } = useParams();
-  const { handleSubmit, control, reset, watch } = useForm();
+  const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
+  const [check, setCheck] = useState(false);
+  const [folder, setFolder] = useState("");
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -89,7 +97,7 @@ const FieldSettings = ({
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getList(slug, {
         data: { limit: 10, offset: 0, app_id: appId },
       });
     },
@@ -145,6 +153,11 @@ const FieldSettings = ({
     }
   };
 
+  const { data: backetOptions, isBacketLoading } = useMenuListQuery({
+    params: {
+      parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
+    },
+  });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
       setFormLoader(true);
@@ -160,6 +173,12 @@ const FieldSettings = ({
       updateFieldInform(field);
       closeSettingsBlock();
     }
+  };
+
+  const handleSelect = (e, item) => {
+    setValue("attributes.minio_folder", item);
+    setCheck(true);
+    setFolder(item);
   };
 
   const submitHandler = (values) => {
@@ -224,7 +243,6 @@ const FieldSettings = ({
       },
     }
   );
-
   useEffect(() => {
     const values = {
       attributes: {},
@@ -237,12 +255,12 @@ const FieldSettings = ({
       type: "",
       relation_field: selectedAutofillFieldSlug,
     };
-
     if (formType !== "CREATE") {
       reset({
         ...values,
         ...field,
       });
+      setFolder(field?.minio_folder);
     } else {
       reset(values);
     }
@@ -436,8 +454,45 @@ const FieldSettings = ({
                             optionType="GROUP"
                             placeholder="Type"
                             required
+                            defaultValue={fieldType}
                           />
                         </FRow>
+
+                        {(fieldType === "FILE" ||
+                          fieldType === "VIDEO" ||
+                          fieldType === "PHOTO" ||
+                          fieldType === "CUSTOM_IMAGE") && (
+                          <FRow
+                            label="Backet"
+                            required
+                            extra={
+                              <>
+                                <Typography variant="h6">
+                                  Selected folder: {folder}
+                                </Typography>
+                              </>
+                            }
+                          >
+                            <TreeView
+                              defaultCollapseIcon={<ExpandMoreIcon />}
+                              defaultExpandIcon={<ChevronRightIcon />}
+                              defaultSelected={folder}
+                              onNodeSelect={handleSelect}
+                              style={{
+                                border: "1px solid #D4DAE2",
+                              }}
+                            >
+                              {backetOptions?.menus?.map((item) => (
+                                <FieldTreeView
+                                  element={item}
+                                  setCheck={setCheck}
+                                  check={check}
+                                  folder={folder}
+                                />
+                              ))}
+                            </TreeView>
+                          </FRow>
+                        )}
 
                         {(fieldType === "SINGLE_LINE" ||
                           fieldType === "MULTI_LINE") && (

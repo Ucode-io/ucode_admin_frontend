@@ -113,11 +113,10 @@ const TableView = ({
   });
 
   const paginiation = useMemo(() => {
-    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
 
-    return getObject?.pageLimit ?? null
-  }, [paginationInfo, tableSlug])
-
+    return getObject?.pageLimit ?? null;
+  }, [paginationInfo, tableSlug]);
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -349,7 +348,9 @@ const TableView = ({
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / (paginiation ?? limit)),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / (paginiation ?? limit)),
       };
     },
     onSuccess: (data) => {
@@ -492,7 +493,7 @@ const TableView = ({
   //   }
   // }, []);
 
-  console.log('currentPage', currentPage)
+  console.log("currentPage", currentPage);
 
   return (
     <div className={styles.wrapper}>
@@ -561,6 +562,7 @@ const TableView = ({
               margin: 0,
             }}
             isResizeble={true}
+            navigateToForm={navigateToForm}
             {...props}
           />
           {/* ) : <EmptyDataComponent />} */}

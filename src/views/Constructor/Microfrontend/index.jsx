@@ -51,7 +51,7 @@ const MicrofrontendPage = () => {
 
   return (
     <div>
-      <HeaderSettings title={"Микрофронтенд"} />
+      <HeaderSettings title={"Микрофронтенд"} backButtonLink={-1} />
 
       <FiltersBlock>
         <div className="p-1">

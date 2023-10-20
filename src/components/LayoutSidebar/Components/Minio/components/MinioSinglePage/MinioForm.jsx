@@ -1,10 +1,16 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import FormCard from "../../../../../FormCard";
 import FRow from "../../../../../FormElements/FRow";
 import HFTextField from "../../../../../FormElements/HFTextField";
 import style from "./style.module.scss";
+import DownloadIcon from "@mui/icons-material/Download";
+import useDownloader from "../../../../../../hooks/useDownloader";
+const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
-const MinioForm = ({ control }) => {
+const MinioForm = ({ control, file }) => {
+  const { download } = useDownloader();
+  const url = `${cdnURL}${file?.link}`;
+
   return (
     <>
       <Box className={style.form}>
@@ -50,6 +56,13 @@ const MinioForm = ({ control }) => {
               control={control}
               fullWidth
               required
+              endAdornment={
+                <IconButton
+                  onClick={() => download({ link: url, fileName: file?.title })}
+                >
+                  <DownloadIcon />
+                </IconButton>
+              }
             />
           </FRow>
         </FormCard>

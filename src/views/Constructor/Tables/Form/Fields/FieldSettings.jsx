@@ -9,6 +9,7 @@ import {
   Box,
   Card,
   IconButton,
+  Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -33,6 +34,9 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
 import { useMenuListQuery } from "../../../../../services/menuService";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { TreeView } from "@mui/lab";
+import FieldTreeView from "./FieldTreeView";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -48,12 +52,14 @@ const FieldSettings = ({
   slug,
 }) => {
   const { id, tableSlug, appId } = useParams();
-  const { handleSubmit, control, reset, watch } = useForm();
+  const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
+  const [check, setCheck] = useState(false);
+  const [folder, setFolder] = useState("");
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -151,14 +157,6 @@ const FieldSettings = ({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
-    queryParams: {
-      select: (data) => {
-        return data?.menus?.map((item) => ({
-          label: item.label,
-          value: item.label,
-        }));
-      },
-    },
   });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
@@ -175,6 +173,12 @@ const FieldSettings = ({
       updateFieldInform(field);
       closeSettingsBlock();
     }
+  };
+
+  const handleSelect = (e, item) => {
+    setValue("attributes.minio_folder", item);
+    setCheck(true);
+    setFolder(item);
   };
 
   const submitHandler = (values) => {
@@ -256,6 +260,7 @@ const FieldSettings = ({
         ...values,
         ...field,
       });
+      setFolder(field?.minio_folder);
     } else {
       reset(values);
     }
@@ -427,15 +432,35 @@ const FieldSettings = ({
                           fieldType === "VIDEO" ||
                           fieldType === "PHOTO" ||
                           fieldType === "CUSTOM_IMAGE") && (
-                          <FRow label="Backet" required>
-                            <HFSelect
-                              disabledHelperText
-                              name="attributes.minio_folder"
-                              control={control}
-                              options={backetOptions}
-                              placeholder="Backet"
-                              required
-                            />
+                          <FRow
+                            label="Backet"
+                            required
+                            extra={
+                              <>
+                                <Typography variant="h6">
+                                  Selected folder: {folder}
+                                </Typography>
+                              </>
+                            }
+                          >
+                            <TreeView
+                              defaultCollapseIcon={<ExpandMoreIcon />}
+                              defaultExpandIcon={<ChevronRightIcon />}
+                              defaultSelected={folder}
+                              onNodeSelect={handleSelect}
+                              style={{
+                                border: "1px solid #D4DAE2",
+                              }}
+                            >
+                              {backetOptions?.menus?.map((item) => (
+                                <FieldTreeView
+                                  element={item}
+                                  setCheck={setCheck}
+                                  check={check}
+                                  folder={folder}
+                                />
+                              ))}
+                            </TreeView>
                           </FRow>
                         )}
 

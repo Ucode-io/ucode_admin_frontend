@@ -568,6 +568,21 @@ const ButtonsMenu = ({
           />
         </Box>
       )}
+      {menuType === "MINIO_FOLDER" && (
+        <Box className="menu">
+          {element?.data?.permission?.delete || permissionButton ? (
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить папку"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          ) : null}
+        </Box>
+      )}
     </Menu>
   );
 };

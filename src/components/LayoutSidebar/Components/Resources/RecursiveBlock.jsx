@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
+import {Box, Button} from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { useNavigate, useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { updateLevel } from "../../../../utils/level";
-import { useQueryClient } from "react-query";
+import {updateLevel} from "../../../../utils/level";
+import {useQueryClient} from "react-query";
 
 const RecursiveBlock = ({
   element,
@@ -15,9 +15,10 @@ const RecursiveBlock = ({
   childBlockVisible,
   deleteResource,
   setSubMenuIsOpen,
-  deleteResourceV2
+  deleteResourceV2,
+  resourceType,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const navigate = useNavigate();
 
   const activeStyle = {
@@ -38,129 +39,133 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.type === 'REST' ? (
+        {element?.type === "REST" ? (
           <Button
-          key={element.id}
-          style={activeStyle}
-          className={`nav-element ${
-            element.isChild &&
-            (tableSlug !== element.slug ? "active-with-child" : "active")
-          }`}
-          onClick={(e) =>  {
-            e.stopPropagation()
-            navigate(`${element?.id}/variable-resources`)
-            setSubMenuIsOpen(false)
-          }}
-        >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === element?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-              opacity: element?.isChild && 0.6,
-            }}
-          >
-            <IconGenerator icon={element?.icon} size={18} />
-            {element?.title ?? element?.name}
-          </div>
-          <Box
+            key={element.id}
+            style={activeStyle}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
             onClick={(e) => {
               e.stopPropagation();
-              deleteResourceV2({
-                id: element?.id,
+              setSubMenuIsOpen(false);
+              navigate(`/main/resources/${element?.id}`, {
+                state: {
+                  type: element?.type,
+                },
               });
             }}
-            sx={{ cursor: "pointer" }}
           >
-            <DeleteIcon />
-          </Box>
-        </Button>
+            <div
+              className="label"
+              style={{
+                color:
+                  selected?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text,
+                opacity: element?.isChild && 0.6,
+              }}
+            >
+              <IconGenerator icon={element?.icon} size={18} />
+              {element?.title ?? element?.name}
+            </div>
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteResourceV2({
+                  id: element?.id,
+                });
+              }}
+              sx={{cursor: "pointer"}}
+            >
+              <DeleteIcon />
+            </Box>
+          </Button>
         ) : (
           <Button
-          key={element.id}
-          style={activeStyle}
-          className={`nav-element ${
-            element.isChild &&
-            (tableSlug !== element.slug ? "active-with-child" : "active")
-          }`}
-          onClick={clickHandler}
-        >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === element?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-              opacity: element?.isChild && 0.6,
-            }}
-            onClick={() => navigate(`/main/resources/${element?.id}`)}
+            key={element.id}
+            style={activeStyle}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
+            onClick={clickHandler}
           >
-            <IconGenerator icon={element?.icon} size={18} />
-            {element?.title ?? element?.name}
-          </div>
-          <Box
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteResource({
-                id: element?.id,
-              });
-            }}
-            sx={{ cursor: "pointer" }}
-          >
-            <DeleteIcon />
-          </Box>
-          {element.type === "FOLDER" && (
-            <Box className="icon_group">
-              <Tooltip title="Resource settings" placement="top">
-                <Box className="extra_icon">
-                  <BsThreeDots
-                    size={13}
-                    onClick={(e) => {
-                      e?.stopPropagation();
-                      handleOpenNotify(e, "FOLDER");
-                    }}
-                    style={{
-                      color:
-                        selected?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                </Box>
-              </Tooltip>
+            <div
+              className="label"
+              style={{
+                color:
+                  selected?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text,
+                opacity: element?.isChild && 0.6,
+              }}
+              onClick={() => navigate(`/main/resources/${element?.id}`)}
+            >
+              <IconGenerator icon={element?.icon} size={18} />
+              {element?.title ?? element?.name}
+            </div>
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteResource({
+                  id: element?.id,
+                });
+              }}
+              sx={{cursor: "pointer"}}
+            >
+              <DeleteIcon />
             </Box>
-          )}
-          {element.type === "DAG" && (
-            <Box className="icon_group">
-              <Tooltip title="Resource settings" placement="top">
-                <Box className="extra_icon">
-                  <BsThreeDots
-                    size={13}
-                    onClick={(e) => {
-                      e?.stopPropagation();
-                      handleOpenNotify(e, "DAG");
-                    }}
-                    style={{
-                      color:
-                        selected?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                </Box>
-              </Tooltip>
-            </Box>
-          )}
-          {element.type === "FOLDER" &&
-            (childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            ))}
-        </Button>
+            {element.type === "FOLDER" && (
+              <Box className="icon_group">
+                <Tooltip title="Resource settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                      }}
+                      style={{
+                        color:
+                          selected?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              </Box>
+            )}
+            {element.type === "DAG" && (
+              <Box className="icon_group">
+                <Tooltip title="Resource settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "DAG");
+                      }}
+                      style={{
+                        color:
+                          selected?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              </Box>
+            )}
+            {element.type === "FOLDER" &&
+              (childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              ))}
+          </Button>
         )}
       </div>
     </Box>

@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Tooltip } from "@mui/material";
-import { BsThreeDots } from "react-icons/bs";
+import {Box, Button, Tooltip} from "@mui/material";
+import {BsThreeDots} from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
@@ -13,7 +13,8 @@ import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Container, Draggable} from "react-smooth-dnd";
+import Resources from "../Components/Resources";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -31,12 +32,11 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
-  users
+  users,
 }) => {
-
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
@@ -44,10 +44,7 @@ const SubMenu = ({
     dispatch(mainActions.setPinIsEnabled(val));
   };
 
-  const onDrop = (dropResult, index) => {
-
-  };
-
+  const onDrop = (dropResult, index) => {};
 
   return (
     <div
@@ -66,7 +63,8 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}
           <Box className="buttons">
@@ -144,24 +142,30 @@ const SubMenu = ({
             ) : (
               <div className="nav-block">
                 {selectedApp?.id === adminId && (
-                   <Permissions
-                      menuStyle={menuStyle}
-                      menuItem={menuItem}
-                      setElement={setElement}
-                      level={2}
-                    />
-                  )}
-                   {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
-                    <Users
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      menuItem={menuItem}
-                      level={2} 
-                      child={users}
-                    />
-                 )}
+                  <Permissions
+                    menuStyle={menuStyle}
+                    menuItem={menuItem}
+                    setElement={setElement}
+                    level={2}
+                  />
+                )}
+                <Resources
+                  menuStyle={menuStyle}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  level={2}
+                  menuItem={menuItem}
+                />
+                {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                  <Users
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    menuItem={menuItem}
+                    level={2}
+                    child={users}
+                  />
+                )}
                 <div className="menu-element">
-                <Container
+                  <Container
                     style={{
                       height: "calc(100vh - 170px)",
                       overflow: "auto",
@@ -169,9 +173,10 @@ const SubMenu = ({
                     }}
                     groupName="subtask"
                     onDrop={onDrop}
-                    dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                    dropPlaceholder={{className: "drag-row-drop-preview"}}
                   >
-                    {selectedApp?.id !== '9e988322-cffd-484c-9ed6-460d8701551b' && (
+                    {selectedApp?.id !==
+                      "9e988322-cffd-484c-9ed6-460d8701551b" &&
                       child?.map((element) => (
                         <Draggable key={element.id}>
                           <RecursiveBlock
@@ -190,18 +195,17 @@ const SubMenu = ({
                             menuItem={menuItem}
                           />
                         </Draggable>
-                      ))
-                    )}
-
-                </Container>
-                 {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                   <DocumentsSidebar  
-                   menuStyle={menuStyle}
-                   setSubMenuIsOpen={setSubMenuIsOpen}
-                   menuItem={menuItem}
-                   level={2} 
-                   />
-                 )}
+                      ))}
+                  </Container>
+                  {selectedApp?.id ===
+                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                    <DocumentsSidebar
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      menuItem={menuItem}
+                      level={2}
+                    />
+                  )}
                 </div>
               </div>
             )}

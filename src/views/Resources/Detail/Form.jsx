@@ -1,17 +1,20 @@
-import React, { useMemo } from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import React, {useMemo} from "react";
+import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import Footer from "../../../components/Footer";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import { resourceTypes } from "../../../utils/resourceConstants";
+import {resourceTypes} from "../../../utils/resourceConstants";
+import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
+import {useWatch} from "react-hook-form";
+import {useLocation} from "react-router-dom";
 
 const headerStyle = {
-  width: '100',
-  height: '50px',
-  borderBottom: '1px solid #e5e9eb',
-  display: 'flex',
-  padding: '15px'
-}
+  width: "100",
+  height: "50px",
+  borderBottom: "1px solid #e5e9eb",
+  display: "flex",
+  padding: "15px",
+};
 
 const Form = ({
   control,
@@ -34,17 +37,32 @@ const Form = ({
     }));
   }, [projectEnvironments]);
 
+  const resurceType = useWatch({
+    control,
+    name: "resource_type",
+  });
 
   return (
-    <Box flex={1} sx={{borderRight: '1px solid #e5e9eb'}}>
+    <Box flex={1} sx={{borderRight: "1px solid #e5e9eb"}}>
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
       </Box>
 
-      <Box style={{ height: "calc(100vh - 170px)", overflow: "auto" }}>
-        <Stack  spacing={4}>
-        <Box sx={{borderBottom: '1px solid #e5e9eb', padding: '15px', fontWeight: 'bold'}}>
-        <Box sx={{fontSize: '14px', marginBottom: '15px'}}>Name</Box>
+      <Box
+        style={{
+          height: `calc(100vh - ${resurceType === 4 ? "500px" : "170px"})`,
+          overflow: "auto",
+        }}
+      >
+        <Stack spacing={4}>
+          <Box
+            sx={{
+              borderBottom: "1px solid #e5e9eb",
+              padding: "15px",
+              fontWeight: "bold",
+            }}
+          >
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
             <HFTextField
               control={control}
               required
@@ -55,7 +73,11 @@ const Form = ({
               }}
             />
 
-          <Box sx={{fontSize: '14px', marginTop: '10px', marginBottom: '10px'}}>Type</Box>
+            <Box
+              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}
+            >
+              Type
+            </Box>
             <HFSelect
               options={resourceTypes}
               control={control}
@@ -63,10 +85,12 @@ const Form = ({
               name="resource_type"
               defaultValue={0}
             />
-        </Box>
+          </Box>
           {!isEditPage && (
             <Box px={2}>
-              <Box sx={{fontSize: '14px', marginBottom: '10px'}}>Environment</Box>
+              <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
+                Environment
+              </Box>
               <HFSelect
                 options={environments}
                 control={control}
@@ -85,49 +109,66 @@ const Form = ({
 
         {selectedEnvironment?.length && (
           <>
-            <Box sx={{padding: '15px', fontSize: '24px'}}>
-              <Typography variant="h6" >Credentials</Typography>
+            <Box sx={{padding: "15px", fontSize: "24px"}}>
+              <Typography variant="h6">Credentials</Typography>
             </Box>
 
             <Grid px={2} container spacing={2}>
-              <Grid item xs={6} sx={{paddingLeft: '0px'}}>
-                  <Box width={50} sx={{fontSize: '14px'}}>Host</Box>
-                  <HFTextField fullWidth control={control} required name="credentials.host" />
+              <Grid item xs={6} sx={{paddingLeft: "0px"}}>
+                <Box width={50} sx={{fontSize: "14px"}}>
+                  Host
+                </Box>
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  required
+                  name="credentials.host"
+                />
               </Grid>
               <Grid item xs={6}>
-                  <Box sx={{fontSize: '14px'}}>Port</Box>
-                  <HFTextField fullWidth control={control} required name="credentials.port" />
+                <Box sx={{fontSize: "14px"}}>Port</Box>
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  required
+                  name="credentials.port"
+                />
               </Grid>
               <Grid item xs={6}>
-                  <Box sx={{fontSize: '14px'}}>Username</Box>
-                  <HFTextField
-                    control={control}
-                    required
-                    fullWidth
-                    name="credentials.username"
-                  />
+                <Box sx={{fontSize: "14px"}}>Username</Box>
+                <HFTextField
+                  control={control}
+                  required
+                  fullWidth
+                  name="credentials.username"
+                />
               </Grid>
               <Grid item xs={6}>
-                  <Box sx={{fontSize: '14px'}}>Database</Box>
-                  <HFTextField
-                    control={control}
-                    required
-                    fullWidth
-                    name="credentials.database"
-                  />
+                <Box sx={{fontSize: "14px"}}>Database</Box>
+                <HFTextField
+                  control={control}
+                  required
+                  fullWidth
+                  name="credentials.database"
+                />
               </Grid>
               {true && (
                 <Grid item xs={6}>
                   <Box mb={4}>
-                  <Box sx={{fontSize: '14px', }}>Password</Box>
-                  <HFTextField fullWidth control={control} name="credentials.password" />
-                </Box>
+                    <Box sx={{fontSize: "14px"}}>Password</Box>
+                    <HFTextField
+                      fullWidth
+                      control={control}
+                      name="credentials.password"
+                    />
+                  </Box>
                 </Grid>
               )}
             </Grid>
           </>
         )}
       </Box>
+      {resurceType === 4 && <VariableResources control={control} />}
 
       <Footer>
         {selectedEnvironment?.length && (

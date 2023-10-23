@@ -2,19 +2,19 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useMutation, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMenuListQuery } from "../../../services/menuService";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useMutation, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {useMenuListQuery} from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { updateLevel } from "../../../utils/level";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {updateLevel} from "../../../utils/level";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
@@ -32,7 +32,7 @@ import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import PersonIcon from "@mui/icons-material/Person";
 import "../style.scss";
-import { analyticItems, folderIds } from "./mock/folders";
+import {analyticItems, folderIds} from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -54,7 +54,7 @@ const RecursiveBlock = ({
   menuItem,
   selectedApp,
 }) => {
-  const { appId, tableSlug } = useParams();
+  const {appId, tableSlug} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -65,7 +65,7 @@ const RecursiveBlock = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -154,7 +154,7 @@ const RecursiveBlock = ({
     }
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -195,7 +195,7 @@ const RecursiveBlock = ({
     }
   }, []);
 
-  const { mutate: deleteReportSetting } = useMutation(
+  const {mutate: deleteReportSetting} = useMutation(
     (id) => pivotService.deleteReportSetting(id),
     {
       onSuccess: () => {
@@ -205,7 +205,7 @@ const RecursiveBlock = ({
     }
   );
 
-  const { mutate: onDeleteTemplate } = useMutation(
+  const {mutate: onDeleteTemplate} = useMutation(
     (id) =>
       pivotService.deletePivotTemplate({
         id,
@@ -219,7 +219,7 @@ const RecursiveBlock = ({
   );
   console.log("element", element);
   return (
-    <Box sx={{ padding: "0 5px" }}>
+    <Box sx={{padding: "0 5px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {permission ? (
           <Button
@@ -598,14 +598,6 @@ const RecursiveBlock = ({
               level={2}
             />
           </>
-        )}
-        {element.id === folderIds.resource_folder_id && (
-          <Resources
-            menuStyle={menuStyle}
-            setSubMenuIsOpen={setSubMenuIsOpen}
-            level={2}
-            menuItem={menuItem}
-          />
         )}
         {element.id === folderIds.api_folder_id && (
           <>

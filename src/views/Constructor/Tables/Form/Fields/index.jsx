@@ -14,13 +14,13 @@ import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-const Fields = ({ mainForm, getRelationFields }) => {
-  const { id, slug } = useParams();
+const Fields = ({ mainForm, getRelationFields, slug }) => {
+  const { id, tableSlug } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const { i18n } = useTranslation();
-  const [selectedField, setSelectedField] = useState({})
-
+  const [selectedField, setSelectedField] = useState({});
+  console.log("tableSlug=====", tableSlug);
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
     name: "fields",
@@ -126,7 +126,10 @@ const Fields = ({ mainForm, getRelationFields }) => {
           // <PermissionWrapperV2 tableSlug={slug} type="write">
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>
-              <div className={styles.createButton} onClick={() => setDrawerState("CREATE")}>
+              <div
+                className={styles.createButton}
+                onClick={() => setDrawerState("CREATE")}
+              >
                 <Add color="primary" />
                 <p>Добавить</p>
               </div>
@@ -136,7 +139,12 @@ const Fields = ({ mainForm, getRelationFields }) => {
         }
       />
 
-      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+      <Drawer
+        open={drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           onSubmit={(index, field) => update(index, field)}
@@ -146,6 +154,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
           selectedField={selectedField}
+          slug={slug}
         />
       </Drawer>
 

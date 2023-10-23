@@ -18,16 +18,11 @@ import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
-import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
-import EmailSidebar from "../Components/Email/EmailSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
-import NotificationSidebar from "../Components/Notification/NotificationSidebar";
-import Permissions from "../Components/Permission";
 import QuerySidebar from "../Components/Query/QuerySidebar";
 import Resources from "../Components/Resources";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
-import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import PersonIcon from "@mui/icons-material/Person";
@@ -119,6 +114,8 @@ const RecursiveBlock = ({
     switch (element?.type) {
       case "FOLDER":
         return navigate(`/main/${appId}`);
+      case "MINIO_FOLDER":
+        return navigate(`/main/${appId}/backet/${element?.id}`);
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "MICROFRONTEND":
@@ -180,13 +177,25 @@ const RecursiveBlock = ({
     if (
       !pinIsEnabled &&
       element.type !== "FOLDER" &&
-      element.type !== "USER_FOLDER"
+      element.type !== "USER_FOLDER" &&
+      element.type !== "MINIO_FOLDER"
     ) {
       setSubMenuIsOpen(false);
     }
     element.type !== "USER" && setChildBlockVisible((prev) => !prev);
     setId(element?.id);
     setElement(element);
+  };
+
+  const menuAddClick = (e) => {
+    e.stopPropagation();
+    setElement(element);
+    dispatch(menuActions.setMenuItem(element));
+    if (element?.type === "MINIO_FOLDER") {
+      handleOpenNotify(e, "CREATE_TO_MINIO");
+    } else {
+      handleOpenNotify(e, "CREATE_TO_FOLDER");
+    }
   };
 
   useEffect(() => {
@@ -217,7 +226,6 @@ const RecursiveBlock = ({
       },
     }
   );
-  console.log("element", element);
   return (
     <Box sx={{ padding: "0 5px" }}>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -265,6 +273,11 @@ const RecursiveBlock = ({
                 ""
               ) : (
                 <KeyboardArrowRightIcon />
+              )}
+              {childBlockVisible && element?.type === "MINIO_FOLDER" ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                element?.type === "MINIO_FOLDER" && <KeyboardArrowRightIcon />
               )}
               <IconGenerator
                 icon={
@@ -356,7 +369,8 @@ const RecursiveBlock = ({
                   <KeyboardArrowRightIcon />
                 )}
               </Box>
-            ) : element?.type === "FOLDER" && sidebarIsOpen ? (
+            ) : element?.type === "FOLDER" ||
+              (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ? (
               <Box className="icon_group">
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
@@ -366,10 +380,7 @@ const RecursiveBlock = ({
                       <AddIcon
                         size={13}
                         onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenNotify(e, "CREATE_TO_FOLDER");
-                          setElement(element);
-                          dispatch(menuActions.setMenuItem(element));
+                          menuAddClick(e);
                         }}
                         style={{
                           color:
@@ -381,25 +392,6 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
-                {/* <Tooltip title="Folder settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                        dispatch(menuActions.setMenuItem(element));
-                      }}
-                      style={{
-                        color:
-                          menuItem?.id === element?.id
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip> */}
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
               <>

@@ -75,6 +75,8 @@ import UsersList from "../views/Users/UsersList";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
 import TablesPage from "../views/Constructor/AllTables";
+import MinioPage from "../components/LayoutSidebar/Components/Minio";
+import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -153,6 +155,10 @@ const Router = () => {
 
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
+        </Route>
+        <Route path=":appId/backet/:minioId">
+          <Route index element={<MinioPage />} />
+          <Route path=":fileId" element={<MinioSinglePage />} />
         </Route>
         <Route path=":appId/projects">
           <Route index element={<ProjectPage />} />

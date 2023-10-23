@@ -254,17 +254,15 @@ const ResourceDetail = () => {
             <h2>Resource settings</h2>
           </Box>
           <Box>
-            {isEditPage && (
-              <Button
-                bg="primary"
-                type="submit"
-                sx={{fontSize: "14px", margin: "0 10px"}}
-                hidden={isEditPage}
-                isLoading={createLoading}
-              >
-                Save changes
-              </Button>
-            )}
+            <Button
+              bg="primary"
+              type="submit"
+              sx={{fontSize: "14px", margin: "0 10px"}}
+              hidden={isEditPage}
+              isLoading={createLoading}
+            >
+              Save changes
+            </Button>
             {isEditPage && (
               <Button
                 sx={{color: "#fff", background: "#38A169", marginRight: "10px"}}

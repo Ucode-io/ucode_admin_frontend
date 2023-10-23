@@ -38,7 +38,7 @@ const ImageUpload = ({
         folder_name: field?.attributes?.minio_folder,
       })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       })
       .finally(() => setLoading(false));
   };
@@ -54,18 +54,20 @@ const ImageUpload = ({
 
   return (
     <div className={`Gallery ${className}`}>
-      {value && (
-        <div className="block" onClick={() => imageClickHandler()}>
-          <button
-            className="close-btn"
-            type="button"
-            onClick={(e) => closeButtonHandler(e)}
-          >
-            <CancelIcon />
-          </button>
-          <img src={value} className="img" alt="" />
-        </div>
-      )}
+      {value &&
+        (console.log("value", value),
+        (
+          <div className="block" onClick={() => imageClickHandler()}>
+            <button
+              className="close-btn"
+              type="button"
+              onClick={(e) => closeButtonHandler(e)}
+            >
+              <CancelIcon />
+            </button>
+            <img src={value} className="img" alt="" />
+          </div>
+        ))}
 
       {!value && (
         <div

@@ -43,14 +43,16 @@ const Form = ({
   });
 
   return (
-    <Box flex={1} sx={{borderRight: "1px solid #e5e9eb"}}>
+    <Box
+      flex={1}
+      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}
+    >
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
       </Box>
 
       <Box
         style={{
-          height: `calc(100vh - ${resurceType === 4 ? "500px" : "170px"})`,
           overflow: "auto",
         }}
       >

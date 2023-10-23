@@ -47,7 +47,7 @@ const ResourceDetail = () => {
   const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
       name: "",
-      variables: variables,
+      variables: variables?.variables,
     },
   });
 
@@ -74,7 +74,6 @@ const ResourceDetail = () => {
       enabled: isEditPage && location?.state?.type === "REST",
       onSuccess: (res) => {
         reset(res?.data);
-        console.log("ressssss", res);
         setVariables(res);
         // setSelectedEnvironment(
         //   res.environments?.filter((env) => env.is_configured)
@@ -210,9 +209,12 @@ const ResourceDetail = () => {
     );
     if (matchingResource) {
       setValue("resource_type", matchingResource.value);
-      setValue("variables", matchingResource?.variables);
+      setValue(
+        "variables",
+        variables?.variables?.filter((item) => item?.id)
+      );
     }
-  }, [variables, setValue]);
+  }, [variables]);
 
   return (
     <Box sx={{background: "#fff"}}>

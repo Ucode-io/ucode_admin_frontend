@@ -26,6 +26,8 @@ const ImageUpload = ({
     window.open(value, "_blank");
   };
 
+  console.log("field", field);
+
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -35,7 +37,7 @@ const ImageUpload = ({
 
     fileService
       .folderUpload(data, {
-        folder_name: field?.attributes?.minio_folder,
+        folder_name: field?.attributes?.path,
       })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);

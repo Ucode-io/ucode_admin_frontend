@@ -9,7 +9,7 @@ const headerStyle = {
   // borderBottom: "1px solid #e5e9eb",
   display: "flex",
   padding: "15px",
-  marginTop: "20px",
+  marginTop: "10px",
 };
 
 const VariableResources = ({control}) => {

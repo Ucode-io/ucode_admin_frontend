@@ -59,7 +59,7 @@ const Form = ({
         <Stack spacing={4}>
           <Box
             sx={{
-              borderBottom: "1px solid #e5e9eb",
+              // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
             }}
@@ -86,10 +86,12 @@ const Form = ({
               required
               name="resource_type"
               defaultValue={0}
+              resurceType={resurceType}
+              disabled={resurceType === 4}
             />
           </Box>
           {!isEditPage && (
-            <Box px={2}>
+            <Box sx={{marginTop: "0px", padding: "15px"}} px={2}>
               <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
                 Environment
               </Box>

@@ -12,6 +12,7 @@ const resourceService = {
   create: (data) => request.post(`/company/project/resource`, data),
   createV2: (data) => requestV2.post(`/company/project/resource`, data),
   update: (data) => request.put(`/company/project/resource/${data.id}`, data),
+  updateV2: (data) => requestV2.put(`/company/project/resource`, data),
   createFromCluster: (data) =>
     request.post("/company/project/create-resource", data),
   getResourceEnvironment: (id) =>
@@ -125,6 +126,13 @@ export const useResourceCreateMutationV2 = (mutationSettings) => {
 
 export const useResourceUpdateMutation = (mutationSettings) => {
   return useMutation((data) => resourceService.update(data), mutationSettings);
+};
+
+export const useResourceUpdateMutationV2 = (mutationSettings) => {
+  return useMutation(
+    (data) => resourceService.updateV2(data),
+    mutationSettings
+  );
 };
 
 export const useResourceConfigureMutation = (mutationSettings) => {

@@ -13,6 +13,7 @@ import {
   useResourceGetByIdQueryV2,
   useResourceReconnectMutation,
   useResourceUpdateMutation,
+  useResourceUpdateMutationV2,
 } from "../../../services/resourceService";
 import {store} from "../../../store";
 import ResourceeEnvironments from "./ResourceEnvironment";
@@ -21,6 +22,7 @@ import AllowList from "./AllowList";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes} from "../../../utils/resourceConstants";
+import resourceVariableService from "../../../services/resourceVariableService";
 
 const headerStyle = {
   width: "100%",
@@ -47,7 +49,7 @@ const ResourceDetail = () => {
   const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
       name: "",
-      variables: variables,
+      variables: variables?.variables,
     },
   });
 
@@ -74,7 +76,6 @@ const ResourceDetail = () => {
       enabled: isEditPage && location?.state?.type === "REST",
       onSuccess: (res) => {
         reset(res?.data);
-        console.log("ressssss", res);
         setVariables(res);
         // setSelectedEnvironment(
         //   res.environments?.filter((env) => env.is_configured)
@@ -148,6 +149,14 @@ const ResourceDetail = () => {
       },
     });
 
+  const {mutate: updateResourceV2, isLoading: updateLoadingV2} =
+    useResourceUpdateMutationV2({
+      onSuccess: () => {
+        // successToast("Successfully updated");
+        setSelectedEnvironment(null);
+      },
+    });
+
   const {mutate: reconnectResource, isLoading: reconnectLoading} =
     useResourceReconnectMutation(
       ///////////
@@ -169,22 +178,36 @@ const ResourceDetail = () => {
       user_id: authStore.userId,
       environment_id: selectedEnvironment?.[0].id,
       is_configured: true,
-      id: selectedEnvironment?.[0].resource_environment_id,
+      id:
+        selectedEnvironment?.[0].resource_environment_id ??
+        variables?.environment_id,
     };
-    if (values?.resource_type === 4) {
-      delete computedValues2.resource_type;
+    if (isEditPage) {
+      updateResourceV2({
+        name: values?.name,
+        // type: values?.resource_type,
+        id: values?.id,
+      });
+      resourceVariableService.update({
+        project_resource_id: variables?.id,
+        variables: computedValues2?.variables,
+      });
+    } else {
+      if (values?.resource_type === 4) {
+        delete computedValues2.resource_type;
 
-      createResourceV2(computedValues2);
-    } else if (!isEditPage) createResource(computedValues2);
-    else {
-      if (!selectedEnvironment?.[0].is_configured) {
-        configureResource(computedValues2);
-      } else {
-        updateResource(computedValues2);
+        createResourceV2(computedValues2);
+      } else if (!isEditPage) createResource(computedValues2);
+      else {
+        if (!selectedEnvironment?.[0].is_configured) {
+          configureResource(computedValues2);
+        } else {
+          updateResource(computedValues2);
+        }
       }
     }
   };
-
+  console.log("variables", variables);
   useEffect(() => {
     if (!selectedEnvironment?.length) return;
 
@@ -210,9 +233,12 @@ const ResourceDetail = () => {
     );
     if (matchingResource) {
       setValue("resource_type", matchingResource.value);
-      setValue("variables", matchingResource?.variables);
+      setValue(
+        "variables",
+        variables?.variables?.filter((item) => item?.id)
+      );
     }
-  }, [variables, setValue]);
+  }, [variables]);
 
   return (
     <Box sx={{background: "#fff"}}>
@@ -230,6 +256,17 @@ const ResourceDetail = () => {
           <Box>
             {isEditPage && (
               <Button
+                bg="primary"
+                type="submit"
+                sx={{fontSize: "14px", margin: "0 10px"}}
+                hidden={isEditPage}
+                isLoading={createLoading}
+              >
+                Save changes
+              </Button>
+            )}
+            {isEditPage && (
+              <Button
                 sx={{color: "#fff", background: "#38A169", marginRight: "10px"}}
                 hidden={!isEditPage}
                 color={"success"}
@@ -238,18 +275,6 @@ const ResourceDetail = () => {
                 isLoading={reconnectLoading}
               >
                 Reconnect
-              </Button>
-            )}
-
-            {!isEditPage && (
-              <Button
-                bg="primary"
-                type="submit"
-                sx={{fontSize: "14px"}}
-                hidden={isEditPage}
-                isLoading={createLoading}
-              >
-                Save changes
               </Button>
             )}
           </Box>

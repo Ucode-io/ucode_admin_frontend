@@ -43,21 +43,23 @@ const Form = ({
   });
 
   return (
-    <Box flex={1} sx={{borderRight: "1px solid #e5e9eb"}}>
+    <Box
+      flex={1}
+      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}
+    >
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
       </Box>
 
       <Box
         style={{
-          height: `calc(100vh - ${resurceType === 4 ? "500px" : "170px"})`,
           overflow: "auto",
         }}
       >
         <Stack spacing={4}>
           <Box
             sx={{
-              borderBottom: "1px solid #e5e9eb",
+              // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
             }}
@@ -84,10 +86,12 @@ const Form = ({
               required
               name="resource_type"
               defaultValue={0}
+              resurceType={resurceType}
+              disabled={resurceType === 4}
             />
           </Box>
           {!isEditPage && (
-            <Box px={2}>
+            <Box sx={{marginTop: "0px", padding: "15px"}} px={2}>
               <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
                 Environment
               </Box>

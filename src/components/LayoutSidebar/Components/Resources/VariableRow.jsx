@@ -10,9 +10,9 @@ function VariableRow({control, index, remove, summary}) {
   };
 
   return (
-    <Box key={summary?.id} sx={{margin: "10px"}}>
+    <Box key={summary?.id} sx={{margin: "10px 15px"}}>
       <Box
-        sx={{display: "flex", alignItems: "center", width: "100%", gap: "20px"}}
+        sx={{display: "flex", alignItems: "center", width: "100%", gap: "15px"}}
       >
         <HFTextField
           fullWidth

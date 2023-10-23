@@ -176,7 +176,7 @@ const FieldSettings = ({
   };
 
   const handleSelect = (e, item) => {
-    setValue("attributes.minio_folder", item);
+    setValue("attributes.path", item);
     setCheck(true);
     setFolder(item);
   };
@@ -260,7 +260,7 @@ const FieldSettings = ({
         ...values,
         ...field,
       });
-      setFolder(field?.minio_folder);
+      setFolder(field?.path);
     } else {
       reset(values);
     }

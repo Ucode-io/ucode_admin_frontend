@@ -27,6 +27,7 @@ const ButtonsMenu = ({
   setWebPageModal,
   setLinkedTableModal,
 }) => {
+  console.log("menuType", menuType);
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
   const navigate = useNavigate();
@@ -489,6 +490,79 @@ const ButtonsMenu = ({
                 id: element?.id,
                 type: "MINIO_FOLDER",
               });
+              handleCloseNotify();
+            }}
+          />
+        </Box>
+      )}
+      {menuType === "ROOT" && (
+        <Box className="menu">
+          <MenuItemComponent
+            icon={<TableChartIcon size={13} />}
+            title="Создать table"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<TableChartIcon size={13} />}
+            title="Создать pivot template"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`${appId}/pivot-template/create`);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<SyncAltIcon size={13} />}
+            title="Добавить table"
+            onClick={(e) => {
+              e.stopPropagation();
+              setTableModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<SyncAltIcon size={13} />}
+            title="Добавить link table"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLinkedTableModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<DeveloperBoardIcon size={13} />}
+            title="Добавить microfrontend"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMicrofrontendModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<WebIcon size={13} />}
+            title="Добавить web-page"
+            onClick={(e) => {
+              e.stopPropagation();
+              setWebPageModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
+          <MenuItemComponent
+            icon={<CreateNewFolderIcon size={13} />}
+            title="Добавить папку"
+            onClick={(e) => {
+              e.stopPropagation();
+              openFolderCreateModal("create", element);
               handleCloseNotify();
             }}
           />

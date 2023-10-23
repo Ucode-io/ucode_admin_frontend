@@ -1,19 +1,18 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button, Tooltip} from "@mui/material";
-import {BsThreeDots} from "react-icons/bs";
+import { Box, Button, Tooltip } from "@mui/material";
+import { BsThreeDots } from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
-import {Container, Draggable} from "react-smooth-dnd";
 import Resources from "../Components/Resources";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -36,7 +35,7 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
@@ -48,7 +47,7 @@ const SubMenu = ({
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
     } else {
-      handleOpenNotify(e, "CREATE_TO_FOLDER");
+      handleOpenNotify(e, "ROOT");
     }
     setElement(selectedApp);
   };
@@ -155,12 +154,14 @@ const SubMenu = ({
                     level={2}
                   />
                 )}
-                <Resources
-                  menuStyle={menuStyle}
-                  setSubMenuIsOpen={setSubMenuIsOpen}
-                  level={2}
-                  menuItem={menuItem}
-                />
+                {selectedApp?.id === adminId && (
+                  <Resources
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    level={2}
+                    menuItem={menuItem}
+                  />
+                )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
                     menuStyle={menuStyle}

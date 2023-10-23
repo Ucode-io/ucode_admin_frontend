@@ -37,7 +37,7 @@ const FileUpload = ({
         folder_name: field?.attributes?.minio_folder,
       })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "docs/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       })
       .finally(() => setLoading(false));
   };

@@ -34,7 +34,7 @@ const FileUpload = ({
 
     fileService
       .folderUpload(data, {
-        folder_name: field?.attributes?.minio_folder,
+        folder_name: field?.attributes?.path,
       })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);

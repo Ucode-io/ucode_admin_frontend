@@ -35,6 +35,8 @@ const ButtonsMenu = ({
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
 
+  console.log("element", element);
+
   const onFavourite = (element, type) => {
     type === "TABLE"
       ? createMenu({
@@ -562,7 +564,10 @@ const ButtonsMenu = ({
             title="Добавить папку"
             onClick={(e) => {
               e.stopPropagation();
-              openFolderCreateModal("create", element);
+              openFolderCreateModal("create", {
+                id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                type: "FOLDER",
+              });
               handleCloseNotify();
             }}
           />

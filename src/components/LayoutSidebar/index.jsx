@@ -432,7 +432,7 @@ const LayoutSidebar = ({ appId }) => {
                     }
                     openFolderCreateModal={openFolderCreateModal}
                     onClick={(e) => {
-                      handleOpenNotify(e, "ROOT");
+                      handleOpenNotify(e, "CREATE");
                     }}
                     sidebarIsOpen={sidebarIsOpen}
                     style={{

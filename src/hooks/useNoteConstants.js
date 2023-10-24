@@ -1,7 +1,6 @@
 import Embed from "@editorjs/embed";
 import Table from "@editorjs/table";
 import List from "@editorjs/list";
-import Warning from "@editorjs/warning";
 import Code from "@editorjs/code";
 import LinkTool from "@editorjs/link";
 import Image from "@editorjs/image";
@@ -10,25 +9,22 @@ import Header from "@editorjs/header";
 import Quote from "@editorjs/quote";
 import Marker from "@editorjs/marker";
 import CheckList from "@editorjs/checklist";
-import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
 import Paragraph from "@editorjs/paragraph";
 import FontSize from "editorjs-inline-font-size-tool";
 import ColorPlugin from "editorjs-text-color-plugin";
 import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
-import ToggleBlock from "editorjs-toggle-block";
 import NestedList from "@editorjs/nested-list";
-import TextVariantTune from "@editorjs/text-variant-tune";
+import TextVariantTune from "@moxrbe/text-variant-tune";
 import FootnotesTune from "@editorjs/footnotes";
 import OpenseaTool from "@editorjs/opensea";
-import Personality from "@editorjs/personality";
 import Underline from "@editorjs/underline";
-import editorjsColumns from "@lokeshpahal/editorjs-columns-imp";
 import Telegram from "editorjs-telegram";
 import Iframe from "@hammaadhrasheedh/editorjs-iframe";
 import Alert from "editorjs-alerticons";
 import noteFileService from "../services/noteFileService";
+import BreakLine from "editorjs-break-line";
 
 function encodeFileToBase64(file, callback) {
   var reader = new FileReader();
@@ -47,11 +43,13 @@ const tools = {
     class: Table,
     inlineToolbar: true,
   },
-  // list: {
-  //   class: List,
-  //   inlineToolbar: true
-  // },
-  warning: Warning,
+  breakLine: {
+    class: BreakLine,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+ENTER",
+  },
+  // ToggleBlock: ToggleBlock,
+  // warning: Warning,
   code: Code,
   linkTool: LinkTool,
   image: {
@@ -86,11 +84,18 @@ const tools = {
     inlineToolbar: true,
     tunes: ["textVariant", "footnotes"],
   },
-  quote: Quote,
+  quote: {
+    class: Quote,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+O",
+    config: {
+      quotePlaceholder: "Enter a quote",
+      captionPlaceholder: false,
+    },
+  },
   marker: Marker,
   checklist: CheckList,
   NestedList: NestedList,
-  delimiter: Delimiter,
   inlineCode: InlineCode,
   simpleImage: SimpleImage,
   fontSize: FontSize,
@@ -113,12 +118,12 @@ const tools = {
   opensea: {
     class: OpenseaTool,
   },
-  personality: {
-    class: Personality,
-    // config: {
-    //   endpoint: 'http://localhost:8008/uploadFile'
-    // }
-  },
+  // personality: {
+  //   class: Personality,
+  //   // config: {
+  //   //   endpoint: 'http://localhost:8008/uploadFile'
+  //   // }
+  // },
   underline: Underline,
 };
 
@@ -128,11 +133,17 @@ export const EDITOR_JS_TOOLS = {
     class: Table,
     inlineToolbar: true,
   },
-  // list: {
-  //   class: List,
-  //   inlineToolbar: true
-  // },
-  warning: Warning,
+  breakLine: {
+    class: BreakLine,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+ENTER",
+  },
+  list: {
+    class: List,
+    inlineToolbar: true,
+  },
+  // ToggleBlock: ToggleBlock,
+  // warning: Warning,
   code: Code,
   linkTool: LinkTool,
   image: {
@@ -167,11 +178,18 @@ export const EDITOR_JS_TOOLS = {
     inlineToolbar: true,
     tunes: ["textVariant", "footnotes"],
   },
-  quote: Quote,
+  quote: {
+    class: Quote,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+O",
+    config: {
+      quotePlaceholder: "Enter a quote",
+      captionPlaceholder: false,
+    },
+  },
   marker: Marker,
   checklist: CheckList,
   NestedList: NestedList,
-  delimiter: Delimiter,
   inlineCode: InlineCode,
   simpleImage: SimpleImage,
   fontSize: FontSize,
@@ -194,12 +212,12 @@ export const EDITOR_JS_TOOLS = {
   opensea: {
     class: OpenseaTool,
   },
-  personality: {
-    class: Personality,
-    // config: {
-    //   endpoint: 'http://localhost:8008/uploadFile'
-    // }
-  },
+  // personality: {
+  //   class: Personality,
+  //   // config: {
+  //   //   endpoint: 'http://localhost:8008/uploadFile'
+  //   // }
+  // },
   underline: Underline,
   telegram: Telegram,
   iframe: Iframe,
@@ -207,10 +225,10 @@ export const EDITOR_JS_TOOLS = {
     class: Alert,
     defaultValue: "awdkmawlkdmawlkdmawlk",
   },
-  columns: {
-    class: editorjsColumns,
-    config: {
-      tools,
-    },
-  },
+  // columns: {
+  //   class: editorjsColumns,
+  //   config: {
+  //     tools,
+  //   },
+  // },
 };

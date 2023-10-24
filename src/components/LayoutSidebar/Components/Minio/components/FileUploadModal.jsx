@@ -16,12 +16,12 @@ const FileUploadModal = ({ closeModal, menuItem }) => {
     setLoader(true);
     fileService
       .folderUpload(data, { folder_name: menuItem?.attributes?.path })
-      .then((res) => {
+      .then(() => {
         setLoader(false);
         closeModal();
         queryClient.refetchQueries(["MINIO_OBJECT"]);
       })
-      .catch((err) => {})
+      .catch(() => {})
       .finally(() => setLoader(false));
   };
   return (

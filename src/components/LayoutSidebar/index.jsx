@@ -66,7 +66,6 @@ const LayoutSidebar = ({ appId }) => {
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-
   const handleOpenNotify = (event, type) => {
     setMenu({ event: event?.currentTarget, type: type });
   };

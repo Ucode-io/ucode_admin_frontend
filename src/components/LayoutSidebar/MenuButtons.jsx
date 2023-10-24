@@ -27,15 +27,12 @@ const ButtonsMenu = ({
   setWebPageModal,
   setLinkedTableModal,
 }) => {
-  console.log("menuType", menuType);
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
   const navigate = useNavigate();
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
-
-  console.log("element", element);
 
   const onFavourite = (element, type) => {
     type === "TABLE"
@@ -564,10 +561,7 @@ const ButtonsMenu = ({
             title="Добавить папку"
             onClick={(e) => {
               e.stopPropagation();
-              openFolderCreateModal("create", {
-                id: "c57eedc3-a954-4262-a0af-376c65b5a284",
-                type: "FOLDER",
-              });
+              openFolderCreateModal("create", element);
               handleCloseNotify();
             }}
           />
@@ -586,6 +580,82 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
+        </Box>
+      )}
+      {menuType === "CREATE" && (
+        <Box className="menu">
+          <MenuItemComponent
+            icon={<TableChartIcon size={13} />}
+            title="Создать table"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<TableChartIcon size={13} />}
+            title="Создать pivot template"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`${appId}/pivot-template/create`);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<SyncAltIcon size={13} />}
+            title="Добавить table"
+            onClick={(e) => {
+              e.stopPropagation();
+              setTableModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<SyncAltIcon size={13} />}
+            title="Добавить link table"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLinkedTableModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<DeveloperBoardIcon size={13} />}
+            title="Добавить microfrontend"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMicrofrontendModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<WebIcon size={13} />}
+            title="Добавить web-page"
+            onClick={(e) => {
+              e.stopPropagation();
+              setWebPageModal(element);
+              handleCloseNotify();
+            }}
+          />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
+          <MenuItemComponent
+            icon={<CreateNewFolderIcon size={13} />}
+            title="Добавить папку"
+            onClick={(e) => {
+              e.stopPropagation();
+              openFolderCreateModal("create", {
+                id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                type: "FOLDER",
+              });
+              handleCloseNotify();
+            }}
+          />
         </Box>
       )}
     </Menu>

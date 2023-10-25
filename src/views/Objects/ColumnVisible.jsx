@@ -146,6 +146,7 @@ export default function ColumnVisible({
             views={views}
             selectedTabIndex={selectedTabIndex}
             computedColumns={computedColumns}
+            columns={columns}
           />
         )}
       </Menu>

@@ -20,7 +20,7 @@ export default function TimeLineBlock({
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
-console.log('focusedDays', focusedDays)
+  console.log("focusedDays", focusedDays);
   const handleScroll = (e) => {
     const { scrollLeft, scrollWidth, clientWidth } = e.target;
 
@@ -46,7 +46,7 @@ console.log('focusedDays', focusedDays)
       <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
 
       <TimeLineDayDataBlock
-      setFocusedDays={setFocusedDays}
+        setFocusedDays={setFocusedDays}
         selectedType={selectedType}
         zoomPosition={zoomPosition}
         data={data}

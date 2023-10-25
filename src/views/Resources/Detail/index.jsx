@@ -23,6 +23,8 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes} from "../../../utils/resourceConstants";
 import resourceVariableService from "../../../services/resourceVariableService";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 const headerStyle = {
   width: "100%",
@@ -43,6 +45,7 @@ const ResourceDetail = () => {
   const navigate = useNavigate();
   const company = store.getState().company;
   const authStore = store.getState().auth;
+  const dispatch = useDispatch();
 
   const isEditPage = !!resourceId;
 
@@ -153,6 +156,7 @@ const ResourceDetail = () => {
     useResourceUpdateMutationV2({
       onSuccess: () => {
         // successToast("Successfully updated");
+        dispatch(showAlert("Resources are updated!", "success"));
         setSelectedEnvironment(null);
       },
     });
@@ -188,10 +192,17 @@ const ResourceDetail = () => {
         // type: values?.resource_type,
         id: values?.id,
       });
-      resourceVariableService.update({
-        project_resource_id: variables?.id,
-        variables: computedValues2?.variables,
-      });
+      resourceVariableService
+        .update({
+          project_resource_id: variables?.id,
+          variables: computedValues2?.variables,
+        })
+        .then(() => {
+          dispatch(showAlert("Resource variable updated!", "success"));
+        })
+        .catch((err) => {
+          dispatch(showAlert(err, "error"));
+        });
     } else {
       if (values?.resource_type === 4) {
         delete computedValues2.resource_type;
@@ -207,7 +218,7 @@ const ResourceDetail = () => {
       }
     }
   };
-  console.log("variables", variables);
+
   useEffect(() => {
     if (!selectedEnvironment?.length) return;
 
@@ -263,9 +274,13 @@ const ResourceDetail = () => {
             >
               Save changes
             </Button>
-            {isEditPage && (
+            {isEditPage && variables?.type !== "REST" && (
               <Button
-                sx={{color: "#fff", background: "#38A169", marginRight: "10px"}}
+                sx={{
+                  color: "#fff",
+                  background: "#38A169",
+                  marginRight: "10px",
+                }}
                 hidden={!isEditPage}
                 color={"success"}
                 variant="contained"

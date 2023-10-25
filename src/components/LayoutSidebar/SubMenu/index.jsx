@@ -44,6 +44,8 @@ const SubMenu = ({
     dispatch(mainActions.setPinIsEnabled(val));
   };
 
+  const onDrop = (dropResult, index) => {};
+
   const clickHandler = (e) => {
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
@@ -169,7 +171,7 @@ const SubMenu = ({
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     menuItem={menuItem}
                     level={2}
-                    child={users}
+                    child={child}
                   />
                 )}
                 <div className="menu-element">

@@ -30,7 +30,7 @@ const VariableResources = ({control}) => {
       <Box sx={headerStyle}>
         <h2 variant="h6">Variable Resource</h2>
       </Box>
-      <Box style={{height: "calc(100vh - 500px)", overflow: "auto"}}>
+      <Box style={{height: "calc(100vh - 400px)", overflow: "scroll"}}>
         <div className="">
           <div className={styles.actionSettingBlock}>
             {fields?.map((summary, index) => (

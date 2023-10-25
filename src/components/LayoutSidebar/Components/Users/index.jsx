@@ -1,16 +1,16 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
+import {Box, Button, Collapse} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch} from "react-redux";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
-import { updateLevel } from "../../../../utils/level";
-import { useNavigate, useParams } from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
+import {useNavigate, useParams} from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const userFolder = {
@@ -29,26 +29,26 @@ const userFolder = {
   },
 };
 
-const Users = ({ 
-  level = 1, 
-  menuStyle, 
-  menuItem, 
-  setElement, 
-  setSelectedApp, 
-  setChildBlockVisible, 
-  childBlockVisible, 
+const Users = ({
+  level = 1,
+  menuStyle,
+  menuItem,
+  setElement,
+  setSelectedApp,
+  setChildBlockVisible,
+  childBlockVisible,
   handleOpenNotify,
   sidebarIsOpen,
   setSidebarIsOpen,
-  child
+  child,
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const navigate = useNavigate()
-  const {appId} = useParams()
+  const navigate = useNavigate();
+  const {appId} = useParams();
 
   const activeStyle = {
-    borderRadius: '10px',
+    borderRadius: "10px",
     backgroundColor:
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -70,8 +70,6 @@ const Users = ({
         : menuStyle?.text,
   };
 
-
-
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
@@ -86,23 +84,21 @@ const Users = ({
   };
 
   return (
-    <Box sx={{margin: '0 5px'}}>
-
-        {child?.map((childElement) => (
-          <RecursiveBlock
-            onClick={() => {
-              handleGetClientType();
-            }}
-            key={childElement.id}
-            level={1}
-            element={childElement}
-            menuStyle={menuStyle}
-            menuItem={menuItem}
-            setElement={setElement}
-            handleOpenNotify={handleOpenNotify}
-          />
-        ))}
-
+    <Box sx={{margin: "0 5px"}}>
+      {child?.map((childElement) => (
+        <RecursiveBlock
+          onClick={() => {
+            handleGetClientType();
+          }}
+          key={childElement.id}
+          level={1}
+          element={childElement}
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          setElement={setElement}
+          handleOpenNotify={handleOpenNotify}
+        />
+      ))}
     </Box>
   );
 };

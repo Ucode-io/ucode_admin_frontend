@@ -158,19 +158,21 @@ const SubMenu = ({
                     level={2}
                   />
                 )}
-                <Resources
-                  menuStyle={menuStyle}
-                  setSubMenuIsOpen={setSubMenuIsOpen}
-                  level={2}
-                  menuItem={menuItem}
-                />
+                {selectedApp?.id === adminId && (
+                  <Resources
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    level={2}
+                    menuItem={menuItem}
+                  />
+                )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     menuItem={menuItem}
                     level={2}
-                    child={users}
+                    child={child}
                   />
                 )}
                 <div className="menu-element">

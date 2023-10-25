@@ -199,6 +199,9 @@ const ResourceDetail = () => {
         })
         .then(() => {
           dispatch(showAlert("Resource variable updated!", "success"));
+        })
+        .catch((err) => {
+          dispatch(showAlert(err, "error"));
         });
     } else {
       if (values?.resource_type === 4) {
@@ -233,7 +236,7 @@ const ResourceDetail = () => {
     //   resourceTypes.find((item) => item?.label === variables?.type).value
     // );
   }, [selectedEnvironment]);
-  console.log("variables", variables);
+
   useEffect(() => {
     if (variables?.type !== "REST") return;
     const matchingResource = resourceTypes.find(

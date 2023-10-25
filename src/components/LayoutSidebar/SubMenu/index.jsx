@@ -32,7 +32,6 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
-  users,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -43,8 +42,6 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-
-  const onDrop = (dropResult, index) => {};
 
   return (
     <div

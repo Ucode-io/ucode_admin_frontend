@@ -157,7 +157,7 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
     if (element.link) navigate(element.link);
     else if (element.type === "RESOURCE") navigateToEditPage(id);
   };
-  console.log("selected", selected);
+
   return (
     <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">

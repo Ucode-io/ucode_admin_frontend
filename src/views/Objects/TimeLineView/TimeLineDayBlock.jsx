@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { Popover, Typography } from "@mui/material";
+import { eachDayOfInterval, format } from "date-fns";
 
-export default function TimeLineDayBlock({ day, zoomPosition }) {
+export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focusedDays }) {
+  console.log("sssssswwwww", focusedDays);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const splittedDay = day.split("/");
 
@@ -16,20 +18,58 @@ export default function TimeLineDayBlock({ day, zoomPosition }) {
 
   const open = Boolean(anchorEl);
 
+  function generateDateRange(startDate, endDate) {
+    if (!startDate || !endDate) return [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const dateRange = eachDayOfInterval({ start, end });
+    return dateRange;
+  }
+
+  const isFocusedDay = () => {
+    return generateDateRange(focusedDays?.[0], focusedDays?.[1])
+      .map((date) => {
+        if (!date) return null;
+        return format(date, "dd/EEEE");
+      })
+      .includes(day);
+  };
+
   return (
     <>
-      <div
-      style={{
-        minWidth: `${zoomPosition * 30}px`
-      }}
+      {/* <div
+        style={{
+          minWidth: `${zoomPosition * 30}px`,
+          visibility: selectedType === "month" ? "hidden" : "",
+          backgroundColor: isFocusedDay() ? "#007AFF !important" : "",
+          color: isFocusedDay() ? "#fff !important" : "",
+        }}
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        className={`${styles.dayBlock} ${splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday" ? styles.dayOff : ""}`}
+        className={`${styles.dayBlock} ${(splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday") && selectedType !== "month" ? styles.dayOff : ""}`}
+      >
+        {splittedDay[0]}
+      </div> */}
+
+      <div
+        style={{
+          minWidth: `${zoomPosition * 30}px`,
+          visibility: selectedType === "month" ? "hidden" : "visible",
+          backgroundColor: isFocusedDay() ? "#7f77f1" : "transparent",
+          color: isFocusedDay() ? "#fff" : "inherit",
+        }}
+        aria-owns={open ? "mouse-over-popover" : undefined}
+        aria-haspopup="true"
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        className={`${styles.dayBlock} ${(splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday") && selectedType !== "month" ? styles.dayOff : ""}`}
       >
         {splittedDay[0]}
       </div>
+
       <Popover
         id="mouse-over-popover"
         sx={{

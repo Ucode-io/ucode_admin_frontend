@@ -1,12 +1,26 @@
-import React, { useRef } from "react";
+import { addDays } from "date-fns";
+import React, { useRef, useState } from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
+import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
-import TimeLineDayDataBlock from "./TimeLineDayDataBlock";
-import { addDays, setDate } from "date-fns";
 
-export default function TimeLineBlock({ data, fieldsMap, datesList, view, tabs, zoomPosition, setDateFilters, dateFilters }) {
+export default function TimeLineBlock({
+  data,
+  fieldsMap,
+  datesList,
+  view,
+  tabs,
+  zoomPosition,
+  setDateFilters,
+  dateFilters,
+  selectedType,
+  calendar_from_slug,
+  calendar_to_slug,
+  visible_field,
+}) {
   const scrollContainerRef = useRef(null);
-
+  const [focusedDays, setFocusedDays] = useState([]);
+console.log('focusedDays', focusedDays)
   const handleScroll = (e) => {
     const { scrollLeft, scrollWidth, clientWidth } = e.target;
 
@@ -24,10 +38,26 @@ export default function TimeLineBlock({ data, fieldsMap, datesList, view, tabs, 
   };
 
   return (
-    <div className={styles.gantt} ref={scrollContainerRef} onScroll={handleScroll}>
-      <TimeLineDatesRow datesList={datesList} zoomPosition={zoomPosition} />
+    <div
+      className={styles.gantt}
+      ref={scrollContainerRef}
+      // onScroll={handleScroll}
+    >
+      <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
 
-      <TimeLineDayDataBlock zoomPosition={zoomPosition} data={data} fieldsMap={fieldsMap} view={view} tabs={tabs} datesList={datesList} />
+      <TimeLineDayDataBlock
+      setFocusedDays={setFocusedDays}
+        selectedType={selectedType}
+        zoomPosition={zoomPosition}
+        data={data}
+        fieldsMap={fieldsMap}
+        view={view}
+        tabs={tabs}
+        datesList={datesList}
+        calendar_from_slug={calendar_from_slug}
+        calendar_to_slug={calendar_to_slug}
+        visible_field={visible_field}
+      />
     </div>
   );
 }

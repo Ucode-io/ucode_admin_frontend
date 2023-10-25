@@ -22,13 +22,7 @@ import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
 
-const ObjectsFormPage = ({
-  tableSlugFromProps,
-  handleClose,
-  modal = false,
-  selectedRow,
-  dateInfo,
-}) => {
+const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selectedRow, dateInfo }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
 
   const id = useMemo(() => {
@@ -63,7 +57,7 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
@@ -80,14 +74,9 @@ const ObjectsFormPage = ({
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
       setSections(sortSections(sections));
-      setSummary(
-        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
-      );
+      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
 
       const defaultLayout = layout?.find((el) => el.is_default === true);
 
@@ -100,10 +89,7 @@ const ObjectsFormPage = ({
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
 
@@ -135,10 +121,7 @@ const ObjectsFormPage = ({
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -154,8 +137,14 @@ const ObjectsFormPage = ({
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
-        navigate(-1);
+        if (!modal) {
+          navigate(-1);
+        }
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
+          table_slug: tableSlug,
+          user_id: isUserId,
+        });
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
       })
@@ -170,6 +159,9 @@ const ObjectsFormPage = ({
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
+          table_slug: tableSlug,
+        });
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
           user_id: isUserId,
@@ -217,12 +209,7 @@ const ObjectsFormPage = ({
 
         <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
 
-        <SummarySectionValue
-          computedSummary={summary}
-          control={control}
-          sections={sections}
-          setFormValue={setFormValue}
-        />
+        <SummarySectionValue computedSummary={summary} control={control} sections={sections} setFormValue={setFormValue} />
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
@@ -247,23 +234,12 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
+            <SecondaryButton onClick={() => (modal ? handleClose() : navigate(-1))} color="error">
               Close
             </SecondaryButton>
-            <FormCustomActionButton
-              control={control?._formValues}
-              tableSlug={tableSlug}
-              id={id}
-            />
-            <PermissionWrapperV2
-              tableSlug={tableSlug}
-              type={id ? "update" : "write"}
-            >
-              <PrimaryButton
-                loader={btnLoader}
-                id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+            <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
+            <PermissionWrapperV2 tableSlug={tableSlug} type={id ? "update" : "write"}>
+              <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                 <Save />
                 Save
               </PrimaryButton>

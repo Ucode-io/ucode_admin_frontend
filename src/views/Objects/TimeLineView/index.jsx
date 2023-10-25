@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import useFilters from "../../../hooks/useFilters";
 import { useDispatch, useSelector } from "react-redux";
 import { add, differenceInDays, endOfMonth, format, startOfMonth } from "date-fns";
-import { useQueries, useQuery } from "react-query";
+import { useQueries, useQuery, useQueryClient } from "react-query";
 import constructorObjectService from "../../../services/constructorObjectService";
 import { listToMap } from "../../../utils/listToMap";
 import FiltersBlock from "../../../components/FiltersBlock";
@@ -33,6 +33,12 @@ import SearchParams from "../components/ViewSettings/SearchParams";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
+import SettingsIcon from "@mui/icons-material/Settings";
+import FRow from "../../../components/FormElements/FRow";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import { useForm } from "react-hook-form";
+import listToOptions from "../../../utils/listToOptions";
+import constructorViewService from "../../../services/constructorViewService";
 
 export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews }) {
   const { t } = useTranslation();
@@ -73,11 +79,11 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     return result;
   }, [dateFilters]);
 
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
+  const { data: { data, fields } = { data: [] }, isLoading } = useQuery(
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { ...filters },
+        data: { ...filters, gte: dateFilters[0], lte: dateFilters[1] },
       });
     },
     {
@@ -92,13 +98,11 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         const fieldsMap = listToMap([...fields, ...relationFields]);
         const data = res.data?.response?.map((row) => ({
           ...row,
-          calendar: {
-            date: row[view.calendar_from_slug] ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy") : null,
-          },
         }));
         return {
           fieldsMap,
           data,
+          fields,
         };
       },
       onSuccess: (res) => {
@@ -149,6 +153,15 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     setAnchorElType(null);
   };
 
+  const [anchorElSettings, setAnchorElSettings] = useState(null);
+  const openSettings = Boolean(anchorElSettings);
+  const handleClickSettings = (event) => {
+    setAnchorElSettings(event.currentTarget);
+  };
+  const handleCloseSettings = () => {
+    setAnchorElSettings(null);
+  };
+
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -177,6 +190,59 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     },
   ];
   const [selectedType, setSelectedType] = useState("day");
+
+  const handleScrollClick = () => {
+    // Use native JavaScript to scroll to the div by its id
+    const scrollToDiv = document.getElementById("todayDate");
+    if (scrollToDiv) {
+      scrollToDiv.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  const form = useForm({
+    defaultValues: {
+      calendar_from_slug: "",
+      calendar_to_slug: "",
+    },
+  });
+
+  const computedColumns = useMemo(() => {
+    const filteredFields = fields?.filter((el) => el?.type === "DATE" || el?.type === "DATE_TIME");
+    return listToOptions(filteredFields, "label", "slug");
+  }, [fields]);
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    form.setValue("calendar_from_slug", view?.attributes?.calendar_from_slug);
+    form.setValue("calendar_to_slug", view?.attributes?.calendar_to_slug);
+    form.setValue("visible_field", view?.attributes?.visible_field);
+  }, [view]);
+
+  const saveSettings = () => {
+    const computedData = {
+      ...view,
+      attributes: {
+        ...view.attributes,
+        calendar_from_slug: form.getValues("calendar_from_slug"),
+        calendar_to_slug: form.getValues("calendar_to_slug"),
+        visible_field: form.getValues("visible_field"),
+      },
+    };
+
+    constructorViewService
+      .update({
+        ...computedData,
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      });
+  };
+
+  useEffect(() => {
+    if (selectedType === "month") {
+      setZoomPosition(1);
+    }
+  }, [selectedType]);
 
   return (
     <div>
@@ -340,6 +406,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
             margin: "0 5px",
             color: "#888",
           }}
+          onClick={handleScrollClick}
         >
           Today
         </Button>
@@ -420,20 +487,115 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
             ))}
           </div>
         </Menu>
+
+        <Button
+          onClick={handleClickSettings}
+          style={{
+            margin: "0 5px",
+            color: "#888",
+            display: "flex",
+            alignItems: "center",
+            gap: "3px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "3px",
+            }}
+          >
+            <SettingsIcon />
+            <span>Settings</span>
+          </div>
+          {openSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </Button>
+
+        <Divider orientation="vertical" flexItem />
+
+        <Menu
+          open={openSettings}
+          onClose={handleCloseSettings}
+          anchorEl={anchorElSettings}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                // width: 100,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                left: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "5px",
+              minWidth: "200px",
+              padding: "10px",
+            }}
+          >
+            <div>
+              <FRow label="Time from">
+                <HFSelect options={computedColumns} control={form.control} name="calendar_from_slug" />
+              </FRow>
+              <FRow label="Time to">
+                <HFSelect options={computedColumns} control={form.control} name="calendar_to_slug" />
+              </FRow>
+              <FRow label="Visible field">
+                <HFSelect options={listToOptions(fields, "label", "slug")} control={form.control} name="visible_field" />
+              </FRow>
+            </div>
+            <Button variant="contained" onClick={saveSettings}>
+              Save
+            </Button>
+          </div>
+        </Menu>
       </div>
 
-      {isLoading || tabLoading ? (
+      {/* {isLoading || tabLoading ? (
         <PageFallback />
-      ) : (
-        <div className={styles.wrapper}>
-          {/* <div className={styles.filters}>
+      ) : ( */}
+      <div className={styles.wrapper}>
+        {/* <div className={styles.filters}>
             <p>{t("filters")}</p>
             <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
           </div> */}
 
-          <TimeLineBlock dateFilters={dateFilters} setDateFilters={setDateFilters} zoomPosition={zoomPosition} data={data} fieldsMap={fieldsMap} datesList={datesList} view={view} tabs={tabs} />
-        </div>
-      )}
+        <TimeLineBlock
+          view={view}
+          dateFilters={dateFilters}
+          setDateFilters={setDateFilters}
+          zoomPosition={zoomPosition}
+          data={data}
+          selectedType={selectedType}
+          fieldsMap={fieldsMap}
+          datesList={datesList}
+          tabs={tabs}
+          calendar_from_slug={view?.attributes?.calendar_from_slug}
+          calendar_to_slug={view?.attributes?.calendar_to_slug}
+          visible_field={view?.attributes?.visible_field}
+        />
+      </div>
+      {/* )} */}
     </div>
   );
 }

@@ -1,10 +1,10 @@
-import { Box, Switch, Typography } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
+import {Box, Switch, Typography} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -31,8 +31,15 @@ import NfcIcon from "@mui/icons-material/Nfc";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
-const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, computedColumns }) => {
-  const { i18n } = useTranslation();
+const ColumnsTab = ({
+  form,
+  updateView,
+  isMenu,
+  views,
+  selectedTabIndex,
+  computedColumns,
+}) => {
+  const {i18n} = useTranslation();
 
   const computeColumns = (checkedColumnsIds = [], columns) => {
     const selectedColumns =
@@ -42,21 +49,24 @@ const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, compute
           ...columns.find((el) => el.id === id),
           is_checked: true,
         })) ?? [];
-    const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+    const unselectedColumns =
+      columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
     return [...selectedColumns, ...unselectedColumns];
   };
-  
+
   useEffect(() => {
     if (views?.[selectedTabIndex]?.columns) {
       form.reset({
         ...form.getValues(),
-        columns: computeColumns(views?.[selectedTabIndex]?.columns, computedColumns),
+        columns: computeColumns(
+          views?.[selectedTabIndex]?.columns,
+          computedColumns
+        ),
       });
     }
   }, [views, selectedTabIndex, computedColumns, form]);
 
-
-  const { fields: columns, move } = useFieldArray({
+  const {fields: columns, move} = useFieldArray({
     control: form.control,
     name: "columns",
     keyName: "key",
@@ -131,11 +141,11 @@ const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, compute
     };
   }, []);
 
-  useEffect(() => {
-    if (isMenu) {
-      updateView();
-    }
-  }, [watchedColumns]);
+  // useEffect(() => {
+  //   if (isMenu) {
+  //     updateView();
+  //   }
+  // }, [watchedColumns]);
 
   return (
     <div
@@ -155,7 +165,7 @@ const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, compute
         >
           <div
             className={styles.cell}
-            style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}
+            style={{flex: 1, border: 0, paddingLeft: 0, paddingRight: 0}}
           >
             <b>All</b>
           </div>
@@ -181,7 +191,7 @@ const ColumnsTab = ({ form, updateView, isMenu, views, selectedTabIndex, compute
         </div>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{className: "drag-row-drop-preview"}}
         >
           {columns.map((column, index) => (
             <Draggable key={column.id}>

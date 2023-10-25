@@ -1,15 +1,15 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Tooltip } from "@mui/material";
-import { BsThreeDots } from "react-icons/bs";
+import {Box, Button, Tooltip} from "@mui/material";
+import {BsThreeDots} from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import { useDispatch, useSelector } from "react-redux";
-import { mainActions } from "../../../store/main/main.slice";
-import { useTranslation } from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {mainActions} from "../../../store/main/main.slice";
+import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
@@ -32,11 +32,10 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
-  users,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
 

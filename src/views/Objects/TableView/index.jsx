@@ -59,9 +59,7 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
-  const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
-  );
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
@@ -113,10 +111,10 @@ const TableView = ({
   });
 
   const paginiation = useMemo(() => {
-    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug)
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
 
-    return getObject?.pageLimit ?? null
-  }, [paginationInfo, tableSlug])
+    return getObject?.pageLimit ?? null;
+  }, [paginationInfo, tableSlug]);
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -128,15 +126,11 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -144,13 +138,11 @@ const TableView = ({
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -164,10 +156,7 @@ const TableView = ({
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -194,8 +183,7 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key])
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
     return customSortArray(
@@ -228,9 +216,7 @@ const TableView = ({
     });
 
     if (sortValues && sortValues.length > 0) {
-      const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
-      );
+      const matchingSort = sortValues.find((entry) => entry.tableSlug === tableSlug);
 
       if (matchingSort) {
         const { field, order } = matchingSort;
@@ -260,7 +246,7 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
-  console.log('limitPage', limitPage)
+  console.log("limitPage", limitPage);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: { fiedlsarray, fieldView } = {
@@ -328,18 +314,10 @@ const TableView = ({
           offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
-          limit: limitPage && limitPage !== 0 ? limitPage : limit,
+          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
+          limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
-          [tab?.slug]: tab
-            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${tab?.value}`]
-              : tab?.value
-            : undefined,
+          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
       });
     },
@@ -390,10 +368,9 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
+  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+    tableSlug,
+  });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -423,9 +400,7 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
         });
       });
   }, [tableSlug, i18n?.language]);
@@ -441,15 +416,7 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&&");
+      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -479,38 +446,16 @@ const TableView = ({
     }
   };
 
-  const [elementHeight, setElementHeight] = useState(null);
-
-  // useEffect(() => {
-  //   const element = document.querySelector("#data-table");
-  //   if (element) {
-  //     const height = element.getBoundingClientRect().height;
-  //     setElementHeight(height);
-  //   }
-  // }, []);
-
-  console.log('currentPage', currentPage)
-
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div
-          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
-          id="data-table"
-        >
+        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
@@ -521,7 +466,6 @@ const TableView = ({
             setDrawerStateField={setDrawerStateField}
             isTableView={true}
             getValues={getValues}
-            // elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}
@@ -565,18 +509,9 @@ const TableView = ({
         </div>
       </PermissionWrapperV2>
 
-      <ModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        selectedRow={selectedRow}
-      />
+      <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
 
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -590,12 +525,7 @@ const TableView = ({
         />
       </Drawer>
 
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerStateField} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <RelationSettingsTest
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

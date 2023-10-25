@@ -16,7 +16,6 @@ import FontSize from "editorjs-inline-font-size-tool";
 import ColorPlugin from "editorjs-text-color-plugin";
 import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 import NestedList from "@editorjs/nested-list";
-import TextVariantTune from "@moxrbe/text-variant-tune";
 import FootnotesTune from "@editorjs/footnotes";
 import OpenseaTool from "@editorjs/opensea";
 import Underline from "@editorjs/underline";
@@ -25,6 +24,7 @@ import Iframe from "@hammaadhrasheedh/editorjs-iframe";
 import Alert from "editorjs-alerticons";
 import noteFileService from "../services/noteFileService";
 import BreakLine from "editorjs-break-line";
+import TextVariantTune from "@moxrbe/text-variant-tune";
 
 function encodeFileToBase64(file, callback) {
   var reader = new FileReader();

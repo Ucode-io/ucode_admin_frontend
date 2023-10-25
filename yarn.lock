@@ -3862,10 +3862,10 @@
   dependencies:
     "@monaco-editor/loader" "^1.3.3"
 
-"@moxrbe/text-variant-tune@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@moxrbe/text-variant-tune/-/text-variant-tune-1.0.1.tgz#2eb727245847b516322a453100f49d5be9b2f1d3"
-  integrity sha512-uR20pQWEibHE3RzA8F2u2Wc+HwwzUe8W1QxpMurqYqaUnV+TPglqOlJdo0f8r7+/XSYoEl6+rhK2jjBAAQhRwg==
+"@moxrbe/text-variant-tune@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@moxrbe/text-variant-tune/-/text-variant-tune-1.1.0.tgz#d2417bb6a68f518f2562b5f9273ed2743b23355e"
+  integrity sha512-I4hcwVswfcIbqvu2IXFX+NwwlRYMIUBvGsZ0w8cLQhkyZwCE6gcy7ybir2hLN3qSo/zpXOxcDXFwpVQG7UQqGA==
 
 "@mui/base@5.0.0-beta.8":
   version "5.0.0-beta.8"
@@ -6193,6 +6193,11 @@ core-js@^3.28.0, core-js@^3.6.0, core-js@^3.6.4, core-js@^3.8.3:
   version "3.32.0"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.32.0.tgz#7643d353d899747ab1f8b03d2803b0312a0fb3b6"
   integrity sha512-rd4rYZNlF3WuoYuRIDEmbR/ga9CeuWX9U05umAvgrrZoHY4Z++cp/xwPQMvUpBB4Ag6J8KfD80G0zwCyaSxDww==
+
+core-js@^3.33.1:
+  version "3.33.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.33.1.tgz#ef3766cfa382482d0a2c2bc5cb52c6d88805da52"
+  integrity sha512-qVSq3s+d4+GsqN0teRCJtM6tdEEXyWxjzbhVrCHmBS5ZTM0FS2MOS0D13dUXAWDUN6a+lHI/N1hF9Ytz6iLl9Q==
 
 core-util-is@^1.0.2, core-util-is@~1.0.0:
   version "1.0.3"
@@ -11579,6 +11584,11 @@ regenerator-runtime@^0.13.11, regenerator-runtime@^0.13.5, regenerator-runtime@^
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
+
+regenerator-runtime@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
+  integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
 
 regenerator-transform@^0.14.5:
   version "0.14.5"

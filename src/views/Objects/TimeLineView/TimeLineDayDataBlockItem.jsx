@@ -26,7 +26,7 @@ export default function TimeLineDayDataBlockItem({ data, level, setFocusedDays, 
   });
 
   const startDate = useMemo(() => {
-    return datesList.findIndex((date) => format(date, "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy"));
+    return datesList && calendar_from_slug ? datesList.findIndex((date) => format(date, "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy")) : null;
   }, [datesList, data[calendar_from_slug]]);
 
   const differenceInDays = useMemo(() => {

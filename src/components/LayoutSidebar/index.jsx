@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import {Box, Button, Divider} from "@mui/material";
 import {useEffect, useState} from "react";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {Container} from "react-smooth-dnd";

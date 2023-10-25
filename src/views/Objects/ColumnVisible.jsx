@@ -1,11 +1,20 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 
-export default function ColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form, text = "Columns", width = "" }) {
+export default function ColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+  text = "Columns",
+  width = "",
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -29,7 +38,9 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -39,16 +50,20 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: form.getValues('attributes.group_by_columns')?.filter((el) => el?.is_checked)?.map((el) => el.id),
+          group_by_columns: form
+            .getValues("attributes.group_by_columns")
+            ?.filter((el) => el?.is_checked)
+            ?.map((el) => el.id),
         },
-        columns: form.getValues('columns')?.filter((el) => el.is_checked)?.map((el) => el.id),
+        columns: form
+          .getValues("columns")
+          ?.filter((el) => el.is_checked)
+          ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
   };
-
-  
 
   return (
     <div>
@@ -121,7 +136,18 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true} views={views} selectedTabIndex={selectedTabIndex} computedColumns={computedColumns}/>}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <ColumnsTab
+            form={form}
+            updateView={updateView}
+            isMenu={true}
+            views={views}
+            selectedTabIndex={selectedTabIndex}
+            computedColumns={computedColumns}
+          />
+        )}
       </Menu>
     </div>
   );

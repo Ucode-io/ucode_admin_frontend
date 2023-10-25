@@ -1,8 +1,8 @@
-import { Lock } from "@mui/icons-material";
-import { InputAdornment, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import {Lock} from "@mui/icons-material";
+import {InputAdornment, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useMemo} from "react";
+import {useSelector} from "react-redux";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -30,7 +30,7 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 
 const parser = new Parser();
@@ -52,7 +52,7 @@ const FormElementGenerator = ({
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -118,7 +118,7 @@ const FormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (field?.type === "SINGLE_LINE") return defaultValue;
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [
     field.attributes,
@@ -130,11 +130,11 @@ const FormElementGenerator = ({
   ]);
 
   const isDisabled = useMemo(() => {
-    const { attributes } = field;
+    const {attributes} = field;
 
-    if (window.location.pathname.includes('create' )) {
-        if(attributes?.disabled) return true;
-        else return false;
+    if (window.location.pathname.includes("create")) {
+      if (attributes?.disabled) return true;
+      else return false;
     } else {
       return (
         attributes?.disabled ||
@@ -142,10 +142,7 @@ const FormElementGenerator = ({
         attributes?.is_editable
       );
     }
-
   }, [field]);
-
-  
 
   if (
     !field.attributes?.field_permission?.view_permission &&
@@ -828,7 +825,7 @@ const FormElementGenerator = ({
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             type="password"
             {...props}
           />
@@ -866,7 +863,7 @@ const FormElementGenerator = ({
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),

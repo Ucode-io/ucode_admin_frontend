@@ -14,7 +14,7 @@ import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
-import { Container, Draggable } from "react-smooth-dnd";
+import Resources from "../Components/Resources";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -43,8 +43,6 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-
-  const onDrop = (dropResult, index) => {};
 
   const clickHandler = (e) => {
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
@@ -155,6 +153,14 @@ const SubMenu = ({
                     menuItem={menuItem}
                     setElement={setElement}
                     level={2}
+                  />
+                )}
+                {selectedApp?.id === adminId && (
+                  <Resources
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    level={2}
+                    menuItem={menuItem}
                   />
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (

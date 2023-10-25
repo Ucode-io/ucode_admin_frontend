@@ -200,10 +200,15 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     companyService
       .getCompanyList(data)
       .then((res) => {
-        setIsUserId(res?.user_id);
-        setCompanies(res?.companies);
-        computeCompanyElement(res?.companies);
-        setLoading(true);
+        if (res?.companies) {
+          setIsUserId(res?.user_id);
+          setCompanies(res?.companies);
+          computeCompanyElement(res?.companies);
+          setLoading(true);
+        } else {
+          dispatch(showAlert("The company does not exist", "error"));
+          setLoading(false);
+        }
 
         if (index === 1) register(values);
       })
@@ -266,13 +271,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 0) {
-
-      if (     
+      if (
         getFormValue?.username &&
         getFormValue?.password &&
         getFormValue?.client_type &&
         getFormValue?.project_id &&
-        getFormValue?.environment_id && checkConnections) {
+        getFormValue?.environment_id &&
+        checkConnections
+      ) {
         onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();

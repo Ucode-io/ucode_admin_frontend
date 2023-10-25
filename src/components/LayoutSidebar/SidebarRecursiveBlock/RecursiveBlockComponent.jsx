@@ -197,6 +197,16 @@ const RecursiveBlock = ({
       handleOpenNotify(e, "CREATE_TO_FOLDER");
     }
   };
+  const menuSettingsClick = (e) => {
+    e?.stopPropagation();
+    if (element?.type === "MINIO_FOLDER") {
+      handleOpenNotify(e, "MINIO_FOLDER");
+    } else {
+      handleOpenNotify(e, "FOLDER");
+    }
+    setElement(element);
+    dispatch(menuActions.setMenuItem(element));
+  };
 
   useEffect(() => {
     if (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
@@ -321,10 +331,7 @@ const RecursiveBlock = ({
                         <BsThreeDots
                           size={13}
                           onClick={(e) => {
-                            e?.stopPropagation();
-                            handleOpenNotify(e, "FOLDER");
-                            setElement(element);
-                            dispatch(menuActions.setMenuItem(element));
+                            menuSettingsClick(e);
                           }}
                           style={{
                             color:
@@ -590,14 +597,6 @@ const RecursiveBlock = ({
               level={2}
             />
           </>
-        )}
-        {element.id === folderIds.resource_folder_id && (
-          <Resources
-            menuStyle={menuStyle}
-            setSubMenuIsOpen={setSubMenuIsOpen}
-            level={2}
-            menuItem={menuItem}
-          />
         )}
         {element.id === folderIds.api_folder_id && (
           <>

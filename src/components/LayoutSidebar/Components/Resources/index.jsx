@@ -1,10 +1,9 @@
-
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { store } from "../../../../store";
+import {Box, Button, Collapse, Menu, MenuItem, Tooltip} from "@mui/material";
+import {useMemo, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {store} from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import {
@@ -17,53 +16,36 @@ import {
 import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import StorageIcon from "@mui/icons-material/Storage";
-import { TbDatabaseExport } from "react-icons/tb";
-import { BiGitCompare } from "react-icons/bi";
-import { IoEnter, IoExit } from "react-icons/io5";
+import {TbDatabaseExport} from "react-icons/tb";
+import {BiGitCompare} from "react-icons/bi";
+import {IoEnter, IoExit} from "react-icons/io5";
 // import { resourceTypes } from "utils/resourceConstants";
-import { resourceTypes } from "../../../../utils/resourceConstants";
-import { useQueryClient } from "react-query";
+import {resourceTypes} from "../../../../utils/resourceConstants";
+import {useQueryClient} from "react-query";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import {useDispatch} from "react-redux";
 // import environmentStore from "../../../../store/environment";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
-const dataBases = [
-  {
-    label: "Resources",
-    type: "USER_FOLDER",
-    icon: "database.svg",
-    parent_id: adminId,
-    id: "15",
-    data: {
-      permission: {
-        read: true,
-        write: true,
-        delete: true,
-        update: true,
-      },
+const dataBases = {
+  label: "Resources",
+  type: "USER_FOLDER",
+  icon: "database.svg",
+  parent_id: adminId,
+  id: "15",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
     },
   },
-];
+};
 
-// const dataBaseVariable = 
-//   {
-//     label: "Variable Resources",
-//     type: "USER_FOLDER",
-//     icon: "database.svg",
-//     parent_id: adminId,
-//     id: "10",
-//     data: {
-//       permission: {
-//         read: true,
-//         write: true,
-//         delete: true,
-//         update: true,
-//       },
-//     },
-//   }
-
-const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
+const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
   const navigate = useNavigate();
-  const { projectId, resourceId , appId} = useParams();
+  const {projectId, resourceId, appId} = useParams();
 
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [selected, setSelected] = useState({});
@@ -72,31 +54,39 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const open = Boolean(anchorEl);
   const authStore = store.getState().auth;
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
+  const activeStyle = {
+    borderRadius: "10px",
+    backgroundColor:
+      dataBases?.id === menuItem?.id
+        ? menuStyle?.active_background || "#007AFF"
+        : menuStyle?.background,
+    color:
+      dataBases?.id === menuItem?.id
+        ? menuStyle?.active_text || "#fff"
+        : menuStyle?.text,
+    // paddingLeft: updateLevel(level),
+    display:
+      menuItem?.id === "0" ||
+      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  };
 
-  const { data: { resources } = {} } = useResourceListQuery({
+  const {data: {resources} = {}} = useResourceListQuery({
     params: {
       project_id: company?.projectId,
     },
   });
 
-  const { data = {} } = useResourceListQueryV2({
+  const {data = {}} = useResourceListQueryV2({
     params: {
       project_id: company?.projectId,
     },
   });
-
 
   const computedResources = useMemo(() => {
-    return [
-        ...(data?.resources || []),
-        ...(resources || []) 
-    ];
+    return [...(data?.resources || []), ...(resources || [])];
   }, [data, resources]);
-
-
-
-  console.log('computedResources', computedResources)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -105,7 +95,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     setAnchorEl(null);
   };
 
-  const { mutate: deleteResource, isLoading: deleteLoading } =
+  const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutation({
       onSuccess: () => {
         refetch();
@@ -113,16 +103,15 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       },
     });
 
+  const {mutate: deleteResourceV2, isLoading: deleteLoadingV2} =
+    useResourceDeleteMutationV2({
+      onSuccess: () => {
+        queryClient.refetchQueries(["RESOURCESV2"]);
+        handleClose();
+      },
+    });
 
-  const { mutate: deleteResourceV2, isLoading: deleteLoadingV2 } =
-  useResourceDeleteMutationV2({
-    onSuccess: () => {
-      queryClient.refetchQueries(["RESOURCESV2"]);
-      handleClose();
-    },
-  });
-
-  const { mutate: addResourceFromCluster, isLoading: clusterLoading } =
+  const {mutate: addResourceFromCluster, isLoading: clusterLoading} =
     useResourceCreateFromClusterMutation({
       onSuccess: () => {
         refetch();
@@ -143,6 +132,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   };
 
   const clickHandler = (e) => {
+    dispatch(menuActions.setMenuItem(dataBases));
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
   };
@@ -167,107 +157,105 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     if (element.link) navigate(element.link);
     else if (element.type === "RESOURCE") navigateToEditPage(id);
   };
-
+  console.log("selected", selected);
   return (
-    <Box>
-      {dataBases?.map((dataBase => (
-        <div className="parent-block column-drag-handle">
-            <Button
-                  className={`nav-element`}
-                  onClick={(e) => {
-                    clickHandler(e);
-                  }}
-                >
-                  <div
-                    className="label"
+    <Box sx={{margin: "0 5px"}}>
+      <div className="parent-block column-drag-handle">
+        <Button
+          className={`nav-element`}
+          style={activeStyle}
+          onClick={(e) => {
+            clickHandler(e);
+          }}
+        >
+          <div
+            className="label"
+            style={{
+              color:
+                selected?.id === dataBases?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text,
+            }}
+          >
+            {childBlockVisible ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
+            )}
+            <IconGenerator icon={"database.svg"} size={18} />
+            {dataBases?.label}
+          </div>
+
+          {dataBases?.id === "15" && (
+            <Box mt={1} sx={{cursor: "pointer"}}>
+              <Tooltip title="Add resource" placement="top">
+                <Box className="">
+                  <StorageIcon
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClick(e);
+                      handleOpenNotify(e, "CREATE_FOLDER");
+                    }}
                     style={{
                       color:
-                        selected?.id === dataBase?.id
+                        selected?.id === dataBases?.id
                           ? menuStyle?.active_text
-                          : menuStyle?.text,
+                          : menuStyle?.text || "",
                     }}
-                  >
-                    <IconGenerator icon={"database.svg"} size={18} />
-                    {dataBase?.label}
-                  </div>
-        
-                {dataBase?.id === '15' && (
-                    <Box mt={1} sx={{ cursor: "pointer" }}>
-                    <Tooltip title="Add resource" placement="top">
-                      <Box className="">
-                        <StorageIcon
-                          size={13}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClick(e);
-                            handleOpenNotify(e, "CREATE_FOLDER");
-                          }}
-                          style={{
-                            color:
-                              selected?.id === dataBase?.id
-                                ? menuStyle?.active_text
-                                : menuStyle?.text || "",
-                          }}
-                        />
-                      </Box>
-                    </Tooltip>
-                  </Box>
-                )}
-
-                {dataBase?.id === '15' && (
-                  <Box mt={1} sx={{ cursor: "pointer" }}>
-                  <Tooltip title="Add resource" placement="top">
-                    <Box className="">
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          navigateToCreateForm()
-                          navigate("/main/resources/create");
-                          e.stopPropagation();
-                          handleOpenNotify(e, "CREATE_FOLDER");
-                        }}
-                        style={{
-                          color:
-                            selected?.id === dataBase?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
+                  />
                 </Box>
-                )}
-        
-                  <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                      "aria-labelledby": "basic-button",
-                    }}
-                  >
-                    {resourceTypes?.map((el) => (
-                      <MenuItem
-                        sx={{ width: "250px" }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addResourceFromClusterClick(el.value);
-                        }}
-                      >
-                        {el?.label}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                  {childBlockVisible ? (
-                    <KeyboardArrowDownIcon />
-                  ) : (
-                    <KeyboardArrowRightIcon />
-                  )}
-              </Button>
-          </div>        
-      )))}
+              </Tooltip>
+            </Box>
+          )}
 
+          {dataBases?.id === "15" && (
+            <Box mt={1} sx={{cursor: "pointer"}}>
+              <Tooltip title="Add resource" placement="top">
+                <Box className="">
+                  <AddIcon
+                    size={13}
+                    onClick={(e) => {
+                      navigateToCreateForm();
+                      navigate("/main/resources/create");
+                      e.stopPropagation();
+                      handleOpenNotify(e, "CREATE_FOLDER");
+                    }}
+                    style={{
+                      color:
+                        selected?.id === dataBases?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
+
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            {resourceTypes?.map((el) => (
+              <MenuItem
+                sx={{width: "250px"}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addResourceFromClusterClick(el.value);
+                }}
+              >
+                {el?.label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Button>
+      </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {computedResources?.map((childElement) => (
@@ -287,7 +275,6 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
           />
         ))}
       </Collapse>
-
     </Box>
   );
 };

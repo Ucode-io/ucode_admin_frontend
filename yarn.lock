@@ -3167,10 +3167,10 @@
   resolved "https://registry.yarnpkg.com/@editorjs/opensea/-/opensea-1.0.2.tgz#edc3c2025f7d4bc10caf76e1e6e893f5222745a0"
   integrity sha512-H3cAaG8WgSqh9xpN7V9t6U8JTUnqD+QUV1PsAGF6OMI9yoLEXGN6SbqUQUtFae+/npCMKj/2l8n82qhuzsCS7Q==
 
-"@editorjs/paragraph@^2.9.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/paragraph/-/paragraph-2.10.0.tgz#dcf152e69738a9399b4af83262606d76cf1376e5"
-  integrity sha512-AzaGxR9DQAdWhx43yupBcwqtwH0WWi5jBDOCSeALIK86IYOnO6Lp4anEbH8IYmYrE/5MdnRiTwdU8/Xs8W15Nw==
+"@editorjs/paragraph@^2.11.3":
+  version "2.11.3"
+  resolved "https://registry.yarnpkg.com/@editorjs/paragraph/-/paragraph-2.11.3.tgz#fb438de863179739f18de7d8851671a0d8447923"
+  integrity sha512-ON72lhvhgWzPrq4VXpHUeut9bsFeJgVATDeL850FVToOwYHKvdsNpfu0VgxEodhkXgzU/IGl4FzdqC2wd3AJUQ==
   dependencies:
     "@codexteam/icons" "^0.0.4"
 
@@ -3206,11 +3206,6 @@
   integrity sha512-MfCGaEl3c+k+//WriVbtLTLfVzuD2gcyovf3/wIevkQ35vAJEVnimj+bTPWJqBtiHsKUVd4yXvk5QH5xRWOybg==
   dependencies:
     "@codexteam/icons" "^0.0.6"
-
-"@editorjs/text-variant-tune@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@editorjs/text-variant-tune/-/text-variant-tune-1.0.1.tgz#1fc90bbef473576ae8033d4f5ad597584dbdff4a"
-  integrity sha512-uVRbiMeJ14XjlP4cLqHxgQpdqbQnuQgUhlMQUFDLi7yanbEqWmb0gguZjmbdl6gnBYeUYRv9IbyOva3Iaif6ZQ==
 
 "@editorjs/underline@^1.1.0":
   version "1.1.0"
@@ -3834,10 +3829,22 @@
   dependencies:
     "@monaco-editor/loader" "^1.3.3"
 
+<<<<<<< HEAD
 "@mui/base@5.0.0-beta.11":
   version "5.0.0-beta.11"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.11.tgz#0124d336f1931c6cd5f0008d015df5bd8fafd3a8"
   integrity sha512-FdKZGPd8qmC3ZNke7CNhzcEgToc02M6WYZc9hcBsNQ17bgAd3s9F//1bDDYgMVBYxDM71V0sv/hBHlOY4I1ZVA==
+=======
+"@moxrbe/text-variant-tune@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@moxrbe/text-variant-tune/-/text-variant-tune-1.1.0.tgz#d2417bb6a68f518f2562b5f9273ed2743b23355e"
+  integrity sha512-I4hcwVswfcIbqvu2IXFX+NwwlRYMIUBvGsZ0w8cLQhkyZwCE6gcy7ybir2hLN3qSo/zpXOxcDXFwpVQG7UQqGA==
+
+"@mui/base@5.0.0-beta.8":
+  version "5.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.8.tgz#a0a9531ae9147be92d17e4f0e3b9accc57916841"
+  integrity sha512-b4vVjMZx5KzzEMf4arXKoeV5ZegAMOoPwoy1vfUBwhvXc2QtaaAyBp50U7OA2L06Leubc1A+lEp3eqwZoFn87g==
+>>>>>>> divider_npm
   dependencies:
     "@babel/runtime" "^7.22.6"
     "@emotion/is-prop-valid" "^1.2.1"
@@ -6173,6 +6180,11 @@ core-js@^3.28.0, core-js@^3.6.0, core-js@^3.6.4, core-js@^3.8.3:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.32.0.tgz#7643d353d899747ab1f8b03d2803b0312a0fb3b6"
   integrity sha512-rd4rYZNlF3WuoYuRIDEmbR/ga9CeuWX9U05umAvgrrZoHY4Z++cp/xwPQMvUpBB4Ag6J8KfD80G0zwCyaSxDww==
 
+core-js@^3.33.1:
+  version "3.33.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.33.1.tgz#ef3766cfa382482d0a2c2bc5cb52c6d88805da52"
+  integrity sha512-qVSq3s+d4+GsqN0teRCJtM6tdEEXyWxjzbhVrCHmBS5ZTM0FS2MOS0D13dUXAWDUN6a+lHI/N1hF9Ytz6iLl9Q==
+
 core-util-is@^1.0.2, core-util-is@~1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
@@ -7174,6 +7186,11 @@ editorjs-alerticons@^1.0.0:
     yaml "^1.10.0"
     yargs "^13.3.2"
     yargs-parser "^13.1.2"
+
+editorjs-break-line@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/editorjs-break-line/-/editorjs-break-line-1.0.9.tgz#7f35bed494b8af2cbc5dac24218eb2b414e22ec8"
+  integrity sha512-RoB3n6gnDmLnR6NNv1nmrlA04VIydVsjJY42n2rD6j6hk2R4TkhiUF/DGSmCJq4ePFDiNTphOF8x2Uq+KYiJIA==
 
 editorjs-drag-drop@^1.1.13:
   version "1.1.13"
@@ -11635,6 +11652,11 @@ regenerator-runtime@^0.13.11, regenerator-runtime@^0.13.5, regenerator-runtime@^
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
+
+regenerator-runtime@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
+  integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
 
 regenerator-transform@^0.14.5:
   version "0.14.5"

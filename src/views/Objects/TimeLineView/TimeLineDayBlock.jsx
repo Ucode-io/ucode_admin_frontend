@@ -28,6 +28,7 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
   }
 
   const isFocusedDay = () => {
+    if (focusedDays?.length) return null;
     return generateDateRange(focusedDays?.[0], focusedDays?.[1])
       .map((date) => {
         if (!date) return null;

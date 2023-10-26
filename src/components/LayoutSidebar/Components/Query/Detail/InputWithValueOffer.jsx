@@ -31,13 +31,13 @@ const InputWithValueOffer = ({
     control: form.control,
     name,
   });
-  console.log("name", name);
+
   const dispatch = useDispatch();
   const containsOnlyNumbers = (str) => {
     return /^[0-9]+$/.test(str);
   };
 
-  const queryVairables = form.watch("query_variables");
+  const queryVairables = form.watch("project_resource_id");
 
   const {data: {variables} = {}} = useVariableResourceListQuery({
     id: queryVairables,
@@ -78,7 +78,7 @@ const InputWithValueOffer = ({
     getElementBetween(form);
     setValue(newValue);
   };
-
+  console.log("variables", variables);
   return (
     <div
       className={className || styles.container}
@@ -114,7 +114,9 @@ const InputWithValueOffer = ({
           onBlur={onBlur}
         />
 
-        {focused && inputValue.trim() !== "{{}}" ? (
+        {focused &&
+        inputValue.trim() !== "{{" &&
+        inputValue.trim() !== "{{}}" ? (
           <div className={styles.prompt}>
             <div className={styles.wrapper}>
               <div>
@@ -138,9 +140,8 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 0 &&
-        inputValue.trim() === "{{}}" &&
-        Boolean(queryVairables) ? (
+        {(variables?.length > 0 && inputValue.trim() === "{{") ||
+        (inputValue.trim() === "{{}}" && Boolean(queryVairables)) ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (

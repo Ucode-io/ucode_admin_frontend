@@ -7,11 +7,10 @@ import { useDispatch } from "react-redux";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
-import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
 import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
-import { updateLevel } from "../../../../utils/level";
+import PermissionSidebarRecursiveBlock from "./PermissionSidebarRecursiveBlock";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
@@ -30,7 +29,13 @@ const permissionFolder = {
   },
 };
 
-const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
+const Permissions = ({
+  level = 1,
+  menuStyle,
+  menuItem,
+  setElement,
+  handleOpenNotify,
+}) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
@@ -46,7 +51,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   const activeStyle = {
-    borderRadius: '10px',
+    borderRadius: "10px",
     backgroundColor:
       permissionFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -75,13 +80,13 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   const { isLoading } = useQuery(
-    ["GET_CLIENT_TYPE_LIST"],
+    ["GET_CLIENT_TYPE_PERMISSION", permissionFolder],
     () => {
       return clientTypeServiceV2.getList();
     },
     {
       cacheTime: 10,
-      enabled: false,
+      enabled: Boolean(permissionFolder),
       onSuccess: (res) => {
         setChild(
           res.data.response?.map((row) => ({
@@ -103,13 +108,12 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const clickHandler = (e) => {
     e.stopPropagation();
     setSelected(permissionFolder);
-    queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     setChildBlockVisible((prev) => !prev);
     dispatch(menuActions.setMenuItem(permissionFolder));
   };
 
   return (
-    <Box sx={{margin: '0 5px'}}>
+    <Box sx={{ margin: "0 5px" }}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
@@ -119,11 +123,11 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
           }}
         >
           <div className="label" style={labelStyle}>
-          {childBlockVisible ? (
-             <KeyboardArrowDownIcon />
-              ) : (
-                <KeyboardArrowRightIcon />
-              )}
+            {childBlockVisible ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
+            )}
             <IconGenerator icon={"lock.svg"} size={18} />
             Permissions
           </div>
@@ -134,7 +138,6 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
                   size={13}
                   onClick={(e) => {
                     e.stopPropagation();
-                    // handleOpenNotify(e, "CREATE_FOLDER");
                     openUserFolderModal({}, "CREATE");
                   }}
                   style={iconStyle}
@@ -142,23 +145,20 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
               </Box>
             </Tooltip>
           </Box>
-          {/* {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )} */}
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
-          <RecursiveBlock
+          <PermissionSidebarRecursiveBlock
             key={childElement.id}
             level={level + 1}
             element={childElement}
             menuStyle={menuStyle}
             menuItem={menuItem}
             setElement={setElement}
+            handleOpenNotify={handleOpenNotify}
+            openUserFolderModal={openUserFolderModal}
           />
         ))}
       </Collapse>

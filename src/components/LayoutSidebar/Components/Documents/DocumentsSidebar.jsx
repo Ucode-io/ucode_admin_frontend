@@ -53,10 +53,10 @@ const DocumentsSidebar = ({
   menuStyle,
   setSubMenuIsOpen,
   menuItem,
-  setElement, 
-  setSelectedApp, 
+  setElement,
+  setSelectedApp,
   sidebarIsOpen,
-  setSidebarIsOpen
+  setSidebarIsOpen,
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -101,7 +101,7 @@ const DocumentsSidebar = ({
   const closeNoteFolderModal = () => setNoteFolderModalType(false);
 
   const activeStyle = {
-    borderRadius: '10px',
+    borderRadius: "10px",
     backgroundColor:
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -294,7 +294,7 @@ const DocumentsSidebar = ({
       },
       {
         id: 2,
-        name: "Notes",
+        name: "Wiki",
         icon: TbEdit,
         children: computedNotesList,
         type: "FOLDER",
@@ -346,43 +346,41 @@ const DocumentsSidebar = ({
       },
     });
 
-    const rowClickHandler = (id, element) => {
-      dispatch(menuActions.setMenuItem(element));
-      if (id === 1 || id === 2) {
-        if (element.children === null) {
-          element.name === "Templates"
-            ? setTemplateFolderModalType("CREATE")
-            : setNoteFolderModalType("CREATE");
-        } else if (element.children === null) {
-          element.name === "Notes"
-            ? setNoteFolderModalType("CREATE")
-            : setTemplateFolderModalType("CREATE");
-        }
+  const rowClickHandler = (id, element) => {
+    dispatch(menuActions.setMenuItem(element));
+    if (id === 1 || id === 2) {
+      if (element.children === null) {
+        element.name === "Templates"
+          ? setTemplateFolderModalType("CREATE")
+          : setNoteFolderModalType("CREATE");
+      } else if (element.children === null) {
+        element.name === "Notes"
+          ? setNoteFolderModalType("CREATE")
+          : setTemplateFolderModalType("CREATE");
       }
-      if (
-        element.type !== "FOLDER" ||
-        openedNoteFolders.includes(id) ||
-        openedTemplateFolders.includes(id)
-      )
-        return;
-      if (element.what_is === "template") {
-        setOpenedTemplateFolders((prev) => [...prev, id]);
-      } else if (element.what_is === "note") {
-        setOpenedNoteFolders((prev) => [...prev, id]);
-      }
-      if (element.type === "FOLDER") {
-        navigate(`/main/31a91a86-7ad3-47a6-a172-d33ceaebb35f`);
-      }
-    };
-  
+    }
+    if (
+      element.type !== "FOLDER" ||
+      openedNoteFolders.includes(id) ||
+      openedTemplateFolders.includes(id)
+    )
+      return;
+    if (element.what_is === "template") {
+      setOpenedTemplateFolders((prev) => [...prev, id]);
+    } else if (element.what_is === "note") {
+      setOpenedNoteFolders((prev) => [...prev, id]);
+    }
+    if (element.type === "FOLDER") {
+      navigate(`/main/31a91a86-7ad3-47a6-a172-d33ceaebb35f`);
+    }
+  };
 
   const clickHandler = (e) => {
     e.stopPropagation();
     setSubMenuIsOpen(true);
     dispatch(menuActions.setMenuItem(docsFolder));
     setSelected(docsFolder);
-    
-   
+
     setChildBlockVisible((prev) => !prev);
     // navigate(`/main/${adminId}`);
   };
@@ -405,20 +403,20 @@ const DocumentsSidebar = ({
 
   return (
     <>
-        {sidebarElements?.map((element) => (
-          <DocumentsRecursive
-            key={element.id}
-            level={level + 1}
-            element={element}
-            menuStyle={menuStyle}
-            onRowClick={rowClickHandler}
-            selected={selected}
-            handleOpenNotify={handleOpenNotify}
-            onSelect={onSelect}
-            setSelected={setSelected}
-            menuItem={menuItem}
-          />
-        ))}
+      {sidebarElements?.map((element) => (
+        <DocumentsRecursive
+          key={element.id}
+          level={level + 1}
+          element={element}
+          menuStyle={menuStyle}
+          onRowClick={rowClickHandler}
+          selected={selected}
+          handleOpenNotify={handleOpenNotify}
+          onSelect={onSelect}
+          setSelected={setSelected}
+          menuItem={menuItem}
+        />
+      ))}
 
       <DocumentButtonMenu
         selected={selected}

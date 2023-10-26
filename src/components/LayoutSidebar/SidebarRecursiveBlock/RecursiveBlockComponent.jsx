@@ -30,6 +30,7 @@ import "../style.scss";
 import { analyticItems, folderIds } from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
+import { Draggable } from "react-smooth-dnd";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -48,6 +49,9 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
   selectedApp,
+  index,
+  setCheck,
+  check,
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -55,7 +59,6 @@ const RecursiveBlock = ({
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
-  const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
@@ -109,7 +112,6 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
-
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -197,6 +199,7 @@ const RecursiveBlock = ({
       handleOpenNotify(e, "CREATE_TO_FOLDER");
     }
   };
+
   const menuSettingsClick = (e) => {
     e?.stopPropagation();
     if (element?.type === "MINIO_FOLDER") {
@@ -236,102 +239,132 @@ const RecursiveBlock = ({
       },
     }
   );
+
   return (
-    <Box sx={{ padding: "0 5px" }}>
-      <div className="parent-block column-drag-handle" key={element.id}>
-        {permission ? (
-          <Button
-            key={element.id}
-            style={activeStyle}
-            className={`nav-element ${
-              element.isChild &&
-              (tableSlug !== element.slug ? "active-with-child" : "active")
-            }`}
-            onClick={(e) => {
-              customFunc(e);
-              clickHandler(e);
-            }}
-          >
-            <div
-              className="label"
-              style={{
-                color:
-                  menuItem?.id === element?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text,
-                opacity: element?.isChild && 0.6,
+    <Draggable key={index}>
+      <Box sx={{ padding: "0 5px" }}>
+        <div className="parent-block column-drag-handle" key={element.id}>
+          {permission ? (
+            <Button
+              key={element.id}
+              style={activeStyle}
+              className={`nav-element ${
+                element.isChild &&
+                (tableSlug !== element.slug ? "active-with-child" : "active")
+              }`}
+              onClick={(e) => {
+                customFunc(e);
+                clickHandler(e);
               }}
             >
-              {element?.type === "USER" && (
-                <PersonIcon
-                  style={{
-                    color:
-                      menuItem?.id === element?.id
-                        ? "#fff"
-                        : "rgb(45, 108, 229)",
-                  }}
-                />
-              )}
-              {childBlockVisible ? (
-                element?.type === "PERMISSION" || element?.type !== "FOLDER" ? (
-                  ""
-                ) : (
-                  <KeyboardArrowDownIcon />
-                )
-              ) : element?.type === "PERMISSION" ||
-                element?.type !== "FOLDER" ? (
-                ""
-              ) : (
-                <KeyboardArrowRightIcon />
-              )}
-              {childBlockVisible && element?.type === "MINIO_FOLDER" ? (
-                <KeyboardArrowDownIcon />
-              ) : (
-                element?.type === "MINIO_FOLDER" && <KeyboardArrowRightIcon />
-              )}
-              <IconGenerator
-                icon={
-                  element?.icon ||
-                  element?.data?.microfrontend?.icon ||
-                  element?.data?.webpage?.icon
-                }
-                size={18}
-              />
-
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
+              <div
+                className="label"
+                style={{
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text,
+                  opacity: element?.isChild && 0.6,
                 }}
               >
-                <Box>
-                  <Tooltip
-                    title={
-                      element?.attributes?.[`label_${defaultLanguage}`] ??
-                      element?.attributes?.[`title_${defaultLanguage}`] ??
-                      element?.label ??
-                      element?.name
-                    }
-                    placement="top"
-                  >
-                    <p>
-                      {element?.attributes?.[`label_${defaultLanguage}`] ??
+                {element?.type === "USER" && (
+                  <PersonIcon
+                    style={{
+                      color:
+                        menuItem?.id === element?.id
+                          ? "#fff"
+                          : "rgb(45, 108, 229)",
+                    }}
+                  />
+                )}
+                {childBlockVisible ? (
+                  element?.type === "PERMISSION" ||
+                  element?.type !== "FOLDER" ? (
+                    ""
+                  ) : (
+                    <KeyboardArrowDownIcon />
+                  )
+                ) : element?.type === "PERMISSION" ||
+                  element?.type !== "FOLDER" ? (
+                  ""
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
+                {childBlockVisible && element?.type === "MINIO_FOLDER" ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  element?.type === "MINIO_FOLDER" && <KeyboardArrowRightIcon />
+                )}
+                <IconGenerator
+                  icon={
+                    element?.icon ||
+                    element?.data?.microfrontend?.icon ||
+                    element?.data?.webpage?.icon
+                  }
+                  size={18}
+                />
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Box>
+                    <Tooltip
+                      title={
+                        element?.attributes?.[`label_${defaultLanguage}`] ??
                         element?.attributes?.[`title_${defaultLanguage}`] ??
                         element?.label ??
-                        element?.name}
-                    </p>
-                  </Tooltip>
+                        element?.name
+                      }
+                      placement="top"
+                    >
+                      <p>
+                        {element?.attributes?.[`label_${defaultLanguage}`] ??
+                          element?.attributes?.[`title_${defaultLanguage}`] ??
+                          element?.label ??
+                          element?.name}
+                      </p>
+                    </Tooltip>
+                  </Box>
+                  {selectedApp?.id !== adminId && (
+                    <Box>
+                      <Tooltip title="Folder settings" placement="top">
+                        <Box className="extra_icon">
+                          <BsThreeDots
+                            size={13}
+                            onClick={(e) => {
+                              menuSettingsClick(e);
+                            }}
+                            style={{
+                              color:
+                                menuItem?.id === element?.id
+                                  ? menuStyle?.active_text
+                                  : menuStyle?.text || "",
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    </Box>
+                  )}
                 </Box>
-                {selectedApp?.id !== adminId && (
-                  <Box>
-                    <Tooltip title="Folder settings" placement="top">
-                      <Box className="extra_icon">
-                        <BsThreeDots
+              </div>
+              {element?.type === "FOLDER" &&
+              element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
+                <Box className="icon_group">
+                  <Tooltip title="Create report settings" placement="top">
+                    <Box className="extra_icon">
+                      {element?.data?.permission?.write || permissionButton ? (
+                        <AddIcon
                           size={13}
                           onClick={(e) => {
-                            menuSettingsClick(e);
+                            e.stopPropagation();
+                            navigate(`/main/${appId}/report-setting/create`);
+                            // handleOpenNotify(e, "CREATE_TO_REPORT_SETTING");
+                            setElement(element);
                           }}
                           style={{
                             color:
@@ -340,282 +373,226 @@ const RecursiveBlock = ({
                                 : menuStyle?.text || "",
                           }}
                         />
-                      </Box>
-                    </Tooltip>
-                  </Box>
-                )}
-              </Box>
-            </div>
-            {element?.type === "FOLDER" &&
-            element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
-              <Box className="icon_group">
-                <Tooltip title="Create report settings" placement="top">
-                  <Box className="extra_icon">
-                    {element?.data?.permission?.write || permissionButton ? (
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/main/${appId}/report-setting/create`);
-                          // handleOpenNotify(e, "CREATE_TO_REPORT_SETTING");
-                          setElement(element);
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    ) : null}
-                  </Box>
-                </Tooltip>
-                {element?.type === "FOLDER" && childBlockVisible ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
-              </Box>
-            ) : element?.type === "FOLDER" ||
-              (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ? (
-              <Box className="icon_group">
-                <Tooltip title="Create folder" placement="top">
-                  <Box className="extra_icon">
-                    {element?.data?.permission?.write ||
-                    element?.id === analyticItems.pivot_id ||
-                    element?.id === analyticItems.report_setting ? (
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          menuAddClick(e);
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    ) : null}
-                  </Box>
-                </Tooltip>
-              </Box>
-            ) : element?.type === "USER_FOLDER" ? (
-              <>
-                {childBlockVisible ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
-              </>
-            ) : element?.type === "PIVOT" ? (
-              <Tooltip title="Delete Pivot" placement="top">
-                <Box className="extra_icon">
-                  <DeleteIconFromMui
-                    size={13}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteTemplate(element.pivot_template_id);
-                    }}
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
+                      ) : null}
+                    </Box>
+                  </Tooltip>
+                  {element?.type === "FOLDER" && childBlockVisible ? (
+                    <KeyboardArrowDownIcon />
+                  ) : (
+                    <KeyboardArrowRightIcon />
+                  )}
                 </Box>
-              </Tooltip>
-            ) : (
-              ""
-            )}
-            {element?.type === "TABLE" && (
-              <MenuIcon
-                title="Table settings"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenNotify(e, "TABLE");
-                  setElement(element);
-                  dispatch(menuActions.setMenuItem(element));
-                }}
-                style={{
-                  color:
-                    menuItem?.id === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text || "",
-                }}
-              />
-            )}
-            {element?.type === "MICROFRONTEND" && (
-              <MenuIcon
-                title="Microfrontend settings"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenNotify(e, "MICROFRONTEND");
-                  setElement(element);
-                  dispatch(menuActions.setMenuItem(element));
-                }}
-                style={{
-                  color:
-                    menuItem?.id === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text || "",
-                }}
-              />
-            )}
-            {element?.type === "WEBPAGE" && (
-              <MenuIcon
-                title="Webpage settings"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenNotify(e, "WEBPAGE");
-                  setElement(element);
-                  dispatch(menuActions.setMenuItem(element));
-                }}
-                style={{
-                  color:
-                    menuItem?.id === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text || "",
-                }}
-              />
-            )}
-            {element?.type === "REPORT_SETTING" && (
-              <DeleteIcon
-                title="Delete report settings"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteReportSetting(element?.report_setting_id);
-                  // handleOpenNotify(e, "REPORT_SETTING");
-                  // setElement(element);
-                }}
-                style={{
-                  color:
-                    menuItem?.id === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text || "",
-                }}
-              />
-            )}
-          </Button>
-        ) : null}
-      </div>
+              ) : element?.type === "FOLDER" ||
+                (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ? (
+                <Box className="icon_group">
+                  <Tooltip title="Create folder" placement="top">
+                    <Box className="extra_icon">
+                      {element?.data?.permission?.write ||
+                      element?.id === analyticItems.pivot_id ||
+                      element?.id === analyticItems.report_setting ? (
+                        <AddIcon
+                          size={13}
+                          onClick={(e) => {
+                            menuAddClick(e);
+                          }}
+                          style={{
+                            color:
+                              menuItem?.id === element?.id
+                                ? menuStyle?.active_text
+                                : menuStyle?.text || "",
+                          }}
+                        />
+                      ) : null}
+                    </Box>
+                  </Tooltip>
+                </Box>
+              ) : element?.type === "USER_FOLDER" ? (
+                <>
+                  {childBlockVisible ? (
+                    <KeyboardArrowDownIcon />
+                  ) : (
+                    <KeyboardArrowRightIcon />
+                  )}
+                </>
+              ) : element?.type === "PIVOT" ? (
+                <Tooltip title="Delete Pivot" placement="top">
+                  <Box className="extra_icon">
+                    <DeleteIconFromMui
+                      size={13}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteTemplate(element.pivot_template_id);
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {element?.type === "TABLE" && (
+                <MenuIcon
+                  title="Table settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "TABLE");
+                    setElement(element);
+                    dispatch(menuActions.setMenuItem(element));
+                  }}
+                  style={{
+                    color:
+                      menuItem?.id === element?.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
+              )}
+              {element?.type === "MICROFRONTEND" && (
+                <MenuIcon
+                  title="Microfrontend settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "MICROFRONTEND");
+                    setElement(element);
+                    dispatch(menuActions.setMenuItem(element));
+                  }}
+                  style={{
+                    color:
+                      menuItem?.id === element?.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
+              )}
+              {element?.type === "WEBPAGE" && (
+                <MenuIcon
+                  title="Webpage settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "WEBPAGE");
+                    setElement(element);
+                    dispatch(menuActions.setMenuItem(element));
+                  }}
+                  style={{
+                    color:
+                      menuItem?.id === element?.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
+              )}
+              {element?.type === "REPORT_SETTING" && (
+                <DeleteIcon
+                  title="Delete report settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteReportSetting(element?.report_setting_id);
+                    // handleOpenNotify(e, "REPORT_SETTING");
+                    // setElement(element);
+                  }}
+                  style={{
+                    color:
+                      menuItem?.id === element?.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
+              )}
+            </Button>
+          ) : null}
+        </div>
 
-      <Collapse in={childBlockVisible} unmountOnExit>
-        {child?.map((childElement) => (
-          <RecursiveBlock
-            customFunc={customFunc}
-            key={childElement.id}
-            level={level + 1}
-            element={childElement}
-            openFolderCreateModal={openFolderCreateModal}
-            environment={environment}
-            setFolderModalType={setFolderModalType}
-            sidebarIsOpen={sidebarIsOpen}
-            setTableModal={setTableModal}
-            handleOpenNotify={handleOpenNotify}
-            setElement={setElement}
-            setSubMenuIsOpen={setSubMenuIsOpen}
-            menuStyle={menuStyle}
-            menuItem={menuItem}
-          />
-        ))}
-        {element.id === folderIds.data_base_folder_id && (
-          <>
-            <DataBase
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuItem={menuItem}
-              level={2}
-            />
-            {/* <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} /> */}
-            <MicroServiceSidebar
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              level={2}
-            />
-          </>
-        )}
-        {/* {element.id === folderIds.users_folder_id && (
-          <>
-            <Users
-              menuStyle={menuStyle}
-              menuItem={menuItem}
+        <Collapse in={childBlockVisible} unmountOnExit>
+          {child?.map((childElement) => (
+            <RecursiveBlock
+              customFunc={customFunc}
+              key={childElement.id}
+              level={level + 1}
+              element={childElement}
+              openFolderCreateModal={openFolderCreateModal}
+              environment={environment}
+              setFolderModalType={setFolderModalType}
+              sidebarIsOpen={sidebarIsOpen}
+              setTableModal={setTableModal}
+              handleOpenNotify={handleOpenNotify}
               setElement={setElement}
-              level={2}
-            />
-            <Permissions
+              setSubMenuIsOpen={setSubMenuIsOpen}
               menuStyle={menuStyle}
               menuItem={menuItem}
-              setElement={setElement}
-              level={2}
+              index={index}
+              setCheck={setCheck}
+              check={check}
             />
-          </>
-        )} */}
+          ))}
+          {element.id === folderIds.data_base_folder_id && (
+            <>
+              <DataBase
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+              />
+              <MicroServiceSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+            </>
+          )}
 
-        {element.id === folderIds.code_folder_id && (
-          <>
-            <ScenarioSidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuItem={menuItem}
-              level={2}
-            />
+          {element.id === folderIds.code_folder_id && (
+            <>
+              <ScenarioSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+              />
 
-            {/* <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} /> */}
-            {/* <ProjectSettingSidebar
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              level={2}
-            /> */}
+              <FunctionSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+                integrated={false}
+              />
+              <MicrofrontendSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <TableSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+            </>
+          )}
 
-            <FunctionSidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuItem={menuItem}
-              level={2}
-              integrated={false}
-            />
-            {/* <NotificationSidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuItem={menuItem}
-              level={2}
-            /> */}
-          </>
-        )}
-        {element.id === folderIds.constructor_id && (
-          <>
-            <MicrofrontendSettingSidebar
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              level={2}
-            />
-            <TableSettingSidebar
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              level={2}
-            />
-          </>
-        )}
-        {element.id === folderIds.api_folder_id && (
-          <>
-            <QuerySidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              level={2}
-              menuItem={menuItem}
-            />
-            <ApiSidebar
-              menuStyle={menuStyle}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              level={2}
-              menuItem={menuItem}
-            />
-          </>
-        )}
-      </Collapse>
-    </Box>
+          {element.id === folderIds.api_folder_id && (
+            <>
+              <QuerySidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                level={2}
+                menuItem={menuItem}
+              />
+              <ApiSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                level={2}
+                menuItem={menuItem}
+              />
+            </>
+          )}
+        </Collapse>
+      </Box>
+    </Draggable>
   );
 };
 

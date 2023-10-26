@@ -17,6 +17,14 @@ export const HeaderLeftSide = ({ children, ...props }) => {
   );
 };
 
+export const HeaderRightSide = ({ children, ...props }) => {
+  return (
+    <Box className={styles.headerRightSide} {...props}>
+      {children}
+    </Box>
+  );
+};
+
 export const HeaderDivider = () => {
   return <div className={styles.border}></div>;
 };

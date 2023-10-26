@@ -36,7 +36,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const { mutate: createClientType, isLoading: createLoading } =
     useClientTypeCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
@@ -44,7 +44,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const { mutate: updateClientType, isLoading: updateLoading } =
     useClientTypeUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
@@ -110,6 +110,15 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
                 required
               />
             </FRow>
+            <FRow label="Default page link">
+              <HFTextField
+                autoFocus
+                fullWidth
+                label="Default page link"
+                control={control}
+                name="default_page"
+              />
+            </FRow>
             <HFCheckbox
               label="Self recover"
               control={control}
@@ -126,7 +135,6 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
                 control={control}
                 placeholder="Table"
                 fullWidth
-                required
                 options={tableOptions}
               />
             </FRow>

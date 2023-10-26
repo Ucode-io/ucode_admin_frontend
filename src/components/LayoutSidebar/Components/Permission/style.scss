@@ -1,16 +1,15 @@
-.SubMenu {
+$main-color: #0365F2;
+
+.LayoutSidebar {
     // min-width: 280px;
     width: 280px;
     height: 100vh;
     background-color: #fff;
     border-right: 1px solid rgba(192, 192, 192, 0.562);
     transition-property: width;
-    transition-duration: 0s;
+    transition-timing-function: linear;
+    transition-duration: .3s;
     overflow-x: hidden;
-
-    .body {
-        display: block;
-    }
 
     .search {
         display: flex;
@@ -34,7 +33,7 @@
 
     .MuiButtonBase-root {
         padding: 12px;
-        border-top: 1px solid #F0F0F0;
+        // border-top: 1px solid #F0F0F0;
 
 
         span {
@@ -57,25 +56,11 @@
         padding: 0 12px;
         // box-shadow: inset 0px -1px 0px #E5E9EB;
 
-        .buttons {
-            display: flex;
-            column-gap: 8px;
-            align-items: center;
-
-            .close-btn,
-            .dots {
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                column-gap: 8px;
-            }
-        }
-
 
         .brand {
             display: flex;
             align-items: center;
-            padding-left: 5px;
+            justify-content: space-between;
 
             &-name {
                 color: #6b6966;
@@ -103,12 +88,14 @@
         }
     }
 
+
+
     .menu-button {
         display: flex;
         align-items: center;
         width: 100%;
         border-radius: 0;
-        padding: 8px 12px;
+        padding: 10px 12px;
         color: #6e8bb7;
         cursor: default;
         border: 0;
@@ -118,7 +105,7 @@
             background-color: #A8A8A81A;
 
             .extra_icon {
-                display: flex !important;
+                display: block !important;
                 cursor: pointer;
             }
         }
@@ -129,6 +116,11 @@
 
             .extra_icon {
                 display: none;
+
+                svg {
+                    width: 13px;
+                    height: 13px;
+                }
             }
 
             .profile-avatar {
@@ -139,10 +131,10 @@
 
         &.active-with-child {
             color: #0365F2;
-            background-color: #fff !important;
+            background-color: #fff;
 
             &:hover {
-                background-color: #A8A8A81A !important;
+                // background: #A8A8A81A !important;
             }
 
             .extra_icon {
@@ -171,6 +163,18 @@
             margin-right: 13px;
         }
 
+        .open-label {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 24px;
+            flex: 1;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            column-gap: 8px;
+            color: #A8A8A8;
+        }
+
         .label {
             font-size: 14px;
             font-weight: 500;
@@ -181,7 +185,7 @@
             align-items: center;
             column-gap: 8px;
             color: #A8A8A8;
-
+            justify-content: center;
         }
 
         .icon_group {
@@ -229,6 +233,7 @@
 
         .parent-folder {
             cursor: default;
+            justify-content: center;
 
             &:hover {
                 .extra_icon {
@@ -272,12 +277,10 @@
                     background-color: #A8A8A81A;
 
                     .extra_icon {
-                        display: block !important;
+                        display: flex !important;
                         cursor: pointer;
                     }
                 }
-
-
 
                 &.active {
                     background-color: #0365F2;
@@ -295,7 +298,7 @@
 
                 &.active-with-child {
                     color: #0365F2;
-                    background-color: #fff !important;
+                    background-color: #fff;
 
                     &:hover {
                         background-color: #A8A8A81A !important;
@@ -336,14 +339,6 @@
                     display: flex;
                     align-items: center;
                     column-gap: 8px;
-
-                    p {
-                        max-width: 200px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        cursor: pointer;
-                    }
                 }
 
                 .icon_group {
@@ -399,14 +394,10 @@
         }
     }
 
+
     &.right-side-closed {
         // min-width: 72px;
-        width: 0;
-        border: none;
-
-        .body {
-            display: none;
-        }
+        width: 72px;
 
         .header {
 
@@ -477,7 +468,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 5px;
+
+    li {
+        column-gap: 6px;
+        padding: 5px;
+        border-radius: 6px;
+    }
 
 
     div {

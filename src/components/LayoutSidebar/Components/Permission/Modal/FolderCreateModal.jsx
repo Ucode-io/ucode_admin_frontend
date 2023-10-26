@@ -27,6 +27,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
       id: clientType.id,
       guid: clientType.guid,
       name: clientType.name ?? "",
+      default_page: clientType.default_page ?? "",
       self_recover: clientType.self_recover ?? false,
       self_register: clientType.self_register ?? false,
       table_slug: clientType.table_slug ?? "",

@@ -12,7 +12,7 @@ import { useGetSingleObjectDocumentQuery } from "../../../../../services/templat
 import { showAlert } from "../../../../../store/alert/alert.thunk";
 import { useDispatch } from "react-redux";
 import { Box, Button } from "@mui/material";
-import Header, { HeaderLeftSide } from "../../Header";
+import Header, { HeaderLeftSide, HeaderRightSide } from "../../Header";
 import HFTextField from "../../../../FormElements/HFTextField";
 import EditorJs from "../Components/EditorJS";
 import styles from "./style.module.scss";
@@ -100,7 +100,15 @@ const Note = () => {
 
   return (
     <FormProvider {...form}>
-      <Box backgroundColor="white" height={"100%"}>
+      <Box
+        backgroundColor="white"
+        height={"100%"}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
         <Header border="none">
           <HeaderLeftSide flex={1}>
             <HFTextField
@@ -108,9 +116,6 @@ const Note = () => {
               name="title"
               className={styles.input}
             />
-            {/* <Button variant="contained" onClick={form.handleSubmit(onSubmit)}>
-              Save
-            </Button> */}
           </HeaderLeftSide>
         </Header>
 
@@ -120,6 +125,13 @@ const Note = () => {
           isLoading={isLoading}
           loadingFromTokenDoc={loadingFromTokenDoc}
         />
+        <Header border="none">
+          <HeaderRightSide flex={1}>
+            <Button variant="contained" onClick={form.handleSubmit(onSubmit)}>
+              Save
+            </Button>
+          </HeaderRightSide>
+        </Header>
       </Box>
     </FormProvider>
   );

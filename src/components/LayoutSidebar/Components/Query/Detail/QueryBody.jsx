@@ -21,6 +21,10 @@ const QueryBody = ({
     }));
   }, [resources]);
 
+  // useEffect(() => {
+  //   setValue('query_variables', form.get)
+  // }, [])
+
   return (
     <FormProvider {...form}>
       <Box display="flex" flexDirection="column" gap="12px">
@@ -51,7 +55,7 @@ const QueryBody = ({
               options={computedOptions ?? []}
               control={control}
               clearable
-              name="query_variables"
+              name="project_resource_id"
               placeholder={"Select..."}
               // customOnChange={(e) => form.setValue("body.body", "")}
             />

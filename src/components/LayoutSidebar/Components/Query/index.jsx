@@ -154,7 +154,7 @@ const Queries = () => {
     }
   }, [queryId]);
 
-  const queryVariables = form.getValues("query_variables");
+  const queryVariables = form.watch("project_resource_id");
 
   const {data: {resources} = {}} = useResourceListQueryV2({
     params: {},
@@ -192,18 +192,20 @@ const Queries = () => {
       },
     },
   });
-
+  console.log("variables", variables);
   const onSubmit = (values) => {
     if (!!values.id) {
       updateQuery({
         ...values,
         project_id: company.projectId,
+        project_resource_id: form.getValues("project_resource_id"),
       });
     } else {
       createQuery({
         ...values,
         project_id: company.projectId,
         folder_id: queryParams.get("folder_id"),
+        project_resource_id: form.getValues("project_resource_id"),
       });
     }
   };
@@ -290,7 +292,7 @@ const Queries = () => {
       };
     });
   }, [form.watch("variables"), variables]);
-  console.log("bodyyyyyyyyyyyy", form.watch("variables"));
+
   return (
     <FormProvider {...form}>
       <Box className={styles.query}>
@@ -377,7 +379,7 @@ const Queries = () => {
                     (item) => item.value === form.getValues("query_type")
                   ).label,
                   title: form.getValues("title"),
-                  project_resource_id: form.getValues("query_variables"),
+                  project_resource_id: form.getValues("project_resource_id"),
                   variables: updatedVariables
                     ? updatedVariables
                     : form.getValues("variables")?.map((variable) => {

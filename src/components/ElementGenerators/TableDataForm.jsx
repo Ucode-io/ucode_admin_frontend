@@ -1,14 +1,27 @@
-import { Box } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
-import { useMutation } from "react-query";
+import {Box} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useWatch} from "react-hook-form";
+import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
 
-export default function TableDataForm({ tableSlug, fields, field, row, getValues, index, control, setFormValue, relationfields, data, isWrap, watch }) {
-  const { mutate: updateObject } = useMutation(() =>
+export default function TableDataForm({
+  tableSlug,
+  fields,
+  field,
+  row,
+  getValues,
+  index,
+  control,
+  setFormValue,
+  relationfields,
+  data,
+  isWrap,
+  watch,
+}) {
+  const {mutate: updateObject} = useMutation(() =>
     constructorObjectService.update(tableSlug, {
-      data: { ...getValues(`multi.${index}`) },
+      data: {...getValues(`multi.${index}`)},
     })
   );
 
@@ -16,7 +29,7 @@ export default function TableDataForm({ tableSlug, fields, field, row, getValues
     if (!isWrap || !field || !field.id) {
       return null;
     }
-  
+
     return Object.keys(isWrap)
       .map((key) => {
         return {
@@ -26,7 +39,6 @@ export default function TableDataForm({ tableSlug, fields, field, row, getValues
       })
       .find((x) => x?.id === field?.id)?.status;
   }, [isWrap, field?.id]);
-  
 
   return (
     <Box

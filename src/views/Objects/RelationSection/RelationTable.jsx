@@ -281,7 +281,7 @@ const RelationTable = forwardRef(
         },
       }
     );
-
+    console.log("tableData", tableData);
     useEffect(() => {
       if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));

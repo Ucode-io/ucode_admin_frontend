@@ -1,5 +1,6 @@
 import { Card, Modal, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import { store } from "../../../../../store";
 import CreateButton from "../../../../Buttons/CreateButton";
@@ -12,21 +13,18 @@ import {
 import { useTablesListQuery } from "../../../../../services/tableService";
 import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
-import HFSelect from "../../../../FormElements/HFSelect";
+import { useMemo } from "react";
+import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
 
-const FolderCreateModal = ({
-  closeModal,
-  clientType = {},
-  modalType,
-  refetch,
-}) => {
+const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const company = store.getState().company;
+  const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
       project_id: company.projectId,
-      id: clientType.guid,
+      id: clientType.id,
       guid: clientType.guid,
       name: clientType.name ?? "",
       self_recover: clientType.self_recover ?? false,
@@ -38,7 +36,7 @@ const FolderCreateModal = ({
   const { mutate: createClientType, isLoading: createLoading } =
     useClientTypeCreateMutation({
       onSuccess: () => {
-        refetch();
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
@@ -46,7 +44,7 @@ const FolderCreateModal = ({
   const { mutate: updateClientType, isLoading: updateLoading } =
     useClientTypeUpdateMutation({
       onSuccess: () => {
-        refetch();
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
@@ -72,9 +70,16 @@ const FolderCreateModal = ({
     const params = {
       "project-id": company.projectId,
     };
-    if (clientType.guid) updateClientType({ data, params });
+    if (clientType.id) updateClientType({ data, params });
     else createClientType({ params, data });
   };
+
+  const tableOptions = useMemo(() => {
+    return projectTables?.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  }, [projectTables]);
 
   return (
     <div>
@@ -94,7 +99,7 @@ const FolderCreateModal = ({
             />
           </div>
 
-          <form className="form">
+          <form onSubmit={handleSubmit(onSubmit)} className="form">
             <FRow label="Title">
               <HFTextField
                 autoFocus
@@ -103,6 +108,15 @@ const FolderCreateModal = ({
                 control={control}
                 name="name"
                 required
+              />
+            </FRow>
+            <FRow label="Default page link">
+              <HFTextField
+                autoFocus
+                fullWidth
+                label="Default page link"
+                control={control}
+                name="default_page"
               />
             </FRow>
             <HFCheckbox
@@ -116,23 +130,23 @@ const FolderCreateModal = ({
               name="self_register"
             />
             <FRow label="Table" required>
-              <HFSelect
-                control={control}
+              <HFAutocomplete
                 name="table_slug"
+                control={control}
                 placeholder="Table"
                 fullWidth
-                options={projectTables}
+                options={tableOptions}
               />
             </FRow>
             <div className="btns-row">
               {createType ? (
                 <CreateButton
-                  onClick={handleSubmit(onSubmit)}
+                  type="submit"
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
-                  onClick={handleSubmit(onSubmit)}
+                  type="submit"
                   loading={createLoading || updateLoading}
                 />
               )}

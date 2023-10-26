@@ -1,20 +1,25 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button, Tooltip} from "@mui/material";
-import {BsThreeDots} from "react-icons/bs";
+import { Box, Button, Tooltip } from "@mui/material";
+import { BsThreeDots } from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../../utils/applyDrag";
+import menuService from "../../../services/menuService";
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -34,16 +39,17 @@ const SubMenu = ({
   setLinkedTableModal,
 }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
+  const [check, setCheck] = useState(false);
 
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
-
-  const onDrop = (dropResult, index) => {};
 
   const clickHandler = (e) => {
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
@@ -52,6 +58,19 @@ const SubMenu = ({
       handleOpenNotify(e, "ROOT");
     }
     setElement(selectedApp);
+  };
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(child, dropResult);
+    if (result) {
+      menuService
+        .updateOrder({
+          menus: result,
+        })
+        .then(() => {
+          queryClient.refetchQueries(["MENU"]);
+        });
+    }
   };
 
   return (
@@ -154,6 +173,7 @@ const SubMenu = ({
                     menuItem={menuItem}
                     setElement={setElement}
                     level={2}
+                    handleOpenNotify={handleOpenNotify}
                   />
                 )}
                 {selectedApp?.id === adminId && (
@@ -175,23 +195,33 @@ const SubMenu = ({
                 )}
                 <div className="menu-element">
                   {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-                    child?.map((element) => (
-                      <RecursiveBlock
-                        key={element.id}
-                        element={element}
-                        openFolderCreateModal={openFolderCreateModal}
-                        setFolderModalType={setFolderModalType}
-                        sidebarIsOpen={subMenuIsOpen}
-                        selectedApp={selectedApp}
-                        setTableModal={setTableModal}
-                        setLinkedTableModal={setLinkedTableModal}
-                        handleOpenNotify={handleOpenNotify}
-                        setElement={setElement}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuStyle={menuStyle}
-                        menuItem={menuItem}
-                      />
-                    ))}
+                  child?.length ? (
+                    <Container
+                      dragHandleSelector=".column-drag-handle"
+                      onDrop={onDrop}
+                    >
+                      {child?.map((element, index) => (
+                        <RecursiveBlock
+                          key={element.id}
+                          element={element}
+                          openFolderCreateModal={openFolderCreateModal}
+                          setFolderModalType={setFolderModalType}
+                          sidebarIsOpen={subMenuIsOpen}
+                          selectedApp={selectedApp}
+                          setTableModal={setTableModal}
+                          setLinkedTableModal={setLinkedTableModal}
+                          handleOpenNotify={handleOpenNotify}
+                          setElement={setElement}
+                          setSubMenuIsOpen={setSubMenuIsOpen}
+                          menuStyle={menuStyle}
+                          menuItem={menuItem}
+                          index={index}
+                          setCheck={setCheck}
+                          check={check}
+                        />
+                      ))}
+                    </Container>
+                  ) : null}
                   {selectedApp?.id ===
                     "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
                     <DocumentsSidebar

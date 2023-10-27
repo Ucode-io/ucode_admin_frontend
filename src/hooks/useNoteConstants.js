@@ -6,7 +6,7 @@ import LinkTool from "@editorjs/link";
 import Image from "@editorjs/image";
 import Raw from "@editorjs/raw";
 import Header from "@editorjs/header";
-import Quote from "@editorjs/quote";
+import Quote from "@moxrbe/quote";
 import Marker from "@editorjs/marker";
 import CheckList from "@editorjs/checklist";
 import InlineCode from "@editorjs/inline-code";

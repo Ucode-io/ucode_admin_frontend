@@ -3207,13 +3207,6 @@
   resolved "https://registry.yarnpkg.com/@editorjs/personality/-/personality-2.0.2.tgz#f45444f6f872bd662efdc8b3954a97401af929f9"
   integrity sha512-CnQ15cW14bHQrjUT6qWQHJJOrTyAbTlIOeARQcQ1COU3OFWuJOmMsWFUFYpz5POMmQk30Cgi9qdFyyFfZf0asA==
 
-"@editorjs/quote@^2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/quote/-/quote-2.5.0.tgz#a4a4e7513b8194db405825bb9b3ea02757a12a5a"
-  integrity sha512-24Mu8cESaj34a0kg1Enj7qiZ3yiCOsZI59+8xpfXLO/NkO7hBYWNForVcBy5yIWs/VLlEZK11FP37f/mHrKugQ==
-  dependencies:
-    "@codexteam/icons" "^0.0.5"
-
 "@editorjs/raw@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@editorjs/raw/-/raw-2.4.0.tgz#b22731fea9130354ae9320f6f5eeac7bb02ed3f7"
@@ -3866,6 +3859,13 @@
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@moxrbe/editorjs-break-line/-/editorjs-break-line-1.0.2.tgz#3fcb76b1a5f7ebe6c5d02ffeab8b8501ca7cfa96"
   integrity sha512-L8HgDTYXVDcfrB4Jo6IGSn/V1lQCJ2fpmJBdwbCBtTI8lTZcIH/ZLY3DPjx57U1omoOmTx1IURRGVZYB6ga25A==
+
+"@moxrbe/quote@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@moxrbe/quote/-/quote-1.0.3.tgz#a42c55ccad3828721adc16a87cc5388a8f9b9cd8"
+  integrity sha512-0Y840/pBXIWZlMM1VaiAqnivDfIKjPiMO17ERQdRM/XhX+WNVU7Kmx6aMbM5GSXmp0lGNorVex3q7Oogq109qw==
+  dependencies:
+    "@codexteam/icons" "^0.0.5"
 
 "@moxrbe/text-variant-tune@^1.1.0":
   version "1.1.0"

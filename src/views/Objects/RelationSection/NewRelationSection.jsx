@@ -1,24 +1,24 @@
-import { CheckIcon } from "@/assets/icons/icon";
-import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import {CheckIcon} from "@/assets/icons/icon";
+import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import style from "@/views/Objects/style.module.scss";
-import { Add, Clear, Edit, InsertDriveFile, Save } from "@mui/icons-material";
+import {Add, Clear, Edit, InsertDriveFile, Save} from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Card } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useMutation } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Card} from "@mui/material";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useMutation} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
+import {store} from "../../../store";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -26,7 +26,7 @@ import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -46,7 +46,7 @@ const NewRelationSection = ({
   watch,
   setSelectTab,
   selectedTab,
-  errors
+  errors,
 }) => {
   const [data, setData] = useState([]);
 
@@ -57,7 +57,7 @@ const NewRelationSection = ({
     });
   }, [data]);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
@@ -66,7 +66,7 @@ const NewRelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -78,7 +78,6 @@ const NewRelationSection = ({
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [type, setType] = useState(null);
-  console.log("type", type);
 
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
@@ -112,8 +111,6 @@ const NewRelationSection = ({
     setHeightControl(false);
   };
 
-  console.log("watch", watch());
-
   // const {
   //   control,
   //   reset,
@@ -127,7 +124,7 @@ const NewRelationSection = ({
   //   },
   // });
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -197,7 +194,7 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  const { mutate: updateMultipleObject } = useMutation(
+  const {mutate: updateMultipleObject} = useMutation(
     (values) =>
       constructorObjectService.updateMultipleObject(
         getRelatedTabeSlug.relatedTable,
@@ -401,7 +398,7 @@ const NewRelationSection = ({
                       onClick={navigateToCreatePage}
                       disabled={!id}
                     >
-                      <Add style={{ color: "#007AFF" }} />
+                      <Add style={{color: "#007AFF"}} />
                     </RectangleIconButton>
 
                     {formVisible ? (
@@ -462,7 +459,7 @@ const NewRelationSection = ({
                       color="white"
                       onClick={() => setHeightControl(!heightControl)}
                     >
-                      <div style={{ position: "relative" }}>
+                      <div style={{position: "relative"}}>
                         <span
                           style={{
                             cursor: "pointer",
@@ -496,7 +493,7 @@ const NewRelationSection = ({
                       size="small"
                       onClick={() => setMoreShowButton(!moreShowButton)}
                     >
-                      <div style={{ position: "relative" }}>
+                      <div style={{position: "relative"}}>
                         <span
                           style={{
                             cursor: "pointer",
@@ -509,7 +506,7 @@ const NewRelationSection = ({
                         {moreShowButton && (
                           <div
                             className={style.heightControl}
-                            style={{ minWidth: "auto" }}
+                            style={{minWidth: "auto"}}
                           >
                             <div
                               className={style.heightControl_item}

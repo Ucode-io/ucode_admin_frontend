@@ -12,7 +12,15 @@ const EditorJs = ({
   loadingFromTokenDoc,
 }) => {
   return (
-    <Box pr="40px" pl="60px">
+    <Box
+      pr="96px"
+      pl="96px"
+      height={"auto"}
+      minHeight={"87vh"}
+      style={{
+        background: "#fff",
+      }}
+    >
       <Controller
         name={name}
         control={control}

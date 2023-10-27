@@ -24,6 +24,7 @@ import request from "../../utils/request";
 import {useSelector} from "react-redux";
 import Select from "react-select";
 import {useTranslation} from "react-i18next";
+import {pageToOffset} from "../../utils/pageToOffset";
 
 const RelationFormElement = ({
   control,
@@ -50,7 +51,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-  
+
   const computedLabel =
     field?.attributes?.[`title_${i18n?.language}`] ??
     field?.label ??
@@ -64,8 +65,8 @@ const RelationFormElement = ({
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           rules={{
-            required: field?.required ? 'This field is required!' : '',
-            ...rules
+            required: field?.required ? "This field is required!" : "",
+            ...rules,
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
@@ -149,9 +150,8 @@ const AutoCompleteElement = ({
   name,
   multipleInsertField,
   setFormValue = () => {},
-  errors
+  errors,
 }) => {
-
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const {id} = useParams();
@@ -170,7 +170,7 @@ const AutoCompleteElement = ({
   const customStyles = {
     control: (provided) => ({
       ...provided,
-        border: `1px solid ${errors?.[field?.slug] ? 'red' : '#d4d2d2'}`,
+      border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
     }),
   };
 
@@ -216,8 +216,8 @@ const AutoCompleteElement = ({
             table_slug: tableSlug,
             ...autoFiltersValue,
             search: debouncedValue,
-            limit: 10 * page,
-            offset: 0,
+            limit: 10,
+            offset: pageToOffset(page, 10),
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
@@ -253,7 +253,8 @@ const AutoCompleteElement = ({
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
-          limit: 10 * page,
+          limit: 10,
+          offset: pageToOffset(page, 10),
         },
       });
     },
@@ -267,6 +268,9 @@ const AutoCompleteElement = ({
           options,
           slugOptions,
         };
+      },
+      onSuccess: (data) => {
+        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
       },
     }
   );
@@ -282,7 +286,6 @@ const AutoCompleteElement = ({
     optionsFromLocale,
     field?.attributes?.function_path,
   ]);
-
 
   const getValueData = async () => {
     try {
@@ -313,7 +316,6 @@ const AutoCompleteElement = ({
       setPage(1);
     } else {
       const val = value;
-
 
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
@@ -385,19 +387,14 @@ const AutoCompleteElement = ({
     setClientTypeValue();
   }, []);
 
-
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-      if (optionsFromFunctions?.options?.length > 5) {
-        setPage((prevPage) => prevPage + 1);
-      } else return false;
+      setPage((prevPage) => prevPage + 1);
     } else {
-      if (optionsFromLocale?.options?.length > 5) {
-        setPage((prevPage) => prevPage + 1);
-      } else return false;
+      setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log('errors', errors)
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -441,54 +438,67 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-       <>
-         <Select
-          isDisabled={
-            disabled ||
-            (field?.attributes?.object_id_from_jwt &&
-              field?.id?.split("#")?.[0] === "client_type") ||
-            (Boolean(field?.attributes?.is_user_id_default) &&
-              localValue?.length !== 0)
-          }
-          options={options?.options ?? []}
-          isClearable={true}
-          styles={customStyles}
-          value={localValue ?? []}
-          required={field?.required}
-          defaultValue={value ?? ""}
-          onChange={(e) => {
-            changeHandler(e);
-            // console.log('eeeeeeeeeeee', e.guid)
-            // setLocalValue(e.guid);
-          }}
-          onMenuScrollToBottom={loadMoreItems}
-          inputChangeHandler={(e) => inputChangeHandler(e)}
-          onInputChange={(e, newValue) => {
-            setInputValue(e ?? null);
-            inputChangeHandler(e);
-          }}
-          getOptionLabel={(option) =>
-            field?.attributes?.view_fields?.map((el) => `${option[el?.slug]} `)
-          }
-          getOptionValue={(option) => option?.guid}
-          components={{
-            DropdownIndicator: () => null,
-            MultiValue: ({data}) => (
-              <IconGenerator
-                icon="arrow-up-right-from-square.svg"
-                style={{marginLeft: "10px", cursor: "pointer"}}
-                size={15}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  navigateToForm(tableSlug, "EDIT", value);
-                }}
-              />
-            ),
-          }}
-        />
-        {errors?.[field?.slug] && <div style={{ color: 'red', fontSize:'10px', textAlign: 'center', marginTop: '5px' }}>{'This field is required!'}</div>}
-       </>
+        <>
+          <Select
+            isDisabled={
+              disabled ||
+              (field?.attributes?.object_id_from_jwt &&
+                field?.id?.split("#")?.[0] === "client_type") ||
+              (Boolean(field?.attributes?.is_user_id_default) &&
+                localValue?.length !== 0)
+            }
+            options={allOptions ?? []}
+            isClearable={true}
+            styles={customStyles}
+            value={localValue ?? []}
+            required={field?.required}
+            defaultValue={value ?? ""}
+            onChange={(e) => {
+              changeHandler(e);
+              // console.log('eeeeeeeeeeee', e.guid)
+              // setLocalValue(e.guid);
+            }}
+            onMenuScrollToBottom={loadMoreItems}
+            inputChangeHandler={(e) => inputChangeHandler(e)}
+            onInputChange={(e, newValue) => {
+              setInputValue(e ?? null);
+              inputChangeHandler(e);
+            }}
+            getOptionLabel={(option) =>
+              field?.attributes?.view_fields?.map(
+                (el) => `${option[el?.slug]} `
+              )
+            }
+            getOptionValue={(option) => option?.guid}
+            components={{
+              DropdownIndicator: () => null,
+              MultiValue: ({data}) => (
+                <IconGenerator
+                  icon="arrow-up-right-from-square.svg"
+                  style={{marginLeft: "10px", cursor: "pointer"}}
+                  size={15}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    navigateToForm(tableSlug, "EDIT", value);
+                  }}
+                />
+              ),
+            }}
+          />
+          {errors?.[field?.slug] && (
+            <div
+              style={{
+                color: "red",
+                fontSize: "10px",
+                textAlign: "center",
+                marginTop: "5px",
+              }}
+            >
+              {"This field is required!"}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

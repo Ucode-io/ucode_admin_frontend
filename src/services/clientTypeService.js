@@ -18,7 +18,10 @@ const clientTypeService = {
     requestAuthV2.put("/client-type", data, {
       params,
     }),
-  delete: (id) => requestAuthV2.delete(`/client-type/${id}`),
+  delete: ({ id, projectId }) =>
+    requestAuthV2.delete(`/client-type/${id}`, {
+      params: { "project-id": projectId },
+    }),
 };
 
 export const useClientTypesListQuery = ({

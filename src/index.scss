@@ -10,8 +10,18 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
   text-decoration: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+div {
+  font-family: "Inter", sans-serif;
 }
 
 .silver-bottom-border {
@@ -429,4 +439,8 @@ html {
 }
 .moveable-control-box {
   z-index: 2 !important;
+}
+
+.codex-editor__redactor {
+  padding-bottom: 0 !important;
 }

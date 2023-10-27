@@ -41,6 +41,27 @@ const ColumnsTab = ({
 }) => {
   const {i18n} = useTranslation();
 
+  const {fields: columns, move} = useFieldArray({
+    control: form.control,
+    name: "columns",
+    keyName: "key",
+  });
+
+  const {
+    fields: groupColumn,
+    replace: replaceGroup,
+    move: groupMove,
+  } = useFieldArray({
+    control: form.control,
+    name: "attributes.group_by_columns",
+    keyName: "key",
+  });
+
+  const watchedColumns = useWatch({
+    control: form.control,
+    name: "columns",
+  });
+
   const computeColumns = (checkedColumnsIds = [], columns) => {
     const selectedColumns =
       checkedColumnsIds
@@ -64,28 +85,7 @@ const ColumnsTab = ({
         ),
       });
     }
-  }, [views, selectedTabIndex, computedColumns, form]);
-
-  const {fields: columns, move} = useFieldArray({
-    control: form.control,
-    name: "columns",
-    keyName: "key",
-  });
-
-  const {
-    fields: groupColumn,
-    replace: replaceGroup,
-    move: groupMove,
-  } = useFieldArray({
-    control: form.control,
-    name: "attributes.group_by_columns",
-    keyName: "key",
-  });
-
-  const watchedColumns = useWatch({
-    control: form.control,
-    name: "columns",
-  });
+  }, [views, selectedTabIndex, computedColumns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
@@ -141,11 +141,11 @@ const ColumnsTab = ({
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (isMenu) {
-  //     updateView();
-  //   }
-  // }, [watchedColumns]);
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
 
   return (
     <div

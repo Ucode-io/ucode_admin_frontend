@@ -294,7 +294,7 @@ const DocumentsSidebar = ({
       },
       {
         id: 2,
-        name: "Notes",
+        name: "Wiki",
         icon: TbEdit,
         children: computedNotesList,
         type: "FOLDER",

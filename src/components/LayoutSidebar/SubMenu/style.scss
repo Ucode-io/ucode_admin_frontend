@@ -272,10 +272,12 @@
                     background-color: #A8A8A81A;
 
                     .extra_icon {
-                        display: flex !important;
+                        display: block !important;
                         cursor: pointer;
                     }
                 }
+
+
 
                 &.active {
                     background-color: #0365F2;

@@ -1,15 +1,15 @@
-import { Delete } from "@mui/icons-material";
-import { Button, Checkbox } from "@mui/material";
+import {Delete} from "@mui/icons-material";
+import {Button, Checkbox} from "@mui/material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
@@ -54,7 +54,9 @@ const TableRow = ({
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
-      setSelectedObjectsForDelete(selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid));
+      setSelectedObjectsForDelete(
+        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
+      );
     } else {
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
@@ -97,7 +99,7 @@ const TableRow = ({
         data={data}
       />
     );
-    
+
   return (
     <>
       {!relationAction ? (
@@ -138,8 +140,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span className="data_table__row_number" style={{width: "35px"}}>
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
 
@@ -164,9 +168,14 @@ const TableRow = ({
               <Checkbox
                 className="table_multi_checkbox"
                 style={{
-                  display: selectedObjectsForDelete.find((item) => item?.guid === row?.guid) && "block",
+                  display:
+                    selectedObjectsForDelete.find(
+                      (item) => item?.guid === row?.guid
+                    ) && "block",
                 }}
-                checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                checked={selectedObjectsForDelete?.find(
+                  (item) => item?.guid === row?.guid
+                )}
                 onChange={() => {
                   changeSetDelete(row);
                 }}
@@ -192,8 +201,9 @@ const TableRow = ({
           </CTableCell>
 
           {virtualizer.getVirtualItems().map(
-            (virtualColumn) => (
-              columns[virtualColumn.index]?.attributes?.field_permission?.view_permission && (
+            (virtualColumn) =>
+              columns[virtualColumn.index]?.attributes?.field_permission
+                ?.view_permission && (
                 <CTableCell
                   key={columns[virtualColumn.index].id}
                   className={`overflow-ellipsis ${tableHeight}`}
@@ -206,8 +216,12 @@ const TableRow = ({
                     lineHeight: "normal",
                     padding: "0 5px",
                     position: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
-                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === columns[virtualColumn.index]?.id
+                      )?.isStiky ||
+                      view?.attributes?.fixedColumns?.[
+                        columns[virtualColumn.index]?.id
+                      ]
                         ? "sticky"
                         : "relative"
                     }`,
@@ -216,16 +230,32 @@ const TableRow = ({
                     //     ? `${calculateWidth(column?.id, index)}px`
                     //     : "0"
                     // }`,
-                    left: view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id] ? `${calculateWidthFixedColumn(columns[virtualColumn.index].id) + 80}px` : "0",
+                    left: view?.attributes?.fixedColumns?.[
+                      columns[virtualColumn.index]?.id
+                    ]
+                      ? `${
+                          calculateWidthFixedColumn(
+                            columns[virtualColumn.index].id
+                          ) + 80
+                        }px`
+                      : "0",
                     backgroundColor: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
-                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === columns[virtualColumn.index]?.id
+                      )?.isStiky ||
+                      view?.attributes?.fixedColumns?.[
+                        columns[virtualColumn.index]?.id
+                      ]
                         ? "#F6F6F6"
                         : "#fff"
                     }`,
                     zIndex: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === columns[virtualColumn.index]?.id)?.isStiky ||
-                      view?.attributes?.fixedColumns?.[columns[virtualColumn.index]?.id]
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === columns[virtualColumn.index]?.id
+                      )?.isStiky ||
+                      view?.attributes?.fixedColumns?.[
+                        columns[virtualColumn.index]?.id
+                      ]
                         ? "1"
                         : "0"
                     }`,
@@ -247,11 +277,13 @@ const TableRow = ({
                       onRowClick={onRowClick}
                     />
                   ) : (
-                    <CellElementGenerator field={columns[virtualColumn.index]} row={row} />
+                    <CellElementGenerator
+                      field={columns[virtualColumn.index]}
+                      row={row}
+                    />
                   )}
                 </CTableCell>
               )
-            )
           )}
 
           {/* {columns.map(
@@ -315,9 +347,16 @@ const TableRow = ({
                 alignItems: "center",
               }}
             >
-              <CTableCell style={{ padding: 0, borderRight: "none", borderBottom: "none" }}>
+              <CTableCell
+                style={{padding: 0, borderRight: "none", borderBottom: "none"}}
+              >
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                  <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() =>
+                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                    }
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
@@ -327,20 +366,31 @@ const TableRow = ({
           </td>
 
           <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
+            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
           </td>
         </CTableRow>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
         <CTableRow
           onClick={() => {
             onRowClick(row, rowIndex);
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
             {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
           </CTableCell>
@@ -352,9 +402,21 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? `${calculateWidth(column?.id, index)}px` : "0",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? `${calculateWidth(column?.id, index)}px`
+                  : "0",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -392,10 +454,20 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
             {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
           </CTableCell>
@@ -407,10 +479,22 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? `${calculateWidth(column?.id, index)}px` : "0",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? `${calculateWidth(column?.id, index)}px`
+                  : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />

@@ -8,7 +8,7 @@ import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
-  label: "Table",
+  label: "Data module",
   type: "USER_FOLDER",
   icon: "table.svg",
   parent_id: adminId,

@@ -423,8 +423,10 @@ html {
   align-items: center;
 }
 
-
 .ce-toolbar__actions {
   left: -55px !important;
   top: -2px !important;
+}
+.moveable-control-box {
+  z-index: 2 !important;
 }

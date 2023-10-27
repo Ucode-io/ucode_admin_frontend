@@ -1,9 +1,7 @@
-import { format } from "date-fns";
-import React, { useState } from "react";
+import React from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
-import styles from "./styles.module.scss";
-import CustomPopoverForTimeLine from "./CustomPopoverForTimeLine";
 import TimeLineDays from "./TimeLineDays";
+import styles from "./styles.module.scss";
 
 export default function TimeLineDayDataBlock({
   data,
@@ -17,18 +15,13 @@ export default function TimeLineDayDataBlock({
   calendar_to_slug,
   visible_field,
   selectedType,
+  groupByList,
 }) {
+
   return (
     <>
       <div className={styles.container}>
-        <div
-          className={styles.days}
-          style={{
-            display: "flex",
-          }}
-        >
-          {datesList && datesList.map((date) => <TimeLineDays date={date} zoomPosition={zoomPosition} selectedType={selectedType} />)}
-        </div>
+        <div className={styles.days}>{datesList && datesList.map((date) => <TimeLineDays date={date} zoomPosition={zoomPosition} selectedType={selectedType} />)}</div>
 
         {calendar_from_slug && calendar_to_slug && (
           <div className={styles.datas}>
@@ -36,6 +29,7 @@ export default function TimeLineDayDataBlock({
               <TimeLineDayDataBlockItem
                 data={item}
                 level={index}
+                groupByList={groupByList}
                 setFocusedDays={setFocusedDays}
                 datesList={datesList}
                 view={view}

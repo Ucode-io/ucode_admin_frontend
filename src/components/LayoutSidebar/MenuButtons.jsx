@@ -219,6 +219,7 @@ const ButtonsMenu = ({
           />
         </Box>
       )}
+
       {menuType === "TABLE" && (
         <Box className="menu">
           {element?.data?.permission?.menu_settings || permissionButton ? (
@@ -232,6 +233,17 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
+          {element.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Переместить table"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderModalType("folder", element);
+                handleCloseNotify();
+              }}
+            />
+          )}
 
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent

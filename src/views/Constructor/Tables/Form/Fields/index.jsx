@@ -20,7 +20,6 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
   const [drawerState, setDrawerState] = useState(null);
   const { i18n } = useTranslation();
   const [selectedField, setSelectedField] = useState({});
-  console.log("tableSlug=====", tableSlug);
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
     name: "fields",

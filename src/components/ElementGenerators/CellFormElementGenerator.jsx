@@ -1,7 +1,7 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo} from "react";
-import {useWatch} from "react-hook-form";
-import {useSelector} from "react-redux";
+import { Parser } from "hot-formula-parser";
+import { useEffect, useMemo } from "react";
+import { useWatch } from "react-hook-form";
+import { useSelector } from "react-redux";
 import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -41,7 +41,6 @@ const CellFormElementGenerator = ({
   data,
   ...props
 }) => {
-  console.log("field", field);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -66,8 +65,6 @@ const CellFormElementGenerator = ({
     //   return field?.slug;
     // }
   }, [field.slug, index]);
-
-  console.log("computedSlug", computedSlug);
 
   const changedValue = useWatch({
     control,
@@ -96,7 +93,7 @@ const CellFormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (!defaultValue) return undefined;
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
 
@@ -486,7 +483,7 @@ const CellFormElementGenerator = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

@@ -34,7 +34,7 @@ const RelationCreateForm = ({
   isLoading = false,
 }) => {
   const { appId } = useParams();
-  const params = useParams()
+  const params = useParams();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [openSumCreate, setOpenSumCreate] = useState(false);
 
@@ -72,7 +72,6 @@ const RelationCreateForm = ({
     },
     {
       select: ({ fields }) => {
-        console.log("FIELDS ====>", fields);
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
@@ -127,7 +126,6 @@ const RelationCreateForm = ({
 
     delete data?.field_name;
     delete data?.formula_name;
-    // return console.log('values', data);
     onSubmit({
       // ...values,
       ...data,

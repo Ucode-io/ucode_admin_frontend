@@ -154,7 +154,6 @@ const GroupObjectDataTable = ({
   title,
   view,
 }) => {
-  console.log("data", data);
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -323,7 +322,6 @@ const GroupObjectDataTable = ({
   const hasMore = useMemo(() => {
     return currentPage <= count;
   }, [currentPage, pagesCount, tableSlug, data, count]);
-  console.log("columns", columns);
 
   return (
     // <CTable

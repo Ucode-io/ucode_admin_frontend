@@ -44,7 +44,6 @@ const ActionButton = ({ event, id, control, disable }) => {
       .then((res) => {
         dispatch(showAlert("Success", "success"));
         // queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
-        console.log("window.location.pathname", window.location.pathname);
         let url = res?.data?.link ?? event?.url ?? "";
         if (res?.data?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));

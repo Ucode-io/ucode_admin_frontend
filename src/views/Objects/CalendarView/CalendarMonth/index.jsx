@@ -19,7 +19,6 @@ const CalendarMonth = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
-  console.log("virtualizer", virtualizer.getVirtualItems());
   return (
     <div className={styles.calendarmonth} ref={parentRef}>
       {/* <TimesColumnMonth view={view} data={data} /> */}

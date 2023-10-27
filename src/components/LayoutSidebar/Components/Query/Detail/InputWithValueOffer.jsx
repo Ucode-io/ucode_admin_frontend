@@ -1,14 +1,14 @@
 import styles from "../style.module.scss";
-import {MdContentCopy} from "react-icons/md";
-import {useMemo, useState} from "react";
+import { MdContentCopy } from "react-icons/md";
+import { useMemo, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import {useDispatch} from "react-redux";
-import {showAlert} from "../../../../../store/alert/alert.thunk";
-import {Box, Button} from "@mui/material";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../../../store/alert/alert.thunk";
+import { Box, Button } from "@mui/material";
 import HFTextField from "../../../../FormElements/HFTextField";
 import getElementBetween from "../../../../../utils/getElementBetween";
-import {useVariableResourceListQuery} from "../../../../../services/resourceService";
-import {useWatch} from "react-hook-form";
+import { useVariableResourceListQuery } from "../../../../../services/resourceService";
+import { useWatch } from "react-hook-form";
 
 const InputWithValueOffer = ({
   name,
@@ -31,7 +31,6 @@ const InputWithValueOffer = ({
     control: form.control,
     name,
   });
-  console.log("name", name);
   const dispatch = useDispatch();
   const containsOnlyNumbers = (str) => {
     return /^[0-9]+$/.test(str);
@@ -39,7 +38,7 @@ const InputWithValueOffer = ({
 
   const queryVairables = form.watch("query_variables");
 
-  const {data: {variables} = {}} = useVariableResourceListQuery({
+  const { data: { variables } = {} } = useVariableResourceListQuery({
     id: queryVairables,
     params: {},
     queryParams: {

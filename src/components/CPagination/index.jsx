@@ -36,8 +36,6 @@ const CPagination = ({
     return getObject?.pageLimit ?? null;
   }, [paginationInfo]);
 
-  console.log('paginiation', paginiation)
-
   const options = [
     { value: "all", label: "All" },
     // {

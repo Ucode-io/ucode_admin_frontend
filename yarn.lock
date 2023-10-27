@@ -3436,10 +3436,10 @@
   resolved "https://registry.yarnpkg.com/@moxrbe/editorjs-break-line/-/editorjs-break-line-1.0.2.tgz#3fcb76b1a5f7ebe6c5d02ffeab8b8501ca7cfa96"
   integrity sha512-L8HgDTYXVDcfrB4Jo6IGSn/V1lQCJ2fpmJBdwbCBtTI8lTZcIH/ZLY3DPjx57U1omoOmTx1IURRGVZYB6ga25A==
 
-"@moxrbe/quote@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@moxrbe/quote/-/quote-1.0.3.tgz#a42c55ccad3828721adc16a87cc5388a8f9b9cd8"
-  integrity sha512-0Y840/pBXIWZlMM1VaiAqnivDfIKjPiMO17ERQdRM/XhX+WNVU7Kmx6aMbM5GSXmp0lGNorVex3q7Oogq109qw==
+"@moxrbe/quote@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@moxrbe/quote/-/quote-1.0.4.tgz#7ee103e9183aa988702b8b91bb616b1c79b7927c"
+  integrity sha512-sEolSD+mkiRYVuzr+aPJ8qAF68TSI6gS6vnxBbQhEBWczBafG1vZJ/JGiClaIa0Ss6NnV7v3/Di2XATzrK4BtQ==
   dependencies:
     "@codexteam/icons" "^0.0.5"
 

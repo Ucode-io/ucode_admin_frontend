@@ -47,7 +47,7 @@
     "@lokeshpahal/editorjs-columns-imp": "^0.2.5",
     "@monaco-editor/react": "^4.4.5",
     "@moxrbe/editorjs-break-line": "^1.0.2",
-    "@moxrbe/quote": "^1.0.3",
+    "@moxrbe/quote": "^1.0.4",
     "@moxrbe/text-variant-tune": "^1.1.0",
     "@mui/icons-material": "^5.2.4",
     "@mui/lab": "^5.0.0-alpha.60",

@@ -102,7 +102,6 @@ const Note = () => {
     <FormProvider {...form}>
       <Box
         backgroundColor="white"
-        height={"100%"}
         style={{
           display: "flex",
           flexDirection: "column",

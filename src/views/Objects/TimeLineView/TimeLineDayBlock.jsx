@@ -4,7 +4,6 @@ import { Popover, Typography } from "@mui/material";
 import { eachDayOfInterval, format } from "date-fns";
 
 export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focusedDays }) {
-  console.log("sssssswwwww", focusedDays);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const splittedDay = day.split("/");
 

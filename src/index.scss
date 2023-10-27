@@ -422,3 +422,7 @@ html {
   display: flex;
   align-items: center;
 }
+
+.moveable-control-box{
+  z-index: 2 !important;
+}

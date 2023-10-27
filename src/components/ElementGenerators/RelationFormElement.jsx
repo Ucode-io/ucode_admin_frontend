@@ -57,6 +57,14 @@ const RelationFormElement = ({
     field?.label ??
     field?.title;
 
+  const required = useMemo(() => {
+    if (window.location.pathname?.includes("settings")) {
+      return false;
+    } else return false;
+  }, [window.location.pathname]);
+
+  console.log("required", required);
+
   if (!isLayout)
     return (
       <FRow label={computedLabel} required={field.required}>
@@ -65,7 +73,7 @@ const RelationFormElement = ({
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           rules={{
-            required: field?.required ? "This field is required!" : "",
+            required: required ? "This field is required!" : "",
             ...rules,
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
@@ -82,6 +90,7 @@ const RelationFormElement = ({
               name={name}
               multipleInsertField={multipleInsertField}
               errors={errors}
+              required={required}
             />
           )}
         />
@@ -151,6 +160,7 @@ const AutoCompleteElement = ({
   multipleInsertField,
   setFormValue = () => {},
   errors,
+  required = false,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -394,7 +404,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
+  console.log("fielddddddd", field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -451,7 +461,7 @@ const AutoCompleteElement = ({
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}
-            required={field?.required}
+            required={required}
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);

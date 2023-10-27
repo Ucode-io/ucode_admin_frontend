@@ -1,7 +1,7 @@
-import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -45,7 +45,7 @@ const NewCellElementGenerator = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -73,15 +73,14 @@ const NewCellElementGenerator = ({
 
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return `${removeLangFromSlug}_${i18n}`;
-    }
-
-    if (field.id?.includes("@")) {
+      return `multi.${index}.${field.slug}`;
+      // return `${removeLangFromSlug}_${i18n?.language}`;
+    } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
 
     return `multi.${index}.${field.slug}`;
-  }, [field]);
+  }, [field, i18n?.language]);
 
   // const changedValue = useWatch({
   //   control,
@@ -111,7 +110,7 @@ const NewCellElementGenerator = ({
 
     if (!defaultValue) return undefined;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field]);
@@ -184,6 +183,7 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          field={field}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
@@ -600,7 +600,7 @@ const NewCellElementGenerator = ({
 
     default:
       return (
-        <div style={{ padding: "0 4px" }}>
+        <div style={{padding: "0 4px"}}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

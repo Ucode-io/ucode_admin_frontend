@@ -24,7 +24,7 @@ const MicrofrontendPage = () => {
   const location = useLocation();
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
-  console.log("ssssssss enter ===>");
+
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
   };

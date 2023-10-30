@@ -32,11 +32,11 @@ const TablesPage = ({}) => {
     },
   });
   const navigateToEditForm = (id, slug) => {
-    navigate(`${location.pathname}/${id}/${slug}`);
+    navigate(`${location.pathname}/${id}/`);
   };
 
   const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/objects/create`);
+    navigate(`/main/:appId/tables`);
   };
 
   const openImportModal = () => {

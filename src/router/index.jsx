@@ -242,8 +242,8 @@ const Router = () => {
 
         <Route path=":appId/tables">
           <Route index element={<TablesPage />} />
-          {/* <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+          <Route path="create" element={<MicrofrontendForm />} />
+          {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
         </Route>
 
         <Route path="resources">

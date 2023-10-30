@@ -468,7 +468,7 @@ const AutoCompleteElement = ({
               // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
-            onMenuScrollToBottom={loadMoreItems}
+            // onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

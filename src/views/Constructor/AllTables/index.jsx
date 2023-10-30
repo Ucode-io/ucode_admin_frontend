@@ -1,7 +1,7 @@
-import { Delete } from "@mui/icons-material";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useState} from "react";
+import {useSelector} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -12,7 +12,7 @@ import {
 } from "../../../components/CTable";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import { useTablesListQuery } from "../../../services/constructorTableService";
+import {useTablesListQuery} from "../../../services/constructorTableService";
 import HeaderSettings from "../../../components/HeaderSettings";
 import SearchInput from "../../../components/SearchInput";
 import FiltersBlock from "../../../components/FiltersBlock";
@@ -26,17 +26,17 @@ const TablesPage = ({}) => {
   const [modalLoader, setModalLoader] = useState();
   const projectId = useSelector((state) => state.auth.projectId);
 
-  const { data: tables, isLoading } = useTablesListQuery({
+  const {data: tables, isLoading} = useTablesListQuery({
     params: {
       search: searchText,
     },
   });
   const navigateToEditForm = (id, slug) => {
-    navigate(`${location.pathname}/${id}/${slug}`);
+    navigate(`${location.pathname}/${id}/`);
   };
 
   const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/objects/create`);
+    navigate(`/main/:appId/tables`);
   };
 
   const openImportModal = () => {
@@ -65,8 +65,15 @@ const TablesPage = ({}) => {
             />
           </div>
         </FiltersBlock>
-        <TableCard>
-          <CTable disablePagination removableHeight={120}>
+        <TableCard type={"withoutPadding"}>
+          <CTable
+            tableStyle={{
+              borderRadius: "0px",
+              border: "none",
+            }}
+            disablePagination
+            removableHeight={120}
+          >
             <CTableHead>
               {/* <CTableCell></CTableCell> */}
               <CTableCell width={10}>№</CTableCell>

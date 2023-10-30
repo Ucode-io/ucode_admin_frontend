@@ -7,7 +7,7 @@ import LayoutSidebar from "../../components/LayoutSidebar";
 
 const SettingsLayout = ({favicon}) => {
   const profilePath = useLocation();
-  const { appId } = useParams();
+  const {appId} = useParams();
   // const dispatch = useDispatch()
 
   // useEffect(() => {
@@ -17,10 +17,10 @@ const SettingsLayout = ({favicon}) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      {/* {!profilePath?.pathname?.includes("profile") && (
+      {!profilePath?.pathname?.includes("profile") && (
         // <Sidebar2222 favicon={favicon} />
         <LayoutSidebar appId={appId} />
-      )} */}
+      )}
       <div className={styles.content}>
         {/* <RouterTabsBlock /> */}
 

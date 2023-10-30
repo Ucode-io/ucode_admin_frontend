@@ -246,7 +246,9 @@ const ButtonsMenu = ({
             />
           )}
 
-          {element?.data?.permission?.update || permissionButton ? (
+          {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+            element?.data?.permission?.update) ||
+          permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Изменить table"
@@ -258,24 +260,9 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
-          {element?.data?.permission?.delete || permissionButton ? (
-            <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить table"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolder(element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+          {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+            element?.data?.permission?.delete) ||
+          permissionButton ? (
             <>
               <Divider
                 style={{
@@ -283,7 +270,26 @@ const ButtonsMenu = ({
                   marginTop: "4px",
                 }}
               />
-              {element?.data?.permission?.menu_settings || permissionButton ? (
+              <MenuItemComponent
+                icon={<BsFillTrashFill size={13} />}
+                title="Удалить table"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              />
+            </>
+          ) : null}
+          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+            (element?.data?.permission?.menu_settings || permissionButton ? (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
                 <MenuItemComponent
                   icon={<StarBorderIcon size={13} />}
                   title="Favourite"
@@ -293,9 +299,8 @@ const ButtonsMenu = ({
                     onFavourite(element, "TABLE");
                   }}
                 />
-              ) : null}
-            </>
-          )}
+              </>
+            ) : null)}
         </Box>
       )}
       {menuType === "LINK" && (

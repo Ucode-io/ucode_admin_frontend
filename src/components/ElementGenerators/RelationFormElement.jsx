@@ -63,8 +63,6 @@ const RelationFormElement = ({
     } else return false;
   }, [window.location.pathname]);
 
-  console.log("required", required);
-
   if (!isLayout)
     return (
       <FRow label={computedLabel} required={field.required}>
@@ -404,7 +402,6 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log("fielddddddd", field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -465,7 +462,6 @@ const AutoCompleteElement = ({
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);
-              // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
             onMenuScrollToBottom={loadMoreItems}

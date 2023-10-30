@@ -24,7 +24,6 @@ const FunctionCreateModal = ({ folder, func, closeModal }) => {
       ...func,
     },
   });
-  console.log("watch", watch());
 
   const { mutate: createFunction, isLoading: createLoading } =
     useFunctionCreateMutation({

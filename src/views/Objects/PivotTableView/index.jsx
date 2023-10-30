@@ -42,8 +42,6 @@ export default function PivotTableView() {
     total_values: [],
   });
 
-  // console.log("computedFields", computedFields);
-
   const [isTemplateChanged, setIsTemplateChanged] = useState(false);
   const [modalParams, setModalParams] = useState({ key: "", isOpen: false });
   const [dateRange, setDateRange] = useState({
@@ -176,7 +174,9 @@ export default function PivotTableView() {
         pivot_table_slug: values.template_name,
         app_id: appId,
         report_setting_id: values.report_setting_id,
-        from_date: dateRange ? format(new Date(dateRange.$gte), "yyyy-MM-dd") : "",
+        from_date: dateRange
+          ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
+          : "",
         to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
         clone_id: activeClickActionTabId,
         status: "SAVED",
@@ -195,8 +195,6 @@ export default function PivotTableView() {
       upsertPivotTemplate({ ...values, status: "HISTORY" });
     }
   };
-
-  // console.log("activeClickActionTabId", activeClickActionTabId);
 
   const pivotTemplateField = useQuery(
     ["GET_PIVOT_TEMPLATE_BY_ID", activeClickActionTabId],
@@ -243,7 +241,7 @@ export default function PivotTableView() {
     }
   );
 
-  const {pivotTemplateId} = useParams()
+  const { pivotTemplateId } = useParams();
 
   const pivotTemplatesHistory = useQuery(
     ["GET_TEMPLATES_LIST_HISTORY"],
@@ -276,13 +274,6 @@ export default function PivotTableView() {
     }
     return { [row?.slug]: row?.real_value };
   };
-
-  // console.log("curClActRow", curClActRow);
-  // console.log("clickActionTabs", clickActionTabs);
-  // console.log("expanded Rows", expandedRows);
-  // console.log("relationOrderNumber", relationOrderNumber);
-
-  console.log('activeClickActionTabId',activeClickActionTabId)
 
   const { isLoading, isRefetching, refetch } = useQuery(
     ["DYNAMIC_REPORT", activeClickActionTabId, [activeClickActionTabId]],
@@ -408,10 +399,6 @@ export default function PivotTableView() {
     return "";
   };
 
-  // console.log("calculateParentValues", calculateParentValues([computedData[0]]));
-  // console.log("relation order number => ", relationOrderNumber);
-  // console.log("relation row slug => ", relationRowSlug);
-
   const handleExpandRow = (row, fieldObjArg, isAfterRelationRow) => {
     const fieldObj = {
       ...fieldObjArg,
@@ -428,10 +415,6 @@ export default function PivotTableView() {
       parent_value_combined: row.parent_ids.join("#"),
       slug: row.table_slug,
     };
-
-    // console.log("row => ", row);
-    // console.log("field => ", fieldObj);
-    // console.log("sample => ", sample);
 
     const repeated = {
       relation_order_number:
@@ -603,9 +586,6 @@ export default function PivotTableView() {
         setIsCollapsing(false);
         setChildLoader(true);
 
-        // console.log("CHECK ADD EXPAND ROW => ", p);
-        // console.log("ACTIVE CLICK ACTION TAB ID => ", activeClickActionTabId);
-
         return {
           ...p,
           [activeClickActionTabId]: addExpandRow(p[activeClickActionTabId]),
@@ -613,10 +593,6 @@ export default function PivotTableView() {
       }
     });
   };
-
-  // console.log("click action tabs => ", clickActionTabs);
-  // console.log("curClActRow => ", curClActRow);
-  // console.log("history => ", pivotTemplatesHistory.data);
 
   const { mutate: onDeleteTemplate } = useMutation(
     (id) =>

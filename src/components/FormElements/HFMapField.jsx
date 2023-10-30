@@ -12,7 +12,7 @@ const HFMapField = ({
   tabIndex,
   required,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   rules,
   disabledHelperText = false,
   disabled,
@@ -43,7 +43,6 @@ const HFMapField = ({
           handleGeolocationSuccess,
           handleGeolocationError
         );
-        console.log("yeees it works");
       } else {
         console.error("Geolocation is not supported in this browser.");
       }
@@ -110,7 +109,11 @@ const HFMapField = ({
                 <Placemark geometry={[lat, long]} />
               </Map>
             </YMaps>
-            <a href={generateLink(lat, long)} target="_blank" rel="noopener noreferrer">
+            <a
+              href={generateLink(lat, long)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Open in Yandex Maps
             </a>
           </Box>

@@ -8,7 +8,18 @@ import { showAlert } from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 
-export default function TimeLineDayDataBlockItem({ data, level, setFocusedDays, datesList, view, zoomPosition, calendar_from_slug, calendar_to_slug, visible_field }) {
+export default function TimeLineDayDataBlockItem({
+  data,
+  level,
+  setFocusedDays,
+  datesList,
+  view,
+  zoomPosition,
+  calendar_from_slug,
+  calendar_to_slug,
+  visible_field,
+  groupByList,
+}) {
   const ref = useRef();
   const { tableSlug } = useParams();
   const [target, setTarget] = useState();
@@ -26,7 +37,7 @@ export default function TimeLineDayDataBlockItem({ data, level, setFocusedDays, 
   });
 
   const startDate = useMemo(() => {
-    return datesList && calendar_from_slug ? datesList.findIndex((date) => format(date, "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy")) : null;
+    return datesList && calendar_from_slug ? datesList.findIndex((date) => format(new Date(date), "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy")) : null;
   }, [datesList, data[calendar_from_slug]]);
 
   const differenceInDays = useMemo(() => {
@@ -35,9 +46,9 @@ export default function TimeLineDayDataBlockItem({ data, level, setFocusedDays, 
   }, [data[calendar_from_slug], data[calendar_to_slug]]);
 
   useEffect(() => {
-    if (!ref?.current) return null;
+    if (!ref.current) return null;
     setTarget(ref.current);
-  }, [ref]);
+  }, [ref, level, zoomPosition, startDate, differenceInDays]);
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -136,9 +147,16 @@ export default function TimeLineDayDataBlockItem({ data, level, setFocusedDays, 
           cursor: "pointer",
         }}
         onClick={handleOpen}
-        ref={ref}
       >
-        {data[visible_field]}
+        <div
+          ref={ref}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <p>{data[visible_field]}</p>
+        </div>
       </div>
       <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
 

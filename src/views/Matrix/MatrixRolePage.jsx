@@ -385,8 +385,6 @@ const MatrixRolePage = () => {
     }
   }, [isCustomVisible, automaticFilters]);
 
-  console.log("autoFilterFields", autoFilterFields);
-
   const isAppPermissionYes = useCallback(
     (items, key) => {
       return recordPermissions
@@ -761,7 +759,6 @@ const MatrixRolePage = () => {
                   <CTableHeadCell
                     onClick={() => {
                       if (app?.children) {
-                        console.log("app , ", app);
                         handleOpen();
                         setTableSlug(app?.slug);
                       }
@@ -778,7 +775,6 @@ const MatrixRolePage = () => {
                   <CTableHeadCell
                     onClick={() => {
                       if (app?.children) {
-                        console.log("action permission , ", app);
                         actionOpen();
                         setTableSlug(app?.slug);
                       }

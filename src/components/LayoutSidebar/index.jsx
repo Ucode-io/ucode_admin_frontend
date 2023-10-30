@@ -1,4 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { Box, Button, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
@@ -7,36 +9,32 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "react-smooth-dnd";
 import { UdevsLogo } from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
+import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import menuService, {
   useMenuListQuery,
   usePlatformGetByIdQuery,
 } from "../../services/menuService";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
+import { useProjectGetByIdQuery } from "../../services/projectService";
 import { store } from "../../store";
 import { mainActions } from "../../store/main/main.slice";
 import { applyDrag } from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import AppSidebar from "./AppSidebarComponent";
+import MenuBox from "./Components/MenuBox";
 import FolderModal from "./FolderModalComponent";
 import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import MenuBox from "./Components/MenuBox";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
-import TemplateModal from "../../layouts/MainLayout/TemplateModal";
-import Users from "./Components/Users";
-import DocumentsSidebar from "./Components/Documents/DocumentsSidebar";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 
 const LayoutSidebar = ({ appId }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
@@ -45,8 +43,6 @@ const LayoutSidebar = ({ appId }) => {
   );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const projectId = store.getState().company.projectId;
-
-  console.log("menuItem", menuItem);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -74,7 +70,6 @@ const LayoutSidebar = ({ appId }) => {
   const handleOpenNotify = (event, type) => {
     setMenu({ event: event?.currentTarget, type: type });
   };
-  console.log("menuItem?.id", menuItem?.id);
   const handleCloseNotify = () => {
     setMenu(null);
   };
@@ -87,7 +82,6 @@ const LayoutSidebar = ({ appId }) => {
     queryParams: {
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        console.log("dfdfkdhjfkdfk");
         setChild(res.menus);
       },
     },
@@ -190,8 +184,6 @@ const LayoutSidebar = ({ appId }) => {
         console.log("error", error);
       });
   };
-
-  console.log("appId", appId === "9e988322-cffd-484c-9ed6-460d8701551b");
 
   const { isLoadingUser } = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
@@ -568,21 +560,23 @@ const LayoutSidebar = ({ appId }) => {
         setChild={setChild}
         setSelectedApp={setSelectedApp}
       />
-      <ButtonsMenu
-        element={element}
-        menu={menu?.event}
-        openMenu={openSidebarMenu}
-        handleCloseNotify={handleCloseNotify}
-        openFolderCreateModal={openFolderCreateModal}
-        menuType={menu?.type}
-        setFolderModalType={setFolderModalType}
-        appId={appId}
-        setTableModal={setTableModal}
-        setLinkedTableModal={setLinkedTableModal}
-        setMicrofrontendModal={setMicrofrontendModal}
-        setWebPageModal={setWebPageModal}
-        deleteFolder={deleteFolder}
-      />
+      {menu?.type?.length ? (
+        <ButtonsMenu
+          element={element}
+          menu={menu?.event}
+          openMenu={openSidebarMenu}
+          handleCloseNotify={handleCloseNotify}
+          openFolderCreateModal={openFolderCreateModal}
+          menuType={menu?.type}
+          setFolderModalType={setFolderModalType}
+          appId={appId}
+          setTableModal={setTableModal}
+          setLinkedTableModal={setLinkedTableModal}
+          setMicrofrontendModal={setMicrofrontendModal}
+          setWebPageModal={setWebPageModal}
+          deleteFolder={deleteFolder}
+        />
+      ) : null}
       {templateModal && <TemplateModal closeModal={closeTemplateModal} />}
       {menuSettingModal && (
         <MenuSettingModal closeModal={closeMenuSettingModal} />

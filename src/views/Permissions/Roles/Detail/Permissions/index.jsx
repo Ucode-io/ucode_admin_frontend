@@ -33,7 +33,6 @@ const Permissions = ({
     control,
     name: "menus",
   });
-  console.log("allMenu", allMenu);
   const allReadTrue = tables?.tables?.every(
     (permission) => permission.record_permissions?.read === "Yes"
   );

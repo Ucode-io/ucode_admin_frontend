@@ -30,7 +30,6 @@ export default function PivotTemplateModalContent(props) {
       select: (data) => data.report_settings ?? [],
     }
   );
-console.log('settingId', settingId)
   return (
     <div>
       {settingId ? (

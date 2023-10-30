@@ -1,8 +1,13 @@
 import { addDays } from "date-fns";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
+import constructorObjectService from "../../../services/constructorObjectService";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import constructorRelationService from "../../../services/constructorRelationService";
+import PageFallback from "../../../components/PageFallback";
 
 export default function TimeLineBlock({
   data,
@@ -17,10 +22,13 @@ export default function TimeLineBlock({
   calendar_from_slug,
   calendar_to_slug,
   visible_field,
+  computedColumnsFor,
+  isLoading,
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
-  console.log("focusedDays", focusedDays);
+  const { tableSlug } = useParams();
+  const [relaitonLoading, setRelationLoading] = useState(false);
   const handleScroll = (e) => {
     const { scrollLeft, scrollWidth, clientWidth } = e.target;
 
@@ -37,27 +45,115 @@ export default function TimeLineBlock({
     // }
   };
 
+  const groupbyFields = useMemo(() => {
+    return view?.group_fields?.map((field) => {
+      return fieldsMap?.[field];
+    });
+  }, [view?.group_fields, fieldsMap]);
+
+  //   const { data: relations } = useQuery(
+  //     ["GET_RELATION_LIST", tableSlug],
+  //     () => {
+  //       return constructorRelationService.getList({
+  //         table_slug: tableSlug,
+  //         relation_table_slug: tableSlug,
+  //       });
+  //     },
+  //     {
+  //       select: (res) => {
+  //         return res?.relations;
+  //       },
+  //     }
+  //   );
+
+  // console.log('relations', groupbyFields)
+
+  const getDataRelation = async (field) => {
+    setRelationLoading(true);
+    try {
+      const res = await constructorObjectService.getList(field?.table_slug, {
+        data: {},
+      });
+      return res?.data?.response.map((item) => {
+        return {
+          label: item[field?.view_fields?.[0]?.slug],
+          value: item.id ?? item.guid,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const groupByList = useMemo(() => {
+    if (groupbyFields?.length === 1) {
+      if (groupbyFields[0]?.type === "MULTISELECT") {
+        return groupbyFields[0]?.attributes?.options;
+      } else if (groupbyFields[0]?.type === "LOOKUP" || groupbyFields[0]?.type === "LOOKUPS") {
+        const options = [];
+        getDataRelation(groupbyFields?.[0]).then((res) => {
+          options.push(...res);
+          setRelationLoading(false);
+          return options;
+        });
+        return options;
+      }
+    } else if (groupbyFields?.length === 2) {
+      
+    }
+  }, [groupbyFields]);
+
   return (
     <div
-      className={styles.gantt}
-      ref={scrollContainerRef}
-      // onScroll={handleScroll}
+      className={styles.main_container}
+      style={{
+        height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
+      }}
     >
-      <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
+      {view?.group_fields?.length ? (
+        <div className={styles.group_by}>
+          <div className={`${styles.fakeDiv} ${selectedType === "month" ? styles.month : ""}`}>Columns</div>
 
-      <TimeLineDayDataBlock
-        setFocusedDays={setFocusedDays}
-        selectedType={selectedType}
-        zoomPosition={zoomPosition}
-        data={data}
-        fieldsMap={fieldsMap}
-        view={view}
-        tabs={tabs}
-        datesList={datesList}
-        calendar_from_slug={calendar_from_slug}
-        calendar_to_slug={calendar_to_slug}
-        visible_field={visible_field}
-      />
+          <div className={styles.group_by_columns}>
+            {groupByList?.map((item) => (
+              <div className={styles.group_by_column}>
+                <div className={styles.group_by_column_header}>{item?.label}</div>
+                {item?.options?.map((option) => (
+                  <div className={styles.subs}>
+                    <div className={styles.group_by_sub_column}>{option?.label}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      <div
+        className={styles.gantt}
+        ref={scrollContainerRef}
+        // onScroll={handleScroll}
+      >
+        <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
+
+        {relaitonLoading || isLoading ? (
+          <PageFallback />
+        ) : (
+          <TimeLineDayDataBlock
+            groupByList={groupByList}
+            setFocusedDays={setFocusedDays}
+            selectedType={selectedType}
+            zoomPosition={zoomPosition}
+            data={data}
+            fieldsMap={fieldsMap}
+            view={view}
+            tabs={tabs}
+            datesList={datesList}
+            calendar_from_slug={calendar_from_slug}
+            calendar_to_slug={calendar_to_slug}
+            visible_field={visible_field}
+          />
+        )}
+      </div>
     </div>
   );
 }

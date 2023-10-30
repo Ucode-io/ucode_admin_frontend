@@ -21,11 +21,7 @@ import { constructorTableActions } from "../../../../store/constructorTable/cons
 import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
 import { generateGUID } from "../../../../utils/generateID";
 import { listToMap } from "../../../../utils/listToMap";
-import {
-  computeSectionsOnSubmit,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
+
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
@@ -42,7 +38,6 @@ const ConstructorTablesFormPage = () => {
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const { i18n } = useTranslation();
-  console.log("slug", slug);
 
   const mainForm = useForm({
     defaultValues: {
@@ -79,8 +74,6 @@ const ConstructorTablesFormPage = () => {
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
     });
-
-    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList({

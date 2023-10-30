@@ -53,7 +53,6 @@ export default function TimeLineDatesRow({ datesList, zoomPosition, selectedType
       {/* <div className={styles.mockBlock} /> */}
 
       {computedDatesList.map(({ month, days }) => (
-        console.log('sssssss', days, format(focusedDays[0] ?? new Date(), "dd/EEEE")),
         <div
           className={styles.dateBlock}
           style={{

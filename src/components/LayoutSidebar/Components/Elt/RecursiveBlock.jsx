@@ -31,7 +31,6 @@ const RecursiveBlock = ({
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
-  console.log("element", element);
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>

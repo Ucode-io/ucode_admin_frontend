@@ -1,7 +1,7 @@
 import ReloadRelations from "@/components/ReloadRelations";
-import { lazy, Suspense, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {lazy, Suspense, useMemo, useState} from "react";
+import {useSelector} from "react-redux";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
@@ -228,6 +228,24 @@ const Router = () => {
           <Route path="role/:roleId" element={<RoleDetail />} />
         </Route>
 
+        {/* <Route path="constructor/microfrontend">
+          <Route index element={<MicrofrontendPage />} />
+          <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+        </Route> */}
+
+        <Route path=":appId/microfrontend">
+          <Route index element={<MicrofrontendPage />} />
+          <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+        </Route>
+
+        <Route path=":appId/tables">
+          <Route index element={<TablesPage />} />
+          {/* <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+        </Route>
+
         <Route path="resources">
           <Route path="create" element={<ResourceDetail />} />
           <Route path=":resourceId" element={<ResourceDetail />} />
@@ -340,12 +358,12 @@ const Router = () => {
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
-
+        {/* 
         <Route path="constructor/microfrontend">
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-        </Route>
+        </Route> */}
 
         <Route path="constructor/tables">
           <Route index element={<TablesPage />} />

@@ -1,5 +1,5 @@
-import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -13,18 +13,18 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import SearchInput from "../../../components/SearchInput";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import microfrontendService from "../../../services/microfrontendService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
-
+  console.log("ssssssss enter ===>");
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
   };
@@ -59,8 +59,15 @@ const MicrofrontendPage = () => {
         </div>
       </FiltersBlock>
 
-      <TableCard>
-        <CTable disablePagination removableHeight={140}>
+      <TableCard type={"withoutPadding"}>
+        <CTable
+          tableStyle={{
+            borderRadius: "0px",
+            border: "none",
+          }}
+          disablePagination
+          removableHeight={140}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
@@ -90,7 +97,7 @@ const MicrofrontendPage = () => {
               </CTableRow>
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={5} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

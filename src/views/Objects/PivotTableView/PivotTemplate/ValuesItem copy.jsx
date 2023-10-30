@@ -14,13 +14,16 @@ export default function ValuesItem(props) {
 
   const data = useWatch({ control: form.control, name: "values" });
 
-  console.log("data => ", data);
-
   const onAllCheckboxChange = (val, idx) => {
     form.watch(`${rowName}.${idx}`).objects.forEach((_, objIdx) => {
-      form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`).forEach((_, fieldIdx) => {
-        form.setValue(`${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`, val);
-      });
+      form
+        .watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`)
+        .forEach((_, fieldIdx) => {
+          form.setValue(
+            `${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`,
+            val
+          );
+        });
     });
   };
 
@@ -39,7 +42,10 @@ export default function ValuesItem(props) {
                     sx={{ padding: 0 }}
                     checked={form
                       .watch(`${rowName}.${idx}.objects`)
-                      ?.reduce((acc, cur) => [...acc, ...cur.table_field_settings], [])
+                      ?.reduce(
+                        (acc, cur) => [...acc, ...cur.table_field_settings],
+                        []
+                      )
                       ?.every((i) => i.checked)}
                     onChange={(_, val) => onAllCheckboxChange(val, idx)}
                   />
@@ -60,7 +66,10 @@ export default function ValuesItem(props) {
 function ObjectItem(props) {
   const { row, form, idx, rowName } = props;
 
-  const { fields: objects, move } = useFieldArray({ control: form.control, name: `${rowName}.${idx}.objects` });
+  const { fields: objects, move } = useFieldArray({
+    control: form.control,
+    name: `${rowName}.${idx}.objects`,
+  });
 
   const onDropHandle = ({ removedIndex, addedIndex }) => {
     move(removedIndex, addedIndex);
@@ -70,7 +79,14 @@ function ObjectItem(props) {
     <Container onDrop={(params) => onDropHandle(params)}>
       {objects?.map((object, objIdx) => (
         <Draggable key={row.id}>
-          <Item key={object.id} row={object} idx={idx} objIdx={objIdx} form={form} rowName={rowName} />
+          <Item
+            key={object.id}
+            row={object}
+            idx={idx}
+            objIdx={objIdx}
+            form={form}
+            rowName={rowName}
+          />
         </Draggable>
       ))}
     </Container>
@@ -86,25 +102,38 @@ function Item(props) {
   });
 
   const checkboxHandler = (val, index) => {
-    form.setValue(`${rowName}.${idx}.objects.${objIdx}.table_field_settings.${index}.checked`, val);
+    form.setValue(
+      `${rowName}.${idx}.objects.${objIdx}.table_field_settings.${index}.checked`,
+      val
+    );
   };
 
   const onAllCheckboxChange = (val) => {
-    form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`).forEach((_, fieldIdx) => {
-      form.setValue(`${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`, val);
-    });
+    form
+      .watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`)
+      .forEach((_, fieldIdx) => {
+        form.setValue(
+          `${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`,
+          val
+        );
+      });
   };
 
   return (
     <div className={styles.item}>
       {rowName !== "values" && (
         <>
-          <RectangleIconButton className={styles.expandBtn} onClick={() => setIsOpen((p) => !p)}>
+          <RectangleIconButton
+            className={styles.expandBtn}
+            onClick={() => setIsOpen((p) => !p)}
+          >
             {isOpen ? <RemoveIcon /> : <Add />}
           </RectangleIconButton>
           <Checkbox
             sx={{ padding: 0, marginTop: "7px" }}
-            checked={form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`).every((i) => i.checked)}
+            checked={form
+              .watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`)
+              .every((i) => i.checked)}
             onChange={(_, val) => onAllCheckboxChange(val)}
           />
         </>
@@ -116,16 +145,24 @@ function Item(props) {
             {fields?.map((field, fieldIdx) => (
               <div key={field.id} className={styles.element}>
                 <div className={styles.head}>
-                  <div className={`${styles.field} ${rowName === "values" ? styles.vertical : ""}`}>
+                  <div
+                    className={`${styles.field} ${
+                      rowName === "values" ? styles.vertical : ""
+                    }`}
+                  >
                     <div>
                       <Checkbox
                         checked={
-                          !!form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`)
+                          !!form.watch(
+                            `${rowName}.${idx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`
+                          )
                         }
                         onChange={(_, val) => checkboxHandler(val, fieldIdx)}
                       />
                       <span>
-                        {field.field_type?.includes("LOOKUP") ? field.table_to?.label : field.label?.split(" -> ")[0]}
+                        {field.field_type?.includes("LOOKUP")
+                          ? field.table_to?.label
+                          : field.label?.split(" -> ")[0]}
                       </span>
                     </div>
                   </div>

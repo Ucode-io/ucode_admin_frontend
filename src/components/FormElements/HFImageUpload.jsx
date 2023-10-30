@@ -13,7 +13,6 @@ const HFImageUpload = ({
   field,
   ...props
 }) => {
-  console.log("field", field);
   return (
     <Controller
       control={control}

@@ -1,15 +1,15 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./style.module.scss";
 import NewSectionsBlock from "./NewSectionsBlock";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {Button, Card, TextField} from "@mui/material";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { Button, Card, TextField } from "@mui/material";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import {Add} from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
-import {applyDrag} from "../../../../../utils/applyDrag";
-import {Container, Draggable} from "react-smooth-dnd";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import { Container, Draggable } from "react-smooth-dnd";
 import RelationTable from "../../../components/RelationTable";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function LayoutTabs({
   mainForm,
@@ -46,7 +46,7 @@ function LayoutTabs({
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
-  const {fields: viewRelations, ...viewRelationsFieldArray} = useFieldArray({
+  const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
     keyName: "key",
@@ -88,8 +88,8 @@ function LayoutTabs({
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
           dropResult.payload.view_relation_type === "FILE"
-            ? {...dropResult.payload, relation_id: dropResult.payload?.id}
-            : {relation_id: dropResult.payload?.id}
+            ? { ...dropResult.payload, relation_id: dropResult.payload?.id }
+            : { relation_id: dropResult.payload?.id }
         );
       } else {
         // viewRelationsFieldArray.replace(result)
@@ -142,12 +142,11 @@ function LayoutTabs({
       .findIndex((layout) => layout?.id === selectedLayout?.id);
   }, [mainForm, selectedLayout]);
 
-  const {i18n} = useTranslation();
-  console.log("allTabs", allTabs);
+  const { i18n } = useTranslation();
   return (
     <>
-      <div className={"custom-tabs"} style={{width: "100%"}}>
-        <div style={{display: "flex", alignItems: "center"}}>
+      <div className={"custom-tabs"} style={{ width: "100%" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Container
             groupName="table_relation"
             style={{
@@ -156,7 +155,7 @@ function LayoutTabs({
               gap: "10px",
               padding: "0 16px",
             }}
-            dropPlaceholder={{className: "drag-row-drop-preview"}}
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
             orientation="horizontal"
             onDrop={onDrop}
             getChildPayload={(i) => allTabs[i]}
@@ -175,7 +174,7 @@ function LayoutTabs({
                     setSelectedTabIndex(index);
                     setSelectedTab(tab);
                   }}
-                  style={{padding: 0}}
+                  style={{ padding: 0 }}
                 >
                   <div
                     // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
@@ -185,13 +184,14 @@ function LayoutTabs({
                   >
                     <div
                       className={styles.tab}
-                      style={{display: "flex", alignItems: "center"}}
+                      style={{ display: "flex", alignItems: "center" }}
                     >
                       {mainForm.watch(
                         `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
-                      ) ?? mainForm.watch(
-                        `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
                       ) ??
+                        mainForm.watch(
+                          `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                        ) ??
                         mainForm.watch(
                           `layouts.${selectedLayoutIndex}.tabs.${index}.label`
                         ) ??

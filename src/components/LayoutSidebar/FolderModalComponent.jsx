@@ -82,7 +82,7 @@ const FolderModal = ({
                 nodeId={"c57eedc3-a954-4262-a0af-376c65b5a284"}
                 label={"Root"}
               >
-                {menuList?.menus?.map((item) => (
+                {menuList?.map((item) => (
                   <FolderTreeView
                     element={item}
                     setCheck={setCheck}

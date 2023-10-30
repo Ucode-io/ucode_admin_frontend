@@ -13,11 +13,15 @@ import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
-import Filter1Icon from '@mui/icons-material/Filter1';
+import Filter1Icon from "@mui/icons-material/Filter1";
 import { Button, Switch } from "@mui/material";
 import React, { useEffect, useMemo } from "react";
 
-export default function SearchParams({ checkedColumns, setCheckedColumns, columns }) {
+export default function SearchParams({
+  checkedColumns,
+  setCheckedColumns,
+  columns,
+}) {
   const columnIcons = useMemo(() => {
     return {
       SINGLE_LINE: <TextFieldsIcon />,
@@ -36,7 +40,7 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
       QRCODE: <QrCode2Icon />,
       COLOR: <ColorizeIcon />,
       PASSWORD: <PasswordIcon />,
-      INCREMENT_ID: <Filter1Icon/>,
+      INCREMENT_ID: <Filter1Icon />,
     };
   }, []);
 
@@ -59,7 +63,6 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
   useEffect(() => {
     selectAll();
   }, []);
-  console.log('columns', columns)
   return (
     <div>
       {/* <div
@@ -106,7 +109,11 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
           <div>
             <Switch
               size="small"
-              onChange={() => (checkedColumns.length === columns.length ? deselectAll() : selectAll())}
+              onChange={() =>
+                checkedColumns.length === columns.length
+                  ? deselectAll()
+                  : selectAll()
+              }
               checked={checkedColumns.length === columns.length ? true : false}
             />
           </div>
@@ -136,7 +143,11 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
             </div>
 
             <div>
-              <Switch size="small" onChange={() => changeHandler(column.slug)} checked={checkedColumns.includes(column.slug)} />
+              <Switch
+                size="small"
+                onChange={() => changeHandler(column.slug)}
+                checked={checkedColumns.includes(column.slug)}
+              />
             </div>
           </div>
         ))}

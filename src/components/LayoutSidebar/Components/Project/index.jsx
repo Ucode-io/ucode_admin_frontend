@@ -134,7 +134,6 @@ const ProjectSettingPage = () => {
       })),
     });
   };
-  console.log("languageOptions", languageOptions);
   return (
     <div
       style={{

@@ -278,7 +278,6 @@ const CalendarView = ({
       },
     }
   );
-
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
   const tabLoading = tabResponses?.some((response) => response?.isLoading);

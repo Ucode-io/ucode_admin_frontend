@@ -26,8 +26,6 @@ const ImageUpload = ({
     window.open(value, "_blank");
   };
 
-  console.log("field", field);
-
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -56,20 +54,18 @@ const ImageUpload = ({
 
   return (
     <div className={`Gallery ${className}`}>
-      {value &&
-        (console.log("value", value),
-        (
-          <div className="block" onClick={() => imageClickHandler()}>
-            <button
-              className="close-btn"
-              type="button"
-              onClick={(e) => closeButtonHandler(e)}
-            >
-              <CancelIcon />
-            </button>
-            <img src={value} className="img" alt="" />
-          </div>
-        ))}
+      {value && (
+        <div className="block" onClick={() => imageClickHandler()}>
+          <button
+            className="close-btn"
+            type="button"
+            onClick={(e) => closeButtonHandler(e)}
+          >
+            <CancelIcon />
+          </button>
+          <img src={value} className="img" alt="" />
+        </div>
+      )}
 
       {!value && (
         <div

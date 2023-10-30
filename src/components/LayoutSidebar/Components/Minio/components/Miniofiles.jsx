@@ -11,7 +11,6 @@ const Card = ({ item, selected, onSelect, handleNavigate }) => {
   const parts = item?.file_name_download?.split(".") || ".";
   const extension = parts[parts?.length - 1];
   const size = item?.file_size / 1048576;
-  console.log("url", url);
   return (
     <Box
       className={style.card}

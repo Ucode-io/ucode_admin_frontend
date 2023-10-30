@@ -62,7 +62,7 @@ const ViewForm = ({
     "#" +
     initialValues?.attributes?.balance?.field_id;
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
-  const attributes = initialValues?.attributes
+  const attributes = initialValues?.attributes;
   const form = useForm();
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
@@ -253,7 +253,6 @@ const ViewForm = ({
       .catch(() => setDeleteBtnLoader(false));
   };
 
-
   const computedFieldsListOptions = useMemo(() => {
     return fields?.map((field) => ({
       label: field.label,
@@ -261,12 +260,11 @@ const ViewForm = ({
     }));
   }, [fields]);
 
-
   useEffect(() => {
-    if(nameMulti) {
-      form.setValue(`attributes.name_${i18n?.language}`, nameMulti)
+    if (nameMulti) {
+      form.setValue(`attributes.name_${i18n?.language}`, nameMulti);
     }
-  }, [nameMulti])
+  }, [nameMulti]);
 
   return (
     <div className={styles.formSection}>
@@ -292,7 +290,12 @@ const ViewForm = ({
                   <div className={styles.formRow}>
                     <FRow label="Название">
                       <Box style={{ display: "flex", gap: "6px" }}>
-                          <HFTextField control={form.control} name={`attributes.name_${i18n?.language}`} placeholder={`Название (${i18n?.language})`} fullWidth />
+                        <HFTextField
+                          control={form.control}
+                          name={`attributes.name_${i18n?.language}`}
+                          placeholder={`Название (${i18n?.language})`}
+                          fullWidth
+                        />
                       </Box>
                     </FRow>
                   </div>
@@ -395,7 +398,7 @@ const getInitialValues = (
   relationObjValue,
   numberFieldValue,
   navigate,
-  group_by_columns,
+  group_by_columns
 ) => {
   if (initialValues === "NEW")
     return {

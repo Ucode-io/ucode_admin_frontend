@@ -51,7 +51,6 @@ export default function CalendarSceduleVisible({
   }, [initialValues, tableSlug, form]);
 
   const getInitialValues = (initialValues) => {
-    console.log("initialValues", initialValues);
     if (initialValues === "NEW")
       return {
         disable_dates: {

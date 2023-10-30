@@ -111,7 +111,6 @@ const Template = () => {
   });
 
   const onSubmit = (values) => {
-    console.log("values", values);
     if (!!values.id) {
       updateTemplate({
         ...values,

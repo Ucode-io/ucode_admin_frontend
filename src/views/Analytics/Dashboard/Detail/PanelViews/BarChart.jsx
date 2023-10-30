@@ -3,7 +3,6 @@ import styles from "./style.module.scss";
 
 const BarChart = ({ panel = {}, data = [] }) => {
   const chartAttributes = panel?.attributes?.["BAR_CHART"] ?? {};
-  console.log("chartAttributes", chartAttributes);
   return (
     <div className={styles.card}>
       <div className={styles.title}>{panel?.title}</div>

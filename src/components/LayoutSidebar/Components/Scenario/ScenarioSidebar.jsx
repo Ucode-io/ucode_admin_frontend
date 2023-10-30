@@ -1,11 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useMemo, useState } from "react";
-import { FaFolder } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useMemo, useState} from "react";
+import {FaFolder} from "react-icons/fa";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import {
   useScenarioCategoryDeleteMutation,
   useScenarioCategoryListQuery,
@@ -14,17 +14,17 @@ import {
   useScenarioDeleteMutation,
   useScenarioListQuery,
 } from "../../../../services/scenarioService";
-import { store } from "../../../../store";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {store} from "../../../../store";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../../LayoutSidebar/style.scss";
 import "../../style.scss";
 import FolderCreateModal from "./Components/Modal/FolderCreateModal";
 import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
 import ScenarioRecursive from "./RecursiveBlock";
-import { BsTable } from "react-icons/bs";
-import { updateLevel } from "../../../../utils/level";
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import {BsTable} from "react-icons/bs";
+import {updateLevel} from "../../../../utils/level";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const scenarioFolder = {
@@ -57,7 +57,7 @@ const ScenarioSidebar = ({
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openMenu = Boolean(menu?.event);
   const [selectedScenarioFolder, setSelectedScenarioFolder] = useState(null);
   const [scenarioFolderModalType, setScenarioFolderModalType] = useState(null);
@@ -69,7 +69,7 @@ const ScenarioSidebar = ({
   };
 
   const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+    setMenu({event: event?.currentTarget, type: type});
   };
 
   const handleCloseNotify = () => {
@@ -85,6 +85,7 @@ const ScenarioSidebar = ({
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
   };
   const labelStyle = {
     color:
@@ -141,14 +142,14 @@ const ScenarioSidebar = ({
     });
   };
 
-  const { mutate: deleteScenario, deleteScenarioLoading } =
+  const {mutate: deleteScenario, deleteScenarioLoading} =
     useScenarioDeleteMutation({
       onSuccess: () => {
         refetch();
       },
     });
 
-  const { mutate: deleteCategory } = useScenarioCategoryDeleteMutation({
+  const {mutate: deleteCategory} = useScenarioCategoryDeleteMutation({
     onSuccess: () => refetchCategory(),
   });
   const onDeleteCategory = (id) => {
@@ -194,12 +195,12 @@ const ScenarioSidebar = ({
             <KeyboardArrowRightIcon />
           )}
           <div className="label" style={labelStyle}>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
-            <PlayCircleIcon/>
+            {childBlockVisible ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
+            )}
+            <PlayCircleIcon />
             {/* <IconGenerator icon={"film.svg"} size={18} /> */}
             Scenarios
           </div>

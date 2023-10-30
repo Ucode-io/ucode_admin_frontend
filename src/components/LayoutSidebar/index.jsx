@@ -1,13 +1,13 @@
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { Box, Button, Divider } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Container } from "react-smooth-dnd";
-import { UdevsLogo } from "../../assets/icons/icon";
+import {Box, Button, Divider} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {Container} from "react-smooth-dnd";
+import {UdevsLogo} from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
@@ -15,17 +15,17 @@ import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkMo
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+
 import menuService, {
   useMenuListQuery,
   usePlatformGetByIdQuery,
 } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { store } from "../../store";
-import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import AppSidebar from "./AppSidebarComponent";
@@ -35,8 +35,10 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
+import Users from "./Components/Users";
+import DocumentsSidebar from "./Components/Documents/DocumentsSidebar";
 
-const LayoutSidebar = ({ appId }) => {
+const LayoutSidebar = ({appId}) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -63,18 +65,18 @@ const LayoutSidebar = ({ appId }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+    setMenu({event: event?.currentTarget, type: type});
   };
   const handleCloseNotify = () => {
     setMenu(null);
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: appId || menuItem?.id,
       search: subSearchText,
@@ -87,11 +89,11 @@ const LayoutSidebar = ({ appId }) => {
     },
   });
 
-  const { data: menuById } = usePlatformGetByIdQuery({
+  const {data: menuById} = usePlatformGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
         menuById?.attributes?.menu_settings_id ||
@@ -185,7 +187,7 @@ const LayoutSidebar = ({ appId }) => {
       });
   };
 
-  const { isLoadingUser } = useQuery(
+  const {isLoadingUser} = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -245,7 +247,7 @@ const LayoutSidebar = ({ appId }) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);

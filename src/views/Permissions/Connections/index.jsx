@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -9,27 +9,27 @@ import {
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import TableCard from "../../../components/TableCard";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
-import { store } from "../../../store";
-import { useQuery, useQueryClient } from "react-query";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {Delete} from "@mui/icons-material";
+import {store} from "../../../store";
+import {useQuery, useQueryClient} from "react-query";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import TableRowButton from "../../../components/TableRowButton";
-import { useState } from "react";
+import {useState} from "react";
 import ConnectionCreateModal from "./ConnectionFormPage";
 import connectionServiceV2, {
   useConnectionDeleteMutation,
 } from "../../../services/auth/connectionService";
 
 const ConnectionPage = () => {
-  const { clientId } = useParams();
+  const {clientId} = useParams();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [connectionId, setConnectionId] = useState();
 
-  const { data: connections, isLoading } = useQuery(
+  const {data: connections, isLoading} = useQuery(
     ["GET_CONNECTION_LIST", clientId],
     () => {
-      return connectionServiceV2.getList({ "client-type-id": clientId });
+      return connectionServiceV2.getList({"client-type-id": clientId});
     },
     {
       cacheTime: 10,
@@ -37,7 +37,7 @@ const ConnectionPage = () => {
     }
   );
 
-  const { mutateAsync: deleteRole, isLoading: createLoading } =
+  const {mutateAsync: deleteRole, isLoading: createLoading} =
     useConnectionDeleteMutation({
       onSuccess: () => {
         store.dispatch(showAlert("Успешно", "success"));
@@ -53,9 +53,21 @@ const ConnectionPage = () => {
   };
 
   return (
-    <div>
-      <TableCard type={"withoutPadding"}>
-        <CTable disablePagination removableHeight={false}>
+    <div style={{height: "calc(100vh - 100px)"}}>
+      <TableCard
+        cardStyles={{height: "calc(100vh - 200px)"}}
+        type={"withoutPadding"}
+      >
+        <CTable
+          tableStyle={{
+            borderRadius: "0px",
+            borderLeft: "0px",
+            borderRight: "0px",
+            borderBottom: "0px",
+          }}
+          disablePagination
+          removableHeight={false}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>

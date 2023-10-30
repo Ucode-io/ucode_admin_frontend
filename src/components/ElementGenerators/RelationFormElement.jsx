@@ -60,7 +60,7 @@ const RelationFormElement = ({
   const required = useMemo(() => {
     if (window.location.pathname?.includes("settings")) {
       return false;
-    } else return false;
+    } else return field?.required;
   }, [window.location.pathname]);
 
   if (!isLayout)

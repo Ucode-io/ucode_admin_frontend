@@ -19,7 +19,6 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
   const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
-  console.log('menuItemLabel', menuItemLabel)
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "TABLE") {

@@ -2,7 +2,6 @@ export const folderListToNested = (
   list,
   { idSlug, parentIdSlug, undefinedChildren }
 ) => {
-  console.log("list", list);
   if (!Array.isArray(list)) return [];
   return getChildrenRecursive(
     list,

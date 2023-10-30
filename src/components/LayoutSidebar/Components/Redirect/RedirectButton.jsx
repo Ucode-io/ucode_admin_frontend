@@ -3,16 +3,17 @@ import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { updateLevel } from "../../../../utils/level";
+import MoveUpIcon from "@mui/icons-material/MoveUp";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
-const microServiceFolder = {
-  label: "Micro service",
+const redirectButton = {
+  label: "Redirects",
   type: "USER_FOLDER",
-  icon: "lock.svg",
+  icon: "key.svg",
   parent_id: adminId,
-  id: "20",
+  id: "0010",
   data: {
     permission: {
       read: true,
@@ -23,17 +24,18 @@ const microServiceFolder = {
   },
 };
 
-const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
+const RedirectButton = ({ level = 1, menuStyle, menuItem }) => {
+  const { appId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const activeStyle = {
     backgroundColor:
-      microServiceFolder?.id === menuItem?.id
+      redirectButton?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      microServiceFolder?.id === menuItem?.id
+      redirectButton?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
@@ -45,14 +47,14 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   const labelStyle = {
     paddingLeft: "15px",
     color:
-      microServiceFolder?.id === menuItem?.id
+      redirectButton?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
 
-  const clickHandler = (e) => {
-    navigate(`/main/${adminId}/micro-service`);
-    dispatch(menuActions.setMenuItem(microServiceFolder));
+  const clickHandler = () => {
+    navigate(`/main/${appId}/redirects`);
+    dispatch(menuActions.setMenuItem(redirectButton));
   };
 
   return (
@@ -66,8 +68,8 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"atom.svg"} size={18} />
-            Micro Service
+            <MoveUpIcon size={18} />
+            {redirectButton?.label}
           </div>
         </Button>
       </div>
@@ -75,4 +77,4 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   );
 };
 
-export default MicroServiceSidebar;
+export default RedirectButton;

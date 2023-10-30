@@ -31,6 +31,9 @@ import { analyticItems, folderIds } from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import { Draggable } from "react-smooth-dnd";
+import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
+import RedirectButton from "../Components/Redirect/RedirectButton";
+import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -330,7 +333,7 @@ const RecursiveBlock = ({
                       </p>
                     </Tooltip>
                   </Box>
-                  {selectedApp?.id !== adminId && (
+                  {selectedApp?.id !== adminId && element?.type === "FOLDER" ? (
                     <Box>
                       <Tooltip title="Folder settings" placement="top">
                         <Box className="extra_icon">
@@ -349,7 +352,30 @@ const RecursiveBlock = ({
                         </Box>
                       </Tooltip>
                     </Box>
-                  )}
+                  ) : null}
+                  {selectedApp?.id !== adminId && element?.type === "TABLE" ? (
+                    <Box>
+                      <Tooltip title="Table settings" placement="top">
+                        <Box className="extra_icon">
+                          <BsThreeDots
+                            size={13}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenNotify(e, "TABLE");
+                              setElement(element);
+                              dispatch(menuActions.setMenuItem(element));
+                            }}
+                            style={{
+                              color:
+                                menuItem?.id === element?.id
+                                  ? menuStyle?.active_text
+                                  : menuStyle?.text || "",
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    </Box>
+                  ) : null}
                 </Box>
               </div>
               {element?.type === "FOLDER" &&
@@ -542,6 +568,26 @@ const RecursiveBlock = ({
                 menuItem={menuItem}
                 level={2}
               />
+              <TableSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <ApiKeyButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <RedirectButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <SmsOtpButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
             </>
           )}
 
@@ -562,11 +608,6 @@ const RecursiveBlock = ({
                 integrated={false}
               />
               <MicrofrontendSettingSidebar
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <TableSettingSidebar
                 menuStyle={menuStyle}
                 menuItem={menuItem}
                 level={2}

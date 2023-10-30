@@ -1,8 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Tooltip } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { BsThreeDots } from "react-icons/bs";
-import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
@@ -14,7 +13,7 @@ import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";
-import { Container, Draggable } from "react-smooth-dnd";
+import { Container } from "react-smooth-dnd";
 import { applyDrag } from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
 import { useState } from "react";
@@ -39,12 +38,18 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
   const [check, setCheck] = useState(false);
+
+  const exception =
+    selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+    selectedApp?.id !== "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9" &&
+    selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
+    selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a280" &&
+    selectedApp?.id !== "31a91a86-7ad3-47a6-a172-d33ceaebb35f";
 
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
@@ -234,7 +239,7 @@ const SubMenu = ({
               </div>
             )}
 
-            {selectedApp?.data?.permission?.write && (
+            {selectedApp?.data?.permission?.write && exception ? (
               <Button
                 className="menu-button active-with-child"
                 onClick={clickHandler}
@@ -269,7 +274,7 @@ const SubMenu = ({
                   Create
                 </div>
               </Button>
-            )}
+            ) : null}
           </div>
         </Box>
       </div>

@@ -348,42 +348,37 @@ const NewRelationSection = ({
               {!relation?.is_visible_section && (
                 <div className={styles.cardHeader}>
                   <TabList className={styles.tabList}>
-                    {relation?.tabs?.map(
-                      (el, index) => (
-                        console.log("element", el),
-                        (
-                          <Tab
-                            key={el.id}
-                            className={`${styles.tabs_item} ${
-                              selectedTabIndex === index
-                                ? "custom-selected-tab"
-                                : "custom-tab"
-                            }`}
-                            onClick={() => {
-                              setSelectedIndex(index);
-                              onSelect(el);
-                            }}
-                          >
-                            {relation?.view_relation_type === "FILE" && (
-                              <>
-                                <InsertDriveFile /> Файлы
-                              </>
-                            )}
-                            <div className="flex align-center gap-2 text-nowrap">
-                              {el?.attributes?.[`label_${i18n.language}`]
-                                ? el?.attributes?.[`label_${i18n.language}`]
-                                : el?.relation?.attributes?.[
-                                    `title_${i18n.language}`
-                                  ]
-                                ? el?.relation?.attributes?.[
-                                    `title_${i18n.language}`
-                                  ]
-                                : el?.label ?? el?.title}
-                            </div>
-                          </Tab>
-                        )
-                      )
-                    )}
+                    {relation?.tabs?.map((el, index) => (
+                      <Tab
+                        key={el.id}
+                        className={`${styles.tabs_item} ${
+                          selectedTabIndex === index
+                            ? "custom-selected-tab"
+                            : "custom-tab"
+                        }`}
+                        onClick={() => {
+                          setSelectedIndex(index);
+                          onSelect(el);
+                        }}
+                      >
+                        {relation?.view_relation_type === "FILE" && (
+                          <>
+                            <InsertDriveFile /> Файлы
+                          </>
+                        )}
+                        <div className="flex align-center gap-2 text-nowrap">
+                          {el?.attributes?.[`label_${i18n.language}`]
+                            ? el?.attributes?.[`label_${i18n.language}`]
+                            : el?.relation?.attributes?.[
+                                `title_${i18n.language}`
+                              ]
+                            ? el?.relation?.attributes?.[
+                                `title_${i18n.language}`
+                              ]
+                            : el?.label ?? el?.title}
+                        </div>
+                      </Tab>
+                    ))}
                   </TabList>
 
                   <div className="flex gap-2">

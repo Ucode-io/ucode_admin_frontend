@@ -35,8 +35,6 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     table_slug: slug ?? tableSlug,
     // project_id: projectId,
   };
-  console.log('slug',slug);
-  console.log('params',params);
   //============   TABLE GET LIST
   const { data: tables = [] } = useQuery(
     ["GET_TABLES_LIST"],

@@ -1,8 +1,8 @@
-import {Delete} from "@mui/icons-material";
-import {Checkbox} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import { Delete } from "@mui/icons-material";
+import { Checkbox } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import {CTableCell, CTableRow} from "../CTable";
+import { CTableCell, CTableRow } from "../CTable";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";

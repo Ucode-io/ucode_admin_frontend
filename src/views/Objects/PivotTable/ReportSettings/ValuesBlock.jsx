@@ -124,7 +124,6 @@ function ObjectItem({ form, idx, objIdx, options, removeObj, getTables }) {
     });
   };
 
-  console.log('formValuesObj', formValuesObj)
 
   const onFieldChange = (values) => {
     const getField = (slug) => fields.find((v) => v.value === slug);

@@ -1,7 +1,4 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
-import KeyIcon from "@mui/icons-material/Key";
-import MoveUpIcon from "@mui/icons-material/MoveUp";
-import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
@@ -67,10 +64,6 @@ const NewProfilePanel = ({
     project_id: company.projectId,
   };
 
-  const handleClick = () => {
-    navigate(`/main/${appId}/api-key`);
-  };
-
   const handleEnvNavigate = () => {
     navigate(`/main/${appId}/environments`);
   };
@@ -79,12 +72,6 @@ const NewProfilePanel = ({
   };
   const handleProjectNavigate = () => {
     navigate(`/main/${appId}/projects`);
-  };
-  const handleRedirectNavigate = () => {
-    navigate(`/main/${appId}/redirects`);
-  };
-  const handleSmsNavigate = () => {
-    navigate(`/main/${appId}/sms-otp`);
   };
 
   const closeMenu = (e) => {
@@ -399,50 +386,7 @@ const NewProfilePanel = ({
             />
           )}
           {/* </div> */}
-          {permissions?.version_button && <Divider />}
-          <div className={styles.block}>
-            {permissions?.api_keys_button && (
-              <ProfileItem
-                children={
-                  <KeyIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Api Keys"}
-                onClick={handleClick}
-              />
-            )}
 
-            {permissions?.redirects_button && (
-              <ProfileItem
-                children={
-                  <MoveUpIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Redirects"}
-                onClick={handleRedirectNavigate}
-              />
-            )}
-
-            {permissions?.sms_button && (
-              <ProfileItem
-                children={
-                  <SmsIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Sms Otp"}
-                onClick={handleSmsNavigate}
-              />
-            )}
-          </div>
           {permissions?.sms_button && <Divider />}
 
           <div className={styles.block}>

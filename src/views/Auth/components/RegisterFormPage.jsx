@@ -53,7 +53,6 @@ const RegisterFormPage = ({ setFormType, formType }) => {
     });
 
   const onSubmit = (values) => {
-    console.log("values", values);
     registerCompany({
       ...values,
       user_info: {

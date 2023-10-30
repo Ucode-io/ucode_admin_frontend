@@ -53,7 +53,6 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
   });
 
   const action_type = watch('action_type')
-  console.log('action_type', action_type)
 
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],

@@ -75,6 +75,8 @@ import UsersList from "../views/Users/UsersList";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
 import TablesPage from "../views/Constructor/AllTables";
+import MinioPage from "../components/LayoutSidebar/Components/Minio";
+import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -99,10 +101,15 @@ const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"));
 const Router = () => {
   const location = useLocation();
   const isAuth = useSelector((state) => state.auth.isAuth);
+  const auth = useSelector((state) => state.auth);
   const applications = useSelector((state) => state.application.list);
   const cashbox = useSelector((state) => state.cashbox.data);
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
+
+  const parts = auth?.clientType?.default_page?.split("/");
+  const result =
+    parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
   const redirectLink = useMemo(() => {
     // if (location.pathname.includes("settings"))
@@ -111,8 +118,10 @@ const Router = () => {
     // if (!applications.length || !applications[0].permission?.read)
     //   return "/settings/constructor/apps";
     // return "/settings/constructor/apps";
-    return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
-  }, [location.pathname, applications]);
+    return auth?.clientType?.default_page?.length
+      ? result
+      : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
+  }, [location.pathname, applications, result]);
 
   if (!isAuth)
     return (
@@ -153,6 +162,10 @@ const Router = () => {
 
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
+        </Route>
+        <Route path=":appId/backet/:minioId">
+          <Route index element={<MinioPage />} />
+          <Route path=":fileId" element={<MinioSinglePage />} />
         </Route>
         <Route path=":appId/projects">
           <Route index element={<ProjectPage />} />

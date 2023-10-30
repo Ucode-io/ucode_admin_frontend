@@ -28,6 +28,19 @@
     padding-left: 30px;
   }
 
+  .desc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .extra {
+      transform: translateY(0);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+  }
+
   &.vertical {
     flex-direction: column;
     align-items: flex-start;

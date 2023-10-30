@@ -6,12 +6,13 @@ const HFFileUpload = ({
   control,
   name,
   required,
-    tabIndex,
-    updateObject,
-  isNewTableView=false,
+  tabIndex,
+  updateObject,
+  isNewTableView = false,
   rules,
   disabledHelperText = false,
   disabled,
+  field,
   ...props
 }) => {
   return (
@@ -29,9 +30,10 @@ const HFFileUpload = ({
             name={name}
             value={value}
             tabIndex={tabIndex}
+            field={field}
             onChange={(val) => {
-              onChange(val)
-              isNewTableView && updateObject()
+              onChange(val);
+              isNewTableView && updateObject();
             }}
             disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}

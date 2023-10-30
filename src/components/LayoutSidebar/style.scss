@@ -96,6 +96,8 @@ $main-color: #0365f2;
     }
   }
 
+
+
   .menu-button {
     display: flex;
     align-items: center;
@@ -111,7 +113,7 @@ $main-color: #0365f2;
       background-color: #a8a8a81a;
 
       .extra_icon {
-        display: flex !important;
+        display: block !important;
         cursor: pointer;
       }
     }
@@ -122,6 +124,11 @@ $main-color: #0365f2;
 
       .extra_icon {
         display: none;
+
+        svg {
+          width: 13px;
+          height: 13px;
+        }
       }
 
       .profile-avatar {

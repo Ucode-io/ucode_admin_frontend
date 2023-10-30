@@ -15,6 +15,7 @@ const FileUpload = ({
   className = "",
   disabled,
   tabIndex,
+  field,
 }) => {
   const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -32,9 +33,11 @@ const FileUpload = ({
     data.append("file", file);
 
     fileService
-      .upload(data)
+      .folderUpload(data, {
+        folder_name: field?.attributes?.path,
+      })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "docs/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       })
       .finally(() => setLoading(false));
   };
@@ -82,8 +85,8 @@ const FileUpload = ({
                   background: "#c0c0c039",
                 }
               : {
-                background: "inherit",
-                color: "inherit",
+                  background: "inherit",
+                  color: "inherit",
                 }
           }
         >

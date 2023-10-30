@@ -594,6 +594,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            field={field}
             {...props}
           />
         </FRow>
@@ -638,6 +639,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            field={field}
             {...props}
           />
         </FRow>

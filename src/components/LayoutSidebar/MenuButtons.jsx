@@ -12,6 +12,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useMenuCreateMutation } from "../../services/menuService";
 import WebIcon from "@mui/icons-material/Web";
 import { analyticItems } from "./SidebarRecursiveBlock/mock/folders";
+import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 const ButtonsMenu = ({
   element,
   menu,
@@ -235,7 +236,7 @@ const ButtonsMenu = ({
           ) : null}
           {element.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<DriveFileMoveIcon size={13} />}
               title="Переместить table"
               onClick={(e) => {
                 e.stopPropagation();
@@ -301,7 +302,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<DriveFileMoveIcon size={13} />}
               title="Переместить table"
               onClick={(e) => {
                 e.stopPropagation();

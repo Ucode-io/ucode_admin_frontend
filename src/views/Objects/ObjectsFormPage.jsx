@@ -168,6 +168,9 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
         });
         if (modal) {
           handleClose();
+          queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
+            table_slug: tableSlug,
+          });
         } else {
           navigate(-1);
           handleClose();

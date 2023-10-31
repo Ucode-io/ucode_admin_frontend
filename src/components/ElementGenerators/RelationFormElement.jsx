@@ -247,6 +247,9 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
+      onSuccess: (data) => {
+        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+      },
     }
   );
 

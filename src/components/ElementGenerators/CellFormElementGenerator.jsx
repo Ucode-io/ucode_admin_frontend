@@ -67,8 +67,6 @@ const CellFormElementGenerator = ({
     // }
   }, [field.slug, index]);
 
-  console.log("computedSlug", computedSlug);
-
   const changedValue = useWatch({
     control,
     name: computedSlug,

@@ -1,5 +1,5 @@
-import { FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
+import {FormHelperText} from "@mui/material";
+import {Controller} from "react-hook-form";
 import ImageUpload from "../Upload/ImageUpload";
 
 const HFImageUpload = ({
@@ -13,7 +13,6 @@ const HFImageUpload = ({
   field,
   ...props
 }) => {
-  console.log("field", field);
   return (
     <Controller
       control={control}
@@ -23,7 +22,7 @@ const HFImageUpload = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <ImageUpload
             name={name}

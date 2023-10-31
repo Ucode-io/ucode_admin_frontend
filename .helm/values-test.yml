@@ -94,10 +94,10 @@ ingress:
         - host: "test.wiki.ucode.run"
           path: /
           servicePort: 80
-      # tls:
-      #   - secretName: ucode-star
-      #     hosts:
-      #       - "app.ucode.run"
+      tls:
+        - secretName: ucode-star
+          hosts:
+            - "test.wiki.ucode.run"
 
 resources:
   {}

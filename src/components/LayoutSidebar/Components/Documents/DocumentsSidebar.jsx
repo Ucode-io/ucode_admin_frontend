@@ -398,6 +398,7 @@ const DocumentsSidebar = ({
       navigate(`/main/${adminId}/docs/template/${element?.id}/${id}`);
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
       navigate(`/main/${adminId}/docs/note/${element?.id}/${id}`);
+      setSubMenuIsOpen(false);
     }
   };
 

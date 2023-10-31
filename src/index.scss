@@ -422,3 +422,13 @@ html {
   display: flex;
   align-items: center;
 }
+
+
+.ce-toolbar__actions {
+  left: -55px !important;
+  top: -2px !important;
+}
+
+.codex-editor__redactor {
+  padding-bottom: 0 !important;
+}

@@ -82,6 +82,22 @@ export default function TimeLineBlock({
     }
   };
 
+  const getDataText = async (viewID) => {
+    setRelationLoading(true);
+    try {
+      const res = await constructorObjectService.getList(tableSlug, {
+        data: {
+          builder_service_view_id: viewID,
+        },
+      });
+      return res?.data?.response;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRelationLoading(false);
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       if (groupbyFields?.length === 1) {
@@ -90,6 +106,23 @@ export default function TimeLineBlock({
         } else if (groupbyFields[0]?.type === "LOOKUP" || groupbyFields[0]?.type === "LOOKUPS") {
           const options = await getDataRelation(groupbyFields?.[0]);
           setAllData(options);
+        } else if (groupbyFields[0]?.type === "SINGLE_LINE") {
+          const options = await getDataText(view?.id);
+
+          console.log("ssssssss", options, options?.[0]?.[groupbyFields?.[0]?.slug]);
+
+          const result = options?.map((item) => {
+            return {
+              ...item,
+              label: item?.[groupbyFields?.[0]?.slug],
+            };
+          });
+
+          setAllData(
+            result?.filter((item) => {
+              return item?.[groupbyFields?.[0]?.slug] !== null;
+            })
+          );
         }
       } else if (groupbyFields?.length === 2) {
         // FOR 2 GROUP BY
@@ -112,7 +145,7 @@ export default function TimeLineBlock({
     }
 
     fetchData();
-  }, [groupbyFields]);
+  }, [groupbyFields, view?.id]);
 
   useEffect(() => {
     handleScrollClick();
@@ -132,7 +165,7 @@ export default function TimeLineBlock({
           <div className={styles.group_by_columns}>
             {allData?.map((item) => (
               <div className={styles.group_by_column}>
-                <div className={styles.group_by_column_header}>{item?.[groupbyFields?.[0]?.view_fields?.[0]?.slug]}</div>
+                <div className={styles.group_by_column_header}>{item?.label ?? item?.[groupbyFields?.[0]?.view_fields?.[0]?.slug]}</div>
                 {item?.options?.map((option) => (
                   <div className={styles.subs}>
                     <div className={styles.group_by_sub_column}>{option?.[groupbyFields?.[1]?.view_fields?.[0]?.slug]}</div>

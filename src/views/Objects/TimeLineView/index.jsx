@@ -277,6 +277,10 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
+        attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
+          group_by_columns: form.watch("group_fields"),
+        },
         group_fields: form.watch("group_fields"),
       })
       .then(() => {

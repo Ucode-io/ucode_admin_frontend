@@ -32,11 +32,17 @@ export default function TimeLineDayDataBlockItem({
     setOpen(true);
     setSelectedRow(data);
   };
-
+  
   const levelGroupByOne = useMemo(() => {
-    const a = groupByList?.find((group) => group?.guid === data?.[`${groupbyFields?.[0]?.table_slug}_id_data`]?.guid);
+    if (groupbyFields?.[0]?.type === "SINGLE_LINE") {
+      const a = groupByList?.find((group) => group?.label === data?.[groupbyFields?.[0]?.slug]);
 
-    return groupByList?.indexOf(a);
+      return groupByList?.indexOf(a);
+    } else {
+      const a = groupByList?.find((group) => group?.guid === data?.[`${groupbyFields?.[0]?.table_slug}_id_data`]?.guid);
+
+      return groupByList?.indexOf(a);
+    }
   }, [groupByList, data, groupbyFields]);
 
   const levelGroupByTwo = useMemo(() => {

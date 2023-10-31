@@ -33,12 +33,15 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
     name: "group_fields",
   });
   const { i18n } = useTranslation();
-
   const [selectedColumn, setSelectedColumn] = useState();
   const [updatedColumns, setUpdatedColumns] = useState();
-  
+
   useEffect(() => {
-    setUpdatedColumns(columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT"));
+    setUpdatedColumns(
+      columns?.filter(
+        (column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT" || column.type === "SINGLE_LINE"
+      )
+    );
   }, [columns]);
 
   useEffect(() => {

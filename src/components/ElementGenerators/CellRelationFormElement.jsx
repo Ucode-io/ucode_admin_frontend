@@ -403,7 +403,7 @@ const AutoCompleteElement = ({
   const clearSelection = () => {
     setValue(null);
   };
-  console.log("localValue", localValue);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (

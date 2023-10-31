@@ -1,5 +1,5 @@
 import { addDays } from "date-fns";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
@@ -15,6 +15,7 @@ export default function TimeLineBlock({
   datesList,
   view,
   tabs,
+  handleScrollClick,
   zoomPosition,
   setDateFilters,
   dateFilters,
@@ -26,6 +27,7 @@ export default function TimeLineBlock({
   isLoading,
 }) {
   const scrollContainerRef = useRef(null);
+  const [allData, setAllData] = useState([]);
   const [focusedDays, setFocusedDays] = useState([]);
   const { tableSlug } = useParams();
   const [relaitonLoading, setRelationLoading] = useState(false);
@@ -51,22 +53,20 @@ export default function TimeLineBlock({
     });
   }, [view?.group_fields, fieldsMap]);
 
-  //   const { data: relations } = useQuery(
-  //     ["GET_RELATION_LIST", tableSlug],
-  //     () => {
-  //       return constructorRelationService.getList({
-  //         table_slug: tableSlug,
-  //         relation_table_slug: tableSlug,
-  //       });
-  //     },
-  //     {
-  //       select: (res) => {
-  //         return res?.relations;
-  //       },
-  //     }
-  //   );
-
-  // console.log('relations', groupbyFields)
+  const { data: relations } = useQuery(
+    ["GET_RELATION_LIST", tableSlug],
+    () => {
+      return constructorRelationService.getList({
+        table_slug: tableSlug,
+        relation_table_slug: tableSlug,
+      });
+    },
+    {
+      select: (res) => {
+        return res?.relations;
+      },
+    }
+  );
 
   const getDataRelation = async (field) => {
     setRelationLoading(true);
@@ -74,34 +74,82 @@ export default function TimeLineBlock({
       const res = await constructorObjectService.getList(field?.table_slug, {
         data: {},
       });
-      return res?.data?.response.map((item) => {
-        return {
-          label: item[field?.view_fields?.[0]?.slug],
-          value: item.id ?? item.guid,
-        };
-      });
+      return res?.data?.response;
     } catch (error) {
       console.error(error);
+    } finally {
+      setRelationLoading(false);
     }
   };
 
-  const groupByList = useMemo(() => {
-    if (groupbyFields?.length === 1) {
-      if (groupbyFields[0]?.type === "MULTISELECT") {
-        return groupbyFields[0]?.attributes?.options;
-      } else if (groupbyFields[0]?.type === "LOOKUP" || groupbyFields[0]?.type === "LOOKUPS") {
-        const options = [];
-        getDataRelation(groupbyFields?.[0]).then((res) => {
-          options.push(...res);
-          setRelationLoading(false);
-          return options;
-        });
-        return options;
-      }
-    } else if (groupbyFields?.length === 2) {
-      
+  const getDataText = async (viewID) => {
+    setRelationLoading(true);
+    try {
+      const res = await constructorObjectService.getList(tableSlug, {
+        data: {
+          builder_service_view_id: viewID,
+        },
+      });
+      return res?.data?.response;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRelationLoading(false);
     }
-  }, [groupbyFields]);
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      if (groupbyFields?.length === 1) {
+        if (groupbyFields[0]?.type === "MULTISELECT") {
+          setAllData(groupbyFields[0]?.attributes?.options);
+        } else if (groupbyFields[0]?.type === "LOOKUP" || groupbyFields[0]?.type === "LOOKUPS") {
+          const options = await getDataRelation(groupbyFields?.[0]);
+          setAllData(options);
+        } else if (groupbyFields[0]?.type === "SINGLE_LINE") {
+          const options = await getDataText(view?.id);
+
+          console.log("ssssssss", options, options?.[0]?.[groupbyFields?.[0]?.slug]);
+
+          const result = options?.map((item) => {
+            return {
+              ...item,
+              label: item?.[groupbyFields?.[0]?.slug],
+            };
+          });
+
+          setAllData(
+            result?.filter((item) => {
+              return item?.[groupbyFields?.[0]?.slug] !== null;
+            })
+          );
+        }
+      } else if (groupbyFields?.length === 2) {
+        // FOR 2 GROUP BY
+        if (groupbyFields?.[0]?.type === "LOOKUP" && groupbyFields?.[1]?.type === "LOOKUP") {
+          const options1 = await getDataRelation(groupbyFields?.[0]);
+          const options2 = await getDataRelation(groupbyFields?.[1]);
+
+          const result = options1?.map((item) => {
+            const options = options2?.filter((option) => option?.[`${groupbyFields?.[0]?.table_slug}_id`] === item?.guid);
+            return {
+              ...item,
+              options,
+            };
+          });
+          setAllData(result);
+        } else {
+          setAllData([]);
+        }
+      }
+    }
+
+    fetchData();
+  }, [groupbyFields, view?.id]);
+
+  useEffect(() => {
+    handleScrollClick();
+  }, []);
 
   return (
     <div
@@ -115,12 +163,12 @@ export default function TimeLineBlock({
           <div className={`${styles.fakeDiv} ${selectedType === "month" ? styles.month : ""}`}>Columns</div>
 
           <div className={styles.group_by_columns}>
-            {groupByList?.map((item) => (
+            {allData?.map((item) => (
               <div className={styles.group_by_column}>
-                <div className={styles.group_by_column_header}>{item?.label}</div>
+                <div className={styles.group_by_column_header}>{item?.label ?? item?.[groupbyFields?.[0]?.view_fields?.[0]?.slug]}</div>
                 {item?.options?.map((option) => (
                   <div className={styles.subs}>
-                    <div className={styles.group_by_sub_column}>{option?.label}</div>
+                    <div className={styles.group_by_sub_column}>{option?.[groupbyFields?.[1]?.view_fields?.[0]?.slug]}</div>
                   </div>
                 ))}
               </div>
@@ -139,7 +187,8 @@ export default function TimeLineBlock({
           <PageFallback />
         ) : (
           <TimeLineDayDataBlock
-            groupByList={groupByList}
+            groupbyFields={groupbyFields}
+            groupByList={allData}
             setFocusedDays={setFocusedDays}
             selectedType={selectedType}
             zoomPosition={zoomPosition}

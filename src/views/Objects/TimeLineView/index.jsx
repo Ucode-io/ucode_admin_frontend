@@ -81,6 +81,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     }
     return result;
   }, [dateFilters]);
+
   const { data: { data, fields, visibleColumns, visibleRelationColumns } = { data: [] }, isLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters }],
     () => {
@@ -210,12 +211,12 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   const [selectedType, setSelectedType] = useState("day");
 
   const handleScrollClick = () => {
-    // Use native JavaScript to scroll to the div by its id
     const scrollToDiv = document.getElementById("todayDate");
     if (scrollToDiv) {
       scrollToDiv.scrollIntoView({ behavior: "smooth" });
     }
   };
+
   const form = useForm({
     defaultValues: {
       calendar_from_slug: "",
@@ -276,6 +277,10 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
+        attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
+          group_by_columns: form.watch("group_fields"),
+        },
         group_fields: form.watch("group_fields"),
       })
       .then(() => {
@@ -404,10 +409,12 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         }}
       >
         {/* <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} /> */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <CRangePicker interval={"months"} value={dateFilters} onChange={setDateFilters} />
           <Button
             variant="text"
@@ -768,7 +775,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
       <div
         className={styles.wrapper}
         style={{
-          height: "calc(100vh - 90px)",
+          height: "calc(100vh - 92px)",
         }}
       >
         {/* <div className={styles.filters}>
@@ -780,6 +787,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
           <PageFallback />
         ) : (
           <TimeLineBlock
+            handleScrollClick={handleScrollClick}
             isLoading={isLoading}
             computedColumnsFor={computedColumnsFor}
             view={view}

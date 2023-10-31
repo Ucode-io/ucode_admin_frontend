@@ -10,9 +10,10 @@ import styles from "./styles.module.scss";
 
 export default function TimeLineDayDataBlockItem({
   data,
-  level,
+  levelIndex,
   setFocusedDays,
   datesList,
+  groupbyFields,
   view,
   zoomPosition,
   calendar_from_slug,
@@ -31,24 +32,64 @@ export default function TimeLineDayDataBlockItem({
     setOpen(true);
     setSelectedRow(data);
   };
+  
+  const levelGroupByOne = useMemo(() => {
+    if (groupbyFields?.[0]?.type === "SINGLE_LINE") {
+      const a = groupByList?.find((group) => group?.label === data?.[groupbyFields?.[0]?.slug]);
+
+      return groupByList?.indexOf(a);
+    } else {
+      const a = groupByList?.find((group) => group?.guid === data?.[`${groupbyFields?.[0]?.table_slug}_id_data`]?.guid);
+
+      return groupByList?.indexOf(a);
+    }
+  }, [groupByList, data, groupbyFields]);
+
+  const levelGroupByTwo = useMemo(() => {
+    let qty = 0;
+
+    groupByList?.forEach((group) => {
+      qty++;
+      group?.options?.forEach((option) => {
+        qty++;
+        if (option?.guid === data?.[`${groupbyFields?.[1]?.table_slug}_id_data`]?.guid) {
+          return qty;
+        }
+      });
+    });
+
+    return qty;
+  }, [groupByList, data, groupbyFields]);
+
+  const level = useMemo(() => {
+    if (view?.group_fields?.length === 0) {
+      return levelIndex;
+    } else if (view?.group_fields?.length === 1) {
+      return levelGroupByOne;
+    } else if (view?.group_fields?.length === 2) {
+      return levelGroupByTwo - 1;
+    }
+  }, [levelIndex, levelGroupByOne, levelGroupByTwo, view]);
 
   const [frame] = useState({
     translate: [0, 0],
   });
 
   const startDate = useMemo(() => {
-    return datesList && calendar_from_slug ? datesList.findIndex((date) => format(new Date(date), "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy")) : null;
-  }, [datesList, data[calendar_from_slug]]);
+    return datesList && calendar_from_slug
+      ? datesList.findIndex((date) => format(new Date(date), "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy"))
+      : null;
+  }, [datesList, calendar_from_slug, data]);
 
   const differenceInDays = useMemo(() => {
     const days = Math.ceil((new Date(data[calendar_to_slug]) - new Date(data[calendar_from_slug])) / (1000 * 60 * 60 * 24));
     return days;
-  }, [data[calendar_from_slug], data[calendar_to_slug]]);
+  }, [data, calendar_from_slug, calendar_to_slug]);
 
   useEffect(() => {
     if (!ref.current) return null;
     setTarget(ref.current);
-  }, [ref, level, zoomPosition, startDate, differenceInDays]);
+  }, [ref, view]);
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -145,6 +186,7 @@ export default function TimeLineDayDataBlockItem({
           left: `${startDate * (zoomPosition * 30)}px`,
           width: `${zoomPosition * 30 * differenceInDays}px`,
           cursor: "pointer",
+          display: startDate === -1 || level === -1 ? "none" : "block",
         }}
         onClick={handleOpen}
       >
@@ -160,22 +202,26 @@ export default function TimeLineDayDataBlockItem({
       </div>
       <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
 
-      <Moveable
-        target={target}
-        className="moveable3"
-        draggable
-        resizable
-        throttleDrag={zoomPosition * 30}
-        throttleResize={zoomPosition * 30}
-        keepRatio={false}
-        origin={false}
-        renderDirections={["w", "e"]}
-        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        onDrag={onDrag}
-        onDragEnd={onDragEnd}
-        onResize={onResize}
-        onResizeEnd={onResizeEnd}
-      />
+      {startDate === -1 || level === -1 ? (
+        ""
+      ) : (
+        <Moveable
+          target={target}
+          className="moveable3"
+          draggable
+          resizable
+          throttleDrag={zoomPosition * 30}
+          throttleResize={zoomPosition * 30}
+          keepRatio={false}
+          origin={false}
+          renderDirections={["w", "e"]}
+          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+          onDrag={onDrag}
+          onDragEnd={onDragEnd}
+          onResize={onResize}
+          onResizeEnd={onResizeEnd}
+        />
+      )}
     </>
   );
 }

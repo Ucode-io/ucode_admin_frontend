@@ -13,11 +13,12 @@ export default function TimeLineDayDataBlock({
   zoomPosition,
   calendar_from_slug,
   calendar_to_slug,
+  groupbyFields,
   visible_field,
   selectedType,
   groupByList,
 }) {
-
+  
   return (
     <>
       <div className={styles.container}>
@@ -27,8 +28,9 @@ export default function TimeLineDayDataBlock({
           <div className={styles.datas}>
             {data.map((item, index) => (
               <TimeLineDayDataBlockItem
+                groupbyFields={groupbyFields}
                 data={item}
-                level={index}
+                levelIndex={index}
                 groupByList={groupByList}
                 setFocusedDays={setFocusedDays}
                 datesList={datesList}

@@ -56,7 +56,7 @@ const ImageUpload = ({
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          {!disabled && (
+          {!disabled ? (
             <button
               className="close-btn"
               type="button"
@@ -64,6 +64,10 @@ const ImageUpload = ({
             >
               <CancelIcon />
             </button>
+          ) : (
+            <div className="lock_icon">
+              <Lock style={{fontSize: "20px"}} />
+            </div>
           )}
           <img src={value} className="img" alt="" />
         </div>

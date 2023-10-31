@@ -531,7 +531,7 @@ const AutoCompleteElement = ({
           value.some((val) => val.value === value)
         }
         blurInputOnSelect
-        autoFocus
+        // autoFocus
       />
       {/* {errors?.[field?.slug] && (
         <div

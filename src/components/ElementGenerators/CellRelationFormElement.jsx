@@ -19,6 +19,7 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import AddIcon from "@mui/icons-material/Add";
 import Select from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -398,6 +399,10 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
+
+  const clearSelection = () => {
+    setValue(null);
+  };
   console.log("localValue", localValue);
   return (
     <div className={styles.autocompleteWrapper}>
@@ -455,9 +460,25 @@ const AutoCompleteElement = ({
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}
-        isClearable={true}
         menuPortalTarget={document.body}
-        components={{}}
+        components={{
+          ClearIndicator: () =>
+            localValue?.length && (
+              <div
+                style={{
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // clearSelection();
+                  setLocalValue([]);
+                }}
+              >
+                <ClearIcon />
+              </div>
+            ),
+        }}
         onChange={(newValue, {action}) => {
           changeHandler(newValue);
         }}
@@ -482,10 +503,13 @@ const AutoCompleteElement = ({
             width: "100%",
             display: "flex",
             alignItems: "center",
+            border: "none",
+            outline: "none",
           }),
           input: (provided) => ({
             ...provided,
             width: "100%",
+            border: "none",
           }),
           option: (provided, state) => ({
             ...provided,

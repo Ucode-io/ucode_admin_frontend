@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   useNoteByIdQuery,
   useNoteCreateMutation,
@@ -10,12 +10,13 @@ import {
 import { store } from "../../../../../store";
 import { useGetSingleObjectDocumentQuery } from "../../../../../services/templateNoteShareService";
 import { showAlert } from "../../../../../store/alert/alert.thunk";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Button } from "@mui/material";
 import Header, { HeaderLeftSide, HeaderRightSide } from "../../Header";
 import HFTextField from "../../../../FormElements/HFTextField";
 import EditorJs from "../Components/EditorJS";
 import styles from "./style.module.scss";
+import { folderIds } from "../../../SidebarRecursiveBlock/mock/folders";
 
 const Note = () => {
   const form = useForm();
@@ -24,6 +25,8 @@ const Note = () => {
   const [queryParams, setQueryParams] = useSearchParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const menuItem = useSelector((state) => state.menu.menuItem);
 
   const token = queryParams.get("token");
 
@@ -74,13 +77,15 @@ const Note = () => {
   const { mutate: updateNote } = useNoteUpdateMutation({
     onSuccess: (res) => {
       dispatch(showAlert("Success", "success"));
-      queryClient.refetchQueries(["NOTES"]);
+      queryClient.refetchQueries(["MENU"], folderIds.wiki_id);
+      navigate("/main/744d63e6-0ab7-4f16-a588-d9129cf959d1");
     },
   });
 
   const { mutate: createNote } = useNoteCreateMutation({
     onSuccess: (res) => {
-      queryClient.refetchQueries(["NOTES"]);
+      queryClient.refetchQueries(["MENU"], folderIds.wiki_id);
+      navigate("/main/744d63e6-0ab7-4f16-a588-d9129cf959d1");
     },
   });
 
@@ -88,15 +93,19 @@ const Note = () => {
     if (!!values.id) {
       updateNote({
         ...values,
+        parent_id: menuItem?.id,
       });
     } else {
       createNote({
         ...values,
         project_id: projectId,
         folder_id: folderId,
+        parent_id: menuItem?.id,
       });
     }
   };
+
+  console.log("menuItem", menuItem);
 
   return (
     <FormProvider {...form}>

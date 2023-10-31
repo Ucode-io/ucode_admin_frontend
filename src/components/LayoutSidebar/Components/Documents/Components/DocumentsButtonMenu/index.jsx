@@ -5,6 +5,8 @@ import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import AddIcon from "@mui/icons-material/Add";
 import { Delete } from "@mui/icons-material";
+import { BsFillTrashFill } from "react-icons/bs";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const DocumentButtonMenu = ({
@@ -15,6 +17,7 @@ const DocumentButtonMenu = ({
   handleCloseNotify,
   deleteNoteFolder,
   deleteTemplateFolder,
+  openNoteFolderModal,
 }) => {
   const navigate = useNavigate();
   return (
@@ -70,10 +73,37 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Note"
+              title="Добавить Wiki"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/note/${element.id}/create`);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<CreateNewFolderIcon size={13} />}
+              title="Добавить папку"
+              onClick={(e) => {
+                e.stopPropagation();
+                openNoteFolderModal(element, "CREATE");
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить папку"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteNoteFolder(element?.id);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить папку"
+              onClick={(e) => {
+                e.stopPropagation();
+                openNoteFolderModal(element, "EDIT");
                 handleCloseNotify();
               }}
             />

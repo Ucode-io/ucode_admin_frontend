@@ -51,7 +51,7 @@ const NoteFolderCreateModal = ({ closeModal, modalType, folder }) => {
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
-              {createType ? "Create folder" : "Edit folder"}
+              {createType ? "Create wiki folder" : "Edit wiki folder"}
             </Typography>
             <ClearIcon
               color="primary"
@@ -69,7 +69,7 @@ const NoteFolderCreateModal = ({ closeModal, modalType, folder }) => {
               fullWidth
               label="Title"
               control={control}
-              name="Title"
+              name="title"
               required
             />
 

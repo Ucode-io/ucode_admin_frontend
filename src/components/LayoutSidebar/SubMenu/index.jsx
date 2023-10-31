@@ -59,6 +59,8 @@ const SubMenu = ({
   const clickHandler = (e) => {
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
+    } else if (selectedApp?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1") {
+      handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "ROOT");
     }
@@ -157,17 +159,6 @@ const SubMenu = ({
           }}
         >
           <div>
-            {/* <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSubSearchText(e);
-                }}
-              />
-            </Box> */}
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (

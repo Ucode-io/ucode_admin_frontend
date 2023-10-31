@@ -13,6 +13,8 @@ import { useMenuCreateMutation } from "../../services/menuService";
 import WebIcon from "@mui/icons-material/Web";
 import { analyticItems } from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
+import AddIcon from "@mui/icons-material/Add";
+
 const ButtonsMenu = ({
   element,
   menu,
@@ -671,6 +673,44 @@ const ButtonsMenu = ({
                 id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 type: "FOLDER",
               });
+              handleCloseNotify();
+            }}
+          />
+        </Box>
+      )}
+
+      {menuType === "WIKI_FOLDER" && (
+        <Box className="menu">
+          <MenuItemComponent
+            icon={<CreateNewFolderIcon size={13} />}
+            title="Добавить папку"
+            onClick={(e) => {
+              e.stopPropagation();
+              openFolderCreateModal("create", element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<AddIcon size={13} />}
+            title="Добавить Wiki"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(
+                `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/note/${element?.id}/create`
+              );
+              handleCloseNotify();
+            }}
+          />
+        </Box>
+      )}
+      {menuType === "WIKI" && (
+        <Box className="menu">
+          <MenuItemComponent
+            icon={<BsFillTrashFill size={13} />}
+            title="Удалить Wiki"
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteFolder(element);
               handleCloseNotify();
             }}
           />

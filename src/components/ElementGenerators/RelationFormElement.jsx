@@ -1,15 +1,15 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import { useEffect, useRef, useState } from "react";
-import { useMemo } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Autocomplete, TextField} from "@mui/material";
+import {get} from "@ngard/tiny-get";
+import {useEffect, useRef, useState} from "react";
+import {useMemo} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -21,10 +21,10 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import Select from "react-select";
-import { useTranslation } from "react-i18next";
-import { pageToOffset } from "../../utils/pageToOffset";
+import {useTranslation} from "react-i18next";
+import {pageToOffset} from "../../utils/pageToOffset";
 
 const RelationFormElement = ({
   control,
@@ -46,7 +46,7 @@ const RelationFormElement = ({
   errors,
   ...props
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSlug = useMemo(() => {
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
@@ -76,7 +76,7 @@ const RelationFormElement = ({
             required: required ? "This field is required!" : "",
             ...rules,
           }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
@@ -102,7 +102,7 @@ const RelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
@@ -112,7 +112,7 @@ const RelationFormElement = ({
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
-            render={({ field: { onChange, value }, fieldState: { error } }) =>
+            render={({field: {onChange, value}, fieldState: {error}}) =>
               field?.attributes?.cascadings?.length === 2 ? (
                 <CascadingElement
                   field={field}
@@ -164,14 +164,14 @@ const AutoCompleteElement = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const { id } = useParams();
+  const {id} = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
   const [firstValue, setFirstValue] = useState(false);
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
@@ -213,7 +213,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -247,10 +247,13 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
+      onSuccess: (data) => {
+        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+      },
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -297,6 +300,13 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions]);
+
   const getValueData = async () => {
     try {
       const id = value;
@@ -320,7 +330,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -331,7 +341,7 @@ const AutoCompleteElement = ({
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -376,7 +386,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -456,7 +466,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            options={allOptions ?? []}
+            options={computedOptions ?? []}
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}
@@ -467,7 +477,7 @@ const AutoCompleteElement = ({
               // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
-            // onMenuScrollToBottom={loadMoreItems}
+            onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);
@@ -481,10 +491,10 @@ const AutoCompleteElement = ({
             getOptionValue={(option) => option?.guid}
             components={{
               DropdownIndicator: () => null,
-              MultiValue: ({ data }) => (
+              MultiValue: ({data}) => (
                 <IconGenerator
                   icon="arrow-up-right-from-square.svg"
-                  style={{ marginLeft: "10px", cursor: "pointer" }}
+                  style={{marginLeft: "10px", cursor: "pointer"}}
                   size={15}
                   onClick={(e) => {
                     e.stopPropagation();

@@ -1,6 +1,6 @@
-import { get } from "@ngard/tiny-get";
-import { format } from "date-fns";
-import { numberWithSpaces } from "@/utils/formatNumbers";
+import {get} from "@ngard/tiny-get";
+import {format} from "date-fns";
+import {numberWithSpaces} from "@/utils/formatNumbers";
 
 export const getRelationFieldLabel = (field, option) => {
   if (!option) return "";
@@ -55,7 +55,7 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
     else if (el?.type === "NUMBER") result = numberWithSpaces(value);
     else result = value;
 
-    label += `${result ?? ""}`;
+    label += ` ${result ?? " "}`;
   });
 
   return label;

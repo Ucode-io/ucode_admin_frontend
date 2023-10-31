@@ -403,7 +403,7 @@ const AutoCompleteElement = ({
   const clearSelection = () => {
     setValue(null);
   };
-  console.log("localValue", localValue);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -531,7 +531,7 @@ const AutoCompleteElement = ({
           value.some((val) => val.value === value)
         }
         blurInputOnSelect
-        autoFocus
+        // autoFocus
       />
       {/* {errors?.[field?.slug] && (
         <div

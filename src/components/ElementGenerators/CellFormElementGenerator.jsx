@@ -23,6 +23,7 @@ import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFPassword from "../FormElements/HFPassword";
 import HFModalMap from "../FormElements/HFModalMap";
 import HFFileUpload from "../FormElements/HFFileUpload";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 
 const parser = new Parser();
 
@@ -112,6 +113,7 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -261,6 +263,22 @@ const CellFormElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          {...props}
+        />
+      );
+
+    case "INTERNATION_PHONE":
+      return (
+        <HFInternationPhone
+          control={control}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          fullWidth
+          required={field?.required}
+          placeholder={field.attributes?.placeholder}
+          mask={"(99) 999-99-99"}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       );

@@ -297,6 +297,13 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions]);
+
   const getValueData = async () => {
     try {
       const id = value;
@@ -404,7 +411,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log("fielddddddd", field);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -457,7 +464,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            options={allOptions ?? []}
+            options={computedOptions ?? []}
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}
@@ -468,7 +475,7 @@ const AutoCompleteElement = ({
               // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
-            // onMenuScrollToBottom={loadMoreItems}
+            onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

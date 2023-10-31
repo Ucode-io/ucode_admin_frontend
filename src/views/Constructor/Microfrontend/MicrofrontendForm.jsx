@@ -1,7 +1,7 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useNavigate, useParams} from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import Footer from "../../../components/Footer";
@@ -16,7 +16,7 @@ import microfrontendService from "../../../services/microfrontendService";
 const microfrontendListPageLink = "/settings/constructor/microfrontend";
 
 const MicrofrontendForm = () => {
-  const { microfrontendId } = useParams();
+  const {microfrontendId} = useParams();
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
@@ -81,14 +81,14 @@ const MicrofrontendForm = () => {
     <div>
       <HeaderSettings
         title="Микрофронтенд"
-        backButtonLink={microfrontendListPageLink}
+        backButtonLink={-1}
         subtitle={microfrontendId ? mainForm.watch("name") : "Новый"}
       ></HeaderSettings>
 
       <form
         onSubmit={mainForm.handleSubmit(onSubmit)}
         className="p-2"
-        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
+        style={{height: "calc(100vh - 112px)", overflow: "auto"}}
       >
         <FormCard title="Детали" maxWidth={500}>
           <FRow

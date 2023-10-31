@@ -245,6 +245,9 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
+      onSuccess: (data) => {
+        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+      },
     }
   );
 
@@ -294,6 +297,13 @@ const AutoCompleteElement = ({
     optionsFromLocale,
     field?.attributes?.function_path,
   ]);
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions]);
 
   const getValueData = async () => {
     try {
@@ -454,7 +464,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            options={allOptions ?? []}
+            options={computedOptions ?? []}
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}

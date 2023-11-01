@@ -48,6 +48,11 @@ export default function TimeLineDatesRow({ datesList, zoomPosition, selectedType
       className={styles.datesRow}
       style={{
         borderRight: selectedType === "month" ? "1px solid #e0e0e0" : "",
+        position: "sticky",
+        left: 0,
+        top: 0,
+        background: "#fff",
+        zIndex: 4,
       }}
     >
       {/* <div className={styles.mockBlock} /> */}

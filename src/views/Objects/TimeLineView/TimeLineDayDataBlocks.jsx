@@ -22,12 +22,17 @@ export default function TimeLineDayDataBlock({
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.days}>{datesList && datesList.map((date) => <TimeLineDays date={date} zoomPosition={zoomPosition} selectedType={selectedType} />)}</div>
+        <div className={styles.days}>
+          {datesList.map((date) => (
+            <TimeLineDays date={date} zoomPosition={zoomPosition} selectedType={selectedType} />
+          ))}
+        </div>
 
         {calendar_from_slug && calendar_to_slug && (
           <div className={styles.datas}>
             {data.map((item, index) => (
               <TimeLineDayDataBlockItem
+                selectedType={selectedType}
                 computedColumnsFor={computedColumnsFor}
                 groupbyFields={groupbyFields}
                 data={item}

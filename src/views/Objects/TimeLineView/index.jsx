@@ -296,6 +296,12 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     form.setValue("group_fields", view?.group_fields);
   }, [view, form]);
 
+  useEffect(() => {
+    if (selectedType === "day") {
+      setZoomPosition(2);
+    }
+  }, [selectedType]);
+
   return (
     <div>
       <FiltersBlock

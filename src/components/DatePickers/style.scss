@@ -882,5 +882,9 @@
 }
 
 .ucode-rangepicker .react-datepicker-popper {
-  z-index: 4;
+  z-index: 6;
+}
+
+.react-datepicker__aria-live {
+  display: none;
 }

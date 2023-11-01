@@ -189,7 +189,8 @@ const RecursiveBlock = ({
       !pinIsEnabled &&
       element.type !== "FOLDER" &&
       element.type !== "USER_FOLDER" &&
-      element.type !== "MINIO_FOLDER"
+      element.type !== "MINIO_FOLDER" &&
+      element.type !== "WIKI_FOLDER"
     ) {
       setSubMenuIsOpen(false);
     }
@@ -290,13 +291,15 @@ const RecursiveBlock = ({
                 )}
                 {childBlockVisible ? (
                   element?.type === "PERMISSION" ||
-                  element?.type !== "FOLDER" ? (
+                  (element?.type !== "FOLDER" &&
+                    element?.type !== "WIKI_FOLDER") ? (
                     ""
                   ) : (
                     <KeyboardArrowDownIcon />
                   )
                 ) : element?.type === "PERMISSION" ||
-                  element?.type !== "FOLDER" ? (
+                  (element?.type !== "FOLDER" &&
+                    element?.type !== "WIKI_FOLDER") ? (
                   ""
                 ) : (
                   <KeyboardArrowRightIcon />
@@ -341,7 +344,9 @@ const RecursiveBlock = ({
                       </p>
                     </Tooltip>
                   </Box>
-                  {selectedApp?.id !== adminId && element?.type === "FOLDER" ? (
+                  {(selectedApp?.id !== adminId &&
+                    element?.type === "FOLDER") ||
+                  element?.type === "WIKI_FOLDER" ? (
                     <Box>
                       <Tooltip title="Folder settings" placement="top">
                         <Box className="extra_icon">
@@ -440,7 +445,8 @@ const RecursiveBlock = ({
                   )}
                 </Box>
               ) : element?.type === "FOLDER" ||
-                (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ? (
+                (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ||
+                element?.type === "WIKI_FOLDER" ? (
                 <Box className="icon_group">
                   <Tooltip title="Create folder" placement="top">
                     <Box className="extra_icon">

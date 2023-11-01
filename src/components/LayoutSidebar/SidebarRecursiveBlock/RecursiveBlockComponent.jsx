@@ -204,7 +204,7 @@ const RecursiveBlock = ({
     dispatch(menuActions.setMenuItem(element));
     if (element?.type === "MINIO_FOLDER") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
-    } else if (element?.parent_id === folderIds.wiki_id) {
+    } else if (appId === folderIds.wiki_id) {
       handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "CREATE_TO_FOLDER");

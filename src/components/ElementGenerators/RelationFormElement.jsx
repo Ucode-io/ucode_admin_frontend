@@ -167,7 +167,6 @@ const AutoCompleteElement = ({
   const {id} = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
-  const [firstValue, setFirstValue] = useState(false);
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -248,7 +247,11 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
       },
     }
   );
@@ -283,20 +286,24 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
       },
     }
   );
 
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
+      return optionsFromFunctions?.options ?? [];
     } else {
-      return optionsFromLocale ?? [];
+      return optionsFromLocale?.options ?? [];
     }
   }, [
-    optionsFromFunctions,
-    optionsFromLocale,
+    optionsFromFunctions?.options,
+    optionsFromLocale?.options,
     field?.attributes?.function_path,
   ]);
 
@@ -305,7 +312,7 @@ const AutoCompleteElement = ({
       new Set(allOptions.map(JSON.stringify))
     ).map(JSON.parse);
     return uniqueObjects ?? [];
-  }, [allOptions]);
+  }, [allOptions, options]);
 
   const getValueData = async () => {
     try {
@@ -349,7 +356,7 @@ const AutoCompleteElement = ({
   };
 
   const setClientTypeValue = () => {
-    const value = options?.options?.find((item) => item?.guid === clientTypeID);
+    const value = options?.find((item) => item?.guid === clientTypeID);
 
     if (
       field?.attributes?.object_id_from_jwt &&
@@ -369,7 +376,7 @@ const AutoCompleteElement = ({
   };
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.options?.find((el) => el?.guid === value);
+    const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 

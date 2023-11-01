@@ -297,7 +297,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-
+    console.log("valueeeeeee", value);
     setValue(val?.guid ?? null);
     setInputValue("");
 
@@ -431,23 +431,26 @@ const AutoCompleteElement = ({
         style={{display: "flex", alignItems: "center"}}
       >
         {props.children}
-        <Box
-          sx={{position: "relation", zIndex: 99}}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            navigateToForm(tableSlug, "EDIT", value[0]);
-          }}
-        >
-          <IconGenerator
-            icon="arrow-up-right-from-square.svg"
-            style={{marginLeft: "10px", cursor: "pointer"}}
-            size={15}
-          />
-        </Box>
+        {!disabled && (
+          <Box
+            sx={{position: "relation", zIndex: 99}}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              navigateToForm(tableSlug, "EDIT", value[0]);
+            }}
+          >
+            <IconGenerator
+              icon="arrow-up-right-from-square.svg"
+              style={{marginLeft: "10px", cursor: "pointer"}}
+              size={15}
+            />
+          </Box>
+        )}
       </div>
     </components.SingleValue>
   );
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -505,6 +508,7 @@ const AutoCompleteElement = ({
         options={computedOptions ?? []}
         value={localValue}
         menuPortalTarget={document.body}
+        isClearable
         components={{
           ClearIndicator: () =>
             localValue?.length && (
@@ -522,6 +526,7 @@ const AutoCompleteElement = ({
               </div>
             ),
           SingleValue: CustomSingleValue,
+          DropdownIndicator: null,
         }}
         onChange={(newValue, {action}) => {
           changeHandler(newValue);

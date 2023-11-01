@@ -259,7 +259,7 @@
   width: 2px;
   height: calc(100% + 1px);
   background-color: #d63b30;
-  z-index: 20;
+  z-index: 0;
 }
 
 .moreButton {
@@ -752,7 +752,7 @@
     border-right: 1px solid #e5e9eb;
     position: sticky;
     left: 0;
-    z-index: 3;
+    z-index: 5;
     background-color: #fff;
 
     .fakeDiv {
@@ -799,4 +799,11 @@
 .days {
   display: flex;
   height: 100%;
+}
+
+.dataBlockInner {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
 }

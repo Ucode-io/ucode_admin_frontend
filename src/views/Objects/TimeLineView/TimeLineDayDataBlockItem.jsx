@@ -8,6 +8,7 @@ import { showAlert } from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator";
+import { generateID } from "../../../utils/generateID";
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -178,7 +179,7 @@ export default function TimeLineDayDataBlockItem({
       setFocusedDays([]);
     }
   };
-
+console.log('first', data)
   return (
     <>
       <div
@@ -192,8 +193,10 @@ export default function TimeLineDayDataBlockItem({
         }}
         onClick={handleOpen}
         ref={ref}
+        key={data?.id_order}
       >
         <div
+        className={styles.dataBlockInner}
           style={{
             width: "100%",
             height: "100%",
@@ -211,6 +214,7 @@ export default function TimeLineDayDataBlockItem({
         <Moveable
           target={target}
           className="moveable3"
+          key={`${zoomPosition}${data?.guid}`}
           draggable
           resizable
           throttleDrag={zoomPosition * 30}

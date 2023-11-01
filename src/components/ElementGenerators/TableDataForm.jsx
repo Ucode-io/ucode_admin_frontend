@@ -4,6 +4,7 @@ import {useWatch} from "react-hook-form";
 import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
+import NewCellFormElementGenerator2 from "./NewCellFormElementGenerator2";
 
 export default function TableDataForm({
   tableSlug,
@@ -47,7 +48,7 @@ export default function TableDataForm({
         minWidth: "150px",
       }}
     >
-      <NewCellElementGenerator
+      <NewCellFormElementGenerator2
         tableSlug={tableSlug}
         name={`multi.${index}.${field.slug}`}
         watch={watch}

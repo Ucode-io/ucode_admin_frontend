@@ -109,8 +109,6 @@ export default function TimeLineBlock({
         } else if (groupbyFields[0]?.type === "SINGLE_LINE") {
           const options = await getDataText(view?.id);
 
-          console.log("ssssssss", options, options?.[0]?.[groupbyFields?.[0]?.slug]);
-
           const result = options?.map((item) => {
             return {
               ...item,
@@ -187,6 +185,7 @@ export default function TimeLineBlock({
           <PageFallback />
         ) : (
           <TimeLineDayDataBlock
+            computedColumnsFor={computedColumnsFor}
             groupbyFields={groupbyFields}
             groupByList={allData}
             setFocusedDays={setFocusedDays}

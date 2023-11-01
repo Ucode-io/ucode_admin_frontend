@@ -7,6 +7,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { showAlert } from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
+import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator";
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -18,6 +19,7 @@ export default function TimeLineDayDataBlockItem({
   zoomPosition,
   calendar_from_slug,
   calendar_to_slug,
+  computedColumnsFor,
   visible_field,
   groupByList,
 }) {
@@ -32,7 +34,7 @@ export default function TimeLineDayDataBlockItem({
     setOpen(true);
     setSelectedRow(data);
   };
-  
+
   const levelGroupByOne = useMemo(() => {
     if (groupbyFields?.[0]?.type === "SINGLE_LINE") {
       const a = groupByList?.find((group) => group?.label === data?.[groupbyFields?.[0]?.slug]);
@@ -89,7 +91,7 @@ export default function TimeLineDayDataBlockItem({
   useEffect(() => {
     if (!ref.current) return null;
     setTarget(ref.current);
-  }, [ref, view]);
+  }, [ref, view, data, calendar_from_slug, calendar_to_slug, groupbyFields, visible_field, groupByList, levelGroupByOne, levelGroupByTwo, levelIndex, datesList, zoomPosition]);
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -189,15 +191,16 @@ export default function TimeLineDayDataBlockItem({
           display: startDate === -1 || level === -1 ? "none" : "block",
         }}
         onClick={handleOpen}
+        ref={ref}
       >
         <div
-          ref={ref}
           style={{
             width: "100%",
             height: "100%",
           }}
         >
-          <p>{data[visible_field]}</p>
+          {/* <p>{data[visible_field]}</p> */}
+          <CellElementGenerator row={data} field={computedColumnsFor?.find((field) => field?.slug === visible_field)} />
         </div>
       </div>
       <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />

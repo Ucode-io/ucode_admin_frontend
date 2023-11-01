@@ -1,4 +1,4 @@
-import {Autocomplete, Popover, TextField, Typography} from "@mui/material";
+import {Autocomplete, Box, Popover, TextField, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
@@ -9,7 +9,6 @@ import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {useLocation, useParams} from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
@@ -17,7 +16,7 @@ import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import AddIcon from "@mui/icons-material/Add";
-import Select from "react-select";
+import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -28,16 +27,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const customStyles = {
-  control: (provided) => ({
-    ...provided,
-    // border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
-  }),
-  input: () => ({
-    // width: "100%",
-  }),
-};
 
 const CellRelationFormElement = ({
   isBlackBg,
@@ -404,6 +393,61 @@ const AutoCompleteElement = ({
     setValue(null);
   };
 
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+      color: isBlackBg ? "#fff" : "",
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      border: "none",
+      outline: "none",
+    }),
+    input: (provided) => ({
+      ...provided,
+      width: "100%",
+      border: "none",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      background: state.isSelected ? "#007AFF" : provided.background,
+      color: state.isSelected ? "#fff" : provided.color,
+      cursor: "pointer",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
+
+  const CustomSingleValue = (props) => (
+    <components.SingleValue {...props}>
+      <div
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+        className="select_icon"
+        style={{display: "flex", alignItems: "center"}}
+      >
+        {props.children}
+        <Box
+          sx={{position: "relation", zIndex: 99}}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            navigateToForm(tableSlug, "EDIT", value[0]);
+          }}
+        >
+          <IconGenerator
+            icon="arrow-up-right-from-square.svg"
+            style={{marginLeft: "10px", cursor: "pointer"}}
+            size={15}
+          />
+        </Box>
+      </div>
+    </components.SingleValue>
+  );
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -471,13 +515,13 @@ const AutoCompleteElement = ({
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  // clearSelection();
                   setLocalValue([]);
                 }}
               >
                 <ClearIcon />
               </div>
             ),
+          SingleValue: CustomSingleValue,
         }}
         onChange={(newValue, {action}) => {
           changeHandler(newValue);
@@ -491,47 +535,18 @@ const AutoCompleteElement = ({
           </span>
         )}
         menuShouldScrollIntoView
-        styles={{
-          control: (provided, state) => ({
-            ...provided,
-            background: isBlackBg
-              ? "#2A2D34"
-              : disabled
-              ? "#FFF"
-              : "transparent",
-            color: isBlackBg ? "#fff" : "",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            border: "none",
-            outline: "none",
-          }),
-          input: (provided) => ({
-            ...provided,
-            width: "100%",
-            border: "none",
-          }),
-          option: (provided, state) => ({
-            ...provided,
-            background: state.isSelected ? "#007AFF" : provided.background,
-            color: state.isSelected ? "#fff" : provided.color,
-            cursor: "pointer",
-          }),
-          menu: (provided) => ({
-            ...provided,
-            zIndex: 9999, // Increase the z-index to ensure it displays above other elements
-          }),
-        }}
+        styles={customStyles}
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
         }}
-        getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
+        getOptionLabel={(option) =>
+          `${getRelationFieldTabsLabel(field, option)}`
+        }
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>
           value.some((val) => val.value === value)
         }
         blurInputOnSelect
-        // autoFocus
       />
       {/* {errors?.[field?.slug] && (
         <div

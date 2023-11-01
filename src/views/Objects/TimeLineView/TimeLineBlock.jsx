@@ -149,6 +149,8 @@ export default function TimeLineBlock({
     handleScrollClick();
   }, []);
 
+  console.log('focusedDays', focusedDays)
+
   return (
     <div
       className={styles.main_container}

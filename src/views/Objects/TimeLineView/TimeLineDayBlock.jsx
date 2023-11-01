@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Popover, Typography } from "@mui/material";
 import { eachDayOfInterval, format } from "date-fns";
@@ -26,15 +26,36 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
     return dateRange;
   }
 
-  const isFocusedDay = () => {
-    if (focusedDays?.length) return null;
-    return generateDateRange(focusedDays?.[0], focusedDays?.[1])
-      .map((date) => {
-        if (!date) return null;
-        return format(date, "dd/EEEE");
-      })
-      .includes(day);
-  };
+  const [isFocusedDay, setIsFocusedDay] = useState(false);
+
+  useEffect(() => {
+    if (!focusedDays?.length) {
+      setIsFocusedDay(false);
+      return;
+    }
+
+    const dateRange = generateDateRange(focusedDays?.[0], focusedDays?.[1]);
+
+    setIsFocusedDay(
+      dateRange
+        .map((date) => {
+          if (!date) return null;
+          return format(date, "dd/EEEE");
+        })
+        .includes(day)
+    );
+  }, [focusedDays, day]);
+
+  // const isFocusedDay = () => {
+  //   if (focusedDays?.length) return null;
+
+  //   return generateDateRange(focusedDays?.[0], focusedDays?.[1])
+  //     .map((date) => {
+  //       if (!date) return null;
+  //       return format(date, "dd/EEEE");
+  //     })
+  //     .includes(day);
+  // };
 
   return (
     <>
@@ -58,8 +79,8 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
         style={{
           minWidth: `${zoomPosition * 30}px`,
           visibility: selectedType === "month" ? "hidden" : "visible",
-          backgroundColor: isFocusedDay() ? "#7f77f1" : "transparent",
-          color: isFocusedDay() ? "#fff" : "inherit",
+          backgroundColor: isFocusedDay ? "#7f77f1" : "transparent",
+          color: isFocusedDay ? "#fff" : "inherit",
         }}
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"

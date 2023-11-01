@@ -179,7 +179,7 @@ export default function TimeLineDayDataBlockItem({
       setFocusedDays([]);
     }
   };
-
+console.log('first', data)
   return (
     <>
       <div
@@ -193,8 +193,10 @@ export default function TimeLineDayDataBlockItem({
         }}
         onClick={handleOpen}
         ref={ref}
+        key={data?.id_order}
       >
         <div
+        className={styles.dataBlockInner}
           style={{
             width: "100%",
             height: "100%",
@@ -212,7 +214,7 @@ export default function TimeLineDayDataBlockItem({
         <Moveable
           target={target}
           className="moveable3"
-          key={`${zoomPosition}${generateID()}`}
+          key={`${zoomPosition}${data?.guid}`}
           draggable
           resizable
           throttleDrag={zoomPosition * 30}

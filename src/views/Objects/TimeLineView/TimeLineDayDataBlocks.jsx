@@ -19,6 +19,7 @@ export default function TimeLineDayDataBlock({
   selectedType,
   groupByList,
 }) {
+  console.log("data", data)
   return (
     <>
       <div className={styles.container}>

@@ -129,10 +129,8 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
 
   const zoom = (e) => {
     if (e === "zoomin" && zoomPosition === 3) {
-      dispatch(showAlert("Достигло максимальный размер!", "error"));
       return;
     } else if (e === "zoomout" && zoomPosition === 1) {
-      dispatch(showAlert("Достигло максимальный размер!", "error"));
       return;
     } else if (e === "zoomin") {
       setZoomPosition(zoomPosition + 1);

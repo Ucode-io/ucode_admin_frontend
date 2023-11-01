@@ -2,7 +2,6 @@ import { endOfWeek, format, startOfWeek } from "date-fns";
 import React, { useMemo } from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
-import { use } from "i18next";
 
 export default function TimeLineDatesRow({ datesList, zoomPosition, selectedType, focusedDays }) {
   const computedDatesList = useMemo(() => {

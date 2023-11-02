@@ -39,8 +39,6 @@ const FolderCreateModal = ({
     },
   });
 
-  console.log("selectedFolder", selectedFolder);
-
   useEffect(() => {
     if (modalType === "update")
       menuSettingsService

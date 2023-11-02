@@ -22,6 +22,7 @@ import CopyToClipboard from "../../CopyToClipboard";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
+import { store } from "../../../store";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -48,9 +49,12 @@ const SubMenu = ({
   const menuItem = useSelector((state) => state.menu.menuItem);
   const [check, setCheck] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const company = store.getState().company;
 
   const handleClick = () => {
-    navigator.clipboard.writeText("copyText");
+    navigator.clipboard.writeText(
+      `http://localhost:7777/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
+    );
     setIsCopied(true);
     dispatch(showAlert("Скопировано в буфер обмена", "success"));
     setTimeout(() => setIsCopied(false), 3000);

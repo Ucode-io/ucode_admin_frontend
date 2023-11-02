@@ -77,7 +77,6 @@ const InputWithValueOffer = ({
     getElementBetween(form);
     setValue(newValue);
   };
-  console.log("variables", variables);
   return (
     <div
       className={className || styles.container}

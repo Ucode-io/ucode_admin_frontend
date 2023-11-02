@@ -278,25 +278,25 @@ const DocumentsSidebar = ({
         ),
         button_text: "Create Template folder",
       },
-      // {
-      //   id: 2,
-      //   name: "Wiki",
-      //   icon: TbEdit,
-      //   children: computedNotesList,
-      //   type: "FOLDER",
-      //   buttons: (
-      //     <>
-      //       <AddIcon
-      //         size={13}
-      //         onClick={(e) => {
-      //           e?.stopPropagation();
-      //           createFolder("note");
-      //         }}
-      //       />
-      //     </>
-      //   ),
-      //   button_text: "Create Note folder",
-      // },
+      {
+        id: 2,
+        name: "Wiki",
+        icon: TbEdit,
+        children: computedNotesList,
+        type: "FOLDER",
+        buttons: (
+          <>
+            <AddIcon
+              size={13}
+              onClick={(e) => {
+                e?.stopPropagation();
+                createFolder("note");
+              }}
+            />
+          </>
+        ),
+        button_text: "Create Note folder",
+      },
     ],
     [computedTemplatesList, computedNotesList]
   );

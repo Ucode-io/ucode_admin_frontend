@@ -59,8 +59,6 @@ const ApiEndpoint = () => {
       },
     });
 
-  console.log("watch", watch());
-
   const {
     fields: exampleFields,
     append: exampleAppend,
@@ -91,7 +89,6 @@ const ApiEndpoint = () => {
       },
     },
   });
-  console.log("object", watch());
   const { isLoading: formLoading } = useApiCategoryGetByIdQuery({
     fieldId: categoryId,
     envId: company.environmentId,
@@ -99,7 +96,6 @@ const ApiEndpoint = () => {
     queryParams: {
       cacheTime: 10,
       onSuccess: (res) => {
-        console.log("res", res);
         setValue("base_url", res.base_url);
       },
     },

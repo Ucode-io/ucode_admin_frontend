@@ -34,8 +34,6 @@ const Redactor = ({ value, onChange }) => {
       }
 
       json = JSON.parse(xhr.responseText);
-      console.log("json", json);
-      console.log("xhr.responseText", xhr.responseText);
 
       if (!json || typeof json.file_path !== "string") {
         failure("Invalid JSON: " + xhr.responseText);
@@ -54,7 +52,6 @@ const Redactor = ({ value, onChange }) => {
     formData = new FormData();
     formData.append("image", blobInfo.blob(), blobInfo.filename());
 
-    console.log("formData", formData);
     xhr.send(formData);
   };
 

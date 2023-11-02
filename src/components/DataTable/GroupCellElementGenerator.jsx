@@ -76,7 +76,6 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
   if (field.render) {
     return field.render(row);
   }
-  console.log("field", field);
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;

@@ -132,8 +132,6 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
 
-  console.log("AutoCompleteElement", field);
-
   const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {

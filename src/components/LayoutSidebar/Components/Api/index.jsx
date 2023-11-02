@@ -113,7 +113,7 @@ const ApiEndpoint = () => {
     queryParams: {
       cacheTime: 10,
       onSuccess: (res) => {
-        setValue("attributes.base_url", res.base_url);
+        setValue("base_url", res.base_url);
       },
     },
   });

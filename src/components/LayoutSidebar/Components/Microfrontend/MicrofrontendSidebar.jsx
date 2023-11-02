@@ -1,10 +1,10 @@
-import {Box, Button} from "@mui/material";
-import {useDispatch} from "react-redux";
-import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import { Box, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {updateLevel} from "../../../../utils/level";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -32,9 +32,8 @@ const MicrofrontendSettingSidebar = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const location = useLocation();
-  console.log("appId", appId);
 
   const activeStyle = {
     backgroundColor:

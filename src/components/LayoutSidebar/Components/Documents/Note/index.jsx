@@ -105,8 +105,6 @@ const Note = () => {
     }
   };
 
-  console.log("menuItem", menuItem);
-
   return (
     <FormProvider {...form}>
       <Box

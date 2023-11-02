@@ -346,7 +346,8 @@ const RecursiveBlock = ({
                   </Box>
                   {(selectedApp?.id !== adminId &&
                     element?.type === "FOLDER") ||
-                  element?.type === "WIKI_FOLDER" ? (
+                  (element?.type === "WIKI_FOLDER" &&
+                    element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea") ? (
                     <Box>
                       <Tooltip title="Folder settings" placement="top">
                         <Box className="extra_icon">

@@ -296,7 +296,7 @@ const TableView = ({
       };
     },
   });
-  console.log("paginiation", paginiation);
+
   const {
     data: {tableData, pageCount} = {
       tableData: [],

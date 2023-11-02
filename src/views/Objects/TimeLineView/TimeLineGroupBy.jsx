@@ -26,6 +26,8 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import { CTable, CTableBody, CTableCell, CTableRow } from "../../../components/CTable";
 import { Box, Switch, Typography } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../../utils/applyDrag";
 
 export default function TimeLineGroupBy({ columns, form, selectedView, updateView, isLoading, updateLoading }) {
   const selectedColumns = useWatch({
@@ -99,6 +101,20 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
     };
   }, []);
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(updatedColumns, dropResult);
+    if (!result) return;
+    form.setValue(
+      "group_fields",
+      result.filter((item) => selectedColumns?.map((el) => el?.id === item?.id)).map((el) => el?.id)
+    );
+    setUpdatedColumns(result);
+    updateView();
+    // console.log("ssssssss", result);
+  };
+
+  console.log("ssssssss", form.watch("group_fields"));
+
   return (
     <div
       style={{
@@ -111,18 +127,26 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
       <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
           {updatedColumns?.length ? (
-            updatedColumns?.map((column) => (
-              <CTableRow
-                key={column.id}
-                onClick={(val) => {
-                  changeHandler(val, column.id);
-                }}
-              >
-                <CTableCell
+            <Container
+              groupName="1"
+              onDrop={onDrop}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              getChildPayload={(i) => ({
+                ...updatedColumns[i],
+                field_name: updatedColumns[i]?.label ?? updatedColumns[i]?.title,
+              })}
+            >
+              {updatedColumns?.map((column) => (
+                <Draggable
+                  key={column.id}
                   style={{
-                    padding: 0,
-                    border: 0,
-                    borderBottom: "1px solid #eee",
+                    overflow: "visible",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "move",
+                    borderBottom: "1px solid #e5e5e5",
+                    padding: "5px 0",
                   }}
                 >
                   <div
@@ -135,23 +159,16 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
                     <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
                     <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
                   </div>
-                </CTableCell>
-                <CTableCell
-                  style={{
-                    width: 20,
-                    borderBottom: "1px solid #eee",
-                    borderRight: 0,
-                  }}
-                >
+
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}
                     checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
-                </CTableCell>
-              </CTableRow>
-            ))
+                </Draggable>
+              ))}
+            </Container>
           ) : (
             <Box style={{ padding: "10px" }}>
               <Typography>No columns to set group!</Typography>

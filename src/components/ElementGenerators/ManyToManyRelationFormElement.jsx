@@ -1,19 +1,20 @@
-import { Close } from "@mui/icons-material";
-import { Autocomplete, TextField } from "@mui/material";
-import { useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Close} from "@mui/icons-material";
+import {Autocomplete, TextField} from "@mui/material";
+import {useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 import request from "../../utils/request";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import Select from "react-select";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -33,7 +34,7 @@ const ManyToManyRelationFormElement = ({
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   if (!isLayout)
     return (
@@ -53,7 +54,7 @@ const ManyToManyRelationFormElement = ({
           name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={value}
               setValue={onChange}
@@ -74,7 +75,7 @@ const ManyToManyRelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
@@ -84,7 +85,7 @@ const ManyToManyRelationFormElement = ({
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={null}
-            render={({ field: { onChange, value }, fieldState: { error } }) =>
+            render={({field: {onChange, value}, fieldState: {error}}) =>
               field?.attributes?.cascadings?.length > 1 ? (
                 <CascadingSection
                   disabled={disabled}
@@ -128,7 +129,7 @@ const AutoCompleteElement = ({
   disabled,
   disabledHelperText,
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
 
@@ -154,7 +155,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: fromInvokeList } = useQuery(
+  const {data: fromInvokeList} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(
@@ -187,7 +188,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: fromObjectList } = useQuery(
+  const {data: fromObjectList} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return constructorObjectService.getList(tableSlug, {
@@ -257,6 +258,8 @@ const AutoCompleteElement = ({
     setDebouncedValue(val);
   }, 300);
 
+  console.log("options", options);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div
@@ -266,7 +269,46 @@ const AutoCompleteElement = ({
         Создать новый
       </div>
 
-      <Autocomplete
+      <Select
+        options={options ?? []}
+        value={computedValue}
+        onChange={(event, newValue) => {
+          changeHandler(event);
+        }}
+        onInputChange={(_, val) => {
+          setInputValue(val);
+          inputChangeHandler(val);
+        }}
+        components={{
+          DropdownIndicator: null,
+        }}
+        isMulti
+        menuPortalTarget={document.body}
+        getOptionLabel={(option) => getRelationFieldLabel(field, option)}
+        noOptionsMessage={() => (
+          <span
+            onClick={() => navigateToForm(tableSlug)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+          >
+            Создать новый
+          </span>
+        )}
+        // isDisabled={disabled}
+        // onMenuScrollToBottom={loadMoreItems}
+        isClearable
+        menuShouldScrollIntoView
+        styles={customStyles}
+        onPaste={(e) => {
+          console.log("eeeeeee -", e.clipboardData.getData("Text"));
+        }}
+        getOptionValue={(option) => option.value}
+        isOptionSelected={(option, value) =>
+          value.some((val) => val.value === value)
+        }
+        blurInputOnSelect
+      />
+
+      {/* <Autocomplete
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
@@ -328,7 +370,7 @@ const AutoCompleteElement = ({
             </>
           );
         }}
-      />
+      /> */}
     </div>
   );
 };

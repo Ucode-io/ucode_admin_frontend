@@ -436,8 +436,7 @@ const AutoCompleteElement = ({
             sx={{position: "relation", zIndex: 99}}
             onClick={(e) => {
               e.stopPropagation();
-              e.preventDefault();
-              navigateToForm(tableSlug, "EDIT", value[0]);
+              navigateToForm(tableSlug, "EDIT", localValue?.[0]);
             }}
           >
             <IconGenerator

@@ -55,19 +55,18 @@ const AutoFilterModal = ({
         res.relations
           ?.filter(
             (relation) =>
-              relation.type === "Many2Many" ||
-              (relation.type === "Many2One" &&
-                relation.table_from.slug === tableSlug)
+              relation?.type === "Many2Many" ||
+              (relation?.type === "Many2One" &&
+                relation?.table_from?.slug === tableSlug)
           )
           .map((relation) => {
             const relatedTable =
-              relation.table_from.slug === tableSlug
-                ? relation.table_to
-                : relation.table_from;
+              relation?.table_from.slug === tableSlug
+                ? relation?.table_to
+                : relation?.table_from;
             return {
-              label: relatedTable.label,
-              value: relatedTable.slug,
-              id: relatedTable?.id,
+              label: relation?.title ?? relatedTable?.label,
+              value: `${relatedTable?.slug}#${relation?.id}`,
             };
           }),
     },

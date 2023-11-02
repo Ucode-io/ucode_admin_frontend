@@ -22,6 +22,7 @@ import {generateGUID} from "../../../utils/generateID";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
+import {useSelector} from "react-redux";
 
 const RelationTable = forwardRef(
   (
@@ -59,7 +60,11 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState();
+    const [limit, setLimit] = useState(20);
+    const paginationInfo = useSelector(
+      (state) => state?.pagination?.paginationInfo
+    );
+
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -98,6 +103,24 @@ const RelationTable = forwardRef(
       },
       mode: "all",
     });
+
+    const paginiation = useMemo(() => {
+      const getObject = paginationInfo.find(
+        (el) => el?.tableSlug === tableSlug
+      );
+
+      return getObject?.pageLimit ?? limit;
+    }, [paginationInfo, tableSlug]);
+
+    const limitPage = useMemo(() => {
+      if (typeof paginiation === "number") {
+        return paginiation;
+      } else if (paginiation === "all" && limit === "all") {
+        return undefined;
+      } else {
+        return pageToOffset(currentPage, limit);
+      }
+    }, [paginiation, limit, currentPage]);
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
@@ -237,7 +260,7 @@ const RelationTable = forwardRef(
         return constructorObjectService.getList(relatedTableSlug, {
           data: {
             offset: pageToOffset(currentPage, limit),
-            limit: id ? limit : 0,
+            limit: limitPage !== 0 ? limitPage : limit,
             from_tab: type === "relation" ? true : false,
             ...computedFilters,
           },

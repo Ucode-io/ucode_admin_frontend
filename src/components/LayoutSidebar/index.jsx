@@ -36,6 +36,7 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 
 const LayoutSidebar = ({ appId }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
@@ -499,6 +500,15 @@ const LayoutSidebar = ({ appId }) => {
           modalType === "parent" ||
           modalType === "update") && (
           <FolderCreateModal
+            closeModal={closeModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            getMenuList={getMenuList}
+          />
+        )}
+        {modalType === "wiki_update" && (
+          <WikiFolderCreateModal
             closeModal={closeModal}
             selectedFolder={selectedFolder}
             modalType={modalType}

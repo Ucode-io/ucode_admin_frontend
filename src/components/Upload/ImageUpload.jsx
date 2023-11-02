@@ -1,13 +1,13 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useState } from "react";
-import { useRef } from "react";
+import {useMemo, useState} from "react";
+import {useRef} from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
+import {CircularProgress, InputAdornment, Tooltip} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
-import { useNavigate } from "react-router-dom";
-import { Lock } from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import {Lock} from "@mui/icons-material";
 
 const ImageUpload = ({
   value,
@@ -56,13 +56,19 @@ const ImageUpload = ({
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          <button
-            className="close-btn"
-            type="button"
-            onClick={(e) => closeButtonHandler(e)}
-          >
-            <CancelIcon />
-          </button>
+          {!disabled ? (
+            <button
+              className="close-btn"
+              type="button"
+              onClick={(e) => closeButtonHandler(e)}
+            >
+              <CancelIcon />
+            </button>
+          ) : (
+            <div className="lock_icon">
+              <Lock style={{fontSize: "20px"}} />
+            </div>
+          )}
           <img src={value} className="img" alt="" />
         </div>
       )}
@@ -88,11 +94,11 @@ const ImageUpload = ({
                 {disabled ? (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
-                      <Lock style={{ fontSize: "20px" }} />
+                      <Lock style={{fontSize: "20px"}} />
                     </InputAdornment>
                   </Tooltip>
                 ) : (
-                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                  <AddCircleOutlineIcon style={{fontSize: "35px"}} />
                 )}
                 {/* <p>Max size: 4 MB</p> */}
               </>

@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Controller, useWatch } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
-import { InputAdornment, TextField, Tooltip } from "@mui/material";
+import {useEffect, useRef, useState} from "react";
+import {useDispatch} from "react-redux";
+import {Controller, useWatch} from "react-hook-form";
+import {useNavigate, useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {InputAdornment, TextField, Tooltip} from "@mui/material";
 
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import request from "../../utils/request";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {showAlert} from "../../store/alert/alert.thunk";
 import constructorFunctionService from "../../services/constructorFunctionService";
-import { Lock } from "@mui/icons-material";
+import {Lock} from "@mui/icons-material";
 
 const InventoryBarCode = ({
   control,
@@ -17,7 +17,7 @@ const InventoryBarCode = ({
   name = "",
   relatedTable,
   updateObject,
-          isNewTableView=false,
+  isNewTableView = false,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -34,7 +34,7 @@ const InventoryBarCode = ({
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const {id} = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
 
@@ -111,7 +111,7 @@ const InventoryBarCode = ({
         required: checkRequiredField ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <TextField
             size="small"
@@ -135,7 +135,7 @@ const InventoryBarCode = ({
             onKeyDown={(e) => keyPress(e)}
             name={name}
             error={error}
-            sx={{ padding: 0 }}
+            sx={{padding: 0}}
             fullWidth={fullWidth}
             InputProps={{
               readOnly: disabled,
@@ -145,7 +145,7 @@ const InventoryBarCode = ({
                     paddingRight: "0px",
                   }
                 : {
-                    background: "#fff",
+                    background: "inherit",
                     color: "#000",
                     height: "25px",
                     padding: 0,
@@ -154,11 +154,12 @@ const InventoryBarCode = ({
               endAdornment: disabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),
             }}
+            className="custom_textfield"
             helperText={!disabledHelperText && error?.message}
             {...props}
           />

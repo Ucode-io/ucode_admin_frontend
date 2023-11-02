@@ -30,6 +30,7 @@ const ButtonsMenu = ({
   setWebPageModal,
   setLinkedTableModal,
 }) => {
+  console.log("ssssss", element);
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
   const navigate = useNavigate();

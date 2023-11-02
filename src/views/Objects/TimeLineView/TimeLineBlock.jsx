@@ -128,8 +128,11 @@ export default function TimeLineBlock({
           const options1 = await getDataRelation(groupbyFields?.[0]);
           const options2 = await getDataRelation(groupbyFields?.[1]);
 
+          console.log('options', options1, options2, groupbyFields?.[0]?.table_slug)
+
           const result = options1?.map((item) => {
             const options = options2?.filter((option) => option?.[`${groupbyFields?.[0]?.table_slug}_id`] === item?.guid);
+            console.log('eeeeee', options)
             return {
               ...item,
               options,
@@ -149,8 +152,7 @@ export default function TimeLineBlock({
     handleScrollClick();
   }, []);
 
-  console.log('focusedDays', focusedDays)
-
+console.log('allData', allData) 
   return (
     <div
       className={styles.main_container}

@@ -46,7 +46,7 @@ const WikiFolderCreateModal = ({
   });
 
   useEffect(() => {
-    if (modalType === "update")
+    if (modalType === "wiki_update")
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {
@@ -116,10 +116,6 @@ const WikiFolderCreateModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {/* {languages.map((item) => (
-                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))} */}
-
               {languages?.map((language) => {
                 const languageFieldName = `attributes.label_${language?.slug}`;
                 const fieldValue = watch(languageFieldName);

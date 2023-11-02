@@ -53,7 +53,7 @@ const SubMenu = ({
 
   const handleClick = () => {
     navigator.clipboard.writeText(
-      `http://localhost:7777/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
+      `https://dev-app.ucode.run/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
     );
     setIsCopied(true);
     dispatch(showAlert("Скопировано в буфер обмена", "success"));

@@ -56,7 +56,6 @@ const RecursiveBlock = ({
   setCheck,
   check,
 }) => {
-  console.log("elementelement", element);
   const {appId, tableSlug} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,7 +65,7 @@ const RecursiveBlock = ({
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const readPermission = element?.data?.permission?.read;
@@ -126,6 +125,7 @@ const RecursiveBlock = ({
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "MICROFRONTEND":
+        console.log("elemeentttttttt", element);
         let obj = {};
         element?.attributes?.params.forEach((el) => {
           obj[el.key] = el.value;
@@ -135,7 +135,6 @@ const RecursiveBlock = ({
           pathname: `/main/${appId}/code`,
           search: `?${searchParams.toString()}`,
         });
-        return navigate(`/main/${appId}/code/${element?.guid}`);
       case "WEBPAGE":
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`

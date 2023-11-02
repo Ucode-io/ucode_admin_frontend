@@ -64,7 +64,8 @@ const RecursiveBlock = ({
   const auth = store.getState().auth;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const {i18n} = useTranslation();
-  const defaultLanguage = i18n.language;
+  const defaultLanguage = i18n?.language;
+
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.parent_id === adminId || element?.parent_id === analyticsId
@@ -112,7 +113,6 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
-
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -122,16 +122,16 @@ const RecursiveBlock = ({
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "MICROFRONTEND":
-        console.log("elemeentttttttt", element);
         let obj = {};
         element?.attributes?.params.forEach((el) => {
           obj[el.key] = el.value;
         });
         const searchParams = new URLSearchParams(obj || {});
         return navigate({
-          pathname: `/main/${appId}/code`,
+          pathname: `/main/${appId}/page/${element?.data?.microfrontend?.id}`,
           search: `?${searchParams.toString()}`,
         });
+
       case "WEBPAGE":
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`

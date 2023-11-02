@@ -92,28 +92,36 @@ const ButtonsMenu = ({
               title="Изменить папку"
               onClick={(e) => {
                 e.stopPropagation();
-                openFolderCreateModal("update", element);
                 handleCloseNotify();
+                if (element?.type === "WIKI_FOLDER") {
+                  openFolderCreateModal("wiki_update", element);
+                } else {
+                  openFolderCreateModal("update", element);
+                }
               }}
             />
           ) : null}
 
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
-          {element?.data?.permission?.delete || permissionButton ? (
-            <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolder(element);
-                handleCloseNotify();
-              }}
-            />
+          {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
+            element?.data?.permission?.delete) ||
+          permissionButton ? (
+            <>
+              <Divider
+                style={{
+                  marginBottom: "4px",
+                  marginTop: "4px",
+                }}
+              />
+              <MenuItemComponent
+                icon={<BsFillTrashFill size={13} />}
+                title="Удалить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              />
+            </>
           ) : null}
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
@@ -126,15 +134,15 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              {element?.data?.permission?.menu_settings || permissionButton ? (
+          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+            (element?.data?.permission?.menu_settings || permissionButton ? (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
                 <MenuItemComponent
                   icon={<StarBorderIcon size={13} />}
                   title="Favourite"
@@ -144,9 +152,8 @@ const ButtonsMenu = ({
                     onFavourite(element, "FOLDER");
                   }}
                 />
-              ) : null}
-            </>
-          )}
+              </>
+            ) : null)}
         </Box>
       )}
       {menuType === "CREATE_TO_FOLDER" && (

@@ -63,8 +63,6 @@ const RelationFormElement = ({
     } else return field?.required;
   }, [window.location.pathname]);
 
-  console.log("required", required);
-
   if (!isLayout)
     return (
       <FRow label={computedLabel} required={field.required}>

@@ -1,4 +1,3 @@
-import AddIcon from "@mui/icons-material/Add";
 import { useMemo, useState } from "react";
 import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,9 +19,7 @@ import { listToNested } from "../../../../utils/listToNestedList";
 import "../../style.scss";
 import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
 import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
-import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
 import DocumentsRecursive from "./RecursiveBlock";
-import { TbEdit } from "react-icons/tb";
 import { FaFolder } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -43,7 +40,7 @@ const docsFolder = {
   },
 };
 
-const DocumentsSidebar = ({
+const WikiSidebar = ({
   level = 1,
   menuStyle,
   setSubMenuIsOpen,
@@ -52,6 +49,8 @@ const DocumentsSidebar = ({
   setSelectedApp,
   sidebarIsOpen,
   setSidebarIsOpen,
+  setNoteFolderModalType,
+  noteFolderModalType,
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -74,25 +73,15 @@ const DocumentsSidebar = ({
   const [openedTemplateFolders, setOpenedTemplateFolders] = useState([]);
   const [openedNoteFolders, setOpenedNoteFolders] = useState([]);
 
-  const [templateFolderModalType, setTemplateFolderModalType] = useState(null);
-  const [noteFolderModalType, setNoteFolderModalType] = useState(null);
-
-  const [selectedTemplateFolder, setSelectedTemplateFolder] = useState(null);
   const [selectedNoteFolder, setSelectedNoteFolder] = useState(null);
 
   const queryClient = useQueryClient();
-
-  const openTemplateFolderModal = (folder, type) => {
-    setSelectedTemplateFolder(folder);
-    setTemplateFolderModalType(type);
-  };
 
   const openNoteFolderModal = (folder, type) => {
     setSelectedNoteFolder(folder);
     setNoteFolderModalType(type);
   };
 
-  const closeTemplateFolderModal = () => setTemplateFolderModalType(false);
   const closeNoteFolderModal = () => setNoteFolderModalType(false);
 
   const activeStyle = {
@@ -163,6 +152,15 @@ const DocumentsSidebar = ({
             hasChild: true,
             what_is: "note",
             name: folder?.title,
+            // buttons: (
+            //   <BsThreeDots
+            //     size={13}
+            //     onClick={(e) => {
+            //       e.stopPropagation();
+            //       handleOpenNotify(e, "NOTE");
+            //     }}
+            //   />
+            // ),
           })),
       },
     });
@@ -257,50 +255,6 @@ const DocumentsSidebar = ({
     });
   }, [noteFolders, notes]);
 
-  const sidebarElements = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "Templates",
-        icon: CgFileDocument,
-        children: computedTemplatesList,
-        type: "FOLDER",
-        buttons: (
-          <>
-            <AddIcon
-              size={13}
-              onClick={(e) => {
-                e?.stopPropagation();
-                createFolder("template");
-              }}
-            />
-          </>
-        ),
-        button_text: "Create Template folder",
-      },
-      {
-        id: 2,
-        name: "Wiki",
-        icon: TbEdit,
-        children: computedNotesList,
-        type: "FOLDER",
-        buttons: (
-          <>
-            <AddIcon
-              size={13}
-              onClick={(e) => {
-                e?.stopPropagation();
-                createFolder("note");
-              }}
-            />
-          </>
-        ),
-        button_text: "Create Note folder",
-      },
-    ],
-    [computedTemplatesList, computedNotesList]
-  );
-
   // --IS LOADING--
 
   const isLoading = useMemo(() => {
@@ -336,13 +290,9 @@ const DocumentsSidebar = ({
     dispatch(menuActions.setMenuItem(element));
     if (id === 1 || id === 2) {
       if (element.children === null) {
-        element.name === "Templates"
-          ? setTemplateFolderModalType("CREATE")
-          : setNoteFolderModalType("CREATE");
+        setNoteFolderModalType("CREATE");
       } else if (element.children === null) {
-        element.name === "Notes"
-          ? setNoteFolderModalType("CREATE")
-          : setTemplateFolderModalType("CREATE");
+        setNoteFolderModalType("CREATE");
       }
     }
     if (
@@ -373,24 +323,25 @@ const DocumentsSidebar = ({
 
   // --CREATE FOLDERS--
 
-  const createFolder = (element) => {
-    element === "note"
-      ? setNoteFolderModalType("CREATE")
-      : setTemplateFolderModalType("CREATE");
-  };
   const onSelect = (id, element) => {
     setSelected(element);
     if (element.type !== "FOLDER" && element.what_is === "template") {
-      navigate(`/main/${adminId}/docs/template/${element?.id}/${id}`);
+      navigate(
+        `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/template/${element?.id}/${id}`
+      );
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
-      navigate(`/main/${adminId}/docs/note/${element?.id}/${id}`);
-      setSubMenuIsOpen(false);
+      navigate(
+        `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/note/${element?.id}/${id}`
+      );
+      if (!pinIsEnabled) {
+        setSubMenuIsOpen(false);
+      }
     }
   };
 
   return (
     <>
-      {sidebarElements?.map((element) => (
+      {computedNotesList?.map((element) => (
         <DocumentsRecursive
           key={element.id}
           level={level + 1}
@@ -412,18 +363,11 @@ const DocumentsSidebar = ({
         menuType={menu?.type}
         element={menu?.element}
         handleCloseNotify={handleCloseNotify}
-        templateFolderModalType={templateFolderModalType}
         deleteNoteFolder={deleteNoteFolder}
         deleteTemplateFolder={deleteTemplateFolder}
+        openNoteFolderModal={openNoteFolderModal}
       />
 
-      {templateFolderModalType && (
-        <TemplateFolderCreateModal
-          modalType={templateFolderModalType}
-          folder={selectedTemplateFolder}
-          closeModal={closeTemplateFolderModal}
-        />
-      )}
       {noteFolderModalType && (
         <NoteFolderCreateModal
           modalType={noteFolderModalType}
@@ -435,4 +379,4 @@ const DocumentsSidebar = ({
   );
 };
 
-export default DocumentsSidebar;
+export default WikiSidebar;

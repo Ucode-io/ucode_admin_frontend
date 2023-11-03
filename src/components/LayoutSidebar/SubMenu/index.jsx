@@ -18,6 +18,11 @@ import { applyDrag } from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
+import CopyToClipboard from "../../CopyToClipboard";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DoneIcon from "@mui/icons-material/Done";
+import { store } from "../../../store";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -43,6 +48,17 @@ const SubMenu = ({
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
   const [check, setCheck] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const company = store.getState().company;
+
+  const handleClick = () => {
+    navigator.clipboard.writeText(
+      `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
+    );
+    setIsCopied(true);
+    dispatch(showAlert("Скопировано в буфер обмена", "success"));
+    setTimeout(() => setIsCopied(false), 3000);
+  };
 
   const exception =
     selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
@@ -58,6 +74,8 @@ const SubMenu = ({
   const clickHandler = (e) => {
     if (selectedApp?.id === "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
+    } else if (selectedApp?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1") {
+      handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "ROOT");
     }
@@ -99,8 +117,24 @@ const SubMenu = ({
             </h2>
           )}
           <Box className="buttons">
-            {/* {selectedApp?.id !== adminId && ( */}
             <div className="dots">
+              {selectedApp?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1" &&
+                (isCopied ? (
+                  <DoneIcon
+                    style={{
+                      color: menuStyle?.text,
+                    }}
+                    size={13}
+                  />
+                ) : (
+                  <ContentCopyIcon
+                    size={13}
+                    onClick={handleClick}
+                    style={{
+                      color: menuStyle?.text,
+                    }}
+                  />
+                ))}
               <BsThreeDots
                 size={13}
                 onClick={(e) => {
@@ -156,17 +190,6 @@ const SubMenu = ({
           }}
         >
           <div>
-            {/* <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSubSearchText(e);
-                }}
-              />
-            </Box> */}
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (

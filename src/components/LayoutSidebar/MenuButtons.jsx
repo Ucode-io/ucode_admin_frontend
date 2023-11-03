@@ -13,6 +13,8 @@ import { useMenuCreateMutation } from "../../services/menuService";
 import WebIcon from "@mui/icons-material/Web";
 import { analyticItems } from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
+import AddIcon from "@mui/icons-material/Add";
+
 const ButtonsMenu = ({
   element,
   menu,
@@ -28,6 +30,7 @@ const ButtonsMenu = ({
   setWebPageModal,
   setLinkedTableModal,
 }) => {
+  console.log("ssssss", element);
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
   const navigate = useNavigate();
@@ -90,28 +93,36 @@ const ButtonsMenu = ({
               title="Изменить папку"
               onClick={(e) => {
                 e.stopPropagation();
-                openFolderCreateModal("update", element);
                 handleCloseNotify();
+                if (element?.type === "WIKI_FOLDER") {
+                  openFolderCreateModal("WIKI_FOLDER_UPDATE", element);
+                } else {
+                  openFolderCreateModal("update", element);
+                }
               }}
             />
           ) : null}
 
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
-          {element?.data?.permission?.delete || permissionButton ? (
-            <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolder(element);
-                handleCloseNotify();
-              }}
-            />
+          {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
+            element?.data?.permission?.delete) ||
+          permissionButton ? (
+            <>
+              <Divider
+                style={{
+                  marginBottom: "4px",
+                  marginTop: "4px",
+                }}
+              />
+              <MenuItemComponent
+                icon={<BsFillTrashFill size={13} />}
+                title="Удалить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              />
+            </>
           ) : null}
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
@@ -124,15 +135,15 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              {element?.data?.permission?.menu_settings || permissionButton ? (
+          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
+            (element?.data?.permission?.menu_settings || permissionButton ? (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
                 <MenuItemComponent
                   icon={<StarBorderIcon size={13} />}
                   title="Favourite"
@@ -142,9 +153,8 @@ const ButtonsMenu = ({
                     onFavourite(element, "FOLDER");
                   }}
                 />
-              ) : null}
-            </>
-          )}
+              </>
+            ) : null)}
         </Box>
       )}
       {menuType === "CREATE_TO_FOLDER" && (
@@ -675,6 +685,57 @@ const ButtonsMenu = ({
             }}
           />
         </Box>
+      )}
+
+      {menuType === "WIKI_FOLDER" && (
+        <Box className="menu">
+          <MenuItemComponent
+            icon={<CreateNewFolderIcon size={13} />}
+            title="Добавить папку"
+            onClick={(e) => {
+              e.stopPropagation();
+              openFolderCreateModal("create", element);
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<AddIcon size={13} />}
+            title="Добавить Wiki"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(
+                `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/note/${element?.id}/create`
+              );
+              handleCloseNotify();
+            }}
+          />
+        </Box>
+      )}
+      {menuType === "WIKI" && (
+        <>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                openFolderCreateModal("WIKI_UPDATE", element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        </>
       )}
     </Menu>
   );

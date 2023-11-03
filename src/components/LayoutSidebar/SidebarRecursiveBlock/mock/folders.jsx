@@ -5,6 +5,7 @@ export const folderIds = {
   resource_folder_id: "f313614f-f018-4ddc-a0ce-10a1f5716401",
   api_folder_id: "db4ffda3-7696-4f56-9f1f-be128d82ae68",
   constructor_id: "c19594a8-9b5e-4c12-a0a1-f97c2357070c",
+  wiki_id: "744d63e6-0ab7-4f16-a588-d9129cf959d1",
 };
 
 export const analyticItems = {

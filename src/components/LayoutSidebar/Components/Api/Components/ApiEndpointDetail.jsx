@@ -31,7 +31,6 @@ const ApiEndpointDetail = () => {
       authentification: true,
     },
   });
-  console.log("response", response);
   const languages = watch("attributes.example");
   const method = getValues("method")?.toLowerCase();
   const url = `${watch("base_url")}${watch("additional_url")}`;
@@ -46,9 +45,6 @@ const ApiEndpointDetail = () => {
     });
     return arr;
   }, [watch("attributes.result")]);
-  console.log("attributs", watch("attributes"));
-
-  console.log("responseOptions", responseOptions);
 
   const { isLoading } = useApiEndpointGetByIdQuery({
     fieldId: endpointId,
@@ -208,7 +204,6 @@ const ApiEndpointDetail = () => {
                       options={responseOptions}
                       value={response}
                       onChange={(e) => {
-                        console.log("e", e);
                         setResponse(e?.target?.value);
                       }}
                       disabledHelperText

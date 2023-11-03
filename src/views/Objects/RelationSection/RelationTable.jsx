@@ -22,6 +22,7 @@ import {generateGUID} from "../../../utils/generateID";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
+import {useSelector} from "react-redux";
 
 const RelationTable = forwardRef(
   (
@@ -59,7 +60,11 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState();
+    const [limit, setLimit] = useState(10);
+    const paginationInfo = useSelector(
+      (state) => state?.pagination?.paginationInfo
+    );
+
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -98,6 +103,24 @@ const RelationTable = forwardRef(
       },
       mode: "all",
     });
+
+    const paginiation = useMemo(() => {
+      const getObject = paginationInfo.find(
+        (el) => el?.tableSlug === tableSlug
+      );
+
+      return getObject?.pageLimit ?? limit;
+    }, [paginationInfo, tableSlug]);
+
+    const limitPage = useMemo(() => {
+      if (typeof paginiation === "number") {
+        return paginiation;
+      } else if (paginiation === "all" && limit === "all") {
+        return undefined;
+      } else {
+        return pageToOffset(currentPage, limit);
+      }
+    }, [paginiation, limit, currentPage]);
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
@@ -237,7 +260,7 @@ const RelationTable = forwardRef(
         return constructorObjectService.getList(relatedTableSlug, {
           data: {
             offset: pageToOffset(currentPage, limit),
-            limit: id ? limit : 0,
+            limit: limitPage !== 0 ? limitPage : limit,
             from_tab: type === "relation" ? true : false,
             ...computedFilters,
           },
@@ -250,7 +273,7 @@ const RelationTable = forwardRef(
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
               ? 1
-              : Math.ceil(data.count / limit);
+              : Math.ceil(data.count / paginiation);
           setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
@@ -281,7 +304,7 @@ const RelationTable = forwardRef(
         },
       }
     );
-    console.log("tableData", tableData);
+
     useEffect(() => {
       if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));

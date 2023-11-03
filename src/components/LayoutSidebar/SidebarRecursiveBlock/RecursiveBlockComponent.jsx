@@ -2,19 +2,19 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Box, Button, Collapse, Tooltip} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {BsThreeDots} from "react-icons/bs";
-import {useMutation, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {useMenuListQuery} from "../../../services/menuService";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { BsThreeDots } from "react-icons/bs";
+import { useMutation, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMenuListQuery } from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
-import {store} from "../../../store";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import {updateLevel} from "../../../utils/level";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
+import { store } from "../../../store";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import { updateLevel } from "../../../utils/level";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
@@ -27,10 +27,10 @@ import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import PersonIcon from "@mui/icons-material/Person";
 import "../style.scss";
-import {analyticItems, folderIds} from "./mock/folders";
+import { analyticItems, folderIds } from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
-import {Draggable} from "react-smooth-dnd";
+import { Draggable } from "react-smooth-dnd";
 import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import RedirectButton from "../Components/Redirect/RedirectButton";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
@@ -56,8 +56,7 @@ const RecursiveBlock = ({
   setCheck,
   check,
 }) => {
-  console.log("elementelement", element);
-  const {appId, tableSlug} = useParams();
+  const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -66,9 +65,10 @@ const RecursiveBlock = ({
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-  const {i18n} = useTranslation();
-  const defaultLanguage = i18n.language;
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n?.language;
+
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.parent_id === adminId || element?.parent_id === analyticsId
@@ -116,7 +116,6 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
-
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -125,6 +124,10 @@ const RecursiveBlock = ({
         return navigate(`/main/${appId}/backet/${element?.id}`);
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
+      case "WIKI":
+        return navigate(
+          `/main/${appId}/docs/note/${element?.parent_id}/${element?.wiki_id}`
+        );
       case "MICROFRONTEND":
         let obj = {};
         element?.attributes?.params.forEach((el) => {
@@ -132,10 +135,10 @@ const RecursiveBlock = ({
         });
         const searchParams = new URLSearchParams(obj || {});
         return navigate({
-          pathname: `/main/${appId}/code`,
+          pathname: `/main/${appId}/page/${element?.data?.microfrontend?.id}`,
           search: `?${searchParams.toString()}`,
         });
-        return navigate(`/main/${appId}/code/${element?.guid}`);
+
       case "WEBPAGE":
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`
@@ -159,7 +162,7 @@ const RecursiveBlock = ({
     }
   };
 
-  const {isLoading} = useMenuListQuery({
+  const { isLoading } = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -186,7 +189,8 @@ const RecursiveBlock = ({
       !pinIsEnabled &&
       element.type !== "FOLDER" &&
       element.type !== "USER_FOLDER" &&
-      element.type !== "MINIO_FOLDER"
+      element.type !== "MINIO_FOLDER" &&
+      element.type !== "WIKI_FOLDER"
     ) {
       setSubMenuIsOpen(false);
     }
@@ -201,6 +205,8 @@ const RecursiveBlock = ({
     dispatch(menuActions.setMenuItem(element));
     if (element?.type === "MINIO_FOLDER") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
+    } else if (appId === folderIds.wiki_id) {
+      handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "CREATE_TO_FOLDER");
     }
@@ -223,7 +229,7 @@ const RecursiveBlock = ({
     }
   }, []);
 
-  const {mutate: deleteReportSetting} = useMutation(
+  const { mutate: deleteReportSetting } = useMutation(
     (id) => pivotService.deleteReportSetting(id),
     {
       onSuccess: () => {
@@ -233,7 +239,7 @@ const RecursiveBlock = ({
     }
   );
 
-  const {mutate: onDeleteTemplate} = useMutation(
+  const { mutate: onDeleteTemplate } = useMutation(
     (id) =>
       pivotService.deletePivotTemplate({
         id,
@@ -248,7 +254,7 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}}>
+      <Box sx={{ padding: "0 5px" }}>
         <div className="parent-block column-drag-handle" key={element.id}>
           {permission ? (
             <Button
@@ -285,13 +291,15 @@ const RecursiveBlock = ({
                 )}
                 {childBlockVisible ? (
                   element?.type === "PERMISSION" ||
-                  element?.type !== "FOLDER" ? (
+                  (element?.type !== "FOLDER" &&
+                    element?.type !== "WIKI_FOLDER") ? (
                     ""
                   ) : (
                     <KeyboardArrowDownIcon />
                   )
                 ) : element?.type === "PERMISSION" ||
-                  element?.type !== "FOLDER" ? (
+                  (element?.type !== "FOLDER" &&
+                    element?.type !== "WIKI_FOLDER") ? (
                   ""
                 ) : (
                   <KeyboardArrowRightIcon />
@@ -336,7 +344,10 @@ const RecursiveBlock = ({
                       </p>
                     </Tooltip>
                   </Box>
-                  {selectedApp?.id !== adminId && element?.type === "FOLDER" ? (
+                  {(selectedApp?.id !== adminId &&
+                    element?.type === "FOLDER") ||
+                  (element?.type === "WIKI_FOLDER" &&
+                    element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea") ? (
                     <Box>
                       <Tooltip title="Folder settings" placement="top">
                         <Box className="extra_icon">
@@ -365,6 +376,29 @@ const RecursiveBlock = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               handleOpenNotify(e, "TABLE");
+                              setElement(element);
+                              dispatch(menuActions.setMenuItem(element));
+                            }}
+                            style={{
+                              color:
+                                menuItem?.id === element?.id
+                                  ? menuStyle?.active_text
+                                  : menuStyle?.text || "",
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    </Box>
+                  ) : null}
+                  {selectedApp?.id !== adminId && element?.type === "WIKI" ? (
+                    <Box>
+                      <Tooltip title="Table settings" placement="top">
+                        <Box className="extra">
+                          <BsThreeDots
+                            size={13}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenNotify(e, "WIKI");
                               setElement(element);
                               dispatch(menuActions.setMenuItem(element));
                             }}
@@ -412,7 +446,8 @@ const RecursiveBlock = ({
                   )}
                 </Box>
               ) : element?.type === "FOLDER" ||
-                (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ? (
+                (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ||
+                element?.type === "WIKI_FOLDER" ? (
                 <Box className="icon_group">
                   <Tooltip title="Create folder" placement="top">
                     <Box className="extra_icon">
@@ -498,6 +533,7 @@ const RecursiveBlock = ({
                   }}
                 />
               )}
+
               {element?.type === "WEBPAGE" && (
                 <MenuIcon
                   title="Webpage settings"

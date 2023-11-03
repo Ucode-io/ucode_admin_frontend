@@ -60,7 +60,7 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(10);
     const paginationInfo = useSelector(
       (state) => state?.pagination?.paginationInfo
     );

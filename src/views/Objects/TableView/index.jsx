@@ -62,7 +62,7 @@ const TableView = ({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(10);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);

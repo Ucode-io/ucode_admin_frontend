@@ -15,6 +15,8 @@ import styles from "./style.module.scss";
 import request from "../../utils/request";
 import {useTranslation} from "react-i18next";
 import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import {pageToOffset} from "../../utils/pageToOffset";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -132,8 +134,8 @@ const AutoCompleteElement = ({
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
-
-  console.log("AutoCompleteElement", field);
+  const [page, setPage] = useState(1);
+  const [allOptions, setAllOptions] = useState([]);
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -156,7 +158,7 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const {data: fromInvokeList} = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
@@ -176,6 +178,7 @@ const AutoCompleteElement = ({
             // additional_ids: value,
             search: debouncedValue,
             limit: 10,
+            offset: pageToOffset(page, 10),
           },
         }
       );
@@ -185,11 +188,18 @@ const AutoCompleteElement = ({
       select: (res) => {
         return res?.data?.response ?? [];
       },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data]);
+        } else {
+          setAllOptions(data);
+        }
+      },
     }
   );
 
   const {data: fromObjectList} = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
@@ -204,6 +214,7 @@ const AutoCompleteElement = ({
           // additional_ids: value,
           search: debouncedValue,
           limit: 10,
+          offset: pageToOffset(page, 10),
         },
       });
     },
@@ -211,6 +222,13 @@ const AutoCompleteElement = ({
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         return res?.data?.response ?? [];
+      },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data]);
+        } else {
+          setAllOptions(data);
+        }
       },
     }
   );
@@ -224,7 +242,7 @@ const AutoCompleteElement = ({
 
     return value
       ?.map((id) => {
-        const option = options?.find((el) => el?.guid === id);
+        const option = allOptions?.find((el) => el?.guid === id);
 
         if (!option) return null;
         return {
@@ -233,10 +251,18 @@ const AutoCompleteElement = ({
         };
       })
       ?.filter((el) => el);
-  }, [value, options]);
+  }, [value, allOptions]);
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions, options]);
+
+  console.log("computedOptions", computedOptions);
 
   const getOptionLabel = (option) => {
-    // return ''
     return getRelationFieldLabel(field, option);
   };
 
@@ -246,19 +272,43 @@ const AutoCompleteElement = ({
     const val = value?.map((el) => el.guid);
 
     setValue(val ?? null);
-
-    // if (!field?.attributes?.autofill) return
-
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   setFormValue(field_to, val?.[field_from])
-    // })
   };
 
   const inputChangeHandler = useDebounce((val) => {
     setDebouncedValue(val);
   }, 300);
 
-  console.log("options", options);
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      outline: "none",
+    }),
+    input: (provided) => ({
+      ...provided,
+      width: "100%",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: state.isSelected ? "#fff" : provided.color,
+      cursor: "pointer",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
+
+  function loadMoreItems() {
+    console.log("eeeeeeeeeeeeeee");
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -270,7 +320,7 @@ const AutoCompleteElement = ({
       </div>
 
       <Select
-        options={options ?? []}
+        options={computedOptions ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
           changeHandler(event);
@@ -282,7 +332,9 @@ const AutoCompleteElement = ({
         components={{
           DropdownIndicator: null,
         }}
+        onMenuScrollToBottom={loadMoreItems}
         isMulti
+        closeMenuOnSelect={false}
         menuPortalTarget={document.body}
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         noOptionsMessage={() => (
@@ -293,10 +345,9 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         )}
-        // isDisabled={disabled}
-        // onMenuScrollToBottom={loadMoreItems}
         isClearable
         menuShouldScrollIntoView
+        onMenuClose={false}
         styles={customStyles}
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));

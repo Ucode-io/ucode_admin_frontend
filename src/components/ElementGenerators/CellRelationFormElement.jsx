@@ -296,7 +296,7 @@ const AutoCompleteElement = ({
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
-      new Set(allOptions.map(JSON.stringify))
+      new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);
@@ -308,7 +308,6 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-    console.log("valueeeeeee", value);
     setValue(val?.guid ?? null);
     setInputValue("");
 

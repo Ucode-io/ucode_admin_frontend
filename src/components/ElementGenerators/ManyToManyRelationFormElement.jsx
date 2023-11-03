@@ -238,7 +238,7 @@ const AutoCompleteElement = ({
   }, [fromInvokeList, fromObjectList]);
 
   const computedValue = useMemo(() => {
-    if (!value) return undefined;
+    if (!value) return [];
 
     return value
       ?.map((id) => {
@@ -264,10 +264,10 @@ const AutoCompleteElement = ({
     return getRelationFieldLabel(field, option);
   };
 
-  const changeHandler = (data) => {
-    if (!data) setValue(null);
+  const changeHandler = (value) => {
+    if (!value) setValue(null);
 
-    const val = data?.filter((el) => el?.guid);
+    const val = value?.map((el) => el.guid);
 
     setValue(val ?? null);
   };
@@ -319,8 +319,8 @@ const AutoCompleteElement = ({
       <Select
         options={computedOptions ?? []}
         value={computedValue}
-        onChange={(event, newValue) => {
-          changeHandler(event);
+        onChange={(value) => {
+          changeHandler(value);
         }}
         onInputChange={(_, val) => {
           setInputValue(val);

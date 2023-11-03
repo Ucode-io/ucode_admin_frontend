@@ -15,7 +15,7 @@ import styles from "./style.module.scss";
 import request from "../../utils/request";
 import {useTranslation} from "react-i18next";
 import Select from "react-select";
-import makeAnimated, {MultiValue} from "react-select/animated";
+import makeAnimated from "react-select/animated";
 import {pageToOffset} from "../../utils/pageToOffset";
 
 const ManyToManyRelationFormElement = ({
@@ -264,29 +264,12 @@ const AutoCompleteElement = ({
     return getRelationFieldLabel(field, option);
   };
 
-  const changeHandler = (value) => {
-    if (!value) setValue(null);
+  const changeHandler = (data) => {
+    if (!data) setValue(null);
 
-    const val = value?.map((el) => el.guid);
+    const val = data?.filter((el) => el?.guid);
 
     setValue(val ?? null);
-  };
-
-  const CustomMultiValue = (props) => {
-    return (
-      <MultiValue {...props}>
-        {props.data.label}
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            props.removeProps.onClick();
-          }}
-          style={{marginLeft: "5px", cursor: "pointer"}}
-        >
-          &#10006;
-        </span>
-      </MultiValue>
-    );
   };
 
   const inputChangeHandler = useDebounce((val) => {
@@ -345,7 +328,6 @@ const AutoCompleteElement = ({
         }}
         components={{
           DropdownIndicator: null,
-          // MultiValue: CustomMultiValue,
         }}
         onMenuScrollToBottom={loadMoreItems}
         isMulti

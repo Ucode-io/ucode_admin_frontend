@@ -15,7 +15,7 @@ import styles from "./style.module.scss";
 import request from "../../utils/request";
 import {useTranslation} from "react-i18next";
 import Select from "react-select";
-import makeAnimated from "react-select/animated";
+import makeAnimated, {MultiValue} from "react-select/animated";
 import {pageToOffset} from "../../utils/pageToOffset";
 
 const ManyToManyRelationFormElement = ({
@@ -232,7 +232,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-
+  console.log("value", value);
   const options = useMemo(() => {
     return fromObjectList ?? fromInvokeList;
   }, [fromInvokeList, fromObjectList]);
@@ -260,8 +260,6 @@ const AutoCompleteElement = ({
     return uniqueObjects ?? [];
   }, [allOptions, options]);
 
-  console.log("computedOptions", computedOptions);
-
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
@@ -272,6 +270,23 @@ const AutoCompleteElement = ({
     const val = value?.map((el) => el.guid);
 
     setValue(val ?? null);
+  };
+
+  const CustomMultiValue = (props) => {
+    return (
+      <MultiValue {...props}>
+        {props.data.label}
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            props.removeProps.onClick();
+          }}
+          style={{marginLeft: "5px", cursor: "pointer"}}
+        >
+          &#10006;
+        </span>
+      </MultiValue>
+    );
   };
 
   const inputChangeHandler = useDebounce((val) => {
@@ -302,7 +317,6 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
-    console.log("eeeeeeeeeeeeeee");
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
     } else {
@@ -331,6 +345,7 @@ const AutoCompleteElement = ({
         }}
         components={{
           DropdownIndicator: null,
+          // MultiValue: CustomMultiValue,
         }}
         onMenuScrollToBottom={loadMoreItems}
         isMulti
@@ -345,9 +360,6 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         )}
-        isClearable
-        menuShouldScrollIntoView
-        onMenuClose={false}
         styles={customStyles}
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
@@ -356,7 +368,6 @@ const AutoCompleteElement = ({
         isOptionSelected={(option, value) =>
           value.some((val) => val.value === value)
         }
-        blurInputOnSelect
       />
 
       {/* <Autocomplete

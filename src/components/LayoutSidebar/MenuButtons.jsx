@@ -95,7 +95,7 @@ const ButtonsMenu = ({
                 e.stopPropagation();
                 handleCloseNotify();
                 if (element?.type === "WIKI_FOLDER") {
-                  openFolderCreateModal("wiki_update", element);
+                  openFolderCreateModal("WIKI_FOLDER_UPDATE", element);
                 } else {
                   openFolderCreateModal("update", element);
                 }
@@ -712,17 +712,30 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "WIKI" && (
-        <Box className="menu">
-          <MenuItemComponent
-            icon={<BsFillTrashFill size={13} />}
-            title="Удалить Wiki"
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteFolder(element);
-              handleCloseNotify();
-            }}
-          />
-        </Box>
+        <>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                openFolderCreateModal("WIKI_UPDATE", element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        </>
       )}
     </Menu>
   );

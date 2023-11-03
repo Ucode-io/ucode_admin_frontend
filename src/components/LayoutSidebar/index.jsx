@@ -506,7 +506,7 @@ const LayoutSidebar = ({ appId }) => {
             getMenuList={getMenuList}
           />
         )}
-        {modalType === "wiki_update" && (
+        {modalType === "WIKI_UPDATE" || modalType === "WIKI_FOLDER_UPDATE" ? (
           <WikiFolderCreateModal
             closeModal={closeModal}
             selectedFolder={selectedFolder}
@@ -514,7 +514,7 @@ const LayoutSidebar = ({ appId }) => {
             appId={appId}
             getMenuList={getMenuList}
           />
-        )}
+        ) : null}
         {tableModal && (
           <TableLinkModal
             closeModal={closeTableModal}

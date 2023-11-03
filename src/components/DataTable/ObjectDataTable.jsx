@@ -235,7 +235,7 @@ const ObjectDataTable = ({
       dispatch(selectedRowActions.clear());
     }
   }, [formVisible]);
-  console.log("fields", fields);
+
   return (
     <CTable
       disablePagination={disablePagination}

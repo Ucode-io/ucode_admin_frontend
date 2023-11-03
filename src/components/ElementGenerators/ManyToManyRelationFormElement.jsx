@@ -232,7 +232,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-  console.log("value", value);
+
   const options = useMemo(() => {
     return fromObjectList ?? fromInvokeList;
   }, [fromInvokeList, fromObjectList]);
@@ -264,12 +264,19 @@ const AutoCompleteElement = ({
     return getRelationFieldLabel(field, option);
   };
 
-  const changeHandler = (value) => {
+  const changeHandler = (value, options) => {
     if (!value) setValue(null);
+    if (options?.action === "select-option") {
+      const val = value?.map((el) => el.guid);
 
-    const val = value?.map((el) => el.guid);
-
-    setValue(val ?? null);
+      setValue(val ?? null);
+    } else if (options?.action === "remove-value") {
+      const val = value?.filter(
+        (item) => item?.guid === options?.options?.guid
+      );
+      console.log("val", val);
+      setValue(val ?? null);
+    }
   };
 
   const inputChangeHandler = useDebounce((val) => {
@@ -319,8 +326,8 @@ const AutoCompleteElement = ({
       <Select
         options={computedOptions ?? []}
         value={computedValue}
-        onChange={(value) => {
-          changeHandler(value);
+        onChange={(value, options) => {
+          changeHandler(value, options);
         }}
         onInputChange={(_, val) => {
           setInputValue(val);

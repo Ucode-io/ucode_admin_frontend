@@ -273,7 +273,7 @@ const RelationTable = forwardRef(
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
               ? 1
-              : Math.ceil(data.count / limit);
+              : Math.ceil(data.count / paginiation);
           setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
@@ -304,7 +304,7 @@ const RelationTable = forwardRef(
         },
       }
     );
-    console.log("tableData", tableData);
+
     useEffect(() => {
       if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));

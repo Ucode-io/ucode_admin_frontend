@@ -5,6 +5,6 @@ export const viewTypes = [
   "CALENDAR HOUR",
   "GANTT",
   "TREE",
-  "BOARD",
-  "FINANCE CALENDAR"
+  // "BOARD",
+  "FINANCE CALENDAR",
 ];

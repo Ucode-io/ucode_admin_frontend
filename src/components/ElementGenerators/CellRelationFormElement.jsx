@@ -297,7 +297,6 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-    console.log("valueeeeeee", value);
     setValue(val?.guid ?? null);
     setInputValue("");
 

@@ -235,7 +235,17 @@ const ObjectDataTable = ({
       dispatch(selectedRowActions.clear());
     }
   }, [formVisible]);
-  console.log("fields", fields);
+
+
+  const relationFields = useMemo(() => {
+    return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
+  }, [columns]);
+
+  console.log('relationFields', relationFields)
+
+  
+
+
   return (
     <CTable
       disablePagination={disablePagination}

@@ -23,20 +23,13 @@ const WikiFolderCreateModal = ({
   modalType,
   appId,
   selectedFolder,
-  getMenuList,
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
 
   const onSubmit = (data) => {
-    if (modalType === "create") {
-      createType(data, selectedFolder);
-    } else if (modalType === "parent") {
-      createType(data, selectedFolder);
-    } else if (modalType === "wiki_update") {
-      updateType(data);
-    }
+    updateType(data);
   };
 
   const { control, handleSubmit, reset, watch } = useForm({
@@ -44,43 +37,23 @@ const WikiFolderCreateModal = ({
       app_id: appId,
     },
   });
-
   useEffect(() => {
-    if (modalType === "wiki_update")
-      menuSettingsService
-        .getById(selectedFolder.id, projectId)
-        .then((res) => {
-          reset(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-  }, [modalType]);
-
-  const createType = (data, selectedFolder) => {
     menuSettingsService
-      .create({
-        ...data,
-        parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: "WIKI_FOLDER",
-        label: Object.values(data?.attributes).find((item) => item),
-      })
-      .then(() => {
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
-        closeModal();
+      .getById(selectedFolder.id, projectId)
+      .then((res) => {
+        reset(res);
       })
       .catch((err) => {
         console.log(err);
       });
-  };
+  }, [modalType]);
 
   const updateType = (data, selectedFolder) => {
     menuSettingsService
       .update({
         ...data,
         label: Object.values(data?.attributes).find((item) => item),
-        type: "WIKI_FOLDER",
+        type: modalType === "WIKI_UPDATE" ? "WIKI" : "WIKI_FOLDER",
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);

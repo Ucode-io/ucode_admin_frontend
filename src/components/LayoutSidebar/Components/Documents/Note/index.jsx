@@ -94,6 +94,7 @@ const Note = () => {
       updateNote({
         ...values,
         parent_id: menuItem?.id,
+        is_visible: true,
       });
     } else {
       createNote({
@@ -101,6 +102,7 @@ const Note = () => {
         project_id: projectId,
         folder_id: folderId,
         parent_id: menuItem?.id,
+        is_visible: true,
       });
     }
   };

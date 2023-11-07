@@ -2,7 +2,6 @@ import {Parser} from "hot-formula-parser";
 import {useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
-import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
@@ -24,13 +23,15 @@ import HFVideoUpload from "../FormElements/HFVideoUpload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import CellRelationFormElement from "./CellRelationFormElement";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
+import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 
 const parser = new Parser();
 
-const NewCellFormElementGenerator2 = ({
+const CellElementGeneratorForTableView = ({
+  relOptions,
+  tableView,
   field,
   fields,
   isBlackBg = false,
@@ -83,11 +84,6 @@ const NewCellFormElementGenerator2 = ({
     return `multi.${index}.${field.slug}`;
   }, [field, i18n?.language]);
 
-  // const changedValue = useWatch({
-  //   control,
-  //   name: computedSlug,
-  // });
-
   const isDisabled =
     field.attributes?.disabled ||
     !field.attributes?.field_permission?.edit_permission;
@@ -135,7 +131,9 @@ const NewCellFormElementGenerator2 = ({
   switch (field.type) {
     case "LOOKUP":
       return (
-        <CellRelationFormElement
+        <CellRelationFormElementForTableView
+          relOptions={relOptions}
+          tableView={tableView}
           disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
@@ -608,4 +606,4 @@ const NewCellFormElementGenerator2 = ({
   }
 };
 
-export default NewCellFormElementGenerator2;
+export default CellElementGeneratorForTableView;

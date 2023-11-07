@@ -1,4 +1,4 @@
-import {Autocomplete, Box, Popover, TextField, Typography} from "@mui/material";
+import {Box, Popover, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
@@ -9,7 +9,6 @@ import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
-import {useLocation, useParams} from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
@@ -28,13 +27,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CellRelationFormElement = ({
+const CellRelationFormElementForTableView = ({
+  relOptions,
+  tableView,
   isBlackBg,
   isFormEdit,
   control,
   name,
   updateObject,
-  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -91,6 +91,8 @@ const CellRelationFormElement = ({
             />
           ) : (
             <AutoCompleteElement
+              relOptions={relOptions}
+              tableView={tableView}
               disabled={disabled}
               isFormEdit={isFormEdit}
               placeholder={placeholder}
@@ -122,21 +124,17 @@ const CellRelationFormElement = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
+  relOptions,
+  tableView,
   field,
   value,
-  isFormEdit,
-  placeholder,
   tableSlug,
   name,
-  defaultValue,
   disabled,
-  classes,
   isBlackBg,
   setValue,
   index,
   control,
-  relationfields,
-  data,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
@@ -144,253 +142,13 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
-  const {id} = useParams();
-  const [allOptions, setAllOptions] = useState([]);
+  const [allOptions, setAllOptions] = useState();
   const [localValue, setLocalValue] = useState(null);
-  const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option);
-  };
-  const autoFilters = field?.attributes?.auto_filters;
-
-  const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
-  }, [autoFilters, index]);
-
-  const filtersHandler = useWatch({
-    control,
-    name: autoFiltersFieldFroms,
-  });
-
-  const autoFiltersValue = useMemo(() => {
-    const result = {};
-    filtersHandler?.forEach((value, index) => {
-      const key = autoFilters?.[index]?.field_to;
-      if (key) result[key] = value;
-    });
-    return result;
-  }, [autoFilters, filtersHandler]);
-
-  // const getIds = useMemo(() => {
-  //   let val = [];
-  //   relationfields
-  //     ?.filter((item) => {
-  //       return item[field?.slug];
-  //     })
-  //     .map((item) => {
-  //       return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
-  //     });
-  //   return val;
-  // }, [relationfields, field]);
-
-  const getIdsFromData = useMemo(() => {
-    let val = [];
-    data
-      ?.filter((item) => {
-        return item[field?.slug];
-      })
-      .map((item) => {
-        return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
-      });
-    return val;
-  }, [data, field]);
-
-  const {data: optionsFromFunctions} = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
-    () => {
-      return request.post(
-        `/invoke_function/${field?.attributes?.function_path}`,
-        {
-          params: {
-            from_input: true,
-          },
-          data: {
-            table_slug: tableSlug,
-            ...autoFiltersValue,
-            search: debouncedValue,
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
-          },
-        }
-      );
-    },
-    {
-      enabled: !!field?.attributes?.function_path,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
-        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
-
-        return {
-          options,
-          // slugOptions,
-        };
-      },
-    }
-  );
-
-  const {data: optionsFromLocale} = useQuery(
-    [
-      "GET_OBJECT_LIST",
-      tableSlug,
-      debouncedValue,
-      autoFiltersValue,
-      value,
-      page,
-    ],
-    () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [value],
-          },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          offset: pageToOffset(page, 10),
-        },
-      });
-    },
-    {
-      enabled: !field?.attributes?.function_path,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
-
-        return {
-          options,
-          // slugOptions,
-        };
-      },
-      onSuccess: (data) => {
-        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
-      },
-    }
-  );
-
-  const options = useMemo(() => {
-    if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
-    } else {
-      return optionsFromLocale ?? [];
-    }
-  }, [
-    optionsFromFunctions,
-    optionsFromLocale,
-    field?.attributes?.function_path,
-  ]);
-
-  const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(
-      new Set(allOptions.map(JSON.stringify))
-    ).map(JSON.parse);
-    return uniqueObjects ?? [];
-  }, [allOptions]);
-
-  const computedValue = useMemo(() => {
-    const findedOption = options?.options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
-
-  const changeHandler = (value) => {
-    const val = value;
-    setValue(val?.guid ?? null);
-    setInputValue("");
-
-    if (!field?.attributes?.autofill) return;
-
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
-      const setName = name.split(".");
-      setName.pop();
-      setName.push(field_to);
-      setFormValue(setName.join("."), get(val, field_from));
-    });
-  };
-
-  const getValueData = async () => {
-    try {
-      const id = value;
-      const res = await constructorObjectService.getById(tableSlug, id);
-      const data = res?.data?.response;
-      if (data.prepayment_balance) {
-        setFormValue("prepayment_balance", data.prepayment_balance || 0);
-      }
-
-      setLocalValue(data ? [data] : null);
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    let val;
-
-    if (Array.isArray(computedValue)) {
-      val = computedValue[computedValue.length - 1];
-    } else {
-      val = computedValue;
-    }
-
-    if (!field?.attributes?.autofill || !val) {
-      return;
-    }
-
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
-      const setName = name?.split(".");
-      setName?.pop();
-      setName?.push(field_to);
-
-      if (automatic) {
-        setTimeout(() => {
-          setFormValue(setName.join("."), get(val, field_from));
-        }, 1);
-      }
-    });
-  }, [computedValue, field]);
-
+  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const openFormModal = (tableSlug) => {
-    handleOpen();
-    setTableSlugFromProps(tableSlug);
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
   const openPopover = Boolean(anchorEl);
-
-  useEffect(() => {
-    if (value) getValueData();
-  }, [value]);
-
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
-  const clearSelection = () => {
-    setValue(null);
-  };
+  const autoFilters = field?.attributes?.auto_filters;
 
   const customStyles = {
     control: (provided, state) => ({
@@ -419,6 +177,206 @@ const AutoCompleteElement = ({
       zIndex: 9999,
     }),
   };
+
+  const autoFiltersFieldFroms = useMemo(() => {
+    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
+  }, [autoFilters, index]);
+
+  const filtersHandler = useWatch({
+    control,
+    name: autoFiltersFieldFroms,
+  });
+
+  const autoFiltersValue = useMemo(() => {
+    const result = {};
+    filtersHandler?.forEach((value, index) => {
+      const key = autoFilters?.[index]?.field_to;
+      if (key) result[key] = value;
+    });
+    return result;
+  }, [autoFilters, filtersHandler]);
+
+  const {data: optionsFromFunctions} = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
+    () => {
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {
+            from_input: true,
+          },
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
+    },
+    {
+      enabled:
+        (!!field?.attributes?.function_path && Boolean(page > 1)) ||
+        (!!field?.attributes?.function_path && Boolean(debouncedValue)),
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+
+        return {
+          options,
+        };
+      },
+    }
+  );
+
+  const {data: optionsFromLocale} = useQuery(
+    [
+      "GET_OBJECT_LIST",
+      tableSlug,
+      debouncedValue,
+      autoFiltersValue,
+      value,
+      page,
+    ],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getListV2(field?.table_slug, {
+        data: {
+          ...autoFiltersValue,
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [value],
+          },
+          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+          search: debouncedValue.trim(),
+          limit: 10,
+          offset: pageToOffset(page, 10),
+        },
+      });
+    },
+    {
+      enabled:
+        (!field?.attributes?.function_path && Boolean(page > 1)) ||
+        (!field?.attributes?.function_path && Boolean(debouncedValue)),
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+
+        return {
+          options,
+        };
+      },
+      onSuccess: (data) => {
+        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+      },
+    }
+  );
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions?.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions]);
+
+  const computedValue = useMemo(() => {
+    const findedOption = allOptions?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [allOptions, value]);
+
+  const changeHandler = (value) => {
+    const val = value;
+    setValue(val?.guid ?? null);
+    setInputValue("");
+
+    if (!field?.attributes?.autofill) return;
+
+    field.attributes.autofill.forEach(({field_from, field_to}) => {
+      const setName = name.split(".");
+      setName.pop();
+      setName.push(field_to);
+      setFormValue(setName.join("."), get(val, field_from));
+    });
+  };
+
+  const getValueData = async () => {
+    try {
+      const id = value;
+      const data = allOptions?.find((item) => item?.guid === value);
+      if (data.prepayment_balance) {
+        setFormValue("prepayment_balance", data.prepayment_balance || 0);
+      }
+
+      setLocalValue(data ? [data] : null);
+    } catch (error) {}
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const openFormModal = (tableSlug) => {
+    handleOpen();
+    setTableSlugFromProps(tableSlug);
+  };
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    let val;
+
+    if (Array.isArray(computedValue)) {
+      val = computedValue[computedValue.length - 1];
+    } else {
+      val = computedValue;
+    }
+
+    if (!field?.attributes?.autofill || !val) {
+      return;
+    }
+
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+      const setName = name?.split(".");
+      setName?.pop();
+      setName?.push(field_to);
+
+      if (automatic) {
+        setTimeout(() => {
+          setFormValue(setName.join("."), get(val, field_from));
+        }, 1);
+      }
+    });
+  }, [computedValue, field]);
+
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  useEffect(() => {
+    const matchingOption = relOptions?.find(
+      (item) => item?.table_slug === field?.table_slug
+    );
+
+    if (matchingOption) {
+      setAllOptions(matchingOption.response);
+    }
+  }, [relOptions, field]);
+
+  useEffect(() => {
+    if (value) getValueData();
+  }, [value, allOptions]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
@@ -551,20 +509,8 @@ const AutoCompleteElement = ({
         }
         blurInputOnSelect
       />
-      {/* {errors?.[field?.slug] && (
-        <div
-          style={{
-            color: "red",
-            fontSize: "10px",
-            textAlign: "center",
-            marginTop: "5px",
-          }}
-        >
-          {"This field is required!"}
-        </div>
-      )} */}
     </div>
   );
 };
 
-export default CellRelationFormElement;
+export default CellRelationFormElementForTableView;

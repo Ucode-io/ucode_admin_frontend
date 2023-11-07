@@ -28,6 +28,8 @@ import constructorObjectService from "../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
 
 const ObjectDataTable = ({
+  relOptions,
+  tableView,
   data = [],
   loader = false,
   setDrawerState,
@@ -236,15 +238,13 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
-
   const relationFields = useMemo(() => {
-    return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
+    return columns?.filter(
+      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+    );
   }, [columns]);
 
-  console.log('relationFields', relationFields)
-
-  
-
+  console.log("relationFields", relationFields);
 
   return (
     <CTable
@@ -344,6 +344,8 @@ const ObjectDataTable = ({
         {(isRelationTable ? fields : data).length > 0
           ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
               <TableRow
+                relOptions={relOptions}
+                tableView={tableView}
                 width={"80px"}
                 remove={remove}
                 watch={watch}

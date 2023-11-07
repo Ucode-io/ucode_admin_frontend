@@ -3,7 +3,7 @@ import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
@@ -142,6 +142,7 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
   const [allOptions, setAllOptions] = useState();
   const [localValue, setLocalValue] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -302,15 +303,23 @@ const AutoCompleteElement = ({
   };
 
   const getValueData = async () => {
-    try {
-      const id = value;
-      const data = allOptions?.find((item) => item?.guid === value);
+    const id = value;
+    const data = allOptions?.find((item) => item?.guid === id);
+    if (Boolean(data)) {
       if (data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
 
       setLocalValue(data ? [data] : null);
-    } catch (error) {}
+    } else {
+      const res = await constructorObjectService.getById(field?.table_slug, id);
+      const data = res?.data?.response;
+      if (data?.prepayment_balance) {
+        setFormValue("prepayment_balance", data?.prepayment_balance || 0);
+      }
+
+      setLocalValue(data ? [data] : null);
+    }
   };
 
   const handleOpen = () => {

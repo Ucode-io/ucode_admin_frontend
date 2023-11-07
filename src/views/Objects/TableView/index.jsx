@@ -420,11 +420,17 @@ const TableView = ({
   // );
 
   useEffect(() => {
-    computedRelationField?.forEach((item) => {
+    computedRelationField?.forEach((item, index) => {
       constructorObjectService
         .getListV2(item?.table_slug, {
           data: {
             limit: 10,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [
+                mainForm.getValues(`multi.${index}.${item?.slug}`),
+              ],
+            },
           },
         })
         .then((res) => {

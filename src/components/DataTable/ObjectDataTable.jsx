@@ -244,8 +244,6 @@ const ObjectDataTable = ({
     );
   }, [columns]);
 
-  console.log("relationFields", relationFields);
-
   return (
     <CTable
       disablePagination={disablePagination}

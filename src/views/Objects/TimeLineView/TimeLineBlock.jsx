@@ -53,21 +53,6 @@ export default function TimeLineBlock({
     });
   }, [view?.group_fields, fieldsMap]);
 
-  const { data: relations } = useQuery(
-    ["GET_RELATION_LIST", tableSlug],
-    () => {
-      return constructorRelationService.getList({
-        table_slug: tableSlug,
-        relation_table_slug: tableSlug,
-      });
-    },
-    {
-      select: (res) => {
-        return res?.relations;
-      },
-    }
-  );
-
   const getDataRelation = async (field) => {
     setRelationLoading(true);
     try {

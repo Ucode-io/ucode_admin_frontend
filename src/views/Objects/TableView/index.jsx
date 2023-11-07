@@ -25,6 +25,7 @@ import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/Relati
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import {includes} from "lodash-es";
 
 const TableView = ({
   tab,
@@ -62,13 +63,18 @@ const TableView = ({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [open, setOpen] = useState(false);
+  const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
+  const [selectedRow, setSelectedRow] = useState("");
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const {i18n} = useTranslation();
+  const [relOptions, setRelOptions] = useState([]);
 
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
@@ -234,7 +240,7 @@ const TableView = ({
 
       if (matchingSort) {
         const {field, order} = matchingSort;
-        const sortKey = fieldsMap[field].slug;
+        const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
     }
@@ -268,8 +274,6 @@ const TableView = ({
       fieldView: [],
       fiedlsarray: [],
     },
-    // refetch,
-    // isLoading: tableLoader,
   } = useQuery({
     queryKey: [
       "GET_TABLE_INFO",
@@ -377,18 +381,63 @@ const TableView = ({
     return filteredFields;
   }, [fieldView, fiedlsarray]);
 
-  useEffect(() => {
-    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
-    else setLimit(parseInt(view?.default_limit));
-  }, [view?.default_limit]);
+  const computedRelationField = useMemo(() => {
+    const computedFields = Object.values(fieldsMap)?.filter((element) => {
+      return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
+    });
+
+    return computedFields?.filter((item) => {
+      return view?.columns?.includes(item?.id);
+    });
+  }, [fieldsMap, view]);
+
+  // const {data: optionsFromLocale} = useQuery(
+  //   ["GET_OBJECT_LIST", computedRelationField?.[1]?.table_slug],
+  //   () => {
+  //     return constructorObjectService.getListV2(
+  //       computedRelationField?.[1]?.table_slug,
+  //       {
+  //         data: {
+  //           limit: 10,
+  //         },
+  //       }
+  //     );
+  //   },
+  //   {
+  //     select: (res) => {
+  //       console.log("ressssssssssssss", res);
+  //       const options = res?.data?.response ?? [];
+
+  //       return {
+  //         options,
+  //         // slugOptions,
+  //       };
+  //     },
+  //     // onSuccess: (data) => {
+  //     //   setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+  //     // },
+  //   }
+  // );
 
   useEffect(() => {
-    if (tableData?.length > 0) {
-      reset({
-        multi: tableData.map((i) => i),
-      });
-    }
-  }, [tableData, reset]);
+    computedRelationField?.forEach((item) => {
+      constructorObjectService
+        .getListV2(item?.table_slug, {
+          data: {
+            limit: 10,
+          },
+        })
+        .then((res) => {
+          setRelOptions((prev) => [
+            ...prev,
+            {
+              table_slug: item?.table_slug,
+              response: res?.data?.response,
+            },
+          ]);
+        });
+    });
+  }, [computedRelationField]);
 
   const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
     {
@@ -410,26 +459,6 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
-  const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-
-  useEffect(() => {
-    layoutService
-      .getList({
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-        is_default: true,
-      })
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
-        });
-      });
-  }, [tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -458,16 +487,6 @@ const TableView = ({
     }
   };
 
-  useEffect(() => {
-    refetch();
-  }, [view?.quick_filters?.length, refetch]);
-
-  const openFieldSettings = () => {
-    setDrawerState("CREATE");
-  };
-
-  const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-
   const multipleDelete = async () => {
     setDeleteLoader(true);
     try {
@@ -480,15 +499,42 @@ const TableView = ({
     }
   };
 
-  const [elementHeight, setElementHeight] = useState(null);
+  const openFieldSettings = () => {
+    setDrawerState("CREATE");
+  };
 
-  // useEffect(() => {
-  //   const element = document.querySelector("#data-table");
-  //   if (element) {
-  //     const height = element.getBoundingClientRect().height;
-  //     setElementHeight(height);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
+    else setLimit(parseInt(view?.default_limit));
+  }, [view?.default_limit]);
+
+  useEffect(() => {
+    if (tableData?.length > 0) {
+      reset({
+        multi: tableData.map((i) => i),
+      });
+    }
+  }, [tableData, reset]);
+
+  useEffect(() => {
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+        is_default: true,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
+        });
+      });
+  }, [tableSlug, i18n?.language]);
+
+  useEffect(() => {
+    refetch();
+  }, [view?.quick_filters?.length, refetch]);
 
   return (
     <div className={styles.wrapper}>
@@ -511,6 +557,8 @@ const TableView = ({
           id="data-table"
         >
           <ObjectDataTable
+            relOptions={relOptions}
+            tableView={true}
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}
@@ -520,7 +568,6 @@ const TableView = ({
             setDrawerStateField={setDrawerStateField}
             isTableView={true}
             getValues={getValues}
-            // elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}
@@ -552,7 +599,6 @@ const TableView = ({
               borderRadius: 0,
               border: "none",
               borderBottom: "1px solid #E5E9EB",
-              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
               width: "100%",
               margin: 0,
             }}
@@ -560,7 +606,6 @@ const TableView = ({
             navigateToForm={navigateToForm}
             {...props}
           />
-          {/* ) : <EmptyDataComponent />} */}
         </div>
       </PermissionWrapperV2>
 

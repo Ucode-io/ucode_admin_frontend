@@ -64,6 +64,7 @@ export const useObjectsListQuery = ({ params = {}, data = {}, queryParams } = {}
     queryParams
   );
 };
+
 export const useObjectGetByIdQuery = ({ tableSlug, resourceId, id, envId, projectId, queryParams }) => {
   return useQuery(
     ["FIELD_GET_BY_ID", { tableSlug, resourceId, id, envId, projectId }],

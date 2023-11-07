@@ -62,7 +62,7 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
       );
     }
 
-    if (selectedColumns?.length >= 2) return;
+    // if (selectedColumns?.length >= 2) return;
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
 
@@ -110,10 +110,7 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
     );
     setUpdatedColumns(result);
     updateView();
-    // console.log("ssssssss", result);
   };
-
-  console.log("ssssssss", form.watch("group_fields"));
 
   return (
     <div

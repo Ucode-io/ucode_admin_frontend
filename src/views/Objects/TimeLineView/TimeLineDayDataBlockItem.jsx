@@ -77,10 +77,10 @@ export default function TimeLineDayDataBlockItem({
   const [frame] = useState({
     translate: [0, 0],
   });
-
+  
   const startDate = useMemo(() => {
     return datesList && calendar_from_slug
-      ? datesList.findIndex((date) => format(new Date(date), "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy"))
+      ? datesList?.findIndex((date) => format(date ? new Date(date) : new Date(), "dd.MM.yyyy") === format(data[calendar_from_slug] ? new Date(data[calendar_from_slug]) : new Date(), "dd.MM.yyyy"))
       : null;
   }, [datesList, calendar_from_slug, data]);
 
@@ -179,7 +179,7 @@ export default function TimeLineDayDataBlockItem({
       setFocusedDays([]);
     }
   };
-console.log('first', data)
+  console.log("first", data);
   return (
     <>
       <div
@@ -196,7 +196,7 @@ console.log('first', data)
         key={data?.id_order}
       >
         <div
-        className={styles.dataBlockInner}
+          className={styles.dataBlockInner}
           style={{
             width: "100%",
             height: "100%",

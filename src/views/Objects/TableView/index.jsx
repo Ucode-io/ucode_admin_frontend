@@ -1,10 +1,10 @@
-import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import { Drawer } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import EmptyDataComponent from "../../../components/EmptyDataComponent";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -16,16 +16,16 @@ import constructorObjectService from "../../../services/constructorObjectService
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import {generateGUID} from "../../../utils/generateID";
-import {mergeStringAndState} from "../../../utils/jsonPath";
-import {listToMap} from "../../../utils/listToMap";
-import {pageToOffset} from "../../../utils/pageToOffset";
+import { generateGUID } from "../../../utils/generateID";
+import { mergeStringAndState } from "../../../utils/jsonPath";
+import { listToMap } from "../../../utils/listToMap";
+import { pageToOffset } from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import {includes} from "lodash-es";
+import { includes } from "lodash-es";
 
 const TableView = ({
   tab,
@@ -53,12 +53,12 @@ const TableView = ({
   setFormValue,
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug, appId} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const { id, slug, tableSlug, appId } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -73,7 +73,7 @@ const TableView = ({
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
 
   // const selectTableSlug = selectedLinkedObject
@@ -112,7 +112,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const {fields, prepend, update, remove} = useFieldArray({
+  const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -134,7 +134,7 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -182,7 +182,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
     });
   };
 
@@ -201,7 +201,7 @@ const TableView = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key])
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
     return customSortArray(
@@ -239,7 +239,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -268,7 +268,7 @@ const TableView = ({
 
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
-    data: {fiedlsarray, fieldView} = {
+    data: { fiedlsarray, fieldView } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -301,7 +301,7 @@ const TableView = ({
     },
   });
   const {
-    data: {tableData, pageCount} = {
+    data: { tableData, pageCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -319,7 +319,7 @@ const TableView = ({
         currentPage,
         checkedColumns,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
       },
@@ -445,11 +445,10 @@ const TableView = ({
     });
   }, [computedRelationField]);
 
-  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
-    {
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
       tableSlug,
-    }
-  );
+    });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -559,7 +558,7 @@ const TableView = ({
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
-          style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
           id="data-table"
         >
           <ObjectDataTable

@@ -54,7 +54,7 @@ const SubMenu = ({
 
   const handleClick = () => {
     navigator.clipboard.writeText(
-      `https://dev-wiki.ucode.run/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
+      `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
     );
     setIsCopied(true);
     dispatch(showAlert("Скопировано в буфер обмена", "success"));

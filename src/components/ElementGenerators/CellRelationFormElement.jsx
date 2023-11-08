@@ -227,6 +227,13 @@ const AutoCompleteElement = ({
           // slugOptions,
         };
       },
+      onSuccess: () => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
+      },
     }
   );
 
@@ -266,7 +273,11 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
       },
     }
   );
@@ -285,7 +296,7 @@ const AutoCompleteElement = ({
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
-      new Set(allOptions.map(JSON.stringify))
+      new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);

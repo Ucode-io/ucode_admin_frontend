@@ -1,11 +1,10 @@
-import { Description, Download, Upload } from "@mui/icons-material";
-import { useEffect, useId, useMemo } from "react";
+import { Description } from "@mui/icons-material";
+import { useEffect, useId } from "react";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
@@ -24,23 +23,32 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
+import constructorViewService from "../../../services/constructorViewService";
 
-const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, views, fieldsMap, selectedTable }) => {
+const BoardView = ({
+  view,
+  setViews,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  views,
+  fieldsMap,
+  selectedTable,
+}) => {
+  const queryClient = useQueryClient();
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const { t } = useTranslation();
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-
-  const [columns, setColumns] = useState([]);
+  const [tab, setTab] = useState();
   const { navigateToForm } = useTabRouter();
   const { filters } = useFilters(tableSlug, view.id);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -66,7 +74,9 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
-  const { data: tabs, isLoading: tabsLoader } = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs, isLoading: tabsLoader } = useQuery(
+    queryGenerator(groupField, filters)
+  );
 
   const loader = dataLoader || tabsLoader;
 
@@ -75,9 +85,27 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(columns, dropResult);
-    if (result) setColumns(result);
+    const result = applyDrag(tabs, dropResult);
+    // if (result) updateView(result);
   };
+
+  const updateView = (tabs) => {
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView?.attributes,
+        tabs,
+      },
+    };
+
+    constructorViewService.update(computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
+
+  useEffect(() => {
+    updateView(tabs);
+  }, [tabs]);
 
   return (
     <div>
@@ -126,9 +154,19 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
             >
               <div className={styles.menuBar}>
                 <ExcelButtons />
-                <div className={styles.template} onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div className={`${styles.element} ${selectedTabIndex === views?.length ? styles.active : ""}`}>
-                    <Description className={styles.icon} style={{ color: "#6E8BB7" }} />
+                <div
+                  className={styles.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${styles.element} ${
+                      selectedTabIndex === views?.length ? styles.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={styles.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
                   </div>
                   <span>{t("template")}</span>
                 </div>
@@ -137,9 +175,6 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
                 </PermissionWrapperV2>
               </div>
             </Menu>
-            {/* <ExcelButtons />
-
-            <SettingsButton /> */}
           </>
         }
       >
@@ -155,6 +190,7 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
           setIsChanged={setIsChanged}
           selectedView={selectedView}
           setSelectedView={setSelectedView}
+          setTab={setTab}
         />
       </FiltersBlock>
 
@@ -175,7 +211,9 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
         <PageFallback />
       ) : (
         <div className={styles.wrapper}>
-          {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
+          {(view?.quick_filters?.length > 0 ||
+            (new_list[tableSlug] &&
+              new_list[tableSlug].some((i) => i.checked))) && (
             <div className={styles.filters}>
               <p>{t("filters")}</p>
               <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
@@ -197,9 +235,16 @@ const BoardView = ({ view, setViews, selectedTabIndex, setSelectedTabIndex, view
               }}
               style={{ display: "flex", gap: 24 }}
             >
-              {tabs?.map((tab) => (
+              {view?.attributes?.tabs?.map((tab) => (
                 <Draggable key={tab.value}>
-                  <BoardColumn key={tab.value} tab={tab} data={data} fieldsMap={fieldsMap} view={view} navigateToCreatePage={navigateToCreatePage} />
+                  <BoardColumn
+                    key={tab.value}
+                    tab={tab}
+                    data={data}
+                    fieldsMap={fieldsMap}
+                    view={view}
+                    navigateToCreatePage={navigateToCreatePage}
+                  />
                 </Draggable>
               ))}
             </Container>
@@ -238,7 +283,10 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
+      queryKey: [
+        "GET_OBJECT_LIST_ALL",
+        { tableSlug: groupField.table_slug, filters: computedFilters },
+      ],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

@@ -1,8 +1,8 @@
-import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
+import {Controller, useWatch} from "react-hook-form";
+import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
-import { Box } from "@mui/material";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@mui/material";
+import {Lock} from "@mui/icons-material";
 
 const HFNumberField = ({
   control,
@@ -40,7 +40,8 @@ const HFNumberField = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
+      render={({field: {onChange, value}, fieldState: {error}}) => {
+        console.log("valuevalue", value);
         return (
           <Box
             style={
@@ -75,7 +76,7 @@ const HFNumberField = ({
               autoComplete="off"
               allowNegative
               fullWidth={fullWidth}
-              value={value}
+              value={Boolean(value) ? value : 0}
               onValueChange={(value) => {
                 // const val = e.target.value;
                 // const valueWithoutSpaces = val.replaceAll(" ", "");
@@ -90,7 +91,9 @@ const HFNumberField = ({
                 // isNewTableView && updateObject();
                 handleChange(value, onChange);
               }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${
+                styles.numberField
+              }`}
               name={name}
               readOnly={disabled}
               style={
@@ -102,7 +105,7 @@ const HFNumberField = ({
                       outline: "none",
                     }
                   : disabled
-                  ? { background: "#c0c0c039", borderRight: 0, outline: "none" }
+                  ? {background: "#c0c0c039", borderRight: 0, outline: "none"}
                   : {
                       background: isBlackBg ? "#2A2D34" : "",
                       color: isBlackBg ? "#fff" : "",
@@ -121,7 +124,7 @@ const HFNumberField = ({
                   padding: "5px",
                 }}
               >
-                <Lock style={{ fontSize: "20px" }} />
+                <Lock style={{fontSize: "20px"}} />
               </Box>
             )}
           </Box>

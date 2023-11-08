@@ -127,7 +127,7 @@ const CellElementGeneratorForTableView = ({
   //     );
   //   }
   // }, [changedValue, setFormValue, columns, field, selectedRow]);
-
+  console.log("fielddddd", field);
   switch (field.type) {
     case "LOOKUP":
       return (

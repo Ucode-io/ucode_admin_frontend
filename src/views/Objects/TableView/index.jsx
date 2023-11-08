@@ -76,24 +76,11 @@ const TableView = ({
   const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
 
-  // const selectTableSlug = selectedLinkedObject
-  //   ? selectedLinkedObject?.split("#")?.[1]
-  //   : tableSlug;
-
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
       app_id: appId,
-      // sections: [
-      //   {
-      //     column: "SINGLE",
-      //     fields: [],
-      //     label: "Детали",
-      //     id: generateGUID(),
-      //     icon: "circle-info.svg",
-      //   },
-      // ],
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -103,7 +90,6 @@ const TableView = ({
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -211,10 +197,6 @@ const TableView = ({
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
   }, [view, fieldsMap]);
-
-  // const columnss = useMemo(() => {
-  //   return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
-  // }, [view, fieldsMap]);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
@@ -381,7 +363,7 @@ const TableView = ({
     return filteredFields;
   }, [fieldView, fiedlsarray]);
 
-  const computedRelationField = useMemo(() => {
+  const computedRelationFields = useMemo(() => {
     const computedFields = Object.values(fieldsMap)?.filter((element) => {
       return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
     });
@@ -391,59 +373,73 @@ const TableView = ({
     });
   }, [fieldsMap, view]);
 
-  // const {data: optionsFromLocale} = useQuery(
-  //   ["GET_OBJECT_LIST", computedRelationField?.[1]?.table_slug],
-  //   () => {
-  //     return constructorObjectService.getListV2(
-  //       computedRelationField?.[1]?.table_slug,
-  //       {
-  //         data: {
-  //           limit: 10,
-  //         },
-  //       }
-  //     );
-  //   },
-  //   {
-  //     select: (res) => {
-  //       console.log("ressssssssssssss", res);
-  //       const options = res?.data?.response ?? [];
+  const getOptionsList = () => {
+    const computedIds = computedRelationFields?.map((item) => ({
+      table_slug: item?.slug,
+      ids: Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug]))),
+    }));
 
-  //       return {
-  //         options,
-  //         // slugOptions,
-  //       };
-  //     },
-  //     // onSuccess: (data) => {
-  //     //   setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
-  //     // },
-  //   }
-  // );
+    tableData?.length &&
+      computedRelationFields?.forEach((item, index) => {
+        constructorObjectService
+          .getListV2(item?.table_slug, {
+            data: {
+              limit: 10,
+              offset: 0,
+              additional_request: {
+                additional_field: "guid",
+                additional_values: computedIds?.find(
+                  (computedItem) => computedItem?.table_slug === item?.slug
+                )?.ids,
+              },
+            },
+          })
+          .then((res) => {
+            if (relOptions?.length > 0) {
+              setRelOptions((prev) => {
+                const updatedOptions = prev.map((option) => {
+                  if (option.table_slug === item?.table_slug) {
+                    return {
+                      table_slug: item?.table_slug,
+                      response: res?.data?.response,
+                    };
+                  }
+                  return option;
+                });
+                return updatedOptions;
+              });
+            } else {
+              setRelOptions((prev) => [
+                ...prev,
+                {
+                  table_slug: item?.table_slug,
+                  response: res?.data?.response,
+                },
+              ]);
+            }
+          });
+      });
+  };
 
   useEffect(() => {
-    computedRelationField?.forEach((item, index) => {
-      constructorObjectService
-        .getListV2(item?.table_slug, {
-          data: {
-            limit: 10,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [
-                mainForm.getValues(`multi.${index}.${item?.slug}`),
-              ],
-            },
-          },
-        })
-        .then((res) => {
-          setRelOptions((prev) => [
-            ...prev,
-            {
-              table_slug: item?.table_slug,
-              response: res?.data?.response,
-            },
-          ]);
+    getOptionsList();
+  }, [tableData, computedRelationFields]);
+
+  const getLayoutList = () => {
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+        is_default: true,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
-    });
-  }, [computedRelationField]);
+      });
+  };
 
   const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
     {
@@ -523,19 +519,7 @@ const TableView = ({
   }, [tableData, reset]);
 
   useEffect(() => {
-    layoutService
-      .getList({
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-        is_default: true,
-      })
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
-        });
-      });
+    getLayoutList();
   }, [tableSlug, i18n?.language]);
 
   useEffect(() => {

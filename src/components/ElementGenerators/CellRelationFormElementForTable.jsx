@@ -243,7 +243,7 @@ const AutoCompleteElement = ({
       page,
     ],
     () => {
-      if (!tableSlug) return null;
+      if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
         data: {
           ...autoFiltersValue,
@@ -285,7 +285,24 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [allOptions, value]);
+  }, [allOptions, value, relOptions]);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const openFormModal = (tableSlug) => {
+    handleOpen();
+    setTableSlugFromProps(tableSlug);
+  };
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   const changeHandler = (value) => {
     const val = value;
@@ -305,38 +322,12 @@ const AutoCompleteElement = ({
   const getValueData = async () => {
     const id = value;
     const data = allOptions?.find((item) => item?.guid === id);
-    if (Boolean(data)) {
-      if (data.prepayment_balance) {
-        setFormValue("prepayment_balance", data.prepayment_balance || 0);
-      }
 
-      setLocalValue(data ? [data] : null);
-    } else {
-      const res = await constructorObjectService.getById(field?.table_slug, id);
-      const data = res?.data?.response;
-      if (data?.prepayment_balance) {
-        setFormValue("prepayment_balance", data?.prepayment_balance || 0);
-      }
-
-      setLocalValue(data ? [data] : null);
+    if (data.prepayment_balance) {
+      setFormValue("prepayment_balance", data.prepayment_balance || 0);
     }
-  };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const openFormModal = (tableSlug) => {
-    handleOpen();
-    setTableSlugFromProps(tableSlug);
-  };
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setLocalValue(data ? [data] : null);
   };
 
   useEffect(() => {

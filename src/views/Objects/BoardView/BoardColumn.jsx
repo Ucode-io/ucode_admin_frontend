@@ -87,7 +87,10 @@ const BoardColumn = ({
       </Container>
 
       <div className={`${styles.columnFooterBlock}`}>
-        <Button variant="contain" fullWidth onClick={navigateToCreatePage}>
+        {/* <Button variant="contain" fullWidth onClick={navigateToCreatePage}>
+          <Add /> Add new
+        </Button> */}
+        <Button variant="contain" fullWidth>
           <Add /> Add new
         </Button>
       </div>

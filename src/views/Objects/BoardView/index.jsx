@@ -86,7 +86,7 @@ const BoardView = ({
 
   const onDrop = (dropResult) => {
     const result = applyDrag(tabs, dropResult);
-    if (result) updateView(result);
+    // if (result) updateView(result);
   };
 
   const updateView = (tabs) => {

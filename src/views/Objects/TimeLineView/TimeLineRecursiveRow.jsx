@@ -32,8 +32,10 @@ export default function TimeLineRecursiveRow({
     ?.view_fields?.map((field) => field?.slug);
 
   useEffect(() => {
-    if (openedRows.includes(item)) {
+    if (openedRows.includes(item?.label)) {
       setOpen(true);
+    } else {
+      setOpen(false);
     }
   }, [item, openedRows]);
 

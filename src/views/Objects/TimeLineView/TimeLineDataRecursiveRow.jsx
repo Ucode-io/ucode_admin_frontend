@@ -20,7 +20,7 @@ export default function TimeLineDataRecursiveRow({
   setOpenedRows,
 }) {
   const [open, setOpen] = useState(false);
-
+console.log('sssssswwww', openedRows)
   useEffect(() => {
     if (openedRows.includes(item?.label)) {
       setOpen(true);

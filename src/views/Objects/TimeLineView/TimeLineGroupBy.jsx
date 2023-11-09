@@ -160,7 +160,6 @@ console.log('unCheckedColumns', unCheckedColumns)
                     disabled={isLoading || updateLoading}
                     checked={allColumns?.checkedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(e, val, column?.id)}
-                    // onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
                 </Draggable>
               ))}
@@ -189,11 +188,32 @@ console.log('unCheckedColumns', unCheckedColumns)
                   </div>
 
                   <Switch
+                  sx={{
+                    "& .MuiSwitch-switchBase": {
+                      transitionDuration: "0ms",
+                    },
+
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#3f51b5",
+                    },
+
+                    "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track": {
+                      backgroundColor: "#e5e5e5",
+                    },
+
+                    "& .MuiSwitch-switchBase.Mui-disabled": {
+                      color: "#e5e5e5",
+                    },
+
+                    "& .MuiSwitch-colorSecondary.Mui-checked": {
+                      color: "#3f51b5",
+                    },
+
+                  }}
                     size="small"
                     disabled={isLoading || updateLoading}
-                    checked={allColumns?.checkedColumns?.includes(item?.id) || selectedView?.group_fields?.includes(item?.id)}
+                    checked={false}
                     onChange={(e, val) => changeHandler(e, val, item?.id)}
-                    // onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
                 </div>
               ))}

@@ -1,4 +1,4 @@
-import {Drawer} from "@mui/material";
+import {Box, Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -28,6 +28,8 @@ import styles from "./styles.module.scss";
 import {includes} from "lodash-es";
 
 const TableView = ({
+  filterVisible,
+  setFilterCount,
   tab,
   view,
   shouldGet,
@@ -531,20 +533,27 @@ const TableView = ({
     refetch();
   }, [view?.quick_filters?.length, refetch]);
 
-  console.log("relOptions", relOptions);
+  useEffect(() => {
+    setFilterCount(getFilteredFilterFields?.length);
+  }, [getFilteredFilterFields]);
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
-        <div className={styles.filters}>
-          <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+        <div
+          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}
+        >
+          <Box className={styles.block}>
+            <p>{t("filters")}</p>
+            <FastFilter
+              view={view}
+              fieldsMap={fieldsMap}
+              getFilteredFilterFields={getFilteredFilterFields}
+              isVertical
+            />
+          </Box>
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>

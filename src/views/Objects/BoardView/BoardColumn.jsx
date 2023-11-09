@@ -80,6 +80,8 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   //   return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
   // };
 
+  console.log("viewFields", viewFields);
+
   return (
     <>
       <div className={styles.column}>
@@ -111,43 +113,30 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
           onDrop={onDrop}
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
         >
-          {computedData.map(
-            (el) => (
-              console.log("el", el),
-              (
-                <Draggable
-                  key={el.guid}
-                  style={{
-                    background: "#fff",
-                    borderRadius: "12px",
-                    marginBottom: "6px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div
-                    className={styles.card}
-                    key={el.guid}
-                    onClick={() => navigateToEditPage(el)}
-                  >
-                    {viewFields.map((field) => (
-                      <>
-                        <BoardPhotoGenerator
-                          key={field.id}
-                          field={field}
-                          el={el}
-                        />
-                        <BoardCardRowGenerator
-                          key={field.id}
-                          field={field}
-                          el={el}
-                        />
-                      </>
-                    ))}
-                  </div>
-                </Draggable>
-              )
-            )
-          )}
+          {computedData.map((el) => (
+            <Draggable
+              key={el.guid}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                marginBottom: "6px",
+                cursor: "pointer",
+              }}
+            >
+              <div
+                className={styles.card}
+                key={el.guid}
+                onClick={() => navigateToEditPage(el)}
+              >
+                {viewFields.map((field) => (
+                  <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                ))}
+                {viewFields.map((field) => (
+                  <BoardCardRowGenerator key={field.id} field={field} el={el} />
+                ))}
+              </div>
+            </Draggable>
+          ))}
         </Container>
 
         <div className={`${styles.columnFooterBlock}`}>

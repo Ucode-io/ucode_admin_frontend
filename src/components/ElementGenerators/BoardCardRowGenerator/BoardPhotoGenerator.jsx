@@ -8,16 +8,16 @@ const BoardPhotoGenerator = ({ field, el }) => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
     return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
   }, [field, el]);
-  switch (field?.type) {
-    case "PHOTO":
-      return (
+
+  return (
+    <>
+      {field.type === "PHOTO" && (
         <div key={field.id} className={styles.row}>
           <img src={value} alt="board_image" className={styles.image} />
         </div>
-      );
-    default:
-      <></>;
-  }
+      )}
+    </>
+  );
 };
 
 export default BoardPhotoGenerator;

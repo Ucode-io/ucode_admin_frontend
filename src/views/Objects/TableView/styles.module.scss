@@ -4,12 +4,16 @@
   overflow: auto;
 
   .filters {
+    padding: 8px;
+    border-right: 1px solid #e3e3e3;
+    width: 200px;
     min-width: 200px;
+    max-width: 200px;
     transition: 0.3s;
 
     .block {
       padding: 8px;
-      border-right: 1px solid #e3e3e3;
+      border-right: 0px solid #e3e3e3;
 
       p {
         font-weight: 700;
@@ -24,12 +28,15 @@
 }
 
 .filtersVisiblitiy {
+  padding: 0px;
+  width: 0px;
   min-width: 0px;
+  max-width: 0px;
   transition: 0.3s;
 
   .block {
-    padding: 8px;
-    border-right: 1px solid #e3e3e3;
+    display: none;
+    padding: 0;
 
     p {
       font-weight: 700;

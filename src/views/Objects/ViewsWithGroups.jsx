@@ -92,7 +92,7 @@ const ViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(true);
   const [filterCount, setFilterCount] = useState();
   const groupTable = view?.attributes.group_by_columns;
 

@@ -1,7 +1,7 @@
 import {Autocomplete, TextField} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useQuery} from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CellManyToManyRelationElement = ({
+  relOptions,
   isBlackBg,
   isFormEdit,
   control,
@@ -68,6 +69,7 @@ const CellManyToManyRelationElement = ({
             />
           ) : (
             <AutoCompleteElement
+              relOptions={relOptions}
               disabled={disabled}
               isFormEdit={isFormEdit}
               placeholder={placeholder}
@@ -97,6 +99,7 @@ const CellManyToManyRelationElement = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
+  relOptions,
   field,
   value,
   isFormEdit,
@@ -115,6 +118,8 @@ const AutoCompleteElement = ({
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const {i18n} = useTranslation();
+  const [allOptions, setAllOptions] = useState([]);
+
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -125,16 +130,6 @@ const AutoCompleteElement = ({
       }
       return result;
     }, null);
-
-    console.log(
-      "matchingProperty",
-      Object.keys(obj).reduce((result, key) => {
-        if (!result && key.includes(`_${desiredLanguage}`)) {
-          result = obj[key];
-        }
-        return result;
-      }, null)
-    );
     return matchingProperty;
   }
   const {id} = useParams();
@@ -199,10 +194,10 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue],
     () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
+      if (!field?.table_slug) return null;
+      return constructorObjectService.getListV2(field?.table_slug, {
         data: {
           ...autoFiltersValue,
           additional_request: {
@@ -216,7 +211,7 @@ const AutoCompleteElement = ({
       });
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && Boolean(debouncedValue),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -229,12 +224,12 @@ const AutoCompleteElement = ({
     }
   );
 
-  const options = useMemo(() => {
-    if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
-    }
-    return optionsFromLocale ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
+  // const options = useMemo(() => {
+  //   if (field?.attributes?.function_path) {
+  //     return optionsFromFunctions ?? [];
+  //   }
+  //   return optionsFromLocale ?? [];
+  // }, [optionsFromFunctions, optionsFromLocale]);
 
   const computedValue = useMemo(() => {
     if (!value) return [];
@@ -242,50 +237,49 @@ const AutoCompleteElement = ({
     if (Array.isArray(value)) {
       return value
         ?.map((id) => {
-          const option = options?.options?.find((el) => el?.guid === id);
+          const option = allOptions?.find((el) => el?.guid === id);
 
           if (!option) return null;
           return {
             ...option,
-            // label: getRelationFieldLabel(field, option)
           };
         })
         .filter((el) => el !== null);
     } else {
-      const option = options?.options?.find((el) => el?.guid === value);
+      const option = allOptions?.find((el) => el?.guid === value);
 
       if (!option) return [];
 
       return [
         {
           ...option,
-          // label: getRelationFieldLabel(field, option)
         },
       ];
     }
-  }, [options, value]);
+  }, [allOptions, value]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
     const val = value?.map((el) => el.guid);
 
     setValue(val ?? null);
-
-    // if (!field?.attributes?.autofill) return;
-
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   const setName = name.split(".");
-    //   setName.pop();
-    //   setName.push(field_to);
-    //   setFormValue(setName.join("."), get(val, field_from));
-    // });
   };
+
+  useEffect(() => {
+    const matchingOption = relOptions?.find(
+      (item) => item?.table_slug === field?.table_slug
+    );
+
+    if (matchingOption) {
+      setAllOptions(matchingOption.response);
+    }
+  }, [relOptions, field]);
 
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={options?.options ?? []}
+        options={allOptions ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (

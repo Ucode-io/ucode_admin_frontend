@@ -55,28 +55,9 @@ const CellElementGeneratorForTableView = ({
     relationTableSlug = field?.id.split("#")[0];
   }
 
-  useEffect(() => {
-    tables?.forEach((table) => {
-      if (table.table_slug === relationTableSlug) {
-        objectIdFromJWT = table.object_id;
-      }
-    });
-  }, [tables, relationTableSlug]);
-
-  const removeLangFromSlug = useMemo(() => {
-    var lastIndex = field.slug.lastIndexOf("_");
-    if (lastIndex !== -1) {
-      var result = field.slug.substring(0, lastIndex);
-      return result;
-    } else {
-      return false;
-    }
-  }, [field.slug]);
-
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
       return `multi.${index}.${field.slug}`;
-      // return `${removeLangFromSlug}_${i18n?.language}`;
     } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
@@ -113,21 +94,19 @@ const CellElementGeneratorForTableView = ({
   }, [field]);
 
   useEffect(() => {
+    tables?.forEach((table) => {
+      if (table.table_slug === relationTableSlug) {
+        objectIdFromJWT = table.object_id;
+      }
+    });
+  }, [tables, relationTableSlug]);
+
+  useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
 
-  // useEffect(() => {
-  //   if (columns.length && changedValue !== undefined && changedValue !== null) {
-  //     columns.forEach(
-  //       (i, rowIndex) =>
-  //         selectedRow.includes(i.guid) &&
-  //         setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
-  //     );
-  //   }
-  // }, [changedValue, setFormValue, columns, field, selectedRow]);
-  console.log("fielddddd", field);
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -155,6 +134,7 @@ const CellElementGeneratorForTableView = ({
     case "LOOKUPS":
       return (
         <CellManyToManyRelationElement
+          relOptions={relOptions}
           disabled={isDisabled}
           isFormEdit
           updateObject={updateObject}
@@ -211,7 +191,6 @@ const CellElementGeneratorForTableView = ({
     case "SCAN_BARCODE":
       return (
         <InventoryBarCode
-          // relatedTable={relatedTable}
           control={control}
           name={computedSlug}
           fullWidth
@@ -510,20 +489,6 @@ const CellElementGeneratorForTableView = ({
 
     case "MULTI_LINE":
       return (
-        // <HFTextEditor
-        //   control={control}
-        //   name={computedSlug}
-        //   tabIndex={field?.tabIndex}
-        //   fullWidth
-        //   multiline
-        //   rows={4}
-        //   defaultValue={field.defaultValue}
-        //   disabled={isDisabled}
-        //   key={computedSlug}
-        //   isTransparent={true}
-        //
-        // />
-
         <MultiLineCellFormElement
           control={control}
           isWrapField={isWrapField}

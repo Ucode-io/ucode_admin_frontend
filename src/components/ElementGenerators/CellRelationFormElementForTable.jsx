@@ -198,7 +198,7 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const {data: optionsFromFunctions} = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
+    ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
@@ -234,14 +234,7 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    [
-      "GET_OBJECT_LIST",
-      tableSlug,
-      debouncedValue,
-      autoFiltersValue,
-      value,
-      page,
-    ],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
@@ -323,8 +316,8 @@ const AutoCompleteElement = ({
     const id = value;
     const data = allOptions?.find((item) => item?.guid === id);
 
-    if (data.prepayment_balance) {
-      setFormValue("prepayment_balance", data.prepayment_balance || 0);
+    if (data?.prepayment_balance) {
+      setFormValue("prepayment_balance", data?.prepayment_balance || 0);
     }
 
     setLocalValue(data ? [data] : null);

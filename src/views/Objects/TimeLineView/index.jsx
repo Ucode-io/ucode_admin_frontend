@@ -7,7 +7,7 @@ import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { Button, Divider, Menu } from "@mui/material";
-import { add, differenceInDays, endOfMonth, startOfMonth } from "date-fns";
+import { add, differenceInDays, endOfMonth, set, startOfMonth } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueries, useQuery, useQueryClient } from "react-query";
@@ -30,7 +30,7 @@ import TimeLineGroupBy from "./TimeLineGroupBy";
 import style from "./styles.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
 
-export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews }) {
+export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews, isViewLoading }) {
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -38,6 +38,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   const [selectedView, setSelectedView] = useState(null);
   const [dateFilters, setDateFilters] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
   const [fieldsMap, setFieldsMap] = useState({});
+  const [dataFromQuery, setDataFromQuery] = useState([]);
 
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
@@ -58,50 +59,55 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     return result;
   }, [dateFilters]);
 
+  const recursionFunctionForAddIsOpen = (data) => {
+    return data?.map((el) => {
+      if (el?.data?.length) {
+        return {
+          ...el,
+          isOpen: false,
+          data: recursionFunctionForAddIsOpen(el?.data),
+        };
+      } else {
+        return {
+          ...el,
+          isOpen: false,
+        };
+      }
+    });
+  };
+
   // FOR DATA
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters }],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
-        data: { ...filters, gte: dateFilters[0], lte: dateFilters[1], with_relations: true, builder_service_view_id: view?.attributes?.group_by_columns?.length ? view?.id : null },
+        data: {
+          ...filters,
+          gte: dateFilters[0],
+          lte: dateFilters[1],
+          with_relations: true,
+          builder_service_view_id: view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
+        },
       });
     },
     {
-      cacheTime: 10,
       select: (res) => {
-        const fields = res.data?.fields ?? [];
-        const relationFields =
-          res?.data?.relation_fields?.map((el) => ({
-            ...el,
-            label: `${el.label} (${el.table_label})`,
-          })) ?? [];
-        const fieldsMap = listToMap([...fields, ...relationFields]);
         const data = res.data?.response?.map((row) => ({
           ...row,
         }));
         return {
-          fieldsMap,
           data,
-          fields,
-          visibleColumns: res?.data?.fields ?? [],
-          visibleRelationColumns:
-            res?.data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
         };
-      },
-      onSuccess: (res) => {
-        if (Object.keys(fieldsMap)?.length) return;
-        setFieldsMap(res.fieldsMap);
       },
     }
   );
 
-  console.log("qqqqqqq", data);
+  useEffect(() => {
+    setDataFromQuery(recursionFunctionForAddIsOpen(data));
+  }, [data]);
 
   // FOR TABLE INFO
-  const { data: { fields, visibleColumns, visibleRelationColumns } = { data: [] } } = useQuery(
+  const { data: { fields, visibleColumns, visibleRelationColumns } = { data: [] }, isLoading: tableInfoLoading } = useQuery(
     ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
@@ -121,7 +127,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         const data = res.data?.response?.map((row) => ({
           ...row,
         }));
-        console.log("fieldsMap", res);
+
         return {
           fieldsMap,
           data,
@@ -261,6 +267,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
       return [...visibleColumns, ...visibleRelationColumns];
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
+
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const updateView = () => {
@@ -274,15 +281,15 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         },
         group_fields: form.watch("group_fields"),
       })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-      })
+      .then(() => {})
       .finally(() => {
         setUpdateLoading(false);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
-
+  console.log("eeeeeeee", view);
   useEffect(() => {
     form.setValue("group_fields", view?.group_fields);
   }, [view, form]);
@@ -633,10 +640,12 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
           height: "calc(100vh - 92px)",
         }}
       >
-        {isLoading ? (
+        {isLoading || tableInfoLoading || isViewLoading ? (
           <PageFallback />
         ) : (
           <TimeLineBlock
+            setDataFromQuery={setDataFromQuery}
+            dataFromQuery={dataFromQuery}
             handleScrollClick={handleScrollClick}
             isLoading={isLoading}
             computedColumnsFor={computedColumnsFor}

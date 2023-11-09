@@ -18,6 +18,7 @@ import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import DescriptionIcon from "@mui/icons-material/Description";
 
 const CellElementGenerator = ({field = {}, row}) => {
+  console.log('shohrux', row)
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 

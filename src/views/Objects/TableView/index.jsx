@@ -376,7 +376,12 @@ const TableView = ({
   const getOptionsList = () => {
     const computedIds = computedRelationFields?.map((item) => ({
       table_slug: item?.slug,
-      ids: Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug]))),
+      ids:
+        item?.type === "LOOKUP"
+          ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+          : Array.from(
+              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
+            ),
     }));
 
     tableData?.length &&
@@ -525,6 +530,7 @@ const TableView = ({
     refetch();
   }, [view?.quick_filters?.length, refetch]);
 
+  console.log("relOptions", relOptions);
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||

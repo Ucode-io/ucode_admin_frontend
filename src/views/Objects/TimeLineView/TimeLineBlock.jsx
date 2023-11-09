@@ -37,12 +37,9 @@ export default function TimeLineBlock({
   useEffect(() => {
     handleScrollClick();
   }, []);
-  // console.log("ssssssssss", view?.attributes?.group_by_columns);
-  // if (!view?.attributes?.group_by_columns?.length) {
-  //   return <TimeLineNoGroup />;
-  // }
 
-  console.log('wwwwwwww', data)
+  console.log('sssssss', data)
+  
   return (
     <div
       className={styles.main_container}

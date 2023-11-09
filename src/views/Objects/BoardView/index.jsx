@@ -24,6 +24,9 @@ import Menu from "@mui/material/Menu";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
 import constructorViewService from "../../../services/constructorViewService";
+import ColumnVisible from "../ColumnVisible";
+import { useForm } from "react-hook-form";
+import CalendarGroupByButton from "../CalendarView/CalendarGroupColumns";
 
 const BoardView = ({
   view,
@@ -34,6 +37,7 @@ const BoardView = ({
   fieldsMap,
   selectedTable,
 }) => {
+  const visibleForm = useForm();
   const queryClient = useQueryClient();
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -72,10 +76,24 @@ const BoardView = ({
     }
   );
 
+  const updateView = (tabs) => {
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView?.attributes,
+        tabs,
+      },
+    };
+    constructorViewService.update(computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
+
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+
   const { data: tabs, isLoading: tabsLoader } = useQuery(
-    queryGenerator(groupField, filters)
+    queryGenerator(groupField, filters, updateView)
   );
 
   const loader = dataLoader || tabsLoader;
@@ -85,26 +103,44 @@ const BoardView = ({
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(tabs, dropResult);
-    // if (result) updateView(result);
+    const result = applyDrag(view?.attributes?.tabs, dropResult);
+    if (result) {
+      updateView(result);
+    }
   };
 
-  const updateView = (tabs) => {
-    const computedData = {
-      ...selectedView,
-      attributes: {
-        ...selectedView?.attributes,
-        tabs,
+  const {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
+      visibleViews: [],
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+    isVisibleLoading,
+    refetch: refetchViews,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { limit: 10, offset: 0 },
+      });
+    },
+    {
+      select: ({ data }) => {
+        return {
+          visibleViews: data?.views ?? [],
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
       },
-    };
-
-    constructorViewService.update(computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-    });
-  };
+    }
+  );
 
   useEffect(() => {
-    updateView(tabs);
+    updateView(view?.attributes?.tabs);
   }, [tabs]);
 
   return (
@@ -201,9 +237,29 @@ const BoardView = ({
           background: "#fff",
           borderBottom: "1px solid #E5E9EB",
           marginBottom: "10px",
+          marginLeft: "auto",
+          display: "flex",
+          justifyContent: "flex-end",
         }}
       >
-        <h3>{view.table_label}</h3>
+        <ColumnVisible
+          selectedTabIndex={selectedTabIndex}
+          views={views}
+          columns={visibleColumns}
+          relationColumns={visibleRelationColumns}
+          isLoading={isVisibleLoading}
+          form={visibleForm}
+          text={"Columns"}
+        />
+        <CalendarGroupByButton
+          selectedTabIndex={selectedTabIndex}
+          text="Group"
+          width="105px"
+          views={views}
+          columns={visibleColumns}
+          relationColumns={visibleRelationColumns}
+          isLoading={isVisibleLoading}
+        />
       </div>
 
       {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
@@ -255,7 +311,7 @@ const BoardView = ({
   );
 };
 
-const queryGenerator = (groupField, filters = {}) => {
+const queryGenerator = (groupField, filters = {}, updateView) => {
   if (!groupField)
     return {
       queryFn: () => {},
@@ -288,12 +344,13 @@ const queryGenerator = (groupField, filters = {}) => {
         { tableSlug: groupField.table_slug, filters: computedFilters },
       ],
       queryFn,
-      select: (res) =>
-        res?.data?.response?.map((el) => ({
+      select: (res) => {
+        return res?.data?.response?.map((el) => ({
           label: getRelationFieldTabsLabel(groupField, el),
           value: el.guid,
           slug: groupField?.slug,
-        })),
+        }));
+      },
     };
   }
 };

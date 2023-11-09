@@ -4,7 +4,7 @@ import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
 import { listToMap } from "../../utils/listToMap";
@@ -25,7 +25,7 @@ const ObjectsPage = () => {
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const { i18n } = useTranslation();
-
+  const queryClient = useQueryClient();
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const params = {
@@ -57,10 +57,12 @@ const ObjectsPage = () => {
         };
       },
       onSuccess: ({ views }) => {
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
   );
+
   useEffect(() => {
     queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
   }, [queryTab]);
@@ -116,6 +118,7 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      isViewLoading={isLoading}
                     />
                   </>
                 ) : (

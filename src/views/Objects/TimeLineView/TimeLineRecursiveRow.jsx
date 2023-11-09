@@ -1,0 +1,107 @@
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import { Collapse } from "@mui/material";
+import { get } from "@ngard/tiny-get";
+import React, { useEffect, useMemo, useState } from "react";
+import constructorObjectService from "../../../services/constructorObjectService";
+import styles from "./styles.module.scss";
+
+export default function TimeLineRecursiveRow({
+  groupItem: item,
+  fieldsMap,
+  view,
+  groupbyFields,
+  level,
+  selectedType,
+  computedColumnsFor,
+  setFocusedDays,
+  datesList,
+  zoomPosition,
+  calendar_from_slug,
+  calendar_to_slug,
+  visible_field,
+  openedRows,
+  setOpenedRows,
+  sub = false,
+}) {
+  const [open, setOpen] = useState(false);
+  const [label, setLabel] = useState({});
+
+  const viewFields = Object.values(fieldsMap)
+    .find((field) => field?.table_slug === item?.group_by_slug)
+    ?.view_fields?.map((field) => field?.slug);
+
+  useEffect(() => {
+    if (openedRows.includes(item)) {
+      setOpen(true);
+    }
+  }, [item, openedRows]);
+
+  const handleClick = () => {
+    setOpen(!open);
+    if (!open) {
+      setOpenedRows([...openedRows, item?.label]);
+    } else {
+      setOpenedRows(openedRows.filter((row) => row !== item?.label));
+    }
+  };
+
+  useEffect(() => {
+    if (item?.group_by_type === "LOOKUP") {
+      constructorObjectService.getById(item?.group_by_slug, item?.label).then((res) => {
+        if (res?.data?.response) {
+          setLabel(res?.data?.response);
+        }
+      });
+    }
+  }, [item]);
+
+  const computedValue = useMemo(() => {
+    const slugs = viewFields?.map((item) => item) ?? [];
+    return slugs.map((slug) => get(label, slug, "")).join(" ");
+  }, [label, viewFields]);
+
+  return (
+    <div>
+      <div className={styles.group_by_column}>
+        <div
+          onClick={handleClick}
+          className={styles.group_by_column_header}
+          style={{
+            backgroundColor: sub ? "#FFF" : "",
+          }}
+        >
+          {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
+          {item?.data?.[0]?.data && <>{open ? <ExpandLess /> : <ExpandMore />}</>}
+          {/* {!item?.data?.[0]?.data && <>{open ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}</>} */}
+        </div>
+        {item?.data &&
+          item?.data?.map(
+            (option, index) =>
+              option?.data && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <TimeLineRecursiveRow
+                    openedRows={openedRows}
+                    setOpenedRows={setOpenedRows}
+                    sub={true}
+                    level={index}
+                    groupItem={option}
+                    fieldsMap={fieldsMap}
+                    view={view}
+                    groupbyFields={groupbyFields}
+                    selectedType={selectedType}
+                    computedColumnsFor={computedColumnsFor}
+                    setFocusedDays={setFocusedDays}
+                    datesList={datesList}
+                    zoomPosition={zoomPosition}
+                    calendar_from_slug={calendar_from_slug}
+                    calendar_to_slug={calendar_to_slug}
+                    visible_field={visible_field}
+                  />
+                </Collapse>
+              )
+          )}
+      </div>
+    </div>
+  );
+}

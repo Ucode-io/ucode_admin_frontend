@@ -240,7 +240,7 @@
   min-width: 60px;
   border: 1px solid #e5e9eb;
   height: 100%;
-  position: relative;
+  // position: relative;
 }
 
 .monthText {
@@ -321,6 +321,36 @@
       align-items: center;
       padding-left: 3px;
     }
+  }
+}
+
+.dataBlock {
+  position: absolute;
+  // top: 64px;
+  left: 120px;
+  width: 60px;
+  height: 32px;
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  border: 1px solid #87909e;
+  display: flex;
+  align-items: center;
+  padding-left: 3px;
+}
+
+.datas {
+  .dataBlock {
+    // position: absolute;
+    top: 64px;
+    left: 120px;
+    width: 60px;
+    height: 32px;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    border: 1px solid #87909e;
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
   }
 }
 
@@ -631,7 +661,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    // position: relative;
 
     button {
       margin: 0;
@@ -644,7 +674,7 @@
       background-color: #f76659;
       padding: 2px;
       color: #fff;
-      position: absolute;
+      // position: absolute;
       right: 10px;
       top: 0;
       height: 16px;
@@ -746,6 +776,7 @@
   width: 100vw;
   height: max-content;
   min-height: calc(100vh - 92px);
+  position: relative;
 
   .group_by {
     min-width: 200px;

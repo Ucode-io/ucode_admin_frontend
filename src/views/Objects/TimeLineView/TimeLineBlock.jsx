@@ -1,15 +1,14 @@
-import { addDays } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
+import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
-import constructorObjectService from "../../../services/constructorObjectService";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import constructorRelationService from "../../../services/constructorRelationService";
+import TimeLineNoGroup from "./TimeLineNoGroup";
 import PageFallback from "../../../components/PageFallback";
 
 export default function TimeLineBlock({
+  setDataFromQuery,
+  dataFromQuery,
   data,
   fieldsMap,
   datesList,
@@ -27,117 +26,23 @@ export default function TimeLineBlock({
   isLoading,
 }) {
   const scrollContainerRef = useRef(null);
-  const [allData, setAllData] = useState([]);
   const [focusedDays, setFocusedDays] = useState([]);
-  const { tableSlug } = useParams();
-  const [relaitonLoading, setRelationLoading] = useState(false);
-  const handleScroll = (e) => {
-    const { scrollLeft, scrollWidth, clientWidth } = e.target;
-
-    if (scrollLeft + clientWidth >= scrollWidth) {
-      // console.log("ssssssss End of scrolling");
-      const newDate = [dateFilters[0], addDays(dateFilters[1], 10)];
-      setDateFilters(newDate);
-    }
-
-    // if (scrollLeft === 0) {
-    //   // console.log("ssssssss Start of scrolling");
-    //   const newDate = [addDays(dateFilters[0], -10), dateFilters[1]];
-    //   setDateFilters(newDate);
-    // }
-  };
-
+  const [openedRows, setOpenedRows] = useState([]);
   const groupbyFields = useMemo(() => {
     return view?.group_fields?.map((field) => {
       return fieldsMap?.[field];
     });
   }, [view?.group_fields, fieldsMap]);
 
-  const getDataRelation = async (field) => {
-    setRelationLoading(true);
-    try {
-      const res = await constructorObjectService.getList(field?.table_slug, {
-        data: {},
-      });
-      return res?.data?.response;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setRelationLoading(false);
-    }
-  };
-
-  const getDataText = async (viewID) => {
-    setRelationLoading(true);
-    try {
-      const res = await constructorObjectService.getList(tableSlug, {
-        data: {
-          builder_service_view_id: viewID,
-        },
-      });
-      return res?.data?.response;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setRelationLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (groupbyFields?.length === 1) {
-        if (groupbyFields[0]?.type === "MULTISELECT") {
-          setAllData(groupbyFields[0]?.attributes?.options);
-        } else if (groupbyFields[0]?.type === "LOOKUP" || groupbyFields[0]?.type === "LOOKUPS") {
-          const options = await getDataRelation(groupbyFields?.[0]);
-          setAllData(options);
-        } else if (groupbyFields[0]?.type === "SINGLE_LINE") {
-          const options = await getDataText(view?.id);
-
-          const result = options?.map((item) => {
-            return {
-              ...item,
-              label: item?.[groupbyFields?.[0]?.slug],
-            };
-          });
-
-          setAllData(
-            result?.filter((item) => {
-              return item?.[groupbyFields?.[0]?.slug] !== null;
-            })
-          );
-        }
-      } else if (groupbyFields?.length === 2) {
-        // FOR 2 GROUP BY
-        if (groupbyFields?.[0]?.type === "LOOKUP" && groupbyFields?.[1]?.type === "LOOKUP") {
-          const options1 = await getDataRelation(groupbyFields?.[0]);
-          const options2 = await getDataRelation(groupbyFields?.[1]);
-
-          console.log('options', options1, options2, groupbyFields?.[0]?.table_slug)
-
-          const result = options1?.map((item) => {
-            const options = options2?.filter((option) => option?.[`${groupbyFields?.[0]?.table_slug}_id`] === item?.guid);
-            console.log('eeeeee', options)
-            return {
-              ...item,
-              options,
-            };
-          });
-          setAllData(result);
-        } else {
-          setAllData([]);
-        }
-      }
-    }
-
-    fetchData();
-  }, [groupbyFields, view?.id]);
-
   useEffect(() => {
     handleScrollClick();
   }, []);
+  // console.log("ssssssssss", view?.attributes?.group_by_columns);
+  // if (!view?.attributes?.group_by_columns?.length) {
+  //   return <TimeLineNoGroup />;
+  // }
 
-console.log('allData', allData) 
+  console.log('wwwwwwww', data)
   return (
     <div
       className={styles.main_container}
@@ -145,24 +50,33 @@ console.log('allData', allData)
         height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
       }}
     >
-      {view?.group_fields?.length ? (
+      {view?.attributes?.group_by_columns?.length !== 0 && (
         <div className={styles.group_by}>
           <div className={`${styles.fakeDiv} ${selectedType === "month" ? styles.month : ""}`}>Columns</div>
 
           <div className={styles.group_by_columns}>
-            {allData?.map((item) => (
-              <div className={styles.group_by_column}>
-                <div className={styles.group_by_column_header}>{item?.label ?? item?.[groupbyFields?.[0]?.view_fields?.[0]?.slug]}</div>
-                {item?.options?.map((option) => (
-                  <div className={styles.subs}>
-                    <div className={styles.group_by_sub_column}>{option?.[groupbyFields?.[1]?.view_fields?.[0]?.slug]}</div>
-                  </div>
-                ))}
-              </div>
+            {data?.map((item, index) => (
+              <TimeLineRecursiveRow
+                openedRows={openedRows}
+                setOpenedRows={setOpenedRows}
+                level={index}
+                groupItem={item}
+                fieldsMap={fieldsMap}
+                view={view}
+                groupbyFields={groupbyFields}
+                selectedType={selectedType}
+                computedColumnsFor={computedColumnsFor}
+                setFocusedDays={setFocusedDays}
+                datesList={datesList}
+                zoomPosition={zoomPosition}
+                calendar_from_slug={calendar_from_slug}
+                calendar_to_slug={calendar_to_slug}
+                visible_field={visible_field}
+              />
             ))}
           </div>
         </div>
-      ) : null}
+      )}
       <div
         className={styles.gantt}
         ref={scrollContainerRef}
@@ -170,26 +84,23 @@ console.log('allData', allData)
       >
         <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
 
-        {relaitonLoading || isLoading ? (
-          <PageFallback />
-        ) : (
-          <TimeLineDayDataBlock
-            computedColumnsFor={computedColumnsFor}
-            groupbyFields={groupbyFields}
-            groupByList={allData}
-            setFocusedDays={setFocusedDays}
-            selectedType={selectedType}
-            zoomPosition={zoomPosition}
-            data={data}
-            fieldsMap={fieldsMap}
-            view={view}
-            tabs={tabs}
-            datesList={datesList}
-            calendar_from_slug={calendar_from_slug}
-            calendar_to_slug={calendar_to_slug}
-            visible_field={visible_field}
-          />
-        )}
+        <TimeLineDayDataBlock
+          openedRows={openedRows}
+          setOpenedRows={setOpenedRows}
+          computedColumnsFor={computedColumnsFor}
+          groupbyFields={groupbyFields}
+          setFocusedDays={setFocusedDays}
+          selectedType={selectedType}
+          zoomPosition={zoomPosition}
+          data={data}
+          fieldsMap={fieldsMap}
+          view={view}
+          tabs={tabs}
+          datesList={datesList}
+          calendar_from_slug={calendar_from_slug}
+          calendar_to_slug={calendar_to_slug}
+          visible_field={visible_field}
+        />
       </div>
     </div>
   );

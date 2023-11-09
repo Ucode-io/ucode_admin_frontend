@@ -1,4 +1,4 @@
-import {Description, MoreVertOutlined} from "@mui/icons-material";
+import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
 import CustomActionsButton from "./components/CustomActionsButton";
@@ -8,20 +8,20 @@ import {
   Edit,
   Save,
 } from "@mui/icons-material";
-import {useFieldArray, useForm} from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import {Button, CircularProgress, Divider, Menu, Switch} from "@mui/material";
-import {endOfMonth, startOfMonth} from "date-fns";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useMutation, useQuery} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import {CheckIcon} from "../../assets/icons/icon";
+import { Button, CircularProgress, Divider, Menu, Switch } from "@mui/material";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { CheckIcon } from "../../assets/icons/icon";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
@@ -30,14 +30,14 @@ import TableCard from "../../components/TableCard";
 import useFilters from "../../hooks/useFilters";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import ColumnVisible from "./ColumnVisible";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import GroupByButton from "./GroupByButton";
 import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
-import {menuActions} from "../../store/menuItem/menuItem.slice";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 import TableView from "./TableView";
 import TreeView from "./TreeView";
 import ExcelButtons from "./components/ExcelButtons";
@@ -59,22 +59,22 @@ const ViewsWithGroups = ({
   fieldsMap,
   menuItem,
 }) => {
-  const {t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { t } = useTranslation();
+  const { tableSlug } = useParams();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [shouldGet, setShouldGet] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -143,7 +143,7 @@ const ViewsWithGroups = ({
     },
   });
 
-  const {fields, remove, append} = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name: "multi",
   });
@@ -152,7 +152,7 @@ const ViewsWithGroups = ({
     return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
   }, []);
 
-  const {mutate: updateMultipleObject, isLoading} = useMutation(
+  const { mutate: updateMultipleObject, isLoading } = useMutation(
     (values) =>
       constructorObjectService.updateMultipleObject(tableSlug, {
         data: {
@@ -192,7 +192,7 @@ const ViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
@@ -238,7 +238,7 @@ const ViewsWithGroups = ({
   }, []);
 
   const {
-    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
       visibleViews: [],
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -246,14 +246,14 @@ const ViewsWithGroups = ({
     isVisibleLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
-        data: {limit: 10, offset: 0},
+        data: { limit: 10, offset: 0 },
       });
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],
@@ -609,11 +609,11 @@ const ViewsWithGroups = ({
         <TableCard type="withoutPadding">
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
-              <div style={{display: "flex", alignItems: "center"}}>
-                <div className="title" style={{marginRight: "20px"}}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="title" style={{ marginRight: "20px" }}>
                   <h3>{view.table_label}</h3>
                 </div>
-                <TabList style={{border: "none"}}>
+                <TabList style={{ border: "none" }}>
                   {tabs?.map((tab) => (
                     <Tab
                       key={tab.value}
@@ -845,7 +845,7 @@ const queryGenerator = (groupField, filters = {}) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -868,7 +868,7 @@ const queryGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
+        { tableSlug: groupField.table_slug, filters: computedFilters },
       ],
       queryFn,
       select: (res) =>

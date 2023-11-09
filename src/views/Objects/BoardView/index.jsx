@@ -1,9 +1,8 @@
-import { Description } from "@mui/icons-material";
 import { useEffect, useId } from "react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -12,21 +11,20 @@ import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import { applyDrag } from "../../../utils/applyDrag";
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
-import ExcelButtons from "../components/ExcelButtons";
 import FastFilter from "../components/FastFilter";
-import FastFilterButton from "../components/FastFilter/FastFilterButton";
-import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import BoardColumn from "./BoardColumn";
 import styles from "./style.module.scss";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import Menu from "@mui/material/Menu";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
 import constructorViewService from "../../../services/constructorViewService";
 import ColumnVisible from "../ColumnVisible";
 import { useForm } from "react-hook-form";
-import CalendarGroupByButton from "../CalendarView/CalendarGroupColumns";
+import BoardGroupButton from "./BoardGroupBy";
+import ShareModal from "../ShareModal/ShareModal";
+import { Button } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { store } from "../../../store";
 
 const BoardView = ({
   view,
@@ -38,8 +36,9 @@ const BoardView = ({
   selectedTable,
 }) => {
   const visibleForm = useForm();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const { t } = useTranslation();
@@ -49,15 +48,11 @@ const BoardView = ({
   const [tab, setTab] = useState();
   const { navigateToForm } = useTabRouter();
   const { filters } = useFilters(tableSlug, view.id);
+  const menuItem = store.getState().menu.menuItem;
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+  const navigateToSettingsPage = () => {
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    navigate(url);
   };
 
   useEffect(() => {
@@ -120,7 +115,7 @@ const BoardView = ({
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: { limit: 10, offset: 0 },
       });
     },
@@ -140,7 +135,9 @@ const BoardView = ({
   );
 
   useEffect(() => {
-    updateView(view?.attributes?.tabs);
+    if (tabs) {
+      updateView(tabs);
+    }
   }, [tabs]);
 
   return (
@@ -148,69 +145,29 @@ const BoardView = ({
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton view={view} />
+            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+              <ShareModal />
+            </PermissionWrapperV2>
 
-            <button className={styles.moreButton} onClick={handleClick}>
-              <MoreHorizIcon
+            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+              <Button
+                variant="outlined"
+                onClick={navigateToSettingsPage}
                 style={{
-                  color: "#888",
+                  borderColor: "#A8A8A8",
+                  width: "35px",
+                  height: "35px",
+                  padding: "0px",
+                  minWidth: "35px",
                 }}
-              />
-            </button>
-            <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <div className={styles.menuBar}>
-                <ExcelButtons />
-                <div
-                  className={styles.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${styles.element} ${
-                      selectedTabIndex === views?.length ? styles.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={styles.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
-                  </div>
-                  <span>{t("template")}</span>
-                </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  <SettingsButton />
-                </PermissionWrapperV2>
-              </div>
-            </Menu>
+              >
+                <SettingsIcon
+                  style={{
+                    color: "#A8A8A8",
+                  }}
+                />
+              </Button>
+            </PermissionWrapperV2>
           </>
         }
       >
@@ -244,21 +201,18 @@ const BoardView = ({
       >
         <ColumnVisible
           selectedTabIndex={selectedTabIndex}
-          views={views}
+          views={visibleViews}
           columns={visibleColumns}
           relationColumns={visibleRelationColumns}
           isLoading={isVisibleLoading}
           form={visibleForm}
           text={"Columns"}
         />
-        <CalendarGroupByButton
+        <BoardGroupButton
           selectedTabIndex={selectedTabIndex}
           text="Group"
           width="105px"
-          views={views}
-          columns={visibleColumns}
-          relationColumns={visibleRelationColumns}
-          isLoading={isVisibleLoading}
+          form={visibleForm}
         />
       </div>
 

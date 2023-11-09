@@ -32,7 +32,6 @@ export default function ColumnVisible({
 
   // const watchedColumns = form.watch("columns");
   // const watchedGroupColumns = form.watch("attributes.group_by_columns");
-  console.log("views?.[selectedTabIndex]", views?.[selectedTabIndex]);
   useEffect(() => {
     form.reset({
       columns:

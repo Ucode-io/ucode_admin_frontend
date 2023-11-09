@@ -63,11 +63,10 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
-
   const tableInfo = store.getState().menu.menuItem;
 
   const getAllData = async () => {
@@ -154,15 +153,18 @@ const ObjectsFormPage = ({
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
-        navigate(-1);
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         dispatch(showAlert("Successfully updated", "success"));
-        handleClose();
+        if (modal) {
+          handleClose();
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+        } else {
+          navigate(-1);
+        }
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-
   const create = (data) => {
     setBtnLoader(true);
 
@@ -176,6 +178,7 @@ const ObjectsFormPage = ({
         });
         if (modal) {
           handleClose();
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
           navigate(-1);
           handleClose();

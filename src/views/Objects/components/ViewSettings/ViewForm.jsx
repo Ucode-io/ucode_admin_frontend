@@ -197,6 +197,7 @@ const ViewForm = ({
             default_value: el.default_value ?? "",
           })) ?? [],
       attributes: {
+        ...attributes,
         ...computeFinancialAcc(
           values.chartOfAccounts,
           values?.group_by_field_selected?.slug,

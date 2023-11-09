@@ -8,21 +8,12 @@ import styles from "./style.module.scss";
 const BoardCardRowGenerator = ({ field, el }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
-    return getRelationFieldTableCellLabel(
-      field,
-      el,
-      field.slug + "_data"
-    );;
+    return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
   }, [field, el]);
 
   switch (field?.type) {
     case "PHOTO":
-      return (
-        <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
-          <img src={value} alt="board_image" className={styles.image} />
-        </div>
-      );
+      return <></>;
 
     case "MULTISELECT":
       return (

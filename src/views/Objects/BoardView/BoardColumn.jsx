@@ -10,8 +10,6 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import { get } from "@ngard/tiny-get";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 
 const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
@@ -35,12 +33,12 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
           [tab.slug]: tab.value,
         },
       });
+    },
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+      },
     }
-    // {
-    //   onSuccess: () => {
-    //     queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-    //   },
-    // }
   );
 
   const onDrop = (dropResult) => {
@@ -74,13 +72,6 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
     setOpen(true);
     setDateInfo({ [tab.slug]: tab.value });
   };
-
-  // const value = (field, el) => {
-  //   if (field.type !== "LOOKUP") return get(el, field.slug, "");
-  //   return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
-  // };
-
-  console.log("viewFields", viewFields);
 
   return (
     <>
@@ -140,9 +131,6 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
         </Container>
 
         <div className={`${styles.columnFooterBlock}`}>
-          {/* <Button variant="contain" fullWidth onClick={navigateToCreatePage}>
-          <Add /> Add new
-        </Button> */}
           <Button
             variant="contain"
             fullWidth

@@ -1,4 +1,4 @@
-import {Drawer} from "@mui/material";
+import {Box, Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -25,8 +25,11 @@ import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/Relati
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import {includes} from "lodash-es";
 
 const TableView = ({
+  filterVisible,
+  setFilterCount,
   tab,
   view,
   shouldGet,
@@ -62,32 +65,24 @@ const TableView = ({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [open, setOpen] = useState(false);
+  const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
+  const [selectedRow, setSelectedRow] = useState("");
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const {i18n} = useTranslation();
-
-  // const selectTableSlug = selectedLinkedObject
-  //   ? selectedLinkedObject?.split("#")?.[1]
-  //   : tableSlug;
+  const [relOptions, setRelOptions] = useState([]);
 
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
       app_id: appId,
-      // sections: [
-      //   {
-      //     column: "SINGLE",
-      //     fields: [],
-      //     label: "Детали",
-      //     id: generateGUID(),
-      //     icon: "circle-info.svg",
-      //   },
-      // ],
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -97,7 +92,6 @@ const TableView = ({
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -206,10 +200,6 @@ const TableView = ({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
-  // const columnss = useMemo(() => {
-  //   return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
-  // }, [view, fieldsMap]);
-
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 
@@ -234,7 +224,7 @@ const TableView = ({
 
       if (matchingSort) {
         const {field, order} = matchingSort;
-        const sortKey = fieldsMap[field].slug;
+        const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
     }
@@ -268,8 +258,6 @@ const TableView = ({
       fieldView: [],
       fiedlsarray: [],
     },
-    // refetch,
-    // isLoading: tableLoader,
   } = useQuery({
     queryKey: [
       "GET_TABLE_INFO",
@@ -377,18 +365,88 @@ const TableView = ({
     return filteredFields;
   }, [fieldView, fiedlsarray]);
 
-  useEffect(() => {
-    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
-    else setLimit(parseInt(view?.default_limit));
-  }, [view?.default_limit]);
+  const computedRelationFields = useMemo(() => {
+    const computedFields = Object.values(fieldsMap)?.filter((element) => {
+      return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
+    });
+
+    return computedFields?.filter((item) => {
+      return view?.columns?.includes(item?.id);
+    });
+  }, [fieldsMap, view]);
+
+  const getOptionsList = () => {
+    const computedIds = computedRelationFields?.map((item) => ({
+      table_slug: item?.slug,
+      ids:
+        item?.type === "LOOKUP"
+          ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+          : Array.from(
+              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
+            ),
+    }));
+
+    tableData?.length &&
+      computedRelationFields?.forEach((item, index) => {
+        constructorObjectService
+          .getListV2(item?.table_slug, {
+            data: {
+              limit: 10,
+              offset: 0,
+              additional_request: {
+                additional_field: "guid",
+                additional_values: computedIds?.find(
+                  (computedItem) => computedItem?.table_slug === item?.slug
+                )?.ids,
+              },
+            },
+          })
+          .then((res) => {
+            if (relOptions?.length > 0) {
+              setRelOptions((prev) => {
+                const updatedOptions = prev.map((option) => {
+                  if (option.table_slug === item?.table_slug) {
+                    return {
+                      table_slug: item?.table_slug,
+                      response: res?.data?.response,
+                    };
+                  }
+                  return option;
+                });
+                return updatedOptions;
+              });
+            } else {
+              setRelOptions((prev) => [
+                ...prev,
+                {
+                  table_slug: item?.table_slug,
+                  response: res?.data?.response,
+                },
+              ]);
+            }
+          });
+      });
+  };
 
   useEffect(() => {
-    if (tableData?.length > 0) {
-      reset({
-        multi: tableData.map((i) => i),
+    getOptionsList();
+  }, [tableData, computedRelationFields]);
+
+  const getLayoutList = () => {
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+        is_default: true,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
+        });
       });
-    }
-  }, [tableData, reset]);
+  };
 
   const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
     {
@@ -410,26 +468,6 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
-  const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-
-  useEffect(() => {
-    layoutService
-      .getList({
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-        is_default: true,
-      })
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
-        });
-      });
-  }, [tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -458,16 +496,6 @@ const TableView = ({
     }
   };
 
-  useEffect(() => {
-    refetch();
-  }, [view?.quick_filters?.length, refetch]);
-
-  const openFieldSettings = () => {
-    setDrawerState("CREATE");
-  };
-
-  const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-
   const multipleDelete = async () => {
     setDeleteLoader(true);
     try {
@@ -480,29 +508,52 @@ const TableView = ({
     }
   };
 
-  const [elementHeight, setElementHeight] = useState(null);
+  const openFieldSettings = () => {
+    setDrawerState("CREATE");
+  };
 
-  // useEffect(() => {
-  //   const element = document.querySelector("#data-table");
-  //   if (element) {
-  //     const height = element.getBoundingClientRect().height;
-  //     setElementHeight(height);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
+    else setLimit(parseInt(view?.default_limit));
+  }, [view?.default_limit]);
+
+  useEffect(() => {
+    if (tableData?.length > 0) {
+      reset({
+        multi: tableData.map((i) => i),
+      });
+    }
+  }, [tableData, reset]);
+
+  useEffect(() => {
+    getLayoutList();
+  }, [tableSlug, i18n?.language]);
+
+  useEffect(() => {
+    refetch();
+  }, [view?.quick_filters?.length, refetch]);
+
+  useEffect(() => {
+    setFilterCount(getFilteredFilterFields?.length);
+  }, [getFilteredFilterFields]);
 
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 ||
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
-        <div className={styles.filters}>
-          <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+        <div
+          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}
+        >
+          <Box className={styles.block}>
+            <p>{t("filters")}</p>
+            <FastFilter
+              view={view}
+              fieldsMap={fieldsMap}
+              getFilteredFilterFields={getFilteredFilterFields}
+              isVertical
+            />
+          </Box>
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
@@ -511,6 +562,8 @@ const TableView = ({
           id="data-table"
         >
           <ObjectDataTable
+            relOptions={relOptions}
+            tableView={true}
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}
@@ -520,7 +573,6 @@ const TableView = ({
             setDrawerStateField={setDrawerStateField}
             isTableView={true}
             getValues={getValues}
-            // elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}
@@ -552,7 +604,6 @@ const TableView = ({
               borderRadius: 0,
               border: "none",
               borderBottom: "1px solid #E5E9EB",
-              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
               width: "100%",
               margin: 0,
             }}
@@ -560,7 +611,6 @@ const TableView = ({
             navigateToForm={navigateToForm}
             {...props}
           />
-          {/* ) : <EmptyDataComponent />} */}
         </div>
       </PermissionWrapperV2>
 

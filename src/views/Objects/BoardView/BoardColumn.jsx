@@ -9,8 +9,8 @@ import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCa
 import constructorObjectService from "../../../services/constructorObjectService";
 import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
+import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 
 const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   const { tableSlug } = useParams();
@@ -71,6 +71,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   const navigateToCreatePage = (slug) => {
     setOpen(true);
     setDateInfo({ [tab.slug]: tab.value });
+    setSelectedRow(null);
   };
 
   return (
@@ -143,7 +144,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
           </Button>
         </div>
       </div>
-      <ModalDetailPage
+      <BoardModalDetailPage
         open={open}
         setOpen={setOpen}
         dateInfo={dateInfo}

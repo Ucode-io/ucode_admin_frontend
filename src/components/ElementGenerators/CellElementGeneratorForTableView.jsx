@@ -2,7 +2,6 @@ import {Parser} from "hot-formula-parser";
 import {useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
-import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
@@ -24,13 +23,15 @@ import HFVideoUpload from "../FormElements/HFVideoUpload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import CellRelationFormElement from "./CellRelationFormElement";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
+import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 
 const parser = new Parser();
 
-const NewCellFormElementGenerator2 = ({
+const CellElementGeneratorForTableView = ({
+  relOptions,
+  tableView,
   field,
   fields,
   isBlackBg = false,
@@ -54,39 +55,15 @@ const NewCellFormElementGenerator2 = ({
     relationTableSlug = field?.id.split("#")[0];
   }
 
-  useEffect(() => {
-    tables?.forEach((table) => {
-      if (table.table_slug === relationTableSlug) {
-        objectIdFromJWT = table.object_id;
-      }
-    });
-  }, [tables, relationTableSlug]);
-
-  const removeLangFromSlug = useMemo(() => {
-    var lastIndex = field.slug.lastIndexOf("_");
-    if (lastIndex !== -1) {
-      var result = field.slug.substring(0, lastIndex);
-      return result;
-    } else {
-      return false;
-    }
-  }, [field.slug]);
-
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
       return `multi.${index}.${field.slug}`;
-      // return `${removeLangFromSlug}_${i18n?.language}`;
     } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
 
     return `multi.${index}.${field.slug}`;
   }, [field, i18n?.language]);
-
-  // const changedValue = useWatch({
-  //   control,
-  //   name: computedSlug,
-  // });
 
   const isDisabled =
     field.attributes?.disabled ||
@@ -117,25 +94,25 @@ const NewCellFormElementGenerator2 = ({
   }, [field]);
 
   useEffect(() => {
+    tables?.forEach((table) => {
+      if (table.table_slug === relationTableSlug) {
+        objectIdFromJWT = table.object_id;
+      }
+    });
+  }, [tables, relationTableSlug]);
+
+  useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
 
-  // useEffect(() => {
-  //   if (columns.length && changedValue !== undefined && changedValue !== null) {
-  //     columns.forEach(
-  //       (i, rowIndex) =>
-  //         selectedRow.includes(i.guid) &&
-  //         setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
-  //     );
-  //   }
-  // }, [changedValue, setFormValue, columns, field, selectedRow]);
-
   switch (field.type) {
     case "LOOKUP":
       return (
-        <CellRelationFormElement
+        <CellRelationFormElementForTableView
+          relOptions={relOptions}
+          tableView={tableView}
           disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
@@ -157,6 +134,7 @@ const NewCellFormElementGenerator2 = ({
     case "LOOKUPS":
       return (
         <CellManyToManyRelationElement
+          relOptions={relOptions}
           disabled={isDisabled}
           isFormEdit
           updateObject={updateObject}
@@ -213,7 +191,6 @@ const NewCellFormElementGenerator2 = ({
     case "SCAN_BARCODE":
       return (
         <InventoryBarCode
-          // relatedTable={relatedTable}
           control={control}
           name={computedSlug}
           fullWidth
@@ -512,20 +489,6 @@ const NewCellFormElementGenerator2 = ({
 
     case "MULTI_LINE":
       return (
-        // <HFTextEditor
-        //   control={control}
-        //   name={computedSlug}
-        //   tabIndex={field?.tabIndex}
-        //   fullWidth
-        //   multiline
-        //   rows={4}
-        //   defaultValue={field.defaultValue}
-        //   disabled={isDisabled}
-        //   key={computedSlug}
-        //   isTransparent={true}
-        //
-        // />
-
         <MultiLineCellFormElement
           control={control}
           isWrapField={isWrapField}
@@ -608,4 +571,4 @@ const NewCellFormElementGenerator2 = ({
   }
 };
 
-export default NewCellFormElementGenerator2;
+export default CellElementGeneratorForTableView;

@@ -1,6 +1,6 @@
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { Collapse } from "@mui/material";
+import { Collapse, alpha } from "@mui/material";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -65,7 +65,7 @@ export default function TimeLineRecursiveRow({
     const slugs = viewFields?.map((item) => item) ?? [];
     return slugs.map((slug) => get(label, slug, "")).join(" ");
   }, [label, viewFields]);
-
+  console.log("wwwwwww", `${10 / (level + 1)}`);
   return (
     <div>
       <div className={styles.group_by_column}>
@@ -73,12 +73,27 @@ export default function TimeLineRecursiveRow({
           onClick={handleClick}
           className={styles.group_by_column_header}
           style={{
-            backgroundColor: sub ? "#FFF" : "",
+            // backgroundColor: sub ? "#FFF" : "#f2f4f7",
+            // backgroundColor: sub ? `rgba(242, 244, 247, ${1 / (level + 1)})` : "#f2f4f7",
+            backgroundColor: sub ? `rgba(242, 244, 247, ${1 - (level + 1) * 0.3})` : "#f2f4f7",
+            cursor: item?.data?.[0]?.data?.length ? "pointer" : "",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            padding: "0 10px",
           }}
         >
-          {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
-          {item?.data?.[0]?.data && <>{open ? <ExpandLess /> : <ExpandMore />}</>}
-          {/* {!item?.data?.[0]?.data && <>{open ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}</>} */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingLeft: sub ? `${level * 6}px` : "",
+            }}
+          >
+            {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
+            {item?.data?.[0]?.data && <>{open ? <ExpandLess /> : <ExpandMore />}</>}
+          </div>
         </div>
         {item?.data &&
           item?.data?.map(
@@ -89,7 +104,7 @@ export default function TimeLineRecursiveRow({
                     openedRows={openedRows}
                     setOpenedRows={setOpenedRows}
                     sub={true}
-                    level={index}
+                    level={option?.data?.length ? level + 1 : index + 1 + (level + 1)}
                     groupItem={option}
                     fieldsMap={fieldsMap}
                     view={view}

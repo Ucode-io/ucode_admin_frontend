@@ -22,12 +22,12 @@ import ColumnVisible from "../ColumnVisible";
 import { useForm } from "react-hook-form";
 import BoardGroupButton from "./BoardGroupBy";
 import ShareModal from "../ShareModal/ShareModal";
-import { Button } from "@mui/material";
+import { Badge, Box, Button } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { store } from "../../../store";
-import FastFilterButton from "../components/FastFilter/FastFilterButton";
 import style from "../style.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 const BoardView = ({
   view,
@@ -47,6 +47,9 @@ const BoardView = ({
   const { t } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(true);
+  const [filterCount, setFilterCount] = useState();
+
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
   const { navigateToForm } = useTabRouter();
@@ -73,7 +76,6 @@ const BoardView = ({
       select: ({ data }) => data.response ?? [],
     }
   );
-  console.log("view", view);
   const updateView = (tabs) => {
     const computedData = {
       ...selectedView,
@@ -192,11 +194,24 @@ const BoardView = ({
         />
       </FiltersBlock>
 
-      <div className={style.extraNavbar} style={{ marginBottom: "10px" }}>
+      <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
-          {/* <div className={style.search}>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-          </div> */}
+          <div className={style.search}>
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={view?.quick_filters?.length}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
+          </div>
         </div>
         <ColumnVisible
           selectedTabIndex={selectedTabIndex}
@@ -225,9 +240,15 @@ const BoardView = ({
           {(view?.quick_filters?.length > 0 ||
             (new_list[tableSlug] &&
               new_list[tableSlug].some((i) => i.checked))) && (
-            <div className={styles.filters}>
-              <p>{t("filters")}</p>
-              <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+            <div
+              className={
+                filterVisible ? styles.filters : styles.filtersVisiblitiy
+              }
+            >
+              <Box className={styles.block}>
+                <p>{t("filters")}</p>
+                <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+              </Box>
             </div>
           )}
 

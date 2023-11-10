@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { applyDrag } from "../../../utils/applyDrag";
+import { applyDrag, applyDragIndex } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
@@ -16,6 +16,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState();
+  const [index, setIndex] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
   const [computedData, setComputedData] = useState(
@@ -26,11 +27,12 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   );
 
   const { mutate } = useMutation(
-    (data) => {
+    ({ data, index }) => {
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
           [tab.slug]: tab.value,
+          board_order: index + 1,
         },
       });
     },
@@ -44,8 +46,9 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   const onDrop = (dropResult) => {
     const result = applyDrag(computedData, dropResult);
     if (result) setComputedData(result);
+    setIndex(dropResult?.addedIndex);
     if (result?.length > computedData?.length) {
-      mutate(dropResult.payload);
+      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
     }
   };
 
@@ -102,12 +105,15 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
           }}
           groupName="subtask"
           getChildPayload={(i) => computedData[i]}
-          onDrop={onDrop}
+          onDrop={(e) => {
+            onDrop(e);
+          }}
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
         >
           {computedData.map((el) => (
             <Draggable
               key={el.guid}
+              index={index}
               style={{
                 background: "#fff",
                 borderRadius: "12px",

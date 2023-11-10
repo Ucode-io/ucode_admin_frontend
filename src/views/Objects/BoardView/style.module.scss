@@ -5,14 +5,22 @@
   padding: 0 0px;
 
   .filters {
-    border-radius: 6px;
-    padding: 16px;
+    padding: 8px;
+    border-right: 1px solid #e3e3e3;
     background: #fff;
-    height: calc(100vh - 100px);
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+    transition: 0.3s;
 
-    p {
-      font-weight: 700;
-      margin-bottom: 8px;
+    .block {
+      padding: 8px;
+      border-right: 0px solid #e3e3e3;
+
+      p {
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
     }
   }
 
@@ -22,6 +30,7 @@
     gap: 24px;
     width: 100%;
     overflow: auto;
+    padding-top: 10px;
 
     .column {
       width: 300px;
@@ -78,12 +87,29 @@
       .card {
         background-color: #fff;
         border-radius: 12px;
-        padding: 12px;
         display: flex;
         flex-direction: column;
         gap: 10px;
         box-shadow: 0px 0px 41px -6px rgba(34, 60, 80, 0.2);
       }
+    }
+  }
+}
+
+.filtersVisiblitiy {
+  padding: 0px;
+  width: 0px;
+  min-width: 0px;
+  max-width: 0px;
+  transition: 0.3s;
+
+  .block {
+    display: none;
+    padding: 0;
+
+    p {
+      font-weight: 700;
+      margin-bottom: 12px;
     }
   }
 }

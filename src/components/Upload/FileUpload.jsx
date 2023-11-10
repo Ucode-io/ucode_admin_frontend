@@ -1,7 +1,6 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
 import { useState } from "react";
 import { useRef } from "react";
-import ImageViewer from "react-simple-image-viewer";
 import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";

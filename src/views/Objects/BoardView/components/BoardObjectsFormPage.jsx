@@ -4,25 +4,26 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import SecondaryButton from "../../components/Buttons/SecondaryButton";
-import FiltersBlock from "../../components/FiltersBlock";
-import Footer from "../../components/Footer";
-import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import useTabRouter from "../../hooks/useTabRouter";
-import constructorObjectService from "../../services/constructorObjectService";
-import layoutService from "../../services/layoutService";
-import { store } from "../../store";
-import { showAlert } from "../../store/alert/alert.thunk";
-import { sortSections } from "../../utils/sectionsOrderNumber";
-import NewRelationSection from "./RelationSection/NewRelationSection";
-import SummarySectionValue from "./SummarySection/SummarySectionValue";
-import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
-import FormPageBackButton from "./components/FormPageBackButton";
-import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
 
-const ObjectsFormPage = ({
+import { useTranslation } from "react-i18next";
+import { store } from "../../../../store";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import layoutService from "../../../../services/layoutService";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import { sortSections } from "../../../../utils/sectionsOrderNumber";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import FiltersBlock from "../../../../components/FiltersBlock";
+import FormPageBackButton from "../../components/FormPageBackButton";
+import SummarySectionValue from "../../SummarySection/SummarySectionValue";
+import NewRelationSection from "../../RelationSection/NewRelationSection";
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
+import FormCustomActionButton from "../../components/CustomActionsButton/FormCustomActionButtons";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import styles from "./style.module.scss";
+import Footer from "../../../../components/Footer";
+
+const BoardObjectsFormPage = ({
   tableSlugFromProps,
   handleClose,
   modal = false,
@@ -154,61 +155,27 @@ const ObjectsFormPage = ({
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-            user_id: isUserId,
-          }
-        );
         dispatch(showAlert("Successfully updated", "success"));
-        if (modal) {
-          handleClose();
-          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-        } else {
-          navigate(-1);
-        }
+        handleClose();
+        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
+
   const create = (data) => {
     setBtnLoader(true);
-
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-          }
-        );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        if (modal) {
-          handleClose();
-          queryClient.refetchQueries(
-            "GET_OBJECTS_LIST_WITH_RELATIONS",
-            tableSlug,
-            {
-              table_slug: tableSlug,
-            }
-          );
-          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-        } else {
-          navigate(-1);
-          handleClose();
-          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
-        }
-
+        handleClose();
+        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         dispatch(showAlert("Successfully updated!", "success"));
-        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -232,9 +199,6 @@ const ObjectsFormPage = ({
     getFields();
   }, [id, tableInfo, selectedTabIndex, i18n?.language]);
 
-  // const getSubtitleValue = useMemo(() => {
-  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  // }, [tableInfo]);
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
@@ -272,10 +236,7 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
-            <SecondaryButton
-              onClick={() => (modal ? handleClose() : navigate(-1))}
-              color="error"
-            >
+            <SecondaryButton onClick={() => navigate(-1)} color="error">
               Close
             </SecondaryButton>
             <FormCustomActionButton
@@ -303,4 +264,4 @@ const ObjectsFormPage = ({
   );
 };
 
-export default ObjectsFormPage;
+export default BoardObjectsFormPage;

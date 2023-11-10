@@ -23,28 +23,31 @@ export default function TimeLineRecursiveRow({
   openedRows,
   setOpenedRows,
   sub = false,
+  lastLabels = "",
 }) {
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState({});
-
   const viewFields = Object.values(fieldsMap)
     .find((field) => field?.table_slug === item?.group_by_slug)
     ?.view_fields?.map((field) => field?.slug);
 
   useEffect(() => {
-    if (openedRows.includes(item?.label)) {
+    if (openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label)) {
       setOpen(true);
     } else {
       setOpen(false);
     }
-  }, [item, openedRows]);
+  }, [item, openedRows, lastLabels]);
 
   const handleClick = () => {
-    setOpen(!open);
-    if (!open) {
-      setOpenedRows([...openedRows, item?.label]);
+    const isCurrentlyOpen = openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label);
+
+    setOpen(!isCurrentlyOpen);
+
+    if (!isCurrentlyOpen) {
+      setOpenedRows([...openedRows, lastLabels?.length ? lastLabels + "." + item?.label : item?.label]);
     } else {
-      setOpenedRows(openedRows.filter((row) => row !== item?.label));
+      setOpenedRows(openedRows.filter((row) => row !== (lastLabels?.length ? lastLabels + "." + item?.label : item?.label)));
     }
   };
 
@@ -99,6 +102,7 @@ export default function TimeLineRecursiveRow({
                     calendar_from_slug={calendar_from_slug}
                     calendar_to_slug={calendar_to_slug}
                     visible_field={visible_field}
+                    lastLabels={lastLabels?.length ? lastLabels + "." + item?.label : item?.label}
                   />
                 </Collapse>
               )

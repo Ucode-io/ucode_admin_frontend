@@ -12,7 +12,7 @@ const BoardPhotoGenerator = ({ field, el }) => {
   return (
     <>
       {field.type === "PHOTO" && value !== null && value?.length ? (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={styles.photorow}>
           <img src={value} alt="board_image" className={styles.image} />
         </div>
       ) : null}

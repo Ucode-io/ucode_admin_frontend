@@ -194,9 +194,9 @@ const BoardView = ({
 
       <div className={style.extraNavbar} style={{ marginBottom: "10px" }}>
         <div className={style.extraWrapper}>
-          <div className={style.search}>
+          {/* <div className={style.search}>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
-          </div>
+          </div> */}
         </div>
         <ColumnVisible
           selectedTabIndex={selectedTabIndex}

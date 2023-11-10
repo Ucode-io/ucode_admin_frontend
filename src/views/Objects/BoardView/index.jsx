@@ -73,7 +73,7 @@ const BoardView = ({
       select: ({ data }) => data.response ?? [],
     }
   );
-
+  console.log("view", view);
   const updateView = (tabs) => {
     const computedData = {
       ...selectedView,

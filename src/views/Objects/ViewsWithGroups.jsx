@@ -13,7 +13,14 @@ import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import { Button, CircularProgress, Divider, Menu, Switch } from "@mui/material";
+import {
+  Badge,
+  Button,
+  CircularProgress,
+  Divider,
+  Menu,
+  Switch,
+} from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -50,6 +57,7 @@ import SortButton from "./SortButton";
 import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
 import SettingsIcon from "@mui/icons-material/Settings";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 const ViewsWithGroups = ({
   views,
@@ -83,6 +91,8 @@ const ViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
+  const [filterVisible, setFilterVisible] = useState(true);
+  const [filterCount, setFilterCount] = useState();
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -329,7 +339,22 @@ const ViewsWithGroups = ({
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={filterCount}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
             <Divider orientation="vertical" flexItem />
             <SearchInput
               placeholder={"Search"}
@@ -478,33 +503,12 @@ const ViewsWithGroups = ({
                     },
                   }}
                 >
-                  {/* <div className={style.menuBar}>
-                    {tableHeightOptions.map((el) => (
-                      <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-                        {el.label}
-                        {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-                      </div>
-                    ))}
-                  </div> */}
-
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
                       <div
                         className={style.template}
                         onClick={() => handleHeightControl(el.value)}
                       >
-                        {/* <div
-                          className={`${style.element} ${
-                            selectedTabIndex === views?.length
-                              ? style.active
-                              : ""
-                          }`}
-                        >
-                          {tableHeight === el.value ? (
-                            <CheckIcon color="primary" />
-                          ) : null}
-                        </div> */}
-
                         <span>{el.label}</span>
 
                         <Switch
@@ -520,25 +524,6 @@ const ViewsWithGroups = ({
                   </div>
                 </Menu>
               </>
-
-              // <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
-              //   <div style={{ position: "relative" }}>
-              //     <span className={style.buttonSpan}>
-              //       <FormatLineSpacingIcon color="#A8A8A8" />
-              //       Line Height
-              //     </span>
-              //     {heightControl && (
-              //       <div className={style.heightControl}>
-              //         {tableHeightOptions.map((el) => (
-              //           <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-              //             {el.label}
-              //             {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-              //           </div>
-              //         ))}
-              //       </div>
-              //     )}
-              //   </div>
-              // </div>
             )}
 
             <button className={style.moreButton} onClick={handleClick}>
@@ -590,15 +575,6 @@ const ViewsWithGroups = ({
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                {/* <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
-                  justifyContent: "flex-start",
-                  gap: "10px",
-                }}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
-                  </div>
-                  <span>{t("template")}</span>
-                </div> */}
               </div>
             </Menu>
           </div>
@@ -755,6 +731,8 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        filterVisible={filterVisible}
+                        setFilterCount={setFilterCount}
                         control={control}
                         getValues={getValues}
                         setFormVisible={setFormVisible}
@@ -804,6 +782,8 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      filterVisible={filterVisible}
+                      setFilterCount={setFilterCount}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}

@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -147,6 +148,8 @@ const AutoCompleteElement = ({
   const {id} = useParams();
   const [allOptions, setAllOptions] = useState([]);
   const [localValue, setLocalValue] = useState(null);
+  const {i18n} = useTranslation();
+
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };

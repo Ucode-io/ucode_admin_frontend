@@ -6,12 +6,10 @@ import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
 import { useQuery } from "react-query";
 import PageFallback from "../../components/PageFallback";
-import constructorObjectService from "../../services/constructorObjectService";
 import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
-import styles from "./style.module.scss";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
 import { store } from "../../store";
@@ -19,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 
 const ObjectsPage = () => {
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams();
   const { state } = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
@@ -77,7 +75,7 @@ const ObjectsPage = () => {
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {views.map((view) => {
+          {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (

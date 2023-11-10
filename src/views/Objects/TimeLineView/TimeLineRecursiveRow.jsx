@@ -75,12 +75,13 @@ export default function TimeLineRecursiveRow({
           style={{
             // backgroundColor: sub ? "#FFF" : "#f2f4f7",
             // backgroundColor: sub ? `rgba(242, 244, 247, ${1 / (level + 1)})` : "#f2f4f7",
-            backgroundColor: sub ? `rgba(242, 244, 247, ${1 - (level + 1) * 0.3})` : "#f2f4f7",
+            backgroundColor: sub ? `rgba(192, 197, 206, ${1 - (level + 1) * 0.3})` : "#C0C5CE",
             cursor: item?.data?.[0]?.data?.length ? "pointer" : "",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
             padding: "0 10px",
+            borderRadius: "4px",
           }}
         >
           <div

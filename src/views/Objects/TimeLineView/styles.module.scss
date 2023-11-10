@@ -804,6 +804,7 @@
       .group_by_column {
         display: flex;
         flex-direction: column;
+        // gap: 3px;
 
         .group_by_column_header {
           background-color: #f2f4f7;

@@ -93,7 +93,7 @@ const ViewsWithGroups = ({
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(true);
-  const [filterCount, setFilterCount] = useState();
+  const [filterCount, setFilterCount] = useState(0);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -240,7 +240,7 @@ const ViewsWithGroups = ({
   // useEffect(() => {
   //   setSelectedView(views?.[selectedTabIndex] ?? {});
   // }, [views, selectedTabIndex]);
-  console.log("filtersfilters", filters);
+
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -354,22 +354,26 @@ const ViewsWithGroups = ({
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+            {filterCount === 0 ? (
+              <FastFilterButton view={view} fieldsMap={fieldsMap} />
+            ) : (
+              <Badge
+                sx={{
+                  width: "35px",
+                  paddingLeft: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setFilterVisible((prev) => !prev);
+                }}
+                badgeContent={filterCount}
+                color="primary"
+              >
+                <FilterAltOutlinedIcon color={"#A8A8A8"} />
+              </Badge>
+            )}
+            {/*  */}
 
-            <Badge
-              sx={{
-                width: "35px",
-                paddingLeft: "10px",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setFilterVisible((prev) => !prev);
-              }}
-              badgeContent={filterCount}
-              color="primary"
-            >
-              <FilterAltOutlinedIcon color={"#A8A8A8"} />
-            </Badge>
             <Divider orientation="vertical" flexItem />
             <SearchInput
               placeholder={"Search"}

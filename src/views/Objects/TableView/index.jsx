@@ -62,9 +62,7 @@ const TableView = ({
   const {new_list} = useSelector((state) => state.filter);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
-  const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
-  );
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
   const [limit, setLimit] = useState(20);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -122,15 +120,11 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{relations = []}, {fields = []}] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -138,13 +132,11 @@ const TableView = ({
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -158,10 +150,7 @@ const TableView = ({
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -188,8 +177,7 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key])
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
     return customSortArray(
@@ -218,9 +206,7 @@ const TableView = ({
     });
 
     if (sortValues && sortValues.length > 0) {
-      const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
-      );
+      const matchingSort = sortValues.find((entry) => entry.tableSlug === tableSlug);
 
       if (matchingSort) {
         const {field, order} = matchingSort;
@@ -314,18 +300,10 @@ const TableView = ({
           offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
+          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
-          [tab?.slug]: tab
-            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${tab?.value}`]
-              : tab?.value
-            : undefined,
+          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
       });
     },
@@ -469,6 +447,24 @@ const TableView = ({
     }
   };
 
+  // const [layoutType, setLayoutType] = useState("SimpleLayout");
+  // const [open, setOpen] = useState(false);
+  // const [selectedRow, setSelectedRow] = useState("");
+
+  useEffect(() => {
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+        is_default: true,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+        });
+      });
+  }, [tableSlug, i18n?.language]);
+
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
@@ -480,15 +476,7 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&&");
+      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -614,18 +602,9 @@ const TableView = ({
         </div>
       </PermissionWrapperV2>
 
-      <ModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        selectedRow={selectedRow}
-      />
+      <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
 
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -639,12 +618,7 @@ const TableView = ({
         />
       </Drawer>
 
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerStateField} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <RelationSettingsTest
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

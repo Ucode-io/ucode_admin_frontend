@@ -61,8 +61,8 @@ function ValueGenerator({ field, control, setFormValue }) {
         </span>
       );
 
-    case "FORMULA":
-      return <span className="text-nowrap">{value ?? 0}</span>;
+    // case "FORMULA":
+    //   return <span className="text-nowrap">{value ?? 0}</span>;
 
     case "MULTISELECT":
       return (

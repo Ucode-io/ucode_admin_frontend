@@ -92,8 +92,6 @@ const ViewForm = ({
         chart_of_account: Object.entries(row)
           .filter(([key]) => key !== "group_by")
           .map(([key, value]) => {
-            const options = [];
-
             return {
               object_id: key,
               options: value
@@ -441,7 +439,7 @@ const getInitialValues = (
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
-    attributes: initialValues?.attributes ?? {},
+    // attributes: initialValues?.attributes ?? {},
     default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",
@@ -453,6 +451,7 @@ const getInitialValues = (
     },
     columns: computeColumns(initialValues?.columns, columns),
     attributes: {
+      ...initialValues?.attributes,
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
     },

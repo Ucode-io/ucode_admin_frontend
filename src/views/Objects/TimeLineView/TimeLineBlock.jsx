@@ -52,7 +52,7 @@ export default function TimeLineBlock({
               <TimeLineRecursiveRow
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
-                level={index}
+                level={0}
                 groupItem={item}
                 fieldsMap={fieldsMap}
                 view={view}

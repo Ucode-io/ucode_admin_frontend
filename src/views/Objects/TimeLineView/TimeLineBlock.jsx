@@ -3,8 +3,6 @@ import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
-import TimeLineNoGroup from "./TimeLineNoGroup";
-import PageFallback from "../../../components/PageFallback";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -37,8 +35,6 @@ export default function TimeLineBlock({
   useEffect(() => {
     handleScrollClick();
   }, []);
-
-  console.log('sssssss', data)
   
   return (
     <div

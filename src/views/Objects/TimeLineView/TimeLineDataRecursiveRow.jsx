@@ -18,16 +18,17 @@ export default function TimeLineDataRecursiveRow({
   groupByList,
   openedRows,
   setOpenedRows,
+  lastLabels = "",
 }) {
   const [open, setOpen] = useState(false);
-console.log('sssssswwww', openedRows)
+
   useEffect(() => {
-    if (openedRows.includes(item?.label)) {
+    if (openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label)) {
       setOpen(true);
     } else {
       setOpen(false);
     }
-  }, [item, openedRows]);
+  }, [item, openedRows, lastLabels]);
 
   return (
     <>
@@ -68,6 +69,7 @@ console.log('sssssswwww', openedRows)
           option?.data && (
             <Collapse in={open} timeout="auto" unmountOnExit>
               <TimeLineDataRecursiveRow
+                lastLabels={lastLabels?.length ? lastLabels + "." + item?.label : item?.label}
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
                 key={option?.label}

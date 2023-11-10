@@ -52,7 +52,7 @@ const TableRow = ({
   style,
 }) => {
   const navigate = useNavigate();
-
+console.log('sssssss')
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
       setSelectedObjectsForDelete(
@@ -103,7 +103,7 @@ const TableRow = ({
 
   return (
     <>
-      {!relationAction ? (
+      {relationAction ? (
         <CTableRow style={style} ref={parentRef}>
           <CTableCell
             align="center"

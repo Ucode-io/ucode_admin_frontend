@@ -243,7 +243,7 @@ const ObjectDataTable = ({
       (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
     );
   }, [columns]);
-
+console.log('isRelationTable ? fields : data', isRelationTable ? fields : data)
   return (
     <CTable
       disablePagination={disablePagination}

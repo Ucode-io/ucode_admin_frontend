@@ -8,14 +8,14 @@ const BoardPhotoGenerator = ({ field, el }) => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
     return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
   }, [field, el]);
-
+  console.log("value", value);
   return (
     <>
-      {field.type === "PHOTO" && (
+      {field.type === "PHOTO" && value !== null && value?.length ? (
         <div key={field.id} className={styles.row}>
           <img src={value} alt="board_image" className={styles.image} />
         </div>
-      )}
+      ) : null}
     </>
   );
 };

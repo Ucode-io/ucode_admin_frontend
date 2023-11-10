@@ -25,6 +25,9 @@ import ShareModal from "../ShareModal/ShareModal";
 import { Button } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { store } from "../../../store";
+import FastFilterButton from "../components/FastFilter/FastFilterButton";
+import style from "../style.module.scss";
+import constructorTableService from "../../../services/constructorTableService";
 
 const BoardView = ({
   view,
@@ -62,7 +65,7 @@ const BoardView = ({
   const { data = [], isLoading: dataLoader } = useQuery(
     ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: filters ?? {},
       });
     },
@@ -88,7 +91,7 @@ const BoardView = ({
   const groupField = fieldsMap[groupFieldId];
 
   const { data: tabs, isLoading: tabsLoader } = useQuery(
-    queryGenerator(groupField, filters, updateView)
+    queryGenerator(groupField, filters)
   );
 
   const loader = dataLoader || tabsLoader;
@@ -111,34 +114,36 @@ const BoardView = ({
       visibleRelationColumns: [],
     },
     isVisibleLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
+  } = useQuery({
+    queryKey: [
+      "GET_TABLE_INFO",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
       });
     },
-    {
-      select: ({ data }) => {
-        return {
-          visibleViews: data?.views ?? [],
-          visibleColumns: data?.fields ?? [],
-          visibleRelationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
+    select: (res) => {
+      return {
+        visibleViews: res?.data?.views ?? [],
+        visibleColumns: res?.data?.fields ?? [],
+        visibleRelationColumns:
+          res?.data?.relation_fields?.map((el) => ({
+            ...el,
+            label: `${el.label} (${el.table_label})`,
+          })) ?? [],
+      };
+    },
+  });
 
   useEffect(() => {
     if (tabs) {
       updateView(tabs);
     }
-  }, [tabs]);
+  }, []);
 
   return (
     <div>
@@ -187,18 +192,12 @@ const BoardView = ({
         />
       </FiltersBlock>
 
-      <div
-        className="title"
-        style={{
-          padding: "10px",
-          background: "#fff",
-          borderBottom: "1px solid #E5E9EB",
-          marginBottom: "10px",
-          marginLeft: "auto",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
+      <div className={style.extraNavbar} style={{ marginBottom: "10px" }}>
+        <div className={style.extraWrapper}>
+          {/* <div className={style.search}>
+            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+          </div> */}
+        </div>
         <ColumnVisible
           selectedTabIndex={selectedTabIndex}
           views={visibleViews}
@@ -210,9 +209,11 @@ const BoardView = ({
         />
         <BoardGroupButton
           selectedTabIndex={selectedTabIndex}
+          tabs={tabs}
           text="Group"
-          width="105px"
-          form={visibleForm}
+          queryGenerator={queryGenerator}
+          groupField={groupField}
+          filters={filters}
         />
       </div>
 
@@ -288,7 +289,7 @@ const queryGenerator = (groupField, filters = {}, updateView) => {
 
   if (groupField?.type === "LOOKUP") {
     const queryFn = () =>
-      constructorObjectService.getList(groupField.table_slug, {
+      constructorObjectService.getListV2(groupField.table_slug, {
         data: computedFilters ?? {},
       });
 

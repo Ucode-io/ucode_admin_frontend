@@ -78,7 +78,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
 
   // FOR DATA
   const { data: { data } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters }],
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters, view }],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {

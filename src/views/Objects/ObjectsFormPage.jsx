@@ -153,9 +153,6 @@ const ObjectsFormPage = ({
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
-        if (!modal) {
-          navigate(-1);
-        }
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -203,6 +200,10 @@ const ObjectsFormPage = ({
               table_slug: tableSlug,
             }
           );
+<<<<<<< HEAD
+=======
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+>>>>>>> table_view_no_data
         } else {
           navigate(-1);
           handleClose();

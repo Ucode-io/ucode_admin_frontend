@@ -122,10 +122,7 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
@@ -188,8 +185,7 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key])
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
     return customSortArray(

@@ -8,7 +8,11 @@ import {
   Edit,
   Save,
 } from "@mui/icons-material";
+<<<<<<< HEAD
 import {useFieldArray, useForm} from "react-hook-form";
+=======
+import { useFieldArray, useForm } from "react-hook-form";
+>>>>>>> table_view_no_data
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -67,8 +71,8 @@ const ViewsWithGroups = ({
   fieldsMap,
   menuItem,
 }) => {
-  const {t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { t } = useTranslation();
+  const { tableSlug } = useParams();
   const visibleForm = useForm();
   const dispatch = useDispatch();
   const {filters} = useFilters(tableSlug, view.id);
@@ -77,7 +81,7 @@ const ViewsWithGroups = ({
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -513,6 +517,18 @@ const ViewsWithGroups = ({
                         className={style.template}
                         onClick={() => handleHeightControl(el.value)}
                       >
+                        {/* <div
+                          className={`${style.element} ${
+                            selectedTabIndex === views?.length
+                              ? style.active
+                              : ""
+                          }`}
+                        >
+                          {tableHeight === el.value ? (
+                            <CheckIcon color="primary" />
+                          ) : null}
+                        </div> */}
+
                         <span>{el.label}</span>
 
                         <Switch
@@ -852,7 +868,7 @@ const queryGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
+        { tableSlug: groupField.table_slug, filters: computedFilters },
       ],
       queryFn,
       select: (res) =>

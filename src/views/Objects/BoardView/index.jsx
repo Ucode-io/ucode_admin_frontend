@@ -47,7 +47,7 @@ const BoardView = ({
   const { t } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [filterVisible, setFilterVisible] = useState(true);
+  const [filterVisible, setFilterVisible] = useState(false);
   const [filterCount, setFilterCount] = useState();
 
   const [selectedView, setSelectedView] = useState(null);

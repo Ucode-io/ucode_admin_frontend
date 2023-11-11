@@ -200,10 +200,7 @@ const ObjectsFormPage = ({
               table_slug: tableSlug,
             }
           );
-<<<<<<< HEAD
-=======
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
->>>>>>> table_view_no_data
         } else {
           navigate(-1);
           handleClose();

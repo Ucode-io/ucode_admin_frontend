@@ -8,11 +8,7 @@ import {
   Edit,
   Save,
 } from "@mui/icons-material";
-<<<<<<< HEAD
-import {useFieldArray, useForm} from "react-hook-form";
-=======
 import { useFieldArray, useForm } from "react-hook-form";
->>>>>>> table_view_no_data
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";

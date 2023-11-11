@@ -54,6 +54,10 @@ const WikiFolderCreateModal = ({
         ...data,
         label: Object.values(data?.attributes).find((item) => item),
         type: modalType === "WIKI_UPDATE" ? "WIKI" : "WIKI_FOLDER",
+        attributes: {
+          ...data.attributes,
+          wiki_id: data.wiki_id,
+        },
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);

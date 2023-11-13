@@ -49,6 +49,8 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
     setIndex(dropResult?.addedIndex);
     if (result?.length > computedData?.length) {
       mutate({ data: dropResult.payload, index: dropResult.addedIndex });
+    } else if (result?.length === computedData?.length) {
+      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
     }
   };
 

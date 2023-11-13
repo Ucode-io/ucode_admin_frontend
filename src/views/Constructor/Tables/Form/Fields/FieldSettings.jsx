@@ -29,14 +29,13 @@ import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
 import { store } from "../../../../../store";
-import { add } from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { TreeView } from "@mui/lab";
 import FieldTreeView from "./FieldTreeView";
+import { TreeView } from "@mui/x-tree-view";
 
 const FieldSettings = ({
   closeSettingsBlock,

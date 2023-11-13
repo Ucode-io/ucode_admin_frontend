@@ -103,7 +103,7 @@ const TableRow = ({
 
   return (
     <>
-      {!relationAction ? (
+      {relationAction ? (
         <CTableRow style={style} ref={parentRef}>
           <CTableCell
             align="center"

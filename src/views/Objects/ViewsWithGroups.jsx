@@ -58,6 +58,7 @@ import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import FilterVisible from "./TableView/FilterVisible";
 
 const ViewsWithGroups = ({
   views,
@@ -355,24 +356,39 @@ const ViewsWithGroups = ({
         <div className={style.extraWrapper}>
           <div className={style.search}>
             {filterCount === 0 ? (
-              <FastFilterButton view={view} fieldsMap={fieldsMap} />
+              // <FastFilterButton view={view} fieldsMap={fieldsMap} />
+              <FilterVisible
+                selectedTabIndex={selectedTabIndex}
+                views={visibleViews}
+                columns={visibleColumns}
+                relationColumns={visibleRelationColumns}
+                isLoading={isVisibleLoading}
+                form={visibleForm}
+              />
             ) : (
-              <Badge
-                sx={{
-                  width: "35px",
-                  paddingLeft: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setFilterVisible((prev) => !prev);
-                }}
-                badgeContent={filterCount}
-                color="primary"
-              >
-                <FilterAltOutlinedIcon color={"#A8A8A8"} />
-              </Badge>
+              // <Badge
+              //   sx={{
+              //     width: "35px",
+              //     paddingLeft: "10px",
+              //     cursor: "pointer",
+              //   }}
+              //   onClick={() => {
+              //     setFilterVisible((prev) => !prev);
+              //   }}
+              //   badgeContent={filterCount}
+              //   color="primary"
+              // >
+              //   <FilterAltOutlinedIcon color={"#A8A8A8"} />
+              // </Badge>
+              <FilterVisible
+                selectedTabIndex={selectedTabIndex}
+                views={visibleViews}
+                columns={visibleColumns}
+                relationColumns={visibleRelationColumns}
+                isLoading={isVisibleLoading}
+                form={visibleForm}
+              />
             )}
-            {/*  */}
 
             <Divider orientation="vertical" flexItem />
             <SearchInput

@@ -67,12 +67,19 @@ const TableRow = ({
 
   const virtualizer = useVirtualizer({
     horizontal: true,
-    count: columns.length,
+    count: 10,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 100,
-    overscan: columns.length,
+    overscan: 5,
   });
 
+  const rowVirtualizer = useVirtualizer({
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+  })
+
+console.log('wwwwwwww', virtualizer)
   if (formVisible)
     return (
       <TableRowForm
@@ -161,12 +168,12 @@ const TableRow = ({
             </div>
           </CTableCell>
 
-          {virtualizer.getVirtualItems().map(
+          {columns.map(
             (virtualColumn) =>
-              columns[virtualColumn.index]?.attributes?.field_permission
+            virtualColumn?.attributes?.field_permission
                 ?.view_permission && (
                 <CTableCell
-                  key={columns[virtualColumn.index].id}
+                  key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
                     minWidth: "220px",
@@ -178,39 +185,39 @@ const TableRow = ({
                     padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === columns[virtualColumn.index]?.id
+                        (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[
-                        columns[virtualColumn.index]?.id
+                        virtualColumn?.id
                       ]
                         ? "sticky"
                         : "relative"
                     }`,
                     left: view?.attributes?.fixedColumns?.[
-                      columns[virtualColumn.index]?.id
+                      virtualColumn?.id
                     ]
                       ? `${
                           calculateWidthFixedColumn(
-                            columns[virtualColumn.index].id
+                            virtualColumn.id
                           ) + 80
                         }px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === columns[virtualColumn.index]?.id
+                        (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[
-                        columns[virtualColumn.index]?.id
+                        virtualColumn?.id
                       ]
                         ? "#F6F6F6"
                         : "#fff"
                     }`,
                     zIndex: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === columns[virtualColumn.index]?.id
+                        (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[
-                        columns[virtualColumn.index]?.id
+                        virtualColumn?.id
                       ]
                         ? "1"
                         : "0"
@@ -223,7 +230,7 @@ const TableRow = ({
                       tableView={tableView}
                       tableSlug={tableSlug}
                       fields={columns}
-                      field={columns[virtualColumn.index]}
+                      field={virtualColumn}
                       getValues={getValues}
                       mainForm={mainForm}
                       row={row}
@@ -236,7 +243,7 @@ const TableRow = ({
                     />
                   ) : (
                     <CellElementGenerator
-                      field={columns[virtualColumn.index]}
+                      field={virtualColumn}
                       row={row}
                     />
                   )}

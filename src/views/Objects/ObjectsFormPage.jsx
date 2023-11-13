@@ -154,6 +154,14 @@ const ObjectsFormPage = ({
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+            user_id: isUserId,
+          }
+        );
         dispatch(showAlert("Successfully updated", "success"));
         if (modal) {
           handleClose();
@@ -172,12 +180,26 @@ const ObjectsFormPage = ({
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+          }
+        );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
           user_id: isUserId,
         });
         if (modal) {
           handleClose();
+          queryClient.refetchQueries(
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            tableSlug,
+            {
+              table_slug: tableSlug,
+            }
+          );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
           navigate(-1);
@@ -250,7 +272,10 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
+            <SecondaryButton
+              onClick={() => (modal ? handleClose() : navigate(-1))}
+              color="error"
+            >
               Close
             </SecondaryButton>
             <FormCustomActionButton

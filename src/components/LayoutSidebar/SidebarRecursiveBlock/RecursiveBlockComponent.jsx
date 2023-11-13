@@ -116,6 +116,8 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
+
+  console.log("element", element);
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -126,7 +128,11 @@ const RecursiveBlock = ({
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "WIKI":
         return navigate(
-          `/main/${appId}/docs/note/${element?.parent_id}/${element?.wiki_id}`
+          `/main/${appId}/docs/note/${element?.parent_id}/${
+            element?.attributes?.wiki_id
+              ? element?.attributes?.wiki_id
+              : element?.wiki_id
+          }`
         );
       case "MICROFRONTEND":
         let obj = {};

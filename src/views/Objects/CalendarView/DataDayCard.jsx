@@ -34,6 +34,8 @@ const DataDayCard = ({
     translate: [0, info.calendar?.startPosition ?? 0],
   });
 
+  console.log("target", target)
+
   useEffect(() => {
     if (!ref?.current) return null;
     setTarget(ref.current);
@@ -156,7 +158,7 @@ const DataDayCard = ({
           height: info.calendar?.height,
         }}
         onClick={openMenu}
-        ref={ref}
+       w
       >
         <div
           className={styles.resizing}

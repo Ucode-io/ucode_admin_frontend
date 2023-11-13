@@ -6,13 +6,14 @@ import {
 } from "react-icons/tfi";
 
 const FileTypes = ({ item }) => {
+  console.log("item", item);
   switch (item) {
     case "PNG":
       return "PNG";
     case "JPG":
       return "JPG";
-    case "GPEG":
-      return "GPEG";
+    case "JPEG":
+      return "JPEG";
     case "PDF":
       return "PDF";
     case "TXT":

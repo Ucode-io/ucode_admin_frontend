@@ -77,7 +77,7 @@ const MainInfo = ({control}) => {
       );
     },
     {
-      enable: Boolean(slug),
+      enabled: Boolean(slug),
       select: (res) => {
         return res?.data?.fields ?? [];
       },

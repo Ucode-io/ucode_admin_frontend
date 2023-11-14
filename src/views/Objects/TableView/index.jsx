@@ -29,7 +29,13 @@ import {includes} from "lodash-es";
 
 const TableView = ({
   filterVisible,
-  setFilterCount,
+  handleClickFilter,
+  handleCloseFilter,
+  visibleColumns,
+  visibleRelationColumns,
+  isVisibleLoading,
+  visibleForm,
+  filterAnchor,
   tab,
   view,
   shouldGet,
@@ -353,11 +359,14 @@ const TableView = ({
     const filteredFieldsView =
       fieldView &&
       fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.quick_filters;
+        return item?.type === "TABLE" && item?.attributes?.quick_filters;
       });
-    const quickFilters = filteredFieldsView?.quick_filters?.map((el) => {
-      return el?.field_id;
-    });
+    console.log("filteredFieldsView", filteredFieldsView);
+    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+      (el) => {
+        return el?.field_id;
+      }
+    );
     const filteredFields = fiedlsarray?.filter((item) => {
       return quickFilters?.includes(item.id);
     });
@@ -469,6 +478,26 @@ const TableView = ({
     }
   };
 
+  // const [layoutType, setLayoutType] = useState("SimpleLayout");
+  // const [open, setOpen] = useState(false);
+  // const [selectedRow, setSelectedRow] = useState("");
+
+  useEffect(() => {
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+        is_default: true,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
+        });
+      });
+  }, [tableSlug, i18n?.language]);
+
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
@@ -531,17 +560,11 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
-  }, [view?.quick_filters?.length, refetch]);
-
-  useEffect(() => {
-    setFilterCount(getFilteredFilterFields?.length);
-  }, [getFilteredFilterFields]);
+  }, [view?.attributes?.quick_filters?.length, refetch]);
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {
         <div
           className={filterVisible ? styles.filters : styles.filtersVisiblitiy}
         >
@@ -552,10 +575,15 @@ const TableView = ({
               fieldsMap={fieldsMap}
               getFilteredFilterFields={getFilteredFilterFields}
               isVertical
+              selectedTabIndex={selectedTabIndex}
+              visibleColumns={visibleColumns}
+              visibleRelationColumns={visibleRelationColumns}
+              visibleForm={visibleForm}
+              isVisibleLoading={isVisibleLoading}
             />
           </Box>
         </div>
-      )}
+      }
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
           style={{display: "flex", alignItems: "flex-start", width: "100%"}}

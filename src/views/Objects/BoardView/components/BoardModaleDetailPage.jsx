@@ -2,9 +2,9 @@ import { Close } from "@mui/icons-material";
 import { Card, IconButton, Modal } from "@mui/material";
 import React from "react";
 import styles from "./style.module.scss";
-import ObjectsFormPage from "../ObjectsFormPage";
+import BoardObjectsFormPage from "./BoardObjectsFormPage";
 
-export default function ModalDetailPage({
+export default function BoardModalDetailPage({
   open,
   setOpen,
   tableSlug,
@@ -22,7 +22,7 @@ export default function ModalDetailPage({
           </IconButton>
         </div>
 
-        <ObjectsFormPage
+        <BoardObjectsFormPage
           selectedRow={selectedRow}
           tableSlugFromProps={tableSlug}
           handleClose={handleClose}

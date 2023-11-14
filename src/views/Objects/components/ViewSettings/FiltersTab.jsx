@@ -1,8 +1,5 @@
 import {Box, Switch, Typography} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "../../../../utils/applyDrag";
+import {useEffect, useMemo, useState} from "react";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -27,79 +24,54 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
-const FiltersTab = ({
-  form,
-  updateView,
-  isMenu,
-  views,
-  selectedTabIndex,
-  computedColumns,
-}) => {
+const FiltersTab = ({form, updateView, views, computedColumns}) => {
   const {i18n} = useTranslation();
+  const checkedColumns = useMemo(() => {
+    return (
+      views?.attributes?.quick_filters?.map((checkedField) => {
+        return computedColumns?.find(
+          (column) => column?.id === checkedField?.id
+        );
+      }) ?? []
+    );
+  }, [computedColumns, form, views]);
 
-  //   const {fields: columns, move} = useFieldArray({
-  //     control: form.control,
-  //     name: "columns",
-  //     keyName: "key",
-  //   });
+  const unCheckedColumns = useMemo(() => {
+    if (
+      views?.attributes?.quick_filters?.length === 0 ||
+      views?.attributes?.quick_filters?.length === undefined
+    )
+      return computedColumns ?? [];
+    return (
+      computedColumns?.filter((column) => {
+        return views?.attributes?.quick_filters?.find(
+          (item) => item.id !== column.id
+        );
+      }) ?? []
+    );
+  }, [computedColumns, form, views]);
 
-  const {fields: quickFilters} = useFieldArray({
-    control: form.control,
-    name: "quick_filters",
-    keyName: "key",
-  });
+  const allColumns = useMemo(() => {
+    return {
+      checked_columns: checkedColumns,
+      unchecked_columns: unCheckedColumns,
+    };
+  }, [checkedColumns, unCheckedColumns]);
 
-  const computeColumns = (checkedColumnsIds = [], columns) => {
-    const selectedColumns =
-      checkedColumnsIds
-        ?.filter((id) => quickFilters.find((el) => el.field_id === id))
-        ?.map((id) => ({
-          ...quickFilters.find((el) => el.id === id),
-          is_checked: true,
-        })) ?? [];
-    const unselectedColumns =
-      columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
-    return [...selectedColumns, ...unselectedColumns];
-  };
+  const changeHandler = (val, field) => {
+    let computedData = [];
 
-  useEffect(() => {
-    if (views?.[selectedTabIndex]?.quick_filters) {
-      form.reset({
-        ...form.getValues(),
-        quick_filters: computeColumns(
-          views?.[selectedTabIndex]?.quick_filters,
-          computedColumns
-        ),
-      });
+    if (!val) {
+      computedData = views?.attributes?.quick_filters?.filter(
+        (el) => el?.id !== field?.id
+      );
+    } else {
+      computedData = [...views?.attributes?.quick_filters, field];
     }
-  }, [views, selectedTabIndex]);
 
-  const onDrop = (dropResult) => {
-    const result = applyDrag(columns, dropResult);
-    if (result) {
-      move(dropResult.removedIndex, dropResult.addedIndex);
-      groupMove(dropResult.removedIndex, dropResult.addedIndex);
-    }
-  };
-
-  const isAllChecked = useMemo(() => {
-    return quickFilters?.every((column) => column?.is_checked);
-  }, [quickFilters]);
-
-  const onAllChecked = (_, val) => {
-    const columns = form.getValues("quick_filters");
-
-    columns?.forEach((column, index) => {
-      form.setValue(`quick_filters[${index}].is_checked`, val);
-    });
-
-    if (isMenu) {
-      updateView();
-    }
+    updateView(computedData);
   };
 
   const columnIcons = useMemo(() => {
@@ -132,12 +104,6 @@ const FiltersTab = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (isMenu) {
-      updateView();
-    }
-  }, [quickFilters]);
-
   return (
     <div
       style={{
@@ -153,95 +119,60 @@ const FiltersTab = ({
           style={{
             borderBottom: "1px solid #eee",
           }}
-        >
-          <div
-            className={styles.cell}
-            style={{flex: 1, border: 0, paddingLeft: 0, paddingRight: 0}}
-          >
-            <b>All</b>
-          </div>
-          <div
-            className={styles.cell}
-            style={{
-              width: 70,
-              border: 0,
-              paddingLeft: 0,
-              paddingRight: 0,
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
-            <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch
-              size="small"
-              checked={isAllChecked}
-              onChange={onAllChecked}
-            />
-          </div>
-        </div>
-        <Container
-          onDrop={onDrop}
-          dropPlaceholder={{className: "drag-row-drop-preview"}}
-        >
-          {computedColumns.map((column, index) => (
-            <Draggable key={column.id}>
-              <div key={column.id} className={styles.row}>
-                <div
-                  className={styles.cell}
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    border: 0,
-                    borderBottom: "1px solid #eee",
-                    paddingLeft: 0,
-                    paddingRight: 0,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      marginRight: 5,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {columnIcons[column.type] ?? <LinkIcon />}
-                  </div>
-                  {column?.attributes?.[`label_${i18n.language}`] ??
-                    column.label}
-                </div>
-                <div
-                  className={styles.cell}
-                  style={{
-                    width: 70,
-                    border: 0,
-                    borderBottom: "1px solid #eee",
-                    paddingLeft: 0,
-                    paddingRight: 0,
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <Switch
-                    size="small"
-                    checked={form.watch(`quick_filters.${index}.is_checked`)}
-                    onChange={(e) => {
-                      form.setValue(
-                        `quick_filters.${index}.is_checked`,
-                        e.target.checked
-                      );
-                      if (isMenu) return updateView();
-                    }}
-                  />
-                </div>
+        ></div>
+
+        {computedColumns?.map((column, index) => (
+          <div className={styles.row}>
+            <div
+              className={styles.cell}
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                border: 0,
+                borderBottom: "1px solid #eee",
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
+            >
+              <div
+                style={{
+                  width: 20,
+                  height: 20,
+                  marginRight: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {columnIcons[column.type] ?? <LinkIcon />}
               </div>
-            </Draggable>
-          ))}
-        </Container>
+              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+            </div>
+            <div
+              className={styles.cell}
+              style={{
+                width: 70,
+                border: 0,
+                borderBottom: "1px solid #eee",
+                paddingLeft: 0,
+                paddingRight: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Switch
+                size="small"
+                checked={views?.attributes?.quick_filters?.find(
+                  (filtered) => filtered?.id === column.id
+                )}
+                onChange={(e, val) => {
+                  changeHandler(e.target.checked, column);
+                }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

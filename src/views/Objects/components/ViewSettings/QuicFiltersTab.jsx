@@ -1,38 +1,39 @@
-import { Checkbox } from "@mui/material"
-import { useFieldArray } from "react-hook-form"
-import { Container, Draggable } from "react-smooth-dnd"
-import CSelect from "../../../../components/CSelect"
+import {Checkbox} from "@mui/material";
+import {useFieldArray} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import CSelect from "../../../../components/CSelect";
 import {
   CTable,
   CTableBody,
   CTableCell,
   CTableRow,
-} from "../../../../components/CTable"
-import HFCheckbox from "../../../../components/FormElements/HFCheckbox"
-import { applyDrag } from "../../../../utils/applyDrag"
-import styles from "./style.module.scss"
-import { useTranslation } from "react-i18next"
+} from "../../../../components/CTable";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
+import {applyDrag} from "../../../../utils/applyDrag";
+import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
-const QuickFiltersTab = ({ form }) => {
-  const { fields: quickFilters, move } = useFieldArray({
+const QuickFiltersTab = ({form}) => {
+  const {fields: quickFilters, move} = useFieldArray({
     control: form.control,
-    name: "quick_filters",
+    name: "attributes.quick_filters",
     keyName: "key",
-  })
+  });
+
   const onDrop = (dropResult) => {
-    const result = applyDrag(quickFilters, dropResult)
-    if (result) move(dropResult.removedIndex, dropResult.addedIndex)
-  }
+    const result = applyDrag(quickFilters, dropResult);
+    if (result) move(dropResult.removedIndex, dropResult.addedIndex);
+  };
 
   return (
     <div>
       <div className={styles.table}>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{className: "drag-row-drop-preview"}}
         >
           {quickFilters.map((column, index) => (
-            <Draggable key={column.id} >
+            <Draggable key={column.id}>
               <QuickFilterRow
                 key={column.id}
                 column={column}
@@ -44,19 +45,24 @@ const QuickFiltersTab = ({ form }) => {
         </Container>
       </div>
     </div>
-  )
-}
+  );
+};
 
-const QuickFilterRow = ({ column, onCheckboxChange, index, control }) => {
-  const {i18n} = useTranslation()
+const QuickFilterRow = ({column, onCheckboxChange, index, control}) => {
+  const {i18n} = useTranslation();
   return (
-    <div className={styles.row} >
-      <div className={styles.cell} style={{ flex: 1 }}>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
-      <div className={styles.cell} style={{ width: 70 }}>
-        <HFCheckbox control={control} name={`quick_filters[${index}].is_checked`} />
+    <div className={styles.row}>
+      <div className={styles.cell} style={{flex: 1}}>
+        {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+      </div>
+      <div className={styles.cell} style={{width: 70}}>
+        <HFCheckbox
+          control={control}
+          name={`attributes.quick_filters[${index}].is_checked`}
+        />
       </div>
     </div>
-  )
+  );
 
   // return (
   //   <CTableRow>
@@ -72,6 +78,6 @@ const QuickFilterRow = ({ column, onCheckboxChange, index, control }) => {
   //     </CTableCell>
   //   </CTableRow>
   // )
-}
+};
 
-export default QuickFiltersTab
+export default QuickFiltersTab;

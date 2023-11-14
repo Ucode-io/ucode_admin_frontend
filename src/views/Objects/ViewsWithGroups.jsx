@@ -59,6 +59,7 @@ import GroupTableView from "./TableView/GroupTableView";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FilterVisible from "./TableView/FilterVisible";
+import {quickFiltersActions} from "../../store/filter/quick_filter";
 
 const ViewsWithGroups = ({
   views,
@@ -74,8 +75,8 @@ const ViewsWithGroups = ({
   const dispatch = useDispatch();
   const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [shouldGet, setShouldGet] = useState(false);
-  const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
@@ -94,7 +95,6 @@ const ViewsWithGroups = ({
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(true);
-  const [filterCount, setFilterCount] = useState(0);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -160,51 +160,12 @@ const ViewsWithGroups = ({
     name: "multi",
   });
 
-  const getValue = useCallback((item, key) => {
-    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
-  }, []);
-
-  const {mutate: updateMultipleObject, isLoading} = useMutation(
-    (values) =>
-      constructorObjectService.updateMultipleObject(tableSlug, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-          })),
-        },
-      }),
-    {
-      onSuccess: () => {
-        setShouldGet((p) => !p);
-        setFormVisible(false);
-      },
-    }
-  );
-
-  const onSubmit = (data) => {
-    updateMultipleObject(data);
-  };
-
   const handleHeightControl = (val) => {
     dispatch(
       tableSizeAction.setTableHeight({
         tableHeight: val,
       })
     );
-    setHeightControl(false);
-  };
-
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug);
-  };
-
-  const navigateToCreatePageWithInvite = () => {
-    navigateToForm(tableSlug);
-    dispatch(menuActions.setInvite(true));
   };
 
   function dateIsValid(date) {
@@ -237,10 +198,6 @@ const ViewsWithGroups = ({
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
-
-  // useEffect(() => {
-  //   setSelectedView(views?.[selectedTabIndex] ?? {});
-  // }, [views, selectedTabIndex]);
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
@@ -355,40 +312,21 @@ const ViewsWithGroups = ({
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            {filterCount === 0 ? (
-              // <FastFilterButton view={view} fieldsMap={fieldsMap} />
-              <FilterVisible
-                selectedTabIndex={selectedTabIndex}
-                views={visibleViews}
-                columns={visibleColumns}
-                relationColumns={visibleRelationColumns}
-                isLoading={isVisibleLoading}
-                form={visibleForm}
-              />
-            ) : (
-              // <Badge
-              //   sx={{
-              //     width: "35px",
-              //     paddingLeft: "10px",
-              //     cursor: "pointer",
-              //   }}
-              //   onClick={() => {
-              //     setFilterVisible((prev) => !prev);
-              //   }}
-              //   badgeContent={filterCount}
-              //   color="primary"
-              // >
-              //   <FilterAltOutlinedIcon color={"#A8A8A8"} />
-              // </Badge>
-              <FilterVisible
-                selectedTabIndex={selectedTabIndex}
-                views={visibleViews}
-                columns={visibleColumns}
-                relationColumns={visibleRelationColumns}
-                isLoading={isVisibleLoading}
-                form={visibleForm}
-              />
-            )}
+            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={filterCount}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
 
             <Divider orientation="vertical" flexItem />
             <SearchInput
@@ -544,6 +482,18 @@ const ViewsWithGroups = ({
                         className={style.template}
                         onClick={() => handleHeightControl(el.value)}
                       >
+                        {/* <div
+                          className={`${style.element} ${
+                            selectedTabIndex === views?.length
+                              ? style.active
+                              : ""
+                          }`}
+                        >
+                          {tableHeight === el.value ? (
+                            <CheckIcon color="primary" />
+                          ) : null}
+                        </div> */}
+
                         <span>{el.label}</span>
 
                         <Switch
@@ -766,8 +716,11 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        isVertical
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
                         filterVisible={filterVisible}
-                        setFilterCount={setFilterCount}
                         control={control}
                         getValues={getValues}
                         setFormVisible={setFormVisible}
@@ -817,8 +770,10 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
+                      visibleForm={visibleForm}
                       filterVisible={filterVisible}
-                      setFilterCount={setFilterCount}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}

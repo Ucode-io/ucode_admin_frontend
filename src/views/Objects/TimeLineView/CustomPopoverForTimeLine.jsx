@@ -1,16 +1,10 @@
 import { Close } from "@mui/icons-material";
 import { Card, IconButton, Modal } from "@mui/material";
 import React from "react";
-import styles from "./style.module.scss";
 import ObjectsFormPage from "../ObjectsFormPage";
+import styles from "./styles.module.scss";
 
-export default function ModalDetailPage({
-  open,
-  setOpen,
-  tableSlug,
-  selectedRow,
-  dateInfo,
-}) {
+export default function CustomPopoverForTimeLine({ open, setOpen, tableSlug, selectedRow, dateInfo }) {
   const handleClose = () => setOpen(false);
   return (
     <Modal open={open} onClose={handleClose} className="child-position-center">
@@ -22,13 +16,7 @@ export default function ModalDetailPage({
           </IconButton>
         </div>
 
-        <ObjectsFormPage
-          selectedRow={selectedRow}
-          tableSlugFromProps={tableSlug}
-          handleClose={handleClose}
-          modal={true}
-          dateInfo={dateInfo}
-        />
+        <ObjectsFormPage selectedRow={selectedRow} tableSlugFromProps={tableSlug} handleClose={handleClose} modal={true} dateInfo={dateInfo} />
       </Card>
     </Modal>
   );

@@ -1,14 +1,15 @@
-import AppsIcon from "@mui/icons-material/Apps";
-import {Button, CircularProgress, Menu} from "@mui/material";
+import {Box, Button, CircularProgress, Menu} from "@mui/material";
 import React, {useEffect, useMemo, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-import ColumnsTab from "../components/ViewSettings/ColumnsTab";
+
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import constructorObjectService from "../../../services/constructorObjectService";
+
 import {useParams} from "react-router-dom";
-import useFilters from "../../../hooks/useFilters";
+
 import FiltersTab from "../components/ViewSettings/FiltersTab";
+import {useDispatch} from "react-redux";
+import {quickFiltersActions} from "../../../store/filter/quick_filter";
 
 export default function FilterVisible({
   selectedTabIndex,
@@ -18,71 +19,65 @@ export default function FilterVisible({
   isLoading,
   form,
   text = "",
-  width = "",
 }) {
   const queryClient = useQueryClient();
-  const {tableSlug} = useParams();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const dispatch = useDispatch();
 
-  const type = views?.[selectedTabIndex]?.type;
+  const [filterAnchor, setFilterAnchor] = useState(null);
 
-  //   const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
+  const handleClickFilter = (event) => {
+    setFilterAnchor(event.currentTarget);
+  };
+  const handleCloseFilter = () => {
+    setFilterAnchor(null);
+  };
+  const open = Boolean(filterAnchor);
+
+  const type = views?.type;
 
   const computedColumns = useMemo(() => {
     return columns;
   }, [columns, relationColumns, type]);
 
-  useEffect(() => {
-    form.reset({
-      columns:
-        computedColumns?.map((el) => ({
-          ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
-        })) ?? [],
-    });
-  }, [selectedTabIndex, views, form, computedColumns]);
-
-  const updateView = () => {
+  const updateView = (data) => {
+    console.log("datadatadata", data);
     constructorViewService
       .update({
-        ...views?.[selectedTabIndex],
-        quick_filters: form.getValues("quick_filters").map((item) => ({
-          default_value: "",
-          field_id: item?.id,
-        })),
+        ...views,
+        attributes: {
+          ...views?.attributes,
+          quick_filters: data,
+        },
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
       });
   };
-  console.log('form.getValues("quick_filters")', form.getValues());
+
   return (
     <div>
-      <Button
+      <Box
         variant={"text"}
         sx={{
           gap: "5px",
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
-          width: "50px",
+          width: "100%",
           height: "50px",
-          borderRadius: "0px",
+          display: "flex",
+          alignItems: "center",
+          justifyItems: "center",
+          cursor: "pointer",
         }}
-        onClick={handleClick}
+        onClick={handleClickFilter}
       >
         <FilterAltOutlinedIcon color={"#A8A8A8"} />
-        {text}
-      </Button>
-      <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
+        Add Filters
+      </Box>
+      <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
         {isLoading ? (
           <CircularProgress />
         ) : (

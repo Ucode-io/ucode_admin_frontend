@@ -1,9 +1,9 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import {Button, CircularProgress, Menu} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
+import { Button, CircularProgress, Menu } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
-import {useQueryClient} from "react-query";
+import { useQueryClient } from "react-query";
 
 export default function ColumnVisible({
   selectedTabIndex,
@@ -32,7 +32,6 @@ export default function ColumnVisible({
 
   // const watchedColumns = form.watch("columns");
   // const watchedGroupColumns = form.watch("attributes.group_by_columns");
-
   useEffect(() => {
     form.reset({
       columns:
@@ -50,6 +49,7 @@ export default function ColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: form
             .getValues("attributes.group_by_columns")
             ?.filter((el) => el?.is_checked)

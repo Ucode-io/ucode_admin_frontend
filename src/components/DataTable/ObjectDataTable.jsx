@@ -309,7 +309,7 @@ const ObjectDataTable = ({
       </CTableHead>
 
       <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
-        {(isRelationTable ? fields : data).length && columns.length &&
+        {(isRelationTable ? fields : data).length > 0 && columns.length > 0 &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
             <TableRow
               relOptions={relOptions}

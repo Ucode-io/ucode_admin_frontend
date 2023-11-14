@@ -1,206 +1,96 @@
-import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Badge, Button, Checkbox, Menu, Switch } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import constructorObjectService from "../../../../services/constructorObjectService";
-import constructorViewService from "../../../../services/constructorViewService";
-import style from "./style.module.scss";
-import AppsIcon from "@mui/icons-material/Apps";
-import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
-import ColorizeIcon from "@mui/icons-material/Colorize";
-import EmailIcon from "@mui/icons-material/Email";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import LooksOneIcon from "@mui/icons-material/LooksOne";
-import PasswordIcon from "@mui/icons-material/Password";
-import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import MapIcon from "@mui/icons-material/Map";
-import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import LinkIcon from "@mui/icons-material/Link";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
+import constructorViewService from "../../../../services/constructorViewService";
+import { columnIcons } from "../../../../utils/constants/columnIcons";
+import style from "./style.module.scss";
 
-export default function FixColumnsTableView({ selectedTabIndex }) {
+export default function FixColumnsTableView({ view, fieldsMap }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedView, setSelectedView] = useState({});
-  const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const [selectedColumn, setSelectedColumn] = useState();
-  const [updatedColumns, setUpdatedColumns] = useState();
-  const [selectedColumns, setSelectedColumns] = useState([]);
 
-  const {
-    data: { views, columns } = {
-      views: [],
-      columns: [],
-    },
-    refetch,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0 },
+  const updateView = (data) => {
+    setIsLoading(true);
+    constructorViewService
+      .update(data)
+      .then((res) => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    },
-    {
-      cacheTime: 0,
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-        };
-      },
-    }
-  );
+  };
 
-  useEffect(() => {
-    setSelectedView(views?.[selectedTabIndex] ?? {});
-  }, [views, selectedTabIndex]);
+  const convertArrayToObject = (arr) => {
+    const result = {};
+    arr.forEach((str) => {
+      result[str] = true;
+    });
+    return result;
+  };
 
   const changeHandler = (column, e) => {
-    const updatedColumns = [...selectedColumns];
-
-    if (updatedColumns.includes(column)) {
-      updatedColumns.splice(updatedColumns.indexOf(column), 1);
+    let a = [...Object.keys(view?.attributes?.fixedColumns ?? {})];
+    if (e) {
+      a.push(column.id);
     } else {
-      updatedColumns.unshift(column);
+      a = a.filter((el) => el !== column.id);
     }
 
-    setSelectedColumns(updatedColumns);
-
-    setSelectedColumn(column);
-    setIsLoading(true);
-    const computedData = {
-      ...selectedView,
+    updateView({
+      ...view,
       attributes: {
-        ...selectedView.attributes,
-        fixedColumns: {
-          ...selectedView.attributes?.fixedColumns,
-          [column.id]: e,
-        },
+        ...view.attributes,
+        fixedColumns: convertArrayToObject(a),
       },
-    };
-
-    setSelectedView(computedData);
-
-    constructorViewService.update(computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
-        setIsLoading(false);
-      });
     });
   };
 
-  const updateView = () => {
-    setSelectedView({
-      ...selectedView,
+  const removeFixedColumns = () => {
+    updateView({
+      ...view,
       attributes: {
-        ...selectedView.attributes,
+        ...view.attributes,
         fixedColumns: {},
       },
-    });
-
-    const computedData = {
-      ...selectedView,
-      attributes: {
-        ...selectedView.attributes,
-        fixedColumns: {},
-      },
-    };
-
-    constructorViewService.update(computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
-        setIsLoading(false);
-      });
     });
   };
 
-  useEffect(() => {
-    refetch();
-    setUpdatedColumns(
-      columns.filter((column) => {
-        return views?.[selectedTabIndex]?.columns?.find(
-          (el) => el === column?.id
-        );
+  const allColumns = useMemo(() => {
+    const checkedElements = Object.values(fieldsMap)
+      .filter((column) => {
+        return view?.columns?.find((el) => el === column?.id);
       })
-    );
-  }, [views, columns, selectedTabIndex, anchorEl]);
+      ?.filter((column) => Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
 
-  useEffect(() => {
-    if (selectedColumn) {
-      const updatedArr = [...updatedColumns];
-      const index = updatedArr.indexOf(selectedColumn);
+    const uncheckedElements = Object.values(fieldsMap)
+      .filter((column) => {
+        return view?.columns?.find((el) => el === column?.id);
+      })
+      ?.filter((column) => !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
 
-      if (index !== -1) {
-        updatedArr.splice(index, 1);
-      }
-
-      updatedArr.splice(0, 0, selectedColumn);
-
-      setUpdatedColumns(updatedArr);
-    }
-  }, [selectedColumn]);
-
-  const columnIcons = useMemo(() => {
-    return {
-      SINGLE_LINE: <TextFieldsIcon />,
-      MULTI_LINE: <FormatAlignJustifyIcon />,
-      NUMBER: <LooksOneIcon />,
-      MULTISELECT: <ArrowDropDownCircleIcon />,
-      PHOTO: <PhotoSizeSelectActualIcon />,
-      VIDEO: <PlayCircleIcon />,
-      FILE: <InsertDriveFileIcon />,
-      FORMULA: <FunctionsIcon />,
-      PHONE: <LocalPhoneIcon />,
-      INTERNATION_PHONE: <LocalPhoneIcon />,
-      EMAIL: <EmailIcon />,
-      ICON: <AppsIcon />,
-      BARCODE: <QrCodeScannerIcon />,
-      QRCODE: <QrCode2Icon />,
-      COLOR: <ColorizeIcon />,
-      PASSWORD: <PasswordIcon />,
-      PICK_LIST: <ChecklistIcon />,
-      DATE: <DateRangeIcon />,
-      TIME: <AccessTimeIcon />,
-      DATE_TIME: <InsertInvitationIcon />,
-      CHECKBOX: <CheckBoxIcon />,
-      MAP: <MapIcon />,
-      SWITCH: <ToggleOffIcon />,
-      FLOAT_NOLIMIT: <LooksOneIcon />,
-      DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
-    };
-  }, []);
+    return [...checkedElements, ...uncheckedElements];
+  }, [fieldsMap, view?.columns, view?.attributes?.fixedColumns]);
 
   const badgeCount = useMemo(() => {
-    return Object.keys(selectedView?.attributes?.fixedColumns ?? {}).filter(
-      (key) => selectedView?.attributes?.fixedColumns?.[key]
-    ).length;
-  }, [selectedView?.attributes?.fixedColumns]);
+    return Object.values(view?.attributes?.fixedColumns || {}).length;
+  }, [view]);
 
   return (
     <>
-      {/* <Badge badgeContent={badgeCount} color="primary"> */}
       <Button
-        // className={style.moreButton}
         onClick={handleClick}
         variant={badgeCount > 0 ? "outlined" : "text"}
         style={{
@@ -209,11 +99,24 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
           borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
       >
-        <ViewColumnOutlinedIcon
-          style={{
-            color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          }}
-        />
+        {isLoading ? (
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+            <CircularProgress
+              style={{
+                width: "22px",
+                height: "22px",
+              }}
+            />
+          </Box>
+        ) : (
+          <ViewColumnOutlinedIcon
+            style={{
+              color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              width: "22px",
+              height: "22px",
+            }}
+          />
+        )}
         Fix col's
         {badgeCount > 0 && <span>{badgeCount}</span>}
         {badgeCount > 0 && (
@@ -232,18 +135,25 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
             }}
             onClick={(e) => {
               e.stopPropagation();
-              updateView();
+              removeFixedColumns();
             }}
           >
             <CloseRoundedIcon />
           </button>
         )}
       </Button>
-      {/* </Badge> */}
 
       <Menu
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         anchorEl={anchorEl}
         PaperProps={{
           elevation: 0,
@@ -252,7 +162,6 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
             "& .MuiAvatar-root": {
-              // width: 100,
               height: 32,
               ml: -0.5,
               mr: 1,
@@ -262,7 +171,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -279,7 +188,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
             overflowY: "auto",
           }}
         >
-          {updatedColumns?.map((column) => (
+          {allColumns?.map((column) => (
             <div className={style.menuItem}>
               <div
                 style={{
@@ -295,31 +204,18 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
                     justifyContent: "center",
                   }}
                 >
-                  {columnIcons[column.type] ?? <LinkIcon />}
+                  {column?.type && columnIcons(column?.type)}
                 </div>
 
-                <span>{column.label}</span>
+                <span>{column?.label}</span>
               </div>
-
-              {/* <Checkbox
-                onChange={(e) => {
-                  changeHandler(column, e.target.checked);
-                }}
-                disabled={isLoading}
-                checked={selectedView?.attributes?.fixedColumns?.[column.id]}
-              /> */}
 
               <Switch
                 size="small"
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
-                // disabled={isLoading}
-                checked={
-                  selectedColumns.find((el) => el.id === column.id)
-                    ? true
-                    : false
-                }
+                checked={Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id) ? true : false}
               />
             </div>
           ))}

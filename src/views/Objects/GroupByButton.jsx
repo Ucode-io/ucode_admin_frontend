@@ -9,15 +9,11 @@ import constructorObjectService from "../../services/constructorObjectService";
 import constructorViewService from "../../services/constructorViewService";
 import GroupsTab from "./components/ViewSettings/GroupsTab";
 
-export default function GroupByButton({
-  selectedTabIndex,
-  text = "Tab group",
-  width = "",
-}) {
+export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relationColumns, text = "Tab group", width = "" }) {
   const form = useForm();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
+  // const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -26,51 +22,51 @@ export default function GroupByButton({
     setAnchorEl(null);
   };
 
-  const {
-    data: { views, columns, relationColumns } = {
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-    isLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
+  // const {
+  //   data: { views, columns, relationColumns } = {
+  //     views: [],
+  //     columns: [],
+  //     relationColumns: [],
+  //   },
+  //   isLoading,
+  //   refetch: refetchViews,
+  // } = useQuery(
+  //   ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+  //   () => {
+  //     return constructorObjectService.getListV2(tableSlug, {
+  //       data: { limit: 10, offset: 0 },
+  //     });
+  //   },
+  //   {
+  //     select: ({ data }) => {
+  //       return {
+  //         views: data?.views ?? [],
+  //         columns: data?.fields ?? [],
+  //         relationColumns:
+  //           data?.relation_fields?.map((el) => ({
+  //             ...el,
+  //             label: `${el.label} (${el.table_label})`,
+  //           })) ?? [],
+  //       };
+  //     },
+  //   }
+  // );
 
-  const type = views?.[selectedTabIndex]?.type;
+  // const type = view?.type;
 
   const computedColumns = useMemo(() => {
-    if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns;
+    if (view?.type !== "CALENDAR" && view?.type !== "GANTT") {
+      return Object.values(fieldsMap);
     } else {
-      return [...columns, ...relationColumns];
+      return [...Object.values(fieldsMap), ...relationColumns];
     }
-  }, [columns, relationColumns, type]);
+  }, [fieldsMap, relationColumns, view?.type]);
 
   useEffect(() => {
     form.reset({
-      group_fields: views?.[selectedTabIndex]?.group_fields ?? [],
+      group_fields: view?.group_fields ?? [],
     });
-  }, [selectedTabIndex, views, form]);
+  }, [selectedTabIndex, view, form]);
 
   const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -78,7 +74,7 @@ export default function GroupByButton({
     setUpdateLoading(true);
     constructorViewService
       .update({
-        ...views?.[selectedTabIndex],
+        ...view,
         group_fields: form.watch("group_fields"),
       })
       .then(() => {
@@ -98,7 +94,7 @@ export default function GroupByButton({
     setUpdateLoading(true);
     constructorViewService
       .update({
-        ...views?.[selectedTabIndex],
+        ...view,
         group_fields: [],
       })
       .then(() => {
@@ -112,28 +108,13 @@ export default function GroupByButton({
 
   return (
     <div>
-      {/* <Badge badgeContent={selectedColumns?.length} color="primary"> */}
       <Button
         variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
           color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor:
-            selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
-        // style={{
-        //   display: "flex",
-        //   alignItems: "center",
-        //   gap: 5,
-        //   color: "#A8A8A8",
-        //   cursor: "pointer",
-        //   fontSize: "13px",
-        //   fontWeight: 500,
-        //   lineHeight: "16px",
-        //   letterSpacing: "0em",
-        //   textAlign: "left",
-        //   padding: "0 10px",
-        // }}
         onClick={handleClick}
       >
         <LayersOutlinedIcon color={"#A8A8A8"} />
@@ -151,8 +132,7 @@ export default function GroupByButton({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color:
-                selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -161,14 +141,12 @@ export default function GroupByButton({
           >
             <CloseRoundedIcon
               style={{
-                color:
-                  selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
               }}
             />
           </button>
         )}
       </Button>
-      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}
@@ -180,7 +158,6 @@ export default function GroupByButton({
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
             "& .MuiAvatar-root": {
-              // width: 100,
               height: 32,
               ml: -0.5,
               mr: 1,
@@ -200,18 +177,7 @@ export default function GroupByButton({
           },
         }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <GroupsTab
-            columns={computedColumns}
-            isLoading={isLoading}
-            updateLoading={updateLoading}
-            updateView={updateView}
-            selectedView={views?.[selectedTabIndex]}
-            form={form}
-          />
-        )}
+        <GroupsTab columns={computedColumns} updateLoading={updateLoading} updateView={updateView} selectedView={view} form={form} />
       </Menu>
     </div>
   );

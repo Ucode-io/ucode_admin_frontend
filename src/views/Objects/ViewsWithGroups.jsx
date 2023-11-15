@@ -8,7 +8,7 @@ import {
   Edit,
   Save,
 } from "@mui/icons-material";
-import { useFieldArray, useForm } from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -58,6 +58,8 @@ import GroupColumnVisible from "./GroupColumnVisible";
 import GroupTableView from "./TableView/GroupTableView";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import FilterVisible from "./TableView/FilterVisible";
+import {quickFiltersActions} from "../../store/filter/quick_filter";
 
 const ViewsWithGroups = ({
   views,
@@ -67,17 +69,18 @@ const ViewsWithGroups = ({
   fieldsMap,
   menuItem,
 }) => {
-  const { t } = useTranslation();
-  const { tableSlug } = useParams();
+  const {t} = useTranslation();
+  const {tableSlug} = useParams();
   const visibleForm = useForm();
   const dispatch = useDispatch();
   const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [shouldGet, setShouldGet] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -92,7 +95,6 @@ const ViewsWithGroups = ({
   const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(true);
-  const [filterCount, setFilterCount] = useState(0);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -247,6 +249,14 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
+  useEffect(() => {
+    dispatch(
+      quickFiltersActions.setQuickFiltersCount(
+        view?.attributes?.quick_filters?.length ?? 0
+      )
+    );
+  }, []);
+
   const {
     data: {visibleViews, visibleColumns, visibleRelationColumns} = {
       visibleViews: [],
@@ -276,7 +286,7 @@ const ViewsWithGroups = ({
       },
     }
   );
-
+  console.log("viewwwwwwwwwwwww", view);
   return (
     <>
       <FiltersBlock
@@ -339,25 +349,21 @@ const ViewsWithGroups = ({
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            {filterCount === 0 ? (
-              <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            ) : (
-              <Badge
-                sx={{
-                  width: "35px",
-                  paddingLeft: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setFilterVisible((prev) => !prev);
-                }}
-                badgeContent={filterCount}
-                color="primary"
-              >
-                <FilterAltOutlinedIcon color={"#A8A8A8"} />
-              </Badge>
-            )}
-            {/*  */}
+            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={filterCount}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
 
             <Divider orientation="vertical" flexItem />
             <SearchInput
@@ -747,8 +753,11 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        isVertical
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
                         filterVisible={filterVisible}
-                        setFilterCount={setFilterCount}
                         control={control}
                         getValues={getValues}
                         setFormVisible={setFormVisible}
@@ -798,8 +807,10 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
+                      visibleForm={visibleForm}
                       filterVisible={filterVisible}
-                      setFilterCount={setFilterCount}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}
@@ -864,7 +875,7 @@ const queryGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
+        {tableSlug: groupField.table_slug, filters: computedFilters},
       ],
       queryFn,
       select: (res) =>

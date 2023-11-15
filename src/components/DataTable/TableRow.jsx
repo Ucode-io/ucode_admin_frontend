@@ -77,9 +77,8 @@ const TableRow = ({
     count: 10000,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 35,
-  })
+  });
 
-console.log('wwwwwwww', virtualizer)
   if (formVisible)
     return (
       <TableRowForm
@@ -110,7 +109,7 @@ console.log('wwwwwwww', virtualizer)
 
   return (
     <>
-      {!relationAction ? (
+      {relationAction ? (
         <CTableRow style={style} ref={parentRef}>
           <CTableCell
             align="center"
@@ -170,8 +169,7 @@ console.log('wwwwwwww', virtualizer)
 
           {columns.map(
             (virtualColumn) =>
-            virtualColumn?.attributes?.field_permission
-                ?.view_permission && (
+              virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
@@ -187,28 +185,18 @@ console.log('wwwwwwww', virtualizer)
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
                         : "relative"
                     }`,
-                    left: view?.attributes?.fixedColumns?.[
-                      virtualColumn?.id
-                    ]
-                      ? `${
-                          calculateWidthFixedColumn(
-                            virtualColumn.id
-                          ) + 80
-                        }px`
+                    left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
                         : "#fff"
                     }`,
@@ -216,9 +204,7 @@ console.log('wwwwwwww', virtualizer)
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
                         : "0"
                     }`,
@@ -242,10 +228,7 @@ console.log('wwwwwwww', virtualizer)
                       onRowClick={onRowClick}
                     />
                   ) : (
-                    <CellElementGenerator
-                      field={virtualColumn}
-                      row={row}
-                    />
+                    <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
               )

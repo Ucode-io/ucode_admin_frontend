@@ -153,7 +153,7 @@ const TableRow = ({
                 className="table_multi_checkbox"
                 style={{
                   display:
-                    selectedObjectsForDelete.find(
+                    selectedObjectsForDelete?.find(
                       (item) => item?.guid === row?.guid
                     ) && "block",
                 }}

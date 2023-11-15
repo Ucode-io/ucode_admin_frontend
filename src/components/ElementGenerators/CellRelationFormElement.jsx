@@ -148,6 +148,8 @@ const AutoCompleteElement = ({
   const {id} = useParams();
   const [allOptions, setAllOptions] = useState([]);
   const [localValue, setLocalValue] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const {i18n} = useTranslation();
 
   const getOptionLabel = (option) => {
@@ -172,18 +174,6 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [autoFilters, filtersHandler]);
-
-  // const getIds = useMemo(() => {
-  //   let val = [];
-  //   relationfields
-  //     ?.filter((item) => {
-  //       return item[field?.slug];
-  //     })
-  //     .map((item) => {
-  //       return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
-  //     });
-  //   return val;
-  // }, [relationfields, field]);
 
   const getIdsFromData = useMemo(() => {
     let val = [];
@@ -230,7 +220,7 @@ const AutoCompleteElement = ({
           // slugOptions,
         };
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
         if (page > 1) {
           setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
         } else {
@@ -363,8 +353,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  const [open, setOpen] = useState(false);
-  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const handleOpen = () => {
     setOpen(true);
   };
@@ -401,10 +389,6 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
-  const clearSelection = () => {
-    setValue(null);
-  };
 
   const customStyles = {
     control: (provided, state) => ({
@@ -565,18 +549,6 @@ const AutoCompleteElement = ({
         }
         blurInputOnSelect
       />
-      {/* {errors?.[field?.slug] && (
-        <div
-          style={{
-            color: "red",
-            fontSize: "10px",
-            textAlign: "center",
-            marginTop: "5px",
-          }}
-        >
-          {"This field is required!"}
-        </div>
-      )} */}
     </div>
   );
 };

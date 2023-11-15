@@ -1,7 +1,7 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -80,6 +80,7 @@ export default function GroupColumnVisible({
         setCheckedColumns(null);
         form.reset({
           attributes: {
+            ...views?.[selectedTabIndex]?.attributes,
             group_by_columns: columns?.map((item) => {
               return {
                 ...item,
@@ -103,6 +104,7 @@ export default function GroupColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: watchedGroupColumns
             ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),

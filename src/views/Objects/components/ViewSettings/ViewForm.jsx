@@ -63,8 +63,10 @@ const ViewForm = ({
     initialValues?.attributes?.balance?.field_slug +
     "#" +
     initialValues?.attributes?.balance?.field_id;
+
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const attributes = initialValues?.attributes;
+
   const form = useForm();
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
@@ -164,24 +166,24 @@ const ViewForm = ({
     form.reset({...form.getValues(), number_field: ""});
   }, [relationObjInput, attributes]);
 
-  useWatch(() => {
-    // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
-    const formQuickFilters = form
-      .getValues("attributes.quick_filters")
-      ?.filter((el) => el?.is_checked)
-      ?.map((el) => ({field_id: el.id}));
-
-    // form.setValue('columns', computeColumns(formColumns, computedColumns))
-    form.setValue(
-      "attributes.quick_filters",
-      computeQuickFilters(
-        formQuickFilters,
-        type === "CALENDAR" || type === "GANTT"
-          ? [...columns, ...relationColumns]
-          : columns
-      )
-    );
-  }, [type, form]);
+  // useWatch(() => {
+  //   // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
+  //   const formQuickFilters = form
+  //     .getValues("attributes.quick_filters")
+  //     ?.filter((el) => el?.is_checked)
+  //     ?.map((el) => ({field_id: el.id}));
+  //   console.log("formQuickFilters", formQuickFilters);
+  //   // form.setValue('columns', computeColumns(formColumns, computedColumns))
+  //   form.setValue(
+  //     "attributes.quick_filters",
+  //     computeQuickFilters(
+  //       formQuickFilters,
+  //       type === "CALENDAR" || type === "GANTT"
+  //         ? [...columns, ...relationColumns]
+  //         : columns
+  //     )
+  //   );
+  // }, [type, form]);
 
   const onSubmit = (values) => {
     setBtnLoader(true);
@@ -189,13 +191,6 @@ const ViewForm = ({
       ...values,
       columns:
         values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
-      quick_filters:
-        values?.attributes?.quick_filters
-          ?.filter((el) => el.is_checked)
-          .map((el) => ({
-            field_id: el.id,
-            default_value: el.default_value ?? "",
-          })) ?? [],
       attributes: {
         ...attributes,
         ...computeFinancialAcc(
@@ -203,6 +198,7 @@ const ViewForm = ({
           values?.group_by_field_selected?.slug,
           values
         ),
+
         ...values?.attributes,
         group_by_columns:
           values.attributes.group_by_columns
@@ -283,7 +279,7 @@ const ViewForm = ({
           <div className={styles.section}>
             <TabList style={{marginBottom: "1px"}}>
               <Tab>Information</Tab>
-              <Tab>Quick filters</Tab>
+              {/* <Tab>Quick filters</Tab> */}
               <Tab>Columns</Tab>
               <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
@@ -355,9 +351,9 @@ const ViewForm = ({
                 <GanttSettings form={form} columns={columns} />
               )}
             </TabPanel>
-            <TabPanel>
-              <QuickFiltersTab form={form} />
-            </TabPanel>
+            {/* <TabPanel>
+              <QuickFiltersTab form={form} currentView={initialValues} />
+            </TabPanel> */}
             <TabPanel>
               <ColumnsTab form={form} isMenu={false} />
             </TabPanel>
@@ -441,7 +437,6 @@ const getInitialValues = (
       attributes: {
         group_by_columns:
           columns?.map((el) => ({...el, is_checked: false})) ?? [],
-        quick_filters: columns ?? [],
         summaries: [],
       },
     };
@@ -464,13 +459,6 @@ const getInitialValues = (
       ...initialValues?.attributes,
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
-      quick_filters:
-        computeQuickFilters(
-          initialValues?.attributes?.quick_filters,
-          initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
-            ? [...columns, ...relationColumns]
-            : columns
-        ) ?? [],
     },
     group_fields: computeGroupFields(
       initialValues?.group_fields,

@@ -1,5 +1,5 @@
-import {Box, Switch, Typography} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {Box, Switch, CircularProgress} from "@mui/material";
+import {useMemo} from "react";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -26,19 +26,23 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import LinkIcon from "@mui/icons-material/Link";
 
-const FiltersTab = ({form, updateView, views, computedColumns}) => {
+const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
   const {i18n} = useTranslation();
+
   const checkedColumns = useMemo(() => {
+    const computedIds = computedColumns?.map((item) => item?.id);
     return (
-      views?.attributes?.quick_filters?.map((checkedField) => {
-        return computedColumns?.find(
-          (column) => column?.id === checkedField?.id
-        );
+      views?.attributes?.quick_filters?.filter((checkedField) => {
+        return computedIds?.includes(checkedField?.id);
       }) ?? []
     );
   }, [computedColumns, form, views]);
 
   const unCheckedColumns = useMemo(() => {
+    const computedIds = views?.attributes?.quick_filters?.map(
+      (item) => item?.id
+    );
+
     if (
       views?.attributes?.quick_filters?.length === 0 ||
       views?.attributes?.quick_filters?.length === undefined
@@ -46,9 +50,7 @@ const FiltersTab = ({form, updateView, views, computedColumns}) => {
       return computedColumns ?? [];
     return (
       computedColumns?.filter((column) => {
-        return views?.attributes?.quick_filters?.find(
-          (item) => item.id !== column.id
-        );
+        return !computedIds?.includes(column?.id);
       }) ?? []
     );
   }, [computedColumns, form, views]);
@@ -68,7 +70,7 @@ const FiltersTab = ({form, updateView, views, computedColumns}) => {
         (el) => el?.id !== field?.id
       );
     } else {
-      computedData = [...views?.attributes?.quick_filters, field];
+      computedData = [...(views?.attributes?.quick_filters ?? []), field];
     }
 
     updateView(computedData);
@@ -109,10 +111,31 @@ const FiltersTab = ({form, updateView, views, computedColumns}) => {
       style={{
         minWidth: 200,
         maxHeight: 300,
+        minHeight: 140,
         overflowY: "auto",
         padding: "10px 14px",
+        position: "relative",
       }}
+      className="menu_filter"
     >
+      {isLoading && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#fff",
+            zIndex: "99",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <div className={styles.table}>
         <div
           className={styles.row}
@@ -121,7 +144,7 @@ const FiltersTab = ({form, updateView, views, computedColumns}) => {
           }}
         ></div>
 
-        {computedColumns?.map((column, index) => (
+        {allColumns?.checked_columns?.map((column, index) => (
           <div className={styles.row}>
             <div
               className={styles.cell}
@@ -166,6 +189,56 @@ const FiltersTab = ({form, updateView, views, computedColumns}) => {
                 checked={views?.attributes?.quick_filters?.find(
                   (filtered) => filtered?.id === column.id
                 )}
+                onChange={(e, val) => {
+                  changeHandler(e.target.checked, column);
+                }}
+              />
+            </div>
+          </div>
+        ))}
+        {allColumns?.unchecked_columns?.map((column, index) => (
+          <div className={styles.row}>
+            <div
+              className={styles.cell}
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                border: 0,
+                borderBottom: "1px solid #eee",
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
+            >
+              <div
+                style={{
+                  width: 20,
+                  height: 20,
+                  marginRight: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {columnIcons[column.type] ?? <LinkIcon />}
+              </div>
+              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+            </div>
+            <div
+              className={styles.cell}
+              style={{
+                width: 70,
+                border: 0,
+                borderBottom: "1px solid #eee",
+                paddingLeft: 0,
+                paddingRight: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Switch
+                size="small"
+                checked={false}
                 onChange={(e, val) => {
                   changeHandler(e.target.checked, column);
                 }}

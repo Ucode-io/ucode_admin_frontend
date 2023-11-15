@@ -1,19 +1,12 @@
-import {Checkbox} from "@mui/material";
 import {useFieldArray} from "react-hook-form";
 import {Container, Draggable} from "react-smooth-dnd";
-import CSelect from "../../../../components/CSelect";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableRow,
-} from "../../../../components/CTable";
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
+import {CheckBox} from "@mui/icons-material";
 
-const QuickFiltersTab = ({form}) => {
+const QuickFiltersTab = ({form, currentView}) => {
   const {fields: quickFilters, move} = useFieldArray({
     control: form.control,
     name: "attributes.quick_filters",
@@ -24,6 +17,7 @@ const QuickFiltersTab = ({form}) => {
     const result = applyDrag(quickFilters, dropResult);
     if (result) move(dropResult.removedIndex, dropResult.addedIndex);
   };
+  console.log("ssssssssss", currentView);
 
   return (
     <div>
@@ -39,6 +33,7 @@ const QuickFiltersTab = ({form}) => {
                 column={column}
                 index={index}
                 control={form.control}
+                form={form}
               />
             </Draggable>
           ))}
@@ -48,18 +43,21 @@ const QuickFiltersTab = ({form}) => {
   );
 };
 
-const QuickFilterRow = ({column, onCheckboxChange, index, control}) => {
+const QuickFilterRow = ({column, onCheckboxChange, index, control, form}) => {
   const {i18n} = useTranslation();
+  console.log("akwjbdnkjawd", column);
   return (
     <div className={styles.row}>
       <div className={styles.cell} style={{flex: 1}}>
         {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
       </div>
       <div className={styles.cell} style={{width: 70}}>
-        <HFCheckbox
+        {/* <HFCheckbox
           control={control}
           name={`attributes.quick_filters[${index}].is_checked`}
-        />
+        /> */}
+
+        <CheckBox isChecked={column.is_checked} />
       </div>
     </div>
   );

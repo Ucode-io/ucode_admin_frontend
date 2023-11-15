@@ -220,6 +220,14 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
+  useEffect(() => {
+    dispatch(
+      quickFiltersActions.setQuickFiltersCount(
+        view?.attributes?.quick_filters?.length ?? 0
+      )
+    );
+  }, []);
+
   const {
     data: {visibleViews, visibleColumns, visibleRelationColumns} = {
       visibleViews: [],
@@ -249,7 +257,7 @@ const ViewsWithGroups = ({
       },
     }
   );
-
+  console.log("viewwwwwwwwwwwww", view);
   return (
     <>
       <FiltersBlock

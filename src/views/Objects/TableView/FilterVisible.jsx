@@ -1,11 +1,9 @@
-import {Box, Button, CircularProgress, Menu} from "@mui/material";
+import {Box, Button, CircularProgress, Menu, Skeleton} from "@mui/material";
 import React, {useEffect, useMemo, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-
-import {useParams} from "react-router-dom";
 
 import FiltersTab from "../components/ViewSettings/FiltersTab";
 import {useDispatch} from "react-redux";
@@ -24,6 +22,7 @@ export default function FilterVisible({
   const dispatch = useDispatch();
 
   const [filterAnchor, setFilterAnchor] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
 
   const handleClickFilter = (event) => {
     setFilterAnchor(event.currentTarget);
@@ -40,17 +39,24 @@ export default function FilterVisible({
   }, [columns, relationColumns, type]);
 
   const updateView = (data) => {
-    console.log("datadatadata", data);
+    setUpdateLoading(true);
+    const result = data?.map((item) => ({
+      ...item,
+      is_checked: true,
+    }));
     constructorViewService
       .update({
         ...views,
         attributes: {
           ...views?.attributes,
-          quick_filters: data,
+          quick_filters: result,
         },
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        setTimeout(() => {
+          setUpdateLoading(false);
+        }, 400);
       })
       .finally(() => {
         dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
@@ -78,19 +84,16 @@ export default function FilterVisible({
         Add Filters
       </Box>
       <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <FiltersTab
-            form={form}
-            updateView={updateView}
-            isMenu={true}
-            views={views}
-            selectedTabIndex={selectedTabIndex}
-            computedColumns={computedColumns}
-            columns={columns}
-          />
-        )}
+        <FiltersTab
+          form={form}
+          updateView={updateView}
+          isMenu={true}
+          views={views}
+          selectedTabIndex={selectedTabIndex}
+          computedColumns={computedColumns}
+          columns={columns}
+          isLoading={updateLoading}
+        />
       </Menu>
     </div>
   );

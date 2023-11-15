@@ -230,7 +230,7 @@ const AutoCompleteElement = ({
           // slugOptions,
         };
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
         if (page > 1) {
           setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
         } else {

@@ -2,12 +2,23 @@ import {Box, Button, CircularProgress, Menu, Skeleton} from "@mui/material";
 import React, {useEffect, useMemo, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-
 import FiltersTab from "../components/ViewSettings/FiltersTab";
 import {useDispatch} from "react-redux";
 import {quickFiltersActions} from "../../../store/filter/quick_filter";
+import styles from "./styles.module.scss";
+
+const customStyles = {
+  gap: "5px",
+  color: "#A8A8A8",
+  borderColor: "#A8A8A8",
+  width: "100%",
+  height: "50px",
+  display: "flex",
+  alignItems: "center",
+  justifyItems: "center",
+  cursor: "pointer",
+};
 
 export default function FilterVisible({
   selectedTabIndex,
@@ -67,17 +78,8 @@ export default function FilterVisible({
     <div>
       <Box
         variant={"text"}
-        sx={{
-          gap: "5px",
-          color: "#A8A8A8",
-          borderColor: "#A8A8A8",
-          width: "100%",
-          height: "50px",
-          display: "flex",
-          alignItems: "center",
-          justifyItems: "center",
-          cursor: "pointer",
-        }}
+        className={styles.add_filter}
+        sx={customStyles}
         onClick={handleClickFilter}
       >
         <FilterAltOutlinedIcon color={"#A8A8A8"} />

@@ -113,7 +113,7 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
         maxHeight: 300,
         minHeight: 140,
         overflowY: "auto",
-        padding: "10px 14px",
+        padding: "0px 14px",
         position: "relative",
       }}
       className="menu_filter"
@@ -137,15 +137,10 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
         </Box>
       )}
       <div className={styles.table}>
-        <div
-          className={styles.row}
-          style={{
-            borderBottom: "1px solid #eee",
-          }}
-        ></div>
+        <div></div>
 
         {allColumns?.checked_columns?.map((column, index) => (
-          <div className={styles.row}>
+          <div className={styles.row_filter}>
             <div
               className={styles.cell}
               style={{
@@ -153,7 +148,6 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
                 display: "flex",
                 alignItems: "center",
                 border: 0,
-                borderBottom: "1px solid #eee",
                 paddingLeft: 0,
                 paddingRight: 0,
               }}
@@ -177,7 +171,6 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
               style={{
                 width: 70,
                 border: 0,
-                borderBottom: "1px solid #eee",
                 paddingLeft: 0,
                 paddingRight: 0,
                 display: "flex",
@@ -204,8 +197,7 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
                 flex: 1,
                 display: "flex",
                 alignItems: "center",
-                border: 0,
-                borderBottom: "1px solid #eee",
+                border: "none",
                 paddingLeft: 0,
                 paddingRight: 0,
               }}
@@ -229,7 +221,6 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
               style={{
                 width: 70,
                 border: 0,
-                borderBottom: "1px solid #eee",
                 paddingLeft: 0,
                 paddingRight: 0,
                 display: "flex",

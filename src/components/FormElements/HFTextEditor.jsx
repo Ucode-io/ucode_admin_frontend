@@ -29,11 +29,7 @@ const HFTextEditor = ({
   });
 
   return (
-<<<<<<< HEAD
     <FRowMultiLine label={label} required={field?.required}>
-=======
-    <div id="react_quill">
->>>>>>> master_folder_link
       <Controller
         control={control}
         name={name}
@@ -55,11 +51,7 @@ const HFTextEditor = ({
               autoFocus={false}
               style={{
                 backgroundColor: `${isTransparent ? "transparent" : ""}`,
-<<<<<<< HEAD
-                minWidth: "250px",
-=======
                 width: "300px",
->>>>>>> master_folder_link
               }}
             />
           </Suspense>
@@ -77,11 +69,7 @@ const HFTextEditor = ({
           // />
         )}
       ></Controller>
-<<<<<<< HEAD
     </FRowMultiLine>
-=======
-    </div>
->>>>>>> master_folder_link
   );
 };
 

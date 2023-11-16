@@ -190,9 +190,9 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
           <div>
             <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
               {visibleFields?.map((column, index) => (
-                <Draggable key={column.id}>
+                <Draggable key={column?.id}>
                   <div
-                    key={column.id}
+                    key={column?.id}
                     style={{
                       display: "flex",
                       backgroundColor: "#fff",
@@ -204,7 +204,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                         display: "flex",
                         alignItems: "center",
                         border: 0,
-                        borderBottom: "1px solid #eee",
+                        // borderBottom: "1px solid #eee",
                         paddingLeft: 0,
                         paddingRight: 0,
                         padding: "8px 0px",
@@ -221,15 +221,15 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                           justifyContent: "center",
                         }}
                       >
-                        {columnIcons(column.type) ?? <LinkIcon />}
+                        {columnIcons(column?.type) ?? <LinkIcon />}
                       </div>
-                      {column.label}
+                      {column?.label}
                     </div>
                     <div
                       style={{
                         width: 70,
                         border: 0,
-                        borderBottom: "1px solid #eee",
+                        // borderBottom: "1px solid #eee",
                         paddingLeft: 0,
                         paddingRight: 0,
                         display: "flex",
@@ -251,7 +251,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                 </Draggable>
               ))}
 
-              {unVisibleFields?.map((column, index) => (
+              {/* {unVisibleFields?.map((column, index) => (
                 <div
                   key={column.id}
                   style={{
@@ -265,7 +265,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                       display: "flex",
                       alignItems: "center",
                       border: 0,
-                      borderBottom: "1px solid #eee",
+                      // borderBottom: "1px solid #eee",
                       paddingLeft: 0,
                       paddingRight: 0,
                       padding: "8px 0px",
@@ -290,7 +290,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                     style={{
                       width: 70,
                       border: 0,
-                      borderBottom: "1px solid #eee",
+                      // borderBottom: "1px solid #eee",
                       paddingLeft: 0,
                       paddingRight: 0,
                       display: "flex",
@@ -309,7 +309,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                     />
                   </div>
                 </div>
-              ))}
+              ))} */}
             </Container>
           </div>
         </div>

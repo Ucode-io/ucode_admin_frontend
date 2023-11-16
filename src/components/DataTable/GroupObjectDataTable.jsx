@@ -495,6 +495,8 @@ const GroupObjectDataTable = ({
     // </CTable>
     <>
       <CTable
+        isTableView={true}
+        isGroupByTable={true}
         disablePagination={disablePagination}
         removableHeight={removableHeight}
         count={pagesCount}

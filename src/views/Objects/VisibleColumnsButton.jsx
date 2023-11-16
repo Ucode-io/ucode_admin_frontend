@@ -179,9 +179,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
             </div>
             <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
               {visibleFields.map((column, index) => (
-                <Draggable key={column.id}>
+                <Draggable key={column?.id}>
                   <div
-                    key={column.id}
+                    key={column?.id}
                     style={{
                       display: "flex",
                       backgroundColor: "#fff",
@@ -207,9 +207,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                           justifyContent: "center",
                         }}
                       >
-                        {columnIcons(column.type) ?? <LinkIcon />}
+                        {column?.type ? columnIcons(column?.type) : <LinkIcon />}
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
                     </div>
                     <div
                       style={{
@@ -227,9 +227,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                     >
                       <Switch
                         size="small"
-                        checked={currentView?.columns?.includes(column.id)}
+                        checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
-                          updateView(e.target.checked ? [...currentView?.columns, column.id] : currentView?.columns?.filter((el) => el !== column.id));
+                          updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
                         }}
                       />
                     </div>
@@ -265,9 +265,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                         justifyContent: "center",
                       }}
                     >
-                      {columnIcons(column.type) ?? <LinkIcon />}
+                      {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                    {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
                   </div>
                   <div
                     style={{
@@ -285,9 +285,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                   >
                     <Switch
                       size="small"
-                      checked={currentView?.columns?.includes(column.id)}
+                      checked={currentView?.columns?.includes(column?.id)}
                       onChange={(e) => {
-                        updateView(e.target.checked ? [...currentView?.columns, column.id] : currentView?.columns?.filter((el) => el !== column.id));
+                        updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
                       }}
                     />
                   </div>

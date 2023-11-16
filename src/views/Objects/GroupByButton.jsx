@@ -213,7 +213,7 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
               <div
                 style={{
                   padding: "6px 0",
-                  borderBottom: "1px solid #eee",
+                  // borderBottom: "1px solid #eee",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",

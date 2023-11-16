@@ -358,12 +358,9 @@ const GroupTableView = ({
         </div>
       )} */}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div
-          //   style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
-          id="data-table"
-        >
+        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
           <GroupObjectDataTable
-            disablePagination
+            disablePagination={false}
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}

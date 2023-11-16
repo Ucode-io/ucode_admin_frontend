@@ -129,7 +129,7 @@ const AutoCompleteElement = ({
 }) => {
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  console.log("debouncedValue", debouncedValue);
+
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
@@ -165,9 +165,7 @@ const AutoCompleteElement = ({
           },
           data: {
             ...autoFiltersValue,
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
+            view_fields: [`name_langs_${i18n?.language}`],
             additional_request: {
               additional_field: "guid",
               additional_values: value,
@@ -196,7 +194,14 @@ const AutoCompleteElement = ({
   );
 
   const {data: fromObjectList} = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
+    [
+      "GET_OBJECT_LIST",
+      tableSlug,
+      autoFiltersValue,
+      debouncedValue,
+      page,
+      field?.attributes?.view_fields,
+    ],
     () => {
       return constructorObjectService.getList(
         tableSlug,
@@ -206,6 +211,7 @@ const AutoCompleteElement = ({
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
+            // [`name_langs_${i18n?.language}`],
             additional_request: {
               additional_field: "guid",
               additional_values: value,
@@ -259,7 +265,7 @@ const AutoCompleteElement = ({
       label: getRelationFieldLabel(field, item),
       value: item?.guid,
     }));
-  }, [value, allOptions]);
+  }, [value, allOptions, i18n?.language, field?.attributes?.view_fields]);
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
@@ -271,7 +277,7 @@ const AutoCompleteElement = ({
         value: item?.guid,
       })) ?? []
     );
-  }, [allOptions, options]);
+  }, [allOptions, options, i18n?.language]);
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
@@ -299,6 +305,7 @@ const AutoCompleteElement = ({
     input: (provided) => ({
       ...provided,
       width: "100%",
+      width: "250px",
     }),
     option: (provided, state) => ({
       ...provided,
@@ -318,7 +325,8 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
+  console.log("computedOptions", computedOptions);
+  console.log("fieldfield", field);
   return (
     <div className={styles.autocompleteWrapper}>
       <div
@@ -343,7 +351,6 @@ const AutoCompleteElement = ({
         onMenuScrollToBottom={loadMoreItems}
         isMulti
         closeMenuOnSelect={false}
-        menuPortalTarget={document.body}
         styles={customStyles}
       />
     </div>

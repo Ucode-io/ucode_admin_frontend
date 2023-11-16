@@ -197,18 +197,24 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue],
     () => {
       if (!field?.table_slug) return null;
-      return constructorObjectService.getListV2(field?.table_slug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [defaultValue ?? id],
+      return constructorObjectService.getListV2(
+        field?.table_slug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [defaultValue ?? id],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path && Boolean(debouncedValue),

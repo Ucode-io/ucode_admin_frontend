@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -150,6 +151,7 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
+  const {i18n} = useTranslation();
 
   const customStyles = {
     control: (provided, state) => ({
@@ -237,19 +239,25 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
-      return constructorObjectService.getListV2(field?.table_slug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [value],
+      return constructorObjectService.getListV2(
+        field?.table_slug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [value],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          offset: pageToOffset(page, 10),
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled:

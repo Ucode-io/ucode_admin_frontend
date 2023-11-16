@@ -23,6 +23,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const RelationTable = forwardRef(
   (
@@ -61,6 +62,7 @@ const RelationTable = forwardRef(
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+    const {i18n} = useTranslation();
     const paginationInfo = useSelector(
       (state) => state?.pagination?.paginationInfo
     );
@@ -257,14 +259,20 @@ const RelationTable = forwardRef(
         },
       ],
       () => {
-        return constructorObjectService.getList(relatedTableSlug, {
-          data: {
-            offset: pageToOffset(currentPage, limit),
-            limit: limitPage !== 0 ? limitPage : limit,
-            from_tab: type === "relation" ? true : false,
-            ...computedFilters,
+        return constructorObjectService.getList(
+          relatedTableSlug,
+          {
+            data: {
+              offset: pageToOffset(currentPage, limit),
+              limit: limitPage !== 0 ? limitPage : limit,
+              from_tab: type === "relation" ? true : false,
+              ...computedFilters,
+            },
           },
-        });
+          {
+            language_setting: i18n?.language,
+          }
+        );
       },
       {
         enabled: !!relatedTableSlug,

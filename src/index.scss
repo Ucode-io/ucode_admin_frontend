@@ -447,3 +447,11 @@ div {
 .moveable-control-box {
   z-index: 2 !important;
 }
+
+#react_quill {
+  .ql-editor {
+    min-width: 300px;
+    height: 200px;
+    overflow: auto;
+  }
+}

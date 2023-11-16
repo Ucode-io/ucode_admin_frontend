@@ -1,21 +1,31 @@
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Button } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import {useLocation} from "react-router-dom";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import MultipleUpdateRow from "./MultipleUpdateRow";
-import SummaryRow from "./SummaryRow";
-import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
+import SummaryRow from "./SummaryRow";
+import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import {Box, Button, LinearProgress} from "@mui/material";
+import TableHeadForTableView from "./TableHeadForTableView";
+import InfiniteScroll from "react-infinite-scroll-component";
+import constructorObjectService from "../../services/constructorObjectService";
+import {useTranslation} from "react-i18next";
 
 const ObjectDataTable = ({
   relOptions,
@@ -77,7 +87,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -87,7 +97,8 @@ const ObjectDataTable = ({
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -128,7 +139,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -154,7 +165,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -184,13 +195,18 @@ const ObjectDataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -224,7 +240,9 @@ const ObjectDataTable = ({
   }, [formVisible]);
 
   const relationFields = useMemo(() => {
-    return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
+    return columns?.filter(
+      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+    );
   }, [columns]);
 
   return (
@@ -247,7 +265,15 @@ const ObjectDataTable = ({
       view={view}
     >
       <CTableHead>
-        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
+        {formVisible && selectedRow.length > 0 && (
+          <MultipleUpdateRow
+            columns={data}
+            fields={columns}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+          />
+        )}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
@@ -284,7 +310,10 @@ const ObjectDataTable = ({
               )
           )}
 
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type={["update", "delete"]}
+          >
             {(onDeleteClick || onEditClick) && (
               <CTableHeadCell width={10}>
                 <span
@@ -307,8 +336,13 @@ const ObjectDataTable = ({
         </CTableRow>
       </CTableHead>
 
-      <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
-        {(isRelationTable ? fields : data).length > 0 && columns.length > 0 &&
+      <CTableBody
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+        title={title}
+      >
+        {(isRelationTable ? fields : data).length &&
+          columns.length &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
             <TableRow
               relOptions={relOptions}
@@ -377,7 +411,9 @@ const ObjectDataTable = ({
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
         {additionalRow}
       </CTableBody>
     </CTable>

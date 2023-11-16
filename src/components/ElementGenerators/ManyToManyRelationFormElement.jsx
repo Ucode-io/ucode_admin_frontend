@@ -1,22 +1,18 @@
-import {Close} from "@mui/icons-material";
-import {Autocomplete, TextField} from "@mui/material";
 import {useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
+import {pageToOffset} from "../../utils/pageToOffset";
+import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
-import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
-import request from "../../utils/request";
-import {useTranslation} from "react-i18next";
 import Select from "react-select";
-import makeAnimated from "react-select/animated";
-import {pageToOffset} from "../../utils/pageToOffset";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -133,7 +129,7 @@ const AutoCompleteElement = ({
 }) => {
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  console.log("debouncedValue", debouncedValue);
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
@@ -281,19 +277,11 @@ const AutoCompleteElement = ({
     return getRelationFieldLabel(field, option);
   };
 
-  const changeHandler = (value, options) => {
+  const changeHandler = (value) => {
     if (!value) setValue(null);
-    if (options?.action === "select-option") {
-      const val = value?.map((el) => el.value);
+    const val = value?.map((el) => el.value);
 
-      setValue(val ?? null);
-    } else if (options?.action === "remove-value") {
-      const val = value?.filter(
-        (item) => item?.value === options?.options?.guid
-      );
-      console.log("val", val);
-      setValue(val ?? null);
-    }
+    setValue(val ?? null);
   };
 
   const inputChangeHandler = useDebounce((val) => {
@@ -342,12 +330,11 @@ const AutoCompleteElement = ({
 
       <Select
         options={computedOptions ?? []}
-        defaultValue={computedValue}
+        value={computedValue}
         onChange={(value, options) => {
           changeHandler(value, options);
         }}
         onInputChange={(_, val) => {
-          setInputValue(val);
           inputChangeHandler(val);
         }}
         components={{
@@ -357,21 +344,7 @@ const AutoCompleteElement = ({
         isMulti
         closeMenuOnSelect={false}
         menuPortalTarget={document.body}
-        noOptionsMessage={() => (
-          <span
-            onClick={() => navigateToForm(tableSlug)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-          >
-            Создать новый
-          </span>
-        )}
         styles={customStyles}
-        onPaste={(e) => {
-          console.log("eeeeeee -", e.clipboardData.getData("Text"));
-        }}
-        isOptionSelected={(option, value) =>
-          value.some((val) => val.value === value)
-        }
       />
     </div>
   );

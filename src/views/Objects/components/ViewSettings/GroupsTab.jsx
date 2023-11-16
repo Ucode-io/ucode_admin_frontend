@@ -1,45 +1,12 @@
-import { Box, Switch, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableRow,
-} from "../../../../components/CTable";
-import { useTranslation } from "react-i18next";
-import AppsIcon from "@mui/icons-material/Apps";
-import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
-import ColorizeIcon from "@mui/icons-material/Colorize";
-import EmailIcon from "@mui/icons-material/Email";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import LooksOneIcon from "@mui/icons-material/LooksOne";
-import PasswordIcon from "@mui/icons-material/Password";
-import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import MapIcon from "@mui/icons-material/Map";
-import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import LinkIcon from "@mui/icons-material/Link";
+import { Box, Switch, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
+import { columnIcons } from "../../../../utils/constants/columnIcons";
 
-const GroupsTab = ({
-  columns,
-  form,
-  selectedView,
-  updateView,
-  isLoading,
-  updateLoading,
-}) => {
+const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
@@ -49,23 +16,12 @@ const GroupsTab = ({
   const [selectedColumn, setSelectedColumn] = useState();
   const [updatedColumns, setUpdatedColumns] = useState();
   useEffect(() => {
-    setUpdatedColumns(
-      columns?.filter(
-        (column) =>
-          column.type === "LOOKUP" ||
-          column.type === "PICK_LIST" ||
-          column.type === "LOOKUPS" ||
-          column.type === "MULTISELECT"
-      )
-    );
+    setUpdatedColumns(columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT"));
   }, [columns]);
 
   useEffect(() => {
     if (selectedColumn) {
-      const updatedArr = [
-        selectedColumn,
-        ...updatedColumns.filter((item) => item !== selectedColumn),
-      ];
+      const updatedArr = [selectedColumn, ...updatedColumns.filter((item) => item !== selectedColumn)];
       setUpdatedColumns(updatedArr);
     }
   }, [selectedColumn]);
@@ -95,36 +51,6 @@ const GroupsTab = ({
     updateView();
   };
 
-  const columnIcons = useMemo(() => {
-    return {
-      SINGLE_LINE: <TextFieldsIcon />,
-      MULTI_LINE: <FormatAlignJustifyIcon />,
-      NUMBER: <LooksOneIcon />,
-      MULTISELECT: <ArrowDropDownCircleIcon />,
-      PHOTO: <PhotoSizeSelectActualIcon />,
-      VIDEO: <PlayCircleIcon />,
-      FILE: <InsertDriveFileIcon />,
-      FORMULA: <FunctionsIcon />,
-      PHONE: <LocalPhoneIcon />,
-      INTERNATION_PHONE: <LocalPhoneIcon />,
-      EMAIL: <EmailIcon />,
-      ICON: <AppsIcon />,
-      BARCODE: <QrCodeScannerIcon />,
-      QRCODE: <QrCode2Icon />,
-      COLOR: <ColorizeIcon />,
-      PASSWORD: <PasswordIcon />,
-      PICK_LIST: <ChecklistIcon />,
-      DATE: <DateRangeIcon />,
-      TIME: <AccessTimeIcon />,
-      DATE_TIME: <InsertInvitationIcon />,
-      CHECKBOX: <CheckBoxIcon />,
-      MAP: <MapIcon />,
-      SWITCH: <ToggleOffIcon />,
-      FLOAT_NOLIMIT: <LooksOneIcon />,
-      DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
-    };
-  }, []);
-
   return (
     <div
       style={{
@@ -134,11 +60,7 @@ const GroupsTab = ({
         padding: "10px 14px",
       }}
     >
-      <CTable
-        removableHeight={false}
-        disablePagination
-        tableStyle={{ border: "none" }}
-      >
+      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
           {updatedColumns?.length ? (
             updatedColumns?.map((column) => (
@@ -162,11 +84,8 @@ const GroupsTab = ({
                       gap: "10px",
                     }}
                   >
-                    <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
-                    <div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
-                        column.label}
-                    </div>
+                    <div>{columnIcons(column.type) ?? <LinkIcon />}</div>
+                    <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
                   </div>
                 </CTableCell>
                 <CTableCell
@@ -179,10 +98,7 @@ const GroupsTab = ({
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}
-                    checked={
-                      selectedColumns?.includes(column?.id) ||
-                      selectedView?.group_fields?.includes(column?.id)
-                    }
+                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
                 </CTableCell>

@@ -72,7 +72,7 @@ const TableRow = ({
     estimateSize: () => 100,
     overscan: 5,
   });
-  
+
   if (formVisible)
     return (
       <TableRowForm
@@ -147,7 +147,7 @@ const TableRow = ({
                 className="table_multi_checkbox"
                 style={{
                   display:
-                    selectedObjectsForDelete.find(
+                    selectedObjectsForDelete?.find(
                       (item) => item?.guid === row?.guid
                     ) && "block",
                 }}
@@ -163,8 +163,7 @@ const TableRow = ({
 
           {columns.map(
             (virtualColumn) =>
-            virtualColumn?.attributes?.field_permission
-                ?.view_permission && (
+              virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
@@ -180,28 +179,18 @@ const TableRow = ({
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
                         : "relative"
                     }`,
-                    left: view?.attributes?.fixedColumns?.[
-                      virtualColumn?.id
-                    ]
-                      ? `${
-                          calculateWidthFixedColumn(
-                            virtualColumn.id
-                          ) + 80
-                        }px`
+                    left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
                         : "#fff"
                     }`,
@@ -209,9 +198,7 @@ const TableRow = ({
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === virtualColumn?.id
                       )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[
-                        virtualColumn?.id
-                      ]
+                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
                         : "0"
                     }`,
@@ -235,10 +222,7 @@ const TableRow = ({
                       onRowClick={onRowClick}
                     />
                   ) : (
-                    <CellElementGenerator
-                      field={virtualColumn}
-                      row={row}
-                    />
+                    <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
               )
@@ -282,7 +266,18 @@ const TableRow = ({
             onRowClick(row, rowIndex);
           }}
         >
-          <CTableCell align="center" className="data_table__number_cell">
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0 4px",
+              minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
+            }}
+          >
             <span className="data_table__row_number">
               {(currentPage - 1) * limit + rowIndex + 1}
             </span>
@@ -306,23 +301,37 @@ const TableRow = ({
               key={column.id}
               className={`overflow-ellipsis ${tableHeight}`}
               style={{
-                minWidth: "max-content",
-                padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? `${calculateWidth(column?.id, index)}px`
+                minWidth: "220px",
+                color: "#262626",
+                fontSize: "13px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "normal",
+                padding: "0 5px",
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
+                }`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
                   : "0",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -353,7 +362,18 @@ const TableRow = ({
             onChecked(row?.guid);
           }}
         >
-          <CTableCell align="center" className="data_table__number_cell">
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0 4px",
+              minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
+            }}
+          >
             <span className="data_table__row_number">
               {(currentPage - 1) * limit + rowIndex + 1}
             </span>
@@ -377,24 +397,37 @@ const TableRow = ({
               key={column.id}
               className={`overflow-ellipsis ${tableHeight}`}
               style={{
-                minWidth: "max-content",
-                padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? `${calculateWidth(column?.id, index)}px`
+                minWidth: "220px",
+                color: "#262626",
+                fontSize: "13px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "normal",
+                padding: "0 5px",
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
+                }`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
                   : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <CellElementGenerator field={column} row={row} />

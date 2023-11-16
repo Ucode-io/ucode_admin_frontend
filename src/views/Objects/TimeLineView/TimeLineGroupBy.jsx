@@ -21,16 +21,23 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import { Box, Switch, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Container, Draggable } from "react-smooth-dnd";
-import { CTable, CTableBody } from "../../../components/CTable";
-import { applyDrag } from "../../../utils/applyDrag";
+import {Box, Switch, Typography} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Container, Draggable} from "react-smooth-dnd";
+import {CTable, CTableBody} from "../../../components/CTable";
+import {applyDrag} from "../../../utils/applyDrag";
 
-export default function TimeLineGroupBy({ columns, form, selectedView, updateView, isLoading, updateLoading }) {
+export default function TimeLineGroupBy({
+  columns,
+  form,
+  selectedView,
+  updateView,
+  isLoading,
+  updateLoading,
+}) {
   const [allColumns, setAllColumns] = useState([]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const checkedColumns = useMemo(() => {
     return form.getValues("group_fields").map((id) => {
@@ -44,12 +51,16 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
     });
   }, [columns, form.watch("group_fields"), form]);
 
-console.log('unCheckedColumns', unCheckedColumns)
   useEffect(() => {
     setAllColumns({
       checkedColumns,
       unCheckedColumns: unCheckedColumns.filter(
-        (item) => item?.type === "LOOKUP" || item?.type === "MULTISELECT" || item?.type === "LOOKUPS" || item?.type === "SINGLE_LINE" || item?.type === "PICK_LIST"
+        (item) =>
+          item?.type === "LOOKUP" ||
+          item?.type === "MULTISELECT" ||
+          item?.type === "LOOKUPS" ||
+          item?.type === "SINGLE_LINE" ||
+          item?.type === "PICK_LIST"
       ),
     });
   }, [columns, checkedColumns, unCheckedColumns]);
@@ -119,16 +130,22 @@ console.log('unCheckedColumns', unCheckedColumns)
         padding: "10px 14px",
       }}
     >
-      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
+      <CTable
+        removableHeight={false}
+        disablePagination
+        tableStyle={{border: "none"}}
+      >
         <CTableBody dataLength={1}>
           {checkedColumns?.length || unCheckedColumns?.length ? (
             <Container
               groupName="1"
               onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              dropPlaceholder={{className: "drag-row-drop-preview"}}
               getChildPayload={(i) => ({
                 ...allColumns?.checkedColumns[i],
-                field_name: allColumns?.checkedColumns[i]?.label ?? allColumns?.checkedColumns[i]?.title,
+                field_name:
+                  allColumns?.checkedColumns[i]?.label ??
+                  allColumns?.checkedColumns[i]?.title,
               })}
             >
               {checkedColumns?.map((column) => (
@@ -152,13 +169,19 @@ console.log('unCheckedColumns', unCheckedColumns)
                     }}
                   >
                     <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
-                    <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
+                    <div>
+                      {column?.attributes?.[`label_${i18n.language}`] ??
+                        column.label}
+                    </div>
                   </div>
 
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}
-                    checked={allColumns?.checkedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
+                    checked={
+                      allColumns?.checkedColumns?.includes(column?.id) ||
+                      selectedView?.group_fields?.includes(column?.id)
+                    }
                     onChange={(e, val) => changeHandler(e, val, column?.id)}
                   />
                 </Draggable>
@@ -184,42 +207,46 @@ console.log('unCheckedColumns', unCheckedColumns)
                     }}
                   >
                     <div>{columnIcons[item.type] ?? <LinkIcon />}</div>
-                    <div>{item?.attributes?.[`label_${i18n.language}`] ?? item.label}</div>
+                    <div>
+                      {item?.attributes?.[`label_${i18n.language}`] ??
+                        item.label}
+                    </div>
                   </div>
 
                   <Switch
-                  sx={{
-                    "& .MuiSwitch-switchBase": {
-                      transitionDuration: "0ms",
-                    },
+                    sx={{
+                      "& .MuiSwitch-switchBase": {
+                        transitionDuration: "0ms",
+                      },
 
-                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                      backgroundColor: "#3f51b5",
-                    },
+                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#3f51b5",
+                        },
 
-                    "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track": {
-                      backgroundColor: "#e5e5e5",
-                    },
+                      "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#e5e5e5",
+                        },
 
-                    "& .MuiSwitch-switchBase.Mui-disabled": {
-                      color: "#e5e5e5",
-                    },
+                      "& .MuiSwitch-switchBase.Mui-disabled": {
+                        color: "#e5e5e5",
+                      },
 
-                    "& .MuiSwitch-colorSecondary.Mui-checked": {
-                      color: "#3f51b5",
-                    },
-
-                  }}
+                      "& .MuiSwitch-colorSecondary.Mui-checked": {
+                        color: "#3f51b5",
+                      },
+                    }}
                     size="small"
                     disabled={isLoading || updateLoading}
                     checked={false}
-                    onChange={(e, val) => changeHandler(e, val, item?.id)}
+                    onChange={(e, val) => changeHandler(e, val, item)}
                   />
                 </div>
               ))}
             </Container>
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

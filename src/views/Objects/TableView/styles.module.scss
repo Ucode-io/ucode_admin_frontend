@@ -44,3 +44,10 @@
     }
   }
 }
+
+.add_filter {
+  transition: ease-in 0.1s all;
+  &:hover {
+    color: #2d6ce5;
+  }
+}

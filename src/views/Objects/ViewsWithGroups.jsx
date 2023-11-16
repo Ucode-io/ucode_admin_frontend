@@ -1,16 +1,16 @@
-import { MoreVertOutlined } from "@mui/icons-material";
+import {MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Badge, Button, Divider, Menu, Switch } from "@mui/material";
-import { endOfMonth, startOfMonth } from "date-fns";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
+import {endOfMonth, startOfMonth} from "date-fns";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
@@ -19,8 +19,8 @@ import TableCard from "../../components/TableCard";
 import useFilters from "../../hooks/useFilters";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorTableService from "../../services/constructorTableService";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
@@ -36,18 +36,34 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import useTabRouter from "../../hooks/useTabRouter";
 
-const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem, visibleRelationColumns }) => {
-  const { tableSlug } = useParams();
+const ViewsWithGroups = ({
+  views,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  view,
+  fieldsMap,
+  menuItem,
+  visibleRelationColumns,
+  visibleColumns,
+}) => {
+  const {tableSlug} = useParams();
+  const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
+  const [shouldGet, setShouldGet] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
+    useState(false);
+  const {navigateToForm} = useTabRouter();
+  const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -55,7 +71,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(true);
-  const [filterCount, setFilterCount] = useState(0);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -116,7 +131,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     },
   });
 
-  const { fields } = useFieldArray({
+  const {fields, remove, append} = useFieldArray({
     control,
     name: "multi",
   });
@@ -136,7 +151,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
@@ -224,35 +239,40 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
-        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
+        {view?.type === "FINANCE CALENDAR" && (
+          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+        )}
       </FiltersBlock>
 
-      <div className={style.extraNavbar} style={{
-        minHeight: "42px",
-      }}>
+      <div
+        className={style.extraNavbar}
+        style={{
+          minHeight: "42px",
+        }}
+      >
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            {filterCount === 0 ? (
-              <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            ) : (
-              <Badge
-                sx={{
-                  width: "35px",
-                  paddingLeft: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setFilterVisible((prev) => !prev);
-                }}
-                badgeContent={filterCount}
-                color="primary"
-              >
-                <FilterAltOutlinedIcon color={"#A8A8A8"} />
-              </Badge>
-            )}
+            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={filterCount}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
 
             <Divider orientation="vertical" flexItem />
-            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
+            <SearchInput
+              placeholder={"Search"}
+              onChange={(e) => setSearchText(e)}
+            />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -294,14 +314,23 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 },
               }}
             >
-              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
+              <SearchParams
+                checkedColumns={checkedColumns}
+                setCheckedColumns={setCheckedColumns}
+                columns={columnsForSearch}
+              />
             </Menu>
           </div>
 
           <div className={style.rightExtra}>
             <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
             <Divider orientation="vertical" flexItem />
-            <GroupByButton selectedTabIndex={selectedTabIndex} view={view} fieldsMap={fieldsMap} relationColumns={visibleRelationColumns} />
+            <GroupByButton
+              selectedTabIndex={selectedTabIndex}
+              view={view}
+              fieldsMap={fieldsMap}
+              relationColumns={visibleRelationColumns}
+            />
             <Divider orientation="vertical" flexItem />
             <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
             <Divider orientation="vertical" flexItem />
@@ -365,7 +394,10 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 >
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
-                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
+                      <div
+                        className={style.template}
+                        onClick={() => handleHeightControl(el.value)}
+                      >
                         <span>{el.label}</span>
 
                         <Switch
@@ -450,13 +482,17 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
         <TableCard type="withoutPadding">
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div className="title" style={{ marginRight: "20px" }}>
+              <div style={{display: "flex", alignItems: "center"}}>
+                <div className="title" style={{marginRight: "20px"}}>
                   <h3>{view.table_label}</h3>
                 </div>
-                <TabList style={{ border: "none" }}>
+                <TabList style={{border: "none"}}>
                   {tabs?.map((tab) => (
-                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
+                    <Tab
+                      key={tab.value}
+                      selectedClassName={style.activeTab}
+                      className={`${style.disableTab} react-tabs__tab`}
+                    >
                       {tab.label}
                     </Tab>
                   ))}
@@ -496,7 +532,13 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
-                      <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} tab={tab} />
+                      <TreeView
+                        tableSlug={tableSlug}
+                        filters={filters}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        tab={tab}
+                      />
                     ) : view?.type === "FINANCE CALENDAR" ? (
                       <FinancialCalendarView
                         view={view}
@@ -510,8 +552,11 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       />
                     ) : (
                       <TableView
+                        isVertical
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
                         filterVisible={filterVisible}
-                        setFilterCount={setFilterCount}
                         control={control}
                         getValues={getValues}
                         setFormVisible={setFormVisible}
@@ -541,7 +586,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
-                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} />
+                    <TreeView
+                      tableSlug={tableSlug}
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       control={control}
@@ -555,9 +605,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                     />
                   ) : (
                     <TableView
-                    currentView={view}
+                      currentView={view}
                       filterVisible={filterVisible}
-                      setFilterCount={setFilterCount}
+                      visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
+                      visibleForm={visibleForm}
+                      setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}
                       isTableView={true}
@@ -597,7 +650,7 @@ const queryGenerator = (groupField, filters = {}) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -618,7 +671,10 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
+      queryKey: [
+        "GET_OBJECT_LIST_ALL",
+        {tableSlug: groupField.table_slug, filters: computedFilters},
+      ],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

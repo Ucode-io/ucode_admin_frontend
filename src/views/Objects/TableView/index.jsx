@@ -1,10 +1,10 @@
-import { Box, Drawer } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {Box, Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
@@ -15,10 +15,10 @@ import constructorObjectService from "../../../services/constructorObjectService
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { generateGUID } from "../../../utils/generateID";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import { listToMap } from "../../../utils/listToMap";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {generateGUID} from "../../../utils/generateID";
+import {mergeStringAndState} from "../../../utils/jsonPath";
+import {listToMap} from "../../../utils/listToMap";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
@@ -27,7 +27,13 @@ import styles from "./styles.module.scss";
 
 const TableView = ({
   filterVisible,
-  setFilterCount,
+  handleClickFilter,
+  handleCloseFilter,
+  visibleColumns,
+  visibleRelationColumns,
+  isVisibleLoading,
+  visibleForm,
+  filterAnchor,
   tab,
   view,
   shouldGet,
@@ -54,14 +60,16 @@ const TableView = ({
   currentView,
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
+  const {t} = useTranslation();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug, appId} = useParams();
+  const {new_list} = useSelector((state) => state.filter);
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
-  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
+  const paginationInfo = useSelector(
+    (state) => state?.pagination?.paginationInfo
+  );
   const [limit, setLimit] = useState(20);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -72,7 +80,7 @@ const TableView = ({
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
 
   const mainForm = useForm({
@@ -97,7 +105,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const { update } = useFieldArray({
+  const {update} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -119,11 +127,15 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug:
+          relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -131,11 +143,13 @@ const TableView = ({
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -149,7 +163,10 @@ const TableView = ({
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -158,7 +175,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -176,7 +193,8 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key])
+          result.push({id: key, value: view.attributes.fixedColumns[key]});
       }
     }
     return customSortArray(
@@ -205,10 +223,12 @@ const TableView = ({
     });
 
     if (sortValues && sortValues.length > 0) {
-      const matchingSort = sortValues.find((entry) => entry.tableSlug === tableSlug);
+      const matchingSort = sortValues.find(
+        (entry) => entry.tableSlug === tableSlug
+      );
 
       if (matchingSort) {
-        const { field, order } = matchingSort;
+        const {field, order} = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -237,7 +257,7 @@ const TableView = ({
 
   const [combinedTableData, setCombinedTableData] = useState([]);
   const {
-    data: { fiedlsarray, fieldView } = {
+    data: {fiedlsarray, fieldView} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -270,7 +290,7 @@ const TableView = ({
     },
   });
   const {
-    data: { tableData, pageCount } = {
+    data: {tableData, pageCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -288,7 +308,7 @@ const TableView = ({
         currentPage,
         checkedColumns,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
       },
@@ -299,17 +319,27 @@ const TableView = ({
           offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
+          search:
+            detectStringType(searchText) === "number"
+              ? parseInt(searchText)
+              : searchText,
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
-          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
+          [tab?.slug]: tab
+            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
+                ?.type === "MULTISELECT"
+              ? [`${tab?.value}`]
+              : tab?.value
+            : undefined,
         },
       });
     },
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / (paginiation ?? limit)),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / (paginiation ?? limit)),
       };
     },
     onSuccess: (data) => {
@@ -328,11 +358,14 @@ const TableView = ({
     const filteredFieldsView =
       fieldView &&
       fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.quick_filters;
+        return item?.type === "TABLE" && item?.attributes?.quick_filters;
       });
-    const quickFilters = filteredFieldsView?.quick_filters?.map((el) => {
-      return el?.field_id;
-    });
+    console.log("filteredFieldsView", filteredFieldsView);
+    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+      (el) => {
+        return el?.field_id;
+      }
+    );
     const filteredFields = fiedlsarray?.filter((item) => {
       return quickFilters?.includes(item.id);
     });
@@ -354,7 +387,11 @@ const TableView = ({
     const computedIds = computedRelationFields?.map((item) => ({
       table_slug: item?.slug,
       ids:
-        item?.type === "LOOKUP" ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug]))) : Array.from(new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))),
+        item?.type === "LOOKUP"
+          ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+          : Array.from(
+              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
+            ),
     }));
 
     tableData?.length &&
@@ -366,7 +403,9 @@ const TableView = ({
               offset: 0,
               additional_request: {
                 additional_field: "guid",
-                additional_values: computedIds?.find((computedItem) => computedItem?.table_slug === item?.slug)?.ids,
+                additional_values: computedIds?.find(
+                  (computedItem) => computedItem?.table_slug === item?.slug
+                )?.ids,
               },
             },
           })
@@ -410,14 +449,18 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
       });
   };
 
-  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-    tableSlug,
-  });
+  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
+    {
+      tableSlug,
+    }
+  );
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -443,7 +486,9 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
       });
   }, [tableSlug, i18n?.language]);
@@ -459,7 +504,15 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
+      const params = view.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -502,24 +555,35 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
-  }, [view?.quick_filters?.length, refetch]);
-
-  useEffect(() => {
-    setFilterCount(getFilteredFilterFields?.length);
-  }, [getFilteredFilterFields]);
+  }, [view?.attributes?.quick_filters?.length, refetch]);
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
-        <div className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
+      {
+        <div
+          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}
+        >
           <Box className={styles.block}>
             <p>{t("filters")}</p>
-            <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
+            <FastFilter
+              view={view}
+              fieldsMap={fieldsMap}
+              getFilteredFilterFields={getFilteredFilterFields}
+              isVertical
+              selectedTabIndex={selectedTabIndex}
+              visibleColumns={visibleColumns}
+              visibleRelationColumns={visibleRelationColumns}
+              visibleForm={visibleForm}
+              isVisibleLoading={isVisibleLoading}
+            />
           </Box>
         </div>
-      )}
+      }
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
+        <div
+          style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+          id="data-table"
+        >
           <ObjectDataTable
             currentView={currentView}
             relOptions={relOptions}
@@ -574,9 +638,18 @@ const TableView = ({
         </div>
       </PermissionWrapperV2>
 
-      <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+      />
 
-      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+      <Drawer
+        open={drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -590,7 +663,12 @@ const TableView = ({
         />
       </Drawer>
 
-      <Drawer open={drawerStateField} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+      <Drawer
+        open={drawerStateField}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
         <RelationSettingsTest
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

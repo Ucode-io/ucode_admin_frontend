@@ -215,6 +215,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
   };
   const iconStyle = {
     color:

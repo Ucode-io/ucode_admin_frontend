@@ -19,7 +19,6 @@ import { applyDrag } from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
-import CopyToClipboard from "../../CopyToClipboard";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
@@ -33,7 +32,6 @@ const SubMenu = ({
   setFolderModalType,
   setTableModal,
   setSubMenuIsOpen,
-  setSubSearchText,
   handleOpenNotify,
   setElement,
   selectedApp,
@@ -51,7 +49,9 @@ const SubMenu = ({
   const [check, setCheck] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
-
+  const addPermission =
+    selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a280" ||
+    selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b";
   const handleClick = () => {
     navigator.clipboard.writeText(
       `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
@@ -77,6 +77,8 @@ const SubMenu = ({
       handleOpenNotify(e, "CREATE_TO_MINIO");
     } else if (selectedApp?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1") {
       handleOpenNotify(e, "WIKI_FOLDER");
+    } else if (selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a282") {
+      handleOpenNotify(e, "FAVOURITE");
     } else {
       handleOpenNotify(e, "ROOT");
     }
@@ -136,17 +138,19 @@ const SubMenu = ({
                     }}
                   />
                 ))}
-              <BsThreeDots
-                size={13}
-                onClick={(e) => {
-                  handleOpenNotify(e, "FOLDER");
-                  setElement(selectedApp);
-                }}
-                style={{
-                  color: menuStyle?.text,
-                }}
-              />
-              {selectedApp?.data?.permission?.write && (
+              {!selectedApp?.is_static && (
+                <BsThreeDots
+                  size={13}
+                  onClick={(e) => {
+                    handleOpenNotify(e, "FOLDER");
+                    setElement(selectedApp);
+                  }}
+                  style={{
+                    color: menuStyle?.text,
+                  }}
+                />
+              )}
+              {selectedApp?.data?.permission?.write && !addPermission ? (
                 <AddIcon
                   size={13}
                   onClick={(e) => {
@@ -156,7 +160,7 @@ const SubMenu = ({
                     color: menuStyle?.text,
                   }}
                 />
-              )}
+              ) : null}
               <PushPinIcon
                 size={13}
                 onClick={() => {

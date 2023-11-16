@@ -1,24 +1,21 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useOnClickOutside from "use-onclickoutside";
-import { useLocation } from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
-import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import TableRow from "./TableRow";
-import SummaryRow from "./SummaryRow";
-import MultipleUpdateRow from "./MultipleUpdateRow";
-import "./style.scss";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
-import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import { Box, Button, LinearProgress } from "@mui/material";
-import TableHeadForTableView from "./TableHeadForTableView";
-import InfiniteScroll from "react-infinite-scroll-component";
-import constructorObjectService from "../../services/constructorObjectService";
+import { Button } from "@mui/material";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import useOnClickOutside from "use-onclickoutside";
+import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import FilterGenerator from "../../views/Objects/components/FilterGenerator";
+import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import MultipleUpdateRow from "./MultipleUpdateRow";
+import SummaryRow from "./SummaryRow";
+import TableHeadForTableView from "./TableHeadForTableView";
+import TableRow from "./TableRow";
+import "./style.scss";
 
 const ObjectDataTable = ({
   relOptions,
@@ -26,6 +23,7 @@ const ObjectDataTable = ({
   data = [],
   loader = false,
   setDrawerState,
+  currentView,
   setDrawerStateField,
   removableHeight,
   additionalRow,
@@ -228,7 +226,7 @@ const ObjectDataTable = ({
   const relationFields = useMemo(() => {
     return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
   }, [columns]);
-  
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -257,6 +255,7 @@ const ObjectDataTable = ({
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  currentView={currentView}
                   column={column}
                   index={index}
                   pageName={pageName}
@@ -309,7 +308,8 @@ const ObjectDataTable = ({
       </CTableHead>
 
       <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
-        {(isRelationTable ? fields : data).length && columns.length &&
+        {(isRelationTable ? fields : data).length &&
+          columns.length &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
             <TableRow
               relOptions={relOptions}

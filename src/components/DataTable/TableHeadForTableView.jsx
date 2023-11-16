@@ -1,24 +1,20 @@
-import React, { useState } from "react";
-import { CTableHeadCell } from "../CTable";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import { Button, Menu } from "@mui/material";
+import AlignHorizontalLeftIcon from "@mui/icons-material/AlignHorizontalLeft";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
-import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { useQueryClient } from "react-query";
-import constructorViewService from "../../services/constructorViewService";
-import constructorFieldService from "../../services/constructorFieldService";
-import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
+import { Button, Menu } from "@mui/material";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
+import constructorFieldService from "../../services/constructorFieldService";
+import constructorViewService from "../../services/constructorViewService";
 import { paginationActions } from "../../store/pagination/pagination.slice";
-import AlignHorizontalLeftIcon from "@mui/icons-material/AlignHorizontalLeft";
+import { CTableHeadCell } from "../CTable";
 
 export default function TableHeadForTableView({
   column,
@@ -45,6 +41,7 @@ export default function TableHeadForTableView({
   filters,
   tableSlug,
   disableFilters,
+  currentView,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
@@ -60,11 +57,11 @@ export default function TableHeadForTableView({
 
   const fixColumnChangeHandler = (column, e) => {
     const computedData = {
-      ...selectedView,
+      ...currentView,
       attributes: {
-        ...selectedView?.attributes,
+        ...currentView?.attributes,
         fixedColumns: {
-          ...selectedView?.attributes?.fixedColumns,
+          ...currentView?.attributes?.fixedColumns,
           [column.id]: e,
         },
       },
@@ -77,11 +74,11 @@ export default function TableHeadForTableView({
 
   const textWrapChangeHandler = (column, e) => {
     const computedData = {
-      ...selectedView,
+      ...currentView,
       attributes: {
-        ...selectedView?.attributes,
+        ...currentView?.attributes,
         textWrap: {
-          ...selectedView?.attributes?.textWrap,
+          ...currentView?.attributes?.textWrap,
           [column.id]: e,
         },
       },
@@ -95,8 +92,8 @@ export default function TableHeadForTableView({
   const updateView = (column) => {
     constructorViewService
       .update({
-        ...selectedView,
-        columns: selectedView?.columns?.filter((item) => item !== column),
+        ...currentView,
+        columns: currentView?.columns?.filter((item) => item !== column),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -107,8 +104,8 @@ export default function TableHeadForTableView({
     constructorFieldService.delete(column).then((res) => {
       constructorViewService
         .update({
-          ...selectedView,
-          columns: selectedView?.columns?.filter((item) => item !== column),
+          ...currentView,
+          columns: currentView?.columns?.filter((item) => item !== column),
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -135,36 +132,6 @@ export default function TableHeadForTableView({
         },
       ],
     },
-
-    // {
-    //   id: 3,
-    //   children: [
-    //     {
-    //       id: 4,
-    //       title: "Dublicate field",
-    //       icon: <QueueOutlinedIcon />,
-    //       onClickAction: () => {
-    //         console.log("Dublicate field");
-    //       },
-    //     },
-    //     {
-    //       id: 5,
-    //       title: "Insert Left",
-    //       icon: <ArrowBackOutlinedIcon />,
-    //       onClickAction: () => {
-    //         console.log("Insert Left");
-    //       },
-    //     },
-    //     {
-    //       id: 6,
-    //       title: "Insert Right",
-    //       icon: <ArrowForwardOutlinedIcon />,
-    //       onClickAction: () => {
-    //         console.log("Insert Right");
-    //       },
-    //     },
-    //   ],
-    // },
     {
       id: 7,
       children: [
@@ -207,14 +174,6 @@ export default function TableHeadForTableView({
             fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
           },
         },
-        // {
-        //   id: 11,
-        //   title: "Text Wrap",
-        //   icon: <WrapTextOutlinedIcon />,
-        //   onClickAction: () => {
-        //     console.log("Text Wrap");
-        //   },
-        // },
       ],
     },
     {
@@ -259,7 +218,6 @@ export default function TableHeadForTableView({
           left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
           backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
           zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
-          // color: formVisible && column?.required === true ? "red" : "",
         }}
       >
         <div
@@ -291,19 +249,6 @@ export default function TableHeadForTableView({
           >
             <ExpandCircleDownIcon />
           </Button>
-          {/* {(disableFilters && isTableView) && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
-          {(columnId === column?.id && isTableView) && (
-            <div className="cell-popup" ref={popupRef}>
-              <div className="cell-popup-item" onClick={() => handlePin(column?.id, index)}>
-                <PinIcon pinned={tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky} />
-                <span>Pin column</span>
-              </div>
-              <div className="cell-popup-item" onClick={() => handleAutoSize(column?.id, index)}>
-                <ResizeIcon />
-                <span>Autosize</span>
-              </div>
-            </div>
-          )} */}
         </div>
       </CTableHeadCell>
 
@@ -326,7 +271,6 @@ export default function TableHeadForTableView({
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
             "& .MuiAvatar-root": {
-              // width: 100,
               height: 32,
               ml: -0.5,
               mr: 1,
@@ -363,34 +307,38 @@ export default function TableHeadForTableView({
                 borderBottom: "1px solid #E0E0E0",
               }}
             >
-              {item.children.map((child) => (
-                <div
-                  onClick={() => {
-                    child.onClickAction();
-                    handleClose();
-                  }}
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    color: child.id === 14 ? "red" : "",
-                    padding: "2px 0",
-                  }}
-                >
+              {item.children.map((child) =>
+                child.id === 19 && column?.type !== "MULTI_LINE" ? (
+                  ""
+                ) : (
                   <div
+                    onClick={() => {
+                      child.onClickAction();
+                      handleClose();
+                    }}
                     style={{
                       display: "flex",
+                      gap: "10px",
                       alignItems: "center",
-                      justifyContent: "center",
+                      cursor: "pointer",
+                      color: child.id === 14 ? "red" : "",
+                      padding: "2px 0",
                     }}
                   >
-                    {child.icon}
-                  </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {child.icon}
+                    </div>
 
-                  <span>{child.title}</span>
-                </div>
-              ))}
+                    <span>{child.title}</span>
+                  </div>
+                )
+              )}
             </div>
           ))}
         </div>

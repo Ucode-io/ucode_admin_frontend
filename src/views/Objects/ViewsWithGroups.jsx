@@ -532,6 +532,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                         checkedColumns={checkedColumns}
                         searchText={searchText}
                         selectedView={selectedView}
+                        currentView={view}
                       />
                     )}
                   </TabPanel>
@@ -554,6 +555,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                     />
                   ) : (
                     <TableView
+                    currentView={view}
                       filterVisible={filterVisible}
                       setFilterCount={setFilterCount}
                       getValues={getValues}

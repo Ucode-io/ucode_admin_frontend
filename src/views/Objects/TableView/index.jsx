@@ -51,6 +51,7 @@ const TableView = ({
   selectedLinkedTableSlug,
   menuItem,
   setFormValue,
+  currentView,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -520,6 +521,7 @@ const TableView = ({
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
           <ObjectDataTable
+            currentView={currentView}
             relOptions={relOptions}
             tableView={true}
             defaultLimit={view?.default_limit}

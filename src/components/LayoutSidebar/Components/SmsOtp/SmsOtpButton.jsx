@@ -39,6 +39,7 @@ const SmsOtpButton = ({ level = 1, menuStyle, menuItem }) => {
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

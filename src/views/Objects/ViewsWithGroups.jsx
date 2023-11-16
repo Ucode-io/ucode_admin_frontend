@@ -18,17 +18,18 @@ import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import useFilters from "../../hooks/useFilters";
 import constructorObjectService from "../../services/constructorObjectService";
+import constructorTableService from "../../services/constructorTableService";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import ColumnVisible from "./ColumnVisible";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import GroupByButton from "./GroupByButton";
-import GroupColumnVisible from "./GroupColumnVisible";
 import ShareModal from "./ShareModal/ShareModal";
 import SortButton from "./SortButton";
 import TableView from "./TableView";
 import GroupTableView from "./TableView/GroupTableView";
+import TableViewGroupByButton from "./TableViewGroupByButton";
 import TreeView from "./TreeView";
+import VisibleColumnsButton from "./VisibleColumnsButton";
 import ExcelButtons from "./components/ExcelButtons";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import FixColumnsTableView from "./components/FixColumnsTableView";
@@ -36,9 +37,8 @@ import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 
-const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem, visibleRelationColumns }) => {
   const { tableSlug } = useParams();
-  const visibleForm = useForm();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
@@ -182,35 +182,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     selectAll();
   }, []);
 
-  const {
-    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
-      visibleViews: [],
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-    isVisibleLoading,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          visibleViews: data?.views ?? [],
-          visibleColumns: data?.fields ?? [],
-          visibleRelationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
-
   return (
     <>
       <FiltersBlock
@@ -256,7 +227,9 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
         {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
-      <div className={style.extraNavbar}>
+      <div className={style.extraNavbar} style={{
+        minHeight: "42px",
+      }}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
             {filterCount === 0 ? (
@@ -327,29 +300,15 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
           <div className={style.rightExtra}>
             <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
-
-            <GroupByButton selectedTabIndex={selectedTabIndex} view={view} fieldsMap={fieldsMap} relationColumns={visibleRelationColumns}/>
-
-            <ColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
-            <SortButton selectedTabIndex={selectedTabIndex} sortDatas={sortedDatas} setSortedDatas={setSortedDatas} />
-
-            <GroupColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
+            <Divider orientation="vertical" flexItem />
+            <GroupByButton selectedTabIndex={selectedTabIndex} view={view} fieldsMap={fieldsMap} relationColumns={visibleRelationColumns} />
+            <Divider orientation="vertical" flexItem />
+            <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
+            <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} />
+            <Divider orientation="vertical" flexItem />
+            <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
             {view.type === "TABLE" && (
               <>
                 <Button
@@ -423,14 +382,22 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 </Menu>
               </>
             )}
-
-            <button className={style.moreButton} onClick={handleClick}>
+            <Divider orientation="vertical" flexItem />
+            <Button
+              onClick={handleClick}
+              variant="text"
+              style={{
+                color: "#A8A8A8",
+                borderColor: "#A8A8A8",
+                minWidth: "auto",
+              }}
+            >
               <MoreVertOutlined
                 style={{
                   color: "#888",
                 }}
               />
-            </button>
+            </Button>
 
             <Menu
               open={open}

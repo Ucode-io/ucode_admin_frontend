@@ -83,6 +83,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
+          view_type: "TIMELINE",
           gte: dateFilters[0],
           lte: dateFilters[1],
           with_relations: true,

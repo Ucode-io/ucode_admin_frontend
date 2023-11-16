@@ -6,14 +6,7 @@ import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
-export default function GroupColumnVisible({
-  selectedTabIndex,
-  views,
-  columns,
-  relationColumns,
-  isLoading,
-  form,
-}) {
+export default function GroupColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState(null);
@@ -30,9 +23,7 @@ export default function GroupColumnVisible({
   const type = views?.[selectedTabIndex]?.type;
 
   useEffect(() => {
-    setCheckedColumns(
-      watchedGroupColumns?.filter((item) => item?.is_checked === true)
-    );
+    setCheckedColumns(watchedGroupColumns?.filter((item) => item?.is_checked === true));
   }, [watchedGroupColumns]);
 
   const computedColumns = useMemo(() => {
@@ -56,9 +47,7 @@ export default function GroupColumnVisible({
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
+          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, group_by, columns]);
@@ -70,9 +59,7 @@ export default function GroupColumnVisible({
         attributes: {
           group_by_columns: [],
         },
-        columns: watchedColumns
-          ?.filter((el) => el?.is_checked)
-          ?.map((el) => el.id),
+        columns: watchedColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -90,9 +77,7 @@ export default function GroupColumnVisible({
           columns:
             computedColumns?.map((el) => ({
               ...el,
-              is_checked: views?.[selectedTabIndex]?.columns?.find(
-                (column) => column === el.id
-              ),
+              is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
             })) ?? [],
         });
       });
@@ -103,13 +88,9 @@ export default function GroupColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
+          group_by_columns: watchedGroupColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
         },
-        columns: watchedColumns
-          ?.filter((el) => el?.is_checked)
-          ?.map((el) => el.id),
+        columns: watchedColumns?.filter((el) => el?.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -120,38 +101,17 @@ export default function GroupColumnVisible({
   return (
     <div>
       <Button
-        variant={`${
-          form
-            .watch("attributes.group_by_columns")
-            ?.filter((el) => el?.is_checked)?.length > 0
-            ? "outlined"
-            : "text"
-        }`}
+        variant={`${form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
-          color:
-            form
-              .watch("attributes.group_by_columns")
-              ?.filter((el) => el?.is_checked)?.length > 0
-              ? "rgb(0, 122, 255)"
-              : "#A8A8A8",
-          borderColor:
-            form
-              .watch("attributes.group_by_columns")
-              ?.filter((el) => el?.is_checked)?.length > 0
-              ? "rgb(0, 122, 255)"
-              : "#A8A8A8",
+          color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <AppsIcon
           style={{
-            color:
-              form
-                .watch("attributes.group_by_columns")
-                ?.filter((el) => el?.is_checked)?.length > 0
-                ? "rgb(0, 122, 255)"
-                : "#A8A8A8",
+            color: form.watch("attributes.group_by_columns")?.filter((el) => el?.is_checked)?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           }}
         />
         Group
@@ -168,8 +128,7 @@ export default function GroupColumnVisible({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color:
-                checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color: checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -178,8 +137,7 @@ export default function GroupColumnVisible({
           >
             <CloseRoundedIcon
               style={{
-                color:
-                  checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                color: checkedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
               }}
             />
           </button>
@@ -188,6 +146,14 @@ export default function GroupColumnVisible({
       <Menu
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         anchorEl={anchorEl}
         PaperProps={{
           elevation: 0,
@@ -204,7 +170,7 @@ export default function GroupColumnVisible({
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -214,11 +180,7 @@ export default function GroupColumnVisible({
           },
         }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <GroupByTab form={form} updateView={updateView} isMenu={true} />
-        )}
+        {isLoading ? <CircularProgress /> : <GroupByTab form={form} updateView={updateView} isMenu={true} />}
       </Menu>
     </div>
   );

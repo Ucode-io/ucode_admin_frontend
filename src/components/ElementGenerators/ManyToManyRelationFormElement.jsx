@@ -305,6 +305,7 @@ const AutoCompleteElement = ({
     input: (provided) => ({
       ...provided,
       width: "100%",
+      width: "250px",
     }),
     option: (provided, state) => ({
       ...provided,

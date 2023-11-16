@@ -157,7 +157,7 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-
+  console.log("fieldddddddddddd", field);
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return (
@@ -356,26 +356,28 @@ const FormElementGenerator = ({
 
     case "MULTI_LINE":
       return (
-        <FRow label={label} required={field.required}>
-          <HFTextEditor
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            fullWidth
-            multiline
-            rows={4}
-            placeholder={
-              field?.attributes?.show_label
-                ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
-            }
-            required={checkRequiredField}
-            defaultValue={field.defaultValue}
-            disabled={isDisabled}
-            key={computedSlug}
-            {...props}
-          />
-        </FRow>
+        // <FRow label={label} required={field.required}>
+        <HFTextEditor
+          control={control}
+          label={label}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          field={field}
+          fullWidth
+          multiline
+          rows={4}
+          placeholder={
+            field?.attributes?.show_label
+              ? ""
+              : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+          }
+          required={checkRequiredField}
+          defaultValue={field.defaultValue}
+          disabled={isDisabled}
+          key={computedSlug}
+          {...props}
+        />
+        // </FRow>
       );
 
     case "DATE":

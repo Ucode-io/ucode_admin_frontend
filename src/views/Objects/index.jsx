@@ -23,7 +23,6 @@ const ObjectsPage = () => {
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const { i18n } = useTranslation();
-  const queryClient = useQueryClient();
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const params = {
@@ -31,9 +30,11 @@ const ObjectsPage = () => {
   };
 
   const {
-    data: { views, fieldsMap } = {
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
       views: [],
       fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
     },
     isLoading,
   } = useQuery(
@@ -52,10 +53,15 @@ const ObjectsPage = () => {
         return {
           views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
           fieldsMap: listToMap(data?.fields),
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
         };
       },
       onSuccess: ({ views }) => {
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -122,6 +128,8 @@ const ObjectsPage = () => {
                 ) : (
                   <>
                     <ViewsWithGroups
+                    visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}

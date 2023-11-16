@@ -1,21 +1,16 @@
-import React, { useState } from "react";
-import { CTableHeadCell } from "../CTable";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import { Button, Menu } from "@mui/material";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
-import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
-import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { useQueryClient } from "react-query";
-import constructorViewService from "../../services/constructorViewService";
-import constructorFieldService from "../../services/constructorFieldService";
-import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import { Button, Menu } from "@mui/material";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import constructorFieldService from "../../services/constructorFieldService";
+import constructorViewService from "../../services/constructorViewService";
+import { CTableHeadCell } from "../CTable";
 
 export default function GroupTableHeadForTableView({
   column,
@@ -29,18 +24,9 @@ export default function GroupTableHeadForTableView({
   setSortedDatas,
   view,
   calculateWidthFixedColumn,
-  handlePin,
-  handleAutoSize,
-  popupRef,
-  columnId,
   setColumnId,
   setCurrentColumnWidth,
-  isTableView,
-  FilterGenerator,
-  filterChangeHandler,
-  filters,
   tableSlug,
-  disableFilters,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
@@ -145,22 +131,14 @@ export default function GroupTableHeadForTableView({
       children: [
         {
           id: 8,
-          title: `Sort ${
-            sortedDatas?.find((item) => item.field === column.id)?.order ===
-            "ASC"
-              ? "Z -> A"
-              : "A -> Z"
-          }`,
+          title: `Sort ${sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "Z -> A" : "A -> Z"}`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
-              const index = newSortedDatas.findIndex(
-                (item) => item.field === column.id
-              );
+              const index = newSortedDatas.findIndex((item) => item.field === column.id);
               if (index !== -1) {
-                newSortedDatas[index].order =
-                  newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+                newSortedDatas[index].order = newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
               } else {
                 newSortedDatas.push({
                   field: column.id,
@@ -173,15 +151,10 @@ export default function GroupTableHeadForTableView({
         },
         {
           id: 10,
-          title: `${
-            view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
-          } column`,
+          title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"} column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
-            fixColumnChangeHandler(
-              column,
-              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
-            );
+            fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
           },
         },
         // {
@@ -229,33 +202,12 @@ export default function GroupTableHeadForTableView({
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "normal",
-          minWidth: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          width: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          position: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "sticky"
-              : "relative"
-          }`,
-          left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id)}px`
-            : "0",
-          backgroundColor: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "#F6F6F6"
-              : "#fff"
-          }`,
-          zIndex: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "1"
-              : "0"
-          }`,
+          minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
+          left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
+          backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
+          zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
           // color: formVisible && column?.required === true ? "red" : "",
         }}
       >

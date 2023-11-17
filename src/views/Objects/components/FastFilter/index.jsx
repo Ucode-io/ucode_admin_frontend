@@ -43,7 +43,7 @@ const FastFilter = ({
     const filter = view?.attributes?.quick_filters ?? view?.quick_filters;
     return (
       [
-        ...filter,
+        ...(filter ?? []),
         ...(new_list[tableSlug] ?? [])
           ?.filter(
             (fast) =>

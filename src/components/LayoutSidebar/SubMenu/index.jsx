@@ -97,7 +97,7 @@ const SubMenu = ({
         });
     }
   };
-
+  console.log("selectedApp", selectedApp);
   return (
     <div
       className={`SubMenu ${
@@ -223,6 +223,7 @@ const SubMenu = ({
                     menuItem={menuItem}
                     level={2}
                     child={child}
+                    selectedApp={selectedApp}
                   />
                 )}
                 <div className="menu-element">
@@ -239,7 +240,6 @@ const SubMenu = ({
                           openFolderCreateModal={openFolderCreateModal}
                           setFolderModalType={setFolderModalType}
                           sidebarIsOpen={subMenuIsOpen}
-                          selectedApp={selectedApp}
                           setTableModal={setTableModal}
                           setLinkedTableModal={setLinkedTableModal}
                           handleOpenNotify={handleOpenNotify}
@@ -250,6 +250,7 @@ const SubMenu = ({
                           index={index}
                           setCheck={setCheck}
                           check={check}
+                          selectedApp={selectedApp}
                         />
                       ))}
                     </Container>

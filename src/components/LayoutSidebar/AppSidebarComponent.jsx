@@ -1,3 +1,4 @@
+import "./style.scss";
 import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
 import { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
@@ -5,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
-import "./style.scss";
 import IconGenerator from "../IconPicker/IconGenerator";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../store/menuItem/menuItem.slice";

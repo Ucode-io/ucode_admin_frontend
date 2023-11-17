@@ -1,4 +1,5 @@
-import "../style.scss";
+import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,28 +7,27 @@ import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
 import { store } from "../../../store";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
+import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
-import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
-import QuerySidebar from "../Components/Query/QuerySidebar";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
-import { folderIds } from "./mock/folders";
-import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
-import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
-import { Draggable } from "react-smooth-dnd";
-import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
-import RedirectButton from "../Components/Redirect/RedirectButton";
-import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import { MenuFolderArrows, NavigateByType } from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
+import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
+import QuerySidebar from "../Components/Query/QuerySidebar";
+import RedirectButton from "../Components/Redirect/RedirectButton";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
+import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
+import "../style.scss";
+import { folderIds } from "./mock/folders";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -45,10 +45,11 @@ const RecursiveBlock = ({
   setSubMenuIsOpen,
   menuStyle,
   menuItem,
-  selectedApp,
   index,
   setCheck,
   check,
+  selectedApp,
+  userType = false,
 }) => {
   const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -78,7 +79,10 @@ const RecursiveBlock = ({
     (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ||
     element?.type === "WIKI_FOLDER";
 
-  const settingsButtonPermission = selectedApp?.id !== adminId;
+  const settingsButtonPermission =
+    (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
+      selectedApp?.id !== adminId) ||
+    !selectedApp?.is_static;
 
   const navigateAndSaveHistory = (elementItem) => {
     const computedData = {
@@ -149,14 +153,6 @@ const RecursiveBlock = ({
     }
   };
 
-  const menuSettingsClick = (e) => {
-    if (element?.type === "MINIO_FOLDER") {
-      handleOpenNotify(e, "MINIO_FOLDER");
-    } else {
-      handleOpenNotify(e, "FOLDER");
-    }
-  };
-
   const folderSettings = (e) => {
     e.stopPropagation();
     setElement(element);
@@ -167,17 +163,15 @@ const RecursiveBlock = ({
         (element?.type === "WIKI_FOLDER" &&
           element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")
       ) {
-        menuSettingsClick(e);
+        handleOpenNotify(e, "FOLDER");
       } else if (element?.type === "TABLE") {
         handleOpenNotify(e, "TABLE");
       } else if (element?.type === "WIKI") {
         handleOpenNotify(e, "WIKI");
       } else if (element?.type === "MICROFRONTEND") {
         handleOpenNotify(e, "MICROFRONTEND");
-      } else if (element?.type === "WEBPAGE") {
-        handleOpenNotify(e, "WEBPAGE");
-      } else if (element?.type === "WEBPAGE") {
-        handleOpenNotify(e, "WEBPAGE");
+      } else if (element?.type === "MINIO_FOLDER") {
+        handleOpenNotify(e, "MINIO_FOLDER");
       }
     }
   };
@@ -248,7 +242,7 @@ const RecursiveBlock = ({
                         element?.name}
                     </p>
                   </Box>
-                  {settingsButtonPermission && (
+                  {settingsButtonPermission && !userType ? (
                     <Box className="icon_group">
                       <Tooltip title="Settings" placement="top">
                         <Box className="extra_icon">
@@ -267,7 +261,7 @@ const RecursiveBlock = ({
                         </Box>
                       </Tooltip>
                     </Box>
-                  )}
+                  ) : null}
                 </Box>
               </div>
               {addButtonPermission && element?.data?.permission?.write ? (
@@ -314,6 +308,7 @@ const RecursiveBlock = ({
               index={index}
               setCheck={setCheck}
               check={check}
+              selectedApp={selectedApp}
             />
           ))}
           {element.id === folderIds.data_base_folder_id && (

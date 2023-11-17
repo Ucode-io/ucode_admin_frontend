@@ -32,6 +32,7 @@ import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
 import {useTranslation} from "react-i18next";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
+import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 
 const parser = new Parser();
 
@@ -160,7 +161,18 @@ const FormElementGenerator = ({
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
-      return (
+      return field?.attributes?.multiple_input ? (
+        <ManyToManyRelationMultipleInput
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
+          name={computedSlug}
+          {...props}
+        />
+      ) : (
         <ManyToManyRelationFormElement
           control={control}
           field={field}

@@ -4,9 +4,8 @@
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid rgba(192, 192, 192, 0.562);
-  transition-property: width;
-  transition-duration: 0s;
   overflow-x: hidden;
+  transition: 0.5s;
 
   &::-webkit-scrollbar-thumb {
     width: 0 !important;
@@ -30,7 +29,7 @@
     margin: 10px;
     border-radius: 8px;
 
-    & > div > div {
+    &>div>div {
       background-color: #f7f7f7;
       border-radius: 6px;
       width: 100%;
@@ -283,6 +282,7 @@
           background-color: #0365f2;
           color: #fff;
 
+
           .extra_icon {
             display: none;
           }
@@ -296,6 +296,7 @@
         &.active-with-child {
           color: #0365f2;
           background-color: #fff !important;
+
 
           &:hover {
             background-color: #a8a8a81a !important;
@@ -481,6 +482,7 @@
             background-color: #0365f2;
             color: #fff;
 
+
             .extra_icon {
               display: none;
             }
@@ -494,6 +496,7 @@
           &.active-with-child {
             color: #0365f2;
             background-color: #fff !important;
+
 
             &:hover {
               background-color: #a8a8a81a !important;

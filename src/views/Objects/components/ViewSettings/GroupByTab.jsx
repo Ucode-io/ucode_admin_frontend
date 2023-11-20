@@ -1,32 +1,11 @@
+import LinkIcon from "@mui/icons-material/Link";
 import { Switch } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
-import styles from "./style.module.scss";
-import { applyDrag } from "../../../../utils/applyDrag";
 import { Container, Draggable } from "react-smooth-dnd";
-import AppsIcon from "@mui/icons-material/Apps";
-import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
-import ColorizeIcon from "@mui/icons-material/Colorize";
-import EmailIcon from "@mui/icons-material/Email";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import LooksOneIcon from "@mui/icons-material/LooksOne";
-import PasswordIcon from "@mui/icons-material/Password";
-import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import MapIcon from "@mui/icons-material/Map";
-import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import LinkIcon from "@mui/icons-material/Link";
+import { applyDrag } from "../../../../utils/applyDrag";
+import { columnIcons } from "../../../../utils/constants/columnIcons";
+import styles from "./style.module.scss";
 
 const GroupByTab = ({ form, updateView, isMenu }) => {
   const {
@@ -81,18 +60,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     const selectedId = updatedGroupColumn[index].id;
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      const columnIndex = updatedColumns.findIndex(
-        (item) => item?.id === selectedId
-      );
+      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns.splice(columnIndex, 1)[0];
         updatedColumns.unshift(filteredColumn);
       }
       replace(updatedColumns);
     } else {
-      const columnIndex = updatedColumns.findIndex(
-        (item) => item?.id === selectedId
-      );
+      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
 
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns[columnIndex];
@@ -113,35 +88,6 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       replaceGroup(updatedGroupColumn);
     }
   };
-  const columnIcons = useMemo(() => {
-    return {
-      SINGLE_LINE: <TextFieldsIcon />,
-      MULTI_LINE: <FormatAlignJustifyIcon />,
-      NUMBER: <LooksOneIcon />,
-      MULTISELECT: <ArrowDropDownCircleIcon />,
-      PHOTO: <PhotoSizeSelectActualIcon />,
-      VIDEO: <PlayCircleIcon />,
-      FILE: <InsertDriveFileIcon />,
-      FORMULA: <FunctionsIcon />,
-      PHONE: <LocalPhoneIcon />,
-      INTERNATION_PHONE: <LocalPhoneIcon />,
-      EMAIL: <EmailIcon />,
-      ICON: <AppsIcon />,
-      BARCODE: <QrCodeScannerIcon />,
-      QRCODE: <QrCode2Icon />,
-      COLOR: <ColorizeIcon />,
-      PASSWORD: <PasswordIcon />,
-      PICK_LIST: <ChecklistIcon />,
-      DATE: <DateRangeIcon />,
-      TIME: <AccessTimeIcon />,
-      DATE_TIME: <InsertInvitationIcon />,
-      CHECKBOX: <CheckBoxIcon />,
-      MAP: <MapIcon />,
-      SWITCH: <ToggleOffIcon />,
-      FLOAT_NOLIMIT: <LooksOneIcon />,
-      DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
-    };
-  }, []);
 
   return (
     <div
@@ -153,14 +99,9 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       }}
     >
       <div className={styles.table} style={{}}>
-        <Container
-          onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        >
+        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
           {groupColumn?.map((column, index) =>
-            (!form.watch(`attributes.group_by_columns.${index}.is_checked`) &&
-              isWhatChecked?.length === 2) ||
-            !form.watch(`columns.${index}.is_checked`) ? null : (
+            (!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`) ? null : (
               <Draggable key={column.id}>
                 <div key={column.id} className={styles.row}>
                   <div
@@ -185,7 +126,7 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
                         justifyContent: "center",
                       }}
                     >
-                      {columnIcons[column.type] ?? <LinkIcon />}
+                      {columnIcons(column.type) ?? <LinkIcon />}
                     </div>
                     {column.label}
                   </div>
@@ -202,17 +143,9 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
                     }}
                   >
                     <Switch
-                      disabled={
-                        (!form.watch(
-                          `attributes.group_by_columns.${index}.is_checked`
-                        ) &&
-                          isWhatChecked?.length === 2) ||
-                        !form.watch(`columns.${index}.is_checked`)
-                      }
+                      disabled={(!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`)}
                       size="small"
-                      checked={form.watch(
-                        `attributes.group_by_columns.${index}.is_checked`
-                      )}
+                      checked={form.watch(`attributes.group_by_columns.${index}.is_checked`)}
                       onChange={(e) => {
                         onSwitchChange(e, index);
                       }}

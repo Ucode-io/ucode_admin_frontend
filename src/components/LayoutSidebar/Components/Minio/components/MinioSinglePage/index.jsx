@@ -62,7 +62,7 @@ const MinioSinglePage = () => {
   const url = `${cdnURL}${watch("link")}`;
 
   const parts = file?.file_name_download?.split(".") || ".";
-  const extension = parts[parts?.length - 1];
+  const extension = parts[parts?.length - 1]?.toUpperCase();
 
   return (
     <>
@@ -74,7 +74,7 @@ const MinioSinglePage = () => {
           deleteFileElements={deleteFileElements}
         />
 
-        {extension === "png" || extension === "JPEG" || extension === "JPG" ? (
+        {extension === "PNG" || extension === "JPEG" || extension === "JPG" ? (
           <Box className={style.image}>
             <img alt="sorry" src={url} />
           </Box>

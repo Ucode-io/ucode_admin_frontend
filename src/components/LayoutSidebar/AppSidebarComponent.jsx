@@ -1,11 +1,11 @@
+import "./style.scss";
 import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
-import "./style.scss";
 import IconGenerator from "../IconPicker/IconGenerator";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../store/menuItem/menuItem.slice";
@@ -26,7 +26,6 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
-  setChildBlockVisible,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -42,7 +41,6 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
   const clickHandler = () => {
-    setChildBlockVisible(false);
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
     if (element.type === "FOLDER") {
@@ -88,18 +86,7 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
     }
   };
-  const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
   const menuStyle = menuTemplate?.menu_template;
-
-  const generatorLanguageKey = useMemo(() => {
-    if (i18n.language === "uz") {
-      return "_uz";
-    } else if (i18n.language === "en") {
-      return "_en";
-    } else {
-      return "";
-    }
-  }, [i18n.language]);
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -129,9 +116,6 @@ const AppSidebar = ({
                 ? menuStyle?.active_background || "#007AFF"
                 : menuStyle?.background,
             color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
-            borderTop: favourite && "1px solid #F0F0F0",
-            borderBottom: favourite && "1px solid #F0F0F0",
-            padding: favourite && "18px 12px",
             borderRadius: "10px",
             margin: "0 10px",
           }}
@@ -175,7 +159,9 @@ const AppSidebar = ({
               }}
             />
           )}
-          {element?.type === "FOLDER" && sidebarIsOpen ? (
+          {element?.type === "FOLDER" &&
+          sidebarIsOpen &&
+          !element?.is_static ? (
             <>
               <Tooltip title="Folder settings" placement="top">
                 <Box className="extra_icon">

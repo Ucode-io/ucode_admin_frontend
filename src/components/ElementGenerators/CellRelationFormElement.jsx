@@ -241,19 +241,25 @@ const AutoCompleteElement = ({
     ],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [value],
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [value],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          offset: pageToOffset(page, 10),
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,
@@ -286,7 +292,7 @@ const AutoCompleteElement = ({
     optionsFromLocale,
     field?.attributes?.function_path,
   ]);
-
+  console.log("allOptions", allOptions);
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
@@ -446,7 +452,7 @@ const AutoCompleteElement = ({
       </div>
     </components.SingleValue>
   );
-
+  console.log("computedOptions", computedOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (

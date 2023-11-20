@@ -33,6 +33,7 @@ const ObjectDataTable = ({
   data = [],
   loader = false,
   setDrawerState,
+  currentView,
   setDrawerStateField,
   removableHeight,
   additionalRow,
@@ -280,6 +281,7 @@ const ObjectDataTable = ({
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  currentView={currentView}
                   column={column}
                   index={index}
                   pageName={pageName}
@@ -339,8 +341,8 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length &&
-          columns.length &&
+        {(isRelationTable ? fields : data).length > 0 &&
+          columns.length > 0 &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
             <TableRow
               relOptions={relOptions}

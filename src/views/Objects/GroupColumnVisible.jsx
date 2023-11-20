@@ -104,7 +104,6 @@ export default function GroupColumnVisible({
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: watchedGroupColumns
             ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),
@@ -190,6 +189,14 @@ export default function GroupColumnVisible({
       <Menu
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         anchorEl={anchorEl}
         PaperProps={{
           elevation: 0,
@@ -206,7 +213,7 @@ export default function GroupColumnVisible({
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",

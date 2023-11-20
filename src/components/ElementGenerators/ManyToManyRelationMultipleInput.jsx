@@ -1,44 +1,20 @@
 import {useMemo, useState} from "react";
-import {Controller, useFieldArray, useWatch} from "react-hook-form";
+import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
-import FEditableRow from "../FormElements/FEditableRow";
-import FRow from "../FormElements/FRow";
-import {useTranslation} from "react-i18next";
-import Select from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
+import FEditableRow from "../FormElements/FEditableRow";
+import FRow from "../FormElements/FRow";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
-import {Button} from "@mui/material";
+import Select from "react-select";
 
-const customStyles = {
-  control: (provided, state) => ({
-    ...provided,
-    width: "300px",
-    display: "flex",
-    alignItems: "center",
-    outline: "none",
-  }),
-  input: (provided) => ({
-    ...provided,
-    width: "100%",
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    color: state.isSelected ? "#fff" : provided.color,
-    cursor: "pointer",
-  }),
-  menu: (provided) => ({
-    ...provided,
-    zIndex: 9999,
-  }),
-};
-
-const ManyToManyRelationMultipleInput = ({
+const ManyToManyRelationFormElement = ({
   control,
   field,
   isLayout,
@@ -79,7 +55,6 @@ const ManyToManyRelationMultipleInput = ({
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={value}
-              name={name || `${tableSlug}_ids`}
               setValue={onChange}
               field={field}
               tableSlug={tableSlug}
@@ -148,21 +123,16 @@ const AutoCompleteElement = ({
   tableSlug,
   setValue,
   control,
-  name,
+  error,
+  disabled,
+  disabledHelperText,
 }) => {
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
+
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-
-  const {
-    fields: relationFields,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: "multiple_inputs_value",
-  });
+  const {i18n} = useTranslation();
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -195,9 +165,7 @@ const AutoCompleteElement = ({
           },
           data: {
             ...autoFiltersValue,
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
+            view_fields: [`name_langs_${i18n?.language}`],
             additional_request: {
               additional_field: "guid",
               additional_values: value,
@@ -226,24 +194,38 @@ const AutoCompleteElement = ({
   );
 
   const {data: fromObjectList} = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
+    [
+      "GET_OBJECT_LIST",
+      tableSlug,
+      autoFiltersValue,
+      debouncedValue,
+      page,
+      field?.attributes?.view_fields,
+    ],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return constructorObjectService.getList(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            // [`name_langs_${i18n?.language}`],
+            additional_request: {
+              additional_field: "guid",
+              additional_values: value,
+            },
+            // additional_ids: value,
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          // additional_ids: value,
-          search: debouncedValue,
-          limit: 10,
-          offset: pageToOffset(page, 10),
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,
@@ -267,7 +249,7 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    return value
+    const result = value
       ?.map((id) => {
         const option = allOptions?.find((el) => el?.guid === id);
 
@@ -278,33 +260,63 @@ const AutoCompleteElement = ({
         };
       })
       ?.filter((el) => el);
-  }, [value, allOptions]);
+
+    return result?.map((item) => ({
+      label: getRelationFieldLabel(field, item),
+      value: item?.guid,
+    }));
+  }, [value, allOptions, i18n?.language, field?.attributes?.view_fields]);
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
       new Set(allOptions.map(JSON.stringify))
     ).map(JSON.parse);
-    return uniqueObjects ?? [];
-  }, [allOptions, options]);
+    return (
+      uniqueObjects?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      })) ?? []
+    );
+  }, [allOptions, options, i18n?.language]);
 
-  const changeHandler = (value, options) => {
+  const getOptionLabel = (option) => {
+    return getRelationFieldLabel(field, option);
+  };
+
+  const changeHandler = (value) => {
     if (!value) setValue(null);
-    if (options?.action === "select-option") {
-      const val = value?.map((el) => el.guid);
+    const val = value?.map((el) => el.value);
 
-      setValue(val ?? null);
-    } else if (options?.action === "remove-value") {
-      const val = value?.filter(
-        (item) => item?.guid === options?.options?.guid
-      );
-      console.log("val", val);
-      setValue(val ?? null);
-    }
+    setValue(val ?? null);
   };
 
   const inputChangeHandler = useDebounce((val) => {
     setDebouncedValue(val);
   }, 300);
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      outline: "none",
+    }),
+    input: (provided) => ({
+      ...provided,
+      width: "100%",
+      width: "250px",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: state.isSelected ? "#fff" : provided.color,
+      cursor: "pointer",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
@@ -313,11 +325,8 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
-  const appendInput = () => {
-    append({});
-  };
-
+  console.log("computedOptions", computedOptions);
+  console.log("fieldfield", field);
   return (
     <div className={styles.autocompleteWrapper}>
       <div
@@ -326,45 +335,26 @@ const AutoCompleteElement = ({
       >
         Создать новый
       </div>
-      {relationFields?.map((item) => (
-        <Select
-          options={computedOptions ?? []}
-          // value={computedValue}
-          onChange={(value, options) => {
-            changeHandler(value, options);
-          }}
-          onInputChange={(_, val) => {
-            inputChangeHandler(val);
-          }}
-          components={{
-            DropdownIndicator: null,
-          }}
-          onMenuScrollToBottom={loadMoreItems}
-          // isMulti
-          closeMenuOnSelect={false}
-          menuPortalTarget={document.body}
-          getOptionLabel={(option) => getRelationFieldLabel(field, option)}
-          noOptionsMessage={() => (
-            <span
-              onClick={() => navigateToForm(tableSlug)}
-              style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-            >
-              Создать новый
-            </span>
-          )}
-          styles={customStyles}
-          onPaste={(e) => {
-            console.log("eeeeeee -", e.clipboardData.getData("Text"));
-          }}
-          getOptionValue={(option) => option.value}
-          isOptionSelected={(option, value) =>
-            value.some((val) => val.value === value)
-          }
-        />
-      ))}
-      <Button onClick={() => appendInput()}>Добавить</Button>
+
+      <Select
+        options={computedOptions ?? []}
+        value={computedValue}
+        onChange={(value, options) => {
+          changeHandler(value, options);
+        }}
+        onInputChange={(_, val) => {
+          inputChangeHandler(val);
+        }}
+        components={{
+          DropdownIndicator: null,
+        }}
+        onMenuScrollToBottom={loadMoreItems}
+        isMulti
+        closeMenuOnSelect={false}
+        styles={customStyles}
+      />
     </div>
   );
 };
 
-export default ManyToManyRelationMultipleInput;
+export default ManyToManyRelationFormElement;

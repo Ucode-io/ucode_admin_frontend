@@ -6,7 +6,6 @@ import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
-import EmptyDataComponent from "../../../components/EmptyDataComponent";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -25,7 +24,6 @@ import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/Relati
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import {includes} from "lodash-es";
 
 const TableView = ({
   filterVisible,
@@ -59,6 +57,7 @@ const TableView = ({
   selectedLinkedTableSlug,
   menuItem,
   setFormValue,
+  currentView,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -106,7 +105,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const {fields, prepend, update, remove} = useFieldArray({
+  const {update} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -478,10 +477,6 @@ const TableView = ({
     }
   };
 
-  // const [layoutType, setLayoutType] = useState("SimpleLayout");
-  // const [open, setOpen] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState("");
-
   useEffect(() => {
     layoutService
       .getList({
@@ -590,6 +585,7 @@ const TableView = ({
           id="data-table"
         >
           <ObjectDataTable
+            currentView={currentView}
             relOptions={relOptions}
             tableView={true}
             defaultLimit={view?.default_limit}

@@ -3,6 +3,7 @@ import {Controller, useWatch} from "react-hook-form";
 
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
+import FRowMultiLine from "./FRowMultiLine";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -18,6 +19,8 @@ const HFTextEditor = ({
   withTrim = false,
   tabIndex,
   rules = {},
+  field,
+  label,
   ...props
 }) => {
   const value = useWatch({
@@ -26,7 +29,7 @@ const HFTextEditor = ({
   });
 
   return (
-    <div id="react_quill">
+    <FRowMultiLine label={label} required={field?.required}>
       <Controller
         control={control}
         name={name}
@@ -48,7 +51,7 @@ const HFTextEditor = ({
               autoFocus={false}
               style={{
                 backgroundColor: `${isTransparent ? "transparent" : ""}`,
-                width: "300px",
+                minWidth: "250px",
               }}
             />
           </Suspense>
@@ -66,7 +69,7 @@ const HFTextEditor = ({
           // />
         )}
       ></Controller>
-    </div>
+    </FRowMultiLine>
   );
 };
 

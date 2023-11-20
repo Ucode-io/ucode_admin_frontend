@@ -73,12 +73,6 @@ const TableRow = ({
     overscan: 5,
   });
 
-  const rowVirtualizer = useVirtualizer({
-    count: 10000,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
-  });
-
   if (formVisible)
     return (
       <TableRowForm
@@ -109,7 +103,7 @@ const TableRow = ({
 
   return (
     <>
-      {relationAction ? (
+      {!relationAction ? (
         <CTableRow style={style} ref={parentRef}>
           <CTableCell
             align="center"
@@ -272,7 +266,18 @@ const TableRow = ({
             onRowClick(row, rowIndex);
           }}
         >
-          <CTableCell align="center" className="data_table__number_cell">
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0 4px",
+              minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
+            }}
+          >
             <span className="data_table__row_number">
               {(currentPage - 1) * limit + rowIndex + 1}
             </span>
@@ -296,23 +301,37 @@ const TableRow = ({
               key={column.id}
               className={`overflow-ellipsis ${tableHeight}`}
               style={{
-                minWidth: "max-content",
-                padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? `${calculateWidth(column?.id, index)}px`
+                minWidth: "220px",
+                color: "#262626",
+                fontSize: "13px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "normal",
+                padding: "0 5px",
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
+                }`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
                   : "0",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -343,7 +362,18 @@ const TableRow = ({
             onChecked(row?.guid);
           }}
         >
-          <CTableCell align="center" className="data_table__number_cell">
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0 4px",
+              minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
+            }}
+          >
             <span className="data_table__row_number">
               {(currentPage - 1) * limit + rowIndex + 1}
             </span>
@@ -367,24 +397,37 @@ const TableRow = ({
               key={column.id}
               className={`overflow-ellipsis ${tableHeight}`}
               style={{
-                minWidth: "max-content",
-                padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? `${calculateWidth(column?.id, index)}px`
+                minWidth: "220px",
+                color: "#262626",
+                fontSize: "13px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "normal",
+                padding: "0 5px",
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
+                }`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
                   : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <CellElementGenerator field={column} row={row} />

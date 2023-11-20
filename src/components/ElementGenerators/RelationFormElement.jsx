@@ -173,6 +173,7 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
+  const {i18n} = useTranslation();
 
   const customStyles = {
     control: (provided) => ({
@@ -260,19 +261,25 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [computedIds],
+      return constructorObjectService.getList(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [computedIds],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          offset: pageToOffset(page, 10),
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,

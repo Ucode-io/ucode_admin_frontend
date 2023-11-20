@@ -1,29 +1,28 @@
-import { Fragment, useEffect, useState } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { TabPanel, Tabs } from "react-tabs";
+import {Fragment, useEffect, useState} from "react";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import {TabPanel, Tabs} from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useQuery, useQueryClient } from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import PageFallback from "../../components/PageFallback";
-import { listToMap } from "../../utils/listToMap";
+import {listToMap} from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import { store } from "../../store";
-import { useTranslation } from "react-i18next";
+import {store} from "../../store";
+import {useTranslation} from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
 
 const ObjectsPage = () => {
-  const { tableSlug } = useParams();
-  const { state } = useLocation();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
-  const { i18n } = useTranslation();
-  const queryClient = useQueryClient();
+  const {i18n} = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const params = {
@@ -31,9 +30,11 @@ const ObjectsPage = () => {
   };
 
   const {
-    data: { views, fieldsMap } = {
+    data: {views, fieldsMap, visibleColumns, visibleRelationColumns} = {
       views: [],
       fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
     },
     isLoading,
   } = useQuery(
@@ -48,21 +49,31 @@ const ObjectsPage = () => {
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
-          views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
+          views:
+            data?.views?.filter(
+              (view) => view?.attributes?.view_permission?.view === true
+            ) ?? [],
           fieldsMap: listToMap(data?.fields),
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
         };
       },
-      onSuccess: ({ views }) => {
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
   );
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab - 1))
+      : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const menuItem = store.getState().menu.menuItem;
@@ -78,7 +89,14 @@ const ObjectsPage = () => {
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
                   <>
-                    <BoardView view={view} setViews={setViews} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} fieldsMap={fieldsMap} />
+                    <BoardView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
                   </>
                 ) : view.type === "CALENDAR" ? (
                   <>
@@ -105,7 +123,14 @@ const ObjectsPage = () => {
                   </>
                 ) : view.type === "GANTT" ? (
                   <>
-                    <GanttView view={view} setViews={setViews} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} fieldsMap={fieldsMap} />
+                    <GanttView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
                   </>
                 ) : view.type === "TIMELINE" ? (
                   <>
@@ -122,12 +147,14 @@ const ObjectsPage = () => {
                 ) : (
                   <>
                     <ViewsWithGroups
+                      visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       view={view}
                       fieldsMap={fieldsMap}
                       menuItem={menuItem}
+                      visibleColumns={visibleColumns}
                     />
                   </>
                 )}
@@ -135,14 +162,23 @@ const ObjectsPage = () => {
             );
           })}
           <TabPanel>
-            <DocView views={views} fieldsMap={fieldsMap} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} />
+            <DocView
+              views={views}
+              fieldsMap={fieldsMap}
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+            />
           </TabPanel>
         </div>
       </Tabs>
 
       {!views?.length && (
         <FiltersBlock>
-          <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
+          <ViewTabSelector
+            selectedTabIndex={selectedTabIndex}
+            setSelectedTabIndex={setSelectedTabIndex}
+            views={views}
+          />
         </FiltersBlock>
       )}
     </>

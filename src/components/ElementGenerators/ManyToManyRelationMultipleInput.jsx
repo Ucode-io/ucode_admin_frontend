@@ -1,5 +1,5 @@
 import {useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import {Controller, useFieldArray, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import useDebounce from "../../hooks/useDebounce";
@@ -13,6 +13,7 @@ import FRow from "../FormElements/FRow";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 import Select from "react-select";
+import {Box} from "@mui/material";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -135,6 +136,17 @@ const AutoCompleteElement = ({
   const {i18n} = useTranslation();
 
   const autoFilters = field?.attributes?.auto_filters;
+
+  const {
+    fields: relationFields,
+    append,
+    remove,
+  } = useFieldArray({
+    control: control,
+    name: "multiple_selects",
+  });
+
+  console.log("relationFields", relationFields);
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -325,8 +337,11 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log("computedOptions", computedOptions);
-  console.log("fieldfield", field);
+
+  const appendInput = () => {
+    append({});
+  };
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div
@@ -336,23 +351,31 @@ const AutoCompleteElement = ({
         Создать новый
       </div>
 
-      <Select
-        options={computedOptions ?? []}
-        value={computedValue}
-        onChange={(value, options) => {
-          changeHandler(value, options);
-        }}
-        onInputChange={(_, val) => {
-          inputChangeHandler(val);
-        }}
-        components={{
-          DropdownIndicator: null,
-        }}
-        onMenuScrollToBottom={loadMoreItems}
-        isMulti
-        closeMenuOnSelect={false}
-        styles={customStyles}
-      />
+      {/* {relationFields?.map((element) => ( */}
+      <Box sx={{padding: "5px 0"}}>
+        <Select
+          options={computedOptions ?? []}
+          value={computedValue}
+          onChange={(value, options) => {
+            changeHandler(value, options);
+          }}
+          onInputChange={(_, val) => {
+            inputChangeHandler(val);
+          }}
+          components={{
+            DropdownIndicator: null,
+          }}
+          onMenuScrollToBottom={loadMoreItems}
+          isMulti
+          closeMenuOnSelect={false}
+          styles={customStyles}
+        />
+      </Box>
+      {/* ))} */}
+      {/* 
+      <Box sx={{cursor: "pointer"}} onClick={appendInput}>
+        Add
+      </Box> */}
     </div>
   );
 };

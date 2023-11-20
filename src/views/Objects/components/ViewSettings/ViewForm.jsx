@@ -41,7 +41,7 @@ const ViewForm = ({
   columns,
   relationColumns,
   views,
-  setTab,
+  setTab = () => {},
 }) => {
   const {tableSlug, appId} = useParams();
   const [btnLoader, setBtnLoader] = useState(false);

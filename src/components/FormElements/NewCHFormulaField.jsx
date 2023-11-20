@@ -79,7 +79,7 @@ const NewCHFFormulaField = ({
               ? formula
               : typeof value === "number"
               ? numberWithSpaces(value)
-              : ""
+              : value
           }
           onChange={(e) => {
             const val = e.target.value;

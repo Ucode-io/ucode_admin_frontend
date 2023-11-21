@@ -299,16 +299,30 @@ const AutoCompleteElement = memo(
     }, [value, allOptions, field?.attributes?.view_fields]);
 
     const computedOptions = useMemo(() => {
-      const uniqueObjects = Array.from(
-        new Set(allOptions.map(JSON.stringify))
-      ).map(JSON.parse);
-      return (
-        uniqueObjects?.map((item) => ({
-          label: getRelationFieldLabel(field, item),
-          value: item?.guid,
-        })) ?? []
-      );
-    }, [allOptions, options, i18n?.language]);
+      const uniqueObjects =
+        Array.from(new Set(allOptions.map(JSON.stringify)))
+          .map(JSON.parse)
+          ?.map((item) => ({
+            label: getRelationFieldLabel(field, item),
+            value: item?.guid,
+          })) ?? [];
+
+      return uniqueObjects ?? [];
+    }, [allOptions, options, value]);
+
+    const computedOptionForValue = useMemo(() => {
+      const uniqueObjects =
+        Array.from(new Set(allOptions.map(JSON.stringify)))
+          .map(JSON.parse)
+          ?.map((item) => ({
+            label: getRelationFieldLabel(field, item),
+            value: item?.guid,
+          })) ?? [];
+
+      return uniqueObjects?.filter((item) => {
+        return !value?.includes(item?.value);
+      });
+    }, [allOptions, options, value]);
 
     function loadMoreItems() {
       if (field?.attributes?.function_path) {
@@ -366,6 +380,7 @@ const AutoCompleteElement = memo(
               element={element}
               loadMoreItems={loadMoreItems}
               computedOptions={computedOptions}
+              computedOptionForValue={computedOptionForValue}
               setDebouncedValue={setDebouncedValue}
               setFormValue={setFormValue}
               remove={remove}

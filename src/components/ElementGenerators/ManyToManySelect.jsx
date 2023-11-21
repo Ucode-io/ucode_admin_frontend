@@ -32,6 +32,7 @@ const customStyles = {
 const ManyToManySelect = memo(
   ({
     computedOptions,
+    computedOptionForValue,
     newForm,
     loadMoreItems,
     element,
@@ -58,7 +59,7 @@ const ManyToManySelect = memo(
       const filteredGuid = multiple_selects
         ?.filter((item, i) => i !== index)
         ?.map((element) => element?.value);
-      console.log("filteredGuid", filteredGuid?.length);
+
       setValue(filteredGuid);
       remove(index);
 
@@ -83,8 +84,8 @@ const ManyToManySelect = memo(
         }}
       >
         <Select
-          options={computedOptions ?? []}
-          value={computedOptions.find(
+          options={computedOptionForValue ?? []}
+          value={computedOptions?.find(
             (option) => option.value === element.value
           )}
           onChange={(value) => {
@@ -93,9 +94,9 @@ const ManyToManySelect = memo(
           onInputChange={(_, val) => {
             inputChangeHandler(val);
           }}
-          components={{
-            DropdownIndicator: null,
-          }}
+          // components={{
+          //   DropdownIndicator: null,
+          // }}
           onMenuScrollToBottom={loadMoreItems}
           styles={customStyles}
         />

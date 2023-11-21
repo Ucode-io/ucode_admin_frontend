@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Moveable from "react-moveable";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
@@ -18,6 +19,7 @@ export default function TimeLineDayDataBlockItem({
   zoomPosition,
   calendar_from_slug,
   calendar_to_slug,
+  computedColumnsFor,
   visible_field,
   groupByList,
 }) {
@@ -32,44 +34,10 @@ export default function TimeLineDayDataBlockItem({
     setOpen(true);
     setSelectedRow(data);
   };
-  
-  const levelGroupByOne = useMemo(() => {
-    if (groupbyFields?.[0]?.type === "SINGLE_LINE") {
-      const a = groupByList?.find((group) => group?.label === data?.[groupbyFields?.[0]?.slug]);
-
-      return groupByList?.indexOf(a);
-    } else {
-      const a = groupByList?.find((group) => group?.guid === data?.[`${groupbyFields?.[0]?.table_slug}_id_data`]?.guid);
-
-      return groupByList?.indexOf(a);
-    }
-  }, [groupByList, data, groupbyFields]);
-
-  const levelGroupByTwo = useMemo(() => {
-    let qty = 0;
-
-    groupByList?.forEach((group) => {
-      qty++;
-      group?.options?.forEach((option) => {
-        qty++;
-        if (option?.guid === data?.[`${groupbyFields?.[1]?.table_slug}_id_data`]?.guid) {
-          return qty;
-        }
-      });
-    });
-
-    return qty;
-  }, [groupByList, data, groupbyFields]);
 
   const level = useMemo(() => {
-    if (view?.group_fields?.length === 0) {
-      return levelIndex;
-    } else if (view?.group_fields?.length === 1) {
-      return levelGroupByOne;
-    } else if (view?.group_fields?.length === 2) {
-      return levelGroupByTwo - 1;
-    }
-  }, [levelIndex, levelGroupByOne, levelGroupByTwo, view]);
+    return levelIndex;
+  }, [levelIndex]);
 
   const [frame] = useState({
     translate: [0, 0],
@@ -77,19 +45,21 @@ export default function TimeLineDayDataBlockItem({
 
   const startDate = useMemo(() => {
     return datesList && calendar_from_slug
-      ? datesList.findIndex((date) => format(new Date(date), "dd.MM.yyyy") === format(new Date(data[calendar_from_slug]), "dd.MM.yyyy"))
+      ? datesList?.findIndex(
+          (date) => format(date ? new Date(date) : new Date(), "dd.MM.yyyy") === format(data[calendar_from_slug] ? new Date(data[calendar_from_slug]) : new Date(), "dd.MM.yyyy")
+        )
       : null;
   }, [datesList, calendar_from_slug, data]);
 
   const differenceInDays = useMemo(() => {
-    const days = Math.ceil((new Date(data[calendar_to_slug]) - new Date(data[calendar_from_slug])) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil((new Date(data?.[calendar_to_slug]) - new Date(data?.[calendar_from_slug])) / (1000 * 60 * 60 * 24));
     return days;
   }, [data, calendar_from_slug, calendar_to_slug]);
 
   useEffect(() => {
     if (!ref.current) return null;
     setTarget(ref.current);
-  }, [ref, view]);
+  }, [ref, view, data, calendar_from_slug, calendar_to_slug, groupbyFields, visible_field, groupByList, levelIndex, datesList, zoomPosition]);
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -182,22 +152,24 @@ export default function TimeLineDayDataBlockItem({
       <div
         className={styles.dataBlock}
         style={{
-          top: `${level * 32 + 64}px`,
+          top: view?.attributes?.group_by_columns?.length === 0 && `${level * 32}px`,
           left: `${startDate * (zoomPosition * 30)}px`,
           width: `${zoomPosition * 30 * differenceInDays}px`,
           cursor: "pointer",
           display: startDate === -1 || level === -1 ? "none" : "block",
         }}
         onClick={handleOpen}
+        ref={ref}
+        key={data?.id_order}
       >
         <div
-          ref={ref}
+          className={styles.dataBlockInner}
           style={{
             width: "100%",
             height: "100%",
           }}
         >
-          <p>{data[visible_field]}</p>
+          <CellElementGenerator row={data} field={computedColumnsFor?.find((field) => field?.slug === visible_field)} />
         </div>
       </div>
       <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
@@ -208,6 +180,7 @@ export default function TimeLineDayDataBlockItem({
         <Moveable
           target={target}
           className="moveable3"
+          key={`${zoomPosition}${data?.guid}`}
           draggable
           resizable
           throttleDrag={zoomPosition * 30}

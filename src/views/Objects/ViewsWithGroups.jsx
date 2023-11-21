@@ -1,87 +1,67 @@
-import { Description, MoreVertOutlined } from "@mui/icons-material";
+import { MoreVertOutlined } from "@mui/icons-material";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
-import MultipleInsertButton from "./components/MultipleInsertForm";
-import CustomActionsButton from "./components/CustomActionsButton";
-import {
-  ArrowDropDownCircleOutlined,
-  Clear,
-  Edit,
-  Save,
-} from "@mui/icons-material";
-import { useFieldArray, useForm } from "react-hook-form";
-import AddIcon from "@mui/icons-material/Add";
-import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import { Button, CircularProgress, Divider, Menu, Switch } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { Badge, Button, Divider, Menu, Switch } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import { CheckIcon } from "../../assets/icons/icon";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import useFilters from "../../hooks/useFilters";
-import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
+import constructorTableService from "../../services/constructorTableService";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import ColumnVisible from "./ColumnVisible";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import GroupByButton from "./GroupByButton";
-import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
+import SortButton from "./SortButton";
 import TableView from "./TableView";
+import GroupTableView from "./TableView/GroupTableView";
+import TableViewGroupByButton from "./TableViewGroupByButton";
 import TreeView from "./TreeView";
+import VisibleColumnsButton from "./VisibleColumnsButton";
 import ExcelButtons from "./components/ExcelButtons";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import SortButton from "./SortButton";
-import GroupColumnVisible from "./GroupColumnVisible";
-import GroupTableView from "./TableView/GroupTableView";
-import SettingsIcon from "@mui/icons-material/Settings";
+import useTabRouter from "../../hooks/useTabRouter";
 
-const ViewsWithGroups = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
-  fieldsMap,
-  menuItem,
-}) => {
-  const { t } = useTranslation();
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem, visibleRelationColumns, visibleColumns }) => {
   const { tableSlug } = useParams();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [shouldGet, setShouldGet] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
+  const {navigateToForm} = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-  const [defaultViewTab, setDefaultViewTab] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
-  const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
+  const [filterVisible, setFilterVisible] = useState(true);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -142,10 +122,39 @@ const ViewsWithGroups = ({
     },
   });
 
-  const { fields, remove, append } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
+
+  const getValue = useCallback((item, key) => {
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
+  }, []);
+
+  const {mutate: updateMultipleObject, isLoading} = useMutation(
+    (values) =>
+      constructorObjectService.updateMultipleObject(tableSlug, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? "",
+            doctors_id_2: getValue(item, "doctors_id_2"),
+            doctors_id_3: getValue(item, "doctors_id_3"),
+            specialities_id: getValue(item, "specialities_id"),
+          })),
+        },
+      }),
+    {
+      onSuccess: () => {
+        setShouldGet((p) => !p);
+        setFormVisible(false);
+      },
+    }
+  );
+
+  const onSubmit = (data) => {
+    updateMultipleObject(data);
+  };
 
   const handleHeightControl = (val) => {
     dispatch(
@@ -162,7 +171,7 @@ const ViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
@@ -180,7 +189,8 @@ const ViewsWithGroups = ({
         })
         .finally(() => setIsFinancialCalendarLoading(false));
     }
-  }, [dateFilters, tableSlug]);
+  }, [dateFilters, tableSlug, view?.id, view?.type]);
+
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
@@ -207,36 +217,6 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
-  const {
-    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
-      visibleViews: [],
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-    isVisibleLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          visibleViews: data?.views ?? [],
-          visibleColumns: data?.fields ?? [],
-          visibleRelationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
-
   return (
     <>
       <FiltersBlock
@@ -245,16 +225,6 @@ const ViewsWithGroups = ({
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
               <ShareModal />
             </PermissionWrapperV2>
-
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
-              <LanguagesNavbar />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
-              <Button variant="outlined">
-                <HexagonIcon />
-              </Button>
-            </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button
@@ -288,23 +258,33 @@ const ViewsWithGroups = ({
           setIsChanged={setIsChanged}
           selectedView={selectedView}
           setSelectedView={setSelectedView}
-          defaultViewTab={defaultViewTab}
-          setTab={setTab}
         />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
+        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
-      <div className={style.extraNavbar}>
+      <div className={style.extraNavbar} style={{
+        minHeight: "42px",
+      }}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+            {/* <FastFilterButton view={view} fieldsMap={fieldsMap} /> */}
+            <Badge
+              sx={{
+                width: "35px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setFilterVisible((prev) => !prev);
+              }}
+              badgeContent={filterCount}
+              color="primary"
+            >
+              <FilterAltOutlinedIcon color={"#A8A8A8"} />
+            </Badge>
+
             <Divider orientation="vertical" flexItem />
-            <SearchInput
-              placeholder={"Search"}
-              onChange={(e) => setSearchText(e)}
-            />
+            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -346,57 +326,24 @@ const ViewsWithGroups = ({
                 },
               }}
             >
-              <SearchParams
-                checkedColumns={checkedColumns}
-                setCheckedColumns={setCheckedColumns}
-                columns={columnsForSearch}
-              />
+              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
             </Menu>
           </div>
 
           <div className={style.rightExtra}>
-            <FixColumnsTableView selectedTabIndex={selectedTabIndex} />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <GroupByButton selectedTabIndex={selectedTabIndex} />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <ColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <SortButton
-              selectedTabIndex={selectedTabIndex}
-              sortDatas={sortedDatas}
-              setSortedDatas={setSortedDatas}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <GroupColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
+            <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
+            <GroupByButton selectedTabIndex={selectedTabIndex} view={view} fieldsMap={fieldsMap} relationColumns={visibleRelationColumns} />
+            <Divider orientation="vertical" flexItem />
+            <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
+            <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} />
+            <Divider orientation="vertical" flexItem />
+            <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
             {view.type === "TABLE" && (
               <>
                 <Button
-                  // className={style.moreButton}
                   variant="text"
                   style={{
                     gap: "5px",
@@ -448,33 +395,9 @@ const ViewsWithGroups = ({
                     },
                   }}
                 >
-                  {/* <div className={style.menuBar}>
-                    {tableHeightOptions.map((el) => (
-                      <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-                        {el.label}
-                        {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-                      </div>
-                    ))}
-                  </div> */}
-
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
-                      <div
-                        className={style.template}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
-                        {/* <div
-                          className={`${style.element} ${
-                            selectedTabIndex === views?.length
-                              ? style.active
-                              : ""
-                          }`}
-                        >
-                          {tableHeight === el.value ? (
-                            <CheckIcon color="primary" />
-                          ) : null}
-                        </div> */}
-
+                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
                         <span>{el.label}</span>
 
                         <Switch
@@ -490,34 +413,23 @@ const ViewsWithGroups = ({
                   </div>
                 </Menu>
               </>
-
-              // <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
-              //   <div style={{ position: "relative" }}>
-              //     <span className={style.buttonSpan}>
-              //       <FormatLineSpacingIcon color="#A8A8A8" />
-              //       Line Height
-              //     </span>
-              //     {heightControl && (
-              //       <div className={style.heightControl}>
-              //         {tableHeightOptions.map((el) => (
-              //           <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-              //             {el.label}
-              //             {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-              //           </div>
-              //         ))}
-              //       </div>
-              //     )}
-              //   </div>
-              // </div>
             )}
-
-            <button className={style.moreButton} onClick={handleClick}>
+            <Divider orientation="vertical" flexItem />
+            <Button
+              onClick={handleClick}
+              variant="text"
+              style={{
+                color: "#A8A8A8",
+                borderColor: "#A8A8A8",
+                minWidth: "auto",
+              }}
+            >
               <MoreVertOutlined
                 style={{
                   color: "#888",
                 }}
               />
-            </button>
+            </Button>
 
             <Menu
               open={open}
@@ -560,15 +472,6 @@ const ViewsWithGroups = ({
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                {/* <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
-                  justifyContent: "flex-start",
-                  gap: "10px",
-                }}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
-                  </div>
-                  <span>{t("template")}</span>
-                </div> */}
               </div>
             </Menu>
           </div>
@@ -579,96 +482,18 @@ const ViewsWithGroups = ({
         <TableCard type="withoutPadding">
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div className="title" style={{ marginRight: "20px" }}>
+              <div style={{display: "flex", alignItems: "center"}}>
+                <div className="title" style={{marginRight: "20px"}}>
                   <h3>{view.table_label}</h3>
                 </div>
-                <TabList style={{ border: "none" }}>
+                <TabList style={{border: "none"}}>
                   {tabs?.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      selectedClassName={style.activeTab}
-                      className={`${style.disableTab} react-tabs__tab`}
-                    >
+                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
                       {tab.label}
                     </Tab>
                   ))}
                 </TabList>
               </div>
-
-              {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                {invite && (
-                  <Button
-                    variant="contained"
-                    onClick={navigateToCreatePageWithInvite}
-                  >
-                    Invite
-                  </Button>
-                )}
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                >
-                <Button variant="outlined" onClick={navigateToCreatePage}>
-                  <AddIcon style={{ color: "#007AFF" }} />
-                  Add object
-                </Button>
-                {formVisible ? (
-                  <>
-                    <RectangleIconButton
-                      color="success"
-                      size="small"
-                      onClick={handleSubmit(onSubmit)}
-                      loader={isLoading}
-                    >
-                      <Save color="success" />
-                    </RectangleIconButton>
-                    <RectangleIconButton
-                      color="error"
-                      type="exit"
-                      onClick={() => {
-                        setFormVisible(false);
-                        if (fields.length > dataLength) {
-                          remove(
-                            Array(fields.length - dataLength)
-                              .fill("*")
-                              .map((i, index) => fields.length - (index + 1))
-                          );
-                        }
-                      }}
-                    >
-                      <Clear color="error" />
-                    </RectangleIconButton>
-                  </>
-                ) : (
-                  // <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  //   <RectangleIconButton
-                  //     color="success"
-                  //     className=""
-                  //     size="small"
-                  //     onClick={() => {
-                  //       setFormVisible(true);
-                  //     }}
-                  //   >
-                  //     <Edit color="primary" />
-                  //   </RectangleIconButton>
-                  // </PermissionWrapperV2>
-                  ""
-                )}
-                <MultipleInsertButton
-                  view={view}
-                  fieldsMap={fieldsMap}
-                  tableSlug={tableSlug}
-                />
-                <CustomActionsButton
-                  selectedObjects={selectedObjects}
-                  setSelectedObjects={setSelectedObjects}
-                  tableSlug={tableSlug}
-                />
-              </PermissionWrapperV2>
-            </div> */}
             </div>
           )}
           {
@@ -677,9 +502,7 @@ const ViewsWithGroups = ({
                 <>
                   {view.type === "TABLE" && groupTable?.length ? (
                     <GroupTableView
-                      setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
-                      shouldGet={shouldGet}
                       reset={reset}
                       sortedDatas={sortedDatas}
                       menuItem={menuItem}
@@ -705,13 +528,7 @@ const ViewsWithGroups = ({
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                      />
+                      <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} tab={tab} />
                     ) : view?.type === "FINANCE CALENDAR" ? (
                       <FinancialCalendarView
                         view={view}
@@ -725,6 +542,11 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        isVertical
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
+                        filterVisible={filterVisible}
                         control={control}
                         getValues={getValues}
                         setFormVisible={setFormVisible}
@@ -738,15 +560,14 @@ const ViewsWithGroups = ({
                         selectedObjects={selectedObjects}
                         setSelectedObjects={setSelectedObjects}
                         menuItem={menuItem}
-                        setDataLength={setDataLength}
                         selectedTabIndex={selectedTabIndex}
-                        shouldGet={shouldGet}
                         reset={reset}
                         sortedDatas={sortedDatas}
                         fields={fields}
                         checkedColumns={checkedColumns}
                         searchText={searchText}
                         selectedView={selectedView}
+                        currentView={view}
                       />
                     )}
                   </TabPanel>
@@ -755,12 +576,7 @@ const ViewsWithGroups = ({
               {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
+                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       control={control}
@@ -774,10 +590,14 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
+                      visibleForm={visibleForm}
+                    currentView={view}
+                      filterVisible={filterVisible}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}
-                      shouldGet={shouldGet}
                       isTableView={true}
                       reset={reset}
                       sortedDatas={sortedDatas}
@@ -815,7 +635,7 @@ const queryGenerator = (groupField, filters = {}) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -836,10 +656,7 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
-      ],
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

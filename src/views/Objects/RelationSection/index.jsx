@@ -1,17 +1,17 @@
-import { Add, Clear, Edit, Save } from "@mui/icons-material";
-import { Card } from "@mui/material";
-import { useCallback, useMemo, useRef } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import {Add, Clear, Edit, Save} from "@mui/icons-material";
+import {Card} from "@mui/material";
+import {useCallback, useMemo, useRef} from "react";
+import {useEffect} from "react";
+import {useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useMutation} from "react-query";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -22,9 +22,9 @@ import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
 import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
 import style from "@/views/Objects/style.module.scss";
-import { CheckIcon, UploadIcon } from "@/assets/icons/icon";
-import { useDispatch, useSelector } from "react-redux";
-import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import {CheckIcon, UploadIcon} from "@/assets/icons/icon";
+import {useDispatch, useSelector} from "react-redux";
+import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
@@ -47,7 +47,7 @@ const RelationSection = ({
       return item?.permission?.view_permission === true;
     });
   }, [relations]);
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams} = useParams();
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
@@ -104,7 +104,7 @@ const RelationSection = ({
     },
   });
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -181,7 +181,7 @@ const RelationSection = ({
     },
   ];
 
-  const { mutate: updateMultipleObject } = useMutation(
+  const {mutate: updateMultipleObject} = useMutation(
     (values) =>
       constructorObjectService.updateMultipleObject(
         relations[selectedTabIndex]?.relatedTable,
@@ -277,7 +277,7 @@ const RelationSection = ({
           <Tabs
             selectedIndex={selectedTabIndex}
             onSelect={(index) => {
-              setSelectedTabIndex(index)
+              setSelectedTabIndex(index);
             }}
           >
             <div className={styles.cardHeader}>
@@ -308,21 +308,21 @@ const RelationSection = ({
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
-                {!selectedRelation?.relation_buttons && 
-                <PermissionWrapperV2
-                  tableSlug={filteredRelations?.[0]?.relatedTable}
-                  type={"write"}
-                >
-                  <RectangleIconButton
-                    color="success"
-                    size="small"
-                    onClick={navigateToCreatePage}
-                    disabled={!id}
+                {!selectedRelation?.relation_buttons && (
+                  <PermissionWrapperV2
+                    tableSlug={filteredRelations?.[0]?.relatedTable}
+                    type={"write"}
                   >
-                    <Add style={{ color: "#007AFF" }} />
-                  </RectangleIconButton>
-                </PermissionWrapperV2>
-                 } 
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={navigateToCreatePage}
+                      disabled={!id}
+                    >
+                      <Add style={{color: "#007AFF"}} />
+                    </RectangleIconButton>
+                  </PermissionWrapperV2>
+                )}
 
                 {/*<RectangleIconButton
                     color="white"
@@ -382,9 +382,9 @@ const RelationSection = ({
                     </RectangleIconButton>
                   </>
                 ) : (
-                  fields.length > 0 && (
-                    !selectedRelation?.relation_buttons && 
-                      <PermissionWrapperV2
+                  fields.length > 0 &&
+                  !selectedRelation?.relation_buttons && (
+                    <PermissionWrapperV2
                       type="edit"
                       tableSlug={filteredRelations?.[0]?.relatedTable}
                     >
@@ -400,7 +400,6 @@ const RelationSection = ({
                       </RectangleIconButton>
                     </PermissionWrapperV2>
                   )
-
                 )}
 
                 <DocumentGeneratorButton />
@@ -416,7 +415,7 @@ const RelationSection = ({
                   color="white"
                   onClick={() => setHeightControl(!heightControl)}
                 >
-                  <div style={{ position: "relative" }}>
+                  <div style={{position: "relative"}}>
                     <span
                       style={{
                         cursor: "pointer",
@@ -450,7 +449,7 @@ const RelationSection = ({
                   size="small"
                   onClick={() => setMoreShowButton(!moreShowButton)}
                 >
-                  <div style={{ position: "relative" }}>
+                  <div style={{position: "relative"}}>
                     <span
                       style={{
                         cursor: "pointer",
@@ -463,7 +462,7 @@ const RelationSection = ({
                     {moreShowButton && (
                       <div
                         className={style.heightControl}
-                        style={{ minWidth: "auto" }}
+                        style={{minWidth: "auto"}}
                       >
                         <div
                           className={style.heightControl_item}

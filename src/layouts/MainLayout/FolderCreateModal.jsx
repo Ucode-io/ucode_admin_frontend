@@ -22,6 +22,7 @@ const FolderCreateModal = ({
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
+
   const onSubmit = (data) => {
     if (modalType === "create") {
       createType(data, selectedFolder);
@@ -55,7 +56,11 @@ const FolderCreateModal = ({
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: selectedFolder?.type || "FOLDER",
+        type:
+          selectedFolder?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1" ||
+          selectedFolder?.type === "WIKI_FOLDER"
+            ? "WIKI_FOLDER"
+            : "FOLDER",
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {

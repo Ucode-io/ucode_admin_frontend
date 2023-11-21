@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import constructorObjectService from "../../services/constructorObjectService";
-import { get } from "@ngard/tiny-get";
+import {get} from "@ngard/tiny-get";
 import CascadingMany2Many from "./CascadingSection/CascadingMany2Many";
 import CascadingMany2One from "./CascadingMany2One";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
+import {useTranslation} from "react-i18next";
 
 function CascadingItem({
   fields,
@@ -30,6 +31,7 @@ function CascadingItem({
   const [levelTableSlug, setLevelTableSlug] = useState("");
   const [ids, setIds] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
+  const {i18n} = useTranslation();
 
   //===========SEARCH FILTER==========
   const foundServices = useMemo(() => {
@@ -52,17 +54,23 @@ function CascadingItem({
   }, [tablesSlug, dataFilter]);
 
   //===========SEARCH REQUEST============
-  const { data: searchServices } = useQuery(
+  const {data: searchServices} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          view_fields: fields.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          input: true,
+      return constructorObjectService.getList(
+        tableSlug,
+        {
+          data: {
+            view_fields: fields.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            input: true,
+          },
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       select: (res) => {
@@ -76,14 +84,13 @@ function CascadingItem({
     const cascadingLength = fields?.attributes?.cascadings?.length;
 
     if (
-      cascadingLength &&
-      currentLevel === cascadingLength ||
+      (cascadingLength && currentLevel === cascadingLength) ||
       fields?.type === "LOOKUP"
     ) {
       setValue(item?.guid);
       setInputValue(item);
 
-      fields?.attributes?.autofill?.forEach(({ field_from, field_to }) => {
+      fields?.attributes?.autofill?.forEach(({field_from, field_to}) => {
         setFormValue(`multi.${index}.${field_to}`, get(item, field_from));
       });
 
@@ -102,7 +109,7 @@ function CascadingItem({
             };
       constructorObjectService
         .getList(cascading[cascadingLength - 1 - level]?.table_slug, {
-          data: { ...data, input: true },
+          data: {...data, input: true},
         })
         .then((res) => {
           setValues(res?.data?.response);
@@ -146,7 +153,7 @@ function CascadingItem({
     setInputValue(item);
     handleClose();
 
-    fields?.attributes?.autofill.forEach(({ field_from, field_to }) => {
+    fields?.attributes?.autofill.forEach(({field_from, field_to}) => {
       setFormValue(`multi.${index}.${field_to}`, get(item, field_from));
     });
   };
@@ -163,7 +170,6 @@ function CascadingItem({
       }
     }
   }, [fields, currentLevel]);
-
 
   return (
     <>

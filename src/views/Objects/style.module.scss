@@ -20,6 +20,7 @@
   padding-right: 0px;
   border-right: 1px solid #b3b0b0;
 }
+
 .newmainCardSide {
   width: 100%;
   height: calc(100vh - 180px);
@@ -46,6 +47,7 @@
 .formColumn {
   flex: 1;
 }
+
 .newformColumn {
   // flex: 1;
   width: 100%;
@@ -106,6 +108,7 @@
     div {
       width: 100%;
       border: 0;
+
       &:hover {
         background-color: #f5f7f9;
       }
@@ -168,6 +171,7 @@
     }
   }
 }
+
 .newcontainer {
   display: flex;
   flex-direction: column;
@@ -227,6 +231,7 @@
 .title {
   background-color: #fff;
   padding: 12px 0 12px 7px;
+
   h3 {
     font-size: 18px;
     font-weight: 700;
@@ -255,9 +260,11 @@
   letter-spacing: 0em;
   text-align: left;
 }
+
 .menuBar {
   width: 180px;
 }
+
 .settings {
   display: flex;
   align-items: center;
@@ -280,6 +287,7 @@
   justify-content: center;
   cursor: pointer;
   transition-duration: 0.2s;
+
   &.active {
     color: colors.$primary;
     background-color: #fff;
@@ -294,8 +302,8 @@
   justify-content: space-between;
   font-size: 14px;
   font-weight: 400;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  // border-top: 1px solid #eee;
+  // border-bottom: 1px solid #eee;
   padding: 5px 10px;
   cursor: pointer;
 
@@ -335,11 +343,13 @@
   padding-right: 16px;
   position: relative;
   border-bottom: 1px solid #eee;
+
   .extraWrapper {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     .search {
       border-right: 1px solid #eee;
       display: flex;
@@ -347,6 +357,7 @@
 
       .count {
         padding: 0 20px;
+
         span {
           color: #a8a8a8;
           font-size: 13px;
@@ -355,10 +366,12 @@
           line-height: normal;
         }
       }
+
       fieldset {
         border: none;
       }
     }
+
     .rightExtra {
       display: flex;
       gap: 5px;
@@ -367,6 +380,7 @@
         border-right: 1px solid #eee;
         padding: 0;
         padding-right: 10px;
+
         .buttonSpan {
           cursor: pointer;
           display: flex;
@@ -383,6 +397,7 @@
     }
   }
 }
+
 .language {
   button {
     &.active {

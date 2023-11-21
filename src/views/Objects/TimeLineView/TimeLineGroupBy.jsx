@@ -1,71 +1,81 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import ColorizeIcon from "@mui/icons-material/Colorize";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import EmailIcon from "@mui/icons-material/Email";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+import LinkIcon from "@mui/icons-material/Link";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
+import MapIcon from "@mui/icons-material/Map";
 import PasswordIcon from "@mui/icons-material/Password";
 import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import { CTable, CTableBody, CTableCell, CTableRow } from "../../../components/CTable";
-import { Box, Switch, Typography } from "@mui/material";
-import LinkIcon from "@mui/icons-material/Link";
+import {Box, Switch, Typography} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Container, Draggable} from "react-smooth-dnd";
+import {CTable, CTableBody} from "../../../components/CTable";
+import {applyDrag} from "../../../utils/applyDrag";
 
-export default function TimeLineGroupBy({ columns, form, selectedView, updateView, isLoading, updateLoading }) {
-  const selectedColumns = useWatch({
-    control: form.control,
-    name: "group_fields",
-  });
-  const { i18n } = useTranslation();
-  const [selectedColumn, setSelectedColumn] = useState();
-  const [updatedColumns, setUpdatedColumns] = useState();
+export default function TimeLineGroupBy({
+  columns,
+  form,
+  selectedView,
+  updateView,
+  isLoading,
+  updateLoading,
+}) {
+  const [allColumns, setAllColumns] = useState([]);
+  const {i18n} = useTranslation();
+
+  const checkedColumns = useMemo(() => {
+    return form.getValues("group_fields").map((id) => {
+      return columns.find((column) => column?.id === id);
+    });
+  }, [columns, form.watch("group_fields"), form]);
+
+  const unCheckedColumns = useMemo(() => {
+    return columns.filter((column) => {
+      return !form.getValues("group_fields").includes(column?.id);
+    });
+  }, [columns, form.watch("group_fields"), form]);
 
   useEffect(() => {
-    setUpdatedColumns(
-      columns?.filter(
-        (column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT" || column.type === "SINGLE_LINE"
-      )
-    );
-  }, [columns]);
+    setAllColumns({
+      checkedColumns,
+      unCheckedColumns: unCheckedColumns.filter(
+        (item) =>
+          item?.type === "LOOKUP" ||
+          item?.type === "MULTISELECT" ||
+          item?.type === "LOOKUPS" ||
+          item?.type === "SINGLE_LINE" ||
+          item?.type === "PICK_LIST"
+      ),
+    });
+  }, [columns, checkedColumns, unCheckedColumns]);
 
-  useEffect(() => {
-    if (selectedColumn) {
-      const updatedArr = [selectedColumn, ...updatedColumns.filter((item) => item !== selectedColumn)];
-      setUpdatedColumns(updatedArr);
-    }
-  }, [selectedColumn]);
-
-  const onCheckboxChange = async (val, id, column) => {
-    setSelectedColumn(column);
+  const changeHandler = (e, val, id) => {
+    const oldVals = form.getValues("group_fields");
     if (!val) {
-      return form.setValue(
+      form.setValue(
         "group_fields",
-        selectedColumns.filter((el) => el !== id)
+        oldVals?.filter((el) => el !== id)
       );
+    } else {
+      form.setValue("group_fields", [...oldVals, id]);
     }
 
-    if (selectedColumns?.length >= 2) return;
-    return form.setValue("group_fields", [...selectedColumns, id]);
-  };
-
-  const changeHandler = async (val, id, column) => {
-    await onCheckboxChange(val, id, column);
     updateView();
   };
 
@@ -99,6 +109,18 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
     };
   }, []);
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(allColumns?.checkedColumns, dropResult);
+    if (!result) return;
+
+    form.setValue(
+      "group_fields",
+      result.map((item) => item.id)
+    );
+
+    updateView();
+  };
+
   return (
     <div
       style={{
@@ -108,21 +130,35 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
         padding: "10px 14px",
       }}
     >
-      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
+      <CTable
+        removableHeight={false}
+        disablePagination
+        tableStyle={{border: "none"}}
+      >
         <CTableBody dataLength={1}>
-          {updatedColumns?.length ? (
-            updatedColumns?.map((column) => (
-              <CTableRow
-                key={column.id}
-                onClick={(val) => {
-                  changeHandler(val, column.id);
-                }}
-              >
-                <CTableCell
+          {checkedColumns?.length || unCheckedColumns?.length ? (
+            <Container
+              groupName="1"
+              onDrop={onDrop}
+              dropPlaceholder={{className: "drag-row-drop-preview"}}
+              getChildPayload={(i) => ({
+                ...allColumns?.checkedColumns[i],
+                field_name:
+                  allColumns?.checkedColumns[i]?.label ??
+                  allColumns?.checkedColumns[i]?.title,
+              })}
+            >
+              {checkedColumns?.map((column) => (
+                <Draggable
+                  key={column.id}
                   style={{
-                    padding: 0,
-                    border: 0,
-                    borderBottom: "1px solid #eee",
+                    overflow: "visible",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "move",
+                    borderBottom: "1px solid #e5e5e5",
+                    padding: "5px 0",
                   }}
                 >
                   <div
@@ -133,27 +169,84 @@ export default function TimeLineGroupBy({ columns, form, selectedView, updateVie
                     }}
                   >
                     <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
-                    <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
+                    <div>
+                      {column?.attributes?.[`label_${i18n.language}`] ??
+                        column.label}
+                    </div>
                   </div>
-                </CTableCell>
-                <CTableCell
-                  style={{
-                    width: 20,
-                    borderBottom: "1px solid #eee",
-                    borderRight: 0,
-                  }}
-                >
+
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}
-                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
-                    onChange={(e, val) => changeHandler(val, column.id, column)}
+                    checked={
+                      allColumns?.checkedColumns?.includes(column?.id) ||
+                      selectedView?.group_fields?.includes(column?.id)
+                    }
+                    onChange={(e, val) => changeHandler(e, val, column?.id)}
                   />
-                </CTableCell>
-              </CTableRow>
-            ))
+                </Draggable>
+              ))}
+
+              {allColumns?.unCheckedColumns?.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    overflow: "visible",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderBottom: "1px solid #e5e5e5",
+                    padding: "5px 0",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <div>{columnIcons[item.type] ?? <LinkIcon />}</div>
+                    <div>
+                      {item?.attributes?.[`label_${i18n.language}`] ??
+                        item.label}
+                    </div>
+                  </div>
+
+                  <Switch
+                    sx={{
+                      "& .MuiSwitch-switchBase": {
+                        transitionDuration: "0ms",
+                      },
+
+                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#3f51b5",
+                        },
+
+                      "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#e5e5e5",
+                        },
+
+                      "& .MuiSwitch-switchBase.Mui-disabled": {
+                        color: "#e5e5e5",
+                      },
+
+                      "& .MuiSwitch-colorSecondary.Mui-checked": {
+                        color: "#3f51b5",
+                      },
+                    }}
+                    size="small"
+                    disabled={isLoading || updateLoading}
+                    checked={false}
+                    onChange={(e, val) => changeHandler(e, val, item)}
+                  />
+                </div>
+              ))}
+            </Container>
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

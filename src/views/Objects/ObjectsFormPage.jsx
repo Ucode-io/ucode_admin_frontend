@@ -22,7 +22,13 @@ import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
 
-const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selectedRow, dateInfo }) => {
+const ObjectsFormPage = ({
+  tableSlugFromProps,
+  handleClose,
+  modal = false,
+  selectedRow,
+  dateInfo,
+}) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
 
   const id = useMemo(() => {
@@ -61,7 +67,6 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
   } = useForm({
     defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
   });
-
   const tableInfo = store.getState().menu.menuItem;
 
   const getAllData = async () => {
@@ -74,9 +79,14 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
       setSections(sortSections(sections));
-      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
+      setSummary(
+        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
+      );
 
       const defaultLayout = layout?.find((el) => el.is_default === true);
 
@@ -89,7 +99,10 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
 
@@ -121,7 +134,10 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -137,21 +153,26 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
-        if (!modal) {
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+            user_id: isUserId,
+          }
+        );
+        dispatch(showAlert("Successfully updated", "success"));
+        if (modal) {
+          handleClose();
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+        } else {
           navigate(-1);
         }
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
-          table_slug: tableSlug,
-          user_id: isUserId,
-        });
-        dispatch(showAlert("Successfully updated", "success"));
-        handleClose();
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-
   const create = (data) => {
     setBtnLoader(true);
 
@@ -159,18 +180,27 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
-          table_slug: tableSlug,
-        });
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+          }
+        );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
           user_id: isUserId,
         });
         if (modal) {
           handleClose();
-          queryClient.refetchQueries("GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, {
-            table_slug: tableSlug,
-          });
+          queryClient.refetchQueries(
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            tableSlug,
+            {
+              table_slug: tableSlug,
+            }
+          );
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
           navigate(-1);
           handleClose();
@@ -212,7 +242,12 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
 
         <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
 
-        <SummarySectionValue computedSummary={summary} control={control} sections={sections} setFormValue={setFormValue} />
+        <SummarySectionValue
+          computedSummary={summary}
+          control={control}
+          sections={sections}
+          setFormValue={setFormValue}
+        />
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
@@ -237,12 +272,26 @@ const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false, selec
       <Footer
         extra={
           <>
-            <SecondaryButton onClick={() => (modal ? handleClose() : navigate(-1))} color="error">
+            <SecondaryButton
+              onClick={() => (modal ? handleClose() : navigate(-1))}
+              color="error"
+            >
               Close
             </SecondaryButton>
-            <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
-            <PermissionWrapperV2 tableSlug={tableSlug} type={id ? "update" : "write"}>
-              <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
+            <FormCustomActionButton
+              control={control?._formValues}
+              tableSlug={tableSlug}
+              id={id}
+            />
+            <PermissionWrapperV2
+              tableSlug={tableSlug}
+              type={id ? "update" : "write"}
+            >
+              <PrimaryButton
+                loader={btnLoader}
+                id="submit"
+                onClick={handleSubmit(onSubmit)}
+              >
                 <Save />
                 Save
               </PrimaryButton>

@@ -1,67 +1,44 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import useFilters from "../../../hooks/useFilters";
-import { useDispatch, useSelector } from "react-redux";
-import { add, differenceInDays, endOfMonth, format, startOfMonth } from "date-fns";
-import { useQueries, useQuery, useQueryClient } from "react-query";
-import constructorObjectService from "../../../services/constructorObjectService";
-import { listToMap } from "../../../utils/listToMap";
-import FiltersBlock from "../../../components/FiltersBlock";
-import FastFilterButton from "../components/FastFilter/FastFilterButton";
-import { Button, Divider, Menu } from "@mui/material";
-import style from "./styles.module.scss";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ExcelButtons from "../components/ExcelButtons";
-import { Description } from "@mui/icons-material";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import SettingsButton from "../components/ViewSettings/SettingsButton";
-import ViewTabSelector from "../components/ViewTypeSelector";
-import CRangePicker from "../../../components/DatePickers/CRangePicker";
-import PageFallback from "../../../components/PageFallback";
-import FastFilter from "../components/FastFilter";
-import CalendarHour from "../CalendarHourView/CalendarHour";
-import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
 import styles from "@/views/Objects/TableView/styles.module.scss";
-import TimeLineBlock from "./TimeLineBlock";
-import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import SearchInput from "../../../components/SearchInput";
-import SearchParams from "../components/ViewSettings/SearchParams";
+import CheckIcon from "@mui/icons-material/Check";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CheckIcon from "@mui/icons-material/Check";
 import SettingsIcon from "@mui/icons-material/Settings";
+import WorkspacesIcon from "@mui/icons-material/Workspaces";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import { Button, Divider, Menu } from "@mui/material";
+import { add, differenceInDays, endOfMonth, set, startOfMonth } from "date-fns";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQueries, useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import CRangePicker from "../../../components/DatePickers/CRangePicker";
+import FiltersBlock from "../../../components/FiltersBlock";
 import FRow from "../../../components/FormElements/FRow";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import { useForm } from "react-hook-form";
-import listToOptions from "../../../utils/listToOptions";
+import PageFallback from "../../../components/PageFallback";
+import useFilters from "../../../hooks/useFilters";
+import constructorObjectService from "../../../services/constructorObjectService";
 import constructorViewService from "../../../services/constructorViewService";
-import WorkspacesIcon from "@mui/icons-material/Workspaces";
-import GroupsTab from "../components/ViewSettings/GroupsTab";
+import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
+import { listToMap } from "../../../utils/listToMap";
+import listToOptions from "../../../utils/listToOptions";
+import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
+import ViewTabSelector from "../components/ViewTypeSelector";
+import TimeLineBlock from "./TimeLineBlock";
 import TimeLineGroupBy from "./TimeLineGroupBy";
+import style from "./styles.module.scss";
+import constructorTableService from "../../../services/constructorTableService";
 
-export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews }) {
-  const { t } = useTranslation();
+export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews, isViewLoading }) {
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [dateFilters, setDateFilters] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
   const [fieldsMap, setFieldsMap] = useState({});
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [dataFromQuery, setDataFromQuery] = useState([]);
 
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
@@ -82,11 +59,60 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     return result;
   }, [dateFilters]);
 
-  const { data: { data, fields, visibleColumns, visibleRelationColumns } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters }],
+  const recursionFunctionForAddIsOpen = (data) => {
+    return data?.map((el) => {
+      if (el?.data?.length) {
+        return {
+          ...el,
+          isOpen: false,
+          data: recursionFunctionForAddIsOpen(el?.data),
+        };
+      } else {
+        return {
+          ...el,
+          isOpen: false,
+        };
+      }
+    });
+  };
+
+  // FOR DATA
+  const { data: { data } = { data: [] }, isLoading } = useQuery(
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters, view }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { ...filters, gte: dateFilters[0], lte: dateFilters[1], with_relations: true },
+      return constructorObjectService.getListV2(tableSlug, {
+        data: {
+          ...filters,
+          view_type: "TIMELINE",
+          gte: dateFilters[0],
+          lte: dateFilters[1],
+          with_relations: true,
+          builder_service_view_id: view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
+        },
+      });
+    },
+    {
+      select: (res) => {
+        const data = res.data?.response?.map((row) => ({
+          ...row,
+        }));
+        return {
+          data,
+        };
+      },
+    }
+  );
+
+  useEffect(() => {
+    setDataFromQuery(recursionFunctionForAddIsOpen(data));
+  }, [data]);
+
+  // FOR TABLE INFO
+  const { data: { fields, visibleColumns, visibleRelationColumns } = { data: [] }, isLoading: tableInfoLoading } = useQuery(
+    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
+    () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
       });
     },
     {
@@ -102,6 +128,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         const data = res.data?.response?.map((row) => ({
           ...row,
         }));
+
         return {
           fieldsMap,
           data,
@@ -122,36 +149,19 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   );
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
-  const dispatch = useDispatch();
   const tabs = tabResponses?.map((response) => response?.data);
-  const tabLoading = tabResponses?.some((response) => response?.isLoading);
   const [zoomPosition, setZoomPosition] = useState(2);
 
   const zoom = (e) => {
     if (e === "zoomin" && zoomPosition === 3) {
-      dispatch(showAlert("Достигло максимальный размер!", "error"));
       return;
     } else if (e === "zoomout" && zoomPosition === 1) {
-      dispatch(showAlert("Достигло максимальный размер!", "error"));
       return;
     } else if (e === "zoomin") {
       setZoomPosition(zoomPosition + 1);
     } else if (e === "zoomout") {
       setZoomPosition(zoomPosition - 1);
     }
-  };
-
-  const [checkedColumns, setCheckedColumns] = useState([]);
-
-  const [searchText, setSearchText] = useState("");
-
-  const [anchorElSearch, setAnchorElSearch] = useState(null);
-  const openSearch = Boolean(anchorElSearch);
-  const handleClickSearch = (event) => {
-    setAnchorElSearch(event.currentTarget);
-  };
-  const handleCloseSearch = () => {
-    setAnchorElSearch(null);
   };
 
   const [anchorElType, setAnchorElType] = useState(null);
@@ -181,19 +191,6 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     setAnchorElGroup(null);
   };
 
-  const columnsForSearch = useMemo(() => {
-    return Object.values(fieldsMap)?.filter(
-      (el) =>
-        el?.type === "SINGLE_LINE" ||
-        el?.type === "MULTI_LINE" ||
-        el?.type === "NUMBER" ||
-        el?.type === "PHONE" ||
-        el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID"
-    );
-  }, [view, fieldsMap]);
-
   const types = [
     {
       title: "Day",
@@ -208,6 +205,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
       value: "month",
     },
   ];
+
   const [selectedType, setSelectedType] = useState("day");
 
   const handleScrollClick = () => {
@@ -270,6 +268,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
       return [...visibleColumns, ...visibleRelationColumns];
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
+
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const updateView = () => {
@@ -283,93 +282,28 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         },
         group_fields: form.watch("group_fields"),
       })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-      })
+      .then(() => {})
       .finally(() => {
         setUpdateLoading(false);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
-
+  console.log("eeeeeeee", view);
   useEffect(() => {
     form.setValue("group_fields", view?.group_fields);
   }, [view, form]);
 
+  useEffect(() => {
+    if (selectedType === "day") {
+      setZoomPosition(2);
+    }
+  }, [selectedType]);
+
   return (
     <div>
-      <FiltersBlock
-        extra={
-          <>
-            {/* <FastFilterButton view={view} /> */}
-            {/* <button className={style.moreButton} onClick={handleClick}>
-              <MoreHorizIcon
-                style={{
-                  color: "#888",
-                }}
-              />
-            </button> */}
-            {/* <button className={style.moreButton} onClick={() => zoom("zoomin")}>
-              <ZoomInIcon
-                style={{
-                  color: "#888",
-                }}
-              />
-            </button>
-            <button className={style.moreButton} onClick={() => zoom("zoomout")}>
-              <ZoomOutIcon
-                style={{
-                  color: "#888",
-                }}
-              />
-            </button> */}
-            {/* <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <div className={style.menuBar}>
-                <ExcelButtons />
-                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
-                  </div>
-                  <span>{t("template")}</span>
-                </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  <SettingsButton />
-                </PermissionWrapperV2>
-              </div>
-            </Menu> */}
-          </>
-        }
-      >
+      <FiltersBlock>
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -383,19 +317,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
-        {/* <CRangePicker interval={"months"} value={dateFilters} onChange={setDateFilters} /> */}
       </FiltersBlock>
-
-      {/* <div
-        className="title"
-        style={{
-          padding: "10px",
-          background: "#fff",
-          borderBottom: "1px solid #E5E9EB",
-        }}
-      >
-        <h3>{view.table_label}</h3>
-      </div> */}
 
       <div
         className={style.search}
@@ -408,7 +330,6 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
           justifyContent: "space-between",
         }}
       >
-        {/* <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} /> */}
         <div
           style={{
             display: "flex",
@@ -427,51 +348,6 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
             Today
           </Button>
         </div>
-        {/* <button
-          className={style.moreButton}
-          onClick={handleClickSearch}
-          style={{
-            paddingRight: "10px",
-          }}
-        >
-          <MoreHorizIcon />
-        </button>
-
-        <Divider orientation="vertical" flexItem />
-
-        <Menu
-          open={openSearch}
-          onClose={handleCloseSearch}
-          anchorEl={anchorElSearch}
-          PaperProps={{
-            elevation: 0,
-            sx: {
-              overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-              mt: 1.5,
-              "& .MuiAvatar-root": {
-                // width: 100,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              "&:before": {
-                content: '""',
-                display: "block",
-                position: "absolute",
-                top: 0,
-                left: 14,
-                width: 10,
-                height: 10,
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
-                zIndex: 0,
-              },
-            },
-          }}
-        >
-          <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
-        </Menu> */}
 
         <div
           style={{
@@ -699,18 +575,8 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
                 display: "flex",
                 flexDirection: "column",
                 minWidth: "200px",
-                // padding: "10px",
               }}
             >
-              {/* <GroupsTab
-              columns={computedColumnsFor}
-              isLoading={isLoading}
-              updateLoading={updateLoading}
-              updateView={updateView}
-              selectedView={views?.[selectedTabIndex]}
-              form={form}
-            /> */}
-
               <TimeLineGroupBy
                 columns={computedColumnsFor}
                 isLoading={isLoading}
@@ -769,24 +635,18 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         </div>
       </div>
 
-      {/* {isLoading || tabLoading ? (
-        <PageFallback />
-      ) : ( */}
       <div
         className={styles.wrapper}
         style={{
           height: "calc(100vh - 92px)",
         }}
       >
-        {/* <div className={styles.filters}>
-            <p>{t("filters")}</p>
-            <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
-          </div> */}
-
-        {isLoading ? (
+        {isLoading || tableInfoLoading || isViewLoading ? (
           <PageFallback />
         ) : (
           <TimeLineBlock
+            setDataFromQuery={setDataFromQuery}
+            dataFromQuery={dataFromQuery}
             handleScrollClick={handleScrollClick}
             isLoading={isLoading}
             computedColumnsFor={computedColumnsFor}

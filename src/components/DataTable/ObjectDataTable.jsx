@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {
   CTable,
@@ -12,25 +12,28 @@ import {
   CTableRow,
 } from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRow from "./TableRow";
 import SummaryRow from "./SummaryRow";
 import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import { Box, Button, LinearProgress } from "@mui/material";
+import {Box, Button, LinearProgress} from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";
 import constructorObjectService from "../../services/constructorObjectService";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const ObjectDataTable = ({
+  relOptions,
+  tableView,
   data = [],
   loader = false,
   setDrawerState,
+  currentView,
   setDrawerStateField,
   removableHeight,
   getValues,
@@ -84,7 +87,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -136,7 +139,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -162,9 +165,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -238,6 +239,12 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
+  const relationFields = useMemo(() => {
+    return columns?.filter(
+      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+    );
+  }, [columns]);
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -274,6 +281,7 @@ const ObjectDataTable = ({
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  currentView={currentView}
                   column={column}
                   index={index}
                   pageName={pageName}
@@ -333,46 +341,48 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length > 0
-          ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
-              <TableRow
-                width={"80px"}
-                remove={remove}
-                watch={watch}
-                getValues={getValues}
-                control={control}
-                key={row.id}
-                row={row}
-                mainForm={mainForm}
-                formVisible={formVisible}
-                rowIndex={rowIndex}
-                isTableView={isTableView}
-                selectedObjectsForDelete={selectedObjectsForDelete}
-                setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                isRelationTable={isRelationTable}
-                relatedTableSlug={relatedTableSlug}
-                onRowClick={onRowClick}
-                isChecked={isChecked}
-                calculateWidthFixedColumn={calculateWidthFixedColumn}
-                onCheckboxChange={onCheckboxChange}
-                currentPage={currentPage}
-                limit={limit}
-                setFormValue={setFormValue}
-                columns={columns}
-                tableHeight={tableHeight}
-                tableSettings={tableSettings}
-                pageName={pageName}
-                calculateWidth={calculateWidth}
-                tableSlug={tableSlug}
-                onDeleteClick={onDeleteClick}
-                relationAction={relationAction}
-                onChecked={onChecked}
-                relationFields={fields}
-                data={data}
-                view={view}
-              />
-            ))
-          : ""}
+        {(isRelationTable ? fields : data).length &&
+          columns.length &&
+          (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+            <TableRow
+              relOptions={relOptions}
+              tableView={tableView}
+              width={"80px"}
+              remove={remove}
+              watch={watch}
+              getValues={getValues}
+              control={control}
+              key={row.id}
+              row={row}
+              mainForm={mainForm}
+              formVisible={formVisible}
+              rowIndex={rowIndex}
+              isTableView={isTableView}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              isRelationTable={isRelationTable}
+              relatedTableSlug={relatedTableSlug}
+              onRowClick={onRowClick}
+              isChecked={isChecked}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              onCheckboxChange={onCheckboxChange}
+              currentPage={currentPage}
+              limit={limit}
+              setFormValue={setFormValue}
+              columns={columns}
+              tableHeight={tableHeight}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              calculateWidth={calculateWidth}
+              tableSlug={tableSlug}
+              onDeleteClick={onDeleteClick}
+              relationAction={relationAction}
+              onChecked={onChecked}
+              relationFields={fields}
+              data={data}
+              view={view}
+            />
+          ))}
         <CTableRow>
           <CTableCell
             align="center"

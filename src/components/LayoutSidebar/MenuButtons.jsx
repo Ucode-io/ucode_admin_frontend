@@ -8,9 +8,6 @@ import { useNavigate } from "react-router-dom";
 import MenuItemComponent from "./MenuItem";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { useMenuCreateMutation } from "../../services/menuService";
-import WebIcon from "@mui/icons-material/Web";
 import { analyticItems } from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,43 +24,12 @@ const ButtonsMenu = ({
   appId,
   setTableModal,
   setMicrofrontendModal,
-  setWebPageModal,
   setLinkedTableModal,
 }) => {
-  const { mutateAsync: createMenu, isLoading: createLoading } =
-    useMenuCreateMutation();
   const navigate = useNavigate();
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
-
-  const onFavourite = (element, type) => {
-    type === "TABLE"
-      ? createMenu({
-          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
-          type: type,
-          table_id: element?.data?.table?.id,
-        })
-      : type === "FOLDER"
-      ? createMenu({
-          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
-          type: type,
-          folder_id: element?.id,
-          label: element?.label,
-          icon: element?.icon,
-        })
-      : type === "MICROFRONTEND"
-      ? createMenu({
-          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
-          type: type,
-          microfrontend_id: element?.data?.microfrontend?.id,
-        })
-      : createMenu({
-          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
-          type: type,
-          webpage_id: element?.data?.webpage?.id,
-        });
-  };
 
   return (
     <Menu
@@ -92,28 +58,36 @@ const ButtonsMenu = ({
               title="Изменить папку"
               onClick={(e) => {
                 e.stopPropagation();
-                openFolderCreateModal("update", element);
                 handleCloseNotify();
+                if (element?.type === "WIKI_FOLDER") {
+                  openFolderCreateModal("WIKI_FOLDER_UPDATE", element);
+                } else {
+                  openFolderCreateModal("update", element);
+                }
               }}
             />
           ) : null}
 
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
-          {element?.data?.permission?.delete || permissionButton ? (
-            <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolder(element);
-                handleCloseNotify();
-              }}
-            />
+          {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
+            element?.data?.permission?.delete) ||
+          permissionButton ? (
+            <>
+              <Divider
+                style={{
+                  marginBottom: "4px",
+                  marginTop: "4px",
+                }}
+              />
+              <MenuItemComponent
+                icon={<BsFillTrashFill size={13} />}
+                title="Удалить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              />
+            </>
           ) : null}
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
@@ -126,30 +100,9 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              {element?.data?.permission?.menu_settings || permissionButton ? (
-                <MenuItemComponent
-                  icon={<StarBorderIcon size={13} />}
-                  title="Favourite"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseNotify();
-                    onFavourite(element, "FOLDER");
-                  }}
-                />
-              ) : null}
-            </>
-          )}
         </Box>
       )}
-      {menuType === "CREATE_TO_FOLDER" || menuType === "ROOT" && (
+      {menuType === "CREATE_TO_FOLDER" && (
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
@@ -157,15 +110,6 @@ const ButtonsMenu = ({
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
-            title="Создать pivot template"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`${appId}/pivot-template/create`);
               handleCloseNotify();
             }}
           />
@@ -179,29 +123,11 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
-            title="Добавить link table"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLinkedTableModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
             title="Добавить microfrontend"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
-            icon={<WebIcon size={13} />}
-            title="Добавить web-page"
-            onClick={(e) => {
-              e.stopPropagation();
-              setWebPageModal(element);
               handleCloseNotify();
             }}
           />
@@ -283,26 +209,6 @@ const ButtonsMenu = ({
               />
             </>
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
-            (element?.data?.permission?.menu_settings || permissionButton ? (
-              <>
-                <Divider
-                  style={{
-                    marginBottom: "4px",
-                    marginTop: "4px",
-                  }}
-                />
-                <MenuItemComponent
-                  icon={<StarBorderIcon size={13} />}
-                  title="Favourite"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseNotify();
-                    onFavourite(element, "TABLE");
-                  }}
-                />
-              </>
-            ) : null)}
         </Box>
       )}
       {menuType === "LINK" && (
@@ -348,27 +254,6 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              {element?.data?.permission?.menu_settings || permissionButton ? (
-                <MenuItemComponent
-                  icon={<StarBorderIcon size={13} />}
-                  title="Favourite"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseNotify();
-                    onFavourite(element, "TABLE");
-                  }}
-                />
-              ) : null}
-            </>
-          )}
         </Box>
       )}
       {menuType === "MICROFRONTEND" && (
@@ -385,23 +270,25 @@ const ButtonsMenu = ({
             />
           )}
           {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Изменить microfrontend"
-              onClick={(e) => {
-                e.stopPropagation();
-                setMicrofrontendModal(element);
-                handleCloseNotify();
-              }}
-            />
+            <>
+              <MenuItemComponent
+                icon={<RiPencilFill size={13} />}
+                title="Изменить microfrontend"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMicrofrontendModal(element);
+                  handleCloseNotify();
+                }}
+              />
+              <Divider
+                style={{
+                  marginBottom: "4px",
+                  marginTop: "4px",
+                }}
+              />
+            </>
           ) : null}
 
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
@@ -413,91 +300,9 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              <MenuItemComponent
-                icon={<StarBorderIcon size={13} />}
-                title="Favourite"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCloseNotify();
-                  onFavourite(element, "MICROFRONTEND");
-                }}
-              />
-            </>
-          )}
         </Box>
       )}
-      {menuType === "WEBPAGE" && (
-        <Box className="menu">
-          {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Переместить webpage"
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderModalType("folder", element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null}
-          {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Изменить webpage"
-              onClick={(e) => {
-                e.stopPropagation();
-                setWebPageModal(element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null}
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
-          {element?.data?.permission?.delete || permissionButton ? (
-            <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить webpage"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFolder(element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null}
-          {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <>
-              <Divider
-                style={{
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                }}
-              />
-              {element?.data?.permission?.menu_settings && (
-                <MenuItemComponent
-                  icon={<StarBorderIcon size={13} />}
-                  title="Favourite"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseNotify();
-                    onFavourite(element, "WEBPAGE");
-                  }}
-                />
-              )}
-            </>
-          )}
-        </Box>
-      )}
+
       {menuType === "CREATE_TO_MINIO" && (
         <Box className="menu">
           <MenuItemComponent
@@ -526,15 +331,6 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
-            title="Создать pivot template"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`${appId}/pivot-template/create`);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
             title="Добавить table"
             onClick={(e) => {
@@ -544,29 +340,11 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
-            title="Добавить link table"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLinkedTableModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
             title="Добавить microfrontend"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
-            icon={<WebIcon size={13} />}
-            title="Добавить web-page"
-            onClick={(e) => {
-              e.stopPropagation();
-              setWebPageModal(element);
               handleCloseNotify();
             }}
           />
@@ -614,29 +392,11 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
-            title="Создать pivot template"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`${appId}/pivot-template/create`);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
             title="Добавить table"
             onClick={(e) => {
               e.stopPropagation();
-              setTableModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
-            title="Добавить link table"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLinkedTableModal(element);
+              setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
               handleCloseNotify();
             }}
           />
@@ -645,16 +405,9 @@ const ButtonsMenu = ({
             title="Добавить microfrontend"
             onClick={(e) => {
               e.stopPropagation();
-              setMicrofrontendModal(element);
-              handleCloseNotify();
-            }}
-          />
-          <MenuItemComponent
-            icon={<WebIcon size={13} />}
-            title="Добавить web-page"
-            onClick={(e) => {
-              e.stopPropagation();
-              setWebPageModal(element);
+              setMicrofrontendModal({
+                id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+              });
               handleCloseNotify();
             }}
           />
@@ -703,18 +456,44 @@ const ButtonsMenu = ({
           />
         </Box>
       )}
-      {menuType === "WIKI" && (
+      {menuType === "FAVOURITE" && (
         <Box className="menu">
           <MenuItemComponent
-            icon={<BsFillTrashFill size={13} />}
-            title="Удалить Wiki"
+            icon={<TableChartIcon size={13} />}
+            title="Создать table"
             onClick={(e) => {
               e.stopPropagation();
-              deleteFolder(element);
+              navigate(`/settings/constructor/apps/${appId}/objects/create`);
               handleCloseNotify();
             }}
           />
         </Box>
+      )}
+      {menuType === "WIKI" && (
+        <>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить Wiki"
+              onClick={(e) => {
+                e.stopPropagation();
+                openFolderCreateModal("WIKI_UPDATE", element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        </>
       )}
     </Menu>
   );

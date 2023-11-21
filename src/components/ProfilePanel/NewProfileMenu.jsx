@@ -1,11 +1,11 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { PlusIcon } from "../../assets/icons/icon";
+import {Box, Divider, Menu, MenuItem, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {PlusIcon} from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
 import {
@@ -13,9 +13,9 @@ import {
   useEnvironmentListQuery,
   useProjectListQuery,
 } from "../../services/companyService";
-import { store } from "../../store";
-import { authActions } from "../../store/auth/auth.slice";
-import { companyActions } from "../../store/company/company.slice";
+import {store} from "../../store";
+import {authActions} from "../../store/auth/auth.slice";
+import {companyActions} from "../../store/company/company.slice";
 import UserAvatar from "../UserAvatar";
 import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
 import ProfileItem from "./ProfileItem";
@@ -23,15 +23,15 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import styles from "./newprofile.module.scss";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
-import { useTranslation } from "react-i18next";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {useTranslation} from "react-i18next";
+import {showAlert} from "../../store/alert/alert.thunk";
 
 const NewProfilePanel = ({
   handleMenuSettingModalOpen,
@@ -41,7 +41,7 @@ const NewProfilePanel = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const queryClient = useQueryClient();
   const company = store.getState().company;
   const auth = store.getState().auth;
@@ -54,12 +54,12 @@ const NewProfilePanel = ({
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
-  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const settings = location.pathname.includes("settings");
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
   const params = {
-    refresh_token: auth.refreshToken,
+    refresh_token: auth?.refreshToken,
     env_id: company.environmentId,
     project_id: company.projectId,
   };
@@ -147,7 +147,7 @@ const NewProfilePanel = ({
     );
   }, [company.companies, company.environments]);
 
-  const { isLoading } = useCompanyListQuery({
+  const {isLoading} = useCompanyListQuery({
     params: {
       owner_id: auth.userId,
     },
@@ -159,7 +159,7 @@ const NewProfilePanel = ({
     },
   });
 
-  const { isLoading: projectLoading } = useProjectListQuery({
+  const {isLoading: projectLoading} = useProjectListQuery({
     params: {
       company_id: company.companyId,
     },
@@ -175,7 +175,7 @@ const NewProfilePanel = ({
     },
   });
 
-  const { isLoading: environmentLoading } = useEnvironmentListQuery({
+  const {isLoading: environmentLoading} = useEnvironmentListQuery({
     params: {
       project_id: company.projectId,
     },
@@ -196,7 +196,7 @@ const NewProfilePanel = ({
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const projectId = useSelector((state) => state.company.projectId);
-  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
 
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
@@ -211,7 +211,7 @@ const NewProfilePanel = ({
     }
   }, [languages, projectId, dispatch]);
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);

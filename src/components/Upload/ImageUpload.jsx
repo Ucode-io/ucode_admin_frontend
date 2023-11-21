@@ -1,5 +1,5 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRef } from "react";
 import ImageViewer from "react-simple-image-viewer";
 import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
@@ -56,13 +56,19 @@ const ImageUpload = ({
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          <button
-            className="close-btn"
-            type="button"
-            onClick={(e) => closeButtonHandler(e)}
-          >
-            <CancelIcon />
-          </button>
+          {!disabled ? (
+            <button
+              className="close-btn"
+              type="button"
+              onClick={(e) => closeButtonHandler(e)}
+            >
+              <CancelIcon />
+            </button>
+          ) : (
+            <div className="lock_icon">
+              <Lock style={{ fontSize: "20px" }} />
+            </div>
+          )}
           <img src={value} className="img" alt="" />
         </div>
       )}

@@ -48,20 +48,12 @@ const RecursiveTable = ({
       setChildBlockVisible((prev) => !prev);
     }
   };
-  const filteredColumns = columns.filter((column) =>
-    view?.attributes?.group_by_columns.includes(
-      column.attributes.field_permission.field_id
-    )
-  );
+  const filteredColumns = columns.filter((column) => view?.attributes?.group_by_columns.includes(column.attributes.field_permission.field_id));
 
   const getValue = (field, row) => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
-    const result = getRelationFieldTableCellLabel(
-      field,
-      row,
-      field.slug + "_data"
-    );
+    const result = getRelationFieldTableCellLabel(field, row, field.slug + "_data");
     return result;
   };
 
@@ -82,18 +74,19 @@ const RecursiveTable = ({
                   fontWeight: 400,
                   lineHeight: "normal",
                   padding: "0 5px",
-                  cursor: filteredColumns.find((item) => item.id === column.id)
-                    ? "pointer"
-                    : "default",
+                  position: `${
+                    tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
+                  }`,
+                  left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
+                  backgroundColor: `${
+                    tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                  }`,
+                  zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                 }}
-                onClick={
-                  filteredColumns.find((item) => item.id === column.id) &&
-                  clickHandler
-                }
+                onClick={filteredColumns.find((item) => item.id === column.id) && clickHandler}
               >
                 <Box display={"flex"} alignItems={"center"}>
-                  {filteredColumns.find((item) => item.id === column.id) &&
-                  getValue(column, element)?.length ? (
+                  {filteredColumns.find((item) => item.id === column.id) && getValue(column, element)?.length ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
                     ) : (

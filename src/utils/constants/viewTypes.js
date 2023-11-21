@@ -6,5 +6,5 @@ export const viewTypes = [
   "GANTT",
   "TREE",
   "BOARD",
-  "FINANCE CALENDAR"
+  "FINANCE CALENDAR",
 ];

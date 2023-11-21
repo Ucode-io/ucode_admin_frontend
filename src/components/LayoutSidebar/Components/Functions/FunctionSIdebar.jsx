@@ -1,11 +1,11 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Box, Button, Collapse, Tooltip} from "@mui/material";
-import {useMemo, useState} from "react";
-import {FaFolder} from "react-icons/fa";
-import {HiOutlineCodeBracket} from "react-icons/hi2";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { useMemo, useState } from "react";
+import { FaFolder } from "react-icons/fa";
+import { HiOutlineCodeBracket } from "react-icons/hi2";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   useFunctionFolderDeleteMutation,
   useFunctionFoldersListQuery,
@@ -14,18 +14,18 @@ import {
   useFunctionDeleteMutation,
   useFunctionsListQuery,
 } from "../../../../services/functionService";
-import {store} from "../../../../store";
-import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import { store } from "../../../../store";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import FunctionRecursive from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
-import {BsThreeDots} from "react-icons/bs";
-import {useQueryClient} from "react-query";
+import { BsThreeDots } from "react-icons/bs";
+import { useQueryClient } from "react-query";
 import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
-import {updateLevel} from "../../../../utils/level";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const functionFolder = {
@@ -58,11 +58,11 @@ const FunctionSidebar = ({
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const [menu, setMenu] = useState({event: "", type: ""});
+  const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
   const queryClient = useQueryClient();
   const handleOpenNotify = (event, type, element) => {
-    setMenu({event: event?.currentTarget, type: type, element});
+    setMenu({ event: event?.currentTarget, type: type, element });
   };
 
   const handleCloseNotify = () => {
@@ -93,7 +93,7 @@ const FunctionSidebar = ({
     setFunctionModalIsOpen(false);
   };
 
-  const {data: functionFolders, isLoading: folderLoading} =
+  const { data: functionFolders, isLoading: folderLoading } =
     useFunctionFoldersListQuery({
       params: {
         "project-id": company.projectId,
@@ -103,21 +103,23 @@ const FunctionSidebar = ({
       },
     });
 
-  const {mutate: deleteFunction, isLoading: deleteFunctionLoading} =
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
     useFunctionDeleteMutation({
       onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
     });
 
-  const {data: functions, isLoading: functionLoading} = useFunctionsListQuery({
-    params: {
-      "project-id": company.projectId,
-    },
-    queryParams: {
-      select: (res) => res.functions,
-    },
-  });
+  const { data: functions, isLoading: functionLoading } = useFunctionsListQuery(
+    {
+      params: {
+        "project-id": company.projectId,
+      },
+      queryParams: {
+        select: (res) => res.functions,
+      },
+    }
+  );
 
-  const {mutate: deleteFolder, isLoading: deleteLoading} =
+  const { mutate: deleteFolder, isLoading: deleteLoading } =
     useFunctionFolderDeleteMutation({
       onSuccess: () => {
         queryClient.refetchQueries("FUNCTION_FOLDERS");

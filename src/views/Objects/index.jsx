@@ -4,14 +4,12 @@ import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import PageFallback from "../../components/PageFallback";
-import constructorObjectService from "../../services/constructorObjectService";
 import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
-import styles from "./style.module.scss";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
 import { store } from "../../store";
@@ -20,12 +18,11 @@ import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
 
 const ObjectsPage = () => {
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams();
   const { state } = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const { i18n } = useTranslation();
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const params = {
@@ -33,9 +30,11 @@ const ObjectsPage = () => {
   };
 
   const {
-    data: { views, fieldsMap } = {
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
       views: [],
       fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
     },
     isLoading,
   } = useQuery(
@@ -54,6 +53,12 @@ const ObjectsPage = () => {
         return {
           views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
           fieldsMap: listToMap(data?.fields),
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
         };
       },
       onSuccess: ({ views }) => {
@@ -61,6 +66,7 @@ const ObjectsPage = () => {
       },
     }
   );
+
   useEffect(() => {
     queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
   }, [queryTab]);
@@ -73,7 +79,7 @@ const ObjectsPage = () => {
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {views.map((view) => {
+          {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
@@ -116,11 +122,14 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      isViewLoading={isLoading}
                     />
                   </>
                 ) : (
                   <>
                     <ViewsWithGroups
+                    visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}

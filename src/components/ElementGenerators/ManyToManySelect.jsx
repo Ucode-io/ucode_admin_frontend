@@ -39,6 +39,9 @@ const ManyToManySelect = memo(
     setDebouncedValue,
     index,
     remove,
+    value,
+    appendInput,
+    append = () => {},
   }) => {
     const multiple_selects = useWatch({
       control: newForm.control,
@@ -53,11 +56,17 @@ const ManyToManySelect = memo(
 
     const removeIds = (option, index) => {
       const filteredGuid = multiple_selects
-        ?.filter((item) => item?.value !== option?.value)
+        ?.filter((item, i) => i !== index)
         ?.map((element) => element?.value);
-
+      console.log("filteredGuid", filteredGuid?.length);
       setValue(filteredGuid);
       remove(index);
+
+      if (filteredGuid?.length === 0) {
+        console.log("entered 1");
+        appendInput();
+        append({});
+      }
     };
 
     const inputChangeHandler = useDebounce((val) => {
@@ -91,12 +100,16 @@ const ManyToManySelect = memo(
           styles={customStyles}
         />
 
-        <Button
-          onClick={() => removeIds(element, index)}
-          sx={{width: "50px", padding: "5px 0px", marginLeft: "10px"}}
-        >
-          <DeleteIcon style={{color: "red"}} />
-        </Button>
+        {value?.length ? (
+          <Button
+            onClick={() => removeIds(element, index)}
+            sx={{width: "50px", padding: "5px 0px", marginLeft: "10px"}}
+          >
+            <DeleteIcon style={{color: "red"}} />
+          </Button>
+        ) : (
+          ""
+        )}
       </Box>
     );
   }

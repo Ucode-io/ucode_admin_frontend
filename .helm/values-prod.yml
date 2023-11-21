@@ -91,18 +91,10 @@ ingress:
         - host: "app.u-code.io"
           path: /
           servicePort: 80
-        - host: "ett.u-code.io"
-          path: /
-          servicePort: 80
-        - host: "agent.easyto.travel"
-          path: /
-          servicePort: 80
       tls:
         - secretName: admin-frontend-tls
           hosts:
             - "app.u-code.io"
-            - "ett.u-code.io"
-            - "agent.easyto.travel"
 
 resources:
   {}

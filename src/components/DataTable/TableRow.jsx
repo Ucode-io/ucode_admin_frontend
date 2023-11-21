@@ -1,16 +1,17 @@
-import {Delete} from "@mui/icons-material";
-import {Button, Checkbox} from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { Button, Checkbox } from "@mui/material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import {CTableCell, CTableRow} from "../CTable";
+import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import {useRef} from "react";
-import {useVirtualizer} from "@tanstack/react-virtual";
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import TableRowForm from "./TableRowForm";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 const TableRow = ({
   relOptions,
@@ -136,7 +137,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -238,7 +242,11 @@ const TableRow = ({
               }}
             >
               <CTableCell
-                style={{padding: 0, borderRight: "none", borderBottom: "none"}}
+                style={{
+                  padding: 0,
+                  borderRight: "none",
+                  borderBottom: "none",
+                }}
               >
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                   <RectangleIconButton
@@ -253,10 +261,6 @@ const TableRow = ({
               </CTableCell>
               <GeneratePdfFromTable row={row} />
             </div>
-          </td>
-
-          <td>
-            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
           </td>
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||

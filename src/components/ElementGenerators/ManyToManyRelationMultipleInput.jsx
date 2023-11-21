@@ -145,6 +145,13 @@ const AutoCompleteElement = memo(
     const [allOptions, setAllOptions] = useState([]);
     const {i18n} = useTranslation();
 
+    const multiple_selects = useWatch({
+      control: newForm.control,
+      name: "multiple_select",
+    });
+
+    console.log("multiple_selects", multiple_selects);
+
     const autoFilters = field?.attributes?.auto_filters;
 
     const {
@@ -362,7 +369,10 @@ const AutoCompleteElement = memo(
               setDebouncedValue={setDebouncedValue}
               setFormValue={setFormValue}
               remove={remove}
+              value={value}
               computedValue={computedValue}
+              append={append}
+              appendInput={appendInput}
             />
           </Box>
         ))}

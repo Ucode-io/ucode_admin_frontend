@@ -1,18 +1,19 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const customErrorMessageService = {
-  getList: (params) => {
-    return request.get(`/custom-error-message`, {
+  getList: (params, tableSlug) => {
+    return requestV2.get(`/collection/${tableSlug}/error_messages`, {
       params,
     });
   },
-  getByID: (params, platformId) =>
-    request.get(`/custom-error-message/${platformId}`, {
+  getByID: (params, platformId, tableSlug) =>
+    requestV2.get(`/collection/${tableSlug}/error_messages/${platformId}`, {
       params,
     }),
-  update: (data) =>
-    request.put(`/custom-error-message`, data, {
+  update: (data, tableSlug) =>
+    requestV2.put(`/collection/${tableSlug}/error_messages`, data, {
       params: {
         "project-id": data.project_id,
       },
@@ -23,13 +24,13 @@ const customErrorMessageService = {
         "project-id": data.project_id,
       },
     }),
-  create: (data) =>
-    request.post(`/custom-error-message`, data, {
+  create: (data, tableSlug) =>
+    requestV2.post(`/collection/${tableSlug}/error_messages`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
-  delete: (id) => request.delete(`/custom-error-message/${id}`),
+  delete: (id, tableSlug) => request.delete(`/collection/${tableSlug}/error_messages/${id}`),
 };
 
 export const useCustomErrorListQuery = ({ params = {}, queryParams } = {}) => {
@@ -42,11 +43,7 @@ export const useCustomErrorListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useCustomErrorGetByIdQuery = ({
-  params = {},
-  platformId,
-  queryParams,
-}) => {
+export const useCustomErrorGetByIdQuery = ({ params = {}, platformId, queryParams }) => {
   return useQuery(
     ["CUSTOM_ERROR_MESSAGE_GET_BY_ID", { ...params, platformId }],
     () => {
@@ -57,24 +54,15 @@ export const useCustomErrorGetByIdQuery = ({
 };
 
 export const useCustomErrorUpdateMutation = (mutationSettings) => {
-  return useMutation(
-    (data) => customErrorMessageService.update(data),
-    mutationSettings
-  );
+  return useMutation((data) => customErrorMessageService.update(data), mutationSettings);
 };
 
 export const useCustomErrorCreateMutation = (mutationSettings) => {
-  return useMutation(
-    (data) => customErrorMessageService.create(data),
-    mutationSettings
-  );
+  return useMutation((data) => customErrorMessageService.create(data), mutationSettings);
 };
 
 export const useCustomErrorDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    (id) => customErrorMessageService.delete(id),
-    mutationSettings
-  );
+  return useMutation((id) => customErrorMessageService.delete(id), mutationSettings);
 };
 
 export default customErrorMessageService;

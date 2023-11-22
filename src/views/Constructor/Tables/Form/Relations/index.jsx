@@ -15,13 +15,13 @@ import TableRowButton from "../../../../../components/TableRowButton";
 const Relations = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-
+  const { tableSlug } = useParams();
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
   });
-  
+
   const { id } = useParams();
 
   const openEditForm = (field, index) => {
@@ -40,9 +40,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
   const deleteField = (field, index) => {
     if (!id) updateRelations();
     else {
-      constructorRelationService
-        .delete(field.id)
-        .then((res) => updateRelations());
+      constructorRelationService.delete(field.id, tableSlug).then((res) => updateRelations());
     }
   };
 
@@ -80,20 +78,10 @@ const Relations = ({ mainForm, getRelationFields }) => {
         onEditClick={openEditForm}
         checkPermission={false}
         dataLength={1}
-        additionalRow={
-          <TableRowButton
-            colSpan={columns.length + 2}
-            onClick={() => setDrawerState("CREATE")}
-          />
-        }
+        additionalRow={<TableRowButton colSpan={columns.length + 2} onClick={() => setDrawerState("CREATE")} />}
       />
 
-      <Drawer
-        open={!!drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={!!drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <RelationSettings
           relation={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}

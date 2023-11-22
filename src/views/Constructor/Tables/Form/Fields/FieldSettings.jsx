@@ -148,7 +148,7 @@ const FieldSettings = ({
         columns: [...views[selectedTabIndex].columns, data?.id],
       };
 
-      constructorViewService.update(computedValues).then(() => {
+      constructorViewService.update(tableSlug, computedValues).then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
     }
@@ -382,7 +382,7 @@ const FieldSettings = ({
 
                             {languages?.map((language) => {
                               const languageFieldName = `attributes.label_${language?.slug}`;
-                              const fieldValue = useWatch({
+                              const fieldValue = watch({
                                 control,
                                 name: languageFieldName,
                               });

@@ -52,14 +52,14 @@ export default function GroupTableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedData).then((res) => {
+    constructorViewService.update(tableSlug, computedData).then((res) => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
 
   const updateView = (column) => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...selectedView,
         columns: selectedView?.columns?.filter((item) => item !== column),
       })
@@ -71,7 +71,7 @@ export default function GroupTableHeadForTableView({
   const deleteField = (column) => {
     constructorFieldService.delete(column).then((res) => {
       constructorViewService
-        .update({
+        .update(tableSlug, {
           ...selectedView,
           columns: selectedView?.columns?.filter((item) => item !== column),
         })

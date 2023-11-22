@@ -50,7 +50,7 @@ export default function CalendarGroupByButton({
   const updateView = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         group_fields: form.watch("group_fields"),
       })
@@ -70,7 +70,7 @@ export default function CalendarGroupByButton({
   const disableAll = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         group_fields: [],
       })

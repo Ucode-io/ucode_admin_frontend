@@ -326,23 +326,23 @@ const ViewForm = ({
             {/* <TabPanel>
               <QuickFiltersTab form={form} currentView={initialValues} />
             </TabPanel> */}
-            <TabPanel>
+            {/* <TabPanel>
               <ColumnsTab form={form} isMenu={false} />
-            </TabPanel>
+            </TabPanel> */}
             <TabPanel>
               <NavigateSettings form={form} />
             </TabPanel>
-            {type !== "FINANCE CALENDAR" && (
+            {/* {type !== "FINANCE CALENDAR" && (
               <TabPanel>
                 <GroupsTab columns={computedColumns} form={form} />
               </TabPanel>
-            )}
-            <TabPanel>
+            )} */}
+            {/* <TabPanel>
               <GroupByTab form={form} isMenu={false} />
             </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />
-            </TabPanel>
+            </TabPanel> */}
           </div>
         </Tabs>
       </div>

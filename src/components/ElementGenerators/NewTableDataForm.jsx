@@ -12,7 +12,6 @@ export default function NewTableDataForm({
   fields,
   field,
   row,
-  getValues,
   index,
   control,
   setFormValue,
@@ -21,12 +20,7 @@ export default function NewTableDataForm({
   isWrap,
   watch,
 }) {
-  const {mutate: updateObject} = useMutation(() =>
-    // constructorObjectService.update(tableSlug, {
-    //   data: {...getValues(`multi.${index}`)},
-    // })
-    console.log("")
-  );
+  const {mutate: updateObject} = useMutation(() => console.log(""));
 
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {

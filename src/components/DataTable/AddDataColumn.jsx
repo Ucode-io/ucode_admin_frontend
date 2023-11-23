@@ -9,7 +9,6 @@ import constructorObjectService from "../../services/constructorObjectService";
 import {useQueryClient} from "react-query";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {useDispatch} from "react-redux";
-import layoutService from "../../services/layoutService";
 
 const AddDataColumn = ({
   columns,
@@ -31,7 +30,6 @@ const AddDataColumn = ({
   const {
     handleSubmit,
     control,
-    reset,
     setValue: setFormValue,
     watch,
     formState: {errors},
@@ -46,7 +44,6 @@ const AddDataColumn = ({
       })
       .then((res) => {
         refetch();
-        // queryClient.refetchQueries(["GET_OBJECTS_LIST", tableSlug]);
         setAddNewRow(false);
 
         dispatch(showAlert("Successfully updated!", "success"));

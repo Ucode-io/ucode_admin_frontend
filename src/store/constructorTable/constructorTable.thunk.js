@@ -33,6 +33,7 @@ export const createConstructorTableAction = createAsyncThunk(
           ...res,
         })
       );
+      return data;
     } catch (error) {
       console.log(error);
       throw new Error(error);

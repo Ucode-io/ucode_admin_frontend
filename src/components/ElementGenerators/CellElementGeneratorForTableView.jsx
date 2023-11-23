@@ -117,7 +117,7 @@ const CellElementGeneratorForTableView = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
-  console.log("fielddddddddddd", field);
+
   switch (field.type) {
     case "LOOKUP":
       return (

@@ -22,6 +22,7 @@ import { showAlert } from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
 import { store } from "../../../store";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -82,6 +83,7 @@ const SubMenu = ({
       handleOpenNotify(e, "ROOT");
     }
     setElement(selectedApp);
+    dispatch(menuActions.setMenuItem(selectedApp));
   };
 
   const onDrop = (dropResult) => {

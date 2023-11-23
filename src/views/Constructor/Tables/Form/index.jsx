@@ -71,7 +71,7 @@ const ConstructorTablesFormPage = () => {
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
-    });
+    }, slug);
 
     const getLayouts = layoutService
       .getList({

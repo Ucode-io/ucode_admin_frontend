@@ -30,39 +30,39 @@ const customErrorMessageService = {
         "project-id": data.project_id,
       },
     }),
-  delete: (id, tableSlug) => request.delete(`/collection/${tableSlug}/error_messages/${id}`),
+  delete: (id, tableSlug) => requestV2.delete(`/collection/${tableSlug}/error_messages/${id}`),
 };
 
-export const useCustomErrorListQuery = ({ params = {}, queryParams } = {}) => {
+export const useCustomErrorListQuery = ({ params = {}, queryParams, tableSlug } = {}) => {
   return useQuery(
     ["CUSTOM_ERROR_MESSAGE", params],
     () => {
-      return customErrorMessageService.getList(params);
+      return customErrorMessageService.getList(params, tableSlug);
     },
     queryParams
   );
 };
 
-export const useCustomErrorGetByIdQuery = ({ params = {}, platformId, queryParams }) => {
+export const useCustomErrorGetByIdQuery = ({ params = {}, platformId, queryParams, tableSlug }) => {
   return useQuery(
     ["CUSTOM_ERROR_MESSAGE_GET_BY_ID", { ...params, platformId }],
     () => {
-      return customErrorMessageService.getByID(params, platformId);
+      return customErrorMessageService.getByID(params, platformId, tableSlug);
     },
     queryParams
   );
 };
 
 export const useCustomErrorUpdateMutation = (mutationSettings) => {
-  return useMutation((data) => customErrorMessageService.update(data), mutationSettings);
+  return useMutation((data, tableSlug) => customErrorMessageService.update(data, tableSlug), mutationSettings);
 };
 
 export const useCustomErrorCreateMutation = (mutationSettings) => {
-  return useMutation((data) => customErrorMessageService.create(data), mutationSettings);
+  return useMutation((data, tableSlug) => customErrorMessageService.create(data, tableSlug), mutationSettings);
 };
 
 export const useCustomErrorDeleteMutation = (mutationSettings) => {
-  return useMutation((id) => customErrorMessageService.delete(id), mutationSettings);
+  return useMutation((id, tableSlug) => customErrorMessageService.delete(id, tableSlug), mutationSettings);
 };
 
 export default customErrorMessageService;

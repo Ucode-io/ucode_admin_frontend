@@ -26,6 +26,7 @@ import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";
 import constructorObjectService from "../../services/constructorObjectService";
 import { useTranslation } from "react-i18next";
+import FieldButton from "./FieldButton";
 
 const ObjectDataTable = ({
   relOptions,
@@ -99,7 +100,7 @@ const ObjectDataTable = ({
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-
+  console.log("mainForm", mainForm.watch());
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -335,34 +336,12 @@ const ObjectDataTable = ({
               </CTableHeadCell>
             )}
           </PermissionWrapperV2>
-          <Box>
-            <CTableHeadCell
-              width={10}
-              style={{
-                position: "fixed",
-                right: "0",
-                width: "100%",
-                background: "#fff",
-                maxWidth: "90px",
-              }}
-            >
-              <span
-                style={{
-                  whiteSpace: "nowrap",
-                  padding: "10px 4px",
-                  color: "#747474",
-                  fontSize: "13px",
-                  fontStyle: "normal",
-                  fontWeight: 500,
-                  lineHeight: "normal",
-                  backgroundColor: "#fff",
-                }}
-                onClick={openFieldSettings}
-              >
-                <AddRoundedIcon />
-              </span>
-            </CTableHeadCell>
-          </Box>
+          <FieldButton
+            openFieldSettings={openFieldSettings}
+            view={view}
+            mainForm={mainForm}
+            fields={fields}
+          />
         </CTableRow>
       </CTableHead>
 

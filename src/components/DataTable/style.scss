@@ -25,6 +25,7 @@
       font-weight: 500;
       color: #303940;
       transition: all 0.3s ease;
+
       &:hover {
         background-color: #f5f5f5;
       }
@@ -53,11 +54,12 @@
     }
   }
 
-  .first_button, .table_multi_checkbox{
+  .first_button,
+  .table_multi_checkbox {
     display: none;
   }
 
-  .data_table__row_number{
+  .data_table__row_number {
     display: block;
   }
 
@@ -66,16 +68,27 @@
       display: flex;
     }
 
-    .first_button, .table_multi_checkbox{
+    .first_button,
+    .table_multi_checkbox {
       display: block;
     }
 
-    .data_table__row_number{
+    .data_table__row_number {
       display: none;
     }
   }
 }
+
 .multipleRow {
   background-color: #2a2d34;
   transition: all 1s ease;
+}
+
+// .column-drag-handle {
+  //   z-index: 999999 !important;
+  //   position: relative !important;
+  // }
+
+.smooth-dnd-container {
+  min-height: auto !important;
 }

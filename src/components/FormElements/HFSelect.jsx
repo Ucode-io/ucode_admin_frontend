@@ -107,7 +107,12 @@ const HFSelect = ({
                   ])
                 : options?.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                      <div className="flex align-center gap-2">
+                        {option?.icon && (
+                          <IconGenerator icon={option?.icon} size={15} />
+                        )}
+                        {option.label}
+                      </div>
                     </MenuItem>
                   ))}
             </Select>

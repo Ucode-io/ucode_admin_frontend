@@ -261,3 +261,102 @@ export const fieldTypesOptions = [
     ],
   },
 ];
+
+export const newFieldTypes = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "hashtag.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "calendar.svg",
+  },
+  {
+    label: "Dropdown",
+    value: "DROPDOWN",
+    icon: "arrow-dawn.svg",
+  },
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+  {
+    label: "Formula",
+    value: "FORMULA",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "RELATION",
+  },
+  {
+    label: "File",
+    value: "FILE",
+    icon: "file.svg",
+  },
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Phone",
+    value: "PHONE",
+    icon: "phone.svg",
+  },
+  {
+    label: "Email",
+    value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Icon",
+    value: "ICON",
+    icon: "icons.svg",
+  },
+  {
+    label: "Password",
+    value: "PASSWORD",
+    icon: "lock.svg",
+  },
+  {
+    label: "Color",
+    value: "COLOR",
+    icon: "colon-sign.svg",
+  },
+  {
+    label: "Barcode",
+    value: "BARCODE",
+    icon: "barcode.svg",
+  },
+];
+
+// 1. Text
+// 2. Number
+// 3. Date
+// 4. Dropdown
+// 5. Checkbox
+// 6. Switch
+// 7. Formula
+// 8. Relation
+// 9. File
+// 10. Map
+// 11. Phone
+// 12. Email
+// 13. Icon
+// 14. Password
+// 15. Color
+// 16. Barcode

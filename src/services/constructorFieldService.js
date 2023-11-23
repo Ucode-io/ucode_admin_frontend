@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
 
 const constructorFieldService = {
@@ -21,6 +21,13 @@ export const useFieldsListQuery = ({
       return constructorFieldService.getList(params, headers);
     },
     queryParams
+  );
+};
+
+export const useFieldCreateMutation = (mutationSettings) => {
+  return useMutation(
+    (data) => constructorFieldService.create(data),
+    mutationSettings
   );
 };
 

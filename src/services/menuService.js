@@ -1,11 +1,10 @@
 import { useMutation, useQuery } from "react-query";
-import request from "../utils/request";
 import requestV2 from "../utils/requestV2";
 
 const menuService = {
   getList: (params) => {
     return requestV2.get(`/menus`, {
-      params,
+      params
     });
   },
   getByID: ({ menuId, params }) =>
@@ -42,7 +41,9 @@ export const useMenuListQuery = ({ params = {}, queryParams } = {}) => {
     () => {
       return menuService.getList(params);
     },
-    queryParams
+    {
+      ...queryParams,
+    }
   );
 };
 

@@ -201,7 +201,7 @@ const ViewsWithGroups = ({
   }, [dateFilters, tableSlug, view?.id, view?.type]);
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
     navigate(url);
   };
 

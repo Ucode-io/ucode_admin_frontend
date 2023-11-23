@@ -1,9 +1,9 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -12,15 +12,15 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
-import { store } from "../../store";
-import { showAlert } from "../../store/alert/alert.thunk";
-import { sortSections } from "../../utils/sectionsOrderNumber";
+import {store} from "../../store";
+import {showAlert} from "../../store/alert/alert.thunk";
+import {sortSections} from "../../utils/sectionsOrderNumber";
 import NewRelationSection from "./RelationSection/NewRelationSection";
 import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -29,7 +29,7 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam} = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -40,10 +40,10 @@ const ObjectsFormPage = ({
   }, [tableSlugFromParam, tableSlugFromProps]);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
@@ -55,7 +55,7 @@ const ObjectsFormPage = ({
   const menu = store.getState().menu;
   const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const {
     handleSubmit,
@@ -63,9 +63,9 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
-    defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
+    defaultValues: {...state, ...dateInfo, invite: isInvite ? invite : false},
   });
   const tableInfo = store.getState().menu.menuItem;
 
@@ -79,7 +79,7 @@ const ObjectsFormPage = ({
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
+      const [{data = {}}, {layouts: layout = []}] = await Promise.all([
         getFormData,
         getLayout,
       ]);
@@ -121,7 +121,7 @@ const ObjectsFormPage = ({
     });
 
     try {
-      const [{ layouts: layout = [] }] = await Promise.all([getLayout]);
+      const [{layouts: layout = []}] = await Promise.all([getLayout]);
       const defaultLayout = layout?.find((el) => el.is_default === true);
       setSections(sortSections(sections));
 
@@ -151,7 +151,7 @@ const ObjectsFormPage = ({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -177,7 +177,7 @@ const ObjectsFormPage = ({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(

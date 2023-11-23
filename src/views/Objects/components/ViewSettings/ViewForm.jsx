@@ -280,10 +280,7 @@ const ViewForm = ({
             <TabList style={{marginBottom: "1px"}}>
               <Tab>Information</Tab>
               {/* <Tab>Quick filters</Tab> */}
-              <Tab>Columns</Tab>
               <Tab>Navigation</Tab>
-              {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
-              <Tab>Group by columns</Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
@@ -305,29 +302,6 @@ const ViewForm = ({
                       </Box>
                     </FRow>
                   </div>
-
-                  <div className={styles.formRow}>
-                    <FRow label="Тип">
-                      <HFSelect
-                        options={computedViewTypes}
-                        defaultValue={typeNewView}
-                        control={form.control}
-                        name="type"
-                        fullWidth
-                      />
-                    </FRow>
-                  </div>
-                  <FRow label="Default limit">
-                    <HFTextField control={form.control} name="default_limit" />
-                  </FRow>
-                  <FRow label="Изменение по умолчанию">
-                    <HFSwitch
-                      control={form.control}
-                      name="default_editable"
-                      required
-                      value={form.watch("default_editable")}
-                    />
-                  </FRow>
                 </div>
               </div>
 
@@ -336,8 +310,6 @@ const ViewForm = ({
                 computedFieldsListOptions={computedFieldsListOptions}
                 isViewSettings={true}
               />
-
-              <MultipleInsertSettings form={form} columns={columns} />
 
               {type === "CALENDAR" && (
                 <CalendarSettings form={form} columns={columns} />
@@ -354,13 +326,13 @@ const ViewForm = ({
             {/* <TabPanel>
               <QuickFiltersTab form={form} currentView={initialValues} />
             </TabPanel> */}
-            <TabPanel>
+            {/* <TabPanel>
               <ColumnsTab form={form} isMenu={false} />
-            </TabPanel>
+            </TabPanel> */}
             <TabPanel>
               <NavigateSettings form={form} />
             </TabPanel>
-            {type !== "FINANCE CALENDAR" && (
+            {/* {type !== "FINANCE CALENDAR" && (
               <TabPanel>
                 <GroupsTab columns={computedColumns} form={form} />
               </TabPanel>
@@ -370,7 +342,7 @@ const ViewForm = ({
             </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />
-            </TabPanel>
+            </TabPanel> */}
           </div>
         </Tabs>
       </div>

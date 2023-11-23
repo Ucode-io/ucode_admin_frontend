@@ -360,7 +360,7 @@ const TableView = ({
       fieldView?.find((item) => {
         return item?.type === "TABLE" && item?.attributes?.quick_filters;
       });
-    console.log("filteredFieldsView", filteredFieldsView);
+
     const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
       (el) => {
         return el?.field_id;
@@ -585,6 +585,7 @@ const TableView = ({
           id="data-table"
         >
           <ObjectDataTable
+            refetch={refetch}
             currentView={currentView}
             relOptions={relOptions}
             tableView={true}

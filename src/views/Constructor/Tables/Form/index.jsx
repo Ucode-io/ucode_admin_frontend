@@ -29,11 +29,14 @@ import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import { useTranslation } from "react-i18next";
+import menuSettingsService from "../../../../services/menuSettingsService";
+import { useQueryClient } from "react-query";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
+  const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -60,6 +63,9 @@ const ConstructorTablesFormPage = () => {
     },
     mode: "all",
   });
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const list = useSelector((state) => state.constructorTable.list);
+  console.log("list", list);
 
   const getData = async () => {
     setLoader(true);
@@ -164,6 +170,25 @@ const ConstructorTablesFormPage = () => {
     });
   };
 
+  const createType = (data) => {
+    console.log("data", data);
+    menuSettingsService
+      .create({
+        parent_id: menuItem?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        type: "TABLE",
+        table_id: data?.id,
+        label: data?.label,
+        attributes: data?.attributes,
+        icon: data?.icon,
+      })
+      .then(() => {
+        queryClient.refetchQueries(["MENU"], menuItem?.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
@@ -176,6 +201,7 @@ const ConstructorTablesFormPage = () => {
       .unwrap()
       .then((res) => {
         navigate(-1);
+        createType(res);
       })
       .catch(() => setBtnLoader(false));
   };
@@ -183,17 +209,6 @@ const ConstructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
-
-    // const updateSectionData = constructorSectionService.update({
-    //   sections: addOrderNumberToSections(data.sections),
-    //   table_slug: data.slug,
-    //   table_id: id,
-    // });
-
-    // const updateViewRelationsData = constructorViewRelationService.update({
-    //   view_relations: data.view_relations,
-    //   table_slug: data.slug,
-    // });
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
@@ -271,7 +286,6 @@ const ConstructorTablesFormPage = () => {
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
   };
-
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
@@ -301,7 +315,7 @@ const ConstructorTablesFormPage = () => {
           </HeaderSettings>
 
           <TabPanel>
-            <MainInfo control={mainForm.control} />
+            <MainInfo control={mainForm.control} watch={mainForm.watch} />
           </TabPanel>
 
           <TabPanel>

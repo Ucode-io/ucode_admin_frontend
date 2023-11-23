@@ -1,8 +1,13 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import useOnClickOutside from "use-onclickoutside";
-import {useLocation} from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import {Button} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation} from "react-router-dom";
+import useOnClickOutside from "use-onclickoutside";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import {
   CTable,
   CTableBody,
@@ -11,21 +16,14 @@ import {
   CTableHeadCell,
   CTableRow,
 } from "../CTable";
-import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
-import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import TableRow from "./TableRow";
-import SummaryRow from "./SummaryRow";
-import MultipleUpdateRow from "./MultipleUpdateRow";
-import "./style.scss";
-import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import {Box, Button, LinearProgress} from "@mui/material";
+import MultipleUpdateRow from "./MultipleUpdateRow";
+import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
-import InfiniteScroll from "react-infinite-scroll-component";
-import constructorObjectService from "../../services/constructorObjectService";
-import {useTranslation} from "react-i18next";
+import TableRow from "./TableRow";
+import "./style.scss";
 
 const ObjectDataTable = ({
   relOptions,
@@ -84,6 +82,7 @@ const ObjectDataTable = ({
   title,
   view,
   navigateToForm,
+  refetch,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -94,6 +93,7 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const [addNewRow, setAddNewRow] = useState(false);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -383,6 +383,29 @@ const ObjectDataTable = ({
               view={view}
             />
           ))}
+
+        {addNewRow && (
+          <AddDataColumn
+            rows={isRelationTable ? fields : data}
+            columns={columns}
+            setAddNewRow={setAddNewRow}
+            isTableView={isTableView}
+            relOptions={relOptions}
+            tableView={tableView}
+            tableSlug={tableSlug}
+            fields={columns}
+            getValues={getValues}
+            mainForm={mainForm}
+            control={control}
+            setFormValue={setFormValue}
+            relationfields={fields}
+            data={data}
+            onRowClick={onRowClick}
+            width={"80px"}
+            refetch={refetch}
+          />
+        )}
+
         <CTableRow>
           <CTableCell
             align="center"
@@ -403,7 +426,8 @@ const ObjectDataTable = ({
                 width: "100%",
               }}
               onClick={() => {
-                navigateToForm(tableSlug);
+                // navigateToForm(tableSlug);
+                setAddNewRow(true);
               }}
             >
               <AddRoundedIcon />

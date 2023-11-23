@@ -6,11 +6,13 @@ import { useQueryClient } from "react-query";
 import constructorViewService from "../../../../services/constructorViewService";
 import { columnIcons } from "../../../../utils/constants/columnIcons";
 import style from "./style.module.scss";
+import { useParams } from "react-router-dom";
 
 export default function FixColumnsTableView({ view, fieldsMap }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
+  const { tableSlug } = useParams();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = (event) => {
@@ -24,7 +26,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
   const updateView = (data) => {
     setIsLoading(true);
     constructorViewService
-      .update(data)
+      .update(tableSlug, data)
       .then((res) => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       })

@@ -126,7 +126,7 @@ const TableView = ({
       const getRelations = constructorRelationService.getList({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
-      });
+      }, tableSlug);
       const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,

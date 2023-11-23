@@ -7,9 +7,11 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import { columnIcons } from "../../utils/constants/columnIcons";
+import { useParams } from "react-router-dom";
 
 export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relationColumns, text = "Tab group" }) {
   const form = useForm();
+  const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -39,7 +41,7 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
   const updateView = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...view,
         group_fields: form.watch("group_fields"),
       })
@@ -59,7 +61,7 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
   const disableAll = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...view,
         group_fields: [],
       })

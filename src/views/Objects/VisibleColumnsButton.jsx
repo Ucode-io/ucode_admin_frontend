@@ -8,12 +8,14 @@ import { Container, Draggable } from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
 import { applyDrag } from "../../utils/applyDrag";
 import { columnIcons } from "../../utils/constants/columnIcons";
+import { useParams } from "react-router-dom";
 
 export default function VisibleColumnsButton({ currentView, fieldsMap }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
+  const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
   const allFields = useMemo(() => {
@@ -31,7 +33,7 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
   const updateView = (data) => {
     setIsLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...currentView,
         columns: data,
       })

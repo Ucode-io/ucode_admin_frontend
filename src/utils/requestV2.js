@@ -75,12 +75,13 @@ requestV2.interceptors.request.use(
     const companyStore = store.getState().company;
     const environmentId = companyStore.environmentId;
     const projectId = companyStore.projectId;
-
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
       if(config.params) config.params["project-id"] = projectId;
+
     }
     // if (!config.params?.["project-id"]) {
     //   if (config.params) {

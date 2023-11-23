@@ -5,6 +5,7 @@ import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { useParams } from "react-router-dom";
 
 export default function GroupColumnVisible({
   selectedTabIndex,
@@ -17,6 +18,7 @@ export default function GroupColumnVisible({
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState(null);
+  const {tableSlug} = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -65,7 +67,7 @@ export default function GroupColumnVisible({
 
   const disableAll = () => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           group_by_columns: [],
@@ -101,7 +103,7 @@ export default function GroupColumnVisible({
 
   const updateView = () => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           ...views?.[selectedTabIndex]?.attributes,

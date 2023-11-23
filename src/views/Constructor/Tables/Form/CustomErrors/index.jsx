@@ -1,25 +1,22 @@
-import { Add } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
+import { Drawer } from "@mui/material";
+import { useMemo, useState } from "react";
 import { useFieldArray } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
-import constructorRelationService from "../../../../../services/constructorRelationService";
-import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
 import {
   useCustomErrorDeleteMutation,
   useCustomErrorListQuery,
 } from "../../../../../services/customErrorMessageService";
-import constructorObjectService from "../../../../../services/constructorObjectService";
 import { store } from "../../../../../store";
-import { useQueryClient } from "react-query";
 import CustomErrorsSettings from "./CustomErrorsSettings";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-  const { id } = useParams();
+  const { id, tableSlug } = useParams();
   const queryClient = useQueryClient();
   const authStore = store.getState().auth;
 
@@ -33,6 +30,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
     params: {
       table_id: id,
     },
+    tableSlug: tableSlug
   });
 
   const openEditForm = (field, index) => {
@@ -51,6 +49,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
   const { mutate: deleteCustomError, isLoading: deleteLoading } =
     useCustomErrorDeleteMutation({
       projectId: authStore.projectId,
+      tableSlug: tableSlug,
       onSuccess: () => {
         queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
       },

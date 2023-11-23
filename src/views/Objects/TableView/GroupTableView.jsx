@@ -90,7 +90,7 @@ const GroupTableView = ({
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
-      });
+      }, slug);
       const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({

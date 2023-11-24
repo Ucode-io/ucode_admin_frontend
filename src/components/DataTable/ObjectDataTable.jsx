@@ -27,6 +27,7 @@ import "./style.scss";
 
 const ObjectDataTable = ({
   relOptions,
+  filterVisible,
   tableView,
   data = [],
   loader = false,
@@ -263,6 +264,7 @@ const ObjectDataTable = ({
       setLimit={setLimit}
       defaultLimit={defaultLimit}
       view={view}
+      filterVisible={filterVisible}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (

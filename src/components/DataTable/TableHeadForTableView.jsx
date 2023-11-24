@@ -173,6 +173,14 @@ export default function TableHeadForTableView({
           },
         },
         {
+          id: 8,
+          title: `Add Summary`,
+          icon: <SortByAlphaOutlinedIcon />,
+          onClickAction: () => {
+            console.log("testtttttt", column);
+          },
+        },
+        {
           id: 19,
           title: `${
             view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"

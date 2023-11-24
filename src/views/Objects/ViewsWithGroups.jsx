@@ -5,9 +5,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
 import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
@@ -135,6 +135,35 @@ const ViewsWithGroups = ({
     control,
     name: "multi",
   });
+
+  const getValue = useCallback((item, key) => {
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
+  }, []);
+
+  const {mutate: updateMultipleObject, isLoading} = useMutation(
+    (values) =>
+      constructorObjectService.updateMultipleObject(tableSlug, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? "",
+            doctors_id_2: getValue(item, "doctors_id_2"),
+            doctors_id_3: getValue(item, "doctors_id_3"),
+            specialities_id: getValue(item, "specialities_id"),
+          })),
+        },
+      }),
+    {
+      onSuccess: () => {
+        setShouldGet((p) => !p);
+        setFormVisible(false);
+      },
+    }
+  );
+
+  const onSubmit = (data) => {
+    updateMultipleObject(data);
+  };
 
   const handleHeightControl = (val) => {
     dispatch(
@@ -605,11 +634,11 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
-                      currentView={view}
-                      filterVisible={filterVisible}
                       visibleColumns={visibleColumns}
                       visibleRelationColumns={visibleRelationColumns}
                       visibleForm={visibleForm}
+                      currentView={view}
+                      filterVisible={filterVisible}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}

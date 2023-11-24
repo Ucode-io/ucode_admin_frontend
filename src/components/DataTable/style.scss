@@ -84,11 +84,71 @@
   transition: all 1s ease;
 }
 
-// .column-drag-handle {
-  //   z-index: 999999 !important;
-  //   position: relative !important;
-  // }
-
 .smooth-dnd-container {
   min-height: auto !important;
+}
+
+.math {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  width: 100px;
+}
+
+.math_plus {
+  background: #6bc950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.math_minus {
+  background: #fd7171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+
+}
+
+.math_multiplication {
+  background: #ffc800;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.math_division {
+  background: #49ccf9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
 }

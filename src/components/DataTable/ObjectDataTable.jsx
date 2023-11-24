@@ -95,6 +95,8 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
+  const [fieldData, setFieldData] = useState(null);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -309,6 +311,8 @@ const ObjectDataTable = ({
                   filters={filters}
                   tableSlug={tableSlug}
                   disableFilters={disableFilters}
+                  setFieldCreateAnchor={setFieldCreateAnchor}
+                  setFieldData={setFieldData}
                 />
               )
           )}
@@ -341,6 +345,12 @@ const ObjectDataTable = ({
             view={view}
             mainForm={mainForm}
             fields={fields}
+            setFieldCreateAnchor={setFieldCreateAnchor}
+            fieldCreateAnchor={fieldCreateAnchor}
+            fieldData={fieldData}
+            setFieldData={setFieldData}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
           />
         </CTableRow>
       </CTableHead>

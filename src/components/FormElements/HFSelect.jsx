@@ -11,6 +11,7 @@ import {
 import { Controller } from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import ClearIcon from "@mui/icons-material/Clear"; // Import the clear icon
+import { columnIcons } from "../../utils/constants/columnIcons";
 
 const HFSelect = ({
   control,
@@ -108,9 +109,7 @@ const HFSelect = ({
                 : options?.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       <div className="flex align-center gap-2">
-                        {option?.icon && (
-                          <IconGenerator icon={option?.icon} size={15} />
-                        )}
+                        {option?.icon && columnIcons(option.value)}
                         {option.label}
                       </div>
                     </MenuItem>

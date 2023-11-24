@@ -3,6 +3,7 @@ import React from "react";
 import style from "./field.module.scss";
 import { newFieldTypes } from "../../utils/constants/fieldTypes";
 import IconGenerator from "../IconPicker/IconGenerator";
+import { columnIcons } from "../../utils/constants/columnIcons";
 
 export default function FieldOptionModal({
   anchorEl,
@@ -77,7 +78,7 @@ export default function FieldOptionModal({
               handleChange(e, field?.value);
             }}
           >
-            <IconGenerator icon={field?.icon} size={15} /> <p>{field?.label}</p>
+            {field?.value && columnIcons(field?.value)} <p>{field?.label}</p>
           </Button>
         ))}
       </div>

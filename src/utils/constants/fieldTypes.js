@@ -280,8 +280,8 @@ export const newFieldTypes = [
   },
   {
     label: "Dropdown",
-    value: "DROPDOWN",
-    icon: "arrow-dawn.svg",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
   },
   {
     label: "Checkbox",
@@ -295,12 +295,13 @@ export const newFieldTypes = [
   },
   {
     label: "Formula",
-    value: "FORMULA",
+    value: "FORMULA_FRONTEND",
     icon: "plus-minus.svg",
   },
   {
     label: "Relation",
     value: "RELATION",
+    icon: "link-simple.svg",
   },
   {
     label: "File",
@@ -323,11 +324,6 @@ export const newFieldTypes = [
     icon: "envelope.svg",
   },
   {
-    label: "Icon",
-    value: "ICON",
-    icon: "icons.svg",
-  },
-  {
     label: "Password",
     value: "PASSWORD",
     icon: "lock.svg",
@@ -344,19 +340,21 @@ export const newFieldTypes = [
   },
 ];
 
-// 1. Text
-// 2. Number
-// 3. Date
-// 4. Dropdown
-// 5. Checkbox
-// 6. Switch
-// 7. Formula
-// 8. Relation
-// 9. File
-// 10. Map
-// 11. Phone
-// 12. Email
-// 13. Icon
-// 14. Password
-// 15. Color
-// 16. Barcode
+export const math = [
+  {
+    label: "plus",
+    value: "+",
+  },
+  {
+    label: "minus",
+    value: "-",
+  },
+  {
+    label: "multiplication",
+    value: "*",
+  },
+  {
+    label: "division",
+    value: "/",
+  },
+];

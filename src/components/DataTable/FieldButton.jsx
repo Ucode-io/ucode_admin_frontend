@@ -1,16 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./field.module.scss";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CTableHeadCell } from "../CTable";
 import FieldOptionModal from "./FieldOptionModal";
 import FieldCreateModal from "./FieldCreateModal";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useFieldCreateMutation } from "../../services/constructorFieldService";
 import { useDispatch, useSelector } from "react-redux";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
 import { useTranslation } from "react-i18next";
-import { generateGUID } from "../../utils/generateID";
 import constructorViewService from "../../services/constructorViewService";
 
 export default function FieldButton({
@@ -18,39 +17,40 @@ export default function FieldButton({
   view,
   mainForm,
   fields,
+  setFieldCreateAnchor,
+  fieldCreateAnchor,
+  fieldData,
+  setFieldData,
+  setDrawerState,
+  setDrawerStateField,
 }) {
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const languages = useSelector((state) => state.languages.list);
-  const { control, watch, setValue, reset, handleSubmit } = useForm({
-    defaultValues: {
-      table_id: menuItem?.table_id,
-      index: "string",
-      required: false,
-      show_label: true,
-      id: generateGUID(),
-    },
-  });
-
-  //   const fields = mainForm.watch();
-  console.log("fields", fields);
+  const { control, watch, setValue, reset, handleSubmit } = useForm();
 
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
-  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [target, setTarget] = useState(null);
 
-  const { mutate: createEmail, isLoading: createLoading } =
+  const handleOpenFieldDrawer = (column) => {
+    if (column?.attributes?.relation_data) {
+      setDrawerStateField(column);
+    } else {
+      setDrawerState(column);
+    }
+  };
+
+  const { mutate: createField, isLoading: createLoading } =
     useFieldCreateMutation({
       onSuccess: (res) => {
+        reset({});
+        setFieldOptionAnchor(null);
+        setFieldCreateAnchor(null);
         updateView(res?.id);
         dispatch(showAlert("Successful created", "success"));
-        // queryClient.refetchQueries(["EMAILS"]);
       },
     });
-
-  console.log("view", view);
 
   const updateView = (column) => {
     constructorViewService
@@ -67,15 +67,38 @@ export default function FieldButton({
     const data = {
       ...values,
       slug: values?.label?.replace(/ /g, "_"),
+      table_id: menuItem?.table_id,
+      index: "string",
+      required: false,
+      show_label: true,
       attributes: {
         ...values.attributes,
         [`label_${i18n?.language}`]: values.label,
-        formula: values.formula + values.plus + values.fff,
+        formula: values?.attributes?.advanced_type
+          ? values?.attributes?.formula
+          : values?.attributes?.from_formula +
+            " " +
+            values?.attributes?.math.value +
+            " " +
+            values?.attributes?.to_formula,
       },
     };
-    console.log("data", data);
-    createEmail(data);
+    createField(data);
   };
+
+  useEffect(() => {
+    if (fieldData) {
+      reset({
+        ...fieldData,
+      });
+    } else {
+      reset({
+        attributes: {
+          math: { label: "plus", value: "+" },
+        },
+      });
+    }
+  }, [fieldData]);
 
   return (
     <div>
@@ -103,6 +126,7 @@ export default function FieldButton({
           onClick={(e) => {
             setFieldOptionAnchor(e.currentTarget);
             setTarget(e.currentTarget);
+            setFieldData(null);
           }}
         >
           <AddRoundedIcon />
@@ -127,6 +151,8 @@ export default function FieldButton({
         setFieldOptionAnchor={setFieldOptionAnchor}
         reset={reset}
         menuItem={menuItem}
+        fieldData={fieldData}
+        handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
     </div>
   );

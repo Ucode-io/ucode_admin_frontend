@@ -74,33 +74,9 @@ export const columnIcons = (type) => {
       return <LooksOneIcon />;
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return <InsertInvitationIcon />;
+    case "DROPDOWN":
+      return <ArrowDropDownCircleIcon />;
     default:
       return <LinkIcon />;
-
-    // SINGLE_LINE: <TextFieldsIcon />,
-    // MULTI_LINE: <FormatAlignJustifyIcon />,
-    // NUMBER: <LooksOneIcon />,
-    // MULTISELECT: <ArrowDropDownCircleIcon />,
-    // PHOTO: <PhotoSizeSelectActualIcon />,
-    // VIDEO: <PlayCircleIcon />,
-    // FILE: <InsertDriveFileIcon />,
-    // FORMULA: <FunctionsIcon />,
-    // PHONE: <LocalPhoneIcon />,
-    // INTERNATION_PHONE: <LocalPhoneIcon />,
-    // EMAIL: <EmailIcon />,
-    // ICON: <AppsIcon />,
-    // BARCODE: <QrCodeScannerIcon />,
-    // QRCODE: <QrCode2Icon />,
-    // COLOR: <ColorizeIcon />,
-    // PASSWORD: <PasswordIcon />,
-    // PICK_LIST: <ChecklistIcon />,
-    // DATE: <DateRangeIcon />,
-    // TIME: <AccessTimeIcon />,
-    // DATE_TIME: <InsertInvitationIcon />,
-    // CHECKBOX: <CheckBoxIcon />,
-    // MAP: <MapIcon />,
-    // SWITCH: <ToggleOffIcon />,
-    // FLOAT_NOLIMIT: <LooksOneIcon />,
-    // DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
   }
 };

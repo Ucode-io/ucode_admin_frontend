@@ -1,10 +1,8 @@
-import { Box, Button, Menu, Typography } from "@mui/material";
+import "./style.scss";
+import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
 import React, { useState } from "react";
 import style from "./field.module.scss";
-import "./style.scss";
-import { newFieldTypes } from "../../utils/constants/fieldTypes";
-import IconGenerator from "../IconPicker/IconGenerator";
-import FormCard from "../FormCard";
+import { math, newFieldTypes } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
 import HFTextField from "../FormElements/HFTextField";
 import HFSelect from "../FormElements/HFSelect";
@@ -12,6 +10,9 @@ import { useFieldArray } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../utils/applyDrag";
 import { useFieldsListQuery } from "../../services/fieldService";
+import CloseIcon from "@mui/icons-material/Close";
+import { colorList } from "../ColorPicker/colorList";
+import HFSwitch from "../FormElements/HFSwitch";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -25,9 +26,16 @@ export default function FieldCreateModal({
   target,
   reset,
   menuItem,
+  fieldData,
+  handleOpenFieldDrawer,
 }) {
   const type = watch("type");
   const [fields, setFields] = useState([]);
+  const [colorEl, setColorEl] = useState(null);
+  const [mathEl, setMathEl] = useState(null);
+  const [idx, setIdx] = useState(null);
+  const mathType = watch("attributes.math");
+
   const {
     fields: dropdownFields,
     append: dropdownAppend,
@@ -35,23 +43,20 @@ export default function FieldCreateModal({
   } = useFieldArray({
     control,
     name: "attributes.options",
-    keyName: "key",
   });
   const open = Boolean(anchorEl);
+  const openColor = Boolean(colorEl);
+  const openMath = Boolean(mathEl);
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(watch("attributes.options"), dropResult);
+    if (result) {
+      setValue("attributes.options", result);
+    }
+  };
 
   console.log("watch", watch());
 
-  const onDrop = (dropResult) => {
-    const result = applyDrag(dropdownFields, dropResult);
-    if (result) {
-      reset({
-        attributes: {
-          options: result,
-        },
-      });
-    }
-  };
-  console.log("fields", fields);
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
@@ -73,10 +78,28 @@ export default function FieldCreateModal({
     setValue("type", "");
   };
 
+  const handleCloseColor = () => {
+    setColorEl(null);
+  };
+
+  const handleCloseMath = () => {
+    setMathEl(null);
+  };
+
   const handleClick = () => {
     setAnchorEl(null);
     setValue("type", "");
     setFieldOptionAnchor(target);
+  };
+
+  const handleOpenColor = (e, index) => {
+    setIdx(index);
+    setColorEl(e.currentTarget);
+  };
+
+  const closeAllDrawer = () => {
+    setFieldOptionAnchor(null);
+    setAnchorEl(null);
   };
 
   return (
@@ -91,32 +114,6 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "top",
         horizontal: "right",
-      }}
-      PaperProps={{
-        elevation: 0,
-        sx: {
-          overflow: "visible",
-          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-          mt: 1.5,
-          "& .MuiAvatar-root": {
-            // width: 100,
-            height: 32,
-            ml: -0.5,
-            mr: 1,
-          },
-          "&:before": {
-            content: '""',
-            display: "block",
-            position: "absolute",
-            top: 0,
-            right: 14,
-            width: 10,
-            height: 10,
-            bgcolor: "background.paper",
-            transform: "translateY(-50%) rotate(45deg)",
-            zIndex: 0,
-          },
-        },
       }}
     >
       <div className={style.field}>
@@ -156,79 +153,208 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          {type === "DROPDOWN" && (
-            <Box className={style.dropdown}>
-              <Container
-                dragHandleSelector=".column-drag-handle"
-                onDrop={onDrop}
-              >
-                {dropdownFields.map((item, index) => (
-                  <Draggable key={index}>
-                    <Box className="column-drag-handle">
-                      <FRow
-                        label={`Option ${index + 1}`}
-                        className={style.option}
+          {fieldData && (
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => {
+                handleOpenFieldDrawer(fieldData);
+                closeAllDrawer();
+              }}
+            >
+              Advanced settings
+            </Button>
+          )}
+          <div>
+            {type === "MULTISELECT" && (
+              <Box className={style.dropdown}>
+                <Container
+                  lockAxis="y"
+                  orientation="vertical"
+                  onDrop={onDrop}
+                  dragHandleSelector=".column-drag-handle"
+                >
+                  {dropdownFields.map((item, index) => (
+                    <Draggable key={item.id}>
+                      <Box key={item.id} className="column-drag-handle">
+                        <FRow
+                          label={`Option ${index + 1}`}
+                          className={style.option}
+                        >
+                          <span
+                            className={style.startAdornment}
+                            style={{
+                              background: watch(
+                                `attributes.options.${index}.color`
+                              ),
+                            }}
+                          ></span>
+
+                          <HFTextField
+                            disabledHelperText
+                            name={`attributes.options.${index}.label`}
+                            control={control}
+                            fullWidth
+                            required
+                            placeholder="Type..."
+                            endAdornment={
+                              <Box className={style.adornment}>
+                                <p onClick={(e) => handleOpenColor(e, index)}>
+                                  Add color
+                                </p>
+                                <CloseIcon
+                                  onClick={() => dropdownRemove(index)}
+                                />
+                              </Box>
+                            }
+                            customOnChange={(e) => {
+                              setValue(
+                                `attributes.options.${index}.value`,
+                                e.target.value.replace(/ /g, "_")
+                              );
+                            }}
+                          />
+                        </FRow>
+                      </Box>
+                      <Popover
+                        open={openColor}
+                        anchorEl={colorEl}
+                        onClose={handleCloseColor}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
                       >
-                        <HFTextField
-                          disabledHelperText
-                          name={`attributes.options.${index}.label`}
-                          control={control}
-                          fullWidth
-                          required
-                          placeholder="Type..."
-                          customOnChange={(e) => {
-                            setValue(
-                              `attributes.options.${index}.value`,
-                              e.target.value.replace(/ /g, "_")
-                            );
-                          }}
-                        />
-                      </FRow>
+                        <Card elevation={12} className="ColorPickerPopup">
+                          {colorList.map((color, colorIndex) => (
+                            <div
+                              className="round"
+                              key={colorIndex}
+                              style={{ backgroundColor: color }}
+                              onClick={() => {
+                                setValue(
+                                  `attributes.options.${idx}.color`,
+                                  color
+                                );
+                                handleCloseColor();
+                              }}
+                            />
+                          ))}
+                        </Card>
+                      </Popover>
+                    </Draggable>
+                  ))}
+                </Container>
+                <Button
+                  onClick={() => {
+                    dropdownAppend({
+                      label: "",
+                      value: "",
+                    });
+                  }}
+                >
+                  +Add option
+                </Button>
+              </Box>
+            )}
+          </div>
+          {type === "FORMULA_FRONTEND" && (
+            <>
+              {watch("attributes.advanced_type") ? (
+                <>
+                  <Box className={style.formula}>
+                    <HFTextField
+                      disabledHelperText
+                      name="attributes.formula"
+                      control={control}
+                      fullWidth
+                      required
+                      placeholder="Formula"
+                    />
+                  </Box>
+                  <h2>Fields list:</h2>
+                  {fields.map((field) => (
+                    <div>
+                      {field.label} - <strong>{field.value}</strong>{" "}
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <Box className={style.formula}>
+                  <HFSelect
+                    disabledHelperText
+                    options={fields}
+                    name="attributes.from_formula"
+                    control={control}
+                    fullWidth
+                    required
+                    placeholder="Select variable"
+                  />
+
+                  <span
+                    className={`math_${mathType?.label}`}
+                    onClick={(e) => setMathEl(e.currentTarget)}
+                  >
+                    {mathType?.value}
+                  </span>
+                  <HFSelect
+                    disabledHelperText
+                    options={fields}
+                    name="attributes.to_formula"
+                    control={control}
+                    fullWidth
+                    required
+                    placeholder="Select variable"
+                  />
+
+                  <Menu
+                    open={openMath}
+                    onClose={handleCloseMath}
+                    anchorEl={mathEl}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                  >
+                    <Box className="math">
+                      {math.map((item) => {
+                        return (
+                          <span
+                            className={`math_${item?.label}`}
+                            onClick={() => {
+                              setValue("attributes.math", item);
+                              setMathEl(null);
+                            }}
+                          >
+                            {item?.value}
+                          </span>
+                        );
+                      })}
                     </Box>
-                  </Draggable>
-                ))}
-              </Container>
-              <Button
-                onClick={() => {
-                  dropdownAppend({
-                    label: "",
-                    value: "",
-                  });
+                  </Menu>
+                </Box>
+              )}
+
+              <Box
+                mt={1}
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  columnGap: "5px",
                 }}
               >
-                +Add option
-              </Button>
-            </Box>
-          )}
-          {type === "FORMULA" && (
-            <Box className={style.formula}>
-              <HFSelect
-                disabledHelperText
-                options={fields}
-                name="formula"
-                control={control}
-                fullWidth
-                required
-                placeholder="Select variable"
-              />
-              <HFSelect
-                disabledHelperText
-                options={[{ label: "+", value: "+" }]}
-                name="plus"
-                control={control}
-                fullWidth
-                required
-              />
-              <HFSelect
-                disabledHelperText
-                options={fields}
-                name="fff"
-                control={control}
-                fullWidth
-                required
-                placeholder="Select variable"
-              />
-            </Box>
+                <HFSwitch control={control} name="attributes.advanced_type" />
+                Advanced Editor
+              </Box>
+            </>
           )}
           <Box className={style.button_group}>
             <Button variant="contained" color="error" onClick={handleClick}>

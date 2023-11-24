@@ -558,18 +558,15 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
-    setFilterVisible(
-      view?.attributes?.quick_filters?.length > 0 ? true : false
-    );
-  }, [view?.attributes?.quick_filters?.length, refetch]);
-
-  useEffect(() => {
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
         view?.attributes?.quick_filters?.length ?? 0
       )
     );
-  }, [view]);
+    setFilterVisible(
+      view?.attributes?.quick_filters?.length > 0 ? true : false
+    );
+  }, [view?.attributes?.quick_filters?.length, refetch]);
 
   return (
     <div className={styles.wrapper}>

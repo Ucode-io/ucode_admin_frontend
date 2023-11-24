@@ -586,6 +586,7 @@ const TableView = ({
         >
           <ObjectDataTable
             refetch={refetch}
+            filterVisible={filterVisible}
             currentView={currentView}
             relOptions={relOptions}
             tableView={true}

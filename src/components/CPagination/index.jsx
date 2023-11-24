@@ -20,6 +20,7 @@ const CPagination = ({
   limit,
   setLimit = () => {},
   disablePagination,
+  filterVisible,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -69,7 +70,7 @@ const CPagination = ({
   return (
     <div
       style={{
-        width: view?.quick_filters?.length ? "83%" : "100%",
+        width: view?.quick_filters?.lengthc && filterVisible ? "83%" : "100%",
         display: "flex",
         justifyContent: isGroupByTable ? "flex-end" : "space-between",
         alignItems: "center",

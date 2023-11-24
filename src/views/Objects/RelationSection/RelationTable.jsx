@@ -63,6 +63,8 @@ const RelationTable = forwardRef(
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const {i18n} = useTranslation();
+    const [relOptions, setRelOptions] = useState([]);
+
     const paginationInfo = useSelector(
       (state) => state?.pagination?.paginationInfo
     );
@@ -312,6 +314,74 @@ const RelationTable = forwardRef(
         },
       }
     );
+    const computedRelationFields = useMemo(() => {
+      return Object.values(fieldsMap)?.filter((element) => {
+        return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
+      });
+
+      // return computedFields?.filter((item) => {
+      //   return view?.columns?.includes(item?.id);
+      // });
+    }, [fieldsMap]);
+
+    const getOptionsList = () => {
+      const computedIds = computedRelationFields?.map((item) => ({
+        table_slug: item?.slug,
+        ids:
+          item?.type === "LOOKUP"
+            ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+            : Array.from(
+                new Set(
+                  [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
+                )
+              ),
+      }));
+
+      tableData?.length &&
+        computedRelationFields?.forEach((item, index) => {
+          constructorObjectService
+            .getListV2(item?.table_slug, {
+              data: {
+                limit: 10,
+                offset: 0,
+                additional_request: {
+                  additional_field: "guid",
+                  additional_values: computedIds?.find(
+                    (computedItem) => computedItem?.table_slug === item?.slug
+                  )?.ids,
+                },
+              },
+            })
+            .then((res) => {
+              if (relOptions?.length > 0) {
+                setRelOptions((prev) => {
+                  const updatedOptions = prev.map((option) => {
+                    if (option.table_slug === item?.table_slug) {
+                      return {
+                        table_slug: item?.table_slug,
+                        response: res?.data?.response,
+                      };
+                    }
+                    return option;
+                  });
+                  return updatedOptions;
+                });
+              } else {
+                setRelOptions((prev) => [
+                  ...prev,
+                  {
+                    table_slug: item?.table_slug,
+                    response: res?.data?.response,
+                  },
+                ]);
+              }
+            });
+        });
+    };
+
+    useEffect(() => {
+      getOptionsList();
+    }, [tableData, computedRelationFields]);
 
     useEffect(() => {
       if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
@@ -406,6 +476,7 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
+              relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
               remove={remove}

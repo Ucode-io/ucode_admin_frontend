@@ -1,16 +1,17 @@
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import {Button, Checkbox} from "@mui/material";
-import {useVirtualizer} from "@tanstack/react-virtual";
-import {useRef} from "react";
-import {useNavigate} from "react-router-dom";
+import { Button, Checkbox } from "@mui/material";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import {CTableCell, CTableRow} from "../CTable";
+import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import TableRowForm from "./TableRowForm";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 const TableRow = ({
   relOptions,
@@ -139,7 +140,7 @@ const TableRow = ({
 
                 <span
                   className="data_table__row_number"
-                  style={{width: "35px"}}
+                  style={{ width: "35px" }}
                 >
                   {limit === "all"
                     ? rowIndex + 1
@@ -270,7 +271,9 @@ const TableRow = ({
             </td>
 
             <td>
-              <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
+              <div
+                style={{ display: "flex", gap: "5px", padding: "3px" }}
+              ></div>
             </td>
           </CTableRow>
         </>

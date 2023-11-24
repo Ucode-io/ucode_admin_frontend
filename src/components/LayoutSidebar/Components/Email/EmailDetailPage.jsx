@@ -22,9 +22,9 @@ import { store } from "../../../../store";
 const EmailDetailPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const company = store.getState().company;
   const { emailId } = useParams();
-  const dispatch = useDispatch();
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       project_id: company.projectId,

@@ -46,8 +46,6 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
   index,
-  setCheck,
-  check,
   selectedApp,
   userType = false,
 }) => {
@@ -62,8 +60,9 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
-
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+  const activeRequest =
+    element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
   const defaultLanguage = i18n?.language;
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -102,16 +101,14 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
-
+  console.log("foll", Boolean(element?.type === "FOLDER"));
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: id,
     },
     queryParams: {
-      cacheTime: 10,
-      enabled: Boolean(check),
+      enabled: Boolean(activeRequest),
       onSuccess: (res) => {
-        setCheck(false);
         setChild(res.menus);
       },
     },
@@ -121,10 +118,11 @@ const RecursiveBlock = ({
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
     NavigateByType({ element, appId, navigate, navigateAndSaveHistory });
+    if (activeRequest) {
+      setChildBlockVisible((prev) => !prev);
+    }
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
-    } else {
-      setCheck(true);
     }
     if (
       !pinIsEnabled &&
@@ -135,7 +133,6 @@ const RecursiveBlock = ({
     ) {
       setSubMenuIsOpen(false);
     }
-    element.type !== "USER" && setChildBlockVisible((prev) => !prev);
     setId(element?.id);
     setElement(element);
   };
@@ -306,8 +303,6 @@ const RecursiveBlock = ({
               menuStyle={menuStyle}
               menuItem={menuItem}
               index={index}
-              setCheck={setCheck}
-              check={check}
               selectedApp={selectedApp}
             />
           ))}

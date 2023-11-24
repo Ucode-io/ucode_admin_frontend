@@ -6,15 +6,15 @@ import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import {Button, Menu} from "@mui/material";
-import React, {useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch} from "react-redux";
+import { Button, Menu } from "@mui/material";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { useDispatch } from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
-import {paginationActions} from "../../store/pagination/pagination.slice";
-import {CTableHeadCell} from "../CTable";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import { CTableHeadCell } from "../CTable";
 
 export default function TableHeadForTableView({
   column,
@@ -42,11 +42,13 @@ export default function TableHeadForTableView({
   tableSlug,
   disableFilters,
   currentView,
+  setFieldCreateAnchor,
+  setFieldData,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -109,7 +111,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -122,12 +124,14 @@ export default function TableHeadForTableView({
           id: 2,
           title: "Edit field",
           icon: <CreateOutlinedIcon />,
-          onClickAction: () => {
-            if (column?.attributes?.relation_data) {
-              setDrawerStateField(column);
-            } else {
-              setDrawerState(column);
-            }
+          onClickAction: (e) => {
+            // if (column?.attributes?.relation_data) {
+            //   setDrawerStateField(column);
+            // } else {
+            //   setDrawerState(column);
+            // }
+            setFieldCreateAnchor(e.currentTarget);
+            setFieldData(column);
           },
         },
       ],
@@ -152,7 +156,7 @@ export default function TableHeadForTableView({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({tableSlug, field, order})
+              paginationActions.setSortValues({ tableSlug, field, order })
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -372,8 +376,8 @@ export default function TableHeadForTableView({
                   ""
                 ) : (
                   <div
-                    onClick={() => {
-                      child.onClickAction();
+                    onClick={(e) => {
+                      child.onClickAction(e);
                       handleClose();
                     }}
                     style={{

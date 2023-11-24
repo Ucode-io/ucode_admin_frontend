@@ -261,3 +261,100 @@ export const fieldTypesOptions = [
     ],
   },
 ];
+
+export const newFieldTypes = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "hashtag.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "calendar.svg",
+  },
+  {
+    label: "Dropdown",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
+  },
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+  {
+    label: "Formula",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "RELATION",
+    icon: "link-simple.svg",
+  },
+  {
+    label: "File",
+    value: "FILE",
+    icon: "file.svg",
+  },
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Phone",
+    value: "PHONE",
+    icon: "phone.svg",
+  },
+  {
+    label: "Email",
+    value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Password",
+    value: "PASSWORD",
+    icon: "lock.svg",
+  },
+  {
+    label: "Color",
+    value: "COLOR",
+    icon: "colon-sign.svg",
+  },
+  {
+    label: "Barcode",
+    value: "BARCODE",
+    icon: "barcode.svg",
+  },
+];
+
+export const math = [
+  {
+    label: "plus",
+    value: "+",
+  },
+  {
+    label: "minus",
+    value: "-",
+  },
+  {
+    label: "multiplication",
+    value: "*",
+  },
+  {
+    label: "division",
+    value: "/",
+  },
+];

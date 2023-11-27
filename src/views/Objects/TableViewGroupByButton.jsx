@@ -1,15 +1,16 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LinkIcon from "@mui/icons-material/Link";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
+import {Container, Draggable} from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
-import { applyDrag } from "../../utils/applyDrag";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import {applyDrag} from "../../utils/applyDrag";
+import {columnIcons} from "../../utils/constants/columnIcons";
+import WebIcon from "@mui/icons-material/Web";
 
-export default function TableViewGroupByButton({ currentView, fieldsMap }) {
+export default function TableViewGroupByButton({currentView, fieldsMap}) {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,7 +43,9 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   }, [currentView?.columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter((field) => !currentView?.columns?.includes(field.id));
+    return allFields.filter(
+      (field) => !currentView?.columns?.includes(field.id)
+    );
   }, [allFields, currentView?.columns]);
 
   const onSwitchChange = (value, field) => {
@@ -50,7 +53,11 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
       ...currentView,
       attributes: {
         ...currentView?.attributes,
-        group_by_columns: value ? [...currentView?.attributes?.group_by_columns, field?.id] : currentView?.attributes?.group_by_columns?.filter((id) => id !== field?.id),
+        group_by_columns: value
+          ? [...currentView?.attributes?.group_by_columns, field?.id]
+          : currentView?.attributes?.group_by_columns?.filter(
+              (id) => id !== field?.id
+            ),
       },
     };
     updateView(updatedView);
@@ -96,7 +103,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
         onClick={handleClick}
       >
         {isLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -105,7 +112,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
             />
           </Box>
         ) : (
-          <AppsIcon
+          <WebIcon
             style={{
               color: isGroupBy ? "rgb(0, 122, 255)" : "#A8A8A8",
               width: "22px",
@@ -114,7 +121,9 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
           />
         )}
         Group
-        {isGroupBy > 0 && <span>{currentView?.attributes?.group_by_columns?.length}</span>}
+        {isGroupBy > 0 && (
+          <span>{currentView?.attributes?.group_by_columns?.length}</span>
+        )}
         {isGroupBy && (
           <button
             style={{
@@ -188,7 +197,10 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
           }}
         >
           <div>
-            <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+            <Container
+              onDrop={onDrop}
+              dropPlaceholder={{className: "drag-row-drop-preview"}}
+            >
               {visibleFields?.map((column, index) => (
                 <Draggable key={column?.id}>
                   <div
@@ -241,7 +253,9 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                     >
                       <Switch
                         size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(column?.id)}
+                        checked={currentView?.attributes?.group_by_columns?.includes(
+                          column?.id
+                        )}
                         onChange={(e) => {
                           onSwitchChange(e.target.checked, column);
                         }}

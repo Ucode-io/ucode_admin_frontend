@@ -6,7 +6,7 @@ import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import {Button, Menu} from "@mui/material";
+import {Button, Dialog, Menu} from "@mui/material";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
@@ -44,8 +44,10 @@ export default function TableHeadForTableView({
   currentView,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
+  const summaryIsOpen = Boolean(summaryOpen);
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
@@ -53,6 +55,13 @@ export default function TableHeadForTableView({
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  console.log("columncolumn", column);
+  const handleSummaryOpen = (event) => {
+    setSummaryOpen(event.currentTarget);
+  };
+  const handleSummaryClose = () => {
+    setSummaryOpen(null);
   };
 
   const fixColumnChangeHandler = (column, e) => {
@@ -172,31 +181,31 @@ export default function TableHeadForTableView({
             });
           },
         },
-        {
-          id: 8,
-          title: `Add Summary`,
-          icon: <SortByAlphaOutlinedIcon />,
-          onClickAction: () => {
-            console.log("testtttttt", column);
-          },
-        },
-        {
-          id: 19,
-          title: `${
-            view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
-          } text`,
-          icon: view?.attributes?.textWrap?.[column?.id] ? (
-            <WrapTextOutlinedIcon />
-          ) : (
-            <AlignHorizontalLeftIcon />
-          ),
-          onClickAction: () => {
-            textWrapChangeHandler(
-              column,
-              !view?.attributes?.textWrap?.[column?.id] ? true : false
-            );
-          },
-        },
+        // {
+        //   id: 18,
+        //   title: `Add Summary`,
+        //   icon: <SortByAlphaOutlinedIcon />,
+        //   onClickAction: (e) => {
+        //     handleSummaryOpen(e);
+        //   },
+        // },
+        // {
+        //   id: 19,
+        //   title: `${
+        //     view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
+        //   } text`,
+        //   icon: view?.attributes?.textWrap?.[column?.id] ? (
+        //     <WrapTextOutlinedIcon />
+        //   ) : (
+        //     <AlignHorizontalLeftIcon />
+        //   ),
+        //   onClickAction: () => {
+        //     textWrapChangeHandler(
+        //       column,
+        //       !view?.attributes?.textWrap?.[column?.id] ? true : false
+        //     );
+        //   },
+        // },
         {
           id: 10,
           title: `${
@@ -235,6 +244,52 @@ export default function TableHeadForTableView({
       ],
     },
   ];
+
+  const formulaTypes = [
+    {
+      id: 1,
+      label: "Sum ()",
+      value: "sum",
+    },
+    {
+      id: 1,
+      label: "Avg ()",
+      value: "avg",
+    },
+  ];
+
+  const handleAddSummary = (item) => {
+    const newSummary = {
+      field_name: column?.id,
+      formula_name: item?.value,
+    };
+
+    const existingFieldIds = Array.from(
+      new Set(view?.attributes?.summaries?.map((item) => item?.field_name))
+    );
+
+    console.log("existingFieldIds", existingFieldIds);
+
+    if (!existingFieldIds.includes(newSummary.field_name)) {
+      const computedValues = {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          summaries: [...(view?.attributes?.summaries || []), newSummary],
+        },
+      };
+      constructorViewService.update(computedValues).then(() => {
+        handleSummaryClose();
+        handleClose();
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+      });
+    } else {
+      // Handle the case where the field_id already exists in summaries
+      console.log(
+        `Summary for field_id ${newSummary.field_name} already exists.`
+      );
+    }
+  };
 
   return (
     <>
@@ -372,9 +427,11 @@ export default function TableHeadForTableView({
                   ""
                 ) : (
                   <div
-                    onClick={() => {
-                      child.onClickAction();
-                      handleClose();
+                    onClick={(e) => {
+                      child.onClickAction(e);
+                      if (child?.id !== 18) {
+                        handleClose();
+                      }
                     }}
                     style={{
                       display: "flex",
@@ -399,6 +456,64 @@ export default function TableHeadForTableView({
                   </div>
                 )
               )}
+            </div>
+          ))}
+        </div>
+      </Menu>
+
+      <Menu
+        anchorEl={summaryOpen}
+        open={summaryIsOpen}
+        onClose={handleSummaryClose}
+        anchorOrigin={{horizontal: "right"}}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
+          }}
+        >
+          {formulaTypes?.map((item) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                borderBottom: "1px solid #E0E0E0",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                handleAddSummary(item);
+              }}
+            >
+              {item?.label}
             </div>
           ))}
         </div>

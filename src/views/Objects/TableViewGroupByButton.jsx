@@ -9,6 +9,7 @@ import constructorViewService from "../../services/constructorViewService";
 import {applyDrag} from "../../utils/applyDrag";
 import {columnIcons} from "../../utils/constants/columnIcons";
 import WebIcon from "@mui/icons-material/Web";
+import DnsIcon from "@mui/icons-material/Dns";
 
 export default function TableViewGroupByButton({currentView, fieldsMap}) {
   const queryClient = useQueryClient();

@@ -1,12 +1,18 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
-import { AccountTree, CalendarMonth, TableChart } from "@mui/icons-material";
+import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import { Button } from "@mui/material";
-import ClearAllIcon from '@mui/icons-material/ClearAll';
+import {Button} from "@mui/material";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
 
-export default function ViewTypeList({ computedViewTypes, handleClose, openModal, setSelectedView, setTypeNewView }) {
+export default function ViewTypeList({
+  computedViewTypes,
+  handleClose,
+  openModal,
+  setSelectedView,
+  setTypeNewView,
+}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
 
   const detectImageView = useMemo(() => {
@@ -74,13 +80,25 @@ export default function ViewTypeList({ computedViewTypes, handleClose, openModal
               }}
             >
               {type.value === "TABLE" && <TableChart className={style.icon} />}
-              {type.value === "CALENDAR" && <CalendarMonth className={style.icon} />}
-              {type.value === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-              {type.value === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+              {type.value === "CALENDAR" && (
+                <CalendarMonth className={style.icon} />
+              )}
+              {type.value === "CALENDAR HOUR" && (
+                <IconGenerator className={style.icon} icon="chart-gantt.svg" />
+              )}
+              {type.value === "GANTT" && (
+                <IconGenerator className={style.icon} icon="chart-gantt.svg" />
+              )}
               {type.value === "TREE" && <AccountTree className={style.icon} />}
-              {type.value === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
-              {type.value === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-              {type.value === "TIMELINE" && <ClearAllIcon className={style.icon} />}
+              {type.value === "BOARD" && (
+                <IconGenerator className={style.icon} icon="brand_trello.svg" />
+              )}
+              {type.value === "FINANCE CALENDAR" && (
+                <MonetizationOnIcon className={style.icon} />
+              )}
+              {type.value === "TIMELINE" && (
+                <ClearAllIcon className={style.icon} />
+              )}
               {type.label}
             </Button>
           ))}

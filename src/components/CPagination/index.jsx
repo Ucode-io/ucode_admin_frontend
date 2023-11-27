@@ -70,7 +70,7 @@ const CPagination = ({
   return (
     <div
       style={{
-        width: view?.quick_filters?.lengthc && filterVisible ? "83%" : "100%",
+        width: filterVisible ? "83%" : "100%",
         display: "flex",
         justifyContent: isGroupByTable ? "flex-end" : "space-between",
         alignItems: "center",

@@ -449,7 +449,7 @@ const TableView = ({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
         is_default: true,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout"
@@ -486,7 +486,7 @@ const TableView = ({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
         is_default: true,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout"

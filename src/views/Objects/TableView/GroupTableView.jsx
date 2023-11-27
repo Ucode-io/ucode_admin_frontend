@@ -284,7 +284,7 @@ const GroupTableView = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");

@@ -298,7 +298,7 @@ const NewRelationSection = ({
       .getList({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
-      })
+      }, tableSlug)
       .then((res) => {
         const layout = res?.layouts
           ?.filter((layout) => layout?.is_default === true)

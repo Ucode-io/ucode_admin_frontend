@@ -3,10 +3,11 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
 import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
-import NewCellElementGenerator from "./NewCellElementGenerator";
-import NewCellFormElementGenerator2 from "./NewCellFormElementGenerator2";
+import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
 export default function TableDataForm({
+  relOptions,
+  tableView,
   tableSlug,
   fields,
   field,
@@ -48,7 +49,9 @@ export default function TableDataForm({
         minWidth: "150px",
       }}
     >
-      <NewCellFormElementGenerator2
+      <CellElementGeneratorForTableView
+        relOptions={relOptions}
+        tableView={tableView}
         tableSlug={tableSlug}
         name={`multi.${index}.${field.slug}`}
         watch={watch}

@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import { LoginStrategy } from "../../../../mock/FolderSettings";
 
-const MainInfo = ({ control }) => {
+const MainInfo = ({ control, watch }) => {
   const { slug } = useParams();
   const { i18n } = useTranslation();
 
@@ -64,6 +64,7 @@ const MainInfo = ({ control }) => {
   const { data: computedTableFields } = useQuery(
     ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
+      if (!slug) return false;
       return constructorObjectService.getList(
         slug,
         {
@@ -76,6 +77,7 @@ const MainInfo = ({ control }) => {
       );
     },
     {
+      enabled: Boolean(slug),
       select: (res) => {
         return res?.data?.fields ?? [];
       },
@@ -131,11 +133,7 @@ const MainInfo = ({ control }) => {
           <Box style={{ display: "flex", gap: "6px" }}>
             {languages?.map((language) => {
               const languageFieldName = `attributes.label_${language?.slug}`;
-              const fieldValue = useWatch({
-                control,
-                name: languageFieldName,
-              });
-
+              const fieldValue = watch(languageFieldName);
               return (
                 <HFTextField
                   control={control}
@@ -152,11 +150,7 @@ const MainInfo = ({ control }) => {
           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             {languages?.map((desc) => {
               const languageFieldDesc = `attributes.description_${desc?.slug}`;
-              const fieldValue = useWatch({
-                control,
-                name: languageFieldDesc,
-              });
-
+              const fieldValue = watch(languageFieldDesc);
               return (
                 <HFTextField
                   control={control}

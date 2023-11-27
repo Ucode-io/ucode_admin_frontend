@@ -1,7 +1,7 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -80,6 +80,7 @@ export default function GroupColumnVisible({
         setCheckedColumns(null);
         form.reset({
           attributes: {
+            ...views?.[selectedTabIndex]?.attributes,
             group_by_columns: columns?.map((item) => {
               return {
                 ...item,
@@ -188,6 +189,14 @@ export default function GroupColumnVisible({
       <Menu
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         anchorEl={anchorEl}
         PaperProps={{
           elevation: 0,
@@ -204,7 +213,7 @@ export default function GroupColumnVisible({
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",

@@ -1,8 +1,13 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import useOnClickOutside from "use-onclickoutside";
-import {useLocation} from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import {Button} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation} from "react-router-dom";
+import useOnClickOutside from "use-onclickoutside";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import {
   CTable,
   CTableBody,
@@ -11,26 +16,23 @@ import {
   CTableHeadCell,
   CTableRow,
 } from "../CTable";
-import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
-import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import TableRow from "./TableRow";
-import SummaryRow from "./SummaryRow";
-import MultipleUpdateRow from "./MultipleUpdateRow";
-import "./style.scss";
-import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import {Box, Button, LinearProgress} from "@mui/material";
+import MultipleUpdateRow from "./MultipleUpdateRow";
+import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
-import InfiniteScroll from "react-infinite-scroll-component";
-import constructorObjectService from "../../services/constructorObjectService";
-import {useTranslation} from "react-i18next";
+import TableRow from "./TableRow";
+import "./style.scss";
 
 const ObjectDataTable = ({
+  relOptions,
+  filterVisible,
+  tableView,
   data = [],
   loader = false,
   setDrawerState,
+  currentView,
   setDrawerStateField,
   removableHeight,
   additionalRow,
@@ -81,6 +83,7 @@ const ObjectDataTable = ({
   title,
   view,
   navigateToForm,
+  refetch,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -91,6 +94,7 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const [addNewRow, setAddNewRow] = useState(false);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -236,6 +240,12 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
+  const relationFields = useMemo(() => {
+    return columns?.filter(
+      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+    );
+  }, [columns]);
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -254,6 +264,7 @@ const ObjectDataTable = ({
       setLimit={setLimit}
       defaultLimit={defaultLimit}
       view={view}
+      filterVisible={filterVisible}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
@@ -272,6 +283,7 @@ const ObjectDataTable = ({
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  currentView={currentView}
                   column={column}
                   index={index}
                   pageName={pageName}
@@ -331,46 +343,71 @@ const ObjectDataTable = ({
         dataLength={dataLength || data?.length}
         title={title}
       >
-        {(isRelationTable ? fields : data).length > 0
-          ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
-              <TableRow
-                width={"80px"}
-                remove={remove}
-                watch={watch}
-                getValues={getValues}
-                control={control}
-                key={row.id}
-                row={row}
-                mainForm={mainForm}
-                formVisible={formVisible}
-                rowIndex={rowIndex}
-                isTableView={isTableView}
-                selectedObjectsForDelete={selectedObjectsForDelete}
-                setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                isRelationTable={isRelationTable}
-                relatedTableSlug={relatedTableSlug}
-                onRowClick={onRowClick}
-                isChecked={isChecked}
-                calculateWidthFixedColumn={calculateWidthFixedColumn}
-                onCheckboxChange={onCheckboxChange}
-                currentPage={currentPage}
-                limit={limit}
-                setFormValue={setFormValue}
-                columns={columns}
-                tableHeight={tableHeight}
-                tableSettings={tableSettings}
-                pageName={pageName}
-                calculateWidth={calculateWidth}
-                tableSlug={tableSlug}
-                onDeleteClick={onDeleteClick}
-                relationAction={relationAction}
-                onChecked={onChecked}
-                relationFields={fields}
-                data={data}
-                view={view}
-              />
-            ))
-          : ""}
+        {(isRelationTable ? fields : data).length > 0 &&
+          columns.length > 0 &&
+          (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+            <TableRow
+              relOptions={relOptions}
+              tableView={tableView}
+              width={"80px"}
+              remove={remove}
+              watch={watch}
+              getValues={getValues}
+              control={control}
+              key={row.id}
+              row={row}
+              mainForm={mainForm}
+              formVisible={formVisible}
+              rowIndex={rowIndex}
+              isTableView={isTableView}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              isRelationTable={isRelationTable}
+              relatedTableSlug={relatedTableSlug}
+              onRowClick={onRowClick}
+              isChecked={isChecked}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              onCheckboxChange={onCheckboxChange}
+              currentPage={currentPage}
+              limit={limit}
+              setFormValue={setFormValue}
+              columns={columns}
+              tableHeight={tableHeight}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              calculateWidth={calculateWidth}
+              tableSlug={tableSlug}
+              onDeleteClick={onDeleteClick}
+              relationAction={relationAction}
+              onChecked={onChecked}
+              relationFields={fields}
+              data={data}
+              view={view}
+            />
+          ))}
+
+        {addNewRow && (
+          <AddDataColumn
+            rows={isRelationTable ? fields : data}
+            columns={columns}
+            setAddNewRow={setAddNewRow}
+            isTableView={isTableView}
+            relOptions={relOptions}
+            tableView={tableView}
+            tableSlug={tableSlug}
+            fields={columns}
+            getValues={getValues}
+            mainForm={mainForm}
+            control={control}
+            setFormValue={setFormValue}
+            relationfields={fields}
+            data={data}
+            onRowClick={onRowClick}
+            width={"80px"}
+            refetch={refetch}
+          />
+        )}
+
         <CTableRow>
           <CTableCell
             align="center"
@@ -391,7 +428,8 @@ const ObjectDataTable = ({
                 width: "100%",
               }}
               onClick={() => {
-                navigateToForm(tableSlug);
+                // navigateToForm(tableSlug);
+                setAddNewRow(true);
               }}
             >
               <AddRoundedIcon />

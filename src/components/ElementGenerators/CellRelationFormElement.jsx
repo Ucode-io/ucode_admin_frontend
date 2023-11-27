@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -147,6 +148,10 @@ const AutoCompleteElement = ({
   const {id} = useParams();
   const [allOptions, setAllOptions] = useState([]);
   const [localValue, setLocalValue] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
+  const {i18n} = useTranslation();
+
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -169,18 +174,6 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [autoFilters, filtersHandler]);
-
-  // const getIds = useMemo(() => {
-  //   let val = [];
-  //   relationfields
-  //     ?.filter((item) => {
-  //       return item[field?.slug];
-  //     })
-  //     .map((item) => {
-  //       return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
-  //     });
-  //   return val;
-  // }, [relationfields, field]);
 
   const getIdsFromData = useMemo(() => {
     let val = [];
@@ -227,7 +220,7 @@ const AutoCompleteElement = ({
           // slugOptions,
         };
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
         if (page > 1) {
           setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
         } else {
@@ -248,19 +241,27 @@ const AutoCompleteElement = ({
     ],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [value],
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [value],
+            },
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-          offset: pageToOffset(page, 10),
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,
@@ -293,7 +294,7 @@ const AutoCompleteElement = ({
     optionsFromLocale,
     field?.attributes?.function_path,
   ]);
-
+  console.log("allOptions", allOptions);
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
@@ -360,8 +361,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  const [open, setOpen] = useState(false);
-  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const handleOpen = () => {
     setOpen(true);
   };
@@ -398,10 +397,6 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
-  const clearSelection = () => {
-    setValue(null);
-  };
 
   const customStyles = {
     control: (provided, state) => ({
@@ -459,7 +454,7 @@ const AutoCompleteElement = ({
       </div>
     </components.SingleValue>
   );
-
+  console.log("computedOptions", computedOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -562,18 +557,6 @@ const AutoCompleteElement = ({
         }
         blurInputOnSelect
       />
-      {/* {errors?.[field?.slug] && (
-        <div
-          style={{
-            color: "red",
-            fontSize: "10px",
-            textAlign: "center",
-            marginTop: "5px",
-          }}
-        >
-          {"This field is required!"}
-        </div>
-      )} */}
     </div>
   );
 };

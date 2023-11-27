@@ -1,22 +1,30 @@
-import { Close } from "@mui/icons-material";
-import { Card, IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Close} from "@mui/icons-material";
+import {Card, IconButton} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab, setTab }) => {
-  const { tableSlug, appId } = useParams();
+const ViewSettings = ({
+  closeModal,
+  setIsChanged,
+  isChanged,
+  viewData,
+  typeNewView,
+  defaultViewTab,
+  setTab,
+}) => {
+  const {tableSlug, appId} = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
-
+  console.log("viewData", viewData);
   const closeForm = () => setSelectedView(null);
 
   const {
-    data: { fields, views, columns, relationColumns } = {
+    data: {fields, views, columns, relationColumns} = {
       fields: [],
       views: [],
       columns: [],
@@ -25,14 +33,14 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
+        data: {limit: 10, offset: 0, with_relations: true, app_id: appId},
       });
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fields: data?.fields ?? [],
           views: data?.views ?? [],

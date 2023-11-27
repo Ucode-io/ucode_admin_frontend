@@ -14,36 +14,15 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import Filter1Icon from "@mui/icons-material/Filter1";
-import { Button, Switch } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
+import {Button, Switch} from "@mui/material";
+import React, {useEffect, useMemo} from "react";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
 
 export default function SearchParams({
   checkedColumns,
   setCheckedColumns,
   columns,
 }) {
-  const columnIcons = useMemo(() => {
-    return {
-      SINGLE_LINE: <TextFieldsIcon />,
-      MULTI_LINE: <FormatAlignJustifyIcon />,
-      NUMBER: <LooksOneIcon />,
-      MULTISELECT: <ArrowDropDownCircleIcon />,
-      PHOTO: <PhotoSizeSelectActualIcon />,
-      VIDEO: <PlayCircleIcon />,
-      FILE: <InsertDriveFileIcon />,
-      FORMULA: <FunctionsIcon />,
-      PHONE: <LocalPhoneIcon />,
-      INTERNATION_PHONE: <LocalPhoneIcon />,
-      EMAIL: <EmailIcon />,
-      ICON: <AppsIcon />,
-      BARCODE: <QrCodeScannerIcon />,
-      QRCODE: <QrCode2Icon />,
-      COLOR: <ColorizeIcon />,
-      PASSWORD: <PasswordIcon />,
-      INCREMENT_ID: <Filter1Icon />,
-    };
-  }, []);
-
   const changeHandler = (slug) => {
     if (checkedColumns.includes(slug)) {
       setCheckedColumns(checkedColumns.filter((el) => el !== slug));
@@ -65,22 +44,6 @@ export default function SearchParams({
   }, []);
   return (
     <div>
-      {/* <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-          padding: "10px",
-          gap: "10px",
-        }}
-      >
-        <Button variant="outlined" color="success" onClick={selectAll}>
-          Select all
-        </Button>
-        <Button variant="outlined" color="error" onClick={deselectAll}>
-          Disable all
-        </Button>
-      </div> */}
       <div
         style={{
           padding: "10px 14px",
@@ -103,7 +66,7 @@ export default function SearchParams({
               gap: "10px",
             }}
           >
-            <div style={{ textAlign: "end" }}>All</div>
+            <div style={{textAlign: "end"}}>All</div>
           </div>
 
           <div>
@@ -125,7 +88,6 @@ export default function SearchParams({
             style={{
               display: "flex",
               alignItems: "center",
-              borderBottom: "1px solid #e0e0e0",
               padding: "6px 0",
               justifyContent: "space-between",
             }}
@@ -137,9 +99,9 @@ export default function SearchParams({
                 gap: "10px",
               }}
             >
-              <div>{columnIcons[column.type]}</div>
+              <div>{columnIcons(column.type)}</div>
 
-              <div style={{ textAlign: "end" }}>{column.label}</div>
+              <div style={{textAlign: "end"}}>{column.label}</div>
             </div>
 
             <div>

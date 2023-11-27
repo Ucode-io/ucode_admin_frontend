@@ -1,7 +1,9 @@
 $main-color: #0365f2;
+
 .extra {
   cursor: pointer;
 }
+
 .LayoutSidebar {
   // min-width: 280px;
   width: 280px;
@@ -31,7 +33,7 @@ $main-color: #0365f2;
     margin: 10px;
     border-radius: 8px;
 
-    & > div > div {
+    &>div>div {
       background-color: #f7f7f7;
       border-radius: 6px;
       width: 100%;
@@ -142,10 +144,6 @@ $main-color: #0365f2;
     &.active-with-child {
       color: #0365f2;
       background-color: #fff;
-
-      &:hover {
-        // background: #A8A8A81A !important;
-      }
 
       .extra_icon {
         display: none;
@@ -276,7 +274,6 @@ $main-color: #0365f2;
         border: 0;
         column-gap: 5px;
 
-        // background-color: #6E8BB733;
 
         &:hover {
           background-color: #a8a8a81a;
@@ -291,6 +288,8 @@ $main-color: #0365f2;
           background-color: #0365f2;
           color: #fff;
 
+
+
           .extra_icon {
             display: none;
           }
@@ -304,6 +303,8 @@ $main-color: #0365f2;
         &.active-with-child {
           color: #0365f2;
           background-color: #fff;
+          border-radius: 8px;
+
 
           &:hover {
             background-color: #a8a8a81a !important;

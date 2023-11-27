@@ -243,14 +243,20 @@ const NewRelationSection = ({
   useEffect(() => {
     getRelatedTabeSlug &&
       constructorObjectService
-        .getList(getRelatedTabeSlug?.relatedTable, {
-          data: {
-            offset: 0,
-            limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-              idFromParams,
+        .getList(
+          getRelatedTabeSlug?.relatedTable,
+          {
+            data: {
+              offset: 0,
+              limit: 0,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+                idFromParams,
+            },
           },
-        })
+          {
+            language_setting: i18n?.language,
+          }
+        )
         .then((res) => {
           setJwtObjects(
             res?.data?.fields?.filter(
@@ -259,7 +265,7 @@ const NewRelationSection = ({
           );
         })
         .catch((a) => console.log("error", a));
-  }, [, getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
+  }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {

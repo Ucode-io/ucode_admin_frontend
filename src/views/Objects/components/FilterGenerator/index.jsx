@@ -1,5 +1,5 @@
-import { TextField } from "@mui/material";
-import { useMemo, useState } from "react";
+import {TextField} from "@mui/material";
+import {useMemo, useState} from "react";
 
 import CSelect from "../../../../components/CSelect";
 import TableColumnFilter from "../../../../components/TableColumnFilter";
@@ -10,8 +10,11 @@ import FilterAutoComplete from "./FilterAutocomplete";
 import DateFilter from "./DateFilter";
 import BooleanFilter from "./BooleanFilter";
 
-const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => {
-  const orderingType = useMemo(() => filters.order?.[name], [filters.order, name]);
+const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
+  const orderingType = useMemo(
+    () => filters.order?.[name],
+    [filters.order, name]
+  );
 
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order");
@@ -22,7 +25,7 @@ const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => 
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{display: "flex", alignItems: "center"}}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
       {/* <TableColumnFilter>
         <Filter
@@ -39,9 +42,15 @@ const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => 
 
 export default FilterGenerator;
 
-export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) => {
+export const Filter = ({
+  field = {},
+  name,
+  filters = {},
+  onChange,
+  tableSlug,
+}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-  
+  console.log("fieldfield", field);
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
@@ -63,7 +72,15 @@ export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) 
   switch (field.type) {
     case "LOOKUP":
     case "LOOKUPS":
-      return <RelationFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
+      return (
+        <RelationFilter
+          field={field}
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          tableSlug={tableSlug}
+        />
+      );
 
     case "PICK_LIST":
     case "MULTISELECT":
@@ -73,7 +90,7 @@ export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) 
           setSearchText={setDebouncedValue}
           options={computedOptions}
           value={filters[name] ?? []}
-          onChange={(val) => onChange(val?.length ? val : null, name)}
+          onChange={(val) => onChange(val?.length ? val : undefined, name)}
           label={field.label}
           field={field}
         />
@@ -97,7 +114,10 @@ export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) 
     case "DATE":
     case "DATE_TIME":
       return (
-        <DateFilter value={filters[name]} onChange={(val) => onChange(val, name)} />
+        <DateFilter
+          value={filters[name]}
+          onChange={(val) => onChange(val, name)}
+        />
         // <DatePicker
         //   inputFormat="dd.MM.yyyy"
         //   mask="__.__.____"
@@ -128,9 +148,24 @@ export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) 
       );
 
     case "SWITCH":
-      return <BooleanFilter filters={filters} onChange={onChange} name={name} field={field} />;
+      return (
+        <BooleanFilter
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          field={field}
+        />
+      );
 
     default:
-      return <DefaultFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
+      return (
+        <DefaultFilter
+          field={field}
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          tableSlug={tableSlug}
+        />
+      );
   }
 };

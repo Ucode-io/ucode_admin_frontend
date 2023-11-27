@@ -15,10 +15,12 @@ const CPagination = ({
   paginationExtraButton,
   isTableView,
   multipleDelete,
+  isGroupByTable,
   selectedObjectsForDelete,
   limit,
   setLimit = () => {},
   disablePagination,
+  filterVisible,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -68,15 +70,15 @@ const CPagination = ({
   return (
     <div
       style={{
-        width: view?.quick_filters?.length ? "83%" : "100%",
+        width: filterVisible ? "83%" : "100%",
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: isGroupByTable ? "flex-end" : "space-between",
         alignItems: "center",
         marginTop: "15px",
         paddingRight: "15px",
       }}
     >
-      {!disablePagination && (
+      {!disablePagination && !isGroupByTable && (
         <div>
           {limit && (
             <div className={styles.limitSide}>
@@ -123,7 +125,7 @@ const CPagination = ({
           </Button>
         )}
 
-        {!disablePagination && (
+        {!disablePagination && !isGroupByTable && (
           <>
             <Pagination
               color="primary"

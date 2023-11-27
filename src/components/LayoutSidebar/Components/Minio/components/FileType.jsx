@@ -11,8 +11,8 @@ const FileTypes = ({ item }) => {
       return "PNG";
     case "JPG":
       return "JPG";
-    case "GPEG":
-      return "GPEG";
+    case "JPEG":
+      return "JPEG";
     case "PDF":
       return "PDF";
     case "TXT":

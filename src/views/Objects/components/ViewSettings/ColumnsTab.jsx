@@ -27,8 +27,6 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
 const ColumnsTab = ({
@@ -46,7 +44,6 @@ const ColumnsTab = ({
     name: "columns",
     keyName: "key",
   });
-
   const {
     fields: groupColumn,
     replace: replaceGroup,

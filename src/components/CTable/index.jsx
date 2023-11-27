@@ -15,6 +15,7 @@ export const CTable = ({
   removableHeight = 186,
   disablePagination,
   isTableView = false,
+  isGroupByTable = false,
   loader,
   multipleDelete,
   tableStyle = {},
@@ -24,6 +25,7 @@ export const CTable = ({
   setLimit,
   defaultLimit,
   view,
+  filterVisible,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -35,6 +37,7 @@ export const CTable = ({
             ? `calc(100vh - ${removableHeight}px)`
             : "auto",
           overflow: loader ? "hidden" : "auto",
+          width: "100%",
         }}
       >
         {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
@@ -42,7 +45,9 @@ export const CTable = ({
 
       {!disablePagination && (
         <CPagination
+          filterVisible={filterVisible}
           count={count}
+          isGroupByTable={isGroupByTable}
           selectedObjectsForDelete={selectedObjectsForDelete}
           page={page}
           isTableView={isTableView}

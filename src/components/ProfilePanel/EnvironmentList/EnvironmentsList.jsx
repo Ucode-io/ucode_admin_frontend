@@ -1,8 +1,8 @@
-import { Menu } from "@mui/material";
+import {Menu} from "@mui/material";
 import styles from "./environment.module.scss";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import ProfileItem from "../ProfileItem";
-import { companyActions } from "../../../store/company/company.slice";
+import {companyActions} from "../../../store/company/company.slice";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 const alignCenterStyle = {
@@ -59,7 +59,7 @@ const EnvironmentsList = ({
             key={item.id}
           />
         ))}
-        {permissions?.environments_button && (
+        {/* {permissions?.environments_button && (
           <ProfileItem
             className={styles.menuItem}
             text={"All Environments"}
@@ -69,7 +69,7 @@ const EnvironmentsList = ({
             }}
             style={{ ...alignCenterStyle }}
           />
-        )}
+        )} */}
       </div>
     </Menu>
   );

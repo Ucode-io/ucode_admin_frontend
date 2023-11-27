@@ -362,14 +362,14 @@ const ViewsWithGroups = ({
             />
             <Divider orientation="vertical" flexItem />
             <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} />
+            {/* <Divider orientation="vertical" flexItem /> */}
+            {/* <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} /> */}
             <Divider orientation="vertical" flexItem />
             <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
             {view.type === "TABLE" && (
               <>
-                <Button
+                {/* <Button
                   variant="text"
                   style={{
                     gap: "5px",
@@ -380,7 +380,7 @@ const ViewsWithGroups = ({
                 >
                   <FormatLineSpacingIcon color="#A8A8A8" />
                   Line Height
-                </Button>
+                </Button> */}
 
                 <Menu
                   open={openHeightControl}

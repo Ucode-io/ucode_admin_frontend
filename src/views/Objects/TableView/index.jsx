@@ -438,7 +438,7 @@ const TableView = ({
           });
       });
   };
-  console.log("fieldViewfieldView", getFilteredFilterFields, view);
+
   useEffect(() => {
     getOptionsList();
   }, [tableData, computedRelationFields]);

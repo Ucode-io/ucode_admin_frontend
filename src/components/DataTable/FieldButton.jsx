@@ -11,6 +11,7 @@ import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
 import { useTranslation } from "react-i18next";
 import constructorViewService from "../../services/constructorViewService";
+import { useParams } from "react-router-dom";
 
 export default function FieldButton({
   openFieldSettings,
@@ -26,6 +27,7 @@ export default function FieldButton({
 }) {
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const menuItem = useSelector((state) => state.menu.menuItem);
   const { control, watch, setValue, reset, handleSubmit } = useForm();
@@ -54,7 +56,7 @@ export default function FieldButton({
 
   const updateView = (column) => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...view,
         columns: [...view?.columns, column],
       })
@@ -83,7 +85,7 @@ export default function FieldButton({
             values?.attributes?.to_formula,
       },
     };
-    createField(data);
+    createField({ data, tableSlug });
   };
 
   useEffect(() => {

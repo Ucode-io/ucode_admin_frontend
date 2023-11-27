@@ -275,14 +275,14 @@ const RelationSettings = ({
         .create({
           ...data,
           title: Object.values(data?.attributes).find((item) => item),
-        })
+        }, slug)
         .then((res) => {
           updateRelations();
         })
         .finally(() => setFormLoader(false));
     } else {
       constructorRelationService
-        .update(data)
+        .update(data, slug)
         .then((res) => {
           updateRelations();
         })

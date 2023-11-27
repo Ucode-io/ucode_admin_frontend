@@ -58,7 +58,7 @@ function LinkedListTables({
       return constructorRelationService.getList({
         table_slug: "file",
         relation_table_slug: "file",
-      });
+      }, tableSlug);
     },
     {
       select: (res) => {
@@ -119,7 +119,7 @@ function LinkedListTables({
       return constructorRelationService.getList({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
-      });
+      }, tableSlug);
     },
     {
       select: (res) => {

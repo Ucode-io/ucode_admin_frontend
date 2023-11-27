@@ -255,7 +255,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           linked_table_slug: selectedLinkedTableSlug,
         },
         html: meta + html,
-      });
+      }, tableSlug);
 
       setSelectedTemplate((prev) => ({
         ...prev,

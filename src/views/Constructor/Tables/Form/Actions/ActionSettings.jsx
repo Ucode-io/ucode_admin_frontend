@@ -73,7 +73,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
     setLoader(true);
 
     constructorCustomEventService
-      .create(data)
+      .create(data, slug)
       .then((res) => {
         closeSettingsBlock();
         onCreate(res);
@@ -85,7 +85,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
     setLoader(true);
 
     constructorCustomEventService
-      .update(data)
+      .update(data, slug)
       .then((res) => {
         closeSettingsBlock();
         onUpdate(data);

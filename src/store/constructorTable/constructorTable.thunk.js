@@ -56,12 +56,12 @@ export const updateConstructorTableAction = createAsyncThunk(
 
 export const deleteConstructorTableAction = createAsyncThunk(
   "object/deleteConstructorTable",
-  async (id, { dispatch }) => {
+  async (tableSlug, { dispatch }) => {
     dispatch(constructorTableActions.setLoader(true));
     try {
-      await constructorTableService.delete(id);
+      await constructorTableService.delete(tableSlug);
 
-      dispatch(constructorTableActions.delete(id));
+      dispatch(constructorTableActions.delete(tableSlug));
     } catch (error) {
       console.log(error);
       throw new Error(error);

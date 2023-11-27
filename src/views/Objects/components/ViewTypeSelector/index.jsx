@@ -66,9 +66,10 @@ const ViewTabSelector = ({
     setSettingsModalVisible(false);
     if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
   };
-
+console.log('tableSlug', tableSlug)
   const deleteView = (id) => {
-    constructorViewService.delete(id).then(() => {
+    console.log('sssssssss222222')
+    constructorViewService.delete(id, tableSlug).then(() => {
       navigate("/reload", {
         state: {
           redirectUrl: window.location.pathname,
@@ -86,7 +87,7 @@ const ViewTabSelector = ({
       project_id: projectId,
       table_slug: tableSlug,
     };
-    constructorViewService.changeViewOrder(data).then(() => {
+    constructorViewService.changeViewOrder(data, tableSlug).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };

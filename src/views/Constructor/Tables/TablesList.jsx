@@ -71,7 +71,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
       .finally(() => setModalLoader(false));
   };
 
-  const deleteTable = async (id) => {
+  const deleteTable = async (id, tableSlug) => {
     setLoader(true);
 
     const index = list?.findIndex((table) => table.id === id);
@@ -85,7 +85,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
           is_own_table: Boolean(table.is_own_table),
         })) ?? [];
     try {
-      if (list[index]?.is_own_table) await constructorTableService.delete(id, projectId);
+      if (list[index]?.is_own_table) await constructorTableService.delete(tableSlug, projectId);
       else {
         await applicationService.update({
           ...appData,

@@ -69,7 +69,7 @@ export default function TableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedData).then((res) => {
+    constructorViewService.update(tableSlug, computedData).then((res) => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
@@ -86,14 +86,14 @@ export default function TableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedData).then((res) => {
+    constructorViewService.update(tableSlug, computedData).then((res) => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
 
   const updateView = (column) => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...currentView,
         columns: currentView?.columns?.filter((item) => item !== column),
       })
@@ -105,7 +105,7 @@ export default function TableHeadForTableView({
   const deleteField = (column) => {
     constructorFieldService.delete(column).then((res) => {
       constructorViewService
-        .update({
+        .update(tableSlug, {
           ...currentView,
           columns: currentView?.columns?.filter((item) => item !== column),
         })

@@ -74,7 +74,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    });
+    }, tableSlug);
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
@@ -118,7 +118,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    });
+    }, tableSlug);
 
     try {
       const [{ layouts: layout = [] }] = await Promise.all([getLayout]);

@@ -40,7 +40,7 @@ const FastFilter = ({
   const {filters} = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
-    const filter = view?.attributes?.quick_filters ?? view?.quick_filters;
+    const filter = view?.attributes?.quick_filters ?? view?.quick_filters ?? [];
     return (
       [
         ...(filter ?? []),

@@ -90,7 +90,7 @@ const GroupTableView = ({
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
-      });
+      }, slug);
       const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
@@ -284,7 +284,7 @@ const GroupTableView = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");

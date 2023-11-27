@@ -8,9 +8,11 @@ import { Container, Draggable } from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
 import { applyDrag } from "../../utils/applyDrag";
 import { columnIcons } from "../../utils/constants/columnIcons";
+import { useParams } from "react-router-dom";
 
 export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   const queryClient = useQueryClient();
+  const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -24,7 +26,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   const updateView = (data) => {
     setIsLoading(true);
     constructorViewService
-      .update(data)
+      .update(tableSlug, data)
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       })

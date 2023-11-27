@@ -1,29 +1,30 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const menuTemplateService = {
   getList: (params) => {
-    return request.get(`/menu-template`, {
+    return requestV2.get(`/menus/menu-template`, {
       params,
     });
   },
   getByID: (params, templateId) =>
-    request.get(`/menu-template/${templateId}`, {
+    request.get(`/menus/menu-template/${templateId}`, {
       params,
     }),
   update: (data) =>
-    request.put(`/menu-template`, data, {
+    requestV2.put(`/menus/menu-template`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   create: (data) =>
-    request.post(`/menu-template`, data, {
+    requestV2.post(`/menus/menu-template`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
-  delete: (id) => request.delete(`/menu-template/${id}`),
+  delete: (id) => requestV2.delete(`/menus/menu-template/${id}`),
 };
 
 export const useMenuTemplateListQuery = ({ params = {}, queryParams } = {}) => {

@@ -130,12 +130,21 @@ export default function GroupByButton({
   return (
     <div>
       <Button
-        variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
+        variant={`${
+          selectedColumns?.length > 0 || view?.group_fields?.length > 0
+            ? "outlined"
+            : "text"
+        }`}
         style={{
           gap: "5px",
-          color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            selectedColumns?.length > 0 || view?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
           borderColor:
-            selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+            selectedColumns?.length > 0 || view?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
         onClick={handleClick}
       >
@@ -159,8 +168,10 @@ export default function GroupByButton({
         )}
 
         {text}
-        {selectedColumns?.length > 0 && <span>{selectedColumns?.length}</span>}
-        {selectedColumns?.length > 0 && (
+        {(selectedColumns?.length > 0 || view?.group_fields?.length > 0) && (
+          <span>{selectedColumns?.length ?? view?.group_fields?.length}</span>
+        )}
+        {(selectedColumns?.length > 0 || view?.group_fields?.length > 0) && (
           <button
             style={{
               border: "none",
@@ -173,7 +184,9 @@ export default function GroupByButton({
               alignItems: "center",
               justifyContent: "center",
               color:
-                selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                selectedColumns?.length > 0 || view?.group_fields?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -183,7 +196,9 @@ export default function GroupByButton({
             <CloseRoundedIcon
               style={{
                 color:
-                  selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                  selectedColumns?.length > 0 || view?.group_fields?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
               }}
             />
           </button>

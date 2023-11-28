@@ -1,9 +1,9 @@
-import { FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
-import FileUpload from "../Upload/FileUpload.jsx";
-import NewFileUpload from "../Upload/NewFileUpload.jsx";
+import { FormHelperText } from '@mui/material';
+import React from 'react'
+import { Controller } from 'react-hook-form';
+import ImageUpload from '../Upload/ImageUpload';
 
-const HFFileUpload = ({
+export default function HFPhotoUpload({
   control,
   name,
   required,
@@ -15,7 +15,7 @@ const HFFileUpload = ({
   disabled,
   field,
   ...props
-}) => {
+}) {
   return (
     <Controller
       control={control}
@@ -27,17 +27,17 @@ const HFFileUpload = ({
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
-          <NewFileUpload
+          <ImageUpload
             name={name}
             value={value}
             tabIndex={tabIndex}
             field={field}
+            isNewTableView={isNewTableView}
             onChange={(val) => {
               onChange(val);
               isNewTableView && updateObject();
             }}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (
@@ -47,6 +47,4 @@ const HFFileUpload = ({
       )}
     ></Controller>
   );
-};
-
-export default HFFileUpload;
+}

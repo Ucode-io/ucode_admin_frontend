@@ -1,17 +1,31 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import { Box, Button, CircularProgress, Menu, Switch, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  Switch,
+  Typography,
+} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
-import { columnIcons } from "../../utils/constants/columnIcons";
-import { useParams } from "react-router-dom";
+import {columnIcons} from "../../utils/constants/columnIcons";
+import {useParams} from "react-router-dom";
+import DnsIcon from "@mui/icons-material/Dns";
 
-export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relationColumns, text = "Tab group" }) {
+export default function GroupByButton({
+  selectedTabIndex,
+  view,
+  fieldsMap,
+  relationColumns,
+  text = "Tab group",
+}) {
   const form = useForm();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -74,11 +88,19 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
       });
   };
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [updatedColumns, setUpdatedColumns] = useState();
   useEffect(() => {
-    setUpdatedColumns(computedColumns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT"));
+    setUpdatedColumns(
+      computedColumns?.filter(
+        (column) =>
+          column.type === "LOOKUP" ||
+          column.type === "PICK_LIST" ||
+          column.type === "LOOKUPS" ||
+          column.type === "MULTISELECT"
+      )
+    );
   }, [computedColumns]);
 
   const onCheckboxChange = async (val, id, column) => {
@@ -108,16 +130,26 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
   return (
     <div>
       <Button
-        variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
+        variant={`${
+          selectedColumns?.length > 0 || view?.group_fields?.length > 0
+            ? "outlined"
+            : "text"
+        }`}
         style={{
           gap: "5px",
-          color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            selectedColumns?.length > 0 || view?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
+          borderColor:
+            selectedColumns?.length > 0 || view?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
         onClick={handleClick}
       >
         {updateLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -126,7 +158,7 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
             />
           </Box>
         ) : (
-          <LayersOutlinedIcon
+          <DnsIcon
             color={"#A8A8A8"}
             style={{
               width: "22px",
@@ -136,8 +168,10 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
         )}
 
         {text}
-        {selectedColumns?.length > 0 && <span>{selectedColumns?.length}</span>}
-        {selectedColumns?.length > 0 && (
+        {(selectedColumns?.length > 0 || view?.group_fields?.length > 0) && (
+          <span>{selectedColumns?.length ?? view?.group_fields?.length}</span>
+        )}
+        {(selectedColumns?.length > 0 || view?.group_fields?.length > 0) && (
           <button
             style={{
               border: "none",
@@ -149,7 +183,10 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color:
+                selectedColumns?.length > 0 || view?.group_fields?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -158,7 +195,10 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
           >
             <CloseRoundedIcon
               style={{
-                color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                color:
+                  selectedColumns?.length > 0 || view?.group_fields?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
               }}
             />
           </button>
@@ -238,18 +278,24 @@ export default function GroupByButton({ selectedTabIndex, view, fieldsMap, relat
                     {column?.type && columnIcons(column?.type)}
                   </div>
 
-                  <span>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</span>
+                  <span>
+                    {column?.attributes?.[`label_${i18n.language}`] ??
+                      column.label}
+                  </span>
                 </div>
 
                 <Switch
                   size="small"
-                  checked={selectedColumns?.includes(column?.id) || view?.group_fields?.includes(column?.id)}
+                  checked={
+                    selectedColumns?.includes(column?.id) ||
+                    view?.group_fields?.includes(column?.id)
+                  }
                   onChange={(e, val) => changeHandler(val, column.id, column)}
                 />
               </div>
             ))
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

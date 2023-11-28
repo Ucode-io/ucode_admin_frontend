@@ -24,9 +24,11 @@ import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
+import FieldButton from "./FieldButton";
 
 const ObjectDataTable = ({
   relOptions,
+  filterVisible,
   tableView,
   data = [],
   loader = false,
@@ -94,12 +96,14 @@ const ObjectDataTable = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
   const [addNewRow, setAddNewRow] = useState(false);
+  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
+  const [fieldData, setFieldData] = useState(null);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-
+  console.log("mainForm", mainForm.watch());
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -263,6 +267,7 @@ const ObjectDataTable = ({
       setLimit={setLimit}
       defaultLimit={defaultLimit}
       view={view}
+      filterVisible={filterVisible}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
@@ -306,6 +311,8 @@ const ObjectDataTable = ({
                   filters={filters}
                   tableSlug={tableSlug}
                   disableFilters={disableFilters}
+                  setFieldCreateAnchor={setFieldCreateAnchor}
+                  setFieldData={setFieldData}
                 />
               )
           )}
@@ -335,6 +342,18 @@ const ObjectDataTable = ({
               </CTableHeadCell>
             )}
           </PermissionWrapperV2>
+          <FieldButton
+            openFieldSettings={openFieldSettings}
+            view={view}
+            mainForm={mainForm}
+            fields={fields}
+            setFieldCreateAnchor={setFieldCreateAnchor}
+            fieldCreateAnchor={fieldCreateAnchor}
+            fieldData={fieldData}
+            setFieldData={setFieldData}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+          />
         </CTableRow>
       </CTableHead>
 
@@ -442,6 +461,18 @@ const ObjectDataTable = ({
         )}
         {additionalRow}
       </CTableBody>
+      {/* <Button
+        variant="text"
+        style={{
+          borderColor: "#F0F0F0",
+          borderRadius: "0px",
+          width: "100%",
+        }}
+        // onClick={() => {
+        // }}
+      >
+        <AddRoundedIcon />
+      </Button> */}
     </CTable>
   );
 };

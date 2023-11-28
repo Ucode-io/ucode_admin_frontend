@@ -56,17 +56,29 @@ export default function SortButton({ fieldsMap, setSortedDatas }) {
   return (
     <div>
       <Button
-        variant={watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "outlined" : "text"}
+        variant={
+          watchedSorts.filter((el) => el.field !== "")?.length > 0
+            ? "outlined"
+            : "text"
+        }
         style={{
           gap: "5px",
-          color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            watchedSorts.filter((el) => el.field !== "")?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
+          borderColor:
+            watchedSorts.filter((el) => el.field !== "")?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <SortIcon color={"#A8A8A8"} />
         Sort
-        {watchedSorts.filter((el) => el.field !== "")?.length > 0 && <span>{watchedSorts.filter((el) => el.field !== "")?.length}</span>}
+        {watchedSorts.filter((el) => el.field !== "")?.length > 0 && (
+          <span>{watchedSorts.filter((el) => el.field !== "")?.length}</span>
+        )}
         {watchedSorts.filter((el) => el.field !== "")?.length > 0 && (
           <button
             style={{
@@ -79,7 +91,10 @@ export default function SortButton({ fieldsMap, setSortedDatas }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color:
+                watchedSorts.filter((el) => el.field !== "")?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -95,7 +110,10 @@ export default function SortButton({ fieldsMap, setSortedDatas }) {
           >
             <CloseRoundedIcon
               style={{
-                color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                color:
+                  watchedSorts.filter((el) => el.field !== "")?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
               }}
             />
           </button>
@@ -162,7 +180,12 @@ export default function SortButton({ fieldsMap, setSortedDatas }) {
                   gap: "10px",
                 }}
               >
-                <SortMenuRow computedColumns={Object.values(fieldsMap)} index={index} form={form} typeSorts={typeSorts} />
+                <SortMenuRow
+                  computedColumns={Object.values(fieldsMap)}
+                  index={index}
+                  form={form}
+                  typeSorts={typeSorts}
+                />
 
                 <Button onClick={() => remove(index)}>
                   <ClearIcon />

@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -24,9 +24,11 @@ import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/Relati
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import {quickFiltersActions} from "../../../store/filter/quick_filter";
 
 const TableView = ({
   filterVisible,
+  setFilterVisible,
   handleClickFilter,
   handleCloseFilter,
   visibleColumns,
@@ -66,6 +68,7 @@ const TableView = ({
   const {id, slug, tableSlug, appId} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -446,7 +449,7 @@ const TableView = ({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
         is_default: true,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout"
@@ -483,7 +486,7 @@ const TableView = ({
         "table-slug": tableSlug,
         language_setting: i18n?.language,
         is_default: true,
-      })
+      }, tableSlug)
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout"
@@ -555,6 +558,14 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
+    dispatch(
+      quickFiltersActions.setQuickFiltersCount(
+        view?.attributes?.quick_filters?.length ?? 0
+      )
+    );
+    setFilterVisible(
+      view?.attributes?.quick_filters?.length > 0 ? true : false
+    );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
   return (
@@ -586,6 +597,7 @@ const TableView = ({
         >
           <ObjectDataTable
             refetch={refetch}
+            filterVisible={filterVisible}
             currentView={currentView}
             relOptions={relOptions}
             tableView={true}

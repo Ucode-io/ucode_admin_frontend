@@ -1,29 +1,29 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button } from "@mui/material";
-import { BsThreeDots } from "react-icons/bs";
+import {Box, Button} from "@mui/material";
+import {BsThreeDots} from "react-icons/bs";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import { useDispatch, useSelector } from "react-redux";
-import { mainActions } from "../../../store/main/main.slice";
-import { useTranslation } from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {mainActions} from "../../../store/main/main.slice";
+import {useTranslation} from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";
-import { Container } from "react-smooth-dnd";
-import { applyDrag } from "../../../utils/applyDrag";
+import {Container} from "react-smooth-dnd";
+import {applyDrag} from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
-import { useState } from "react";
-import { useQueryClient } from "react-query";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {useState} from "react";
+import {useQueryClient} from "react-query";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
-import { store } from "../../../store";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {store} from "../../../store";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -44,10 +44,9 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const [check, setCheck] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
   const addPermission =
@@ -250,8 +249,6 @@ const SubMenu = ({
                           menuStyle={menuStyle}
                           menuItem={menuItem}
                           index={index}
-                          setCheck={setCheck}
-                          check={check}
                           selectedApp={selectedApp}
                         />
                       ))}

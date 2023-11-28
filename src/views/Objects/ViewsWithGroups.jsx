@@ -70,7 +70,7 @@ const ViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(true);
+  const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -362,14 +362,14 @@ const ViewsWithGroups = ({
             />
             <Divider orientation="vertical" flexItem />
             <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} />
+            {/* <Divider orientation="vertical" flexItem /> */}
+            {/* <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} /> */}
             <Divider orientation="vertical" flexItem />
             <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
             {view.type === "TABLE" && (
               <>
-                <Button
+                {/* <Button
                   variant="text"
                   style={{
                     gap: "5px",
@@ -380,7 +380,7 @@ const ViewsWithGroups = ({
                 >
                   <FormatLineSpacingIcon color="#A8A8A8" />
                   Line Height
-                </Button>
+                </Button> */}
 
                 <Menu
                   open={openHeightControl}
@@ -591,6 +591,7 @@ const ViewsWithGroups = ({
                         setFormVisible={setFormVisible}
                         formVisible={formVisible}
                         filters={filters}
+                        setFilterVisible={setFilterVisible}
                         view={view}
                         fieldsMap={fieldsMap}
                         setFormValue={setFormValue}
@@ -639,6 +640,7 @@ const ViewsWithGroups = ({
                       visibleForm={visibleForm}
                       currentView={view}
                       filterVisible={filterVisible}
+                      setFilterVisible={setFilterVisible}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}

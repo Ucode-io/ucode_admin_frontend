@@ -1,18 +1,19 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
+import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../../../services/constructorViewService";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
 import style from "./style.module.scss";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
+import ViewListIcon from "@mui/icons-material/ViewList";
 
-export default function FixColumnsTableView({ view, fieldsMap }) {
+export default function FixColumnsTableView({view, fieldsMap}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = (event) => {
@@ -75,13 +76,20 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter((column) => Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
+      ?.filter((column) =>
+        Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id)
+      );
 
     const uncheckedElements = Object.values(fieldsMap)
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter((column) => !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
+      ?.filter(
+        (column) =>
+          !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(
+            column?.id
+          )
+      );
 
     return [...checkedElements, ...uncheckedElements];
   }, [fieldsMap, view?.columns, view?.attributes?.fixedColumns]);
@@ -102,7 +110,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
         }}
       >
         {isLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -111,7 +119,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
             />
           </Box>
         ) : (
-          <ViewColumnOutlinedIcon
+          <ViewListIcon
             style={{
               color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
               width: "22px",
@@ -217,7 +225,13 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
-                checked={Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id) ? true : false}
+                checked={
+                  Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                    (el) => el === column.id
+                  )
+                    ? true
+                    : false
+                }
               />
             </div>
           ))}

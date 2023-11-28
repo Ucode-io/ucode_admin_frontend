@@ -7,7 +7,6 @@ import ColorizeIcon from "@mui/icons-material/Colorize";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import EmailIcon from "@mui/icons-material/Email";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FunctionsIcon from "@mui/icons-material/Functions";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import LinkIcon from "@mui/icons-material/Link";
@@ -21,6 +20,8 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import NumbersIcon from "@mui/icons-material/Numbers";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -29,7 +30,7 @@ export const columnIcons = (type) => {
     case "MULTI_LINE":
       return <FormatAlignJustifyIcon />;
     case "NUMBER":
-      return <LooksOneIcon />;
+      return <NumbersIcon />;
     case "MULTISELECT":
       return <ArrowDropDownCircleIcon />;
     case "PHOTO":
@@ -39,7 +40,9 @@ export const columnIcons = (type) => {
     case "FILE":
       return <InsertDriveFileIcon />;
     case "FORMULA":
-      return <FunctionsIcon />;
+      return <CalculateIcon />;
+    case "FORMULA_FRONTEND":
+      return <CalculateIcon />;
     case "PHONE":
       return <LocalPhoneIcon />;
     case "INTERNATION_PHONE":
@@ -74,33 +77,9 @@ export const columnIcons = (type) => {
       return <LooksOneIcon />;
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return <InsertInvitationIcon />;
+    case "DROPDOWN":
+      return <ArrowDropDownCircleIcon />;
     default:
       return <LinkIcon />;
-
-    // SINGLE_LINE: <TextFieldsIcon />,
-    // MULTI_LINE: <FormatAlignJustifyIcon />,
-    // NUMBER: <LooksOneIcon />,
-    // MULTISELECT: <ArrowDropDownCircleIcon />,
-    // PHOTO: <PhotoSizeSelectActualIcon />,
-    // VIDEO: <PlayCircleIcon />,
-    // FILE: <InsertDriveFileIcon />,
-    // FORMULA: <FunctionsIcon />,
-    // PHONE: <LocalPhoneIcon />,
-    // INTERNATION_PHONE: <LocalPhoneIcon />,
-    // EMAIL: <EmailIcon />,
-    // ICON: <AppsIcon />,
-    // BARCODE: <QrCodeScannerIcon />,
-    // QRCODE: <QrCode2Icon />,
-    // COLOR: <ColorizeIcon />,
-    // PASSWORD: <PasswordIcon />,
-    // PICK_LIST: <ChecklistIcon />,
-    // DATE: <DateRangeIcon />,
-    // TIME: <AccessTimeIcon />,
-    // DATE_TIME: <InsertInvitationIcon />,
-    // CHECKBOX: <CheckBoxIcon />,
-    // MAP: <MapIcon />,
-    // SWITCH: <ToggleOffIcon />,
-    // FLOAT_NOLIMIT: <LooksOneIcon />,
-    // DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
   }
 };

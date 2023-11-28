@@ -82,24 +82,20 @@ const AddDataColumn = ({
             zIndex: "1",
           }}
         >
-          {isTableView ? (
-            <NewTableDataForm
-              relOptions={relOptions}
-              tableSlug={tableSlug}
-              fields={columns}
-              field={column}
-              getValues={getValues}
-              mainForm={mainForm}
-              control={control}
-              setFormValue={setFormValue}
-              relationfields={relationfields}
-              data={data}
-              onRowClick={onRowClick}
-              width={width}
-            />
-          ) : (
-            <CellElementGenerator field={virtualColumn} row={row} />
-          )}
+          <NewTableDataForm
+            relOptions={relOptions}
+            tableSlug={tableSlug}
+            fields={columns}
+            field={column}
+            getValues={getValues}
+            mainForm={mainForm}
+            control={control}
+            setFormValue={setFormValue}
+            relationfields={relationfields}
+            data={data}
+            onRowClick={onRowClick}
+            width={width}
+          />
         </CTableCell>
       ))}
       <CTableCell

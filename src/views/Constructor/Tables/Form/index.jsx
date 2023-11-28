@@ -86,7 +86,7 @@ const ConstructorTablesFormPage = () => {
       .getList({
         "table-slug": slug,
         language_setting: i18n?.language,
-      })
+      }, slug)
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);
       });
@@ -251,7 +251,7 @@ const ConstructorTablesFormPage = () => {
       layouts: computedLayouts,
       table_id: id,
       project_id: projectId,
-    });
+    }, slug);
 
     Promise.all([
       updateTableData,

@@ -1,23 +1,23 @@
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
-import { useMenuListQuery } from "../../../services/menuService";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
+import {useMenuListQuery} from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
-import { store } from "../../../store";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {store} from "../../../store";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
-import { MenuFolderArrows, NavigateByType } from "../Components/MenuSwitchCase";
+import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
@@ -27,7 +27,7 @@ import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
-import { folderIds } from "./mock/folders";
+import {folderIds} from "./mock/folders";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -46,24 +46,23 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
   index,
-  setCheck,
-  check,
   selectedApp,
   userType = false,
 }) => {
-  const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
+  const activeStyle = activeStyles({menuItem, element, menuStyle, level});
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const { appId } = useParams();
+  const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
-
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+  const activeRequest =
+    element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
   const defaultLanguage = i18n?.language;
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -103,15 +102,13 @@ const RecursiveBlock = ({
     }
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: id,
     },
     queryParams: {
-      cacheTime: 10,
-      enabled: Boolean(check),
+      enabled: Boolean(activeRequest),
       onSuccess: (res) => {
-        setCheck(false);
         setChild(res.menus);
       },
     },
@@ -120,11 +117,12 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({ element, appId, navigate, navigateAndSaveHistory });
+    NavigateByType({element, appId, navigate, navigateAndSaveHistory});
+    if (activeRequest) {
+      setChildBlockVisible((prev) => !prev);
+    }
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
-    } else {
-      setCheck(true);
     }
     if (
       !pinIsEnabled &&
@@ -135,7 +133,6 @@ const RecursiveBlock = ({
     ) {
       setSubMenuIsOpen(false);
     }
-    element.type !== "USER" && setChildBlockVisible((prev) => !prev);
     setId(element?.id);
     setElement(element);
   };
@@ -184,7 +181,7 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{ padding: "0 5px" }}>
+      <Box sx={{padding: "0 5px"}}>
         <div className="parent-block column-drag-handle" key={element.id}>
           {permission ? (
             <Button
@@ -216,7 +213,7 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({ element, childBlockVisible })}
+                {MenuFolderArrows({element, childBlockVisible})}
                 <IconGenerator
                   icon={
                     element?.icon ||
@@ -306,8 +303,6 @@ const RecursiveBlock = ({
               menuStyle={menuStyle}
               menuItem={menuItem}
               index={index}
-              setCheck={setCheck}
-              check={check}
               selectedApp={selectedApp}
             />
           ))}
@@ -349,12 +344,12 @@ const RecursiveBlock = ({
 
           {element.id === folderIds.code_folder_id && (
             <>
-              <ScenarioSidebar
+              {/* <ScenarioSidebar
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 level={2}
-              />
+              /> */}
 
               <FunctionSidebar
                 menuStyle={menuStyle}

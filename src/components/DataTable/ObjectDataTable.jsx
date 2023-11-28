@@ -308,6 +308,7 @@ const ObjectDataTable = ({
                   filters={filters}
                   tableSlug={tableSlug}
                   disableFilters={disableFilters}
+                  refetch={refetch}
                 />
               )
           )}

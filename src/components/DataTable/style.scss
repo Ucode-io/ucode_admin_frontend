@@ -53,11 +53,12 @@
     }
   }
 
-  .first_button, .table_multi_checkbox{
+  .first_button,
+  .table_multi_checkbox {
     display: none;
   }
 
-  .data_table__row_number{
+  .data_table__row_number {
     display: block;
   }
 
@@ -66,11 +67,12 @@
       display: flex;
     }
 
-    .first_button, .table_multi_checkbox{
+    .first_button,
+    .table_multi_checkbox {
       display: block;
     }
 
-    .data_table__row_number{
+    .data_table__row_number {
       display: none;
     }
   }
@@ -78,4 +80,12 @@
 .multipleRow {
   background-color: #2a2d34;
   transition: all 1s ease;
+}
+
+.subMenuItem {
+  padding: 2px 14px 2px 10px;
+  &:hover {
+    background: #eee;
+    color: #007aff;
+  }
 }

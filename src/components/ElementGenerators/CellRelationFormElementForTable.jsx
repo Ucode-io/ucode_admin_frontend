@@ -466,7 +466,7 @@ const AutoCompleteElement = ({
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}
-        // menuPortalTarget={document.body}
+        menuPortalTarget={document.body}
         isClearable
         components={{
           ClearIndicator: () =>

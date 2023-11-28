@@ -234,7 +234,7 @@ export default function TableHeadForTableView({
         id={column.id}
         key={index}
         style={{
-          padding: "10px 4px",
+          padding: "0px 4px",
           color: "#747474",
           fontSize: "13px",
           fontStyle: "normal",

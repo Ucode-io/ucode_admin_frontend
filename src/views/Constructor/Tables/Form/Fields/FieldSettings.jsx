@@ -18,7 +18,6 @@ import { useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
@@ -52,7 +51,7 @@ const FieldSettings = ({
   getRelationFields,
   slug,
 }) => {
-  const { id, tableSlug, appId } = useParams();
+  const { id, appId } = useParams();
   const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -81,11 +80,6 @@ const FieldSettings = ({
     const fields = mainForm.getValues("fields") ?? [];
     mainForm.setValue(`fields`, [field, ...fields]);
   };
-
-  const showTooltip = useWatch({
-    control,
-    name: "attributes.showTooltip",
-  });
 
   const {
     data: { views, columns, relationColumns } = {
@@ -333,28 +327,7 @@ const FieldSettings = ({
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
-                        <FRow label="Field Label and icon" required>
-                          <div className="flex align-center gap-1">
-                            <HFIconPicker
-                              control={control}
-                              name="attributes.icon"
-                              shape="rectangle"
-                            />
-                          </div>
-
-                          {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                            {languages?.map((lang) => (
-                              <HFTextField
-                                disabledHelperText
-                                fullWidth
-                                name={`attributes.label_${lang?.slug}`}
-                                control={control}
-                                placeholder={`Field Label (${lang?.slug})`}
-                                autoFocus
-                              />
-                            ))}
-                          </Box> */}
-
+                        <FRow label="Field Label" required>
                           <Box
                             style={{
                               display: "flex",
@@ -362,26 +335,6 @@ const FieldSettings = ({
                               gap: "6px",
                             }}
                           >
-                            {/* {languages?.map((language) => {
-                              // const languageFieldName = `attributes.label_${language?.slug}`;
-                              // const fieldValue = useWatch({
-                              //   control,
-                              //   name: languageFieldName,
-                              // });
-
-                              return (
-                                <HFTextField
-                                  disabledHelperText
-                                  fullWidth
-                                  name={`attributes.label_${language?.slug}`}
-                                  control={control}
-                                  placeholder={`Field Label (${language?.slug})`}
-                                  autoFocus
-                                  defaultValue={fieldValue || selectedField?.label}
-                                />
-                              );
-                            })} */}
-
                             {languages?.map((language) => {
                               const languageFieldName = `attributes.label_${language?.slug}`;
                               const fieldValue = watch({
@@ -501,31 +454,7 @@ const FieldSettings = ({
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
-                        <HFSwitch
-                          control={control}
-                          name="attributes.show_label"
-                          label="Show label"
-                          className="mb-1"
-                        />
-
                         <DefaultValueBlock control={control} />
-
-                        <HFSwitch
-                          control={control}
-                          name="attributes.showTooltip"
-                          label="Show tooltip"
-                          className="mb-1"
-                        />
-
-                        {showTooltip && (
-                          <FRow label="Tooltip text">
-                            <HFTextField
-                              fullWidth
-                              name="attributes.tooltipText"
-                              control={control}
-                            />
-                          </FRow>
-                        )}
                       </div>
                     </AccordionDetails>
                   </Accordion>

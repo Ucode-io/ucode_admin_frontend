@@ -12,8 +12,24 @@ import HeaderSettings from "../../../components/HeaderSettings";
 import PageFallback from "../../../components/PageFallback";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import microfrontendService from "../../../services/microfrontendService";
+import HFSelect from "../../../components/FormElements/HFSelect";
 
 const microfrontendListPageLink = "/settings/constructor/microfrontend";
+
+const frameworkOptions = [
+  {
+    label: "React",
+    value: "REACT"
+  },
+  {
+    label: "Vue",
+    value: "VUE"
+  },
+  {
+    label: "Angular",
+    value: "ANGULAR"
+  }
+]
 
 const MicrofrontendForm = () => {
   const {microfrontendId} = useParams();
@@ -25,6 +41,7 @@ const MicrofrontendForm = () => {
     defaultValues: {
       description: "",
       name: "",
+      framework_type: "REACT"
     },
   });
 
@@ -117,7 +134,16 @@ const MicrofrontendForm = () => {
               required
             />
           </FRow>
-          <FRow label="Описания">
+          <FRow label="Фреймворк" required >
+            <HFSelect
+              name="framework_type"
+              control={mainForm.control}
+              options={frameworkOptions}
+              defaultValue="REACT"
+              required
+            />
+          </FRow>
+          <FRow label="Описания"  >
             <HFTextField
               name="description"
               control={mainForm.control}

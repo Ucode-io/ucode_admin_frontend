@@ -54,7 +54,7 @@ vault:
   secretName: vault-secrets
   variables:
     VAULT_TOKEN: vault_token
-    SECRETS_PATH: 
+    SECRETS_PATH:
 
 environment: {}
 volumes:

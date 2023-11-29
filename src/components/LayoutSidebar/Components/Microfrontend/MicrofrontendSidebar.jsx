@@ -75,7 +75,6 @@ const MicrofrontendSettingSidebar = ({
             clickHandler(e);
           }}
         >
-          <KeyboardArrowRightIcon />
           <div className="label" style={labelStyle}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
             {projectFolder?.label}

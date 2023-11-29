@@ -190,6 +190,7 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
+        console.log("resresres", res);
         navigate(-1);
         createType(res);
       })

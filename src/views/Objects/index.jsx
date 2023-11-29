@@ -1,28 +1,28 @@
-import {Fragment, useEffect, useState} from "react";
-import {useLocation, useParams, useSearchParams} from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
+import { Fragment, useEffect, useState } from "react";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import {useQuery, useQueryClient} from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import PageFallback from "../../components/PageFallback";
-import {listToMap} from "../../utils/listToMap";
+import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import {store} from "../../store";
-import {useTranslation} from "react-i18next";
+import { store } from "../../store";
+import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
-  const {state} = useLocation();
+  const { tableSlug } = useParams();
+  const { state } = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const params = {
@@ -30,7 +30,7 @@ const ObjectsPage = () => {
   };
 
   const {
-    data: {views, fieldsMap, visibleColumns, visibleRelationColumns} = {
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -49,7 +49,7 @@ const ObjectsPage = () => {
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -64,7 +64,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }

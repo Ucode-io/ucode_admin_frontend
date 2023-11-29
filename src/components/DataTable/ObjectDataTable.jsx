@@ -250,6 +250,8 @@ const ObjectDataTable = ({
     );
   }, [columns]);
 
+  console.log("fields", fields, data);
+
   return (
     <CTable
       disablePagination={disablePagination}

@@ -7,7 +7,7 @@ const constructorFieldService = {
     requestV2.get(`/fields/${tableSlug}`, { params }),
   getFieldPermission: ({ role_id, table_slug }) =>
     request.get(`field-permission/${role_id}/${table_slug}`),
-  update: (data, tableSlug) => requestV2.put(`/fields/${tableSlug}`, data),
+  update: ({ data, tableSlug }) => requestV2.put(`/fields/${tableSlug}`, data),
   create: ({ data, tableSlug }) => requestV2.post(`/fields/${tableSlug}`, data),
   delete: (id, tableSlug) => requestV2.delete(`v2/fields/${tableSlug}/${id}`),
 };
@@ -30,6 +30,13 @@ export const useFieldCreateMutation = (mutationSettings) => {
   return useMutation(
     ({ data, tableSlug }) =>
       constructorFieldService.create({ data, tableSlug }),
+    mutationSettings
+  );
+};
+export const useFieldUpdateMutation = (mutationSettings) => {
+  return useMutation(
+    ({ data, tableSlug }) =>
+      constructorFieldService.update({ data, tableSlug }),
     mutationSettings
   );
 };

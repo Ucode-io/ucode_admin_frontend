@@ -6,13 +6,14 @@ import { math, newFieldTypes } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
 import HFTextField from "../FormElements/HFTextField";
 import HFSelect from "../FormElements/HFSelect";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../utils/applyDrag";
 import { useFieldsListQuery } from "../../services/fieldService";
 import CloseIcon from "@mui/icons-material/Close";
 import { colorList } from "../ColorPicker/colorList";
 import HFSwitch from "../FormElements/HFSwitch";
+import RelationFieldForm from "./RelationFieldForm";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -29,7 +30,14 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
 }) {
-  const type = watch("type");
+  const type = useWatch({
+    control,
+    name: "type",
+  });
+  const fieldWatch = useWatch({
+    control,
+  });
+
   const [fields, setFields] = useState([]);
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
@@ -75,7 +83,7 @@ export default function FieldCreateModal({
 
   const handleClose = () => {
     setAnchorEl(null);
-    setValue("type", "");
+    !fieldData && setValue("type", "");
   };
 
   const handleCloseColor = () => {
@@ -88,8 +96,10 @@ export default function FieldCreateModal({
 
   const handleClick = () => {
     setAnchorEl(null);
-    setValue("type", "");
-    setFieldOptionAnchor(target);
+    if (!fieldData) {
+      setValue("type", "");
+      setFieldOptionAnchor(target);
+    }
   };
 
   const handleOpenColor = (e, index) => {
@@ -355,6 +365,15 @@ export default function FieldCreateModal({
                 Advanced Editor
               </Box>
             </>
+          )}
+
+          {type === "RELATION" && (
+            <RelationFieldForm
+              control={control}
+              watch={watch}
+              setValue={setValue}
+              fieldWatch={fieldWatch}
+            />
           )}
           <Box className={style.button_group}>
             <Button variant="contained" color="error" onClick={handleClick}>

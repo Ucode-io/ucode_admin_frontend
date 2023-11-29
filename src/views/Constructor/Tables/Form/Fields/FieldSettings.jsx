@@ -1,4 +1,4 @@
-import {Close} from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -11,31 +11,33 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import constructorFieldService from "../../../../../services/constructorFieldService";
-import {fieldTypesOptions} from "../../../../../utils/constants/fieldTypes";
-import {generateGUID} from "../../../../../utils/generateID";
+import constructorFieldService, {
+  useFieldCreateMutation,
+} from "../../../../../services/constructorFieldService";
+import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
+import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
-import {store} from "../../../../../store";
+import { store } from "../../../../../store";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import {useSelector} from "react-redux";
-import {useMenuListQuery} from "../../../../../services/menuService";
+import { useSelector } from "react-redux";
+import { useMenuListQuery } from "../../../../../services/menuService";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FieldTreeView from "./FieldTreeView";
-import {TreeView} from "@mui/x-tree-view";
+import { TreeView } from "@mui/x-tree-view";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -50,8 +52,8 @@ const FieldSettings = ({
   getRelationFields,
   slug,
 }) => {
-  const {id, tableSlug, appId} = useParams();
-  const {handleSubmit, control, reset, watch, setValue} = useForm();
+  const { id, tableSlug, appId } = useParams();
+  const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
@@ -65,7 +67,7 @@ const FieldSettings = ({
     } else {
       return menuItem?.table_id;
     }
-  }, [id, tableSlug]);
+  }, [id, slug]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -86,7 +88,7 @@ const FieldSettings = ({
   });
 
   const {
-    data: {views, columns, relationColumns} = {
+    data: { views, columns, relationColumns } = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -94,16 +96,16 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS", { slug }],
     () => {
       if (!slug) return false;
       return constructorObjectService.getList(slug, {
-        data: {limit: 10, offset: 0, app_id: appId},
+        data: { limit: 10, offset: 0, app_id: appId },
       });
     },
     {
       enabled: Boolean(!!slug),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -117,24 +119,24 @@ const FieldSettings = ({
     }
   );
 
+  const { mutate: createNewField, isLoading: createLoading } =
+    useFieldCreateMutation({
+      onSuccess: (res) => {
+        prepandFieldInForm(res);
+        closeSettingsBlock(null);
+        getRelationFields();
+        addColumnToView(res);
+      },
+    });
+
   const createField = (field) => {
     const data = {
       ...field,
       id: generateGUID(),
       label: Object.values(field?.attributes).find((item) => item),
     };
-
     if (id || menuItem?.table_id) {
-      setFormLoader(true);
-      constructorFieldService
-        .create(data)
-        .then((res) => {
-          prepandFieldInForm(res);
-          closeSettingsBlock(null);
-          getRelationFields();
-          addColumnToView(res);
-        })
-        .finally(() => setFormLoader(false));
+      createNewField({ data, tableSlug: slug });
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -148,13 +150,13 @@ const FieldSettings = ({
         columns: [...views[selectedTabIndex].columns, data?.id],
       };
 
-      constructorViewService.update(tableSlug, computedValues).then(() => {
+      constructorViewService.update(slug, computedValues).then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
     }
   };
 
-  const {data: backetOptions, isBacketLoading} = useMenuListQuery({
+  const { data: backetOptions, isBacketLoading } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -219,7 +221,7 @@ const FieldSettings = ({
     }));
   }, [layoutRelations]);
 
-  const {data: computedRelationFields} = useQuery(
+  const { data: computedRelationFields } = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -277,7 +279,7 @@ const FieldSettings = ({
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{height}}>
+      <div className={styles.settingsBlockBody} style={{ height }}>
         <form
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}
@@ -305,7 +307,7 @@ const FieldSettings = ({
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <SettingsIcon style={{width: "20px", height: "20px"}} />
+                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
                   </Tab>
                   <Tab
                     style={{
@@ -316,7 +318,7 @@ const FieldSettings = ({
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <FlashOnIcon style={{width: "20px", height: "20px"}} />
+                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
                   </Tab>
                 </TabList>
 
@@ -329,7 +331,7 @@ const FieldSettings = ({
                     >
                       <h2>Field settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
@@ -468,7 +470,7 @@ const FieldSettings = ({
                         {(fieldType === "SINGLE_LINE" ||
                           fieldType === "MULTI_LINE") && (
                           <FRow
-                            style={{marginTop: "15px"}}
+                            style={{ marginTop: "15px" }}
                             label="Multi language"
                           >
                             <HFSwitch
@@ -497,7 +499,7 @@ const FieldSettings = ({
                     >
                       <h2>Appearance</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <HFSwitch
                           control={control}
@@ -538,7 +540,7 @@ const FieldSettings = ({
                     >
                       <h2>Validation</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <HFSwitch
                           control={control}
@@ -586,7 +588,7 @@ const FieldSettings = ({
                     >
                       <h2>Autofill settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Autofill table">
                           <HFSelect
@@ -627,9 +629,9 @@ const FieldSettings = ({
           <PrimaryButton
             size="large"
             className={styles.button}
-            style={{width: "100%"}}
+            style={{ width: "100%" }}
             onClick={handleSubmit(submitHandler)}
-            loader={formLoader}
+            loader={formLoader || createLoading}
           >
             Save
           </PrimaryButton>

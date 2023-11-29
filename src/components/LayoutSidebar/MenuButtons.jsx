@@ -163,15 +163,26 @@ const ButtonsMenu = ({
             />
           ) : null}
           {element.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
-            <MenuItemComponent
-              icon={<DriveFileMoveIcon size={13} />}
-              title="Переместить table"
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderModalType("folder", element);
-                handleCloseNotify();
-              }}
-            />
+            <>
+              <MenuItemComponent
+                icon={<DriveFileMoveIcon size={13} />}
+                title="Переместить table"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setFolderModalType("folder", element);
+                  handleCloseNotify();
+                }}
+              />
+              <MenuItemComponent
+                icon={<RiPencilFill size={13} />}
+                title="Изменить table"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTableModal(element);
+                  handleCloseNotify();
+                }}
+              />
+            </>
           )}
 
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&

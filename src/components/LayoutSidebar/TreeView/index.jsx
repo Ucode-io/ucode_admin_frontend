@@ -1,4 +1,4 @@
-import { TreeItem } from "@mui/lab";
+import { TreeItem } from "@mui/x-tree-view";
 import "../style.scss";
 import { useState } from "react";
 import { useMenuListQuery } from "../../../services/menuService";

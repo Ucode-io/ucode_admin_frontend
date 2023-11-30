@@ -72,7 +72,9 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
   const deleteField = (field, index) => {
     if (!id) remove(index);
     else {
-      constructorFieldService.delete(field.id).then((res) => remove(index));
+      constructorFieldService
+        .delete(field.id, slug)
+        .then((res) => remove(index));
     }
   };
 

@@ -1,6 +1,6 @@
 import "./style.scss";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./field.module.scss";
 import { math, newFieldTypes } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
@@ -14,6 +14,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { colorList } from "../ColorPicker/colorList";
 import HFSwitch from "../FormElements/HFSwitch";
 import RelationFieldForm from "./RelationFieldForm";
+import SettingsIcon from "@mui/icons-material/Settings";
+import HFTextArea from "../FormElements/HFTextArea";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -37,7 +39,6 @@ export default function FieldCreateModal({
   const fieldWatch = useWatch({
     control,
   });
-
   const [fields, setFields] = useState([]);
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
@@ -55,6 +56,7 @@ export default function FieldCreateModal({
   const open = Boolean(anchorEl);
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
+  console.log("anchorEl", anchorEl);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
@@ -62,8 +64,6 @@ export default function FieldCreateModal({
       setValue("attributes.options", result);
     }
   };
-
-  console.log("watch", watch());
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
@@ -113,17 +113,20 @@ export default function FieldCreateModal({
   };
 
   return (
-    <Menu
+    <Popover
+      anchorReference="anchorPosition"
+      anchorPosition={{ top: 350, left: 850 }}
+      id="menu-appbar"
       open={open}
       onClose={handleClose}
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: "bottom",
-        horizontal: "right",
+        horizontal: "center",
       }}
       transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: "bottom",
+        horizontal: "left",
       }}
     >
       <div className={style.field}>
@@ -137,8 +140,10 @@ export default function FieldCreateModal({
               label={"Field name"}
               componentClassName="flex gap-2 align-center"
               required
+              classname={style.custom_label}
             >
               <HFTextField
+                className={style.input}
                 disabledHelperText
                 name="label"
                 control={control}
@@ -151,8 +156,10 @@ export default function FieldCreateModal({
               label={"Field type"}
               componentClassName="flex gap-2 align-center"
               required
+              classname={style.custom_label}
             >
               <HFSelect
+                className={style.input}
                 disabledHelperText
                 options={newFieldTypes}
                 name="type"
@@ -166,12 +173,13 @@ export default function FieldCreateModal({
           {fieldData && (
             <Button
               fullWidth
-              variant="contained"
+              className={style.advanced}
               onClick={() => {
                 handleOpenFieldDrawer(fieldData);
                 closeAllDrawer();
               }}
             >
+              <SettingsIcon />
               Advanced settings
             </Button>
           )}
@@ -207,6 +215,7 @@ export default function FieldCreateModal({
                             fullWidth
                             required
                             placeholder="Type..."
+                            className={style.input}
                             endAdornment={
                               <Box className={style.adornment}>
                                 <p onClick={(e) => handleOpenColor(e, index)}>
@@ -277,7 +286,8 @@ export default function FieldCreateModal({
               {watch("attributes.advanced_type") ? (
                 <>
                   <Box className={style.formula}>
-                    <HFTextField
+                    <HFTextArea
+                      className={style.input}
                       disabledHelperText
                       name="attributes.formula"
                       control={control}
@@ -296,6 +306,7 @@ export default function FieldCreateModal({
               ) : (
                 <Box className={style.formula}>
                   <HFSelect
+                    className={style.input}
                     disabledHelperText
                     options={fields}
                     name="attributes.from_formula"
@@ -312,6 +323,7 @@ export default function FieldCreateModal({
                     {mathType?.value}
                   </span>
                   <HFSelect
+                    className={style.input}
                     disabledHelperText
                     options={fields}
                     name="attributes.to_formula"
@@ -385,6 +397,6 @@ export default function FieldCreateModal({
           </Box>
         </form>
       </div>
-    </Menu>
+    </Popover>
   );
 }

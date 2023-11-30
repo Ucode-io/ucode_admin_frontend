@@ -1,42 +1,34 @@
 import { Close } from "@mui/icons-material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FlashOnIcon from "@mui/icons-material/FlashOn";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Card,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { Box, Card, Divider, IconButton, Typography } from "@mui/material";
+import { TreeView } from "@mui/x-tree-view";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
+import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService, {
   useFieldCreateMutation,
 } from "../../../../../services/constructorFieldService";
+import constructorObjectService from "../../../../../services/constructorObjectService";
+import constructorViewService from "../../../../../services/constructorViewService";
+import { useMenuListQuery } from "../../../../../services/menuService";
+import { store } from "../../../../../store";
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
 import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
-import styles from "./style.module.scss";
-import { store } from "../../../../../store";
-import constructorObjectService from "../../../../../services/constructorObjectService";
-import constructorViewService from "../../../../../services/constructorViewService";
-import { useSelector } from "react-redux";
-import { useMenuListQuery } from "../../../../../services/menuService";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FieldTreeView from "./FieldTreeView";
-import { TreeView } from "@mui/x-tree-view";
+import styles from "./style.module.scss";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -54,12 +46,13 @@ const FieldSettings = ({
   const { id, appId } = useParams();
   const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
+  const [validationView, setValidationView] = useState(false);
+  const [autofillView, setAutofillView] = useState(false);
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -128,6 +121,7 @@ const FieldSettings = ({
       ...field,
       id: generateGUID(),
       label: Object.values(field?.attributes).find((item) => item),
+      show_label: true,
     };
     if (id || menuItem?.table_id) {
       createNewField({ data, tableSlug: slug });
@@ -150,7 +144,7 @@ const FieldSettings = ({
     }
   };
 
-  const { data: backetOptions, isBacketLoading } = useMenuListQuery({
+  const { data: backetOptions } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -266,8 +260,9 @@ const FieldSettings = ({
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>{formType === "CREATE" ? "Create field" : "Edit field"}</h2>
-
+        <Typography variant="h4">
+          {formType === "CREATE" ? "Create field" : "Edit field"}
+        </Typography>
         <IconButton onClick={closeSettingsBlock}>
           <Close />
         </IconButton>
@@ -278,280 +273,244 @@ const FieldSettings = ({
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}
         >
-          <Tabs
-            direction={"ltr"}
-            selectedIndex={selectedTab}
-            onSelect={setSelectedTab}
-          >
-            <div>
-              <Card>
-                <TabList
+          <Card>
+            <Box className="p-2">
+              <Typography variant="h4" className={styles.title}>
+                General
+              </Typography>
+              <FRow
+                label="Field Label"
+                required
+                classname={styles.custom_label}
+              >
+                <Box
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    borderBottom: "3px solid #E5E9EB",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
                   }}
                 >
-                  <Tab
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "10px",
-                    }}
-                    selectedClassName={styles.selectedTab}
-                  >
-                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
-                  </Tab>
-                  <Tab
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "10px",
-                    }}
-                    selectedClassName={styles.selectedTab}
-                  >
-                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
-                  </Tab>
-                </TabList>
+                  {languages?.map((language) => {
+                    const languageFieldName = `attributes.label_${language?.slug}`;
+                    const fieldValue = watch({
+                      control,
+                      name: languageFieldName,
+                    });
 
-                <TabPanel>
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <h2>Field settings</h2>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <div className="p-2">
-                        <FRow label="Field Label" required>
-                          <Box
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "6px",
-                            }}
-                          >
-                            {languages?.map((language) => {
-                              const languageFieldName = `attributes.label_${language?.slug}`;
-                              const fieldValue = watch({
-                                control,
-                                name: languageFieldName,
-                              });
-
-                              return (
-                                <HFTextField
-                                  disabledHelperText
-                                  fullWidth
-                                  name={`attributes.label_${language?.slug}`}
-                                  control={control}
-                                  placeholder={`Field Label (${language?.slug})`}
-                                  autoFocus
-                                  defaultValue={
-                                    fieldValue || selectedField?.label
-                                  }
-                                />
-                              );
-                            })}
-                          </Box>
-                        </FRow>
-
-                        <FRow label="Field SLUG" required>
-                          <HFTextField
-                            disabledHelperText
-                            fullWidth
-                            name="slug"
-                            control={control}
-                            placeholder="Field SLUG"
-                            required
-                            withTrim
-                          />
-                        </FRow>
-
-                        <FRow label="Field type" required>
-                          <HFSelect
-                            disabledHelperText
-                            name="type"
-                            control={control}
-                            options={fieldTypesOptions}
-                            optionType="GROUP"
-                            placeholder="Type"
-                            required
-                            defaultValue={fieldType}
-                          />
-                        </FRow>
-
-                        {(fieldType === "FILE" ||
-                          fieldType === "VIDEO" ||
-                          fieldType === "PHOTO" ||
-                          fieldType === "CUSTOM_IMAGE") && (
-                          <FRow
-                            label="Backet"
-                            required
-                            extra={
-                              <>
-                                <Typography variant="h6">
-                                  Selected folder: {folder}
-                                </Typography>
-                              </>
-                            }
-                          >
-                            <TreeView
-                              defaultCollapseIcon={<ExpandMoreIcon />}
-                              defaultExpandIcon={<ChevronRightIcon />}
-                              defaultSelected={folder}
-                              onNodeSelect={handleSelect}
-                              style={{
-                                border: "1px solid #D4DAE2",
-                              }}
-                            >
-                              {backetOptions?.menus?.map((item) => (
-                                <FieldTreeView
-                                  element={item}
-                                  setCheck={setCheck}
-                                  check={check}
-                                  folder={folder}
-                                />
-                              ))}
-                            </TreeView>
-                          </FRow>
-                        )}
-
-                        {(fieldType === "SINGLE_LINE" ||
-                          fieldType === "MULTI_LINE") && (
-                          <FRow
-                            style={{ marginTop: "15px" }}
-                            label="Multi language"
-                          >
-                            <HFSwitch
-                              control={control}
-                              name="enable_multilanguage"
-                              label=""
-                              className="mb-1"
-                            />
-                          </FRow>
-                        )}
-                      </div>
-
-                      <Attributes
+                    return (
+                      <HFTextField
+                        className={styles.input}
+                        disabledHelperText
+                        fullWidth
+                        name={`attributes.label_${language?.slug}`}
                         control={control}
-                        watch={watch}
-                        mainForm={mainForm}
+                        placeholder={`Field Label (${language?.slug})`}
+                        autoFocus
+                        defaultValue={fieldValue || selectedField?.label}
                       />
-                    </AccordionDetails>
-                  </Accordion>
+                    );
+                  })}
+                </Box>
+              </FRow>
 
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <h2>Appearance</h2>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <div className="p-2">
-                        <DefaultValueBlock control={control} />
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                </TabPanel>
+              <FRow label="Field SLUG" required classname={styles.custom_label}>
+                <HFTextField
+                  className={styles.input}
+                  disabledHelperText
+                  fullWidth
+                  name="slug"
+                  control={control}
+                  placeholder="Field SLUG"
+                  required
+                  withTrim
+                />
+              </FRow>
 
-                <TabPanel>
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <h2>Validation</h2>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <div className="p-2">
-                        <HFSwitch
-                          control={control}
-                          name="attributes.disabled"
-                          label="Disabled"
-                        />
-                        <HFSwitch
-                          control={control}
-                          name="required"
-                          label="Required"
-                        />
-                        <HFSwitch
-                          control={control}
-                          name="unique"
-                          label="Avoid duplicate values"
-                        />
-                        <HFSwitch
-                          control={control}
-                          name="attributes.creatable"
-                          label="Can create"
-                        />
-                        <FRow label="Validation">
-                          <HFTextField
-                            fullWidth
-                            name="attributes.validation"
-                            control={control}
-                          />
-                        </FRow>
-                        <FRow label="Validation message">
-                          <HFTextField
-                            fullWidth
-                            name="attributes.validation_message"
-                            control={control}
-                          />
-                        </FRow>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
+              <FRow label="Field type" required classname={styles.custom_label}>
+                <HFSelect
+                  disabledHelperText
+                  name="type"
+                  control={control}
+                  options={fieldTypesOptions}
+                  optionType="GROUP"
+                  placeholder="Type"
+                  required
+                  defaultValue={fieldType}
+                  className={styles.input}
+                />
+              </FRow>
 
-                  <Accordion>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <h2>Autofill settings</h2>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
-                      <div className="p-2">
-                        <FRow label="Autofill table">
-                          <HFSelect
-                            disabledHelperText
-                            name="autofill_table"
-                            control={control}
-                            options={computedRelationTables}
-                            placeholder="Type"
-                          />
-                        </FRow>
+              {(fieldType === "FILE" ||
+                fieldType === "VIDEO" ||
+                fieldType === "PHOTO" ||
+                fieldType === "CUSTOM_IMAGE") && (
+                <FRow
+                  label="Backet"
+                  required
+                  classname={styles.custom_label}
+                  extra={
+                    <>
+                      <Typography variant="h6">
+                        Selected folder: {folder}
+                      </Typography>
+                    </>
+                  }
+                >
+                  <TreeView
+                    defaultCollapseIcon={<ExpandMoreIcon />}
+                    defaultExpandIcon={<ChevronRightIcon />}
+                    defaultSelected={folder}
+                    onNodeSelect={handleSelect}
+                    style={{
+                      border: "1px solid #D4DAE2",
+                    }}
+                  >
+                    {backetOptions?.menus?.map((item) => (
+                      <FieldTreeView
+                        element={item}
+                        setCheck={setCheck}
+                        check={check}
+                        folder={folder}
+                      />
+                    ))}
+                  </TreeView>
+                </FRow>
+              )}
 
-                        <FRow label="Autofill field">
-                          <HFSelect
-                            disabledHelperText
-                            name="autofill_field"
-                            control={control}
-                            options={computedRelationFields}
-                            placeholder="Type"
-                          />
-                        </FRow>
-                        <FRow label="Automatic">
-                          <HFSwitch
-                            control={control}
-                            name="automatic"
-                            label="automatic"
-                          />
-                        </FRow>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                </TabPanel>
-              </Card>
+              {(fieldType === "SINGLE_LINE" || fieldType === "MULTI_LINE") && (
+                <FRow
+                  style={{ marginTop: "15px" }}
+                  label="Multi language"
+                  classname={styles.custom_label}
+                >
+                  <HFSwitch
+                    control={control}
+                    name="enable_multilanguage"
+                    label=""
+                    className="mb-1"
+                  />
+                </FRow>
+              )}
+            </Box>
+
+            <Attributes control={control} watch={watch} mainForm={mainForm} />
+            <Divider />
+
+            <div className="p-2">
+              <Typography variant="h4" className={styles.title}>
+                Appearance
+              </Typography>
+              <DefaultValueBlock control={control} />
+              <Box className={styles.checkbox}>
+                <HFCheckbox
+                  control={control}
+                  name="attributes.disabled"
+                  label="Disabled"
+                  labelClassName={styles.custom_label}
+                />
+                <HFCheckbox
+                  control={control}
+                  name="required"
+                  label="Required"
+                  labelClassName={styles.custom_label}
+                />
+                <HFCheckbox
+                  control={control}
+                  name="unique"
+                  label="Avoid duplicate values"
+                  labelClassName={styles.custom_label}
+                />
+              </Box>
             </div>
-          </Tabs>
+            <Divider />
+            <div className="p-2">
+              <Typography
+                variant="h4"
+                className={styles.validation}
+                onClick={() => setValidationView((prev) => !prev)}
+              >
+                Validation
+                {validationView ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
+              </Typography>
+              {validationView && (
+                <Box mt={1}>
+                  <FRow label="Validation" classname={styles.custom_label}>
+                    <HFTextField
+                      className={styles.input}
+                      fullWidth
+                      name="attributes.validation"
+                      control={control}
+                    />
+                  </FRow>
+                  <FRow
+                    label="Validation message"
+                    classname={styles.custom_label}
+                  >
+                    <HFTextField
+                      className={styles.input}
+                      fullWidth
+                      name="attributes.validation_message"
+                      control={control}
+                    />
+                  </FRow>
+                </Box>
+              )}
+            </div>
+            <Divider />
+            <div className="p-2">
+              <Typography
+                variant="h4"
+                className={styles.validation}
+                onClick={() => setAutofillView((prev) => !prev)}
+              >
+                Autofill settings
+                {autofillView ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
+              </Typography>
+
+              {autofillView && (
+                <Box mt={1}>
+                  <FRow label="Autofill table" classname={styles.custom_label}>
+                    <HFSelect
+                      disabledHelperText
+                      name="autofill_table"
+                      control={control}
+                      options={computedRelationTables}
+                      placeholder="Type"
+                      className={styles.input}
+                    />
+                  </FRow>
+
+                  <FRow label="Autofill field" classname={styles.custom_label}>
+                    <HFSelect
+                      disabledHelperText
+                      name="autofill_field"
+                      control={control}
+                      options={computedRelationFields}
+                      placeholder="Type"
+                      className={styles.input}
+                    />
+                  </FRow>
+                  <FRow label="Automatic" classname={styles.custom_label}>
+                    <HFCheckbox
+                      control={control}
+                      name="automatic"
+                      label="automatic"
+                      labelClassName={styles.custom_label}
+                    />
+                  </FRow>
+                </Box>
+              )}
+            </div>
+            <Divider />
+          </Card>
         </form>
 
         <div className={styles.settingsFooter}>

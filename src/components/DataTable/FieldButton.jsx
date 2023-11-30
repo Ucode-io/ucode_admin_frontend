@@ -45,8 +45,17 @@ export default function FieldButton({
       setDrawerState(column);
     }
   };
-
   console.log("fieldCreateAnchor", fieldCreateAnchor);
+  const updateView = (column) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        columns: view?.columns ? [...view?.columns, column] : [column],
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      });
+  };
 
   const { mutate: createField, isLoading: createLoading } =
     useFieldCreateMutation({
@@ -54,8 +63,8 @@ export default function FieldButton({
         reset({});
         setFieldOptionAnchor(null);
         setFieldCreateAnchor(null);
-        updateView(res?.id);
         dispatch(showAlert("Successful created", "success"));
+        updateView(res?.id);
       },
     });
 
@@ -65,27 +74,17 @@ export default function FieldButton({
         reset({});
         setFieldOptionAnchor(null);
         setFieldCreateAnchor(null);
-        updateView(res?.id);
         dispatch(showAlert("Successful updated", "success"));
+        updateView(res?.id);
       },
     });
-
-  const updateView = (column) => {
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        columns: [...view?.columns, column],
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      });
-  };
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       slug: values?.label?.replace(/ /g, "_"),
       table_id: menuItem?.table_id,
+      type: values.relation_type ? values.relation_type : values.type,
       index: "string",
       required: false,
       show_label: true,

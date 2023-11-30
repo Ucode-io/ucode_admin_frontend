@@ -125,11 +125,6 @@ export default function TableHeadForTableView({
           title: "Edit field",
           icon: <CreateOutlinedIcon />,
           onClickAction: (e) => {
-            // if (column?.attributes?.relation_data) {
-            //   setDrawerStateField(column);
-            // } else {
-            //   setDrawerState(column);
-            // }
             setFieldCreateAnchor(e.currentTarget);
             setFieldData(column);
           },

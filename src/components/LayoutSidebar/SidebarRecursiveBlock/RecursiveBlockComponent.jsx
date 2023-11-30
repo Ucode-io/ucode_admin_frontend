@@ -101,7 +101,6 @@ const RecursiveBlock = ({
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
     }
   };
-  console.log("foll", Boolean(element?.type === "FOLDER"));
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: id,

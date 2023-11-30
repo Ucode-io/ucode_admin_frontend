@@ -2,7 +2,6 @@ import { Button, Menu, Typography } from "@mui/material";
 import React from "react";
 import style from "./field.module.scss";
 import { newFieldTypes } from "../../utils/constants/fieldTypes";
-import IconGenerator from "../IconPicker/IconGenerator";
 import { columnIcons } from "../../utils/constants/columnIcons";
 
 export default function FieldOptionModal({

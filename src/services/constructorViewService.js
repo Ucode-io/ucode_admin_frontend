@@ -4,7 +4,11 @@ import requestV2 from "../utils/requestV2";
 const constructorViewService = {
   getList: (tableSlug, params) =>
     requestV2.get(`/views/${tableSlug}`, { params }),
-  update: (tableSlug, data) => requestV2.put(`/views/${tableSlug}`, data),
+  update: (tableSlug, data) => {
+    console.log("tableSlug", tableSlug);
+    console.log("data", data);
+    return requestV2.put(`/views/${tableSlug}`, data);
+  },
   create: (tableSlug, data) => requestV2.post(`/views/${tableSlug}`, data),
   getById: (id, tableSlug) => requestV2.get(`/views/${tableSlug}/${id}`),
   delete: (id, tableSlug) => requestV2.delete(`/views/${tableSlug}/${id}`),

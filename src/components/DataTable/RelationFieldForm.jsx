@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import HFSelect from "../FormElements/HFSelect";
-import style from "./field.module.scss";
 import "./style.scss";
+import style from "./field.module.scss";
 import { useTablesListQuery } from "../../services/tableService";
 import { store } from "../../store";
 import listToOptions from "../../utils/listToOptions";
@@ -22,8 +22,6 @@ export default function RelationFieldForm({
   const envId = store.getState().company.environmentId;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
-  console.log("menuItem", menuItem);
-
   useEffect(() => {
     setValue("table_from", menuItem?.data.table?.slug);
   }, []);
@@ -34,7 +32,6 @@ export default function RelationFieldForm({
     return null;
   }, [fieldWatch, tableSlug]);
 
-  console.log("relatedTableSlug", relatedTableSlug);
   const { data: tables } = useTablesListQuery({
     params: { envId: envId },
     queryParams: {
@@ -64,24 +61,15 @@ export default function RelationFieldForm({
     }
   );
 
-  console.log("fieldWatchfieldWatch", fieldWatch);
-
   return (
     <Box className={style.relation}>
       <HFSelect
-        disabledHelperText
-        options={tables}
-        name="table_to"
-        control={control}
-        fullWidth
-        required
-        placeholder="Table to"
-      />
-      <HFSelect
+        className={style.input}
         disabledHelperText
         options={[
           { label: "Single", value: "Many2One" },
           { label: "Multi", value: "Many2Many" },
+          { label: "Recursive", value: "Recursive" },
         ]}
         name="relation_type"
         control={control}
@@ -91,20 +79,37 @@ export default function RelationFieldForm({
         onChange={(val) => {
           if (val === "Many2Many") {
             setValue("view_type", "INPUT");
+          } else if (val === "Recursive") {
+            setValue("table_to", tableSlug);
           } else {
             setValue("view_type", undefined);
           }
         }}
       />
-      <HFMultipleSelect
-        disabledHelperText
-        options={relatedTableFields}
-        name="view_fields"
-        control={control}
-        fullWidth
-        required
-        placeholder="View fields"
-      />
+      {fieldWatch.relation_type !== "Recursive" && (
+        <>
+          <HFSelect
+            disabledHelperText
+            options={tables}
+            name="table_to"
+            control={control}
+            fullWidth
+            required
+            placeholder="Table to"
+            className={style.input}
+          />
+          <HFMultipleSelect
+            disabledHelperText
+            options={relatedTableFields}
+            name="view_fields"
+            control={control}
+            fullWidth
+            required
+            placeholder="View fields"
+            className={style.input}
+          />
+        </>
+      )}
     </Box>
   );
 }

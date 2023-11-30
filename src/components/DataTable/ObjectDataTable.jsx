@@ -102,7 +102,6 @@ const ObjectDataTable = ({
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-  console.log("mainForm", mainForm.watch());
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -249,8 +248,6 @@ const ObjectDataTable = ({
       (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
     );
   }, [columns]);
-
-  console.log("fields", fields, data);
 
   return (
     <CTable

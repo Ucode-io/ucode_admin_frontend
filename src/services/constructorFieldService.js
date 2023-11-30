@@ -9,7 +9,7 @@ const constructorFieldService = {
     request.get(`field-permission/${role_id}/${table_slug}`),
   update: ({ data, tableSlug }) => requestV2.put(`/fields/${tableSlug}`, data),
   create: ({ data, tableSlug }) => requestV2.post(`/fields/${tableSlug}`, data),
-  delete: (id, tableSlug) => requestV2.delete(`v2/fields/${tableSlug}/${id}`),
+  delete: (id, tableSlug) => requestV2.delete(`/fields/${tableSlug}/${id}`),
 };
 
 export const useFieldsListQuery = ({

@@ -1,25 +1,31 @@
-import {Autocomplete, Box, Popover, TextField, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
+import {
+  Autocomplete,
+  Box,
+  Popover,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
-import {useLocation, useParams} from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import AddIcon from "@mui/icons-material/Add";
-import Select, {components} from "react-select";
-import {pageToOffset} from "../../utils/pageToOffset";
+import Select, { components } from "react-select";
+import { pageToOffset } from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -55,7 +61,7 @@ const CellRelationFormElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -140,17 +146,17 @@ const AutoCompleteElement = ({
   data,
   setFormValue = () => {},
 }) => {
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
-  const {id} = useParams();
+  const { id } = useParams();
   const [allOptions, setAllOptions] = useState([]);
   const [localValue, setLocalValue] = useState(null);
   const [open, setOpen] = useState(false);
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
@@ -187,7 +193,7 @@ const AutoCompleteElement = ({
     return val;
   }, [data, field]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -230,7 +236,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const { data: optionsFromLocale } = useQuery(
     [
       "GET_OBJECT_LIST",
       tableSlug,
@@ -292,7 +298,6 @@ const AutoCompleteElement = ({
     optionsFromLocale,
     field?.attributes?.function_path,
   ]);
-  console.log("allOptions", allOptions);
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
@@ -312,7 +317,7 @@ const AutoCompleteElement = ({
 
     if (!field?.attributes?.autofill) return;
 
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -346,7 +351,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -431,12 +436,12 @@ const AutoCompleteElement = ({
           e.preventDefault();
         }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
+        style={{ display: "flex", alignItems: "center" }}
       >
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relation", zIndex: 99}}
+            sx={{ position: "relation", zIndex: 99 }}
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
@@ -444,7 +449,7 @@ const AutoCompleteElement = ({
           >
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
-              style={{marginLeft: "10px", cursor: "pointer"}}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
             />
           </Box>
@@ -452,13 +457,12 @@ const AutoCompleteElement = ({
       </div>
     </components.SingleValue>
   );
-  console.log("computedOptions", computedOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
         >
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
@@ -484,7 +488,7 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{p: 1}}>Create new object</Typography>
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
           </Popover>
         </span>
       )}
@@ -499,7 +503,7 @@ const AutoCompleteElement = ({
 
       <Select
         inputValue={inputValue}
-        onInputChange={(newInputValue, {action}) => {
+        onInputChange={(newInputValue, { action }) => {
           if (action !== "reset") {
             setInputValue(newInputValue);
             inputChangeHandler(newInputValue);
@@ -530,13 +534,13 @@ const AutoCompleteElement = ({
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, {action}) => {
+        onChange={(newValue, { action }) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
           >
             Создать новый
           </span>

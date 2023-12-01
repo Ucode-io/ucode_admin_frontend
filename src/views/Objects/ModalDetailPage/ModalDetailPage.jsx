@@ -1,8 +1,8 @@
-import { Close } from "@mui/icons-material";
-import { Card, IconButton, Modal } from "@mui/material";
-import React from "react";
+import {Close} from "@mui/icons-material";
+import {Card, IconButton, Modal} from "@mui/material";
+import React, {useState} from "react";
 import styles from "./style.module.scss";
-import ObjectsFormPage from "../ObjectsFormPage";
+import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
 
 export default function ModalDetailPage({
   open,
@@ -11,23 +11,40 @@ export default function ModalDetailPage({
   selectedRow,
   dateInfo,
 }) {
-  const handleClose = () => setOpen(false);
+  const [fullScreen, setFullScreen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+    setFullScreen(false);
+  };
+
   return (
     <Modal open={open} onClose={handleClose} className="child-position-center">
-      <Card className={`${styles.card} PlatformModal`}>
+      <Card
+        className={`${
+          fullScreen ? styles.cardModal : styles.card
+        } PlatformModal`}
+      >
         <div className={styles.header}>
           <div className={styles.cardTitle}>View settings</div>
-          <IconButton className={styles.closeButton} onClick={handleClose}>
+          <IconButton
+            className={styles.closeButton}
+            onClick={() => {
+              setFullScreen((prev) => !prev);
+              handleClose();
+            }}
+          >
             <Close className={styles.closeIcon} />
           </IconButton>
         </div>
 
-        <ObjectsFormPage
+        <ObjectsFormPageForModal
           selectedRow={selectedRow}
           tableSlugFromProps={tableSlug}
           handleClose={handleClose}
           modal={true}
           dateInfo={dateInfo}
+          setFullScreen={setFullScreen}
+          fullScreen={fullScreen}
         />
       </Card>
     </Modal>

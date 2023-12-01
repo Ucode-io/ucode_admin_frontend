@@ -366,7 +366,7 @@ export default function TableHeadForTableView({
           <span
             style={{
               whiteSpace: "nowrap",
-              padding: "0 5px",
+              padding: "0 14px",
             }}
             onClick={(e) => {
               e.stopPropagation();

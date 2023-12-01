@@ -567,7 +567,7 @@ const TableView = ({
       view?.attributes?.quick_filters?.length > 0 ? true : false
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
-
+  console.log("viewview", view);
   return (
     <div className={styles.wrapper}>
       {

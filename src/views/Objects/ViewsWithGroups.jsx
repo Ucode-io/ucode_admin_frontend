@@ -73,8 +73,6 @@ const ViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
 
-  console.log("viewviewviewview=====>", view);
-
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),
@@ -227,7 +225,7 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, []);
-  console.log("groupTablegroupTable", groupTable, tabs);
+
   return (
     <>
       <FiltersBlock

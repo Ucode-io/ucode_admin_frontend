@@ -237,7 +237,6 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
-
   useEffect(() => {
     if (!formVisible) {
       dispatch(selectedRowActions.clear());

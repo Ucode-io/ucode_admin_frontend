@@ -103,7 +103,6 @@ const ObjectDataTable = ({
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-  console.log("mainForm", mainForm.watch());
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {

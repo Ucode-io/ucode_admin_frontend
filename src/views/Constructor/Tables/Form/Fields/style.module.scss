@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
   &:hover {
     border-color: colors.$primary;
   }
@@ -20,6 +21,33 @@
     line-height: 24px;
   }
 
+}
+
+.input {
+
+  fieldset {
+    border-radius: 6px;
+  }
+}
+
+.title {
+  color: #2a2e34;
+  margin-bottom: 10px;
+}
+
+.validation {
+  color: #2a2e34;
+  padding: 4px 8px 4px 0;
+  border-radius: 6px;
+  transition: .3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.custom_label {
+  color: #656f7d;
 }
 
 .settingsBlock {
@@ -36,8 +64,6 @@
     padding: 0 16px;
     border-bottom: 1px solid #E5E9EB;
     border-top: 1px solid #E5E9EB;
-    background-color: #F6F8F9;;
-
   }
 
   .settingsBlockBody {
@@ -53,10 +79,11 @@
   }
 }
 
-.selectedTab{
+.selectedTab {
   background-color: #007AFF;
   color: #fff;
-  svg{
+
+  svg {
     color: #fff;
   }
 }

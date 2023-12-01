@@ -5,13 +5,17 @@ import { CTableHeadCell } from "../CTable";
 import FieldOptionModal from "./FieldOptionModal";
 import FieldCreateModal from "./FieldCreateModal";
 import { useForm } from "react-hook-form";
-import { useFieldCreateMutation } from "../../services/constructorFieldService";
+import {
+  useFieldCreateMutation,
+  useFieldUpdateMutation,
+} from "../../services/constructorFieldService";
 import { useDispatch, useSelector } from "react-redux";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
 import { useTranslation } from "react-i18next";
 import constructorViewService from "../../services/constructorViewService";
 import { useParams } from "react-router-dom";
+import { generateGUID } from "../../utils/generateID";
 
 export default function FieldButton({
   openFieldSettings,
@@ -34,13 +38,23 @@ export default function FieldButton({
 
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
-
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
       setDrawerStateField(column);
     } else {
       setDrawerState(column);
     }
+  };
+  console.log("fieldCreateAnchor", fieldCreateAnchor);
+  const updateView = (column) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        columns: view?.columns ? [...view?.columns, column] : [column],
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      });
   };
 
   const { mutate: createField, isLoading: createLoading } =
@@ -49,30 +63,32 @@ export default function FieldButton({
         reset({});
         setFieldOptionAnchor(null);
         setFieldCreateAnchor(null);
-        updateView(res?.id);
         dispatch(showAlert("Successful created", "success"));
+        updateView(res?.id);
       },
     });
 
-  const updateView = (column) => {
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        columns: [...view?.columns, column],
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      });
-  };
+  const { mutate: updateField, isLoading: updateLoading } =
+    useFieldUpdateMutation({
+      onSuccess: (res) => {
+        reset({});
+        setFieldOptionAnchor(null);
+        setFieldCreateAnchor(null);
+        dispatch(showAlert("Successful updated", "success"));
+        updateView(res?.id);
+      },
+    });
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       slug: values?.label?.replace(/ /g, "_"),
       table_id: menuItem?.table_id,
+      type: values.relation_type ? values.relation_type : values.type,
       index: "string",
       required: false,
       show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
       attributes: {
         ...values.attributes,
         [`label_${i18n?.language}`]: values.label,
@@ -80,12 +96,16 @@ export default function FieldButton({
           ? values?.attributes?.formula
           : values?.attributes?.from_formula +
             " " +
-            values?.attributes?.math.value +
+            values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
       },
     };
-    createField({ data, tableSlug });
+    if (fieldData) {
+      updateField({ data, tableSlug });
+    } else {
+      createField({ data, tableSlug });
+    }
   };
 
   useEffect(() => {

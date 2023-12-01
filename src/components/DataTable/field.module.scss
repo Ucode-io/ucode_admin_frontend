@@ -2,6 +2,27 @@
     width: 100%;
     min-width: 240px;
 
+    .advanced {
+        color: #4f5762 !important;
+        display: flex;
+        column-gap: 5px;
+
+        &:hover {
+            background: #F5F6FA;
+        }
+    }
+
+    .input {
+        fieldset {
+            border-radius: 6px;
+        }
+    }
+
+    .custom_label {
+        color: #656f7d;
+    }
+
+
     .title {
         margin-top: 4px;
         font-weight: 600;
@@ -39,6 +60,12 @@
         }
     }
 
+    .relation {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+    }
+
     .button_group {
         display: flex;
         align-items: center;
@@ -53,6 +80,7 @@
             flex-direction: column;
             row-gap: 7px;
             margin-bottom: 7px;
+            color: #656f7d;
         }
 
         .startAdornment {

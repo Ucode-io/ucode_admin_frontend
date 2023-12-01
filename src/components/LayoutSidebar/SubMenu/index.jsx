@@ -98,7 +98,6 @@ const SubMenu = ({
         });
     }
   };
-  console.log("selectedApp", selectedApp);
   return (
     <div
       className={`SubMenu ${

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { store } from "../store/index";
-import { showAlert } from "../store/alert/alert.thunk";
+import {store} from "../store/index";
+import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import { authActions } from "../store/auth/auth.slice";
+import {authActions} from "../store/auth/auth.slice";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`;
 
 const requestV2 = axios.create({
@@ -59,7 +59,7 @@ const errorHandler = (error, hooks) => {
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
     } else {
-      console.log("ERRRRR =>", error)
+      console.log("ERRRRR =>", error);
       store.dispatch(showAlert("___ERROR___"));
     }
 
@@ -80,17 +80,16 @@ requestV2.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
       config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
-      if(config.params) config.params["project-id"] = projectId;
     }
-    // if (!config.params?.["project-id"]) {
-    //   if (config.params) {
-    //     config.params["project-id"] = projectId;
-    //   } else {
-    //     config.params = {
-    //       "project-id": projectId,
-    //     };
-    //   }
-    // }
+    if (!config.params?.["project-id"]) {
+      if (config.params) {
+        config.params["project-id"] = projectId;
+      } else {
+        config.params = {
+          "project-id": projectId,
+        };
+      }
+    }
     return config;
   },
 

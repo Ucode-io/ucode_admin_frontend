@@ -16,6 +16,10 @@ import { useTranslation } from "react-i18next";
 import constructorViewService from "../../services/constructorViewService";
 import { useParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
+import {
+  useRelationUpdateMutation,
+  useRelationsCreateMutation,
+} from "../../services/relationService";
 
 export default function FieldButton({
   openFieldSettings,
@@ -54,6 +58,7 @@ export default function FieldButton({
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
         queryClient.refetchQueries(["FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       });
   };
 
@@ -78,13 +83,32 @@ export default function FieldButton({
         updateView(res?.id);
       },
     });
+  const { mutate: createRelation, isLoading: realationLoading } =
+    useRelationsCreateMutation({
+      onSuccess: (res) => {
+        reset({});
+        setFieldOptionAnchor(null);
+        setFieldCreateAnchor(null);
+        dispatch(showAlert("Successful updated", "success"));
+        updateView(res?.id);
+      },
+    });
+  const { mutate: updateRelation, isLoading: realationUpdateLoading } =
+    useRelationUpdateMutation({
+      onSuccess: (res) => {
+        reset({});
+        setFieldOptionAnchor(null);
+        setFieldCreateAnchor(null);
+        dispatch(showAlert("Successful updated", "success"));
+        updateView(res?.id);
+      },
+    });
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       slug: values?.label?.replace(/ /g, "_"),
       table_id: menuItem?.table_id,
-      type: values.relation_type ? values.relation_type : values.type,
       index: "string",
       required: false,
       show_label: true,
@@ -101,10 +125,29 @@ export default function FieldButton({
             values?.attributes?.to_formula,
       },
     };
-    if (fieldData) {
+    const relationData = {
+      ...values,
+      relation_table_slug: tableSlug,
+      type: values.relation_type ? values.relation_type : values.type,
+      required: false,
+      multiple_insert: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+      attributes: {
+        ...values.attributes,
+        [`label_${i18n?.language}`]: values.label,
+      },
+    };
+    if (fieldData && values?.type !== "RELATION") {
       updateField({ data, tableSlug });
-    } else {
+    } else if (values?.type !== "RELATION") {
       createField({ data, tableSlug });
+    }
+
+    if (fieldData && values?.type === "RELATION") {
+      updateRelation({ data: relationData, tableSlug });
+    } else if (values?.type === "RELATION") {
+      createRelation({ data: relationData, tableSlug });
     }
   };
 

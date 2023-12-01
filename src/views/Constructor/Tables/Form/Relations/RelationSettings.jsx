@@ -90,6 +90,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
+  console.log("values", values);
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === slug) return values.table_from;
@@ -275,7 +276,7 @@ const RelationSettings = ({
         .create(
           {
             ...data,
-            title: Object.values(data?.attributes).find((item) => item),
+            label: Object.values(data?.attributes).find((item) => item),
           },
           slug
         )
@@ -304,7 +305,7 @@ const RelationSettings = ({
       editable: relation?.editable ?? false,
       summaries: relation?.summaries ?? [],
       view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
-      field_name: relation?.title,
+      field_name: relation?.label,
     });
   }, [relation]);
 
@@ -397,7 +398,7 @@ const RelationSettings = ({
                           >
                             {languages?.map((lang) => (
                               <HFTextField
-                                name={`attributes.title_${lang?.slug}`}
+                                name={`attributes.label_${lang?.slug}`}
                                 control={control}
                                 placeholder={`Relation Label (${lang?.slug})`}
                                 fullWidth
@@ -664,7 +665,7 @@ const RelationSettings = ({
                                   </IconButton>
                                   <p className={styles.label}>
                                     {field?.attributes[
-                                      `title_${i18n?.language}`
+                                      `label_${i18n?.language}`
                                     ] ?? field.label}
                                   </p>
 

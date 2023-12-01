@@ -394,7 +394,7 @@ export default function FieldCreateModal({
               Cancel
             </Button>
             <Button variant="contained" type="submit">
-              Add column
+              {fieldData ? "Save column" : "Add column"}
             </Button>
           </Box>
         </form>

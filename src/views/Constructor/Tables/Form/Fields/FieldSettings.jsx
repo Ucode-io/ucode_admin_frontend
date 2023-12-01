@@ -378,18 +378,12 @@ const FieldSettings = ({
               )}
 
               {(fieldType === "SINGLE_LINE" || fieldType === "MULTI_LINE") && (
-                <FRow
-                  style={{ marginTop: "15px" }}
+                <HFCheckbox
+                  control={control}
+                  name="enable_multilanguage"
                   label="Multi language"
-                  classname={styles.custom_label}
-                >
-                  <HFSwitch
-                    control={control}
-                    name="enable_multilanguage"
-                    label=""
-                    className="mb-1"
-                  />
-                </FRow>
+                  labelClassName={styles.custom_label}
+                />
               )}
             </Box>
 
@@ -398,7 +392,7 @@ const FieldSettings = ({
 
             <div className="p-2">
               <Typography variant="h4" className={styles.title}>
-                Appearance
+                Additional
               </Typography>
               <DefaultValueBlock control={control} />
               <Box className={styles.checkbox}>

@@ -1,6 +1,6 @@
 import "./style.scss";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import style from "./field.module.scss";
 import { math, newFieldTypes } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
@@ -164,6 +164,7 @@ export default function FieldCreateModal({
                 options={newFieldTypes}
                 name="type"
                 control={control}
+                disabled={fieldData}
                 fullWidth
                 required
                 placeholder="Select type"

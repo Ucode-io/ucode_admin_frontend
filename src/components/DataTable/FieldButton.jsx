@@ -88,7 +88,7 @@ export default function FieldButton({
       index: "string",
       required: false,
       show_label: true,
-      id: generateGUID(),
+      id: fieldData ? fieldData?.id : generateGUID(),
       attributes: {
         ...values.attributes,
         [`label_${i18n?.language}`]: values.label,

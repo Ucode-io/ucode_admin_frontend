@@ -18,6 +18,7 @@ import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService, {
   useFieldCreateMutation,
+  useFieldUpdateMutation,
 } from "../../../../../services/constructorFieldService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
@@ -43,7 +44,7 @@ const FieldSettings = ({
   getRelationFields,
   slug,
 }) => {
-  const { id, appId } = useParams();
+  const { id, appId, tableSlug } = useParams();
   const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const menuItem = store.getState().menu.menuItem;
@@ -115,6 +116,14 @@ const FieldSettings = ({
         addColumnToView(res);
       },
     });
+  const { mutate: updateOldField, isLoading: updateLoading } =
+    useFieldUpdateMutation({
+      onSuccess: (res) => {
+        updateFieldInform(field);
+        closeSettingsBlock(null);
+        getRelationFields();
+      },
+    });
 
   const createField = (field) => {
     const data = {
@@ -124,7 +133,7 @@ const FieldSettings = ({
       show_label: true,
     };
     if (id || menuItem?.table_id) {
-      createNewField({ data, tableSlug: slug });
+      createNewField({ data, tableSlug: slug || tableSlug });
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -151,15 +160,7 @@ const FieldSettings = ({
   });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
-      setFormLoader(true);
-      constructorFieldService
-        .update(field)
-        .then((res) => {
-          updateFieldInform(field);
-          closeSettingsBlock(null);
-          getRelationFields();
-        })
-        .finally(() => setFormLoader(false));
+      updateOldField({ data: field, tableSlug: tableSlug });
     } else {
       updateFieldInform(field);
       closeSettingsBlock();
@@ -513,7 +514,7 @@ const FieldSettings = ({
             className={styles.button}
             style={{ width: "100%" }}
             onClick={handleSubmit(submitHandler)}
-            loader={formLoader || createLoading}
+            loader={formLoader || createLoading || updateLoading}
           >
             Save
           </PrimaryButton>

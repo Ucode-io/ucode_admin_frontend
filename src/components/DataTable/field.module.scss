@@ -1,3 +1,17 @@
+.headcell {
+    position: fixed;
+    right: 0;
+    width: 100%;
+    background: #fff;
+    max-width: 90px;
+    height: 100%;
+    min-height: 27px !important;
+    max-height: 27px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .field {
     width: 100%;
     min-width: 240px;
@@ -46,14 +60,14 @@
         column-gap: 7px;
 
         svg {
-            font-size: 13px;
+            font-size: 14.5px;
             line-height: 24px;
             font-weight: 500;
             color: #111;
         }
 
         p {
-            font-size: 13px;
+            font-size: 14.5px;
             line-height: 24px;
             font-weight: 500;
             color: #111;

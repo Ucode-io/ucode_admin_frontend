@@ -45,7 +45,6 @@ export default function FieldButton({
       setDrawerState(column);
     }
   };
-  console.log("fieldCreateAnchor", fieldCreateAnchor);
   const updateView = (column) => {
     constructorViewService
       .update(tableSlug, {
@@ -54,6 +53,7 @@ export default function FieldButton({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["FIELDS"]);
       });
   };
 
@@ -124,20 +124,10 @@ export default function FieldButton({
 
   return (
     <div>
-      <CTableHeadCell
-        width={10}
-        style={{
-          position: "fixed",
-          right: "0",
-          width: "100%",
-          background: "#fff",
-          maxWidth: "90px",
-        }}
-      >
-        <span
+      <CTableHeadCell width={10} className={style.headcell}>
+        <div
           style={{
             whiteSpace: "nowrap",
-            padding: "10px 4px",
             color: "#747474",
             fontSize: "13px",
             fontStyle: "normal",
@@ -152,7 +142,7 @@ export default function FieldButton({
           }}
         >
           <AddRoundedIcon />
-        </span>
+        </div>
       </CTableHeadCell>
       <FieldOptionModal
         anchorEl={fieldOptionAnchor}

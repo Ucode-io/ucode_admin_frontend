@@ -37,8 +37,8 @@ const TablesPage = ({}) => {
 
   const {mutate: updateTableDocument} = useTableDeleteMutation({
     onSuccess: (res) => {
-      setLoader(false);
       queryClient.refetchQueries(["TABLES"]);
+      setLoader(false);
     },
   });
 

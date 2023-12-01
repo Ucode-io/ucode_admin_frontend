@@ -66,6 +66,7 @@ const TableView = ({
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
   const {id, slug, tableSlug, appId} = useParams();
+  const permissions = useSelector((state) => state.auth.permissions);
   const {new_list} = useSelector((state) => state.filter);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
@@ -567,7 +568,7 @@ const TableView = ({
       view?.attributes?.quick_filters?.length > 0 ? true : false
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
-  console.log("viewview", view);
+
   return (
     <div className={styles.wrapper}>
       {
@@ -590,66 +591,66 @@ const TableView = ({
           </Box>
         </div>
       }
-      <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div
-          style={{display: "flex", alignItems: "flex-start", width: "100%"}}
-          id="data-table"
-        >
-          <ObjectDataTable
-            refetch={refetch}
-            filterVisible={filterVisible}
-            currentView={currentView}
-            relOptions={relOptions}
-            tableView={true}
-            defaultLimit={view?.default_limit}
-            formVisible={formVisible}
-            selectedView={selectedView}
-            setSortedDatas={setSortedDatas}
-            sortedDatas={sortedDatas}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-            isTableView={true}
-            getValues={getValues}
-            setFormVisible={setFormVisible}
-            setFormValue={setFormValue}
-            mainForm={mainForm}
-            isRelationTable={false}
-            removableHeight={isDocView ? 150 : 170}
-            currentPage={currentPage}
-            pagesCount={pageCount}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            columns={columns}
-            multipleDelete={multipleDelete}
-            openFieldSettings={openFieldSettings}
-            limit={paginiation ?? limit}
-            setLimit={setLimit}
-            onPaginationChange={setCurrentPage}
-            loader={tableLoader || deleteLoader}
-            data={tableData}
-            summaries={view?.attributes?.summaries}
-            disableFilters
-            isChecked={(row) => selectedObjects?.includes(row.guid)}
-            onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-            filters={filters}
-            filterChangeHandler={filterChangeHandler}
-            onRowClick={navigateToEditPage}
-            onDeleteClick={deleteHandler}
-            tableSlug={tableSlug}
-            view={view}
-            tableStyle={{
-              borderRadius: 0,
-              border: "none",
-              borderBottom: "1px solid #E5E9EB",
-              width: "100%",
-              margin: 0,
-            }}
-            isResizeble={true}
-            navigateToForm={navigateToForm}
-            {...props}
-          />
-        </div>
-      </PermissionWrapperV2>
+      {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
+      <div
+        style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+        id="data-table"
+      >
+        <ObjectDataTable
+          refetch={refetch}
+          filterVisible={filterVisible}
+          currentView={currentView}
+          relOptions={relOptions}
+          tableView={true}
+          defaultLimit={view?.default_limit}
+          formVisible={formVisible}
+          selectedView={selectedView}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
+          setDrawerState={setDrawerState}
+          setDrawerStateField={setDrawerStateField}
+          isTableView={true}
+          getValues={getValues}
+          setFormVisible={setFormVisible}
+          setFormValue={setFormValue}
+          mainForm={mainForm}
+          isRelationTable={false}
+          removableHeight={isDocView ? 150 : 170}
+          currentPage={currentPage}
+          pagesCount={pageCount}
+          selectedObjectsForDelete={selectedObjectsForDelete}
+          setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+          columns={columns}
+          multipleDelete={multipleDelete}
+          openFieldSettings={openFieldSettings}
+          limit={paginiation ?? limit}
+          setLimit={setLimit}
+          onPaginationChange={setCurrentPage}
+          loader={tableLoader || deleteLoader}
+          data={tableData}
+          summaries={view?.attributes?.summaries}
+          disableFilters
+          isChecked={(row) => selectedObjects?.includes(row.guid)}
+          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+          filters={filters}
+          filterChangeHandler={filterChangeHandler}
+          onRowClick={navigateToEditPage}
+          onDeleteClick={deleteHandler}
+          tableSlug={tableSlug}
+          view={view}
+          tableStyle={{
+            borderRadius: 0,
+            border: "none",
+            borderBottom: "1px solid #E5E9EB",
+            width: "100%",
+            margin: 0,
+          }}
+          isResizeble={true}
+          navigateToForm={navigateToForm}
+          {...props}
+        />
+      </div>
+      {/* </PermissionWrapperV2> */}
 
       <ModalDetailPage
         open={open}

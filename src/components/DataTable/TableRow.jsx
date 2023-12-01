@@ -53,10 +53,12 @@ const TableRow = ({
   style,
 }) => {
   const navigate = useNavigate();
-  
+
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
-      setSelectedObjectsForDelete(selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid));
+      setSelectedObjectsForDelete(
+        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
+      );
     } else {
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
@@ -136,17 +138,27 @@ const TableRow = ({
                   <OpenInFullIcon />
                 </Button>
 
-                <span className="data_table__row_number" style={{ width: "35px" }}>
-                  {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+                <span
+                  className="data_table__row_number"
+                  style={{ width: "35px" }}
+                >
+                  {limit === "all"
+                    ? rowIndex + 1
+                    : (currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
                 </span>
 
                 <Checkbox
                   className="table_multi_checkbox"
                   style={{
-                    display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
+                    display:
+                      selectedObjectsForDelete?.find(
+                        (item) => item?.guid === row?.guid
+                      ) && "block",
                   }}
-                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                  checked={selectedObjectsForDelete?.find(
+                    (item) => item?.guid === row?.guid
+                  )}
                   onChange={() => {
                     changeSetDelete(row);
                   }}
@@ -156,7 +168,8 @@ const TableRow = ({
 
             {columns.map(
               (virtualColumn) =>
-                virtualColumn?.attributes?.field_permission?.view_permission && (
+                virtualColumn?.attributes?.field_permission
+                  ?.view_permission && (
                   <CTableCell
                     key={virtualColumn.id}
                     className={`overflow-ellipsis ${tableHeight}`}
@@ -169,18 +182,33 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id] ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px` : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        ? `${
+                            calculateWidthFixedColumn(virtualColumn.id) + 80
+                          }px`
+                        : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id] ? "1" : "0"
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                          ? "1"
+                          : "0"
                       }`,
                     }}
                   >
@@ -226,7 +254,14 @@ const TableRow = ({
                   }}
                 >
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                    <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() =>
+                        row.guid
+                          ? onDeleteClick(row, rowIndex)
+                          : remove(rowIndex)
+                      }
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -234,13 +269,10 @@ const TableRow = ({
                 <GeneratePdfFromTable row={row} />
               </div>
             </td>
-
-            <td>
-              <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
-            </td>
           </CTableRow>
         </>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
         <CTableRow
         // onClick={() => {
         //   onRowClick(row, rowIndex);
@@ -297,8 +329,13 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
 
@@ -327,12 +364,30 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm
@@ -430,8 +485,13 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
 
@@ -460,12 +520,30 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm

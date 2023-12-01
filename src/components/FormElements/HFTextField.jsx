@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     "&::placeholder": {
       color: "#fff",
     },
-  }
+  },
 }));
 
 const HFTextField = ({
@@ -78,13 +78,15 @@ const HFTextField = ({
                   background: "#c0c0c039",
                   padding: "0px",
                 }
-              : {
+              : isNewTableView
+              ? {
                   background: "inherit",
                   color: "inherit",
                   padding: "0px !important",
                   margin: "0px !important",
                   height: "25px",
-                },
+                }
+              : {},
 
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>

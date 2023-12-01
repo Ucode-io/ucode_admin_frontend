@@ -1,0 +1,307 @@
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import constructorViewService from "../../../services/constructorViewService";
+import { applyDrag } from "../../../utils/applyDrag";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import { Container, Draggable } from "react-smooth-dnd";
+import { columnIcons } from "../../../utils/constants/columnIcons";
+import LinkIcon from "@mui/icons-material/Link";
+import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
+import relationService from "../../../services/relationService";
+
+export default function VisibleColumnsButtonRelationSection({ currentView, fieldsMap, getAllData }) {
+  const queryClient = useQueryClient();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const open = Boolean(anchorEl);
+  const { i18n } = useTranslation();
+
+  const allFields = useMemo(() => {
+    return Object.values(fieldsMap);
+  }, [fieldsMap]);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const updateView = (data) => {
+    setIsLoading(true);
+    relationService
+      .update({
+        ...currentView,
+        table_from: currentView?.table_from?.slug,
+        table_to: currentView?.table_to?.slug,
+        view_fields: currentView?.view_fields?.map((el) => el.id),
+        columns: data,
+      })
+      .then(() => {
+        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        getAllData();
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const visibleFields = useMemo(() => {
+    return currentView?.columns?.map((id) => fieldsMap[id]) ?? [];
+  }, [currentView?.columns, fieldsMap]);
+
+  const unVisibleFields = useMemo(() => {
+    return allFields.filter((field) => !currentView?.columns?.includes(field.id));
+  }, [allFields, currentView?.columns]);
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(visibleFields, dropResult);
+    if (result) {
+      updateView(result.map((el) => el.id));
+    }
+  };
+
+  return (
+    <div>
+      <Button
+        variant={"text"}
+        style={{
+          gap: "5px",
+          color: "#A8A8A8",
+          borderColor: "#A8A8A8",
+        }}
+        onClick={handleClick}
+      >
+        {isLoading ? (
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+            <CircularProgress
+              style={{
+                width: "22px",
+                height: "22px",
+              }}
+            />
+          </Box>
+        ) : (
+          <ViewColumnOutlinedIcon
+            style={{
+              color: "#A8A8A8",
+              width: "22px",
+              height: "22px",
+            }}
+          />
+        )}
+        Columns
+      </Button>
+      <Menu
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        anchorEl={anchorEl}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+      >
+        <div
+          style={{
+            minWidth: 200,
+            maxHeight: 300,
+            overflowY: "auto",
+            padding: "10px 14px",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                borderBottom: "1px solid #eee",
+                display: "flex",
+                backgroundColor: "#fff",
+              }}
+            >
+              <div
+                style={{
+                  flex: 1,
+                  border: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 0px",
+                  margin: "-1px -1px 0 0",
+                }}
+              >
+                <b>All</b>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  padding: "8px 16px",
+                  margin: "-1px -1px 0 0",
+                  width: 70,
+                  border: 0,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Switch
+                  size="small"
+                  checked={visibleFields.length === allFields.length}
+                  onChange={(e) => {
+                    updateView(e.target.checked ? allFields.map((el) => el.id) : []);
+                  }}
+                />
+              </div>
+            </div>
+            <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+              {visibleFields.map((column, index) => (
+                <Draggable key={column?.id}>
+                  <div
+                    key={column?.id}
+                    style={{
+                      display: "flex",
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    <div
+                      style={{
+                        flex: 1,
+                        border: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 0px",
+                        margin: "-1px -1px 0 0",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 5,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {column?.type ? columnIcons(column?.type) : <LinkIcon />}
+                      </div>
+                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                    </div>
+                    <div
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        padding: "8px 16px",
+                        margin: "-1px -1px 0 0",
+                        width: 70,
+                        border: 0,
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Switch
+                        size="small"
+                        checked={currentView?.columns?.includes(column?.id)}
+                        onChange={(e) => {
+                          updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Draggable>
+              ))}
+
+              {unVisibleFields?.map((column, index) => (
+                <div
+                  key={column.id}
+                  style={{
+                    display: "flex",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <div
+                    style={{
+                      flex: 1,
+                      border: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 0px",
+                      margin: "-1px -1px 0 0",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        marginRight: 5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {column.type ? columnIcons(column.type) : <LinkIcon />}
+                    </div>
+                    {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                  </div>
+                  <div
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      padding: "8px 16px",
+                      margin: "-1px -1px 0 0",
+                      width: 70,
+                      border: 0,
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <Switch
+                      size="small"
+                      checked={currentView?.columns?.includes(column?.id)}
+                      onChange={(e) => {
+                        updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </Container>
+          </div>
+        </div>
+      </Menu>
+    </div>
+  );
+}

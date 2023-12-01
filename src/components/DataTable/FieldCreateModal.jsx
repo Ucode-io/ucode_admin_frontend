@@ -260,6 +260,7 @@ export default function FieldCreateModal({
                                   `attributes.options.${idx}.color`,
                                   color
                                 );
+                                setValue(`attributes.has_color`, true);
                                 handleCloseColor();
                               }}
                             />

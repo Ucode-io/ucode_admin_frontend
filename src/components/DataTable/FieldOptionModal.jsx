@@ -77,7 +77,8 @@ export default function FieldOptionModal({
               handleChange(e, field?.value);
             }}
           >
-            {field?.value && columnIcons(field?.value)} <p>{field?.label}</p>
+            {field?.value && columnIcons(field?.value)}
+            <p>{field?.label}</p>
           </Button>
         ))}
       </div>

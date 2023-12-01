@@ -54,6 +54,7 @@ export default function FieldButton({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["FIELDS"]);
       });
   };
 

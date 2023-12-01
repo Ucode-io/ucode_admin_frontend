@@ -113,6 +113,7 @@ export default function FixColumnsRelationSection({ relatedTable: view, fieldsMa
           gap: "5px",
           color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          textWrap: "nowrap",
         }}
       >
         {isLoading ? (

@@ -324,7 +324,7 @@ export default function TableHeadForTableView({
         id={column.id}
         key={index}
         style={{
-          padding: "10px 4px",
+          padding: "8px 4px",
           color: "#747474",
           fontSize: "13px",
           fontStyle: "normal",
@@ -368,7 +368,7 @@ export default function TableHeadForTableView({
           <span
             style={{
               whiteSpace: "nowrap",
-              padding: "0 5px",
+              padding: "0 14px",
             }}
             onClick={(e) => {
               e.stopPropagation();

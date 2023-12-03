@@ -318,11 +318,13 @@ const ObjectDataTable = ({
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
-              <CTableHeadCell width={10}>
+              <CTableHeadCell style={{
+                padding: "0",
+              }}>
                 <span
                   style={{
                     whiteSpace: "nowrap",
-                    padding: "10px 4px",
+                    padding: "0px 4px",
                     color: "#747474",
                     fontSize: "13px",
                     fontStyle: "normal",

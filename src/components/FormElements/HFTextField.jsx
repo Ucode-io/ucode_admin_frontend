@@ -1,12 +1,13 @@
-import {InputAdornment, TextField, Tooltip} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {Controller} from "react-hook-form";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
 
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {Lock} from "@mui/icons-material";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { Lock } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
+    padding: "0px",
     "&::placeholder": {
       color: "#fff",
     },
@@ -46,20 +47,20 @@ const HFTextField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(
-              withTrim
-                ? e.target.value?.trim()
-                : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
-            );
+            onChange(withTrim ? e.target.value?.trim() : typeof e.target.value === "number" ? numberWithSpaces(e.target.value) : e.target.value);
             customOnChange(e);
             isNewTableView && updateObject();
+          }}
+          sx={{
+            width: "100%",
+            height: "25px",
+            padding: "0px",
+            margin: "0px",
           }}
           name={name}
           error={error}
@@ -68,15 +69,29 @@ const HFTextField = ({
           autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
-            inputProps: {tabIndex},
+            inputProps: { tabIndex },
             classes: {
               input: isBlackBg ? classes.input : "",
             },
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                  padding: "0px",
+                }
+              : isNewTableView
+              ? {
+                  background: "inherit",
+                  color: "inherit",
+                  padding: "0px !important",
+                  margin: "0px !important",
+                  height: "25px",
+                }
+              : {},
 
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>
                 <InputAdornment position="start">
-                  <Lock style={{fontSize: "20px"}} />
+                  <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>
               </Tooltip>
             ) : (

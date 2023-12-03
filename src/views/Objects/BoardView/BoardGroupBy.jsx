@@ -91,7 +91,7 @@ export default function BoardGroupButton({
     delete views?.[selectedTabIndex].attributes.tabs;
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         group_fields: form.watch("group_fields"),
         attributes: {
@@ -116,7 +116,7 @@ export default function BoardGroupButton({
   const disableAll = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           tabs: [],

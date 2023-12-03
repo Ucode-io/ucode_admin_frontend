@@ -84,7 +84,7 @@ const BoardView = ({
         tabs,
       },
     };
-    constructorViewService.update(computedData).then((res) => {
+    constructorViewService.update(tableSlug, computedData).then((res) => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };

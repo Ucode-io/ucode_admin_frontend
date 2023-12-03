@@ -38,7 +38,7 @@ export default function CalendarSceduleVisible({
       calendar_from_slug: values.calendar_from_slug,
       calendar_to_slug: values.calendar_to_slug,
     };
-    constructorViewService.update(computedValues).then(() => {
+    constructorViewService.update(tableSlug, computedValues).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       handleClose();
     });

@@ -1,8 +1,8 @@
-import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const layoutService = {
-  getList: (params) => request.get(`/layout`, { params }),
-  update: (data) => request.put(`/layout`, data),
+  getList: (params, tableSlug) => requestV2.get(`/collections/${tableSlug}/layout`, { params }),
+  update: (data, tableSlug) => requestV2.put(`/collections/${tableSlug}/layout`, data),
 };
 
 export default layoutService;

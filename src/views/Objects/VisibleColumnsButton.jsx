@@ -6,16 +6,18 @@ import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {Container, Draggable} from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
-import {applyDrag} from "../../utils/applyDrag";
-import {columnIcons} from "../../utils/constants/columnIcons";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
+import { applyDrag } from "../../utils/applyDrag";
+import { columnIcons } from "../../utils/constants/columnIcons";
+import { useParams } from "react-router-dom";
 
 export default function VisibleColumnsButton({currentView, fieldsMap}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
 
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
@@ -32,7 +34,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
   const updateView = (data) => {
     setIsLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...currentView,
         columns: data,
       })

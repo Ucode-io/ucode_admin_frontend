@@ -39,7 +39,7 @@ const Actions = ({ mainForm }) => {
   const deleteAction = (row, index) => {
     setLoader(true);
     constructorCustomEventService
-      .delete(row.id)
+      .delete(row.id, row.table_slug)
       .then((res) => remove(index))
       .finally(() => setLoader(false));
   };

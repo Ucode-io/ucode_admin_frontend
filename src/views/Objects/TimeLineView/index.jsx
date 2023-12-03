@@ -247,7 +247,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
     };
 
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...computedData,
       })
       .then(() => {
@@ -274,7 +274,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   const updateView = () => {
     setUpdateLoading(true);
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           ...views?.[selectedTabIndex]?.attributes,

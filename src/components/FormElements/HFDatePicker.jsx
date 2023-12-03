@@ -16,7 +16,7 @@ const HFDatePicker = ({
   className,
   name,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   label,
   width,
   mask,
@@ -26,7 +26,7 @@ const HFDatePicker = ({
   placeholder = "",
   isFormEdit = false,
   defaultValue = "",
-  isTransparent=false,
+  isTransparent = false,
   disabled,
   ...props
 }) => {
@@ -49,9 +49,9 @@ const HFDatePicker = ({
             tabIndex={tabIndex}
             value={value}
             onChange={(val) => {
-              onChange(val)
-              isNewTableView && updateObject()
-          }}
+              onChange(val);
+              isNewTableView && updateObject();
+            }}
             disabled={disabled}
             isTransparent={isTransparent}
           />

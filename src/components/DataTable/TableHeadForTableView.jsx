@@ -29,6 +29,7 @@ export default function TableHeadForTableView({
   sortedDatas,
   selectedView,
   setDrawerState,
+  isRelationTable,
   setDrawerStateField,
   setSortedDatas,
   view,

@@ -285,6 +285,7 @@ const ObjectDataTable = ({
                 <TableHeadForTableView
                   currentView={currentView}
                   column={column}
+                  isRelationTable={isRelationTable}
                   index={index}
                   pageName={pageName}
                   sortedDatas={sortedDatas}
@@ -397,7 +398,7 @@ const ObjectDataTable = ({
             isTableView={isTableView}
             relOptions={relOptions}
             tableView={tableView}
-            tableSlug={tableSlug}
+            tableSlug={relatedTableSlug ?? tableSlug}
             fields={columns}
             getValues={getValues}
             mainForm={mainForm}

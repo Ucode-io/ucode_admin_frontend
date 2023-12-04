@@ -557,7 +557,7 @@ const ViewsWithGroups = ({
                   ) : null}
                 </>
               )}
-              {!!groupTable?.length &&
+              {!groupTable?.length &&
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (

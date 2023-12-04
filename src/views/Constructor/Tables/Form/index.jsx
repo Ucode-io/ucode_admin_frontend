@@ -277,8 +277,7 @@ const ConstructorTablesFormPage = () => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      show_in_menu: true,
     };
     // return;
     if (id) updateConstructorTable(computedData);

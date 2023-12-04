@@ -52,13 +52,18 @@ const HFTextField = ({
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(withTrim ? e.target.value?.trim() : typeof e.target.value === "number" ? numberWithSpaces(e.target.value) : e.target.value);
+            onChange(
+              withTrim
+                ? e.target.value?.trim()
+                : typeof e.target.value === "number"
+                ? numberWithSpaces(e.target.value)
+                : e.target.value
+            );
             customOnChange(e);
             isNewTableView && updateObject();
           }}
           sx={{
             width: "100%",
-            height: "25px",
             padding: "0px",
             margin: "0px",
           }}

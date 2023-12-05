@@ -16,7 +16,6 @@ import constructorViewService from "../../services/constructorViewService";
 import {columnIcons} from "../../utils/constants/columnIcons";
 import {useParams} from "react-router-dom";
 import DnsIcon from "@mui/icons-material/Dns";
-import {useParams} from "react-router-dom";
 
 export default function GroupByButton({
   selectedTabIndex,

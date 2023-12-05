@@ -119,7 +119,7 @@ const NewProfilePanel = ({
 
   const refreshTokenFunc = (env_id) => {
     authService
-      .updateToken(params)
+      .updateToken({...params, env_id: env_id})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();

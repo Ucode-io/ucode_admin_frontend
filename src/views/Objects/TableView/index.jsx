@@ -320,7 +320,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: pageToOffset(currentPage, paginiation),
+          offset: searchText ? 1 : pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
           search:

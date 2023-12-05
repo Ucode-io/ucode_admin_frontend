@@ -44,7 +44,6 @@ const GroupTableView = ({
   setFormValue,
   ...props
 }) => {
-  console.log("loggggggggg");
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
   const {id, slug, tableSlug, appId} = useParams();

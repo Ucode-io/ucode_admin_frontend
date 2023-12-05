@@ -1,6 +1,6 @@
 import {InputAdornment, TextField, Tooltip} from "@mui/material";
 import {makeStyles} from "@mui/styles";
-import {Controller} from "react-hook-form";
+import {Controller, useWatch} from "react-hook-form";
 
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
@@ -31,6 +31,7 @@ const HFTextField = ({
   checkRequiredField,
   placeholder,
   endAdornment,
+  field,
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   ...props

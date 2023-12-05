@@ -1,21 +1,5 @@
-import AppsIcon from "@mui/icons-material/Apps";
-import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
-import ColorizeIcon from "@mui/icons-material/Colorize";
-import EmailIcon from "@mui/icons-material/Email";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import LooksOneIcon from "@mui/icons-material/LooksOne";
-import PasswordIcon from "@mui/icons-material/Password";
-import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import Filter1Icon from "@mui/icons-material/Filter1";
-import {Button, Switch} from "@mui/material";
-import React, {useEffect, useMemo} from "react";
+import {Switch} from "@mui/material";
+import React, {useEffect} from "react";
 import {columnIcons} from "../../../../utils/constants/columnIcons";
 
 export default function SearchParams({
@@ -30,7 +14,7 @@ export default function SearchParams({
       setCheckedColumns([...checkedColumns, slug]);
     }
   };
-
+  console.log("checkedColumns", checkedColumns);
   const selectAll = () => {
     setCheckedColumns(columns.map((el) => el.slug));
   };

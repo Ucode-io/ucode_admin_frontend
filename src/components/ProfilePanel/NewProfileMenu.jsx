@@ -123,6 +123,7 @@ const NewProfilePanel = ({
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
+        dispatch(companyActions.setEnvironmentId(env_id));
       })
       .catch((err) => {
         console.log(err);

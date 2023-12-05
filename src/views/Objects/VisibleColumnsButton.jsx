@@ -56,8 +56,10 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
-    if (result) {
-      updateView(result.map((el) => el.id));
+    const computedResult = result?.filter((item) => item?.id);
+
+    if (computedResult) {
+      updateView(computedResult?.map((el) => el?.id));
     }
   };
 
@@ -203,6 +205,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         alignItems: "center",
                         padding: "8px 0px",
                         margin: "-1px -1px 0 0",
+                        minWidth: "200px",
                       }}
                     >
                       <div
@@ -228,7 +231,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       style={{
                         flex: 1,
                         alignItems: "center",
-                        padding: "8px 16px",
+                        padding: "8px 0px",
                         margin: "-1px -1px 0 0",
                         width: 70,
                         border: 0,
@@ -236,6 +239,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         paddingRight: 0,
                         display: "flex",
                         justifyContent: "flex-end",
+                        width: "70px",
                       }}
                     >
                       <Switch

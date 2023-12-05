@@ -18,6 +18,7 @@ const EnvironmentsList = ({
   environmentList,
   handleEnvNavigate,
   setSelected,
+  refreshTokenFunc,
 }) => {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.globalPermissions);
@@ -53,7 +54,8 @@ const EnvironmentsList = ({
               setSelected(true);
               dispatch(companyActions.setEnvironmentItem(item));
               dispatch(companyActions.setEnvironmentId(item.id));
-              closeEnvironmentList();
+              closeEnvironmentList(item?.id);
+              refreshTokenFunc();
             }}
             className={styles.menuItem}
             key={item.id}

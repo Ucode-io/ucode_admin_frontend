@@ -16,6 +16,7 @@ import constructorViewService from "../../services/constructorViewService";
 import {columnIcons} from "../../utils/constants/columnIcons";
 import {useParams} from "react-router-dom";
 import DnsIcon from "@mui/icons-material/Dns";
+import {useParams} from "react-router-dom";
 
 export default function GroupByButton({
   selectedTabIndex,
@@ -286,10 +287,7 @@ export default function GroupByButton({
 
                 <Switch
                   size="small"
-                  checked={
-                    selectedColumns?.includes(column?.id) ||
-                    view?.group_fields?.includes(column?.id)
-                  }
+                  checked={selectedColumns?.includes(column?.id)}
                   onChange={(e, val) => changeHandler(val, column.id, column)}
                 />
               </div>

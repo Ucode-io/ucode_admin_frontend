@@ -532,6 +532,7 @@ const NewProfilePanel = ({
         environmentList={company.environments}
         handleEnvNavigate={handleEnvNavigate}
         setSelected={setSelected}
+        refreshTokenFunc={refreshTokenFunc}
       />
       {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
 

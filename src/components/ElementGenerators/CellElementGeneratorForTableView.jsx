@@ -289,24 +289,24 @@ const CellElementGeneratorForTableView = ({
         />
       );
 
-    case "MULTISELECT":
-      return (
-        <HFMultipleAutocomplete
-          disabled={isDisabled}
-          isFormEdit
-          updateObject={updateObject}
-          isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          width="100%"
-          required={field.required}
-          field={field}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          data={data}
-        />
-      );
+    // case "MULTISELECT":
+    //   return (
+    //     <HFMultipleAutocomplete
+    //       disabled={isDisabled}
+    //       isFormEdit
+    //       updateObject={updateObject}
+    //       isNewTableView={true}
+    //       control={control}
+    //       name={computedSlug}
+    //       width="100%"
+    //       required={field.required}
+    //       field={field}
+    //       placeholder={field.attributes?.placeholder}
+    //       isBlackBg={isBlackBg}
+    //       defaultValue={defaultValue}
+    //       data={data}
+    //     />
+    //   );
     case "MULTISELECT_V2":
       return (
         <HFMultipleAutocomplete

@@ -256,6 +256,9 @@ const ObjectsFormPageForModal = ({
         />
       </div>
       <Footer
+      style={{
+        bottom: "-10px",
+      }}
         extra={
           <>
             <SecondaryButton

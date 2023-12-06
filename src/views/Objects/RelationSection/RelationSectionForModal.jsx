@@ -324,6 +324,9 @@ const RelationSectionForModal = ({
               key={relation.id}
               className={"react_detail"}
               selectedIndex={selectedTabIndex}
+              style={{
+                height: '100%',
+              }}
               onSelect={(index) => {
                 setSelectedTabIndex(index);
               }}
@@ -399,12 +402,17 @@ const RelationSectionForModal = ({
                 </div>
               )}
 
-              <Box>
+              <Box sx={{
+                height: '100%',
+            
+              }}>
                 {loader ? (
                   <PageFallback />
                 ) : (
                   relation?.tabs?.map((el, index) => (
-                    <TabPanel key={el.id}>
+                    <TabPanel key={el.id} style={{
+                      height: '100%',
+                    }}>
                       {!selectedTab?.relation_id ? (
                         <MainInfoForModal
                           control={control}

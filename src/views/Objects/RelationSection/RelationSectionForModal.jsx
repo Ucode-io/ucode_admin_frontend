@@ -1,18 +1,18 @@
-import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
-import {InsertDriveFile} from "@mui/icons-material";
-import {Box, Card} from "@mui/material";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useMutation} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import { InsertDriveFile } from "@mui/icons-material";
+import { Box, Card } from "@mui/material";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useSearchParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
-import {store} from "../../../store";
+import { store } from "../../../store";
 import FilesSection from "../FilesSection";
 import MainInfoForModal from "../MainInfoForModal";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
@@ -41,7 +41,7 @@ const RelationSectionForModal = ({
   selectedTab,
   errors,
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -63,15 +63,12 @@ const RelationSectionForModal = ({
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
 
-  const {tableSlug: tableSlugFromParams, id: idFromParams} = useParams();
+  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
-    useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
-    {}
-  );
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
 
   const tableHeightOptions = [
     {
@@ -103,7 +100,7 @@ const RelationSectionForModal = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-  const {fields, remove, append, update} = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -124,8 +121,7 @@ const RelationSectionForModal = ({
       mapped[keys[0]] = values[0];
     });
 
-    if (getRelatedTabeSlug?.type === "Many2Many")
-      setSelectedManyToManyRelation(getRelatedTabeSlug);
+    if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
       setFormVisible(true);
@@ -140,23 +136,20 @@ const RelationSectionForModal = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  const {mutate: updateMultipleObject} = useMutation(
+  const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(
-        getRelatedTabeSlug.relatedTable,
-        {
-          data: {
-            objects: values.multi.map((item) => ({
-              ...item,
-              guid: item?.guid ?? undefined,
-              doctors_id_2: getValue(item, "doctors_id_2"),
-              doctors_id_3: getValue(item, "doctors_id_3"),
-              specialities_id: getValue(item, "specialities_id"),
-              [fieldSlug]: id,
-            })),
-          },
-        }
-      ),
+      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? undefined,
+            doctors_id_2: getValue(item, "doctors_id_2"),
+            doctors_id_3: getValue(item, "doctors_id_3"),
+            specialities_id: getValue(item, "specialities_id"),
+            [fieldSlug]: id,
+          })),
+        },
+      }),
     {
       enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {
@@ -169,8 +162,6 @@ const RelationSectionForModal = ({
     updateMultipleObject(data);
   };
 
-  /*****************************JWT START*************************/
-
   const computedSections = useMemo(() => {
     const sections = [];
     data?.map((relation) => {
@@ -181,6 +172,8 @@ const RelationSectionForModal = ({
     return sections;
   }, [data, selectedTabIndex]);
 
+  /*****************************JWT START*************************/
+
   useEffect(() => {
     getRelatedTabeSlug &&
       constructorObjectService
@@ -190,8 +183,7 @@ const RelationSectionForModal = ({
             data: {
               offset: 0,
               limit: 0,
-              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-                idFromParams,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
             },
           },
           {
@@ -199,11 +191,7 @@ const RelationSectionForModal = ({
           }
         )
         .then((res) => {
-          setJwtObjects(
-            res?.data?.fields?.filter(
-              (item) => item?.attributes?.object_id_from_jwt === true
-            )
-          );
+          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
         })
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
@@ -240,16 +228,38 @@ const RelationSectionForModal = ({
         language_setting: i18n?.language,
       })
       .then((res) => {
+        console.log("eeeeeeeee", res?.layouts);
         const layout = res?.layouts
           ?.filter((layout) => layout?.is_default === true)
           .map((item) => {
             return {
               ...item,
-              tabs: item?.tabs?.filter(
-                (tab) =>
-                  tab?.relation?.permission?.view_permission === true ||
-                  tab?.type === "section"
-              ),
+              tabs: item?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),
+            };
+          })
+          ?.map((layout) => {
+            return {
+              ...layout,
+              tabs: layout?.tabs?.map((tab) => {
+                return {
+                  ...tab,
+                  sections: tab?.sections?.map((section) => {
+                    return {
+                      ...section,
+                      fields: section?.fields?.map((field) => {
+                        if (field?.is_visible_layout === undefined) {
+                          return {
+                            ...field,
+                            is_visible_layout: true,
+                          };
+                        } else {
+                          return field;
+                        }
+                      }),
+                    };
+                  }),
+                };
+              }),
             };
           });
         setData(layout);
@@ -273,9 +283,7 @@ const RelationSectionForModal = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab) - 1)
-      : setSelectedTabIndex(0);
+    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
   const handleHeightControl = (val) => {
@@ -307,12 +315,7 @@ const RelationSectionForModal = ({
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal
-          relation={selectedManyToManyRelation}
-          closeModal={() => setSelectedManyToManyRelation(null)}
-          limit={limit}
-          setLimit={setLimit}
-        />
+        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
       )}
       {data?.length ? (
         <Card className={styles.card}>
@@ -331,11 +334,7 @@ const RelationSectionForModal = ({
                     {relation?.tabs?.map((el, index) => (
                       <Tab
                         key={el.id}
-                        className={`${styles.tabs_item} ${
-                          selectedTabIndex === index
-                            ? "custom-selected-tab"
-                            : "custom-tab"
-                        }`}
+                        className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
                         onClick={() => {
                           setSelectedIndex(index);
                           onSelect(el);
@@ -349,12 +348,8 @@ const RelationSectionForModal = ({
                         <div className="flex align-center gap-2 text-nowrap">
                           {el?.attributes?.[`label_${i18n.language}`]
                             ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[
-                                `title_${i18n.language}`
-                              ]
-                            ? el?.relation?.attributes?.[
-                                `title_${i18n.language}`
-                              ]
+                            : el?.relation?.attributes?.[`title_${i18n.language}`]
+                            ? el?.relation?.attributes?.[`title_${i18n.language}`]
                             : el?.label ?? el?.title}
                         </div>
                       </Tab>
@@ -375,23 +370,6 @@ const RelationSectionForModal = ({
                         <CloseIcon
                           style={{
                             color: "red",
-                            width: "20px",
-                            height: "20px",
-                          }}
-                        />
-                      </SecondaryButton>
-                      <SecondaryButton
-                        color=""
-                        style={{
-                          position: "absolute",
-                          right: "46px",
-                          border: "0px solid #2d6ce5",
-                          padding: "4px",
-                        }}
-                      >
-                        <SaveIcon
-                          style={{
-                            color: "green",
                             width: "20px",
                             height: "20px",
                           }}
@@ -440,6 +418,8 @@ const RelationSectionForModal = ({
                           errors={errors}
                           remove={remove}
                           editAcces={editAcces}
+                          setData={setData}
+                          data={data}
                         />
                       ) : relation?.relatedTable === "file" ? (
                         <FilesSection

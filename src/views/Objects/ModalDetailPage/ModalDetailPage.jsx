@@ -23,9 +23,9 @@ export default function ModalDetailPage({
         className={`${
           fullScreen ? styles.cardModal : styles.card
         } PlatformModal`}
-      >
+      > 
         <div className={styles.header}>
-          <div className={styles.cardTitle}>View settings</div>
+          <div className={styles.cardTitle}>Detailed</div>
           <IconButton
             className={styles.closeButton}
             onClick={() => {

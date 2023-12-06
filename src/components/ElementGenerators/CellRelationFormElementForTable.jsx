@@ -238,52 +238,52 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field],
-    () => {
-      if (!field?.table_slug) return null;
-      return constructorObjectService.getListV2(
-        field?.table_slug,
-        {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [value],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
-        },
-        {
-          language_setting: i18n?.language,
-        }
-      );
-    },
-    {
-      enabled:
-        (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
+  // const {data: optionsFromLocale} = useQuery(
+  //   ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field],
+  //   () => {
+  //     if (!field?.table_slug) return null;
+  //     return constructorObjectService.getListV2(
+  //       field?.table_slug,
+  //       {
+  //         data: {
+  //           ...autoFiltersValue,
+  //           additional_request: {
+  //             additional_field: "guid",
+  //             additional_values: [value],
+  //           },
+  //           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+  //           search: debouncedValue.trim(),
+  //           limit: 10,
+  //           offset: pageToOffset(page, 10),
+  //         },
+  //       },
+  //       {
+  //         language_setting: i18n?.language,
+  //       }
+  //     );
+  //   },
+  //   {
+  //     enabled:
+  //       (!field?.attributes?.function_path && Boolean(page > 1)) ||
+  //       (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
+  //       !relOptions?.length,
+  //     select: (res) => {
+  //       const options = res?.data?.response ?? [];
 
-        return {
-          options,
-        };
-      },
-      onSuccess: (data) => {
-        if (data?.options?.length) {
-          setAllOptions((prevOptions) => [
-            ...(prevOptions ?? []),
-            ...(data.options ?? []),
-          ]);
-        }
-      },
-    }
-  );
+  //       return {
+  //         options,
+  //       };
+  //     },
+  //     onSuccess: (data) => {
+  //       if (data?.options?.length) {
+  //         setAllOptions((prevOptions) => [
+  //           ...(prevOptions ?? []),
+  //           ...(data.options ?? []),
+  //         ]);
+  //       }
+  //     },
+  //   }
+  // );
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(

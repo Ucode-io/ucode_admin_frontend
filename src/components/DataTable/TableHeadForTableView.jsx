@@ -8,15 +8,15 @@ import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import {Button, Menu} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch} from "react-redux";
+import { Button, Menu } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { useDispatch } from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
-import {paginationActions} from "../../store/pagination/pagination.slice";
-import {CTableHeadCell} from "../CTable";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import { CTableHeadCell } from "../CTable";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import "./style.scss";
 
@@ -47,6 +47,8 @@ export default function TableHeadForTableView({
   tableSlug,
   disableFilters,
   currentView,
+  setFieldCreateAnchor,
+  setFieldData,
   refetch,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,7 +56,7 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -124,7 +126,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -147,12 +149,9 @@ export default function TableHeadForTableView({
           id: 2,
           title: "Edit field",
           icon: <CreateOutlinedIcon />,
-          onClickAction: () => {
-            if (column?.attributes?.relation_data) {
-              setDrawerStateField(column);
-            } else {
-              setDrawerState(column);
-            }
+          onClickAction: (e) => {
+            setFieldCreateAnchor(e.currentTarget);
+            setFieldData(column);
           },
         },
       ],
@@ -177,7 +176,7 @@ export default function TableHeadForTableView({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({tableSlug, field, order})
+              paginationActions.setSortValues({ tableSlug, field, order })
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -313,7 +312,7 @@ export default function TableHeadForTableView({
     };
 
     constructorViewService.update(computedValues).then(() => {
-      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
       handleSummaryClose();
       handleClose();
     });
@@ -457,6 +456,7 @@ export default function TableHeadForTableView({
                   <div
                     onClick={(e) => {
                       child.onClickAction(e);
+                      handleClose();
                       if (child?.id !== 18) {
                         handleClose();
                       }
@@ -500,7 +500,7 @@ export default function TableHeadForTableView({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{horizontal: "right"}}
+        anchorOrigin={{ horizontal: "right" }}
         PaperProps={{
           elevation: 0,
           sx: {

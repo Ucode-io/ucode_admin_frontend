@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { formatPhoneNumberForRequest } from "../../../utils/formatPhoneNumber";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useMutation } from "react-query";
 
 const RegisterFormPage = ({ setFormType, formType }) => {
   const { control, handleSubmit } = useForm();
@@ -23,9 +24,10 @@ const RegisterFormPage = ({ setFormType, formType }) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+  // const handlePasswordChange = (event) => {
+  //   setPassword(event.target.value);
+  // };
+  const { mutate: updateObject } = useMutation(() => console.log(""));
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -109,10 +111,13 @@ const RegisterFormPage = ({ setFormType, formType }) => {
             <HFTextFieldWithMask
               name="user_info.phone"
               control={control}
-              fullWidth
-              mask={"(99) 999-99-99"}
+              mask={"+\\9\\9\\8 (99) 999-99-99"}
+              maskChar={null}
               required
               placeholder="Введите номер телефона"
+              updateObject={updateObject}
+              className={classes.mask}
+              fullWidth
             />
           </div>
           <div className={classes.formRow}>

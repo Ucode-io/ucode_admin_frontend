@@ -15,6 +15,8 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import { LoginStrategy } from "../../../../mock/FolderSettings";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
+import style from "./main.module.scss";
 
 const MainInfo = ({ control, watch }) => {
   const { slug } = useParams();
@@ -122,14 +124,8 @@ const MainInfo = ({ control, watch }) => {
 
   return (
     <div className="p-2">
-      <FormCard title="Общие сведение">
-        <div className="flex">
-          <FRow label="Иконка">
-            <HFIconPicker control={control} name="icon" required />
-          </FRow>
-        </div>
-
-        <FRow label="Название">
+      <FormCard title="General">
+        <FRow label="Name">
           <Box style={{ display: "flex", gap: "6px" }}>
             {languages?.map((language) => {
               const languageFieldName = `attributes.label_${language?.slug}`;
@@ -139,66 +135,47 @@ const MainInfo = ({ control, watch }) => {
                   control={control}
                   name={languageFieldName}
                   fullWidth
-                  placeholder={`Название (${language?.slug})`}
+                  placeholder={`Name (${language?.slug})`}
                   defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
                 />
               );
             })}
           </Box>
         </FRow>
-        <FRow label="Описание">
-          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {languages?.map((desc) => {
-              const languageFieldDesc = `attributes.description_${desc?.slug}`;
-              const fieldValue = watch(languageFieldDesc);
-              return (
-                <HFTextField
-                  control={control}
-                  name={languageFieldDesc}
-                  fullWidth
-                  placeholder={`Название (${desc?.slug})`}
-                  defaultValue={fieldValue || description} // Set default value if fieldValue is empty
-                />
-              );
-            })}
-          </Box>
-        </FRow>
-        <FRow label="SLUG">
+        <FRow label="Key">
           <HFTextField
             control={control}
             name="slug"
             fullWidth
-            placeholder="SLUG"
+            placeholder="KEY"
             required
             withTrim
           />
         </FRow>
-        <FRow label="Subtitle field">
-          <HFSelect
-            control={control}
-            name="subtitle_field_slug"
-            fullWidth
-            placeholder="Subtitle field"
-            options={computedFields}
-          />
-        </FRow>
 
-        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
-          <FRow label="Login Table">
-            <HFSwitch control={control} name="is_login_table" required />
-          </FRow>
-          <FRow label="Показать в меню">
-            <HFSwitch control={control} name="show_in_menu" required />
-          </FRow>
-          <FRow label="Кеш">
-            <HFSwitch control={control} name="is_cached" required />
-          </FRow>
-          <FRow label="Софт Удаление">
-            <HFSwitch control={control} name="soft_delete" required />
-          </FRow>
-          <FRow label="Сортировка">
-            <HFSwitch control={control} name="order_by" required />
-          </FRow>
+        <Box
+          sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
+          className={style.checkbox}
+        >
+          <HFCheckbox
+            control={control}
+            name="is_login_table"
+            required
+            label="Login Table"
+          />
+          <HFCheckbox
+            control={control}
+            name="is_cached"
+            required
+            label="Cache"
+          />
+          <HFCheckbox
+            control={control}
+            name="soft_delete"
+            required
+            label="Soft delete"
+          />
+          <HFCheckbox control={control} name="order_by" required label="Sort" />
         </Box>
 
         {loginTable && (

@@ -1,5 +1,5 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
+import DnsIcon from "@mui/icons-material/Dns";
 import {
   Box,
   Button,
@@ -8,14 +8,13 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import constructorViewService from "../../services/constructorViewService";
-import DnsIcon from "@mui/icons-material/Dns";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
+import constructorViewService from "../../services/constructorViewService";
+import { columnIcons } from "../../utils/constants/columnIcons";
 
 export default function GroupByButton({
   selectedTabIndex,
@@ -88,7 +87,7 @@ export default function GroupByButton({
       });
   };
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [updatedColumns, setUpdatedColumns] = useState();
   useEffect(() => {
@@ -149,7 +148,7 @@ export default function GroupByButton({
         onClick={handleClick}
       >
         {updateLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -295,7 +294,7 @@ export default function GroupByButton({
               </div>
             ))
           ) : (
-            <Box style={{padding: "10px"}}>
+            <Box style={{ padding: "10px" }}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

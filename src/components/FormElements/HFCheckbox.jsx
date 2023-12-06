@@ -8,9 +8,10 @@ const HFCheckbox = ({
   name,
   label,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   tabIndex,
   className,
+  labelClassName,
   defaultValue = false,
   ...props
 }) => {
@@ -31,19 +32,27 @@ const HFCheckbox = ({
         >
           <Checkbox
             id={`checkbox-${id}`}
-            style={{ transform: "translatey(-1px)" }}
+            style={{
+              transform: "translatey(-1px)",
+              marginRight: "8px",
+              margin: "8px 8px 8px 0",
+              padding: 0,
+            }}
             checked={value ?? false}
             autoFocus={tabIndex === 1}
             onChange={(_, val) => {
-              onChange(val)
-              isNewTableView && updateObject()
+              onChange(val);
+              isNewTableView && updateObject();
             }}
             {...props}
-              inputProps={
-                tabIndex
-              }
+            inputProps={tabIndex}
           />
-          <label htmlFor={`checkbox-${id}`}>{label}</label>
+          <label
+            htmlFor={`checkbox-${id}`}
+            className={`label ${labelClassName}`}
+          >
+            {label}
+          </label>
         </div>
       )}
     ></Controller>

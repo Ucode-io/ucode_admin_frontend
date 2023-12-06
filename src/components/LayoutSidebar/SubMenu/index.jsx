@@ -46,7 +46,6 @@ const SubMenu = ({
   const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const [check, setCheck] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
   const addPermission =
@@ -98,7 +97,6 @@ const SubMenu = ({
         });
     }
   };
-  console.log("selectedApp", selectedApp);
   return (
     <div
       className={`SubMenu ${
@@ -249,8 +247,6 @@ const SubMenu = ({
                           menuStyle={menuStyle}
                           menuItem={menuItem}
                           index={index}
-                          setCheck={setCheck}
-                          check={check}
                           selectedApp={selectedApp}
                         />
                       ))}

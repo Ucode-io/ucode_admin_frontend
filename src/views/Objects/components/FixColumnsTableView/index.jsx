@@ -1,15 +1,14 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useQueryClient} from "react-query";
-import constructorViewService from "../../../../services/constructorViewService";
-import {columnIcons} from "../../../../utils/constants/columnIcons";
-import style from "./style.module.scss";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
+import constructorViewService from "../../../../services/constructorViewService";
+import { columnIcons } from "../../../../utils/constants/columnIcons";
+import style from "./style.module.scss";
 
-export default function FixColumnsTableView({view, fieldsMap}) {
+export default function FixColumnsTableView({ view, fieldsMap }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
@@ -110,7 +109,7 @@ export default function FixColumnsTableView({view, fieldsMap}) {
         }}
       >
         {isLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",

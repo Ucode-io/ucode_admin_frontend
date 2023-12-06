@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import TableRowForm from "./TableRowForm";
+import TableDataForm from "../ElementGenerators/TableDataForm";
 
 const TableRow = ({
   relOptions,
@@ -135,8 +135,13 @@ const TableRow = ({
                   <OpenInFullIcon />
                 </Button>
 
-                <span className="data_table__row_number" style={{ width: "35px" }}>
-                  {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+                <span
+                  className="data_table__row_number"
+                  style={{ width: "35px" }}
+                >
+                  {limit === "all"
+                    ? rowIndex + 1
+                    : (currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
                 </span>
 
@@ -235,7 +240,9 @@ const TableRow = ({
             </td>
 
             <td>
-              <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
+              <div
+                style={{ display: "flex", gap: "5px", padding: "3px" }}
+              ></div>
             </td>
           </CTableRow>
         </>

@@ -165,22 +165,27 @@ const AppSidebar = ({
           sidebarIsOpen &&
           !element?.is_static ? (
             <>
-              <Tooltip title="Folder settings" placement="top">
-                <Box className="extra_icon">
-                  <BsThreeDots
-                    size={13}
-                    onClick={(e) => {
-                      handleOpenNotify(e, "FOLDER");
-                    }}
-                    style={{
-                      color:
-                        selectedApp?.id === element.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                </Box>
-              </Tooltip>
+              {(element?.data?.permission?.delete ||
+                element?.data?.permission?.update ||
+                element?.data?.permission?.write) && (
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        handleOpenNotify(e, "FOLDER");
+                      }}
+                      style={{
+                        color:
+                          selectedApp?.id === element.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              )}
+
               {element?.data?.permission?.create && (
                 <Tooltip title="Create folder" placement="top">
                   <Box

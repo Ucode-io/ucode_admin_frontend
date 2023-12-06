@@ -55,7 +55,7 @@ const EnvironmentsList = ({
               dispatch(companyActions.setEnvironmentItem(item));
               dispatch(companyActions.setEnvironmentId(item.id));
               closeEnvironmentList(item?.id);
-              refreshTokenFunc();
+              refreshTokenFunc(item?.id);
             }}
             className={styles.menuItem}
             key={item.id}

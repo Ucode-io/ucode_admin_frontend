@@ -196,6 +196,7 @@ const AutoCompleteElement = ({
   }, [field]);
 
   const autoFiltersFieldFroms = useMemo(() => {
+    setPage(1);
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
 
@@ -421,6 +422,12 @@ const AutoCompleteElement = ({
     setClientTypeValue();
   }, []);
 
+  useEffect(() => {
+    if (autoFiltersValue) {
+      setPage(1);
+    }
+  }, [autoFiltersValue]);
+
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
@@ -428,6 +435,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

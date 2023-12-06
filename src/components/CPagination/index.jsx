@@ -8,6 +8,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {paginationActions} from "../../store/pagination/pagination.slice";
 import {useMemo} from "react";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 
 const CPagination = ({
   setCurrentPage = () => {},
@@ -106,9 +107,11 @@ const CPagination = ({
         }}
       >
         {selectedObjectsForDelete?.length > 0 && !disablePagination ? (
-          <Button variant="outlined" color="error" onClick={multipleDelete}>
-            Delete all selected
-          </Button>
+          <RectangleIconButton color="error" onClick={multipleDelete}>
+            <Button variant="outlined" color="error">
+              Delete all selected
+            </Button>
+          </RectangleIconButton>
         ) : null}
 
         {isTableView && (

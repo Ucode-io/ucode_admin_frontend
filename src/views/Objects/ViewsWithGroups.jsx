@@ -71,6 +71,7 @@ const ViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -300,7 +301,10 @@ const ViewsWithGroups = ({
             <Divider orientation="vertical" flexItem />
             <SearchInput
               placeholder={"Search"}
-              onChange={(e) => setSearchText(e)}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setSearchText(e);
+              }}
             />
             <button
               className={style.moreButton}
@@ -582,6 +586,8 @@ const ViewsWithGroups = ({
                     ) : (
                       <TableView
                         isVertical
+                        setCurrentPage={setCurrentPage}
+                        currentPage={currentPage}
                         visibleColumns={visibleColumns}
                         visibleRelationColumns={visibleRelationColumns}
                         visibleForm={visibleForm}
@@ -636,6 +642,8 @@ const ViewsWithGroups = ({
                   ) : (
                     <TableView
                       visibleColumns={visibleColumns}
+                      setCurrentPage={setCurrentPage}
+                      currentPage={currentPage}
                       visibleRelationColumns={visibleRelationColumns}
                       visibleForm={visibleForm}
                       currentView={view}

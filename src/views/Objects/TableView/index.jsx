@@ -28,6 +28,8 @@ import {quickFiltersActions} from "../../../store/filter/quick_filter";
 
 const TableView = ({
   filterVisible,
+  setCurrentPage,
+  currentPage,
   setFilterVisible,
   handleClickFilter,
   handleCloseFilter,
@@ -70,7 +72,7 @@ const TableView = ({
   const {new_list} = useSelector((state) => state.filter);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
+
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -86,6 +88,7 @@ const TableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
+  const [combinedTableData, setCombinedTableData] = useState([]);
 
   const mainForm = useForm({
     defaultValues: {
@@ -259,7 +262,6 @@ const TableView = ({
     }
   }, [paginiation, limit, currentPage]);
 
-  const [combinedTableData, setCombinedTableData] = useState([]);
   const {
     data: {fiedlsarray, fieldView} = {
       tableData: [],

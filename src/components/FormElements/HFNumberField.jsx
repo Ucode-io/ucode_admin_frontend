@@ -26,10 +26,10 @@ const HFNumberField = ({
   const handleChange = (value, onChange) => {
     if (value.floatValue) {
       onChange(value.floatValue);
-      isNewTableView && updateObject();
+      // isNewTableView && updateObject();
     } else {
       onChange("");
-      isNewTableView && updateObject();
+      // isNewTableView && updateObject();
     }
   };
 

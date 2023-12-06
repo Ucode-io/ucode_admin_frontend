@@ -239,7 +239,7 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -265,7 +265,8 @@ const AutoCompleteElement = ({
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)),
+        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
+        !relOptions?.length,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -274,7 +275,12 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        if (data?.options?.length) {
+          setAllOptions((prevOptions) => [
+            ...(prevOptions ?? []),
+            ...(data.options ?? []),
+          ]);
+        }
       },
     }
   );
@@ -285,7 +291,7 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);
-
+  console.log("computedOptions", allOptions);
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];

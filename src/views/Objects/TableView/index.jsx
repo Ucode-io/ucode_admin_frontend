@@ -25,6 +25,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import { quickFiltersActions } from "../../../store/filter/quick_filter";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 
 const TableView = ({
   filterVisible,
@@ -691,7 +692,7 @@ const TableView = ({
         onClose={() => setDrawerState(null)}
         orientation="horizontal"
       >
-        <RelationSettingsTest
+        <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}
           getRelationFields={getRelationFields}

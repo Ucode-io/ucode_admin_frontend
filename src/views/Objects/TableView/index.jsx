@@ -638,7 +638,7 @@ const TableView = ({
           onDeleteClick={deleteHandler}
           tableSlug={tableSlug}
           view={view}
-          tableStyle={{
+          tableStyle={{ 
             borderRadius: 0,
             border: "none",
             borderBottom: "1px solid #E5E9EB",

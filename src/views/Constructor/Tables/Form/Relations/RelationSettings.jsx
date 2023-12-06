@@ -102,7 +102,9 @@ const RelationSettings = ({
     return (
       (values.type === "Many2One" && values.table_from === slug) ||
       values.type === "Many2Many" ||
-      values.type === "Recursive"
+      values.type === "Recursive" ||
+      values.type === "LOOKUP" ||
+      values.type === "LOOKUPS"
     );
   }, [values.type, values.table_from, slug]);
 
@@ -119,6 +121,7 @@ const RelationSettings = ({
   const params = {
     language_setting: i18n?.language,
   };
+  console.log("relatedTableSlug", relatedTableSlug);
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
@@ -443,7 +446,7 @@ const RelationSettings = ({
 
                         <FRow
                           label="Multiple Input"
-                          style={{marginTop: "20px"}}
+                          style={{ marginTop: "20px" }}
                         >
                           <HFSwitch
                             name="attributes.multiple_input"

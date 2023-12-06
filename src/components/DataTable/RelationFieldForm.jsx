@@ -17,6 +17,7 @@ export default function RelationFieldForm({
   watch,
   setValue,
   fieldWatch,
+  relatedTableSlug,
 }) {
   const { tableSlug } = useParams();
   const envId = store.getState().company.environmentId;
@@ -25,12 +26,6 @@ export default function RelationFieldForm({
   useEffect(() => {
     setValue("table_from", menuItem?.data.table?.slug);
   }, []);
-
-  const relatedTableSlug = useMemo(() => {
-    if (fieldWatch.table_to === tableSlug) return fieldWatch.table_from;
-    else if (fieldWatch.table_from === tableSlug) return fieldWatch.table_to;
-    return null;
-  }, [fieldWatch, tableSlug]);
 
   const { data: tables } = useTablesListQuery({
     params: { envId: envId },
@@ -60,6 +55,8 @@ export default function RelationFieldForm({
       },
     }
   );
+
+  console.log("relatedTableFields", relatedTableFields);
 
   return (
     <Box className={style.relation}>

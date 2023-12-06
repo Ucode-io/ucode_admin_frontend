@@ -1,6 +1,6 @@
 import "./style.scss";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import style from "./field.module.scss";
 import {
   dateFieldFormats,
@@ -21,6 +21,10 @@ import HFSwitch from "../FormElements/HFSwitch";
 import RelationFieldForm from "./RelationFieldForm";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HFTextArea from "../FormElements/HFTextArea";
+import { useParams } from "react-router-dom";
+import constructorObjectService from "../../services/constructorObjectService";
+import { useQuery } from "react-query";
+import { useTranslation } from "react-i18next";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -49,6 +53,19 @@ export default function FieldCreateModal({
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
   const mathType = watch("attributes.math");
+  const values = watch();
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
+
+  console.log("values", values);
+  console.log("tableSlug", tableSlug);
+
+  const relatedTableSlug = useMemo(() => {
+    if (values.type === "Recursive") return values.table_from;
+    if (values.table_to === tableSlug) return values.table_from;
+    else if (values.table_from === tableSlug) return values.table_to;
+    return null;
+  }, [values, tableSlug]);
 
   const {
     fields: dropdownFields,
@@ -85,6 +102,73 @@ export default function FieldCreateModal({
       },
     },
   });
+
+  const params = {
+    language_setting: i18n?.language,
+  };
+
+  const { isLoading: fieldsLoading } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      if (!relatedTableSlug) return [];
+      return constructorObjectService.getList(
+        relatedTableSlug,
+        {
+          data: { limit: 0, offset: 0 },
+        },
+        params
+      );
+    },
+    {
+      cacheTime: 10,
+      onSuccess: ({ data }) => {
+        if (!data) return;
+
+        const fields = data?.fields ?? [];
+
+        const checkedColumns =
+          values.columns
+            ?.map((id) => {
+              const field = fields.find((field) => field.id === id);
+              if (field)
+                return {
+                  ...field,
+                  is_checked: true,
+                };
+              return null;
+            })
+            .filter((field) => field) ?? [];
+        const unCheckedColumns = fields.filter(
+          (field) => !values.columns?.includes(field.id)
+        );
+
+        const checkedFilters =
+          values.quick_filters
+            ?.map((filter) => {
+              const field = fields.find(
+                (field) => field.id === filter.field_id
+              );
+              if (field)
+                return {
+                  ...field,
+                  is_checked: true,
+                };
+              return null;
+            })
+            .filter((field) => field) ?? [];
+
+        const unCheckedFilters = fields.filter(
+          (field) =>
+            !values.quick_filters?.some(
+              (filter) => filter.field_id === field.id
+            )
+        );
+        console.log("unCheckedFilters", unCheckedFilters);
+        setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
+        setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
+      },
+    }
+  );
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -421,14 +505,15 @@ export default function FieldCreateModal({
             </>
           )}
 
-          {format === "RELATION" && (
+          {format === "RELATION" && !fieldData ? (
             <RelationFieldForm
               control={control}
               watch={watch}
               setValue={setValue}
               fieldWatch={fieldWatch}
+              relatedTableSlug={relatedTableSlug}
             />
-          )}
+          ) : null}
           <Box className={style.button_group}>
             <Button variant="contained" color="error" onClick={handleClick}>
               Cancel

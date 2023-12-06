@@ -237,6 +237,7 @@ const ObjectsFormPageForModal = ({
     <div className={styles.formPage}>
       <div className={styles.formArea}>
         <RelationSectionForModal
+        getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}

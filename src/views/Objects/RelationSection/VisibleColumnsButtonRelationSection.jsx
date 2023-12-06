@@ -16,7 +16,6 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
   const { i18n } = useTranslation();
-
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -32,13 +31,16 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
   const updateView = (data) => {
     setIsLoading(true);
     relationService
-      .update({
-        ...currentView,
-        table_from: currentView?.table_from?.slug,
-        table_to: currentView?.table_to?.slug,
-        view_fields: currentView?.view_fields?.map((el) => el.id),
-        columns: data,
-      })
+      .update(
+        {
+          ...currentView,
+          table_from: currentView?.table_from?.slug,
+          table_to: currentView?.table_to?.slug,
+          view_fields: currentView?.view_fields?.map((el) => el.id),
+          columns: data,
+        },
+        currentView?.relatedTable
+      )
       .then(() => {
         // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
         getAllData();

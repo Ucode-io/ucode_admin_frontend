@@ -8,14 +8,7 @@ import useOnClickOutside from "use-onclickoutside";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableHeadCell,
-  CTableRow,
-} from "../CTable";
+import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
@@ -101,8 +94,7 @@ const ObjectDataTable = ({
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName =
-    location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -168,9 +160,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -200,18 +190,13 @@ const ObjectDataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]
-      ?.filter((item) => item?.isStiky === true)
-      ?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (
-      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
-        .length === 1
-    ) {
+    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -245,9 +230,7 @@ const ObjectDataTable = ({
   }, [formVisible]);
 
   const relationFields = useMemo(() => {
-    return columns?.filter(
-      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
-    );
+    return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
   }, [columns]);
 
   return (
@@ -271,15 +254,7 @@ const ObjectDataTable = ({
       filterVisible={filterVisible}
     >
       <CTableHead>
-        {formVisible && selectedRow.length > 0 && (
-          <MultipleUpdateRow
-            columns={data}
-            fields={columns}
-            watch={watch}
-            setFormValue={setFormValue}
-            control={control}
-          />
-        )}
+        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
@@ -320,14 +295,13 @@ const ObjectDataTable = ({
               )
           )}
 
-          <PermissionWrapperV2
-            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-            type={["update", "delete"]}
-          >
+          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
             {(onDeleteClick || onEditClick) && (
-              <CTableHeadCell style={{
-                padding: "0",
-              }}>
+              <CTableHeadCell
+                style={{
+                  padding: "0",
+                }}
+              >
                 <span
                   style={{
                     whiteSpace: "nowrap",
@@ -345,26 +319,24 @@ const ObjectDataTable = ({
               </CTableHeadCell>
             )}
           </PermissionWrapperV2>
-          <FieldButton
-            openFieldSettings={openFieldSettings}
-            view={view}
-            mainForm={mainForm}
-            fields={fields}
-            setFieldCreateAnchor={setFieldCreateAnchor}
-            fieldCreateAnchor={fieldCreateAnchor}
-            fieldData={fieldData}
-            setFieldData={setFieldData}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-          />
+          {!isRelationTable && (
+            <FieldButton
+              openFieldSettings={openFieldSettings}
+              view={view}
+              mainForm={mainForm}
+              fields={fields}
+              setFieldCreateAnchor={setFieldCreateAnchor}
+              fieldCreateAnchor={fieldCreateAnchor}
+              fieldData={fieldData}
+              setFieldData={setFieldData}
+              setDrawerState={setDrawerState}
+              setDrawerStateField={setDrawerStateField}
+            />
+          )}
         </CTableRow>
       </CTableHead>
 
-      <CTableBody
-        columnsCount={columns.length}
-        dataLength={dataLength || data?.length}
-        title={title}
-      >
+      <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
         {(isRelationTable ? fields : data).length > 0 &&
           columns.length > 0 &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
@@ -459,9 +431,7 @@ const ObjectDataTable = ({
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && (
-          <SummaryRow summaries={summaries} columns={columns} data={data} />
-        )}
+        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
         {additionalRow}
       </CTableBody>
       {/* <Button

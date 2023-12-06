@@ -24,17 +24,8 @@ export default function FixColumnsRelationSection({ relatedTable: view, fieldsMa
 
   const updateView = (data) => {
     setIsLoading(true);
-    // constructorViewService
-    //   .update(data)
-    //   .then((res) => {
-    //     queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
-
     relationService
-      .update(data)
+      .update(data, view?.relatedTable)
       .then((res) => {
         getAllData();
       })

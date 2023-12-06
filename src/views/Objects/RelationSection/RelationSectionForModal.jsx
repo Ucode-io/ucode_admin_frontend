@@ -1,10 +1,10 @@
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import { InsertDriveFile } from "@mui/icons-material";
-import { Box, Card } from "@mui/material";
+import { Box, Card, Divider } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useMutation } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -21,6 +21,10 @@ import styles from "./style.module.scss";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import FixColumnsRelationSection from "./FixColumnsRelationSection";
+import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
+import constructorTableService from "../../../services/constructorTableService";
+import { listToMap } from "../../../utils/listToMap";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -40,6 +44,7 @@ const RelationSectionForModal = ({
   setSelectTab,
   selectedTab,
   errors,
+  getAllData,
 }) => {
   const { i18n } = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
@@ -196,6 +201,28 @@ const RelationSectionForModal = ({
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
+  const refetchData = async () => {
+    getRelatedTabeSlug &&
+      constructorObjectService
+        .getList(
+          getRelatedTabeSlug?.relatedTable,
+          {
+            data: {
+              offset: 0,
+              limit: 0,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+            },
+          },
+          {
+            language_setting: i18n?.language,
+          }
+        )
+        .then((res) => {
+          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
+        })
+        .catch((a) => console.log("error", a));
+  };
+
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
       return item?.table_slug;
@@ -304,6 +331,10 @@ const RelationSectionForModal = ({
     setFormVisible(false);
   }, [selectedTabIndex]);
 
+  const params = {
+    language_setting: i18n?.language,
+  };
+
   useEffect(() => {
     const result = {};
 
@@ -311,6 +342,36 @@ const RelationSectionForModal = ({
 
     setRelationsCreateFormVisible(result);
   }, [filteredRelations]);
+
+  const {
+    data: { fieldsMap } = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+    refetch: refetchFields,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      return constructorTableService.getTableInfo(
+        relatedTableSlug,
+        {
+          data: {},
+        },
+        params
+      );
+    },
+    {
+      select: ({ data }) => {
+        return {
+          fieldsMap: listToMap(data?.fields),
+        };
+      },
+      enabled: !!relatedTableSlug,
+    }
+  );
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -325,7 +386,7 @@ const RelationSectionForModal = ({
               className={"react_detail"}
               selectedIndex={selectedTabIndex}
               style={{
-                height: '100%',
+                height: "100%",
               }}
               onSelect={(index) => {
                 setSelectedTabIndex(index);
@@ -358,61 +419,72 @@ const RelationSectionForModal = ({
                       </Tab>
                     ))}
                   </TabList>
-                  {editAcces ? (
-                    <>
+                  {!getRelatedTabeSlug &&
+                    (editAcces ? (
+                      <>
+                        <SecondaryButton
+                          onClick={() => setEditAccess((prev) => !prev)}
+                          color=""
+                          style={{
+                            right: "16px",
+                            border: "0px solid #2d6ce5",
+                            padding: "4px",
+                          }}
+                        >
+                          <CloseIcon
+                            style={{
+                              color: "red",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                        </SecondaryButton>
+                      </>
+                    ) : (
                       <SecondaryButton
                         onClick={() => setEditAccess((prev) => !prev)}
                         color=""
                         style={{
-                          position: "absolute",
                           right: "16px",
                           border: "0px solid #2d6ce5",
                           padding: "4px",
                         }}
                       >
-                        <CloseIcon
+                        <EditIcon
                           style={{
-                            color: "red",
+                            color: "#2d6ce5",
                             width: "20px",
                             height: "20px",
                           }}
                         />
                       </SecondaryButton>
+                    ))}
+
+                  {getRelatedTabeSlug && (
+                    <>
+                      <FixColumnsRelationSection relatedTable={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
+                      <Divider orientation="vertical" flexItem />
+                      <VisibleColumnsButtonRelationSection currentView={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
                     </>
-                  ) : (
-                    <SecondaryButton
-                      onClick={() => setEditAccess((prev) => !prev)}
-                      color=""
-                      style={{
-                        position: "absolute",
-                        right: "16px",
-                        border: "0px solid #2d6ce5",
-                        padding: "4px",
-                      }}
-                    >
-                      <EditIcon
-                        style={{
-                          color: "#2d6ce5",
-                          width: "20px",
-                          height: "20px",
-                        }}
-                      />
-                    </SecondaryButton>
                   )}
                 </div>
               )}
 
-              <Box sx={{
-                height: '100%',
-            
-              }}>
+              <Box
+                sx={{
+                  height: "100%",
+                }}
+              >
                 {loader ? (
                   <PageFallback />
                 ) : (
                   relation?.tabs?.map((el, index) => (
-                    <TabPanel key={el.id} style={{
-                      height: '100%',
-                    }}>
+                    <TabPanel
+                      key={el.id}
+                      style={{
+                        height: "100%",
+                      }}
+                    >
                       {!selectedTab?.relation_id ? (
                         <MainInfoForModal
                           control={control}

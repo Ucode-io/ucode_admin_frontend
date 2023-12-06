@@ -1,18 +1,17 @@
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import ViewListIcon from "@mui/icons-material/ViewList";
 import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import constructorViewService from "../../../../services/constructorViewService";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
+import constructorViewService from "../../../services/constructorViewService";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import { columnIcons } from "../../../utils/constants/columnIcons";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import style from "./style.module.scss";
+import relationService from "../../../services/relationService";
 
-export default function FixColumnsTableView({ view, fieldsMap }) {
+export default function FixColumnsRelationSection({ relatedTable: view, fieldsMap, getAllData }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const { tableSlug } = useParams();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = (event) => {
@@ -25,10 +24,10 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
 
   const updateView = (data) => {
     setIsLoading(true);
-    constructorViewService
-      .update(tableSlug, data)
+    relationService
+      .update(data, view?.relatedTable)
       .then((res) => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        getAllData();
       })
       .finally(() => {
         setIsLoading(false);
@@ -53,6 +52,9 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
 
     updateView({
       ...view,
+      table_from: view?.table_from?.slug,
+      table_to: view?.table_to?.slug,
+      view_fields: view?.view_fields?.map((el) => el.id),
       attributes: {
         ...view.attributes,
         fixedColumns: convertArrayToObject(a),
@@ -63,6 +65,9 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
   const removeFixedColumns = () => {
     updateView({
       ...view,
+      table_from: view?.table_from?.slug,
+      table_to: view?.table_to?.slug,
+      view_fields: view?.view_fields?.map((el) => el.id),
       attributes: {
         ...view.attributes,
         fixedColumns: {},
@@ -75,20 +80,13 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter((column) =>
-        Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id)
-      );
+      ?.filter((column) => Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
 
     const uncheckedElements = Object.values(fieldsMap)
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter(
-        (column) =>
-          !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(
-            column?.id
-          )
-      );
+      ?.filter((column) => !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
 
     return [...checkedElements, ...uncheckedElements];
   }, [fieldsMap, view?.columns, view?.attributes?.fixedColumns]);
@@ -106,6 +104,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
           gap: "5px",
           color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          textWrap: "nowrap",
         }}
       >
         {isLoading ? (
@@ -224,13 +223,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
-                checked={
-                  Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
-                    (el) => el === column.id
-                  )
-                    ? true
-                    : false
-                }
+                checked={Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id) ? true : false}
               />
             </div>
           ))}

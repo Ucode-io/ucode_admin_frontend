@@ -63,6 +63,7 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
+    getValues,
     formState: {errors},
   } = useForm({
     defaultValues: {...state, ...dateInfo, invite: isInvite ? invite : false},
@@ -74,7 +75,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    });
+    }, tableSlug);
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
@@ -118,7 +119,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    });
+    }, tableSlug);
 
     try {
       const [{layouts: layout = []}] = await Promise.all([getLayout]);
@@ -251,10 +252,12 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
+        getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}
           control={control}
+          getValues={getValues}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           reset={reset}

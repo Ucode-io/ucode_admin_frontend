@@ -232,11 +232,12 @@ const ObjectsFormPageForModal = ({
   useEffect(() => {
     getFields();
   }, [id, tableInfo, selectedTabIndex, i18n?.language]);
-
+ 
   return (
     <div className={styles.formPage}>
       <div className={styles.formArea}>
         <RelationSectionForModal
+        getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}
@@ -256,6 +257,9 @@ const ObjectsFormPageForModal = ({
         />
       </div>
       <Footer
+      style={{
+        bottom: "-10px",
+      }}
         extra={
           <>
             <SecondaryButton

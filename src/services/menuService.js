@@ -1,55 +1,57 @@
-import {useMutation, useQuery} from "react-query";
-import request from "../utils/request";
+import { useMutation, useQuery } from "react-query";
+import requestV2 from "../utils/requestV2";
 
 const menuService = {
   getList: (params) => {
-    return request.get(`/menu`, {
-      params,
+    return requestV2.get(`/menus`, {
+      params
     });
   },
-  getByID: ({menuId, params}) =>
-    request.get(`/menu/${menuId}`, {
+  getByID: ({ menuId, params }) =>
+    requestV2.get(`/menus/${menuId}`, {
       params,
     }),
   update: (data) =>
-    request.put(`/menu`, data, {
+    requestV2.put(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   updateOrder: (data) =>
-    request.put(`/menu/menu-order`, data, {
+    requestV2.put(`/menus/update-order`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   create: (data) =>
-    request.post(`/menu`, data, {
+    requestV2.post(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
-  delete: ({id, projectId}) =>
-    request.delete(`/menu/${id}`, {
-      params: {"project-id": projectId},
+  delete: ({ id, projectId }) =>
+    requestV2.delete(`/menus/${id}`, {
+      params: { "project-id": projectId },
     }),
 };
 
-export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
+export const useMenuListQuery = ({ params = {}, queryParams } = {}) => {
   return useQuery(
     ["MENU", params],
     () => {
       return menuService.getList(params);
     },
-    queryParams
+    {
+      ...queryParams,
+    }
   );
 };
 
-export const usePlatformGetByIdQuery = ({menuId, params = {}, queryParams}) => {
+export const usePlatformGetByIdQuery = ({ menuId, params = {}, queryParams }) => {
   return useQuery(
-    ["MENU_GET_BY_ID", {menuId, ...params}],
+    ["MENU_GET_BY_ID", { menuId, ...params }],
     () => {
-      return menuService.getByID({menuId, params});
+      return menuService.getByID({ menuId, params });
     },
     queryParams
   );
@@ -63,11 +65,8 @@ export const useMenuCreateMutation = (mutationSettings) => {
   return useMutation((data) => menuService.create(data), mutationSettings);
 };
 
-export const usePlatformDeleteMutation = ({projectId, mutationSettings}) => {
-  return useMutation(
-    (id) => menuService.delete({id, projectId}),
-    mutationSettings
-  );
+export const usePlatformDeleteMutation = ({ projectId, mutationSettings }) => {
+  return useMutation((id) => menuService.delete({ id, projectId }), mutationSettings);
 };
 
 export default menuService;

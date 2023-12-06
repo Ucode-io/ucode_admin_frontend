@@ -1,27 +1,24 @@
-import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useMemo, useState } from "react";
-import { useRef } from "react";
-import ImageViewer from "react-simple-image-viewer";
-import { Box, Button, CircularProgress, InputAdornment, Popover, Tooltip, Typography } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
-import "./Gallery/style.scss";
+import React, { useRef, useState } from "react";
 import fileService from "../../services/fileService";
-import { useNavigate } from "react-router-dom";
+import { Box, Button, CircularProgress, InputAdornment, Popover, Tooltip, Typography } from "@mui/material";
 import { Lock } from "@mui/icons-material";
+import DownloadIcon from "@mui/icons-material/Download";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AddCircleOutlineIcon from "@mui/icons-material/Upload";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import FilePresentIcon from "@mui/icons-material/FilePresent";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView = false, tabIndex, field }) => {
-  const inputRef = useRef(null);
+export default function NewFileUpload({ value, onChange, className = "", disabled, tabIndex, field }) {
+  const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const imageClickHandler = (index) => {
     setPreviewVisible(true);
-    window.open(value, "_blank");
   };
 
   const inputChangeHandler = (e) => {
@@ -66,37 +63,35 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
   return (
     <div className={`Gallery ${className}`}>
       {value && (
-        // <div className={`block ${isNewTableView && 'tableViewBlock'}`} onClick={() => imageClickHandler()}>
-        //   {!disabled ? (
-        //     <button
-        //       className="close-btn"
-        //       type="button"
-        //       onClick={(e) => closeButtonHandler(e)}
-        //     >
-        //       <CancelIcon />
-        //     </button>
-        //   ) : (
-        //     <div className="lock_icon">
-        //       <Lock style={{ fontSize: "20px" }} />
-        //     </div>
-        //   )}
-        //   <img src={value} className="img" alt="" />
+        // <div className="block" onClick={() => imageClickHandler()}>
+        //   <button className="close-btn" type="button" onClick={(e) => closeButtonHandler(e)}>
+        //     <CancelIcon />
+        //   </button>
+        //   <a href={value} className="" download target="_blank" rel="noreferrer">
+        //     <DownloadIcon style={{ width: "25px", height: "25px", fontSize: "30px" }} />
+        //   </a>
         // </div>
 
         <>
-          <div className="uploadedImage" aria-describedby={id} onClick={handleClick}>
-            <div className="img">
-              <img
-                src={value}
+          <Box className="uploadedFile">
+            <Button
+              aria-describedby={id}
+              onClick={handleClick}
+              sx={{
+                padding: 0,
+                minWidth: "25px",
+                width: "25px",
+                height: "25px",
+              }}
+            >
+              <AttachFileIcon
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
+                  color: "#747474",
+                  fontSize: "25px",
                 }}
-                className="img"
-                alt=""
               />
-            </div>
+            </Button>
+
             <Typography
               sx={{
                 fontSize: "10px",
@@ -105,7 +100,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
             >
               {value?.split?.("_")?.[1] ?? ""}
             </Typography>
-          </div>
+          </Box>
 
           <Popover
             id={id}
@@ -126,16 +121,20 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
               }}
             >
               <Button
+                href={value}
+                className=""
+                download
+                target="_blank"
+                rel="noreferrer"
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                onClick={() => imageClickHandler()}
               >
                 <OpenInFullIcon />
-                Show Full Image
+                Show file
               </Button>
               <Button
                 sx={{
@@ -148,7 +147,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
                 onClick={(e) => closeButtonHandler(e)}
               >
                 <DeleteIcon />
-                Remove Image
+                Remove file
               </Button>
               <Button
                 sx={{
@@ -164,7 +163,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
                 }}
               >
                 <ChangeCircleIcon />
-                Change Image
+                Change file
               </Button>
             </Box>
             <input
@@ -224,7 +223,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
-            minWidth: 0,
+            minWidth: "25px",
             width: "25px",
             height: "25px",
           }}
@@ -239,17 +238,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
         </Button>
       )}
 
-      {/* {previewVisible && (
-        <ImageViewer
-          src={[value]}
-          currentIndex={0}
-          disableScroll={true}
-          closeOnClickOutside={true}
-          onClose={() => setPreviewVisible(false)}
-        />
-      )} */}
+      {/* {previewVisible && ""} */}
     </div>
   );
-};
-
-export default ImageUpload;
+}

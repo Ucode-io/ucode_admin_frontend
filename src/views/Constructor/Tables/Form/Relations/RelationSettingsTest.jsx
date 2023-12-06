@@ -16,11 +16,11 @@ import {
   Checkbox,
   IconButton,
 } from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -33,8 +33,8 @@ import constructorFunctionService from "../../../../../services/constructorFunct
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
-import {applyDrag} from "../../../../../utils/applyDrag";
-import {relationTyes} from "../../../../../utils/constants/relationTypes";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import { relationTyes } from "../../../../../utils/constants/relationTypes";
 import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
 import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
@@ -44,14 +44,14 @@ import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BrushIcon from "@mui/icons-material/Brush";
-import {F} from "@formulajs/formulajs";
-import {useSelector} from "react-redux";
-import {useTranslation} from "react-i18next";
+import { F } from "@formulajs/formulajs";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const relationViewTypes = [
   {
@@ -71,18 +71,18 @@ const RelationSettingsTest = ({
   formType,
   height,
 }) => {
-  const {appId, slug} = useParams();
+  const { appId, slug } = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const form = useForm();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
     useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] =
     useState(true);
   const [selectedTab, setSelectedTab] = useState(0);
   const languages = useSelector((state) => state.languages.list);
-  const {handleSubmit, control, reset, watch, setValue} = useForm({
+  const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_from: slug,
       auto_filters: [],
@@ -127,21 +127,21 @@ const RelationSettingsTest = ({
     language_setting: i18n?.language,
   };
 
-  const {isLoading: fieldsLoading} = useQuery(
+  const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorObjectService.getList(
         relatedTableSlug,
         {
-          data: {limit: 0, offset: 0},
+          data: { limit: 0, offset: 0 },
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({data}) => {
+      onSuccess: ({ data }) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -189,7 +189,7 @@ const RelationSettingsTest = ({
     }
   );
 
-  const {data: functions = []} = useQuery(
+  const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -208,7 +208,7 @@ const RelationSettingsTest = ({
     }));
   }, [values.columnsList]);
 
-  const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
+  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
   });
 
@@ -280,17 +280,20 @@ const RelationSettingsTest = ({
 
     if (formType === "CREATE") {
       constructorRelationService
-        .create({
-          ...data,
-          title: Object.values(data?.attributes).find((item) => item),
-        })
+        .create(
+          {
+            ...data,
+            title: Object.values(data?.attributes).find((item) => item),
+          },
+          slug
+        )
         .then((res) => {
           updateRelations();
         })
         .finally(() => setFormLoader(false));
     } else {
       constructorRelationService
-        .update(data)
+        .update(data, slug)
         .then((res) => {
           updateRelations();
         })
@@ -331,7 +334,7 @@ const RelationSettingsTest = ({
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{height}}>
+      <div className={styles.settingsBlockBody} style={{ height }}>
         <form
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}
@@ -359,7 +362,7 @@ const RelationSettingsTest = ({
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <SettingsIcon style={{width: "20px", height: "20px"}} />
+                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
                   </Tab>
                   <Tab
                     style={{
@@ -370,7 +373,7 @@ const RelationSettingsTest = ({
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <BrushIcon style={{width: "20px", height: "20px"}} />
+                    <BrushIcon style={{ width: "20px", height: "20px" }} />
                   </Tab>
                   <Tab
                     style={{
@@ -381,7 +384,7 @@ const RelationSettingsTest = ({
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <FlashOnIcon style={{width: "20px", height: "20px"}} />
+                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
                   </Tab>
                 </TabList>
 
@@ -394,7 +397,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Relation settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Label" required>
                           <Box
@@ -460,7 +463,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Additional settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         {values.type === "Many2Many" && (
                           <FRow label="Relate field type" required>
@@ -503,7 +506,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Default limit</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div>
                         {/* <div className={styles.settingsDefaultLimit}> */}
                         {/* <h2>Default limit</h2> */}
@@ -557,7 +560,7 @@ const RelationSettingsTest = ({
                       <h2>Multiple insert</h2>
                     </AccordionSummary>
 
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div>
                         <div className={styles.section}>
                           <div className={styles.sectionHeader}>
@@ -606,7 +609,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Cascade</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <CascadingRelationSettings
                         slug={
                           relation?.attribute?.relation_data?.table_to?.slug
@@ -640,7 +643,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Columns</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div>
                         <div className={styles.settingsBlockHeader}>
                           <h2>Columns</h2>
@@ -697,7 +700,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Display type</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}></AccordionDetails>
+                    <AccordionDetails style={{ padding: 0 }}></AccordionDetails>
                   </Accordion>
 
                   <Accordion>
@@ -708,14 +711,14 @@ const RelationSettingsTest = ({
                     >
                       <h2>Filters</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <div className={styles.settingsBlockHeader}>
                         <h2>Filters</h2>
 
                         <Checkbox
                           icon={
                             <PushPinOutlined
-                              style={{transform: "rotate(45deg)"}}
+                              style={{ transform: "rotate(45deg)" }}
                             />
                           }
                           checkedIcon={<PushPin />}
@@ -744,7 +747,7 @@ const RelationSettingsTest = ({
                                   name={`filtersList[${index}].is_checked`}
                                   icon={
                                     <PushPinOutlined
-                                      style={{transform: "rotate(45deg)"}}
+                                      style={{ transform: "rotate(45deg)" }}
                                     />
                                   }
                                   checkedIcon={<PushPin />}
@@ -765,7 +768,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Summary</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <SummaryBlock
                         control={control}
                         computedFieldsListOptions={computedFieldsListOptions}
@@ -783,7 +786,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: "8px"}}>
+                    <AccordionDetails style={{ padding: "8px" }}>
                       <HFSwitch
                         control={control}
                         name="is_editable"
@@ -815,7 +818,7 @@ const RelationSettingsTest = ({
                     </AccordionDetails>
                   </Accordion>
 
-                  <Box sx={{padding: "16px"}}>
+                  <Box sx={{ padding: "16px" }}>
                     <Box
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -823,7 +826,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Table Actions</h2>
                     </Box>
-                    <Box style={{padding: 0}}>
+                    <Box style={{ padding: 0 }}>
                       <TableActions
                         control={control}
                         watch={watch}
@@ -840,7 +843,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Function</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <FunctionPath
                         control={control}
                         watch={watch}
@@ -858,7 +861,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Default</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <DefaultValueBlock
                         control={control}
                         watch={watch}
@@ -875,7 +878,7 @@ const RelationSettingsTest = ({
                     >
                       <h2>Auto filter</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{ padding: 0 }}>
                       <AutoFiltersBlock control={control} watch={watch} />
                     </AccordionDetails>
                   </Accordion>
@@ -888,7 +891,7 @@ const RelationSettingsTest = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || loader}
             >

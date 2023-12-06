@@ -213,7 +213,7 @@ const MatrixRolePage = () => {
           setTableSlugWithType((prev) => (value === "Yes" ? prev : null));
           if (value === "Yes") {
             constructorRelationService
-              .getList({ table_slug: tabSlug })
+              .getList({ table_slug: tabSlug }, tabSlug)
               .then((res) => {
                 setRelations(
                   res?.relations

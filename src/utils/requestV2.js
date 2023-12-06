@@ -1,8 +1,8 @@
 import axios from "axios";
-import {store} from "../store/index";
-import {showAlert} from "../store/alert/alert.thunk";
+import { store } from "../store/index";
+import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import {authActions} from "../store/auth/auth.slice";
+import { authActions } from "../store/auth/auth.slice";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`;
 
 const requestV2 = axios.create({

@@ -1,23 +1,21 @@
-import LinkIcon from "@mui/icons-material/Link";
-import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import constructorViewService from "../../../services/constructorViewService";
+import { applyDrag } from "../../../utils/applyDrag";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
 import { Container, Draggable } from "react-smooth-dnd";
-import constructorViewService from "../../services/constructorViewService";
-import { applyDrag } from "../../utils/applyDrag";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import { columnIcons } from "../../../utils/constants/columnIcons";
+import LinkIcon from "@mui/icons-material/Link";
+import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
+import relationService from "../../../services/relationService";
 
-export default function VisibleColumnsButton({ currentView, fieldsMap }) {
+export default function VisibleColumnsButtonRelationSection({ currentView, fieldsMap, getAllData }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const { tableSlug } = useParams();
   const { i18n } = useTranslation();
-
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -32,13 +30,20 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
 
   const updateView = (data) => {
     setIsLoading(true);
-    constructorViewService
-      .update(tableSlug, {
-        ...currentView,
-        columns: data,
-      })
+    relationService
+      .update(
+        {
+          ...currentView,
+          table_from: currentView?.table_from?.slug,
+          table_to: currentView?.table_to?.slug,
+          view_fields: currentView?.view_fields?.map((el) => el.id),
+          columns: data,
+        },
+        currentView?.relatedTable
+      )
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        getAllData();
       })
       .finally(() => {
         setIsLoading(false);
@@ -50,17 +55,13 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
   }, [currentView?.columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter(
-      (field) => !currentView?.columns?.includes(field.id)
-    );
+    return allFields.filter((field) => !currentView?.columns?.includes(field.id));
   }, [allFields, currentView?.columns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
-    const computedResult = result?.filter((item) => item?.id);
-
-    if (computedResult) {
-      updateView(computedResult?.map((el) => el?.id));
+    if (result) {
+      updateView(result.map((el) => el.id));
     }
   };
 
@@ -178,17 +179,12 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                   size="small"
                   checked={visibleFields.length === allFields.length}
                   onChange={(e) => {
-                    updateView(
-                      e.target.checked ? allFields.map((el) => el.id) : []
-                    );
+                    updateView(e.target.checked ? allFields.map((el) => el.id) : []);
                   }}
                 />
               </div>
             </div>
-            <Container
-              onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            >
+            <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
               {visibleFields.map((column, index) => (
                 <Draggable key={column?.id}>
                   <div
@@ -206,7 +202,6 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                         alignItems: "center",
                         padding: "8px 0px",
                         margin: "-1px -1px 0 0",
-                        minWidth: "200px",
                       }}
                     >
                       <div
@@ -219,20 +214,15 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                           justifyContent: "center",
                         }}
                       >
-                        {column?.type ? (
-                          columnIcons(column?.type)
-                        ) : (
-                          <LinkIcon />
-                        )}
+                        {column?.type ? columnIcons(column?.type) : <LinkIcon />}
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
-                        column?.label}
+                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
                     </div>
                     <div
                       style={{
                         flex: 1,
                         alignItems: "center",
-                        padding: "8px 0px",
+                        padding: "8px 16px",
                         margin: "-1px -1px 0 0",
                         width: 70,
                         border: 0,
@@ -240,20 +230,13 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                         paddingRight: 0,
                         display: "flex",
                         justifyContent: "flex-end",
-                        width: "70px",
                       }}
                     >
                       <Switch
                         size="small"
                         checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? [...currentView?.columns, column?.id]
-                              : currentView?.columns?.filter(
-                                  (el) => el !== column?.id
-                                )
-                          );
+                          updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
                         }}
                       />
                     </div>
@@ -291,8 +274,7 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                     >
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ??
-                      column?.label}
+                    {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
                   </div>
                   <div
                     style={{
@@ -312,13 +294,7 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                       size="small"
                       checked={currentView?.columns?.includes(column?.id)}
                       onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? [...currentView?.columns, column?.id]
-                            : currentView?.columns?.filter(
-                                (el) => el !== column?.id
-                              )
-                        );
+                        updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
                       }}
                     />
                   </div>

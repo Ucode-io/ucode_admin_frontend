@@ -7,6 +7,7 @@ import {Lock} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
+    padding: "0px",
     "&::placeholder": {
       color: "#fff",
     },
@@ -62,6 +63,11 @@ const HFTextField = ({
             customOnChange(e);
             isNewTableView && updateObject();
           }}
+          sx={{
+            width: "100%",
+            padding: "0px",
+            margin: "0px",
+          }}
           name={name}
           error={error}
           fullWidth={fullWidth}
@@ -73,6 +79,20 @@ const HFTextField = ({
             classes: {
               input: isBlackBg ? classes.input : "",
             },
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                  padding: "0px",
+                }
+              : isNewTableView
+              ? {
+                  background: "inherit",
+                  color: "inherit",
+                  padding: "0px !important",
+                  margin: "0px !important",
+                  height: "25px",
+                }
+              : {},
 
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>

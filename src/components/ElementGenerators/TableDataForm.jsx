@@ -1,7 +1,7 @@
-import {Box} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useWatch} from "react-hook-form";
-import {useMutation} from "react-query";
+import { Box } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useWatch } from "react-hook-form";
+import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
@@ -21,9 +21,9 @@ export default function TableDataForm({
   isWrap,
   watch,
 }) {
-  const {mutate: updateObject} = useMutation(() =>
+  const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {
-      data: {...getValues(`multi.${index}`)},
+      data: { ...getValues(`multi.${index}`) },
     })
   );
 

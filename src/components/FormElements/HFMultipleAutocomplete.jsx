@@ -92,7 +92,7 @@ const HFMultipleAutocomplete = ({
             onFormChange={(el) => {
               onFormChange(el);
               onChange(el);
-              // isNewTableView && updateObject();
+              isNewTableView && updateObject();
             }}
             disabledHelperText={disabledHelperText}
             error={error}

@@ -1,26 +1,43 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const constructorFieldService = {
-  getList: (params) => request.get("/field", { params }),
+  getList: (params, tableSlug) =>
+    requestV2.get(`/fields/${tableSlug}`, { params }),
   getFieldPermission: ({ role_id, table_slug }) =>
     request.get(`field-permission/${role_id}/${table_slug}`),
-  update: (data) => request.put("/field", data),
-  create: (data) => request.post("/field", data),
-  delete: (id) => request.delete(`/field/${id}`),
+  update: ({ data, tableSlug }) => requestV2.put(`/fields/${tableSlug}`, data),
+  create: ({ data, tableSlug }) => requestV2.post(`/fields/${tableSlug}`, data),
+  delete: (id, tableSlug) => requestV2.delete(`/fields/${tableSlug}/${id}`),
 };
 
 export const useFieldsListQuery = ({
   params = {},
-  headers,
+  tableSlug,
   queryParams,
 } = {}) => {
   return useQuery(
     ["FIELDS", params],
     () => {
-      return constructorFieldService.getList(params, headers);
+      return constructorFieldService.getList(params, tableSlug);
     },
     queryParams
+  );
+};
+
+export const useFieldCreateMutation = (mutationSettings) => {
+  return useMutation(
+    ({ data, tableSlug }) =>
+      constructorFieldService.create({ data, tableSlug }),
+    mutationSettings
+  );
+};
+export const useFieldUpdateMutation = (mutationSettings) => {
+  return useMutation(
+    ({ data, tableSlug }) =>
+      constructorFieldService.update({ data, tableSlug }),
+    mutationSettings
   );
 };
 

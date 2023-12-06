@@ -1,14 +1,19 @@
-
-
 import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const constructorViewService = {
-  getList: (params) => request.get('/view', { params }),
-  update: (data) => request.put('/view', data),
-  create: (data) => request.post('/view', data),
-  getById: (id) => request.get(`/view/${id}`),
-  delete: (id) => request.delete(`/view/${id}`),
-  changeViewOrder: (data) => request.put('/update-view-order', data),
-}
+  getList: (tableSlug, params) =>
+    requestV2.get(`/views/${tableSlug}`, { params }),
+  update: (tableSlug, data) => {
+    console.log("tableSlug", tableSlug);
+    console.log("data", data);
+    return requestV2.put(`/views/${tableSlug}`, data);
+  },
+  create: (tableSlug, data) => requestV2.post(`/views/${tableSlug}`, data),
+  getById: (id, tableSlug) => requestV2.get(`/views/${tableSlug}/${id}`),
+  delete: (id, tableSlug) => requestV2.delete(`/views/${tableSlug}/${id}`),
+  changeViewOrder: (data, tableSlug) =>
+    request.put(`/views/${tableSlug}/update-order`, data),
+};
 
-export default constructorViewService
+export default constructorViewService;

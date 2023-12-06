@@ -74,15 +74,21 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
-    const getActions = constructorCustomEventService.getList({
-      table_slug: slug,
-    });
+    const getActions = constructorCustomEventService.getList(
+      {
+        table_slug: slug,
+      },
+      slug
+    );
 
     const getLayouts = layoutService
-      .getList({
-        "table-slug": slug,
-        language_setting: i18n?.language,
-      })
+      .getList(
+        {
+          "table-slug": slug,
+          language_setting: i18n?.language,
+        },
+        slug
+      )
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);
       });
@@ -113,10 +119,13 @@ const ConstructorTablesFormPage = () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({ table_id: id });
 
-      const getRelations = constructorRelationService.getList({
-        table_slug: slug,
-        relation_table_slug: slug,
-      });
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: slug,
+          relation_table_slug: slug,
+        },
+        slug
+      );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
@@ -255,11 +264,14 @@ const ConstructorTablesFormPage = () => {
       }),
     }));
 
-    const updateLayoutData = layoutService.update({
-      layouts: computedLayouts,
-      table_id: id,
-      project_id: projectId,
-    });
+    const updateLayoutData = layoutService.update(
+      {
+        layouts: computedLayouts,
+        table_id: id,
+        project_id: projectId,
+      },
+      slug
+    );
 
     Promise.all([
       updateTableData,

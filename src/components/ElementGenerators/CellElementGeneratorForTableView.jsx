@@ -43,6 +43,7 @@ const CellElementGeneratorForTableView = ({
   setFormValue,
   index,
   data,
+  isNewRow,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
@@ -56,13 +57,23 @@ const CellElementGeneratorForTableView = ({
   }
 
   const computedSlug = useMemo(() => {
-    if (field?.enable_multilanguage) {
-      return `multi.${index}.${field.slug}`;
-    } else if (field.id?.includes("@")) {
-      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
-    }
+    if (!isNewRow) {
+      if (field?.enable_multilanguage) {
+        return `multi.${index}.${field.slug}`;
+      } else if (field.id?.includes("@")) {
+        return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+      }
 
-    return `multi.${index}.${field.slug}`;
+      return `multi.${index}.${field.slug}`;
+    } else {
+      if (field?.enable_multilanguage) {
+        return `${field.slug}`;
+      } else if (field.id?.includes("@")) {
+        return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+      }
+
+      return `${field.slug}`;
+    }
   }, [field, i18n?.language]);
 
   const isDisabled =
@@ -112,6 +123,7 @@ const CellElementGeneratorForTableView = ({
       return (
         <CellRelationFormElementForTableView
           relOptions={relOptions}
+          isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
           isFormEdit

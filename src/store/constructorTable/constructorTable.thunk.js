@@ -27,12 +27,15 @@ export const createConstructorTableAction = createAsyncThunk(
     try {
       const res = await constructorTableService.create(data);
 
+      console.log("resgfsdf", res);
+
       dispatch(
         constructorTableActions.add({
           ...data,
           ...res,
         })
       );
+      return { ...res, ...data };
     } catch (error) {
       console.log(error);
       throw new Error(error);

@@ -440,6 +440,17 @@ const RelationSettings = ({
                             required
                           />
                         </FRow>
+
+                        <FRow
+                          label="Multiple Input"
+                          style={{marginTop: "20px"}}
+                        >
+                          <HFSwitch
+                            name="attributes.multiple_input"
+                            control={control}
+                            placeholder="Relation type"
+                          />
+                        </FRow>
                       </div>
                     </AccordionDetails>
                   </Accordion>

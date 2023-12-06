@@ -16,12 +16,15 @@ import {useTablesListQuery} from "../../../services/constructorTableService";
 import HeaderSettings from "../../../components/HeaderSettings";
 import SearchInput from "../../../components/SearchInput";
 import FiltersBlock from "../../../components/FiltersBlock";
+import {useTableDeleteMutation} from "../../../services/tableService";
+import {useQueryClient} from "react-query";
 
 const TablesPage = ({}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchText, setSearchText] = useState("");
   const [loader, setLoader] = useState(false);
+  const queryClient = useQueryClient();
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [modalLoader, setModalLoader] = useState();
   const projectId = useSelector((state) => state.auth.projectId);
@@ -31,6 +34,14 @@ const TablesPage = ({}) => {
       search: searchText,
     },
   });
+
+  const {mutate: updateTableDocument} = useTableDeleteMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["TABLES"]);
+      setLoader(false);
+    },
+  });
+
   const navigateToEditForm = (id, slug) => {
     navigate(`${location.pathname}/${id}/`);
   };
@@ -49,6 +60,7 @@ const TablesPage = ({}) => {
 
   const deleteTable = async (id) => {
     setLoader(true);
+    updateTableDocument({id});
   };
 
   return (

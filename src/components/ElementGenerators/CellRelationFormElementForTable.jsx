@@ -46,6 +46,7 @@ const CellRelationFormElementForTableView = ({
   defaultValue = null,
   relationfields,
   data,
+  isNewRow,
 }) => {
   const classes = useStyles();
 
@@ -93,6 +94,7 @@ const CellRelationFormElementForTableView = ({
           ) : (
             <AutoCompleteElement
               relOptions={relOptions}
+              isNewRow={isNewRow}
               tableView={tableView}
               disabled={disabled}
               isFormEdit={isFormEdit}
@@ -103,7 +105,7 @@ const CellRelationFormElementForTableView = ({
               name={name}
               setValue={(e) => {
                 onChange(e);
-                updateObject();
+                !isNewRow && updateObject();
               }}
               field={field}
               defaultValue={defaultValue}
@@ -136,6 +138,7 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
+  isNewRow,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
@@ -161,7 +164,7 @@ const AutoCompleteElement = ({
       width: "100%",
       display: "flex",
       alignItems: "center",
-      border: "none",
+      border: "0px solid #fff",
       outline: "none",
     }),
     input: (provided) => ({
@@ -308,7 +311,6 @@ const AutoCompleteElement = ({
   const changeHandler = (value) => {
     const val = value;
     setValue(val?.guid ?? null);
-    setInputValue("");
 
     if (!field?.attributes?.autofill) return;
 

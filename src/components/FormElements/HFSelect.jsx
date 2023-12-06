@@ -56,6 +56,7 @@ const HFSelect = ({
               value={value || selectedValue}
               label={label}
               size="small"
+              className="hf-select"
               error={error}
               inputProps={{ placeholder }}
               fullWidth

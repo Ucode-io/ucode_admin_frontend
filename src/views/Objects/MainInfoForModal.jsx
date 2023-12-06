@@ -1,31 +1,29 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import {Box, Button, Tooltip} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
-import NewFormCard from "./components/NewFormCard";
-import styles from "./style.module.scss";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
-import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
-import projectService from "../../services/projectService";
+import NewFormCard from "./components/NewFormCard";
+import styles from "./style.module.scss";
+import ButtonsPopover from "../../components/ButtonsPopover";
 import {useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
 
-const MainInfo = ({
+const MainInfoForModal = ({
   computedSections,
   control,
   loader,
   setFormValue,
   relatedTable,
   relation,
-  selectedTabIndex,
-  selectedTab,
-  selectedIndex,
   isMultiLanguage,
   errors,
+  setFullScreen,
+  remove,
+  editAcces,
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -56,8 +54,13 @@ const MainInfo = ({
 
   if (loader) return <PageFallback />;
 
+  const removeField = (section, field, fieldIndex) => {
+    console.log("fieldfield", section, field);
+    remove(indexField);
+  };
+
   return (
-    <div className={styles.newcontainer}>
+    <div className={styles.newcontainerModal}>
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (
@@ -83,8 +86,13 @@ const MainInfo = ({
               icon={section.icon}
             >
               <div className={styles.newformColumn}>
-                {section.fields?.map((field) => (
-                  <Box style={{display: "flex", alignItems: "flex-start"}}>
+                {section.fields?.map((field, fieldIndex) => (
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <FormElementGenerator
                       key={field.id}
                       isMultiLanguage={isMultiLanguage}
@@ -97,6 +105,15 @@ const MainInfo = ({
                       activeLang={activeLang}
                       errors={errors}
                     />
+                    {editAcces && (
+                      <ButtonsPopover
+                        className={styles.deleteButton}
+                        //   onEditClick={() => openSettingsBlock(field)}
+                        onDeleteClick={() =>
+                          removeField(section, field, fieldIndex)
+                        }
+                      />
+                    )}
                   </Box>
                 ))}
               </div>
@@ -116,4 +133,4 @@ const MainInfo = ({
   );
 };
 
-export default MainInfo;
+export default MainInfoForModal;

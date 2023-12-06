@@ -261,11 +261,44 @@ export const fieldTypesOptions = [
     ],
   },
 ];
+export const numberFieldFormats = [
+  {
+    label: "Number",
+    value: "NUMBER",
+  },
+  {
+    label: "Float",
+    value: "FLOAT",
+  },
+];
+export const dateFieldFormats = [
+  {
+    label: "Date",
+    value: "DATE",
+  },
+  {
+    label: "Date time (without timezone)",
+    value: "DATE_TIME_WITHOUT_TIME_ZONE",
+  },
+  {
+    label: "Time",
+    value: "TIME",
+  },
+  {
+    label: "Date time",
+    value: "DATE_TIME",
+  },
+];
 
 export const newFieldTypes = [
   {
     label: "Text",
     value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Text Area",
+    value: "MULTI_LINE",
     icon: "minus.svg",
   },
   {
@@ -356,5 +389,20 @@ export const math = [
   {
     label: "division",
     value: "/",
+  },
+];
+
+export const fieldButtons = [
+  {
+    label: "Schema",
+    value: "SCHEMA",
+  },
+  {
+    label: "Validation",
+    value: "VALIDATION",
+  },
+  {
+    label: "Autofill",
+    value: "AUTOFILL",
   },
 ];

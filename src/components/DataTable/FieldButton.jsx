@@ -177,6 +177,11 @@ export default function FieldButton({
           background: "#fff",
           maxWidth: "90px",
         }}
+        onClick={(e) => {
+          setFieldOptionAnchor(e.currentTarget);
+          setTarget(e.currentTarget);
+          setFieldData(null);
+        }}
       >
         <span
           style={{
@@ -188,11 +193,6 @@ export default function FieldButton({
             fontWeight: 500,
             lineHeight: "normal",
             backgroundColor: "#fff",
-          }}
-          onClick={(e) => {
-            setFieldOptionAnchor(e.currentTarget);
-            setTarget(e.currentTarget);
-            setFieldData(null);
           }}
         >
           <AddRoundedIcon />

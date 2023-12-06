@@ -7,6 +7,7 @@ import constructorViewService from "../../../../services/constructorViewService"
 import { columnIcons } from "../../../../utils/constants/columnIcons";
 import style from "./style.module.scss";
 import { useParams } from "react-router-dom";
+import ViewListIcon from "@mui/icons-material/ViewList";
 
 export default function FixColumnsTableView({ view, fieldsMap }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -75,13 +76,20 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter((column) => Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
+      ?.filter((column) =>
+        Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id)
+      );
 
     const uncheckedElements = Object.values(fieldsMap)
       .filter((column) => {
         return view?.columns?.find((el) => el === column?.id);
       })
-      ?.filter((column) => !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id));
+      ?.filter(
+        (column) =>
+          !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(
+            column?.id
+          )
+      );
 
     return [...checkedElements, ...uncheckedElements];
   }, [fieldsMap, view?.columns, view?.attributes?.fixedColumns]);
@@ -111,7 +119,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
             />
           </Box>
         ) : (
-          <ViewColumnOutlinedIcon
+          <ViewListIcon
             style={{
               color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
               width: "22px",
@@ -217,7 +225,13 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
                 onChange={(e) => {
                   changeHandler(column, e.target.checked);
                 }}
-                checked={Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id) ? true : false}
+                checked={
+                  Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                    (el) => el === column.id
+                  )
+                    ? true
+                    : false
+                }
               />
             </div>
           ))}

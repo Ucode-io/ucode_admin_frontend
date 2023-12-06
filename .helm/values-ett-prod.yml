@@ -88,17 +88,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "app.u-code.io"
-          path: /
-          servicePort: 80
-        - host: "ett.u-code.io"
+        - host: "agent.easyto.travel"
           path: /
           servicePort: 80
       tls:
         - secretName: admin-frontend-tls
           hosts:
-            - "app.u-code.io"
-            - "ett.u-code.io"
+            - "agent.easyto.travel"
 
 resources:
   {}
@@ -115,7 +111,6 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-  #
 
 nodeSelector: {}
 
@@ -126,7 +121,8 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.io/ucode-prod
+            - key: workload
               operator: In
               values:
-                - "true"
+                - "ett-prod"
+

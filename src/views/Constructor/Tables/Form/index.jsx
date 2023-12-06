@@ -28,11 +28,14 @@ import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import { useTranslation } from "react-i18next";
 import { ta } from "date-fns/locale";
+import menuSettingsService from "../../../../services/menuSettingsService";
+import { useQueryClient } from "react-query";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
+  const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -59,6 +62,9 @@ const ConstructorTablesFormPage = () => {
     },
     mode: "all",
   });
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const list = useSelector((state) => state.constructorTable.list);
+  console.log("list", list);
 
   const getData = async () => {
     setLoader(true);
@@ -69,21 +75,32 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
-    const getActions = constructorCustomEventService.getList({
-      table_slug: slug,
-    }, slug);
+    const getActions = constructorCustomEventService.getList(
+      {
+        table_slug: slug,
+      },
+      slug
+    );
 
     const getLayouts = layoutService
-      .getList({
-        "table-slug": slug,
-        language_setting: i18n?.language,
-      }, slug)
+      .getList(
+        {
+          "table-slug": slug,
+          language_setting: i18n?.language,
+        },
+        slug
+      )
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
+        getTableData,
+        getActions,
+        getViewRelations,
+        getLayouts,
+      ]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -110,11 +127,15 @@ const ConstructorTablesFormPage = () => {
         },
         slug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug:
+          relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -122,11 +143,13 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -140,7 +163,10 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -149,6 +175,25 @@ const ConstructorTablesFormPage = () => {
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
     });
+  };
+
+  const createType = (data) => {
+    console.log("data", data);
+    menuSettingsService
+      .create({
+        parent_id: menuItem?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        type: "TABLE",
+        table_id: data?.id,
+        label: data?.label,
+        attributes: data?.attributes,
+        icon: data?.icon,
+      })
+      .then(() => {
+        queryClient.refetchQueries(["MENU"], menuItem?.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const createConstructorTable = (data) => {
@@ -162,7 +207,9 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
+        console.log("resresres", res);
         navigate(-1);
+        createType(res);
       })
       .catch(() => setBtnLoader(false));
   };
@@ -170,17 +217,6 @@ const ConstructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
-
-    // const updateSectionData = constructorSectionService.update({
-    //   sections: addOrderNumberToSections(data.sections),
-    //   table_slug: data.slug,
-    //   table_id: id,
-    // });
-
-    // const updateViewRelationsData = constructorViewRelationService.update({
-    //   view_relations: data.view_relations,
-    //   table_slug: data.slug,
-    // });
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
@@ -229,11 +265,14 @@ const ConstructorTablesFormPage = () => {
       }),
     }));
 
-    const updateLayoutData = layoutService.update({
-      layouts: computedLayouts,
-      table_id: id,
-      project_id: projectId,
-    }, slug);
+    const updateLayoutData = layoutService.update(
+      {
+        layouts: computedLayouts,
+        table_id: id,
+        project_id: projectId,
+      },
+      slug
+    );
 
     Promise.all([
       updateTableData,
@@ -251,14 +290,12 @@ const ConstructorTablesFormPage = () => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      show_in_menu: true,
     };
     // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
   };
-
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
@@ -270,7 +307,13 @@ const ConstructorTablesFormPage = () => {
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
+          <HeaderSettings
+            title="Objects"
+            subtitle={id ? mainForm.getValues("label") : "Добавить"}
+            icon={mainForm.getValues("icon")}
+            backButtonLink={-1}
+            sticky
+          >
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -282,7 +325,7 @@ const ConstructorTablesFormPage = () => {
           </HeaderSettings>
 
           <TabPanel>
-            <MainInfo control={mainForm.control} />
+            <MainInfo control={mainForm.control} watch={mainForm.watch} />
           </TabPanel>
 
           <TabPanel>
@@ -290,12 +333,19 @@ const ConstructorTablesFormPage = () => {
           </TabPanel>
 
           <TabPanel>
-            <Fields getRelationFields={getRelationFields} mainForm={mainForm} slug={slug} />
+            <Fields
+              getRelationFields={getRelationFields}
+              mainForm={mainForm}
+              slug={slug}
+            />
           </TabPanel>
 
           {id && (
             <TabPanel>
-              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
+              <Relations
+                mainForm={mainForm}
+                getRelationFields={getRelationFields}
+              />
             </TabPanel>
           )}
           {id && (
@@ -317,7 +367,11 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Close
             </SecondaryButton>
-            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+            <PrimaryButton
+              loader={btnLoader}
+              onClick={mainForm.handleSubmit(onSubmit)}
+              loading={btnLoader}
+            >
               <Save /> Save
             </PrimaryButton>
           </>

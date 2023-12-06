@@ -1,9 +1,9 @@
-import {InputAdornment, TextField, Tooltip} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {Controller} from "react-hook-form";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
 
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {Lock} from "@mui/icons-material";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { Lock } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -46,7 +46,7 @@ const HFTextField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
@@ -68,7 +68,7 @@ const HFTextField = ({
           autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
-            inputProps: {tabIndex},
+            inputProps: { tabIndex },
             classes: {
               input: isBlackBg ? classes.input : "",
             },
@@ -76,7 +76,7 @@ const HFTextField = ({
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>
                 <InputAdornment position="start">
-                  <Lock style={{fontSize: "20px"}} />
+                  <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>
               </Tooltip>
             ) : (

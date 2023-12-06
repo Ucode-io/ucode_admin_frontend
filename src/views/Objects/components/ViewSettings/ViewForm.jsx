@@ -29,7 +29,20 @@ import { Box } from "@mui/material";
 import SummaryBlock from "../../../Constructor/Tables/Form/Relations/SummaryBlock";
 import { quickFiltersActions } from "../../../../store/filter/quick_filter";
 
-const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, fields, refetchViews, setIsChanged, closeModal, columns, relationColumns, views, setTab }) => {
+const ViewForm = ({
+  initialValues,
+  typeNewView,
+  closeForm,
+  defaultViewTab,
+  fields,
+  refetchViews,
+  setIsChanged,
+  closeModal,
+  columns,
+  relationColumns,
+  views,
+  setTab,
+}) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -42,8 +55,14 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, field
   const group_by_columns = initialValues?.attributes?.group_by_columns;
   const nameMulti = initialValues?.attributes?.[`name_${i18n?.language}`];
   const navigate = initialValues?.navigate;
-  const relationObjValue = initialValues?.attributes?.balance?.table_slug + "#" + initialValues?.attributes?.balance?.table_id;
-  const numberFieldValue = initialValues?.attributes?.balance?.field_slug + "#" + initialValues?.attributes?.balance?.field_id;
+  const relationObjValue =
+    initialValues?.attributes?.balance?.table_slug +
+    "#" +
+    initialValues?.attributes?.balance?.table_id;
+  const numberFieldValue =
+    initialValues?.attributes?.balance?.field_slug +
+    "#" +
+    initialValues?.attributes?.balance?.field_id;
 
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const attributes = initialValues?.attributes;
@@ -101,10 +120,22 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, field
       // send balance field if relation_obj is selected
       ...(isBalanceExist && {
         balance: {
-          table_slug: data?.relation_obj?.split("#")?.[0] !== "undefined" ? data?.relation_obj?.split("#")?.[0] : undefined,
-          table_id: data?.relation_obj?.split("#")?.[1] !== "undefined" ? data?.relation_obj?.split("#")?.[1] : undefined,
-          field_id: data?.number_field?.split("#")?.[1] !== "undefined" ? data?.number_field?.split("#")?.[1] : undefined,
-          field_slug: data?.number_field?.split("#")?.[0] !== "undefined" ? data?.number_field?.split("#")?.[0] : undefined,
+          table_slug:
+            data?.relation_obj?.split("#")?.[0] !== "undefined"
+              ? data?.relation_obj?.split("#")?.[0]
+              : undefined,
+          table_id:
+            data?.relation_obj?.split("#")?.[1] !== "undefined"
+              ? data?.relation_obj?.split("#")?.[1]
+              : undefined,
+          field_id:
+            data?.number_field?.split("#")?.[1] !== "undefined"
+              ? data?.number_field?.split("#")?.[1]
+              : undefined,
+          field_slug:
+            data?.number_field?.split("#")?.[0] !== "undefined"
+              ? data?.number_field?.split("#")?.[0]
+              : undefined,
         },
       }),
     };
@@ -158,15 +189,27 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, field
     setBtnLoader(true);
     const computedValues = {
       ...values,
-      columns: values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+      columns:
+        values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
       attributes: {
         ...attributes,
-        ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+        ...computeFinancialAcc(
+          values.chartOfAccounts,
+          values?.group_by_field_selected?.slug,
+          values
+        ),
 
         ...values?.attributes,
-        group_by_columns: values.attributes.group_by_columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+        group_by_columns:
+          values.attributes.group_by_columns
+            ?.filter((el) => el.is_checked)
+            .map((el) => el.id) ?? [],
       },
-      name: values?.attributes?.[`name_${i18n.language}`] ?? Object.values(values?.attributes).find((item) => typeof item === "string"),
+      name:
+        values?.attributes?.[`name_${i18n.language}`] ??
+        Object.values(values?.attributes).find(
+          (item) => typeof item === "string"
+        ),
       app_id: appId,
       order: views?.length ?? 0,
     };
@@ -192,7 +235,13 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, field
         })
         .finally(() => {
           setBtnLoader(false);
-          dispatch(quickFiltersActions.setQuickFiltersCount(values?.attributes?.quick_filters?.filter((item) => item?.is_checked)?.length));
+          dispatch(
+            quickFiltersActions.setQuickFiltersCount(
+              values?.attributes?.quick_filters?.filter(
+                (item) => item?.is_checked
+              )?.length
+            )
+          );
         });
     }
     closeForm();
@@ -230,80 +279,63 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, field
           <div className={styles.section}>
             <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
-              {/* <Tab>Quick filters</Tab> */}
-              <Tab>Columns</Tab>
+
               <Tab>Navigation</Tab>
-              {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
-              <Tab>Group by columns</Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
               <div className={styles.section}>
-                {/* <div className={styles.sectionHeader}>
-                  <div className={styles.sectionTitle}>Main info</div>
-                </div> */}
-
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
                       <Box style={{ display: "flex", gap: "6px" }}>
-                        <HFTextField control={form.control} name={`attributes.name_${i18n?.language}`} placeholder={`Название (${i18n?.language})`} fullWidth />
+                        <HFTextField
+                          control={form.control}
+                          name={`attributes.name_${i18n?.language}`}
+                          placeholder={`Название (${i18n?.language})`}
+                          fullWidth
+                        />
                       </Box>
                     </FRow>
                   </div>
-
-                  <div className={styles.formRow}>
-                    <FRow label="Тип">
-                      <HFSelect options={computedViewTypes} defaultValue={typeNewView} control={form.control} name="type" fullWidth />
-                    </FRow>
-                  </div>
-                  <FRow label="Default limit">
-                    <HFTextField control={form.control} name="default_limit" />
-                  </FRow>
-                  <FRow label="Изменение по умолчанию">
-                    <HFSwitch control={form.control} name="default_editable" required value={form.watch("default_editable")} />
-                  </FRow>
                 </div>
               </div>
 
-              <SummaryBlock control={form.control} computedFieldsListOptions={computedFieldsListOptions} isViewSettings={true} />
+              <SummaryBlock
+                control={form.control}
+                computedFieldsListOptions={computedFieldsListOptions}
+                isViewSettings={true}
+              />
 
-              <MultipleInsertSettings form={form} columns={columns} />
+              {type === "CALENDAR" && (
+                <CalendarSettings form={form} columns={columns} />
+              )}
 
-              {type === "CALENDAR" && <CalendarSettings form={form} columns={columns} />}
+              {type === "CALENDAR HOUR" && (
+                <CalendarHourSettings form={form} columns={columns} />
+              )}
 
-              {type === "CALENDAR HOUR" && <CalendarHourSettings form={form} columns={columns} />}
-
-              {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
-            </TabPanel>
-            {/* <TabPanel>
-              <QuickFiltersTab form={form} currentView={initialValues} />
-            </TabPanel> */}
-            <TabPanel>
-              <ColumnsTab form={form} isMenu={false} />
+              {type === "GANTT" && (
+                <GanttSettings form={form} columns={columns} />
+              )}
             </TabPanel>
             <TabPanel>
               <NavigateSettings form={form} />
-            </TabPanel>
-            {type !== "FINANCE CALENDAR" && (
-              <TabPanel>
-                <GroupsTab columns={computedColumns} form={form} />
-              </TabPanel>
-            )}
-            <TabPanel>
-              <GroupByTab form={form} isMenu={false} />
-            </TabPanel>
-            <TabPanel>
-              <ChartAccountsWrapper viewId={initialValues.id} form={form} />
             </TabPanel>
           </div>
         </Tabs>
       </div>
 
       <div className={styles.formFooter}>
-        {initialValues !== "NEW" && initialValues?.attributes?.view_permission?.delete && (
-          <CancelButton loading={deleteBtnLoader} onClick={deleteView} title={"Delete"} icon={<Delete />} />
-        )}
+        {initialValues !== "NEW" &&
+          initialValues?.attributes?.view_permission?.delete && (
+            <CancelButton
+              loading={deleteBtnLoader}
+              onClick={deleteView}
+              title={"Delete"}
+              icon={<Delete />}
+            />
+          )}
         {/* <CancelButton onClick={closeModal} /> */}
         <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
       </div>
@@ -354,7 +386,8 @@ const getInitialValues = (
       multiple_insert_field: "",
       chartOfAccounts: [{}],
       attributes: {
-        group_by_columns: columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+        group_by_columns:
+          columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
         summaries: [],
       },
     };
@@ -380,7 +413,9 @@ const getInitialValues = (
     },
     group_fields: computeGroupFields(
       initialValues?.group_fields,
-      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns
+      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+        ? [...columns, ...relationColumns]
+        : columns
     ),
     navigate: {
       params: navigate?.params,
@@ -412,7 +447,8 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
         ...columns.find((el) => el.id === id),
         is_checked: true,
       })) ?? [];
-  const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
 const computeGroups = (checkedColumnsIds = [], columns) => {
@@ -423,7 +459,8 @@ const computeGroups = (checkedColumnsIds = [], columns) => {
         ...columns.find((el) => el.id === id),
         is_checked: true,
       })) ?? [];
-  const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
 
@@ -460,12 +497,19 @@ const computeQuickFilters = (quickFilters = [], columns) => {
         ...filter,
         is_checked: true,
       })) ?? [];
-  const unselectedQuickFilters = columns?.filter((el) => !quickFilters?.find((filter) => filter.field_id === el.id)) ?? [];
+  const unselectedQuickFilters =
+    columns?.filter(
+      (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
+    ) ?? [];
   return [...selectedQuickFilters, ...unselectedQuickFilters];
 };
 
 const computeGroupFields = (groupFields = [], columns) => {
-  return groupFields?.filter((groupFieldID) => columns?.some((column) => column.id === groupFieldID)) ?? [];
+  return (
+    groupFields?.filter((groupFieldID) =>
+      columns?.some((column) => column.id === groupFieldID)
+    ) ?? []
+  );
 };
 
 export default ViewForm;

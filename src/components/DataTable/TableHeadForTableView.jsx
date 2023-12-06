@@ -2,12 +2,14 @@ import AlignHorizontalLeftIcon from "@mui/icons-material/AlignHorizontalLeft";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import PlaylistAddCircleIcon from "@mui/icons-material/PlaylistAddCircle";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
 import { Button, Menu } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -15,6 +17,8 @@ import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
 import { paginationActions } from "../../store/pagination/pagination.slice";
 import { CTableHeadCell } from "../CTable";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import "./style.scss";
 
 export default function TableHeadForTableView({
   column,
@@ -44,10 +48,13 @@ export default function TableHeadForTableView({
   currentView,
   setFieldCreateAnchor,
   setFieldData,
+  refetch,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
+  const summaryIsOpen = Boolean(summaryOpen);
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
@@ -55,6 +62,13 @@ export default function TableHeadForTableView({
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleSummaryOpen = (event) => {
+    setSummaryOpen(event.currentTarget);
+  };
+  const handleSummaryClose = () => {
+    setSummaryOpen(null);
   };
 
   const fixColumnChangeHandler = (column, e) => {
@@ -116,6 +130,16 @@ export default function TableHeadForTableView({
     });
   };
 
+  const computedViewSummaries = useMemo(() => {
+    if (
+      view?.attributes?.summaries?.find(
+        (item) => item?.field_name === column?.id
+      )
+    )
+      return true;
+    else return false;
+  }, [view?.attributes?.summaries, column]);
+
   const menu = [
     {
       id: 1,
@@ -169,6 +193,19 @@ export default function TableHeadForTableView({
               }
               return newSortedDatas;
             });
+          },
+        },
+        {
+          id: 18,
+          title: computedViewSummaries ? `Unset Summary` : "Add Summary",
+          icon: <PlaylistAddCircleIcon />,
+          arrowIcon: <KeyboardArrowRightIcon />,
+          onClickAction: (e) => {
+            if (computedViewSummaries) {
+              handleAddSummary(column, "unset");
+            } else {
+              handleSummaryOpen(e);
+            }
           },
         },
         {
@@ -226,6 +263,59 @@ export default function TableHeadForTableView({
       ],
     },
   ];
+
+  const formulaTypes = [
+    {
+      icon: <FunctionsIcon />,
+      id: 1,
+      label: "Sum ()",
+      value: "sum",
+    },
+    {
+      icon: <FunctionsIcon />,
+      id: 1,
+      label: "Avg ()",
+      value: "avg",
+    },
+  ];
+
+  const handleAddSummary = (item, type) => {
+    let result = [];
+
+    if (type === "add") {
+      const newSummary = {
+        field_name: column?.id,
+        formula_name: item?.value,
+      };
+
+      result = Array.from(
+        new Map(
+          [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
+            item.field_name,
+            item,
+          ])
+        ).values()
+      );
+    } else if (type === "unset") {
+      result = view?.attributes?.summaries?.filter(
+        (element) => element?.field_name !== item?.id
+      );
+    }
+
+    const computedValues = {
+      ...view,
+      attributes: {
+        ...view?.attributes,
+        summaries: result ?? [],
+      },
+    };
+
+    constructorViewService.update(computedValues).then(() => {
+      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+      handleSummaryClose();
+      handleClose();
+    });
+  };
 
   return (
     <>
@@ -366,6 +456,9 @@ export default function TableHeadForTableView({
                     onClick={(e) => {
                       child.onClickAction(e);
                       handleClose();
+                      if (child?.id !== 18) {
+                        handleClose();
+                      }
                     }}
                     style={{
                       display: "flex",
@@ -386,10 +479,81 @@ export default function TableHeadForTableView({
                       {child.icon}
                     </div>
 
-                    <span>{child.title}</span>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {child.title}
+                    </div>
                   </div>
                 )
               )}
+            </div>
+          ))}
+        </div>
+      </Menu>
+
+      <Menu
+        anchorEl={summaryOpen}
+        open={summaryIsOpen}
+        onClose={handleSummaryClose}
+        anchorOrigin={{ horizontal: "right" }}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            marginLeft: "10px",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+          },
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          {formulaTypes?.map((item) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                handleAddSummary(item, "add");
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+                className="subMenuItem"
+              >
+                <span
+                  style={{
+                    marginRight: "5px",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                >
+                  {item.icon}
+                </span>
+                {item?.label}
+              </div>
             </div>
           ))}
         </div>

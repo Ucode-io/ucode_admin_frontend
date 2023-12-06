@@ -2,7 +2,12 @@ import "./style.scss";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
 import React, { useState } from "react";
 import style from "./field.module.scss";
-import { math, newFieldTypes } from "../../utils/constants/fieldTypes";
+import {
+  dateFieldFormats,
+  math,
+  newFieldTypes,
+  numberFieldFormats,
+} from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
 import HFTextField from "../FormElements/HFTextField";
 import HFSelect from "../FormElements/HFSelect";
@@ -32,9 +37,9 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
 }) {
-  const type = useWatch({
+  const format = useWatch({
     control,
-    name: "type",
+    name: "attributes.format",
   });
   const fieldWatch = useWatch({
     control,
@@ -137,7 +142,7 @@ export default function FieldCreateModal({
         <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
           <Box className={style.field}>
             <FRow
-              label={"Field name"}
+              label={"Label"}
               componentClassName="flex gap-2 align-center"
               required
               classname={style.custom_label}
@@ -153,7 +158,7 @@ export default function FieldCreateModal({
               />
             </FRow>
             <FRow
-              label={"Field type"}
+              label={"Format"}
               componentClassName="flex gap-2 align-center"
               required
               classname={style.custom_label}
@@ -162,6 +167,41 @@ export default function FieldCreateModal({
                 className={style.input}
                 disabledHelperText
                 options={newFieldTypes}
+                name="attributes.format"
+                control={control}
+                disabled={fieldData}
+                fullWidth
+                required
+                onChange={(e) => {
+                  if (e === "NUMBER") {
+                    setValue("type", "NUMBER");
+                  } else if (e === "DATE") {
+                    setValue("type", "DATE");
+                  } else {
+                    setValue("type", e);
+                  }
+                }}
+                placeholder="Select type"
+              />
+            </FRow>
+          </Box>
+          {format === "NUMBER" || format === "DATE" ? (
+            <FRow
+              label={"Type"}
+              componentClassName="flex gap-2 align-center"
+              required
+              classname={style.custom_label}
+            >
+              <HFSelect
+                className={style.input}
+                disabledHelperText
+                options={
+                  format === "NUMBER"
+                    ? numberFieldFormats
+                    : format === "DATE"
+                    ? dateFieldFormats
+                    : null
+                }
                 name="type"
                 control={control}
                 disabled={fieldData}
@@ -170,7 +210,7 @@ export default function FieldCreateModal({
                 placeholder="Select type"
               />
             </FRow>
-          </Box>
+          ) : null}
           {fieldData && (
             <Button
               fullWidth
@@ -185,7 +225,7 @@ export default function FieldCreateModal({
             </Button>
           )}
           <div>
-            {type === "MULTISELECT" && (
+            {format === "MULTISELECT" && (
               <Box className={style.dropdown}>
                 <Container
                   lockAxis="y"
@@ -283,7 +323,7 @@ export default function FieldCreateModal({
               </Box>
             )}
           </div>
-          {type === "FORMULA_FRONTEND" && (
+          {format === "FORMULA_FRONTEND" && (
             <>
               {watch("attributes.advanced_type") ? (
                 <>
@@ -381,7 +421,7 @@ export default function FieldCreateModal({
             </>
           )}
 
-          {type === "RELATION" && (
+          {format === "RELATION" && (
             <RelationFieldForm
               control={control}
               watch={watch}

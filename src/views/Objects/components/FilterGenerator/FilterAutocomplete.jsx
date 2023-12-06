@@ -48,7 +48,7 @@ const FilterAutoComplete = ({
 
   const onClearButtonClick = (e) => {
     e.stopPropagation();
-    onChange(null);
+    onChange(undefined);
   };
 
   return (
@@ -64,8 +64,8 @@ const FilterAutoComplete = ({
             </span>
           )}
         </div>
-        {computedValue?.length > 1 && `+${computedValue.length - 1}`}
-        {!!computedValue?.length && (
+        {value?.length > 1 && `+${value.length - 1}`}
+        {!!value?.length && (
           <IconButton onClick={onClearButtonClick}>
             <Close />
           </IconButton>

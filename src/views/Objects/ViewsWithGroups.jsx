@@ -5,9 +5,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
 import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
@@ -70,7 +70,7 @@ const ViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(true);
+  const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
 
   const [dateFilters, setDateFilters] = useState({
@@ -136,6 +136,35 @@ const ViewsWithGroups = ({
     name: "multi",
   });
 
+  const getValue = useCallback((item, key) => {
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
+  }, []);
+
+  const {mutate: updateMultipleObject, isLoading} = useMutation(
+    (values) =>
+      constructorObjectService.updateMultipleObject(tableSlug, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? "",
+            doctors_id_2: getValue(item, "doctors_id_2"),
+            doctors_id_3: getValue(item, "doctors_id_3"),
+            specialities_id: getValue(item, "specialities_id"),
+          })),
+        },
+      }),
+    {
+      onSuccess: () => {
+        setShouldGet((p) => !p);
+        setFormVisible(false);
+      },
+    }
+  );
+
+  const onSubmit = (data) => {
+    updateMultipleObject(data);
+  };
+
   const handleHeightControl = (val) => {
     dispatch(
       tableSizeAction.setTableHeight({
@@ -172,7 +201,7 @@ const ViewsWithGroups = ({
   }, [dateFilters, tableSlug, view?.id, view?.type]);
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
     navigate(url);
   };
 
@@ -333,14 +362,14 @@ const ViewsWithGroups = ({
             />
             <Divider orientation="vertical" flexItem />
             <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} />
+            {/* <Divider orientation="vertical" flexItem /> */}
+            {/* <SortButton fieldsMap={fieldsMap} setSortedDatas={setSortedDatas} /> */}
             <Divider orientation="vertical" flexItem />
             <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem /> */}
             {view.type === "TABLE" && (
               <>
-                <Button
+                {/* <Button
                   variant="text"
                   style={{
                     gap: "5px",
@@ -351,7 +380,7 @@ const ViewsWithGroups = ({
                 >
                   <FormatLineSpacingIcon color="#A8A8A8" />
                   Line Height
-                </Button>
+                </Button> */}
 
                 <Menu
                   open={openHeightControl}
@@ -528,7 +557,7 @@ const ViewsWithGroups = ({
                   ) : null}
                 </>
               )}
-              {!groupTable?.length &&
+              {!!groupTable?.length &&
                 tabs?.map((tab) => (
                   <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
@@ -562,6 +591,7 @@ const ViewsWithGroups = ({
                         setFormVisible={setFormVisible}
                         formVisible={formVisible}
                         filters={filters}
+                        setFilterVisible={setFilterVisible}
                         view={view}
                         fieldsMap={fieldsMap}
                         setFormValue={setFormValue}
@@ -605,11 +635,12 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
-                      currentView={view}
-                      filterVisible={filterVisible}
                       visibleColumns={visibleColumns}
                       visibleRelationColumns={visibleRelationColumns}
                       visibleForm={visibleForm}
+                      currentView={view}
+                      filterVisible={filterVisible}
+                      setFilterVisible={setFilterVisible}
                       setDataLength={setDataLength}
                       getValues={getValues}
                       selectedTabIndex={selectedTabIndex}

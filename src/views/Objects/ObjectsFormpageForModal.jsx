@@ -1,12 +1,12 @@
 import {Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
-import FiltersBlock from "../../components/FiltersBlock";
 import Footer from "../../components/Footer";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -15,19 +15,20 @@ import layoutService from "../../services/layoutService";
 import {store} from "../../store";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
-import NewRelationSection from "./RelationSection/NewRelationSection";
-import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import RelationSectionForModal from "./RelationSection/RelationSectionForModal";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
-import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 
-const ObjectsFormPage = ({
+const ObjectsFormPageForModal = ({
   tableSlugFromProps,
   handleClose,
   modal = false,
   selectedRow,
   dateInfo,
+  fullScreen,
+  setFullScreen = () => {},
 }) => {
   const {id: idFromParam, tableSlug: tableSlugFromParam} = useParams();
 
@@ -74,7 +75,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    }, tableSlug);
+    });
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
@@ -118,7 +119,7 @@ const ObjectsFormPage = ({
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    }, tableSlug);
+    });
 
     try {
       const [{layouts: layout = []}] = await Promise.all([getLayout]);
@@ -232,25 +233,10 @@ const ObjectsFormPage = ({
     getFields();
   }, [id, tableInfo, selectedTabIndex, i18n?.language]);
 
-  // const getSubtitleValue = useMemo(() => {
-  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  // }, [tableInfo]);
   return (
     <div className={styles.formPage}>
-      <FiltersBlock summary={true} sections={sections} hasBackground={true}>
-        <FormPageBackButton />
-
-        <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
-
-        <SummarySectionValue
-          computedSummary={summary}
-          control={control}
-          sections={sections}
-          setFormValue={setFormValue}
-        />
-      </FiltersBlock>
       <div className={styles.formArea}>
-        <NewRelationSection
+        <RelationSectionForModal
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}
@@ -272,6 +258,26 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
+            <SecondaryButton
+              onClick={() => setFullScreen((prev) => !prev)}
+              color=""
+              style={{
+                position: "absolute",
+                left: "16px",
+                border: "0px solid #2d6ce5",
+                padding: "4px",
+              }}
+            >
+              {fullScreen ? (
+                <FullscreenExitIcon
+                  style={{color: "#2d6ce5", width: "26px", height: "26px"}}
+                />
+              ) : (
+                <FullscreenIcon
+                  style={{color: "#2d6ce5", width: "26px", height: "26px"}}
+                />
+              )}
+            </SecondaryButton>
             <SecondaryButton
               onClick={() => (modal ? handleClose() : navigate(-1))}
               color="error"
@@ -303,4 +309,4 @@ const ObjectsFormPage = ({
   );
 };
 
-export default ObjectsFormPage;
+export default ObjectsFormPageForModal;

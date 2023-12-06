@@ -14,16 +14,15 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import Filter1Icon from "@mui/icons-material/Filter1";
-import { Button, Switch } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
+import {Button, Switch} from "@mui/material";
+import React, {useEffect, useMemo} from "react";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
 
 export default function SearchParams({
   checkedColumns,
   setCheckedColumns,
   columns,
 }) {
-
   const changeHandler = (slug) => {
     if (checkedColumns.includes(slug)) {
       setCheckedColumns(checkedColumns.filter((el) => el !== slug));
@@ -67,7 +66,7 @@ export default function SearchParams({
               gap: "10px",
             }}
           >
-            <div style={{ textAlign: "end" }}>All</div>
+            <div style={{textAlign: "end"}}>All</div>
           </div>
 
           <div>
@@ -102,7 +101,7 @@ export default function SearchParams({
             >
               <div>{columnIcons(column.type)}</div>
 
-              <div style={{ textAlign: "end" }}>{column.label}</div>
+              <div style={{textAlign: "end"}}>{column.label}</div>
             </div>
 
             <div>

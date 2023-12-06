@@ -104,7 +104,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const deleteEndpointClickHandler = (id) => {
     deleteEndpoint({
       id,
-      envId: company.environmentId,
+      envId: companyironmentId,
       projectId: company.projectId,
     });
   };

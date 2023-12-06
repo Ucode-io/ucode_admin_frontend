@@ -23,6 +23,13 @@
 
 }
 
+.formrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 8px;
+}
+
 .input {
 
   fieldset {
@@ -51,10 +58,39 @@
 }
 
 .settingsBlock {
-  width: 450px;
-  min-width: 450px;
+  width: 550px;
+  min-width: 550px;
   background-color: #fff;
   border-left: 1px solid #E5E9EB;
+  display: flex;
+
+  .additional {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    padding: 16px 8px;
+    row-gap: 5px;
+
+    .active {
+      justify-content: start;
+      color: #fff;
+      background: #007AFF;
+    }
+
+    .inactive {
+      justify-content: start;
+      color: #656f7d;
+
+      &:hover {
+        color: #656f7d;
+        background: #F5F6FA;
+      }
+    }
+  }
+
+  .form {
+    width: 75%;
+  }
 
   .settingsBlockHeader {
     display: flex;

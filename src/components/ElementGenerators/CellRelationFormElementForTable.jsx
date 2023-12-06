@@ -275,8 +275,11 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (data?.length) {
-          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        if (data?.options?.length) {
+          setAllOptions((prevOptions) => [
+            ...(prevOptions ?? []),
+            ...(data.options ?? []),
+          ]);
         }
       },
     }
@@ -288,7 +291,7 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);
-
+  console.log("computedOptions", allOptions);
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];

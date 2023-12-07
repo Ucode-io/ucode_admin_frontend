@@ -1,20 +1,19 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
+import layoutService from "../../services/layoutService";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { store } from "../../store";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import ButtonsPopover from "../../components/ButtonsPopover";
-import { useWatch } from "react-hook-form";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { layout } from "@chakra-ui/react";
-import layoutService from "../../services/layoutService";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../utils/applyDrag";
 
 const MainInfoForModal = ({
   computedSections,
@@ -104,12 +103,23 @@ const MainInfoForModal = ({
     return isVisible;
   };
 
+  const onDrop = (dropResult, colNumber) => {
+    const result = applyDrag(computedSections, dropResult);
+
+    if (!result) return;
+
+    console.log('sssssss', result)
+  };
+
   if (loader) return <PageFallback />;
 
   return (
-    <div className={styles.newcontainerModal} style={{
-      height: "calc(100% - 60px)",
-    }}>
+    <div
+      className={styles.newcontainerModal}
+      style={{
+        height: "calc(100% - 60px)",
+      }}
+    >
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (
@@ -127,64 +137,74 @@ const MainInfoForModal = ({
               isVisibleSection(section) && (
                 <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
                   <div className={styles.newformColumn}>
-                    {!editAcces
-                      ? section.fields?.map(
-                          (field, fieldIndex) =>
-                            (field?.is_visible_layout || field?.is_visible_layout === undefined) && (
-                              <Box
-                                style={{
-                                  display: "flex",
-                                  alignItems: "flex-end",
-                                }}
-                              >
-                                <FormElementGenerator
-                                  key={field.id}
-                                  isMultiLanguage={isMultiLanguage}
-                                  field={field}
-                                  control={control}
-                                  setFormValue={setFormValue}
-                                  fieldsList={fieldsList}
-                                  formTableSlug={tableSlug}
-                                  relatedTable={relatedTable}
-                                  activeLang={activeLang}
-                                  errors={errors}
-                                />
-                              </Box>
-                            )
-                        )
-                      : section.fields?.map((field, fieldIndex) => (
-                          <Box
-                            style={{
-                              display: "flex",
-                              alignItems: "flex-end",
-                            }}
-                          >
-                            <FormElementGenerator
-                              key={field.id}
-                              isMultiLanguage={isMultiLanguage}
-                              field={field}
-                              control={control}
-                              setFormValue={setFormValue}
-                              fieldsList={fieldsList}
-                              formTableSlug={tableSlug}
-                              relatedTable={relatedTable}
-                              activeLang={activeLang}
-                              errors={errors}
-                            />
-
-                            <Button
-                              onClick={() => toggleFields(field)}
-                              sx={{
-                                height: "38px",
-                                minWidth: "38px",
-                                width: "38px",
-                                borderRadius: "50%",
+                    <Container
+                      groupName="1"
+                      onDrop={onDrop}
+                      // orientation="horizontal"
+                      dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                      getChildPayload={(i) => section?.[i] ?? {}}
+                    >
+                      {!editAcces
+                        ? section.fields?.map(
+                            (field, fieldIndex) =>
+                              (field?.is_visible_layout || field?.is_visible_layout === undefined) && (
+                                <Draggable key={field.id} style={{ display: "flex", alignItems: "center" }}>
+                                  <Box
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "flex-end",
+                                    }}
+                                  >
+                                    <FormElementGenerator
+                                      key={field.id}
+                                      isMultiLanguage={isMultiLanguage}
+                                      field={field}
+                                      control={control}
+                                      setFormValue={setFormValue}
+                                      fieldsList={fieldsList}
+                                      formTableSlug={tableSlug}
+                                      relatedTable={relatedTable}
+                                      activeLang={activeLang}
+                                      errors={errors}
+                                    />
+                                  </Box>
+                                </Draggable>
+                              )
+                          )
+                        : section.fields?.map((field, fieldIndex) => (
+                            <Box
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-end",
                               }}
                             >
-                              {!field?.is_visible_layout ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                            </Button>
-                          </Box>
-                        ))}
+                              <FormElementGenerator
+                                key={field.id}
+                                isMultiLanguage={isMultiLanguage}
+                                field={field}
+                                control={control}
+                                setFormValue={setFormValue}
+                                fieldsList={fieldsList}
+                                formTableSlug={tableSlug}
+                                relatedTable={relatedTable}
+                                activeLang={activeLang}
+                                errors={errors}
+                              />
+
+                              <Button
+                                onClick={() => toggleFields(field)}
+                                sx={{
+                                  height: "38px",
+                                  minWidth: "38px",
+                                  width: "38px",
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                {!field?.is_visible_layout ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                              </Button>
+                            </Box>
+                          ))}
+                    </Container>
                   </div>
                 </NewFormCard>
               )

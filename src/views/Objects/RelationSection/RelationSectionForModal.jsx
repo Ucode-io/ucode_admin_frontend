@@ -27,6 +27,8 @@ import constructorTableService from "../../../services/constructorTableService";
 import { listToMap } from "../../../utils/listToMap";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../../utils/applyDrag";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -409,6 +411,21 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
+  const onDrop = (dropResult, colNumber) => {
+    const result = applyDrag(data?.[0]?.tabs, dropResult);
+
+    if (!result) return;
+
+    const newTabs = data?.map((layout) => {
+      return {
+        ...layout,
+        tabs: result,
+      };
+    });
+    setData(newTabs);
+    updateLayout(newTabs);
+  };
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -432,74 +449,88 @@ const RelationSectionForModal = ({
               {!relation?.is_visible_section && (
                 <div className={styles.cardHeaderModal}>
                   <TabList className={styles.tabList}>
-                    {relation?.tabs?.map((el, index) =>
-                      editAcces ? (
-                        <>
-                          <Tab
-                            key={el.id}
-                            className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                            onClick={() => {
-                              setSelectedIndex(index);
-                              onSelect(el);
-                            }}
-                            style={{
-                              marginRight: "0",
-                            }}
-                          >
-                            {relation?.view_relation_type === "FILE" && (
-                              <>
-                                <InsertDriveFile /> Файлы
-                              </>
-                            )}
-                            <div className="flex align-center gap-2 text-nowrap">
-                              {el?.attributes?.[`label_${i18n.language}`]
-                                ? el?.attributes?.[`label_${i18n.language}`]
-                                : el?.relation?.attributes?.[`title_${i18n.language}`]
-                                ? el?.relation?.attributes?.[`title_${i18n.language}`]
-                                : el?.label ?? el?.title}
-                            </div>
-                          </Tab>
+                    <Container
+                      groupName="1"
+                      onDrop={onDrop}
+                      orientation="horizontal"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                      dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                      getChildPayload={(i) => relation?.tabs?.[i] ?? {}}
+                    >
+                      {relation?.tabs?.map((el, index) =>
+                        editAcces ? (
+                          <Draggable key={el.id} style={{ display: "flex", alignItems: "center" }}>
+                            <>
+                              <Tab
+                                key={el.id}
+                                className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                                onClick={() => {
+                                  setSelectedIndex(index);
+                                  onSelect(el);
+                                }}
+                                style={{
+                                  marginRight: "0",
+                                }}
+                              >
+                                {relation?.view_relation_type === "FILE" && (
+                                  <>
+                                    <InsertDriveFile /> Файлы
+                                  </>
+                                )}
+                                <div className="flex align-center gap-2 text-nowrap">
+                                  {el?.attributes?.[`label_${i18n.language}`]
+                                    ? el?.attributes?.[`label_${i18n.language}`]
+                                    : el?.relation?.attributes?.[`title_${i18n.language}`]
+                                    ? el?.relation?.attributes?.[`title_${i18n.language}`]
+                                    : el?.label ?? el?.title}
+                                </div>
+                              </Tab>
 
-                          <Button
-                            onClick={() => toggleTabs(el)}
-                            sx={{
-                              height: "38px",
-                              minWidth: "38px",
-                              width: "38px",
-                              borderRadius: "50%",
-                            }}
-                          >
-                            {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                          </Button>
+                              <Button
+                                onClick={() => toggleTabs(el)}
+                                sx={{
+                                  height: "38px",
+                                  minWidth: "38px",
+                                  width: "38px",
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                              </Button>
 
-                          <Divider orientation="vertical" flexItem />
-                        </>
-                      ) : (
-                        (el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined) && (
-                          <Tab
-                            key={el.id}
-                            className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                            onClick={() => {
-                              setSelectedIndex(index);
-                              onSelect(el);
-                            }}
-                          >
-                            {relation?.view_relation_type === "FILE" && (
-                              <>
-                                <InsertDriveFile /> Файлы
-                              </>
-                            )}
-                            <div className="flex align-center gap-2 text-nowrap">
-                              {el?.attributes?.[`label_${i18n.language}`]
-                                ? el?.attributes?.[`label_${i18n.language}`]
-                                : el?.relation?.attributes?.[`title_${i18n.language}`]
-                                ? el?.relation?.attributes?.[`title_${i18n.language}`]
-                                : el?.label ?? el?.title}
-                            </div>
-                          </Tab>
+                              <Divider orientation="vertical" flexItem />
+                            </>
+                          </Draggable>
+                        ) : (
+                          (el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined) && (
+                            <Tab
+                              key={el.id}
+                              className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                              onClick={() => {
+                                setSelectedIndex(index);
+                                onSelect(el);
+                              }}
+                            >
+                              {relation?.view_relation_type === "FILE" && (
+                                <>
+                                  <InsertDriveFile /> Файлы
+                                </>
+                              )}
+                              <div className="flex align-center gap-2 text-nowrap">
+                                {el?.attributes?.[`label_${i18n.language}`]
+                                  ? el?.attributes?.[`label_${i18n.language}`]
+                                  : el?.relation?.attributes?.[`title_${i18n.language}`]
+                                  ? el?.relation?.attributes?.[`title_${i18n.language}`]
+                                  : el?.label ?? el?.title}
+                              </div>
+                            </Tab>
+                          )
                         )
-                      )
-                    )}
+                      )}
+                    </Container>
                   </TabList>
                   {editAcces ? (
                     <>
@@ -569,6 +600,7 @@ const RelationSectionForModal = ({
                       {!selectedTab?.relation_id ? (
                         <MainInfoForModal
                           control={control}
+                          selectedTabIndex={selectedTabIndex}
                           loader={loader}
                           isMultiLanguage={isMultiLanguage}
                           computedSections={computedSections}

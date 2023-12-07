@@ -47,6 +47,7 @@ export default function TableDataForm({
       style={{
         position: "relative",
         minWidth: "150px",
+        boxSizing: "border-box",
       }}
     >
       <CellElementGeneratorForTableView

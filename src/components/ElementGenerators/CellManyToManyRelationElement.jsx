@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     "&::placeholder": {
       color: "#fff",
     },
+    heigth: "40px",
   },
 }));
 

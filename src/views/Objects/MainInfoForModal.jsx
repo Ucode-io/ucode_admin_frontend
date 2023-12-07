@@ -103,12 +103,20 @@ const MainInfoForModal = ({
     return isVisible;
   };
 
-  const onDrop = (dropResult, colNumber) => {
+  const onDropSections = (dropResult, colNumber) => {
     const result = applyDrag(computedSections, dropResult);
 
     if (!result) return;
 
-    console.log('sssssss', result)
+    console.log("sssssss", result);
+  };
+
+  const onDropFields = (dropResult, colNumber) => {
+    const result = applyDrag(computedSections, dropResult);
+
+    if (!result) return;
+
+    console.log("sssssss", result);
   };
 
   if (loader) return <PageFallback />;
@@ -132,83 +140,93 @@ const MainInfoForModal = ({
             </div>
           )}
 
-          {computedSections.map(
-            (section) =>
-              isVisibleSection(section) && (
-                <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
-                  <div className={styles.newformColumn}>
-                    <Container
-                      groupName="1"
-                      onDrop={onDrop}
-                      // orientation="horizontal"
-                      dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                      getChildPayload={(i) => section?.[i] ?? {}}
-                    >
-                      {!editAcces
-                        ? section.fields?.map(
-                            (field, fieldIndex) =>
-                              (field?.is_visible_layout || field?.is_visible_layout === undefined) && (
-                                <Draggable key={field.id} style={{ display: "flex", alignItems: "center" }}>
-                                  <Box
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "flex-end",
+          <Container
+            groupName="1"
+            onDrop={onDropSections}
+            // orientation="horizontal"
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
+            getChildPayload={(i) => computedSections?.[i] ?? {}}
+          >
+            {computedSections.map(
+              (section) =>
+                isVisibleSection(section) && (
+                  <Draggable key={section.id}>
+                    <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
+                      <div className={styles.newformColumn}>
+                        <Container
+                          groupName="1"
+                          onDrop={onDropFields}
+                          // orientation="horizontal"
+                          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                          getChildPayload={(i) => computedSections?.[i] ?? {}}
+                        >
+                          {!editAcces
+                            ? section.fields?.map(
+                                (field, fieldIndex) =>
+                                  (field?.is_visible_layout || field?.is_visible_layout === undefined) && (
+                                    <Draggable key={field.id}>
+                                      <Box
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "flex-end",
+                                        }}
+                                      >
+                                        <FormElementGenerator
+                                          key={field.id}
+                                          isMultiLanguage={isMultiLanguage}
+                                          field={field}
+                                          control={control}
+                                          setFormValue={setFormValue}
+                                          fieldsList={fieldsList}
+                                          formTableSlug={tableSlug}
+                                          relatedTable={relatedTable}
+                                          activeLang={activeLang}
+                                          errors={errors}
+                                        />
+                                      </Box>
+                                    </Draggable>
+                                  )
+                              )
+                            : section.fields?.map((field, fieldIndex) => (
+                                <Box
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                  }}
+                                >
+                                  <FormElementGenerator
+                                    key={field.id}
+                                    isMultiLanguage={isMultiLanguage}
+                                    field={field}
+                                    control={control}
+                                    setFormValue={setFormValue}
+                                    fieldsList={fieldsList}
+                                    formTableSlug={tableSlug}
+                                    relatedTable={relatedTable}
+                                    activeLang={activeLang}
+                                    errors={errors}
+                                  />
+
+                                  <Button
+                                    onClick={() => toggleFields(field)}
+                                    sx={{
+                                      height: "38px",
+                                      minWidth: "38px",
+                                      width: "38px",
+                                      borderRadius: "50%",
                                     }}
                                   >
-                                    <FormElementGenerator
-                                      key={field.id}
-                                      isMultiLanguage={isMultiLanguage}
-                                      field={field}
-                                      control={control}
-                                      setFormValue={setFormValue}
-                                      fieldsList={fieldsList}
-                                      formTableSlug={tableSlug}
-                                      relatedTable={relatedTable}
-                                      activeLang={activeLang}
-                                      errors={errors}
-                                    />
-                                  </Box>
-                                </Draggable>
-                              )
-                          )
-                        : section.fields?.map((field, fieldIndex) => (
-                            <Box
-                              style={{
-                                display: "flex",
-                                alignItems: "flex-end",
-                              }}
-                            >
-                              <FormElementGenerator
-                                key={field.id}
-                                isMultiLanguage={isMultiLanguage}
-                                field={field}
-                                control={control}
-                                setFormValue={setFormValue}
-                                fieldsList={fieldsList}
-                                formTableSlug={tableSlug}
-                                relatedTable={relatedTable}
-                                activeLang={activeLang}
-                                errors={errors}
-                              />
-
-                              <Button
-                                onClick={() => toggleFields(field)}
-                                sx={{
-                                  height: "38px",
-                                  minWidth: "38px",
-                                  width: "38px",
-                                  borderRadius: "50%",
-                                }}
-                              >
-                                {!field?.is_visible_layout ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                              </Button>
-                            </Box>
-                          ))}
-                    </Container>
-                  </div>
-                </NewFormCard>
-              )
-          )}
+                                    {!field?.is_visible_layout ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                  </Button>
+                                </Box>
+                              ))}
+                        </Container>
+                      </div>
+                    </NewFormCard>
+                  </Draggable>
+                )
+            )}
+          </Container>
         </div>
       ) : (
         <div className={styles.hideSideCard}>

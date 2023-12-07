@@ -16,6 +16,7 @@ const NewSectionsBlock = ({
   openRelationSettingsBlock,
   selectedLayout,
   selectedTab,
+  allTabs
 }) => {
   const selectedLayoutIndex = useWatch({
     control: mainForm.control,
@@ -76,6 +77,7 @@ const NewSectionsBlock = ({
           <Draggable key={section.id}>
             <NewSection
               index={index}
+              allTabs={allTabs}
               selectedLayoutIndex={selectedLayoutIndex}
               selectedTabIndex={selectedTabIndex}
               selectedLayout={selectedLayout}

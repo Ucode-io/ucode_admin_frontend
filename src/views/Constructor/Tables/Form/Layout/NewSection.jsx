@@ -22,6 +22,7 @@ const NewSection = ({
   selectedLayoutIndex,
   selectedTabIndex,
   removeSection,
+  allTabs
 }) => {
   const sectionFields = useFieldArray({
     control: mainForm.control,
@@ -78,7 +79,7 @@ const NewSection = ({
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
-
+console.log('sectionFields', sectionFields)
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
@@ -140,7 +141,7 @@ const NewSection = ({
 
       <div className={styles.newsectionCardBody}>
         <Container
-          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", overflowX: "scroll" }}
+          style={{  height: "50px", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", overflowX: "scroll" }}
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"

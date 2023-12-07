@@ -73,6 +73,7 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
           gap: "5px",
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
+          padding: "2px 8px",
         }}
         onClick={handleClick}
       >
@@ -216,7 +217,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                       >
                         {column?.type ? columnIcons(column?.type) : <LinkIcon />}
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                      <p
+                        style={{
+                          textWrap: "nowrap",
+                        }}
+                      >
+                        {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                      </p>
                     </div>
                     <div
                       style={{
@@ -274,7 +281,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                     >
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                    <p
+                      style={{
+                        textWrap: "nowrap",
+                      }}
+                    >
+                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                    </p>
                   </div>
                   <div
                     style={{

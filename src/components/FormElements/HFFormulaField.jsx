@@ -13,6 +13,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 import {useState} from "react";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
+import FunctionsIcon from "@mui/icons-material/Functions";
 
 const parser = new Parser();
 
@@ -140,10 +141,11 @@ const HFFormulaField = ({
                       color={formulaIsVisible ? "primary" : "default"}
                       onClick={() => setFormulaIsVisible((prev) => !prev)}
                     >
-                      <IconGenerator
+                      {/* <IconGenerator
                         icon="square-root-variable.svg"
                         size={15}
-                      />
+                      /> */}
+                      <FunctionsIcon />
                     </IconButton>
                   </Tooltip>
                   {disabled && (

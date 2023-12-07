@@ -7,6 +7,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 import {useState} from "react";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {fi} from "date-fns/locale";
+import FunctionsIcon from "@mui/icons-material/Functions";
 
 const parser = new Parser();
 
@@ -124,7 +125,8 @@ const NewCHFFormulaField = ({
                     color={formulaIsVisible ? "primary" : "default"}
                     onClick={() => setFormulaIsVisible((prev) => !prev)}
                   >
-                    <IconGenerator icon="square-root-variable.svg" size={15} />
+                    {/* <IconGenerator icon="square-root-variable.svg" size={15} /> */}
+                    <FunctionsIcon />
                   </IconButton>
                 </Tooltip>
               </InputAdornment>

@@ -43,7 +43,9 @@ const Attributes = ({ control, watch, mainForm }) => {
       return <CheckboxAttributes control={control} />;
 
     case "FORMULA_FRONTEND":
-      return <FrontendFormulaAttributes control={control} mainForm={mainForm} />;
+      return (
+        <FrontendFormulaAttributes control={control} mainForm={mainForm} />
+      );
 
     case "FORMULA":
       return <FormulaAttributes control={control} mainForm={mainForm} />;
@@ -56,12 +58,9 @@ const Attributes = ({ control, watch, mainForm }) => {
 
     case "CODABAR":
       return <CodabarIncrements control={control} />;
-      
+
     case "MAP":
       return <MapAttributes control={control} />;
-
-    // case "MAP":
-    //   return <MapAttributes control={control} />;
 
     default:
       return <SingleLineAttributes control={control} />;

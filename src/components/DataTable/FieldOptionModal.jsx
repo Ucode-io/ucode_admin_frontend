@@ -26,6 +26,8 @@ export default function FieldOptionModal({
       setValue("type", "NUMBER");
     } else if (value === "DATE") {
       setValue("type", "DATE");
+    } else if (value === "SINGLE_LINE") {
+      setValue("type", "SINGLE_LINE");
     } else {
       setValue("type", value);
     }

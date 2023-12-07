@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import { Box, Button, Dialog, TextField, makeStyles } from "@mui/material";
+import React, {useState} from "react";
+import {Box, Button, Dialog, TextField, makeStyles} from "@mui/material";
 import HFMapField from "./HFMapField";
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 import styles from "./style.module.scss";
-import { generateLink } from "../../utils/generateYandexLink";
+import {generateLink} from "../../utils/generateYandexLink";
 
-function HFModalMap({ control, field, defaultValue, updateObject, isNewTableView = false, isTransparent = false, isFormEdit, name, required }) {
+function HFModalMap({
+  control,
+  field,
+  defaultValue,
+  updateObject,
+  isNewTableView = false,
+  isTransparent = false,
+  isFormEdit,
+  name,
+  required,
+}) {
   const [open, setOpen] = useState(false);
   const value = useWatch({
     control,
@@ -21,10 +31,15 @@ function HFModalMap({ control, field, defaultValue, updateObject, isNewTableView
   };
 
   return (
-    <>
+    <Box>
       <TextField
-        value={value ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1]) : ""}
+        value={
+          value
+            ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
+            : ""
+        }
         defaultValue={defaultValue}
+        variant="standard"
         width="small"
         onClick={() => handleOpen()}
         sx={{
@@ -33,12 +48,14 @@ function HFModalMap({ control, field, defaultValue, updateObject, isNewTableView
         InputProps={{
           style: {
             background: isTransparent ? "transparent" : "",
+            height: "100%x",
+            height: "100%",
+            padding: "0 0",
           },
           classes: {
-            notchedoutline: {
-              border: "none",
-            },
+            notchedoutline: {},
           },
+          disableUnderline: true, // this removes the default underline
         }}
       />
 
@@ -59,13 +76,17 @@ function HFModalMap({ control, field, defaultValue, updateObject, isNewTableView
             <Button onClick={handleClose} variant="outlined" color="error">
               Cancel
             </Button>
-            <Button onClick={handleClose} sx={{ marginLeft: "10px" }} variant="outlined">
+            <Button
+              onClick={handleClose}
+              sx={{marginLeft: "10px"}}
+              variant="outlined"
+            >
               Confirm
             </Button>
           </Box>
         </div>
       </Dialog>
-    </>
+    </Box>
   );
 }
 

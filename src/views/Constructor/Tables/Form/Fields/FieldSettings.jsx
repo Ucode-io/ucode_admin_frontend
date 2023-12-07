@@ -1,8 +1,6 @@
 import { Close } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {
   Box,
   Button,
@@ -21,7 +19,6 @@ import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService, {
   useFieldCreateMutation,
@@ -37,6 +34,7 @@ import {
 } from "../../../../../utils/constants/fieldTypes";
 import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
+import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
@@ -280,6 +278,21 @@ const FieldSettings = ({
             {item.label}
           </Button>
         ))}
+        <AttributesButton
+          control={control}
+          watch={watch}
+          mainForm={mainForm}
+          button={
+            <Button
+              className={
+                drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
+              }
+              onClick={() => setDrawerType("ATTRIBUTES")}
+            >
+              Field
+            </Button>
+          }
+        />
       </Box>
       <Divider orientation="vertical" />
       <Box className={styles.form}>
@@ -398,22 +411,15 @@ const FieldSettings = ({
                       </TreeView>
                     </FRow>
                   )}
-
-                  {(fieldType === "SINGLE_LINE" ||
-                    fieldType === "MULTI_LINE") && (
-                    <HFCheckbox
-                      control={control}
-                      name="enable_multilanguage"
-                      label="Multi language"
-                      labelClassName={styles.custom_label}
-                    />
-                  )}
-                  <Attributes
-                    control={control}
-                    watch={watch}
-                    mainForm={mainForm}
-                  />
                 </Box>
+              )}
+
+              {drawerType === "ATTRIBUTES" && (
+                <Attributes
+                  control={control}
+                  watch={watch}
+                  mainForm={mainForm}
+                />
               )}
 
               {drawerType === "VALIDATION" && (

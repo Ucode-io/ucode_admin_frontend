@@ -501,28 +501,8 @@ const RelationSectionForModal = ({
                       )
                     )}
                   </TabList>
-                  {!getRelatedTabeSlug &&
-                    (editAcces ? (
-                      <>
-                        <SecondaryButton
-                          onClick={() => setEditAccess((prev) => !prev)}
-                          color=""
-                          style={{
-                            right: "16px",
-                            border: "0px solid #2d6ce5",
-                            padding: "4px",
-                          }}
-                        >
-                          <CloseIcon
-                            style={{
-                              color: "red",
-                              width: "20px",
-                              height: "20px",
-                            }}
-                          />
-                        </SecondaryButton>
-                      </>
-                    ) : (
+                  {editAcces ? (
+                    <>
                       <SecondaryButton
                         onClick={() => setEditAccess((prev) => !prev)}
                         color=""
@@ -532,15 +512,34 @@ const RelationSectionForModal = ({
                           padding: "4px",
                         }}
                       >
-                        <EditIcon
+                        <CloseIcon
                           style={{
-                            color: "#2d6ce5",
+                            color: "red",
                             width: "20px",
                             height: "20px",
                           }}
                         />
                       </SecondaryButton>
-                    ))}
+                    </>
+                  ) : (
+                    <SecondaryButton
+                      onClick={() => setEditAccess((prev) => !prev)}
+                      color=""
+                      style={{
+                        right: "16px",
+                        border: "0px solid #2d6ce5",
+                        padding: "4px",
+                      }}
+                    >
+                      <EditIcon
+                        style={{
+                          color: "#2d6ce5",
+                          width: "20px",
+                          height: "20px",
+                        }}
+                      />
+                    </SecondaryButton>
+                  )}
 
                   {getRelatedTabeSlug && (
                     <>

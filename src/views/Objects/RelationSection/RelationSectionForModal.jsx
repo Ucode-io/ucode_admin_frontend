@@ -600,6 +600,7 @@ const RelationSectionForModal = ({
                       {!selectedTab?.relation_id ? (
                         <MainInfoForModal
                           control={control}
+                          selectedTabIndex={selectedTabIndex}
                           loader={loader}
                           isMultiLanguage={isMultiLanguage}
                           computedSections={computedSections}

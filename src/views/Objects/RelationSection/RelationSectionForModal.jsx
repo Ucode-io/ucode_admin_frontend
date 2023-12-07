@@ -1,6 +1,6 @@
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import { InsertDriveFile } from "@mui/icons-material";
-import { Box, Card, Divider } from "@mui/material";
+import { Box, Button, Card, Divider } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -25,6 +25,8 @@ import FixColumnsRelationSection from "./FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import constructorTableService from "../../../services/constructorTableService";
 import { listToMap } from "../../../utils/listToMap";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -372,6 +374,40 @@ const RelationSectionForModal = ({
     }
   );
   const queryClient = useQueryClient();
+  const projectId = store.getState().company.projectId;
+  const selectedTable = store.getState().menu.menuItem;
+
+  const updateLayout = (newData) => {
+    const computedData = {
+      layouts: newData,
+      project_id: projectId,
+      table_id: selectedTable?.table_id,
+    };
+    layoutService.update(computedData);
+  };
+
+  const toggleTabs = (tab) => {
+    const newTabs = data?.map((layout) => {
+      return {
+        ...layout,
+        tabs: layout?.tabs?.map((t) => {
+          if (t?.id === tab?.id) {
+            return {
+              ...t,
+              attributes: {
+                ...t?.attributes,
+                is_visible_layout: !t?.attributes?.is_visible_layout,
+              },
+            };
+          } else {
+            return t;
+          }
+        }),
+      };
+    });
+    setData(newTabs);
+    updateLayout(newTabs);
+  };
 
   return (
     <>
@@ -387,6 +423,7 @@ const RelationSectionForModal = ({
               selectedIndex={selectedTabIndex}
               style={{
                 height: "100%",
+                padding: "5px",
               }}
               onSelect={(index) => {
                 setSelectedTabIndex(index);
@@ -395,29 +432,74 @@ const RelationSectionForModal = ({
               {!relation?.is_visible_section && (
                 <div className={styles.cardHeaderModal}>
                   <TabList className={styles.tabList}>
-                    {relation?.tabs?.map((el, index) => (
-                      <Tab
-                        key={el.id}
-                        className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                        onClick={() => {
-                          setSelectedIndex(index);
-                          onSelect(el);
-                        }}
-                      >
-                        {relation?.view_relation_type === "FILE" && (
-                          <>
-                            <InsertDriveFile /> Файлы
-                          </>
-                        )}
-                        <div className="flex align-center gap-2 text-nowrap">
-                          {el?.attributes?.[`label_${i18n.language}`]
-                            ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[`title_${i18n.language}`]
-                            ? el?.relation?.attributes?.[`title_${i18n.language}`]
-                            : el?.label ?? el?.title}
-                        </div>
-                      </Tab>
-                    ))}
+                    {relation?.tabs?.map((el, index) =>
+                      editAcces ? (
+                        <>
+                          <Tab
+                            key={el.id}
+                            className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                            onClick={() => {
+                              setSelectedIndex(index);
+                              onSelect(el);
+                            }}
+                            style={{
+                              marginRight: "0",
+                            }}
+                          >
+                            {relation?.view_relation_type === "FILE" && (
+                              <>
+                                <InsertDriveFile /> Файлы
+                              </>
+                            )}
+                            <div className="flex align-center gap-2 text-nowrap">
+                              {el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[`title_${i18n.language}`]
+                                ? el?.relation?.attributes?.[`title_${i18n.language}`]
+                                : el?.label ?? el?.title}
+                            </div>
+                          </Tab>
+
+                          <Button
+                            onClick={() => toggleTabs(el)}
+                            sx={{
+                              height: "38px",
+                              minWidth: "38px",
+                              width: "38px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                          </Button>
+
+                          <Divider orientation="vertical" flexItem />
+                        </>
+                      ) : (
+                        (el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined) && (
+                          <Tab
+                            key={el.id}
+                            className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                            onClick={() => {
+                              setSelectedIndex(index);
+                              onSelect(el);
+                            }}
+                          >
+                            {relation?.view_relation_type === "FILE" && (
+                              <>
+                                <InsertDriveFile /> Файлы
+                              </>
+                            )}
+                            <div className="flex align-center gap-2 text-nowrap">
+                              {el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[`title_${i18n.language}`]
+                                ? el?.relation?.attributes?.[`title_${i18n.language}`]
+                                : el?.label ?? el?.title}
+                            </div>
+                          </Tab>
+                        )
+                      )
+                    )}
                   </TabList>
                   {!getRelatedTabeSlug &&
                     (editAcces ? (

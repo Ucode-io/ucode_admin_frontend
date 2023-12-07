@@ -59,8 +59,6 @@ const MainInfoForModal = ({
   const { i18n } = useTranslation();
   const selectedTable = store.getState().menu.menuItem;
 
-  console.log('selectedTable', selectedTable)
-
   const updateLayout = (newData) => {
     const computedData = {
       layouts: newData,

@@ -26,7 +26,6 @@ import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
-import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 
 const parser = new Parser();
 
@@ -515,21 +514,7 @@ const CellElementGeneratorForTableView = ({
 
     case "CUSTOM_IMAGE":
       return (
-        <HFPhotoUpload
-          isTransparent={true}
-          control={control}
-          updateObject={updateObject}
-          isNewTableView={true}
-          name={computedSlug}
-          defaultValue={defaultValue}
-          isFormEdit
-          required={field.required}
-        />
-      );
-
-    case "PHOTO":
-      return (
-        <HFPhotoUpload
+        <HFFileUpload
           isTransparent={true}
           control={control}
           updateObject={updateObject}

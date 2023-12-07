@@ -1,4 +1,4 @@
-import { Close, Lock } from "@mui/icons-material";
+import {Close, Lock} from "@mui/icons-material";
 import {
   Autocomplete,
   FormControl,
@@ -10,9 +10,9 @@ import {
   Tooltip,
   InputAdornment,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useMemo } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import {useEffect, useState} from "react";
+import {useMemo} from "react";
+import {Controller, useForm, useWatch} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import HFColorPicker from "./HFColorPicker";
 import HFIconPicker from "./HFIconPicker";
@@ -21,10 +21,10 @@ import HFTextField from "./HFTextField";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import AddIcon from "@mui/icons-material/Add";
 import constructorFieldService from "../../services/constructorFieldService";
-import { generateGUID } from "../../utils/generateID";
+import {generateGUID} from "../../utils/generateID";
 import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
-import { makeStyles } from "@mui/styles";
+import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const filter = createFilterOptions();
@@ -73,8 +73,8 @@ const HFMultipleAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: { onChange: onFormChange, value },
-        fieldState: { error },
+        field: {onChange: onFormChange, value},
+        fieldState: {error},
       }) => {
         return (
           <AutoCompleteElement
@@ -168,14 +168,14 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-  useEffect(() => {
-    if (value) {
-      onFormChange(value);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (value) {
+  //     onFormChange(value);
+  //   }
+  // }, []);
 
   return (
-    <FormControl style={{ width }}>
+    <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
@@ -183,7 +183,7 @@ const AutoCompleteElement = ({
         options={localOptions}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
+            <ArrowDropDownIcon style={{color: "#fff"}} />
           ) : (
             <ArrowDropDownIcon />
           )
@@ -238,7 +238,7 @@ const AutoCompleteElement = ({
                   }}
                 >
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),
@@ -259,7 +259,7 @@ const AutoCompleteElement = ({
                 className={styles.multipleAutocompleteTags}
                 style={
                   hasColor
-                    ? { color: el?.color, background: `${el?.color}30` }
+                    ? {color: el?.color, background: `${el?.color}30`}
                     : {}
                 }
               >
@@ -268,7 +268,7 @@ const AutoCompleteElement = ({
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"
-                    onClick={getTagProps({ index })?.onDelete}
+                    onClick={getTagProps({index})?.onDelete}
                   />
                 )}
               </div>
@@ -291,11 +291,11 @@ const AutoCompleteElement = ({
   );
 };
 
-const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
+const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const [loader, setLoader] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
       label: dialogState,
       value: dialogState,
@@ -313,7 +313,7 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
     };
 
     constructorFieldService
-      .update({ ...data })
+      .update({...data})
       .then((res) => {
         handleClose(false);
         addNewOption(newOption);

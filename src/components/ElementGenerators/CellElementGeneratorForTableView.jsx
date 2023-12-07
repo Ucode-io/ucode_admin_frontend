@@ -1,7 +1,7 @@
-import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
@@ -49,7 +49,7 @@ const CellElementGeneratorForTableView = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -77,10 +77,13 @@ const CellElementGeneratorForTableView = ({
     }
   }, [field, i18n?.language]);
 
-  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+  const isDisabled =
+    field.attributes?.disabled ||
+    !field.attributes?.field_permission?.edit_permission;
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -92,11 +95,12 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     if (!defaultValue) return undefined;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field]);
@@ -289,24 +293,24 @@ const CellElementGeneratorForTableView = ({
         />
       );
 
-    // case "MULTISELECT":
-    //   return (
-    //     <HFMultipleAutocomplete
-    //       disabled={isDisabled}
-    //       isFormEdit
-    //       updateObject={updateObject}
-    //       isNewTableView={true}
-    //       control={control}
-    //       name={computedSlug}
-    //       width="100%"
-    //       required={field.required}
-    //       field={field}
-    //       placeholder={field.attributes?.placeholder}
-    //       isBlackBg={isBlackBg}
-    //       defaultValue={defaultValue}
-    //       data={data}
-    //     />
-    //   );
+    case "MULTISELECT":
+      return (
+        <HFMultipleAutocomplete
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          width="100%"
+          required={field.required}
+          field={field}
+          placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
+          data={data}
+        />
+      );
     case "MULTISELECT_V2":
       return (
         <HFMultipleAutocomplete
@@ -471,7 +475,15 @@ const CellElementGeneratorForTableView = ({
 
     case "ICON":
       return (
-        <HFIconPicker isFormEdit control={control} updateObject={updateObject} isNewTableView={true} name={computedSlug} required={field.required} defaultValue={defaultValue} />
+        <HFIconPicker
+          isFormEdit
+          control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          name={computedSlug}
+          required={field.required}
+          defaultValue={defaultValue}
+        />
       );
     case "MAP":
       return (
@@ -579,7 +591,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{ padding: "0 4px" }}>
+        <div style={{padding: "0 4px"}}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

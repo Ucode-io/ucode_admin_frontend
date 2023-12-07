@@ -1,21 +1,20 @@
+import {Close} from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import LaunchIcon from "@mui/icons-material/Launch";
 import {Autocomplete, TextField} from "@mui/material";
 import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CascadingElement from "./CascadingElement";
-import {Close} from "@mui/icons-material";
-import useDebounce from "../../hooks/useDebounce";
 import request from "../../utils/request";
-import {useParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
+import CascadingElement from "./CascadingElement";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -230,13 +229,6 @@ const AutoCompleteElement = ({
     }
   );
 
-  // const options = useMemo(() => {
-  //   if (field?.attributes?.function_path) {
-  //     return optionsFromFunctions ?? [];
-  //   }
-  //   return optionsFromLocale ?? [];
-  // }, [optionsFromFunctions, optionsFromLocale]);
-
   const computedValue = useMemo(() => {
     if (!value) return [];
 
@@ -343,16 +335,23 @@ const AutoCompleteElement = ({
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
-                    <IconGenerator
-                      icon="arrow-up-right-from-square.svg"
-                      style={{marginLeft: "10px", cursor: "pointer"}}
-                      size={15}
+
+                    <span
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
                       }}
-                    />
+                    >
+                      <LaunchIcon
+                        style={{
+                          fontSize: "15px",
+                          marginLeft: "0px",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </span>
 
                     <Close
                       fontSize="12"

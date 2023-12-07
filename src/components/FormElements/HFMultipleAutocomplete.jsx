@@ -42,7 +42,7 @@ const HFMultipleAutocomplete = ({
   name,
   label,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isFormEdit = false,
   isBlackBg = false,
   width = "100%",
@@ -62,7 +62,6 @@ const HFMultipleAutocomplete = ({
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
-  
 
   return (
     <Controller
@@ -168,12 +167,11 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-
-  useEffect(() => {
-    if(value) {
-      onFormChange(value)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if(value) {
+  //     onFormChange(value)
+  //   }
+  // }, [])
 
   return (
     <FormControl style={{width}}>
@@ -226,7 +224,7 @@ const AutoCompleteElement = ({
                     background: "inherit",
                   }
                 : {
-                    background:  "inherit",
+                    background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
                   },
 

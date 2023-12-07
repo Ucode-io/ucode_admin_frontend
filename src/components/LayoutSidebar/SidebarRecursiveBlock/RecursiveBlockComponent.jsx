@@ -51,6 +51,7 @@ const RecursiveBlock = ({
   selectedApp,
   userType = false,
 }) => {
+  console.log("elementelement", element);
   const activeStyle = activeStyles({menuItem, element, menuStyle, level});
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
@@ -244,22 +245,26 @@ const RecursiveBlock = ({
                   </Box>
                   {settingsButtonPermission && !userType ? (
                     <Box className="icon_group">
-                      <Tooltip title="Settings" placement="top">
-                        <Box className="extra_icon">
-                          <BsThreeDots
-                            size={13}
-                            onClick={(e) => {
-                              folderSettings(e);
-                            }}
-                            style={{
-                              color:
-                                menuItem?.id === element?.id
-                                  ? menuStyle?.active_text
-                                  : menuStyle?.text || "",
-                            }}
-                          />
-                        </Box>
-                      </Tooltip>
+                      {(element?.data?.permission?.delete ||
+                        element?.data?.permission?.update ||
+                        element?.data?.permission?.write) && (
+                        <Tooltip title="Settings" placement="top">
+                          <Box className="extra_icon">
+                            <BsThreeDots
+                              size={13}
+                              onClick={(e) => {
+                                folderSettings(e);
+                              }}
+                              style={{
+                                color:
+                                  menuItem?.id === element?.id
+                                    ? menuStyle?.active_text
+                                    : menuStyle?.text || "",
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
+                      )}
                     </Box>
                   ) : null}
                 </Box>

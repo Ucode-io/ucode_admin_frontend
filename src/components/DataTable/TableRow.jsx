@@ -235,7 +235,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td>
+            <td style={{height: "30px"}}>
               <div
                 style={{
                   display: "flex",

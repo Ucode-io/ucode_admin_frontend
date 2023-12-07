@@ -7,6 +7,7 @@ import {
   math,
   newFieldTypes,
   numberFieldFormats,
+  textFieldFormats,
 } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
 import HFTextField from "../FormElements/HFTextField";
@@ -25,6 +26,7 @@ import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import { useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
+import { useRelationGetByIdQuery } from "../../services/relationService";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -57,8 +59,19 @@ export default function FieldCreateModal({
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
-  console.log("values", values);
+  console.log("fieldData", fieldData);
   console.log("tableSlug", tableSlug);
+
+  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+    tableSlug: tableSlug,
+    id: fieldData?.attributes?.relation_data?.id,
+    queryParams: {
+      enabled: Boolean(fieldData?.attributes?.relation_data?.id),
+      onSuccess: (res) => {
+        console.log("res", res);
+      },
+    },
+  });
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
@@ -242,7 +255,7 @@ export default function FieldCreateModal({
               />
             </FRow>
             <FRow
-              label={"Format"}
+              label={"Type"}
               componentClassName="flex gap-2 align-center"
               required
               classname={style.custom_label}
@@ -261,6 +274,8 @@ export default function FieldCreateModal({
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
                     setValue("type", "DATE");
+                  } else if (e === "SINGLE_LINE") {
+                    setValue("type", "SINGLE_LINE");
                   } else {
                     setValue("type", e);
                   }
@@ -269,9 +284,11 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          {format === "NUMBER" || format === "DATE" ? (
+          {format === "NUMBER" ||
+          format === "DATE" ||
+          format === "SINGLE_LINE" ? (
             <FRow
-              label={"Type"}
+              label={"Format"}
               componentClassName="flex gap-2 align-center"
               required
               classname={style.custom_label}
@@ -284,6 +301,8 @@ export default function FieldCreateModal({
                     ? numberFieldFormats
                     : format === "DATE"
                     ? dateFieldFormats
+                    : format === "SINGLE_LINE"
+                    ? textFieldFormats
                     : null
                 }
                 name="type"

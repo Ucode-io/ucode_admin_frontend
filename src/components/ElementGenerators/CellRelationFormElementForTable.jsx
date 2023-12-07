@@ -19,6 +19,7 @@ import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
 import {useTranslation} from "react-i18next";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -404,10 +405,18 @@ const AutoCompleteElement = ({
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
             }}
           >
-            <IconGenerator
+            {/* <IconGenerator
               icon="arrow-up-right-from-square.svg"
               style={{marginLeft: "10px", cursor: "pointer"}}
               size={15}
+            /> */}
+            <LaunchIcon
+              style={{
+                fontSize: "18px",
+                marginLeft: "5px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
             />
           </Box>
         )}

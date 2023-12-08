@@ -20,6 +20,7 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import styles from "./style.module.scss";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
 
 const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
@@ -90,8 +91,8 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
           relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
-
-      if (!selectedTab?.relation_id) reset(data?.response ?? {});
+      console.log("selectedTab", selectedTab);
+      if (selectedTab?.type === "section") reset(data?.response ?? {});
     } catch (error) {
       console.error(error);
     } finally {
@@ -204,6 +205,8 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
 
   return (
     <div className={styles.formPage}>
+      <SummarySectionValuesForModal computedSummary={summary} control={control} />
+
       <div className={styles.formArea}>
         <RelationSectionForModal
           getAllData={getAllData}

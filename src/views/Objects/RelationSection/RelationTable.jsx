@@ -296,13 +296,15 @@ const RelationTable = forwardRef(
         },
       }
     );
-    useEffect(() => {
-      if (tableData?.length > 0) {
-        reset({
-          multi: tableData.map((i) => i),
-        });
-      }
-    }, [tableData, reset]);
+
+    // useEffect(() => {
+    //   if (tableData?.length > 0) {
+    //     reset({
+    //       multi: tableData.map((i) => i),
+    //     });
+    //   }
+    // }, [tableData, reset]);
+
     const computedRelationFields = useMemo(() => {
       return Object.values(fieldsMap)?.filter((element) => {
         return element?.type === "LOOKUP" || element?.type === "LOOKUPS";

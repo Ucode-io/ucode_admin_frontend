@@ -2,7 +2,7 @@ import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import { InsertDriveFile } from "@mui/icons-material";
 import { Box, Button, Card, Divider } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";

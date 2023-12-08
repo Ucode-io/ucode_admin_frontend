@@ -3,6 +3,7 @@ import {Card, IconButton, Modal} from "@mui/material";
 import React, {useState} from "react";
 import styles from "./style.module.scss";
 import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
+import SummarySectionValuesForModal from "./SummarySectionValuesForModal";
 
 export default function ModalDetailPage({
   open,

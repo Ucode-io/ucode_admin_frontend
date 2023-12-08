@@ -259,7 +259,6 @@ const RelationSectionForModal = ({
         language_setting: i18n?.language,
       })
       .then((res) => {
-        console.log("eeeeeeeee", res?.layouts);
         const layout = res?.layouts
           ?.filter((layout) => layout?.is_default === true)
           .map((item) => {

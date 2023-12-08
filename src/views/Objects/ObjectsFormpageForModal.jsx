@@ -91,7 +91,6 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
           relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
-      console.log("selectedTab", selectedTab);
       if (selectedTab?.type === "section") reset(data?.response ?? {});
     } catch (error) {
       console.error(error);

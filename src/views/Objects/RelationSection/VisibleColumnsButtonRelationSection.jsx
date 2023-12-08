@@ -9,13 +9,14 @@ import { columnIcons } from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
+import { useParams } from "react-router-dom";
 
 export default function VisibleColumnsButtonRelationSection({ currentView, fieldsMap, getAllData }) {
-  const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
   const { i18n } = useTranslation();
+  const {id} = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -42,7 +43,6 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
         currentView?.relatedTable
       )
       .then(() => {
-        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
         getAllData();
       })
       .finally(() => {
@@ -64,7 +64,7 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
       updateView(result.map((el) => el.id));
     }
   };
-
+  console.log("visibleFields", unVisibleFields, currentView);
   return (
     <div>
       <Button
@@ -243,7 +243,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                         size="small"
                         checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
-                          updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                          updateView(
+                            e.target.checked
+                              ? currentView?.columns
+                                ? [...currentView?.columns, column?.id]
+                                : [column?.id]
+                              : currentView?.columns?.filter((el) => el !== column?.id)
+                          );
                         }}
                       />
                     </div>
@@ -307,7 +313,9 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                       size="small"
                       checked={currentView?.columns?.includes(column?.id)}
                       onChange={(e) => {
-                        updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                        updateView(
+                          e.target.checked ? (currentView?.columns ? [...currentView?.columns, column?.id] : [column?.id]) : currentView?.columns?.filter((el) => el !== column?.id)
+                        );
                       }}
                     />
                   </div>

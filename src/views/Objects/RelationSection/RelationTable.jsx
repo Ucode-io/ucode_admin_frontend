@@ -265,9 +265,9 @@ const RelationTable = forwardRef(
           setFieldSlug(Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)?.slug);
 
           const array = [];
-          for (const key in getRelatedTabeSlug.attributes.fixedColumns) {
-            if (getRelatedTabeSlug.attributes.fixedColumns.hasOwnProperty(key)) {
-              if (getRelatedTabeSlug.attributes.fixedColumns[key]) array.push({ id: key, value: getRelatedTabeSlug.attributes.fixedColumns[key] });
+          for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
+            if (getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)) {
+              if (getRelatedTabeSlug?.attributes?.fixedColumns[key]) array.push({ id: key, value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key] });
             }
           }
           const columns = customSortArray(

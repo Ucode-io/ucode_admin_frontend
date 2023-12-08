@@ -77,7 +77,7 @@ const ObjectsFormPage = ({
       language_setting: i18n?.language,
     }, tableSlug);
 
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
       const [{data = {}}, {layouts: layout = []}] = await Promise.all([

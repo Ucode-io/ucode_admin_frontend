@@ -275,7 +275,7 @@ const ViewForm = ({
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <Tabs defaultIndex={defaultViewTab} onSelect={(index) => setTab(index)}>
+        <Tabs defaultIndex={defaultViewTab}>
           <div className={styles.section}>
             <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
@@ -301,7 +301,7 @@ const ViewForm = ({
                 </div>
               </div>
 
-              <SummaryBlock
+              {/* <SummaryBlock
                 control={form.control}
                 computedFieldsListOptions={computedFieldsListOptions}
                 isViewSettings={true}
@@ -317,7 +317,7 @@ const ViewForm = ({
 
               {type === "GANTT" && (
                 <GanttSettings form={form} columns={columns} />
-              )}
+              )} */}
             </TabPanel>
             <TabPanel>
               <NavigateSettings form={form} />

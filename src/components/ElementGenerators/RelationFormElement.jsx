@@ -53,7 +53,7 @@ const RelationFormElement = ({
   }, [field.id, formTableSlug, field.relation_type]);
 
   const computedLabel =
-    field?.attributes?.[`title_${i18n?.language}`] ??
+    field?.attributes?.[`label_${i18n?.language}`] ??
     field?.label ??
     field?.title;
 

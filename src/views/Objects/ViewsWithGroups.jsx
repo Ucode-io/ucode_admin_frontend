@@ -215,7 +215,8 @@ const ViewsWithGroups = ({
         el?.type === "PHONE" ||
         el?.type === "EMAIL" ||
         el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID"
+        el?.type === "INCREMENT_ID" ||
+        el?.type === "FORMULA_FRONTEND"
     );
   }, [view, fieldsMap]);
 

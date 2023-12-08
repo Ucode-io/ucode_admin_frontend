@@ -161,7 +161,7 @@ console.log('tableSlug', tableSlug)
             horizontal: "left",
           }}
         >
-          <ViewTypeList computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
+          <ViewTypeList views={views} computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
         </Popover>
       </div>
 

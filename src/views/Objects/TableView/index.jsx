@@ -73,7 +73,7 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-
+  console.log("filters", filters);
   const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
   const [limit, setLimit] = useState(20);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
@@ -241,6 +241,12 @@ const TableView = ({
       return "string";
     }
   };
+  
+  useEffect(() => {
+    if (Object.values(filters).length > 0 && Object.values(filters)?.find((el) => el !== undefined)) {
+      setCurrentPage(1);
+    }
+  }, [filters]);
 
   const limitPage = useMemo(() => {
     if (typeof paginiation === "number") {
@@ -312,7 +318,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: !filters ? (searchText ? 1 : pageToOffset(currentPage, paginiation)) : undefined,
+          offset: searchText ? 1 : pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,

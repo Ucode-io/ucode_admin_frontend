@@ -61,9 +61,10 @@ const ConstructorTablesFormPage = () => {
     },
     mode: "all",
   });
+
+  console.log('mainForm', mainForm)
   const menuItem = useSelector((state) => state.menu.menuItem);
   const list = useSelector((state) => state.constructorTable.list);
-  console.log("list", list);
 
   const getData = async () => {
     setLoader(true);
@@ -291,60 +292,57 @@ const ConstructorTablesFormPage = () => {
   return (
     <>
       <div className="pageWithStickyFooter">
-        <HeaderSettings title={id ? mainForm.getValues("label") : "Create table"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
-          {/* <TabList>
-            <Tab>Details</Tab>
-            <Tab>Layouts</Tab>
-            <Tab>Fields</Tab>
-            {id && <Tab>Relations</Tab>}
-            {id && <Tab>Actions</Tab>}
-            {id && <Tab>Custom errors</Tab>}
-          </TabList> */}
-        </HeaderSettings>
+        {id ? (
+          <>
+            <Tabs direction={"ltr"}>
+              <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
+                <TabList>
+                  <Tab>Details</Tab>
+                  <Tab>Layouts</Tab>
+                  <Tab>Fields</Tab>
+                  {id && <Tab>Relations</Tab>}
+                  {id && <Tab>Actions</Tab>}
+                  {id && <Tab>Custom errors</Tab>}
+                </TabList>
+              </HeaderSettings>
 
-        <MainInfo control={mainForm.control} watch={mainForm.watch} />
+              <TabPanel>
+                <MainInfo control={mainForm.control} watch={mainForm.watch} />
+              </TabPanel>
 
-        {/* <Tabs direction={"ltr"}>
-          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
-            <TabList>
-              <Tab>Details</Tab>
-              <Tab>Layouts</Tab>
-              <Tab>Fields</Tab>
-              {id && <Tab>Relations</Tab>}
-              {id && <Tab>Actions</Tab>}
-              {id && <Tab>Custom errors</Tab>}
-            </TabList>
-          </HeaderSettings>
+              <TabPanel>
+                <Layout mainForm={mainForm} getRelationFields={getRelationFields} />
+              </TabPanel>
 
-          <TabPanel>
+              <TabPanel>
+                <Fields getRelationFields={getRelationFields} mainForm={mainForm} slug={slug} />
+              </TabPanel>
+
+              {id && (
+                <TabPanel>
+                  <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
+                </TabPanel>
+              )}
+              {id && (
+                <TabPanel>
+                  <Actions mainForm={mainForm} />
+                </TabPanel>
+              )}
+              {id && (
+                <TabPanel>
+                  <CustomErrors mainForm={mainForm} />
+                </TabPanel>
+              )}
+              {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
+            </Tabs>
+          </>
+        ) : (
+          <>
+            <HeaderSettings title={id ? mainForm.getValues("label") : "Create table"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky></HeaderSettings>
+
             <MainInfo control={mainForm.control} watch={mainForm.watch} />
-          </TabPanel>
-
-          <TabPanel>
-            <Layout mainForm={mainForm} getRelationFields={getRelationFields} />
-          </TabPanel>
-
-          <TabPanel>
-            <Fields getRelationFields={getRelationFields} mainForm={mainForm} slug={slug} />
-          </TabPanel>
-
-          {id && (
-            <TabPanel>
-              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
-            </TabPanel>
-          )}
-          {id && (
-            <TabPanel>
-              <Actions mainForm={mainForm} />
-            </TabPanel>
-          )}
-          {id && (
-            <TabPanel>
-              <CustomErrors mainForm={mainForm} />
-            </TabPanel>
-          )}
-          <Actions eventLabel={mainForm.getValues("label")} />
-        </Tabs> */}
+          </>
+        )}
       </div>
       <Footer
         extra={

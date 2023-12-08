@@ -7,7 +7,7 @@ const documentTemplateService = {
   create: (data) => request.post("/html-template", data),
   delete: (id) => request.delete(`/html-template/${id}`),
   exportToPDF: (data, tableSlug) => requestV2.post(`/utils/export/${tableSlug}/html-to-pdf`, data),
-  exportToHTML: (data, tableSlug) => requestV2.post(`/utils/${tableSlug}/template-to-html`, data),
+  exportToHTML: (data, tableSlug) => requestV2.post(`/utils/export/${tableSlug}/template-to-html`, data),
 };
 
 export default documentTemplateService;

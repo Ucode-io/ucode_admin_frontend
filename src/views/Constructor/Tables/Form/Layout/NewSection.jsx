@@ -22,6 +22,7 @@ const NewSection = ({
   selectedLayoutIndex,
   selectedTabIndex,
   removeSection,
+  allTabs,
 }) => {
   const sectionFields = useFieldArray({
     control: mainForm.control,
@@ -84,7 +85,7 @@ const NewSection = ({
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
-
+  console.log("sectionFields", sectionFields);
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
@@ -150,7 +151,7 @@ const NewSection = ({
       <div className={styles.newsectionCardBody}>
         <Container
           style={{
-            minHeight: 50,
+            height: "100px",
             width: "100%",
             display: "flex",
             flexDirection: "row",

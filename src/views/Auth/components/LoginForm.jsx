@@ -27,7 +27,6 @@ import RecoverPassword from "./RecoverPassword";
 import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
-import {environmentActions} from "../../../store/environmentList/environment.slice";
 
 const LoginForm = ({setIndex, index, setFormType, formType}) => {
   const {t} = useTranslation();
@@ -239,8 +238,12 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
   };
 
   const onSubmitDialog = (values) => {
+    const computedProject = companies[0]?.projects
+      ?.find((item) => item?.id === selectedProjectID)
+      ?.resource_environments?.map((el) => el?.environment_id);
+
     setLoading(true);
-    dispatch(loginAction(values));
+    dispatch(loginAction({...values, environment_ids: computedProject}));
   };
 
   const computeCompanyElement = (company) => {
@@ -353,12 +356,6 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
 
     return computedProject?.resource_environments ?? [];
   }, [selectedProjectID, companies]);
-
-  useEffect(() => {
-    if (selectedProject?.length) {
-      dispatch(environmentActions.setEnvironment(selectedProject));
-    }
-  }, [selectedProject]);
 
   return (
     <>

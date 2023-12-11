@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./month.module.scss";
 import "../moveable.scss";
-import { Menu } from "@mui/material";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import {Menu} from "@mui/material";
+import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
+import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 import CalendarStatusSelect from "../../components/CalendarStatusSelect";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import useTimeList from "../../../../hooks/useTimeList";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import { format, setHours, setMinutes } from "date-fns";
+import {format, setHours, setMinutes} from "date-fns";
 import InfoBlockMonth from "./InfoBlockMonth";
 import InfoBlock from "../InfoBlock";
 
@@ -26,8 +26,8 @@ const DataMonthCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
-  const { tableSlug } = useParams();
-  const { timeList } = useTimeList(view.time_interval);
+  const {tableSlug} = useParams();
+  const {timeList} = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
 
   useEffect(() => {
@@ -107,12 +107,12 @@ const DataMonthCard = ({
     e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
   };
 
-  const onDrag = ({ target, beforeTranslate }) => {
+  const onDrag = ({target, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     target.style.transform = `translateX(${beforeTranslate[1]}px)`;
   };
 
-  const onDragEnd = ({ lastEvent }) => {
+  const onDragEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onPositionChange(lastEvent, lastEvent.height);
@@ -126,7 +126,7 @@ const DataMonthCard = ({
     e.dragStart && e.dragStart.set(frame.translate);
   };
 
-  const onResize = ({ target, width, drag }) => {
+  const onResize = ({target, width, drag}) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.width = `${width}px`;
@@ -135,7 +135,7 @@ const DataMonthCard = ({
     // else setIsSingleLine(false);
   };
 
-  const onResizeEnd = ({ lastEvent }) => {
+  const onResizeEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onPositionChange(lastEvent.drag, lastEvent.height);
@@ -187,9 +187,9 @@ const DataMonthCard = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        classes={{list: styles.menu, paper: styles.paper}}
+        transformOrigin={{horizontal: "center", vertical: "top"}}
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}
       >
         <div className={styles.popupHeader}>
           <p className={styles.time}>
@@ -224,7 +224,7 @@ const DataMonthCard = ({
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
-                style={{ padding: "2px 5px", marginBottom: 4 }}
+                style={{padding: "2px 5px", marginBottom: 4}}
                 value={info[field.slug]}
                 field={field}
               />

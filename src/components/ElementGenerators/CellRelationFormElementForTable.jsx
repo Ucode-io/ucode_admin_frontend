@@ -19,6 +19,7 @@ import Select, {components} from "react-select";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
 import {useTranslation} from "react-i18next";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -239,7 +240,7 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -265,8 +266,7 @@ const AutoCompleteElement = ({
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
+        (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -291,7 +291,7 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);
-  console.log("computedOptions", allOptions);
+
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -405,10 +405,18 @@ const AutoCompleteElement = ({
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
             }}
           >
-            <IconGenerator
+            {/* <IconGenerator
               icon="arrow-up-right-from-square.svg"
               style={{marginLeft: "10px", cursor: "pointer"}}
               size={15}
+            /> */}
+            <LaunchIcon
+              style={{
+                fontSize: "18px",
+                marginLeft: "5px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
             />
           </Box>
         )}

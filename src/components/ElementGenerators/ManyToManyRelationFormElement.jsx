@@ -325,8 +325,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log("computedOptions", computedOptions);
-  console.log("fieldfield", field);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div

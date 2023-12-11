@@ -3,7 +3,11 @@ import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import style from "./field.module.scss";
 import {
+  FormatOptionType,
   dateFieldFormats,
+  fieldFormats,
+  fileFieldFormats,
+  formatIncludes,
   math,
   newFieldTypes,
   numberFieldFormats,
@@ -59,7 +63,7 @@ export default function FieldCreateModal({
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
-  console.log("fieldData", fieldData);
+  console.log("fieldData", watch());
   console.log("tableSlug", tableSlug);
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
@@ -263,7 +267,7 @@ export default function FieldCreateModal({
               <HFSelect
                 className={style.input}
                 disabledHelperText
-                options={newFieldTypes}
+                options={fieldData ? fieldFormats : newFieldTypes}
                 name="attributes.format"
                 control={control}
                 disabled={fieldData}
@@ -276,6 +280,8 @@ export default function FieldCreateModal({
                     setValue("type", "DATE");
                   } else if (e === "SINGLE_LINE") {
                     setValue("type", "SINGLE_LINE");
+                  } else if (e === "FILE") {
+                    setValue("type", "FILE");
                   } else {
                     setValue("type", e);
                   }
@@ -284,9 +290,7 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          {format === "NUMBER" ||
-          format === "DATE" ||
-          format === "SINGLE_LINE" ? (
+          {formatIncludes?.includes(format) ? (
             <FRow
               label={"Format"}
               componentClassName="flex gap-2 align-center"
@@ -296,15 +300,7 @@ export default function FieldCreateModal({
               <HFSelect
                 className={style.input}
                 disabledHelperText
-                options={
-                  format === "NUMBER"
-                    ? numberFieldFormats
-                    : format === "DATE"
-                    ? dateFieldFormats
-                    : format === "SINGLE_LINE"
-                    ? textFieldFormats
-                    : null
-                }
+                options={FormatOptionType(format)}
                 name="type"
                 control={control}
                 disabled={fieldData}

@@ -26,7 +26,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
   const openEditForm = (field, index) => {
     setDrawerState(field);
   };
-
+  console.log("drawerState", drawerState);
   const updateRelations = async () => {
     setLoader(true);
 

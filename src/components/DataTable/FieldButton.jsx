@@ -156,6 +156,10 @@ export default function FieldButton({
     if (fieldData) {
       reset({
         ...fieldData,
+        attributes: {
+          ...fieldData.attributes,
+          format: fieldData?.type,
+        },
       });
     } else {
       reset({

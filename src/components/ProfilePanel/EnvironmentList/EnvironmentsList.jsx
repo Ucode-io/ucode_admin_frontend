@@ -63,12 +63,12 @@ const EnvironmentsList = ({
             onClick={() => {
               setSelected(true);
               dispatch(companyActions.setEnvironmentItem(item));
-              dispatch(companyActions.setEnvironmentId(item.environment_id));
-              closeEnvironmentList(item?.environment_id);
-              refreshTokenFunc(item?.environment_id);
+              dispatch(companyActions.setEnvironmentId(item.id));
+              closeEnvironmentList(item?.id);
+              refreshTokenFunc(item?.id);
             }}
             className={styles.menuItem}
-            key={item.environment_id}
+            key={item.id}
           />
         ))}
         {/* {permissions?.environments_button && (

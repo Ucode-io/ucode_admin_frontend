@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import ProfileItem from "../ProfileItem";
 import {companyActions} from "../../../store/company/company.slice";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import {useMemo} from "react";
 
 const alignCenterStyle = {
   display: "flex",
@@ -15,16 +16,21 @@ const EnvironmentsList = ({
   environmentListEl,
   closeEnvironmentList,
   environmentVisible,
-  // environmentList,
+  environmentList,
   handleEnvNavigate,
   setSelected,
   refreshTokenFunc,
 }) => {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.globalPermissions);
-  const environmentLists = useSelector(
-    (state) => state?.environment?.environmentList
-  );
+  const environmentIDs = useSelector((state) => state?.auth?.environment_ids);
+
+  const computedEnvironmentList = useMemo(() => {
+    return environmentList?.filter((item) => {
+      return environmentIDs?.includes(item?.id);
+    });
+  }, []);
+
   return (
     <Menu
       id="lock-menu"
@@ -39,7 +45,7 @@ const EnvironmentsList = ({
       }}
     >
       <div className={styles.block}>
-        {environmentLists.map((item) => (
+        {computedEnvironmentList?.map((item) => (
           <ProfileItem
             children={
               <>

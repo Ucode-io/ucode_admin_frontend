@@ -1,6 +1,6 @@
 import styles from "../day.module.scss";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import CalendarTemplate from "./CalendarTemplate";
 
 const CalendarMonth = ({

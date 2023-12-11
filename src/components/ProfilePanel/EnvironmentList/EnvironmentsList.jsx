@@ -15,14 +15,16 @@ const EnvironmentsList = ({
   environmentListEl,
   closeEnvironmentList,
   environmentVisible,
-  environmentList,
+  // environmentList,
   handleEnvNavigate,
   setSelected,
   refreshTokenFunc,
 }) => {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.globalPermissions);
-
+  const environmentLists = useSelector(
+    (state) => state?.environment?.environmentList
+  );
   return (
     <Menu
       id="lock-menu"
@@ -35,7 +37,7 @@ const EnvironmentsList = ({
       }}
     >
       <div className={styles.block}>
-        {environmentList.map((item) => (
+        {environmentLists.map((item) => (
           <ProfileItem
             children={
               <>
@@ -53,12 +55,12 @@ const EnvironmentsList = ({
             onClick={() => {
               setSelected(true);
               dispatch(companyActions.setEnvironmentItem(item));
-              dispatch(companyActions.setEnvironmentId(item.id));
-              closeEnvironmentList(item?.id);
-              refreshTokenFunc(item?.id);
+              dispatch(companyActions.setEnvironmentId(item.environment_id));
+              closeEnvironmentList(item?.environment_id);
+              refreshTokenFunc(item?.environment_id);
             }}
             className={styles.menuItem}
-            key={item.id}
+            key={item.environment_id}
           />
         ))}
         {/* {permissions?.environments_button && (

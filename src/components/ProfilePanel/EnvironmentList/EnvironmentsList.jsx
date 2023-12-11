@@ -28,6 +28,8 @@ const EnvironmentsList = ({
   return (
     <Menu
       id="lock-menu"
+      portalTarget={document.body}
+      portal={true}
       anchorEl={environmentListEl}
       open={environmentVisible}
       onClose={closeEnvironmentList}

@@ -29,8 +29,8 @@ const EnvironmentsList = ({
     return environmentList?.filter((item) => {
       return environmentIDs?.includes(item?.id);
     });
-  }, []);
-
+  }, [environmentList, environmentIDs]);
+  console.log("computedEnvironmentList", computedEnvironmentList);
   return (
     <Menu
       id="lock-menu"

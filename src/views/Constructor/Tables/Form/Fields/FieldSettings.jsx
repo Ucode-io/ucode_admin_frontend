@@ -38,6 +38,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -81,6 +82,10 @@ const FieldSettings = ({
     const fields = mainForm.getValues("fields") ?? [];
     mainForm.setValue(`fields`, [field, ...fields]);
   };
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
 
   const {
     data: { views, columns, relationColumns } = {
@@ -326,52 +331,30 @@ const FieldSettings = ({
                       className={styles.input}
                     />
                   </FRow>
-                  <Box className={styles.formrow}>
-                    <FRow
-                      label="Label"
-                      required
-                      classname={styles.custom_label}
-                    >
-                      <Box
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        {languages?.map((language) => {
-                          const fieldValue = watch(
-                            `attributes.label_${language?.slug}`
-                          );
-                          return (
-                            <HFTextField
-                              className={styles.input}
-                              disabledHelperText
-                              fullWidth
-                              name={`attributes.label_${language?.slug}`}
-                              control={control}
-                              placeholder={`Field Label (${language?.slug})`}
-                              autoFocus
-                              defaultValue={fieldValue || selectedField?.label}
-                            />
-                          );
-                        })}
-                      </Box>
-                    </FRow>
-
-                    <FRow label="Key" required classname={styles.custom_label}>
-                      <HFTextField
-                        className={styles.input}
-                        disabledHelperText
-                        fullWidth
-                        name="slug"
+                  <FRow label="Name" classname={styles.custom_label} required>
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
                         control={control}
-                        placeholder="Field SLUG"
-                        required
-                        withTrim
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
                       />
-                    </FRow>
-                  </Box>
+                    </Box>
+                  </FRow>
+                  <FRow label="Key" required classname={styles.custom_label}>
+                    <HFTextField
+                      className={styles.input}
+                      disabledHelperText
+                      fullWidth
+                      name="slug"
+                      control={control}
+                      placeholder="Field SLUG"
+                      required
+                      withTrim
+                    />
+                  </FRow>
 
                   <DefaultValueBlock control={control} />
 

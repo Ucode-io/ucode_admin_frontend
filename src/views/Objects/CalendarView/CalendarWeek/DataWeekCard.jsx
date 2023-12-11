@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./week.module.scss";
 import "../moveable.scss";
-import { Menu } from "@mui/material";
+import {Menu} from "@mui/material";
 import InfoBlock from "../InfoBlock";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
+import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 import CalendarStatusSelect from "../../components/CalendarStatusSelect";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import useTimeList from "../../../../hooks/useTimeList";
-import { format, setHours, setMinutes } from "date-fns";
+import {format, setHours, setMinutes} from "date-fns";
 import Moveable from "react-moveable";
 import InfoBlockWeek from "./InfoBlockWeek";
 
@@ -27,8 +27,8 @@ const DataWeekCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
-  const { tableSlug } = useParams();
-  const { timeList } = useTimeList(view.time_interval);
+  const {tableSlug} = useParams();
+  const {timeList} = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
 
@@ -101,12 +101,12 @@ const DataWeekCard = ({
     e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
   };
 
-  const onDrag = ({ target, beforeTranslate }) => {
+  const onDrag = ({target, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     target.style.transform = `translateY(${beforeTranslate[1]}px)`;
   };
 
-  const onDragEnd = ({ lastEvent }) => {
+  const onDragEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onPositionChange(lastEvent, lastEvent.height);
@@ -120,7 +120,7 @@ const DataWeekCard = ({
     e.dragStart && e.dragStart.set(frame.translate);
   };
 
-  const onResize = ({ target, height, drag }) => {
+  const onResize = ({target, height, drag}) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.height = `${height}px`;
@@ -129,7 +129,7 @@ const DataWeekCard = ({
     else setIsSingleLine(false);
   };
 
-  const onResizeEnd = ({ lastEvent }) => {
+  const onResizeEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onPositionChange(lastEvent.drag, lastEvent.height);
@@ -142,7 +142,7 @@ const DataWeekCard = ({
   const handleMouseLeave = () => {
     setIsHover(false);
   };
-
+  console.log("viewFields", viewFields);
   return (
     <>
       <div
@@ -160,7 +160,7 @@ const DataWeekCard = ({
       >
         <div
           className={styles.resizing}
-          style={{ background: infoBlockBg, height: "100%" }}
+          style={{background: infoBlockBg, height: "100%"}}
         >
           <div
             className={styles.infoCard}
@@ -186,9 +186,9 @@ const DataWeekCard = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        classes={{list: styles.menu, paper: styles.paper}}
+        transformOrigin={{horizontal: "center", vertical: "top"}}
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}
       >
         <div className={styles.popupHeader}>
           <p className={styles.time}>
@@ -223,7 +223,7 @@ const DataWeekCard = ({
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
-                style={{ padding: "2px 5px", marginBottom: 4 }}
+                style={{padding: "2px 5px", marginBottom: 4}}
                 value={info[field.slug]}
                 field={field}
               />
@@ -249,7 +249,7 @@ const DataWeekCard = ({
         keepRatio={false}
         origin={false}
         renderDirections={["s", "n"]}
-        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        padding={{left: 0, top: 0, right: 0, bottom: 0}}
         onDragStart={onDragStart}
         onDrag={onDrag}
         onDragEnd={onDragEnd}

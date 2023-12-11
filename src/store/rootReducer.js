@@ -17,6 +17,7 @@ import {mainReducer} from "./main/main.slice";
 import {selectedRowReducer} from "./selectedRow/selectedRow.slice";
 import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
 import {paginationReducer} from "./pagination/pagination.slice";
+import {environmentReducer} from "./environmentList/environment.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -92,6 +93,11 @@ const quickFiltersCount = {
   storage,
 };
 
+const environmentList = {
+  key: "environment_list",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -108,6 +114,7 @@ const rootReducer = combineReducers({
   menu: persistReducer(menuPersistConfig, menuReducer),
   quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
+  environment: persistReducer(environmentList, environmentReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),
   company: persistReducer(companyPersistConfig, companyReducer),
   tableColumn: persistReducer(

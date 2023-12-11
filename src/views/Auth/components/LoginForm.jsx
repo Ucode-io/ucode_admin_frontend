@@ -27,6 +27,7 @@ import RecoverPassword from "./RecoverPassword";
 import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
+import {environmentActions} from "../../../store/environmentList/environment.slice";
 
 const LoginForm = ({setIndex, index, setFormType, formType}) => {
   const {t} = useTranslation();
@@ -185,6 +186,8 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
         setLoading(false);
       });
   };
+
+  console.log("selectedEnvID", selectedEnvID);
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
       const tableKeys = Object.keys(getFormValue.tables);
@@ -342,6 +345,20 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
       computeConnections(getFormValue?.tables);
     }
   }, [connectionCheck, getFormValue?.tables]);
+
+  const selectedProject = useMemo(() => {
+    const computedProject = companies[0]?.projects?.find(
+      (item) => item?.id === selectedProjectID
+    );
+
+    return computedProject?.resource_environments ?? [];
+  }, [selectedProjectID, companies]);
+
+  useEffect(() => {
+    if (selectedProject?.length) {
+      dispatch(environmentActions.setEnvironment(selectedProject));
+    }
+  }, [selectedProject]);
 
   return (
     <>

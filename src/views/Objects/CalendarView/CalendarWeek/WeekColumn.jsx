@@ -1,7 +1,7 @@
-import { Add } from "@mui/icons-material";
-import { differenceInMinutes, format, setHours, setMinutes } from "date-fns";
-import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import {Add} from "@mui/icons-material";
+import {differenceInMinutes, format, setHours, setMinutes} from "date-fns";
+import {useMemo, useState} from "react";
+import {useSearchParams} from "react-router-dom";
 import styles from "./week.module.scss";
 import DataWeekCard from "./DataWeekCard.jsx";
 import useTimeList from "../../../../hooks/useTimeList";
@@ -21,7 +21,7 @@ const WeekColumn = ({
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
 
-  const { timeList, timeInterval } = useTimeList(view.time_interval);
+  const {timeList, timeInterval} = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
     return data?.filter(

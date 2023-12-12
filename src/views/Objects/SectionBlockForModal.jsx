@@ -66,7 +66,6 @@ export default function SectionBlockForModal({
 
     updateLayout(newData);
     setData(newData);
-    console.log("sssssssss", result);
   };
 
   return (

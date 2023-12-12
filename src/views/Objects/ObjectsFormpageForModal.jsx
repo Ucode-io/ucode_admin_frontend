@@ -63,6 +63,8 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
   });
   const tableInfo = store.getState().menu.menuItem;
 
+  console.log("wwwwwwwwww", selectedTab);
+
   const getAllData = async () => {
     setLoader(true);
     const getLayout = layoutService.getList({
@@ -196,11 +198,11 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, selectedTabIndex]);
+  }, [id, tableInfo, selectedTabIndex, i18n?.language, selectedTab]);
 
   useEffect(() => {
     getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language]);
+  }, [id, tableInfo, selectedTabIndex, i18n?.language, selectedTab]);
 
   return (
     <div className={styles.formPage}>

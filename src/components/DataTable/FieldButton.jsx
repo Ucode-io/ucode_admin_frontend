@@ -196,7 +196,7 @@ export default function FieldButton({
           }}
         >
           <AddRoundedIcon />
-        </div>
+        </span>
       </CTableHeadCell>
       <FieldOptionModal
         anchorEl={fieldOptionAnchor}

@@ -459,6 +459,7 @@ const CellElementGeneratorForTableView = ({
         <HFSwitch
           disabled={isDisabled}
           isFormEdit
+          field={field}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}

@@ -215,7 +215,7 @@ export default function FieldCreateModal({
     control,
     name: "label",
   });
-console.log('ssssssss', format)
+  console.log("ssssssss", format);
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -251,11 +251,13 @@ console.log('ssssssss', format)
                 width: "100%",
               }}
             >
-              {/* <FRow label="Label" classname={style.custom_label} required>
-                <Box style={{ display: "flex", gap: "6px" }}>
-                  <HFTextFieldWithMultiLanguage control={control} name="attributes.label" fullWidth placeholder="Name" defaultValue={tableName} languages={languages} />
-                </Box>
-              </FRow> */}
+              {format !== "RELATION" && format !== "LOOKUP" && format !== "LOOKUPS" && (
+                <FRow label="Label" classname={style.custom_label} required>
+                  <Box style={{ display: "flex", gap: "6px" }}>
+                    <HFTextFieldWithMultiLanguage control={control} name="attributes.label" fullWidth placeholder="Name" defaultValue={tableName} languages={languages} />
+                  </Box>
+                </FRow>
+              )}
               <FRow label={"Type"} componentClassName="flex gap-2 align-center" required classname={style.custom_label}>
                 <HFSelect
                   className={style.input}

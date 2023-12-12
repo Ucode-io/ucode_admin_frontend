@@ -1,10 +1,9 @@
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import {InputAdornment, TextField} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {Controller} from "react-hook-form";
+import { InputAdornment, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 import "react-phone-number-input/style.css";
-import {Lock, Today} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -30,6 +29,7 @@ const HFTextFieldWithMask = ({
   tabIndex,
   placeholder,
   defaultValue,
+  fullWidth,
   ...props
 }) => {
   const classes = useStyles();
@@ -42,7 +42,7 @@ const HFTextFieldWithMask = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <InputMask
           mask={mask}
           value={value ?? undefined}
@@ -58,6 +58,7 @@ const HFTextFieldWithMask = ({
               size="small"
               name={name}
               error={error}
+              fullWidth={fullWidth}
               helperText={!disabledHelperText && error?.message}
               placeholder={placeholder}
               className={isFormEdit ? "custom_textfield" : ""}
@@ -67,10 +68,10 @@ const HFTextFieldWithMask = ({
                 ...inputProps,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <LocalPhoneIcon style={{fontSize: "30px"}} />
+                    <LocalPhoneIcon style={{ fontSize: "30px" }} />
                   </InputAdornment>
                 ),
-                inputProps: {tabIndex},
+                inputProps: { tabIndex },
                 classes: {
                   input: isBlackBg ? classes.input : "",
                 },
@@ -86,15 +87,6 @@ const HFTextFieldWithMask = ({
             />
           )}
         </InputMask>
-        // <PhoneInput
-        //   placeholder="Enter phone number"
-        //   value={value}
-        //   onChange={onChange}
-        //   defaultCountry="UZ"
-        //   international
-        //   className={styles.phoneNumber}
-        //   name={name}
-        // />
       )}
     ></Controller>
   );

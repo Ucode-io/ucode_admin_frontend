@@ -1,23 +1,22 @@
-import AppsIcon from "@mui/icons-material/Apps";
 import LinkIcon from "@mui/icons-material/Link";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {Container, Draggable} from "react-smooth-dnd";
-import constructorViewService from "../../services/constructorViewService";
-import {useParams} from "react-router-dom";
-import {applyDrag} from "../../utils/applyDrag";
-import {columnIcons} from "../../utils/constants/columnIcons";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import constructorViewService from "../../services/constructorViewService";
+import { applyDrag } from "../../utils/applyDrag";
+import { columnIcons } from "../../utils/constants/columnIcons";
 
-export default function VisibleColumnsButton({currentView, fieldsMap}) {
+export default function VisibleColumnsButton({ currentView, fieldsMap }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
 
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
@@ -77,7 +76,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
         onClick={handleClick}
       >
         {isLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -188,7 +187,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
             </div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
             >
               {visibleFields.map((column, index) => (
                 <Draggable key={column?.id}>

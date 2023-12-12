@@ -2,7 +2,7 @@ import { Box, Card, Modal, Typography } from "@mui/material";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
 import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import { useQueryClient } from "react-query";
@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useSelector } from "react-redux";
+import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const FolderCreateModal = ({
   closeModal,
@@ -88,6 +89,11 @@ const FolderCreateModal = ({
       });
   };
 
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
+
   const languages = useSelector((state) => state.languages.list);
 
   return (
@@ -113,25 +119,24 @@ const FolderCreateModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {/* {languages.map((item) => (
-                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))} */}
 
-              {languages?.map((language) => {
-                const languageFieldName = `attributes.label_${language?.slug}`;
-                const fieldValue = watch(languageFieldName);
-
-                return (
-                  <HFTextField
-                    autoFocus
-                    fullWidth
-                    label={`Title (${language?.slug})`}
-                    control={control}
-                    name={`attributes.label_${language?.slug}`}
-                    defaultValue={fieldValue || menuItemLabel}
-                  />
-                );
-              })}
+              <Box
+                style={{
+                  display: "flex",
+                  gap: "6px",
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                <HFTextFieldWithMultiLanguage
+                  control={control}
+                  name="attributes.label"
+                  fullWidth
+                  placeholder="Name"
+                  defaultValue={tableName}
+                  languages={languages}
+                />
+              </Box>
             </Box>
 
             <div className="btns-row">

@@ -223,10 +223,10 @@ const NewProfilePanel = ({
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
-
+  console.log("defaultLanguage", defaultLanguage);
   useEffect(() => {
     if (languages?.length) {
-      if (languages?.length === 1 && !defaultLanguage) {
+      if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
       }

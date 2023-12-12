@@ -99,6 +99,7 @@ const HFMultipleAutocomplete = ({
             isMultiSelect={isMultiSelect}
             disabled={disabled}
             field={field}
+            className="hf-select"
           />
         );
       }}
@@ -168,10 +169,10 @@ const AutoCompleteElement = ({
   };
 
   // useEffect(() => {
-  //   if(value) {
-  //     onFormChange(value)
+  //   if (value) {
+  //     onFormChange(value);
   //   }
-  // }, [])
+  // }, []);
 
   return (
     <FormControl style={{width}}>

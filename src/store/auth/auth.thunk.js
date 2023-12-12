@@ -10,7 +10,11 @@ export const loginAction = createAsyncThunk(
     try {
       const res = await authService.login(data);
       dispatch(
-        authActions.loginSuccess({ ...res, project_id: data.project_id })
+        authActions.loginSuccess({
+          ...res,
+          project_id: data.project_id,
+          environment_ids: data?.environment_ids,
+        })
       );
       dispatch(companyActions.setCompanyId(res?.user?.company_id));
       dispatch(companyActions.setProjectId(data.project_id));

@@ -1,41 +1,28 @@
-import { CheckIcon } from "@/assets/icons/icon";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
-import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
-import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import style from "@/views/Objects/style.module.scss";
-import { Add, Clear, Edit, InsertDriveFile, Save } from "@mui/icons-material";
-import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { InsertDriveFile } from "@mui/icons-material";
 import { Card, Divider } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
 import { store } from "../../../store";
+import { listToMap } from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
-import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
+import FixColumnsRelationSection from "./FixColumnsRelationSection";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
-import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
-import FixColumnsTableView from "../components/FixColumnsTableView";
-import GroupByButton from "../GroupByButton";
-import VisibleColumnsButton from "../VisibleColumnsButton";
-import TableViewGroupByButton from "../TableViewGroupByButton";
-import FixColumnsRelationSection from "./FixColumnsRelationSection";
-import { useRelationsListQuery } from "../../../services/constructorRelationService";
-import constructorTableService from "../../../services/constructorTableService";
-import { listToMap } from "../../../utils/listToMap";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
+import styles from "./style.module.scss";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -391,8 +378,8 @@ const NewRelationSection = ({
                         <div className="flex align-center gap-2 text-nowrap">
                           {el?.attributes?.[`label_${i18n.language}`]
                             ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[`title_${i18n.language}`]
-                            ? el?.relation?.attributes?.[`title_${i18n.language}`]
+                            : el?.relation?.attributes?.[`label_${i18n.language}`]
+                            ? el?.relation?.attributes?.[`label_${i18n.language}`]
                             : el?.label ?? el?.title}
                         </div>
                       </Tab>

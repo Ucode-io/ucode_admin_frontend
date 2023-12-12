@@ -232,6 +232,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       });
   };
 
+  console.log("selectedEnvID", selectedEnvID);
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
       const tableKeys = Object.keys(getFormValue.tables);
@@ -287,14 +288,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmitDialog = (values) => {
-    const data = {
-      ...values,
-      sms_id: codeAppValue?.sms_id,
-      [type]: values?.recipient,
-      type: type,
-    };
+    const computedProject = companies[0]?.projects
+      ?.find((item) => item?.id === selectedProjectID)
+      ?.resource_environments?.map((el) => el?.environment_id);
+
     setLoading(true);
-    dispatch(loginAction(data));
+    dispatch(loginAction({ ...values, environment_ids: computedProject }));
   };
 
   const computeCompanyElement = (company) => {
@@ -399,6 +398,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       computeConnections(getFormValue?.tables);
     }
   }, [connectionCheck, getFormValue?.tables]);
+
+  const selectedProject = useMemo(() => {
+    const computedProject = companies[0]?.projects?.find(
+      (item) => item?.id === selectedProjectID
+    );
+
+    return computedProject?.resource_environments ?? [];
+  }, [selectedProjectID, companies]);
 
   return (
     <>

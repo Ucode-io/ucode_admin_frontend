@@ -20,7 +20,7 @@ const SettingsTab = ({
   handleClose,
   eventsRefetch,
 }) => {
-  const { slug: table_slug } = useParams();
+  const { tableSlug: table_slug } = useParams();
   const projectId = useSelector(state => state.auth.projectId)
 
   const emptyFields = {

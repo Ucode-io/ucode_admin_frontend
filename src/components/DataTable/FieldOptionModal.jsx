@@ -21,7 +21,18 @@ export default function FieldOptionModal({
 
   const handleChange = (e, value) => {
     setAnchorEl(null);
-    setValue("type", value);
+    setValue("attributes.format", value);
+    if (value === "NUMBER") {
+      setValue("type", "NUMBER");
+    } else if (value === "DATE") {
+      setValue("type", "DATE");
+    } else if (value === "SINGLE_LINE") {
+      setValue("type", "SINGLE_LINE");
+    } else if (value === "FILE") {
+      setValue("type", "FILE");
+    } else {
+      setValue("type", value);
+    }
     setFieldCreateAnchor(target);
   };
 

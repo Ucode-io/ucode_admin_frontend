@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
@@ -19,12 +19,12 @@ import {
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import FieldButton from "./FieldButton";
 import MultipleUpdateRow from "./MultipleUpdateRow";
 import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
-import FieldButton from "./FieldButton";
 
 const ObjectDataTable = ({
   relOptions,
@@ -95,9 +95,10 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const [addNewRow, setAddNewRow] = useState(false);
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
+  const [addNewRow, setAddNewRow] = useState(false);
+  const test = useParams();
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -314,6 +315,7 @@ const ObjectDataTable = ({
                   disableFilters={disableFilters}
                   setFieldCreateAnchor={setFieldCreateAnchor}
                   setFieldData={setFieldData}
+                  refetch={refetch}
                 />
               )
           )}
@@ -345,18 +347,20 @@ const ObjectDataTable = ({
               </CTableHeadCell>
             )}
           </PermissionWrapperV2>
-          <FieldButton
-            openFieldSettings={openFieldSettings}
-            view={view}
-            mainForm={mainForm}
-            fields={fields}
-            setFieldCreateAnchor={setFieldCreateAnchor}
-            fieldCreateAnchor={fieldCreateAnchor}
-            fieldData={fieldData}
-            setFieldData={setFieldData}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-          />
+          {!isRelationTable && (
+            <FieldButton
+              openFieldSettings={openFieldSettings}
+              view={view}
+              mainForm={mainForm}
+              fields={fields}
+              setFieldCreateAnchor={setFieldCreateAnchor}
+              fieldCreateAnchor={fieldCreateAnchor}
+              fieldData={fieldData}
+              setFieldData={setFieldData}
+              setDrawerState={setDrawerState}
+              setDrawerStateField={setDrawerStateField}
+            />
+          )}
         </CTableRow>
       </CTableHead>
 
@@ -412,6 +416,7 @@ const ObjectDataTable = ({
           <AddDataColumn
             rows={isRelationTable ? fields : data}
             columns={columns}
+            isRelationTable={isRelationTable}
             setAddNewRow={setAddNewRow}
             isTableView={isTableView}
             relOptions={relOptions}
@@ -424,6 +429,7 @@ const ObjectDataTable = ({
             setFormValue={setFormValue}
             relationfields={fields}
             data={data}
+            view={view}
             onRowClick={onRowClick}
             width={"80px"}
             refetch={refetch}

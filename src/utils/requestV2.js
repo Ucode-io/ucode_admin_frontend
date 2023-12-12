@@ -19,12 +19,14 @@ const requestV2 = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
-  const token = store.getState().auth.token;
+  // const token = store.getState().auth.token;
   // const logoutParams = {
   //   access_token: token,
   // };
 
-  if (error?.response?.status === 401) {
+if (error?.response?.status === 401 && error?.response?.data?.data === "rpc error: code = Unavailable desc = User not access environment") {
+  store.dispatch(authActions.logout());
+} else if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
 
     const params = {
@@ -75,13 +77,11 @@ requestV2.interceptors.request.use(
     const companyStore = store.getState().company;
     const environmentId = companyStore.environmentId;
     const projectId = companyStore.projectId;
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
-      if(config.params) config.params["project-id"] = projectId;
-
     }
     // if (!config.params?.["project-id"]) {
     //   if (config.params) {

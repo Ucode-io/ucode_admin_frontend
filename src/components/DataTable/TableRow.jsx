@@ -7,11 +7,10 @@ import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import TableRowForm from "./TableRowForm";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import TableDataForm from "../ElementGenerators/TableDataForm";
 
 const TableRow = ({
   relOptions,
@@ -236,7 +235,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td style={{height: "30px"}}>
+            <td style={{ height: "30px" }}>
               <div
                 style={{
                   display: "flex",
@@ -428,34 +427,36 @@ const TableRow = ({
             </PermissionWrapperV2>
           </CTableCell> */}
           <td>
-              <div
+            <div
+              style={{
+                display: "flex",
+                gap: "5px",
+                padding: "3px",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CTableCell
                 style={{
-                  display: "flex",
-                  gap: "5px",
-                  padding: "3px",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  padding: 0,
+                  borderRight: "none",
+                  borderBottom: "none",
                 }}
               >
-                <CTableCell
-                  style={{
-                    padding: 0,
-                    borderRight: "none",
-                    borderBottom: "none",
-                  }}
-                >
-                  <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                    <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </PermissionWrapperV2>
-                </CTableCell>
-                {/* <GeneratePdfFromTable row={row} /> */}
-              </div>
-            </td>
-
-           
-
+                <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() =>
+                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                    }
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </PermissionWrapperV2>
+              </CTableCell>
+              {/* <GeneratePdfFromTable row={row} /> */}
+            </div>
+          </td>
         </CTableRow>
       ) : (
         <CTableRow

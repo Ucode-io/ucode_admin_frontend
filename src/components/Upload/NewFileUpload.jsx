@@ -1,6 +1,14 @@
 import React, { useRef, useState } from "react";
 import fileService from "../../services/fileService";
-import { Box, Button, CircularProgress, InputAdornment, Popover, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  InputAdornment,
+  Popover,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Lock } from "@mui/icons-material";
 import DownloadIcon from "@mui/icons-material/Download";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -12,7 +20,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
-export default function NewFileUpload({ value, onChange, className = "", disabled, tabIndex, field }) {
+export default function NewFileUpload({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  tabIndex,
+  field,
+}) {
   const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,6 +38,7 @@ export default function NewFileUpload({ value, onChange, className = "", disable
 
   const inputChangeHandler = (e) => {
     setLoading(true);
+    console.log("field", field);
     const file = e.target.files[0];
 
     const data = new FormData();
@@ -228,7 +244,15 @@ export default function NewFileUpload({ value, onChange, className = "", disable
             height: "25px",
           }}
         >
-          <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
+          <input
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
+            onChange={inputChangeHandler}
+            disabled={disabled}
+          />
           <UploadFileIcon
             style={{
               color: "#747474",

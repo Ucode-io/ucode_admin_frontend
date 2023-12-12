@@ -77,7 +77,6 @@ const ObjectsPage = () => {
   }, [queryTab]);
 
   const menuItem = store.getState().menu.menuItem;
-
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
   return (

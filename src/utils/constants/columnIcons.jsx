@@ -22,13 +22,15 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import NumbersIcon from "@mui/icons-material/Numbers";
+import NotesIcon from "@mui/icons-material/Notes";
+import Filter9PlusIcon from "@mui/icons-material/Filter9Plus";
 
 export const columnIcons = (type) => {
   switch (type) {
     case "SINGLE_LINE":
       return <TextFieldsIcon />;
     case "MULTI_LINE":
-      return <FormatAlignJustifyIcon />;
+      return <NotesIcon />;
     case "NUMBER":
       return <NumbersIcon />;
     case "MULTISELECT":
@@ -79,6 +81,8 @@ export const columnIcons = (type) => {
       return <InsertInvitationIcon />;
     case "DROPDOWN":
       return <ArrowDropDownCircleIcon />;
+    case "FLOAT":
+      return <Filter9PlusIcon />;
     default:
       return <LinkIcon />;
   }

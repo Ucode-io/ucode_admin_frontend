@@ -56,6 +56,7 @@ const CellElementGeneratorForTableView = ({
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
   }
+  console.log("fieldfield", field);
 
   const computedSlug = useMemo(() => {
     if (!isNewRow) {
@@ -77,10 +78,13 @@ const CellElementGeneratorForTableView = ({
     }
   }, [field, i18n?.language]);
 
-  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+  const isDisabled =
+    field.attributes?.disabled ||
+    !field.attributes?.field_permission?.edit_permission;
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -92,7 +96,8 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     if (!defaultValue) return undefined;
 
@@ -228,6 +233,25 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
+          defaultValue={defaultValue}
+        />
+      );
+
+    case "PHOTO":
+      return (
+        <HFPhotoUpload
+          disabled={isDisabled}
+          isFormEdit
+          field={field}
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          isTransparent={true}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
         />
       );
@@ -436,6 +460,7 @@ const CellElementGeneratorForTableView = ({
         <HFSwitch
           disabled={isDisabled}
           isFormEdit
+          field={field}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}
@@ -471,7 +496,15 @@ const CellElementGeneratorForTableView = ({
 
     case "ICON":
       return (
-        <HFIconPicker isFormEdit control={control} updateObject={updateObject} isNewTableView={true} name={computedSlug} required={field.required} defaultValue={defaultValue} />
+        <HFIconPicker
+          isFormEdit
+          control={control}
+          updateObject={updateObject}
+          isNewTableView={true}
+          name={computedSlug}
+          required={field.required}
+          defaultValue={defaultValue}
+        />
       );
     case "MAP":
       return (
@@ -503,21 +536,7 @@ const CellElementGeneratorForTableView = ({
 
     case "CUSTOM_IMAGE":
       return (
-        <HFPhotoUpload
-          isTransparent={true}
-          control={control}
-          updateObject={updateObject}
-          isNewTableView={true}
-          name={computedSlug}
-          defaultValue={defaultValue}
-          isFormEdit
-          required={field.required}
-        />
-      );
-
-    case "PHOTO":
-      return (
-        <HFPhotoUpload
+        <HFFileUpload
           isTransparent={true}
           control={control}
           updateObject={updateObject}
@@ -558,6 +577,7 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
+          field={field}
         />
       );
 

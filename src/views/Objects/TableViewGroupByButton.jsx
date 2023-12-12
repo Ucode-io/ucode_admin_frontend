@@ -1,20 +1,18 @@
-import AppsIcon from "@mui/icons-material/Apps";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LinkIcon from "@mui/icons-material/Link";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useQueryClient} from "react-query";
-import {Container, Draggable} from "react-smooth-dnd";
-import constructorViewService from "../../services/constructorViewService";
-import {useParams} from "react-router-dom";
-import {applyDrag} from "../../utils/applyDrag";
-import {columnIcons} from "../../utils/constants/columnIcons";
 import WebIcon from "@mui/icons-material/Web";
-import DnsIcon from "@mui/icons-material/Dns";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import constructorViewService from "../../services/constructorViewService";
+import { applyDrag } from "../../utils/applyDrag";
+import { columnIcons } from "../../utils/constants/columnIcons";
 
-export default function TableViewGroupByButton({currentView, fieldsMap}) {
+export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   const queryClient = useQueryClient();
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -106,7 +104,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
         onClick={handleClick}
       >
         {isLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -202,7 +200,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
           <div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
             >
               {visibleFields?.map((column, index) => (
                 <Draggable key={column?.id}>

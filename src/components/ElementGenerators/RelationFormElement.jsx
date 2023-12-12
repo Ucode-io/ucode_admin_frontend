@@ -182,6 +182,10 @@ const AutoCompleteElement = ({
       maxWidth: "300px",
       minWidth: "200px",
     }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 99999,
+    }),
   };
 
   const computedIds = useMemo(() => {

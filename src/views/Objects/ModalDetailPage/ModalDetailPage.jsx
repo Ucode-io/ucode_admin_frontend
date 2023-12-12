@@ -3,6 +3,8 @@ import { Card, IconButton, Modal } from "@mui/material";
 import React from "react";
 import styles from "./style.module.scss";
 import ObjectsFormPage from "../ObjectsFormPage";
+import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
+import SummarySectionValuesForModal from "./SummarySectionValuesForModal";
 
 export default function ModalDetailPage({
   open,
@@ -20,7 +22,7 @@ export default function ModalDetailPage({
         className={`${
           fullScreen ? styles.cardModal : styles.card
         } PlatformModal`}
-      > 
+      >
         <div className={styles.header}>
           <div className={styles.cardTitle}>Detailed</div>
           <IconButton

@@ -4,7 +4,7 @@ import styles from "./style.module.scss";
 import Menu from "@mui/material/Menu";
 import { useMemo, useState } from "react";
 import CascadingRecursiveBlock from "./CascadingRecursiveBlock";
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from "@mui/icons-material/Clear";
 
 const CascadingRelationSettings = ({
   control,
@@ -39,7 +39,7 @@ const CascadingRelationSettings = ({
   const cascadingValue = useMemo(() => {
     let value = "";
     if (cascading?.length > 1) {
-      value += cascading[1]?.label ?? '';
+      value += cascading[1]?.label ?? "";
       if (cascading[2]?.label) {
         value += ` => ${cascading[2]?.label}`;
         if (cascading[3]?.label) {
@@ -49,37 +49,42 @@ const CascadingRelationSettings = ({
     }
     return value;
   }, [cascading]);
-  
+
   return (
     <>
       <div className={styles.settingsBlockHeader}>
         <h2>Cascading</h2>
       </div>
-      <div className="p-2">
-        <div className={styles.input_control}>
-          <span onClick={handleClick} className={styles.cascadingInput}>
-            <input
-              type="text"
-              disabled
-              value={cascadingValue && cascadingValue}
-              className={styles.cascading_input}
-              placeholder="value"
-              control={control}
-            />
-          </span>
-          {cascading?.length > 1 && <button className={styles.cascadingButton} onClick={() => setValue("cascadings", [])}><ClearIcon/></button>}
-        </div>
-        <Menu anchorEl={menu} open={open} onClose={handleClose}>
-          <div className={styles.cascading_collapse}>
-            <CascadingRecursiveBlock
-              fields={relations}
-              cascading={cascading}
-              setValue={setValue}
-              handleClose={handleClose}
-            />
-          </div>
-        </Menu>
+      <div className={styles.input_control}>
+        <span onClick={handleClick} className={styles.cascadingInput}>
+          <input
+            type="text"
+            disabled
+            value={cascadingValue && cascadingValue}
+            className={styles.cascading_input}
+            placeholder="value"
+            control={control}
+          />
+        </span>
+        {cascading?.length > 1 && (
+          <button
+            className={styles.cascadingButton}
+            onClick={() => setValue("cascadings", [])}
+          >
+            <ClearIcon />
+          </button>
+        )}
       </div>
+      <Menu anchorEl={menu} open={open} onClose={handleClose}>
+        <div className={styles.cascading_collapse}>
+          <CascadingRecursiveBlock
+            fields={relations}
+            cascading={cascading}
+            setValue={setValue}
+            handleClose={handleClose}
+          />
+        </div>
+      </Menu>
     </>
   );
 };

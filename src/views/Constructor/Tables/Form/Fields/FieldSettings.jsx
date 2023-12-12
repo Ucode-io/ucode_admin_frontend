@@ -1,9 +1,14 @@
 import { Close } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Card, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { TreeView } from "@mui/x-tree-view";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -14,7 +19,6 @@ import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService, {
   useFieldCreateMutation,
@@ -24,12 +28,17 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import { store } from "../../../../../store";
-import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
+import {
+  fieldButtons,
+  fieldTypesOptions,
+} from "../../../../../utils/constants/fieldTypes";
 import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
+import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -52,8 +61,7 @@ const FieldSettings = ({
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
-  const [validationView, setValidationView] = useState(false);
-  const [autofillView, setAutofillView] = useState(false);
+  const [drawerType, setDrawerType] = useState("SCHEMA");
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -74,6 +82,10 @@ const FieldSettings = ({
     const fields = mainForm.getValues("fields") ?? [];
     mainForm.setValue(`fields`, [field, ...fields]);
   };
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
 
   const {
     data: { views, columns, relationColumns } = {
@@ -235,6 +247,7 @@ const FieldSettings = ({
       },
     }
   );
+  console.log("field", field);
   useEffect(() => {
     const values = {
       attributes: {},
@@ -252,7 +265,7 @@ const FieldSettings = ({
         ...values,
         ...field,
       });
-      setFolder(field?.path);
+      setFolder(field?.attributes?.path);
     } else {
       reset(values);
     }
@@ -260,266 +273,241 @@ const FieldSettings = ({
 
   return (
     <div className={styles.settingsBlock}>
-      <div className={styles.settingsBlockHeader}>
-        <Typography variant="h4">
-          {formType === "CREATE" ? "Create field" : "Edit field"}
-        </Typography>
-        <IconButton onClick={closeSettingsBlock}>
-          <Close />
-        </IconButton>
-      </div>
+      <Box className={styles.additional}>
+        {fieldButtons.map((item) => (
+          <Button
+            className={
+              item.value === drawerType ? styles.active : styles.inactive
+            }
+            onClick={() => setDrawerType(item.value)}
+          >
+            {item.label}
+          </Button>
+        ))}
+        <AttributesButton
+          control={control}
+          watch={watch}
+          mainForm={mainForm}
+          button={
+            <Button
+              className={
+                drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
+              }
+              onClick={() => setDrawerType("ATTRIBUTES")}
+            >
+              Field
+            </Button>
+          }
+        />
+      </Box>
+      <Divider orientation="vertical" />
+      <Box className={styles.form}>
+        <div className={styles.settingsBlockHeader}>
+          <Typography variant="h4">
+            {formType === "CREATE" ? "Create field" : "Edit field"}
+          </Typography>
+          <IconButton onClick={closeSettingsBlock}>
+            <Close />
+          </IconButton>
+        </div>
 
-      <div className={styles.settingsBlockBody} style={{ height }}>
-        <form
-          onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
-          <Card>
-            <Box className="p-2">
-              <Typography variant="h4" className={styles.title}>
-                General
-              </Typography>
-              <FRow
-                label="Field Label"
-                required
-                classname={styles.custom_label}
-              >
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "6px",
-                  }}
-                >
-                  {languages?.map((language) => {
-                    const languageFieldName = `attributes.label_${language?.slug}`;
-                    const fieldValue = watch({
-                      control,
-                      name: languageFieldName,
-                    });
-
-                    return (
-                      <HFTextField
-                        className={styles.input}
-                        disabledHelperText
-                        fullWidth
-                        name={`attributes.label_${language?.slug}`}
+        <div className={styles.settingsBlockBody} style={{ height }}>
+          <form
+            onSubmit={handleSubmit(submitHandler)}
+            className={styles.fieldSettingsForm}
+          >
+            <Card>
+              {drawerType === "SCHEMA" && (
+                <Box className="p-2">
+                  <FRow label="Type" required classname={styles.custom_label}>
+                    <HFSelect
+                      disabledHelperText
+                      name="type"
+                      control={control}
+                      options={fieldTypesOptions}
+                      optionType="GROUP"
+                      placeholder="Type"
+                      required
+                      defaultValue={fieldType}
+                      className={styles.input}
+                    />
+                  </FRow>
+                  <FRow label="Name" classname={styles.custom_label} required>
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
                         control={control}
-                        placeholder={`Field Label (${language?.slug})`}
-                        autoFocus
-                        defaultValue={fieldValue || selectedField?.label}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
                       />
-                    );
-                  })}
-                </Box>
-              </FRow>
-
-              <FRow label="Field SLUG" required classname={styles.custom_label}>
-                <HFTextField
-                  className={styles.input}
-                  disabledHelperText
-                  fullWidth
-                  name="slug"
-                  control={control}
-                  placeholder="Field SLUG"
-                  required
-                  withTrim
-                />
-              </FRow>
-
-              <FRow label="Field type" required classname={styles.custom_label}>
-                <HFSelect
-                  disabledHelperText
-                  name="type"
-                  control={control}
-                  options={fieldTypesOptions}
-                  optionType="GROUP"
-                  placeholder="Type"
-                  required
-                  defaultValue={fieldType}
-                  className={styles.input}
-                />
-              </FRow>
-
-              {(fieldType === "FILE" ||
-                fieldType === "VIDEO" ||
-                fieldType === "PHOTO" ||
-                fieldType === "CUSTOM_IMAGE") && (
-                <FRow
-                  label="Backet"
-                  required
-                  classname={styles.custom_label}
-                  extra={
-                    <>
-                      <Typography variant="h6">
-                        Selected folder: {folder}
-                      </Typography>
-                    </>
-                  }
-                >
-                  <TreeView
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                    defaultSelected={folder}
-                    onNodeSelect={handleSelect}
-                    style={{
-                      border: "1px solid #D4DAE2",
-                    }}
-                  >
-                    {backetOptions?.menus?.map((item) => (
-                      <FieldTreeView
-                        element={item}
-                        setCheck={setCheck}
-                        check={check}
-                        folder={folder}
-                      />
-                    ))}
-                  </TreeView>
-                </FRow>
-              )}
-
-              {(fieldType === "SINGLE_LINE" || fieldType === "MULTI_LINE") && (
-                <HFCheckbox
-                  control={control}
-                  name="enable_multilanguage"
-                  label="Multi language"
-                  labelClassName={styles.custom_label}
-                />
-              )}
-            </Box>
-
-            <Attributes control={control} watch={watch} mainForm={mainForm} />
-            <Divider />
-
-            <div className="p-2">
-              <Typography variant="h4" className={styles.title}>
-                Additional
-              </Typography>
-              <DefaultValueBlock control={control} />
-              <Box className={styles.checkbox}>
-                <HFCheckbox
-                  control={control}
-                  name="attributes.disabled"
-                  label="Disabled"
-                  labelClassName={styles.custom_label}
-                />
-                <HFCheckbox
-                  control={control}
-                  name="required"
-                  label="Required"
-                  labelClassName={styles.custom_label}
-                />
-                <HFCheckbox
-                  control={control}
-                  name="unique"
-                  label="Avoid duplicate values"
-                  labelClassName={styles.custom_label}
-                />
-              </Box>
-            </div>
-            <Divider />
-            <div className="p-2">
-              <Typography
-                variant="h4"
-                className={styles.validation}
-                onClick={() => setValidationView((prev) => !prev)}
-              >
-                Validation
-                {validationView ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
-              </Typography>
-              {validationView && (
-                <Box mt={1}>
-                  <FRow label="Validation" classname={styles.custom_label}>
+                    </Box>
+                  </FRow>
+                  <FRow label="Key" required classname={styles.custom_label}>
                     <HFTextField
                       className={styles.input}
+                      disabledHelperText
                       fullWidth
-                      name="attributes.validation"
+                      name="slug"
                       control={control}
+                      placeholder="Field SLUG"
+                      required
+                      withTrim
                     />
                   </FRow>
-                  <FRow
-                    label="Validation message"
-                    classname={styles.custom_label}
-                  >
-                    <HFTextField
-                      className={styles.input}
-                      fullWidth
-                      name="attributes.validation_message"
-                      control={control}
-                    />
-                  </FRow>
+
+                  <DefaultValueBlock control={control} />
+
+                  {(fieldType === "FILE" ||
+                    fieldType === "VIDEO" ||
+                    fieldType === "PHOTO" ||
+                    fieldType === "CUSTOM_IMAGE") && (
+                    <FRow
+                      label="Backet"
+                      required
+                      classname={styles.custom_label}
+                      extra={
+                        <>
+                          <Typography variant="h6">
+                            Selected folder: {folder}
+                          </Typography>
+                        </>
+                      }
+                    >
+                      <TreeView
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                        defaultSelected={folder}
+                        onNodeSelect={handleSelect}
+                        style={{
+                          border: "1px solid #D4DAE2",
+                        }}
+                      >
+                        {backetOptions?.menus?.map((item) => (
+                          <FieldTreeView
+                            element={item}
+                            setCheck={setCheck}
+                            check={check}
+                            folder={folder}
+                          />
+                        ))}
+                      </TreeView>
+                    </FRow>
+                  )}
                 </Box>
               )}
-            </div>
-            <Divider />
-            <div className="p-2">
-              <Typography
-                variant="h4"
-                className={styles.validation}
-                onClick={() => setAutofillView((prev) => !prev)}
-              >
-                Autofill settings
-                {autofillView ? (
-                  <KeyboardArrowDownIcon />
-                ) : (
-                  <KeyboardArrowRightIcon />
-                )}
-              </Typography>
 
-              {autofillView && (
-                <Box mt={1}>
-                  <FRow label="Autofill table" classname={styles.custom_label}>
-                    <HFSelect
-                      disabledHelperText
-                      name="autofill_table"
-                      control={control}
-                      options={computedRelationTables}
-                      placeholder="Type"
-                      className={styles.input}
-                    />
-                  </FRow>
+              {drawerType === "ATTRIBUTES" && (
+                <Attributes
+                  control={control}
+                  watch={watch}
+                  mainForm={mainForm}
+                />
+              )}
 
-                  <FRow label="Autofill field" classname={styles.custom_label}>
-                    <HFSelect
-                      disabledHelperText
-                      name="autofill_field"
-                      control={control}
-                      options={computedRelationFields}
-                      placeholder="Type"
-                      className={styles.input}
-                    />
-                  </FRow>
-                  <FRow label="Automatic" classname={styles.custom_label}>
+              {drawerType === "VALIDATION" && (
+                <div className="p-2">
+                  <Box mt={1}>
+                    <Box className={styles.formrow}>
+                      <FRow label="RegEx" classname={styles.custom_label}>
+                        <HFTextField
+                          className={styles.input}
+                          fullWidth
+                          name="attributes.validation"
+                          control={control}
+                        />
+                      </FRow>
+                      <FRow
+                        label="Error message"
+                        classname={styles.custom_label}
+                      >
+                        <HFTextField
+                          className={styles.input}
+                          fullWidth
+                          name="attributes.validation_message"
+                          control={control}
+                        />
+                      </FRow>
+                    </Box>
+                    <Box className={styles.checkbox}>
+                      <HFCheckbox
+                        control={control}
+                        name="attributes.disabled"
+                        label="Disabled"
+                        labelClassName={styles.custom_label}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="required"
+                        label="Required"
+                        labelClassName={styles.custom_label}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="unique"
+                        label="Avoid duplicate values"
+                        labelClassName={styles.custom_label}
+                      />
+                    </Box>
+                  </Box>
+                </div>
+              )}
+              {drawerType === "AUTOFILL" && (
+                <div className="p-2">
+                  <Box mt={1}>
+                    <FRow
+                      label="Autofill table"
+                      classname={styles.custom_label}
+                    >
+                      <HFSelect
+                        disabledHelperText
+                        name="autofill_table"
+                        control={control}
+                        options={computedRelationTables}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    </FRow>
+
+                    <FRow
+                      label="Autofill field"
+                      classname={styles.custom_label}
+                    >
+                      <HFSelect
+                        disabledHelperText
+                        name="autofill_field"
+                        control={control}
+                        options={computedRelationFields}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    </FRow>
                     <HFCheckbox
                       control={control}
                       name="automatic"
-                      label="automatic"
+                      label="Automatic"
                       labelClassName={styles.custom_label}
                     />
-                  </FRow>
-                </Box>
+                  </Box>
+                </div>
               )}
-            </div>
-            <Divider />
-          </Card>
-        </form>
+            </Card>
+          </form>
 
-        <div className={styles.settingsFooter}>
-          <PrimaryButton
-            size="large"
-            className={styles.button}
-            style={{ width: "100%" }}
-            onClick={handleSubmit(submitHandler)}
-            loader={formLoader || createLoading || updateLoading}
-          >
-            Save
-          </PrimaryButton>
+          <div className={styles.settingsFooter}>
+            <PrimaryButton
+              size="large"
+              className={styles.button}
+              style={{ width: "100%" }}
+              onClick={handleSubmit(submitHandler)}
+              loader={formLoader || createLoading || updateLoading}
+            >
+              Save
+            </PrimaryButton>
+          </div>
         </div>
-      </div>
+      </Box>
     </div>
   );
 };

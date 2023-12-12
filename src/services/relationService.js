@@ -5,9 +5,9 @@ import requestV2 from "../utils/requestV2";
 const relationService = {
   getList: (params, headers, tableSlug) =>
     requestV2.get(`/relations/${tableSlug}`, { params, headers }),
-  getByID: ({ fieldId }) => request.get(`/relation/${fieldId}`),
-  update: ({ data, tableSlug }) =>
-    requestV2.put(`/relations/${tableSlug}`, data),
+  getByID: ({ tableSlug, id }) =>
+    requestV2.get(`/relations/${tableSlug}/${id}`),
+  update: (data, tableSlug) => requestV2.put(`/relations/${tableSlug}`, data),
   create: ({ data, tableSlug }) =>
     requestV2.post(`/relations/${tableSlug}`, data),
   delete: ({ id, tableSlug }) =>
@@ -29,16 +29,11 @@ export const useRelationsListQuery = ({
   );
 };
 
-export const useRelationGetByIdQuery = ({
-  fieldId,
-  resourceId,
-  envId,
-  queryParams,
-}) => {
+export const useRelationGetByIdQuery = ({ tableSlug, id, queryParams }) => {
   return useQuery(
-    ["RELATION_GET_BY_ID", { fieldId, resourceId, envId }],
+    ["RELATION_GET_BY_ID", { tableSlug, id }],
     () => {
-      return relationService.getByID({ resourceId, fieldId, envId });
+      return relationService.getByID({ tableSlug, id });
     },
     queryParams
   );

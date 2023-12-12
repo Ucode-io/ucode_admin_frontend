@@ -25,6 +25,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import { quickFiltersActions } from "../../../store/filter/quick_filter";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 
 const TableView = ({
   filterVisible,
@@ -67,11 +68,12 @@ const TableView = ({
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
+  const { id, tableSlug, appId } = useParams();
+  const permissions = useSelector((state) => state.auth.permissions);
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-
+  console.log("slugslugslugslug", tableSlug);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -144,7 +146,7 @@ const TableView = ({
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -153,12 +155,13 @@ const TableView = ({
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
           (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
           (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+            relation.table_from?.slug === tableSlug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -253,6 +256,15 @@ const TableView = ({
       return "string";
     }
   };
+
+  useEffect(() => {
+    if (
+      Object.values(filters).length > 0 &&
+      Object.values(filters)?.find((el) => el !== undefined)
+    ) {
+      setCurrentPage(1);
+    }
+  }, [filters]);
 
   const limitPage = useMemo(() => {
     if (typeof paginiation === "number") {
@@ -602,7 +614,7 @@ const TableView = ({
       }
       {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
       <div
-        style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+        style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
         id="data-table"
       >
         <ObjectDataTable
@@ -647,7 +659,7 @@ const TableView = ({
           onDeleteClick={deleteHandler}
           tableSlug={tableSlug}
           view={view}
-          tableStyle={{ 
+          tableStyle={{
             borderRadius: 0,
             border: "none",
             borderBottom: "1px solid #E5E9EB",
@@ -692,7 +704,7 @@ const TableView = ({
         onClose={() => setDrawerState(null)}
         orientation="horizontal"
       >
-        <RelationSettingsTest
+        <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}
           getRelationFields={getRelationFields}

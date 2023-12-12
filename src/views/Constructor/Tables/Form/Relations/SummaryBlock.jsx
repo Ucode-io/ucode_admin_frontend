@@ -1,10 +1,10 @@
-import {Delete} from "@mui/icons-material";
-import {useFieldArray} from "react-hook-form";
+import { Delete } from "@mui/icons-material";
+import { useFieldArray } from "react-hook-form";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import styles from "./style.module.scss";
 import FRow from "../../../../../components/FormElements/FRow";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 
 const formulaTypes = [
   {
@@ -44,7 +44,7 @@ const SummaryBlock = ({
   };
 
   return (
-    <Box sx={{padding: "10px 12px"}}>
+    <Box>
       {isViewSettings && <FRow label="Summary"></FRow>}
 
       <div className="">

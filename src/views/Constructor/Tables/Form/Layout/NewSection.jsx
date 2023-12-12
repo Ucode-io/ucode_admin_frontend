@@ -22,7 +22,7 @@ const NewSection = ({
   selectedLayoutIndex,
   selectedTabIndex,
   removeSection,
-  allTabs
+  allTabs,
 }) => {
   const sectionFields = useFieldArray({
     control: mainForm.control,
@@ -30,7 +30,9 @@ const NewSection = ({
     keyName: "key",
   });
 
-  const sectionFieldsWatch = mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`);
+  const sectionFieldsWatch = mainForm.watch(
+    `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`
+  );
 
   const openSettingsBlock = (field) => {
     if (!field.id?.includes("#")) {
@@ -73,17 +75,24 @@ const NewSection = ({
   const languages = useSelector((state) => state.languages.list);
 
   const nameGenerator = (language) => {
-    if (mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`)) {
+    if (
+      mainForm.watch(
+        `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`
+      )
+    ) {
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`;
     } else {
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
-console.log('sectionFields', sectionFields)
+  console.log("sectionFields", sectionFields);
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
-        <div className={styles.newsectionCardHeaderLeftSide} style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          className={styles.newsectionCardHeaderLeftSide}
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           {/* <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
@@ -141,7 +150,14 @@ console.log('sectionFields', sectionFields)
 
       <div className={styles.newsectionCardBody}>
         <Container
-          style={{  height: "50px", width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", overflowX: "scroll" }}
+          style={{
+            height: "100px",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "flex-start",
+            overflowX: "scroll",
+          }}
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"
@@ -163,7 +179,11 @@ console.log('sectionFields', sectionFields)
                   checkPermission={false}
                   checkRequired={false}
                 />
-                <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />
+                <ButtonsPopover
+                  className={styles.deleteButton}
+                  onEditClick={() => openSettingsBlock(field)}
+                  onDeleteClick={() => removeField(fieldIndex, 1)}
+                />
                 {/* <RectangleIconButton
                   className={styles.deleteButton}
                   color={"error"}

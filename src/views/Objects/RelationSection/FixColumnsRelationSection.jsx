@@ -24,17 +24,8 @@ export default function FixColumnsRelationSection({ relatedTable: view, fieldsMa
 
   const updateView = (data) => {
     setIsLoading(true);
-    // constructorViewService
-    //   .update(data)
-    //   .then((res) => {
-    //     queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
-
     relationService
-      .update(data)
+      .update(data, view?.relatedTable)
       .then((res) => {
         getAllData();
       })
@@ -114,6 +105,7 @@ export default function FixColumnsRelationSection({ relatedTable: view, fieldsMa
           color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           textWrap: "nowrap",
+          padding: "2px 8px",
         }}
       >
         {isLoading ? (
@@ -221,7 +213,13 @@ export default function FixColumnsRelationSection({ relatedTable: view, fieldsMa
                     justifyContent: "center",
                   }}
                 >
-                  {column?.type && columnIcons(column?.type)}
+                  <p
+                    style={{
+                      textWrap: "nowrap",
+                    }}
+                  >
+                    {column?.type && columnIcons(column?.type)}
+                  </p>
                 </div>
 
                 <span>{column?.label}</span>

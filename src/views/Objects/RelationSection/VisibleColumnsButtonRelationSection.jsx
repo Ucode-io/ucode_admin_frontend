@@ -9,14 +9,14 @@ import { columnIcons } from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
+import { useParams } from "react-router-dom";
 
 export default function VisibleColumnsButtonRelationSection({ currentView, fieldsMap, getAllData }) {
-  const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
   const { i18n } = useTranslation();
-
+  const {id} = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -32,15 +32,17 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
   const updateView = (data) => {
     setIsLoading(true);
     relationService
-      .update({
-        ...currentView,
-        table_from: currentView?.table_from?.slug,
-        table_to: currentView?.table_to?.slug,
-        view_fields: currentView?.view_fields?.map((el) => el.id),
-        columns: data,
-      })
+      .update(
+        {
+          ...currentView,
+          table_from: currentView?.table_from?.slug,
+          table_to: currentView?.table_to?.slug,
+          view_fields: currentView?.view_fields?.map((el) => el.id),
+          columns: data,
+        },
+        currentView?.relatedTable
+      )
       .then(() => {
-        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
         getAllData();
       })
       .finally(() => {
@@ -62,7 +64,7 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
       updateView(result.map((el) => el.id));
     }
   };
-
+  console.log("visibleFields", unVisibleFields, currentView);
   return (
     <div>
       <Button
@@ -71,6 +73,7 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
           gap: "5px",
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
+          padding: "2px 8px",
         }}
         onClick={handleClick}
       >
@@ -214,7 +217,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                       >
                         {column?.type ? columnIcons(column?.type) : <LinkIcon />}
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                      <p
+                        style={{
+                          textWrap: "nowrap",
+                        }}
+                      >
+                        {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                      </p>
                     </div>
                     <div
                       style={{
@@ -234,7 +243,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                         size="small"
                         checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
-                          updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                          updateView(
+                            e.target.checked
+                              ? currentView?.columns
+                                ? [...currentView?.columns, column?.id]
+                                : [column?.id]
+                              : currentView?.columns?.filter((el) => el !== column?.id)
+                          );
                         }}
                       />
                     </div>
@@ -272,7 +287,13 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                     >
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                    <p
+                      style={{
+                        textWrap: "nowrap",
+                      }}
+                    >
+                      {column?.attributes?.[`label_${i18n.language}`] ?? column?.label}
+                    </p>
                   </div>
                   <div
                     style={{
@@ -292,7 +313,9 @@ export default function VisibleColumnsButtonRelationSection({ currentView, field
                       size="small"
                       checked={currentView?.columns?.includes(column?.id)}
                       onChange={(e) => {
-                        updateView(e.target.checked ? [...currentView?.columns, column?.id] : currentView?.columns?.filter((el) => el !== column?.id));
+                        updateView(
+                          e.target.checked ? (currentView?.columns ? [...currentView?.columns, column?.id] : [column?.id]) : currentView?.columns?.filter((el) => el !== column?.id)
+                        );
                       }}
                     />
                   </div>

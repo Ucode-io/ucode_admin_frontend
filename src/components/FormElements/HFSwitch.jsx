@@ -1,6 +1,6 @@
-import { Switch } from "@mui/material";
-import { useId } from "react";
-import { Controller } from "react-hook-form";
+import {Switch} from "@mui/material";
+import {useId} from "react";
+import {Controller} from "react-hook-form";
 
 const HFSwitch = ({
   control,
@@ -9,11 +9,12 @@ const HFSwitch = ({
   disabledHelperText,
   tabIndex,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isBlackBg,
   onChange = () => {},
   labelProps,
   defaultValue = false,
+  field,
   ...props
 }) => {
   const id = useId();
@@ -24,8 +25,8 @@ const HFSwitch = ({
       name={name}
       defaultValue={defaultValue}
       render={({
-        field: { onChange: formOnChange, value },
-        fieldState: { error },
+        field: {onChange: formOnChange, value},
+        fieldState: {error},
       }) => {
         return (
           <div
@@ -39,12 +40,12 @@ const HFSwitch = ({
               id={`switch-${id}`}
               {...props}
               autoFocus={tabIndex === 1}
-                inputProps={{ tabIndex }}
+              inputProps={{tabIndex}}
               checked={value ?? false}
               onChange={(e, val) => {
                 formOnChange(val);
                 onChange(val);
-                isNewTableView && updateObject()
+                isNewTableView && updateObject();
               }}
             />
             <label htmlFor={`switch-${id}`} {...labelProps}>

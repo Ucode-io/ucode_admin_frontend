@@ -1,18 +1,18 @@
-import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
-import { InsertDriveFile } from "@mui/icons-material";
-import { Box, Button, Card, Divider } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
+import {InsertDriveFile} from "@mui/icons-material";
+import {Box, Button, Card, Divider} from "@mui/material";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
+import {store} from "../../../store";
 import FilesSection from "../FilesSection";
 import MainInfoForModal from "../MainInfoForModal";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
@@ -24,11 +24,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import FixColumnsRelationSection from "./FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import constructorTableService from "../../../services/constructorTableService";
-import { listToMap } from "../../../utils/listToMap";
+import {listToMap} from "../../../utils/listToMap";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../utils/applyDrag";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../utils/applyDrag";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -50,7 +50,7 @@ const RelationSectionForModal = ({
   errors,
   getAllData,
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -72,12 +72,15 @@ const RelationSectionForModal = ({
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
 
   const tableHeightOptions = [
     {
@@ -109,7 +112,7 @@ const RelationSectionForModal = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -130,7 +133,8 @@ const RelationSectionForModal = ({
       mapped[keys[0]] = values[0];
     });
 
-    if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
+    if (getRelatedTabeSlug?.type === "Many2Many")
+      setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
       setFormVisible(true);
@@ -145,20 +149,23 @@ const RelationSectionForModal = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  const { mutate: updateMultipleObject } = useMutation(
+  const {mutate: updateMultipleObject} = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? undefined,
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-            [fieldSlug]: id,
-          })),
-        },
-      }),
+      constructorObjectService.updateMultipleObject(
+        getRelatedTabeSlug.relatedTable,
+        {
+          data: {
+            objects: values.multi.map((item) => ({
+              ...item,
+              guid: item?.guid ?? undefined,
+              doctors_id_2: getValue(item, "doctors_id_2"),
+              doctors_id_3: getValue(item, "doctors_id_3"),
+              specialities_id: getValue(item, "specialities_id"),
+              [fieldSlug]: id,
+            })),
+          },
+        }
+      ),
     {
       enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {
@@ -192,7 +199,8 @@ const RelationSectionForModal = ({
             data: {
               offset: 0,
               limit: 0,
-              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+                idFromParams,
             },
           },
           {
@@ -200,7 +208,11 @@ const RelationSectionForModal = ({
           }
         )
         .then((res) => {
-          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
         })
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
@@ -214,7 +226,8 @@ const RelationSectionForModal = ({
             data: {
               offset: 0,
               limit: 0,
-              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+                idFromParams,
             },
           },
           {
@@ -222,7 +235,11 @@ const RelationSectionForModal = ({
           }
         )
         .then((res) => {
-          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
         })
         .catch((a) => console.log("error", a));
   };
@@ -264,7 +281,11 @@ const RelationSectionForModal = ({
           .map((item) => {
             return {
               ...item,
-              tabs: item?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),
+              tabs: item?.tabs?.filter(
+                (tab) =>
+                  tab?.relation?.permission?.view_permission === true ||
+                  tab?.type === "section"
+              ),
             };
           })
           ?.map((layout) => {
@@ -313,7 +334,9 @@ const RelationSectionForModal = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
   const handleHeightControl = (val) => {
@@ -347,7 +370,7 @@ const RelationSectionForModal = ({
   }, [filteredRelations]);
 
   const {
-    data: { fieldsMap } = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -366,7 +389,7 @@ const RelationSectionForModal = ({
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -428,7 +451,12 @@ const RelationSectionForModal = ({
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
       {data?.length ? (
         <Card className={styles.card}>
@@ -448,88 +476,96 @@ const RelationSectionForModal = ({
               {!relation?.is_visible_section && (
                 <div className={styles.cardHeaderModal}>
                   <TabList className={styles.tabList}>
-                    <Container
-                      groupName="1"
-                      onDrop={onDrop}
-                      orientation="horizontal"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                      getChildPayload={(i) => relation?.tabs?.[i] ?? {}}
-                    >
-                      {relation?.tabs?.map((el, index) =>
-                        editAcces ? (
-                          <Draggable key={el.id} style={{ display: "flex", alignItems: "center" }}>
-                            <>
-                              <Tab
-                                key={el.id}
-                                className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                                onClick={() => {
-                                  setSelectedIndex(index);
-                                  onSelect(el);
-                                }}
-                                style={{
-                                  marginRight: "0",
-                                }}
-                              >
-                                {relation?.view_relation_type === "FILE" && (
-                                  <>
-                                    <InsertDriveFile /> Файлы
-                                  </>
-                                )}
-                                <div className="flex align-center gap-2 text-nowrap">
-                                  {el?.attributes?.[`label_${i18n.language}`]
-                                    ? el?.attributes?.[`label_${i18n.language}`]
-                                    : el?.relation?.attributes?.[`title_${i18n.language}`]
-                                    ? el?.relation?.attributes?.[`title_${i18n.language}`]
-                                    : el?.label ?? el?.title}
-                                </div>
-                              </Tab>
+                    {relation?.tabs?.map((el, index) =>
+                      editAcces ? (
+                        <>
+                          <Tab
+                            key={el.id}
+                            className={`${styles.tabs_item} ${
+                              selectedTabIndex === index
+                                ? "custom-selected-tab"
+                                : "custom-tab"
+                            }`}
+                            onClick={() => {
+                              setSelectedIndex(index);
+                              onSelect(el);
+                            }}
+                            style={{
+                              marginRight: "0",
+                            }}
+                          >
+                            {relation?.view_relation_type === "FILE" && (
+                              <>
+                                <InsertDriveFile /> Файлы
+                              </>
+                            )}
+                            <div className="flex align-center gap-2 text-nowrap">
+                              {el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                ? el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                : el?.label ?? el?.title}
+                            </div>
+                          </Tab>
 
-                              <Button
-                                onClick={() => toggleTabs(el)}
-                                sx={{
-                                  height: "38px",
-                                  minWidth: "38px",
-                                  width: "38px",
-                                  borderRadius: "50%",
-                                }}
-                              >
-                                {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                              </Button>
+                          <Button
+                            onClick={() => toggleTabs(el)}
+                            sx={{
+                              height: "38px",
+                              minWidth: "38px",
+                              width: "38px",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            {el?.attributes?.is_visible_layout ||
+                            el?.attributes?.is_visible_layout === undefined ? (
+                              <VisibilityOffIcon />
+                            ) : (
+                              <VisibilityIcon />
+                            )}
+                          </Button>
 
-                              <Divider orientation="vertical" flexItem />
-                            </>
-                          </Draggable>
-                        ) : (
-                          (el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined) && (
-                            <Tab
-                              key={el.id}
-                              className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                              onClick={() => {
-                                setSelectedIndex(index);
-                                onSelect(el);
-                              }}
-                            >
-                              {relation?.view_relation_type === "FILE" && (
-                                <>
-                                  <InsertDriveFile /> Файлы
-                                </>
-                              )}
-                              <div className="flex align-center gap-2 text-nowrap">
-                                {el?.attributes?.[`label_${i18n.language}`]
-                                  ? el?.attributes?.[`label_${i18n.language}`]
-                                  : el?.relation?.attributes?.[`title_${i18n.language}`]
-                                  ? el?.relation?.attributes?.[`title_${i18n.language}`]
-                                  : el?.label ?? el?.title}
-                              </div>
-                            </Tab>
-                          )
+                          <Divider orientation="vertical" flexItem />
+                        </>
+                      ) : (
+                        (el?.attributes?.is_visible_layout ||
+                          el?.attributes?.is_visible_layout === undefined) && (
+                          <Tab
+                            key={el.id}
+                            className={`${styles.tabs_item} ${
+                              selectedTabIndex === index
+                                ? "custom-selected-tab"
+                                : "custom-tab"
+                            }`}
+                            onClick={() => {
+                              setSelectedIndex(index);
+                              onSelect(el);
+                            }}
+                          >
+                            {relation?.view_relation_type === "FILE" && (
+                              <>
+                                <InsertDriveFile /> Файлы
+                              </>
+                            )}
+                            <div className="flex align-center gap-2 text-nowrap">
+                              {el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                ? el?.relation?.attributes?.[
+                                    `title_${i18n.language}`
+                                  ]
+                                : el?.label ?? el?.title}
+                            </div>
+                          </Tab>
                         )
-                      )}
-                    </Container>
+                      )
+                    )}
                   </TabList>
                   {editAcces ? (
                     <>
@@ -573,9 +609,17 @@ const RelationSectionForModal = ({
 
                   {getRelatedTabeSlug && (
                     <>
-                      <FixColumnsRelationSection relatedTable={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
+                      <FixColumnsRelationSection
+                        relatedTable={getRelatedTabeSlug}
+                        fieldsMap={fieldsMap}
+                        getAllData={getAllData}
+                      />
                       <Divider orientation="vertical" flexItem />
-                      <VisibleColumnsButtonRelationSection currentView={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
+                      <VisibleColumnsButtonRelationSection
+                        currentView={getRelatedTabeSlug}
+                        fieldsMap={fieldsMap}
+                        getAllData={getAllData}
+                      />
                     </>
                   )}
                 </div>

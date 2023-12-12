@@ -1,15 +1,15 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import { useEffect, useRef, useState } from "react";
-import { useMemo } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Autocomplete, TextField} from "@mui/material";
+import {get} from "@ngard/tiny-get";
+import {useEffect, useRef, useState} from "react";
+import {useMemo} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -21,10 +21,10 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import Select from "react-select";
-import { useTranslation } from "react-i18next";
-import { pageToOffset } from "../../utils/pageToOffset";
+import {useTranslation} from "react-i18next";
+import {pageToOffset} from "../../utils/pageToOffset";
 
 const RelationFormElement = ({
   control,
@@ -46,13 +46,16 @@ const RelationFormElement = ({
   errors,
   ...props
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSlug = useMemo(() => {
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
 
-  const computedLabel = field?.attributes?.[`label_${i18n?.language}`] ?? field?.label ?? field?.title;
+  const computedLabel =
+    field?.attributes?.[`label_${i18n?.language}`] ??
+    field?.label ??
+    field?.title;
 
   const required = useMemo(() => {
     if (window.location.pathname?.includes("settings")) {
@@ -71,7 +74,7 @@ const RelationFormElement = ({
             required: required ? "This field is required!" : "",
             ...rules,
           }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
@@ -97,13 +100,17 @@ const RelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow label={value} onLabelChange={onChange} required={checkRequiredField}>
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <FEditableRow
+          label={value}
+          onLabelChange={onChange}
+          required={checkRequiredField}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
-            render={({ field: { onChange, value }, fieldState: { error } }) =>
+            render={({field: {onChange, value}, fieldState: {error}}) =>
               field?.attributes?.cascadings?.length === 2 ? (
                 <CascadingElement
                   field={field}
@@ -155,18 +162,18 @@ const AutoCompleteElement = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const { id } = useParams();
+  const {id} = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const customStyles = {
     control: (provided) => ({
@@ -175,10 +182,17 @@ const AutoCompleteElement = ({
       maxWidth: "300px",
       minWidth: "200px",
     }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 99999,
+    }),
   };
 
   const computedIds = useMemo(() => {
-    if (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
       return clientTypeID;
     } else {
       return ids;
@@ -204,28 +218,34 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-          from_input: true,
-        },
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: pageToOffset(page, 10),
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {
+            from_input: true,
+          },
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
@@ -242,7 +262,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -270,7 +290,8 @@ const AutoCompleteElement = ({
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
@@ -292,10 +313,16 @@ const AutoCompleteElement = ({
     } else {
       return optionsFromLocale?.options ?? [];
     }
-  }, [optionsFromFunctions?.options, optionsFromLocale?.options, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions?.options,
+    optionsFromLocale?.options,
+    field?.attributes?.function_path,
+  ]);
 
   const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(new Set(allOptions.map(JSON.stringify))).map(JSON.parse);
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions, options]);
 
@@ -322,7 +349,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -333,7 +360,7 @@ const AutoCompleteElement = ({
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -343,7 +370,10 @@ const AutoCompleteElement = ({
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
 
-    if (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
     }
@@ -375,7 +405,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -413,7 +443,10 @@ const AutoCompleteElement = ({
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
-        <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
           Создать новый
         </div>
       )}
@@ -454,8 +487,10 @@ const AutoCompleteElement = ({
           <Select
             isDisabled={
               disabled ||
-              (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") ||
-              (Boolean(field?.attributes?.is_user_id_default) && localValue?.length !== 0)
+              (field?.attributes?.object_id_from_jwt &&
+                field?.id?.split("#")?.[0] === "client_type") ||
+              (Boolean(field?.attributes?.is_user_id_default) &&
+                localValue?.length !== 0)
             }
             options={computedOptions ?? []}
             isClearable={true}
@@ -468,20 +503,25 @@ const AutoCompleteElement = ({
               // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
+            menuPortalTarget={document.body}
             onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);
               inputChangeHandler(e);
             }}
-            getOptionLabel={(option) => field?.attributes?.view_fields?.map((el) => `${option[el?.slug]} `)}
+            getOptionLabel={(option) =>
+              field?.attributes?.view_fields?.map(
+                (el) => `${option[el?.slug]} `
+              )
+            }
             getOptionValue={(option) => option?.guid}
             components={{
               DropdownIndicator: () => null,
-              MultiValue: ({ data }) => (
+              MultiValue: ({data}) => (
                 <IconGenerator
                   icon="arrow-up-right-from-square.svg"
-                  style={{ marginLeft: "10px", cursor: "pointer" }}
+                  style={{marginLeft: "10px", cursor: "pointer"}}
                   size={15}
                   onClick={(e) => {
                     e.stopPropagation();

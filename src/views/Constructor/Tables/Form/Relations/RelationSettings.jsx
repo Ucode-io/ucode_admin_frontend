@@ -375,6 +375,44 @@ const RelationSettings = ({
                       </Box>
                     </FRow>
 
+                    <FRow label="Label From" required>
+                      <Box
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "6px",
+                        }}
+                      >
+                        {languages?.map((lang) => (
+                          <HFTextField
+                            name={`attributes.label_from_${lang?.slug}`}
+                            control={control}
+                            placeholder={`Relation Label From (${lang?.slug})`}
+                            fullWidth
+                          />
+                        ))}
+                      </Box>
+                    </FRow>
+
+                    <FRow label="Label To" required>
+                      <Box
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "6px",
+                        }}
+                      >
+                        {languages?.map((lang) => (
+                          <HFTextField
+                            name={`attributes.label_to_${lang?.slug}`}
+                            control={control}
+                            placeholder={`Relation Label To (${lang?.slug})`}
+                            fullWidth
+                          />
+                        ))}
+                      </Box>
+                    </FRow>
+
                     <FRow label="Table from" required>
                       <HFSelect
                         name="table_from"

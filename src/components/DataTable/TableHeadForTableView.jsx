@@ -132,12 +132,7 @@ export default function TableHeadForTableView({
   };
 
   const computedViewSummaries = useMemo(() => {
-    if (
-      view?.attributes?.summaries?.find(
-        (item) => item?.field_name === column?.id
-      )
-    )
-      return true;
+    if (view?.attributes?.summaries?.find((item) => item?.field_name === column?.id)) return true;
     else return false;
   }, [view?.attributes?.summaries, column]);
 
@@ -161,31 +156,17 @@ export default function TableHeadForTableView({
       children: [
         {
           id: 8,
-          title: `Sort ${
-            sortedDatas?.find((item) => item.field === column.id)?.order ===
-            "ASC"
-              ? "Z -> A"
-              : "A -> Z"
-          }`,
+          title: `Sort ${sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "Z -> A" : "A -> Z"}`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             const field = column.id;
-            const order =
-              sortedDatas?.find((item) => item.field === column.id)?.order ===
-              "ASC"
-                ? "DESC"
-                : "ASC";
-            dispatch(
-              paginationActions.setSortValues({ tableSlug, field, order })
-            );
+            const order = sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "DESC" : "ASC";
+            dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
-              const index = newSortedDatas.findIndex(
-                (item) => item.field === column.id
-              );
+              const index = newSortedDatas.findIndex((item) => item.field === column.id);
               if (index !== -1) {
-                newSortedDatas[index].order =
-                  newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+                newSortedDatas[index].order = newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
               } else {
                 newSortedDatas.push({
                   field: column.id,
@@ -211,32 +192,18 @@ export default function TableHeadForTableView({
         },
         {
           id: 19,
-          title: `${
-            view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
-          } text`,
-          icon: view?.attributes?.textWrap?.[column?.id] ? (
-            <WrapTextOutlinedIcon />
-          ) : (
-            <AlignHorizontalLeftIcon />
-          ),
+          title: `${view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"} text`,
+          icon: view?.attributes?.textWrap?.[column?.id] ? <WrapTextOutlinedIcon /> : <AlignHorizontalLeftIcon />,
           onClickAction: () => {
-            textWrapChangeHandler(
-              column,
-              !view?.attributes?.textWrap?.[column?.id] ? true : false
-            );
+            textWrapChangeHandler(column, !view?.attributes?.textWrap?.[column?.id] ? true : false);
           },
         },
         {
           id: 10,
-          title: `${
-            view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
-          } column`,
+          title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"} column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
-            fixColumnChangeHandler(
-              column,
-              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
-            );
+            fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
           },
         },
       ],
@@ -289,18 +256,9 @@ export default function TableHeadForTableView({
         formula_name: item?.value,
       };
 
-      result = Array.from(
-        new Map(
-          [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
-            item.field_name,
-            item,
-          ])
-        ).values()
-      );
+      result = Array.from(new Map([newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [item.field_name, item])).values());
     } else if (type === "unset") {
-      result = view?.attributes?.summaries?.filter(
-        (element) => element?.field_name !== item?.id
-      );
+      result = view?.attributes?.summaries?.filter((element) => element?.field_name !== item?.id);
     }
 
     const computedValues = {
@@ -317,7 +275,7 @@ export default function TableHeadForTableView({
       handleClose();
     });
   };
-
+console.log('column', column)
   return (
     <>
       <CTableHeadCell
@@ -330,33 +288,12 @@ export default function TableHeadForTableView({
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "normal",
-          minWidth: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          width: tableSize?.[pageName]?.[column.id]
-            ? tableSize?.[pageName]?.[column.id]
-            : "auto",
-          position: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "sticky"
-              : "relative"
-          }`,
-          left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id) + 80}px`
-            : "0",
-          backgroundColor: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "#F6F6F6"
-              : "#fff"
-          }`,
-          zIndex: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "1"
-              : "0"
-          }`,
+          minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
+          left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
+          backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
+          zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
         }}
       >
         <div
@@ -375,7 +312,8 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`label_${i18n?.language}`] ??
+            {column?.attributes?.[`label_from_${i18n?.language}`] ??
+              column?.attributes?.[`label_${i18n?.language}`] ??
               column?.attributes?.[`title_${i18n?.language}`] ??
               column?.attributes?.[`name_${i18n?.language}`] ??
               column.label}

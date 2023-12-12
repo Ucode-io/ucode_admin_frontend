@@ -9,12 +9,12 @@ import constructorObjectService from "../../services/constructorObjectService";
 import {useQueryClient} from "react-query";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {useDispatch} from "react-redux";
+import {useParams} from "react-router-dom";
 
 const AddDataColumn = ({
   columns,
   isTableView,
   relOptions,
-  tableSlug,
   getValues,
   mainForm,
   relationfields,
@@ -24,9 +24,21 @@ const AddDataColumn = ({
   rows,
   setAddNewRow,
   refetch,
+  view,
+  isRelationTable,
 }) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const {tableSlug, id} = useParams();
+
+  const computedSlug = isRelationTable
+    ? view?.type === "Many2One"
+      ? `${tableSlug}_id`
+      : `${tableSlug}_ids`
+    : tableSlug;
+
+  const computedTableSlug = isRelationTable ? view?.relatedTable : tableSlug;
+
   const {
     handleSubmit,
     control,
@@ -37,9 +49,10 @@ const AddDataColumn = ({
 
   const onSubmit = (values) => {
     constructorObjectService
-      .create(tableSlug, {
+      .create(computedTableSlug, {
         data: {
           ...values,
+          [computedSlug]: id,
         },
       })
       .then((res) => {

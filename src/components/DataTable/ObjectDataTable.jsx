@@ -1,14 +1,21 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Button } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import {Button} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useParams} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
@@ -81,7 +88,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -91,10 +98,12 @@ const ObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+  const test = useParams();
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -134,7 +143,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -160,7 +169,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -190,13 +199,18 @@ const ObjectDataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -230,7 +244,9 @@ const ObjectDataTable = ({
   }, [formVisible]);
 
   const relationFields = useMemo(() => {
-    return columns?.filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS");
+    return columns?.filter(
+      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+    );
   }, [columns]);
 
   return (
@@ -254,7 +270,15 @@ const ObjectDataTable = ({
       filterVisible={filterVisible}
     >
       <CTableHead>
-        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
+        {formVisible && selectedRow.length > 0 && (
+          <MultipleUpdateRow
+            columns={data}
+            fields={columns}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+          />
+        )}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
@@ -295,7 +319,10 @@ const ObjectDataTable = ({
               )
           )}
 
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type={["update", "delete"]}
+          >
             {(onDeleteClick || onEditClick) && (
               <CTableHeadCell
                 style={{
@@ -336,7 +363,11 @@ const ObjectDataTable = ({
         </CTableRow>
       </CTableHead>
 
-      <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
+      <CTableBody
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+        title={title}
+      >
         {(isRelationTable ? fields : data).length > 0 &&
           columns.length > 0 &&
           (isRelationTable ? fields : data)?.map((row, rowIndex) => (
@@ -384,6 +415,7 @@ const ObjectDataTable = ({
           <AddDataColumn
             rows={isRelationTable ? fields : data}
             columns={columns}
+            isRelationTable={isRelationTable}
             setAddNewRow={setAddNewRow}
             isTableView={isTableView}
             relOptions={relOptions}
@@ -396,6 +428,7 @@ const ObjectDataTable = ({
             setFormValue={setFormValue}
             relationfields={fields}
             data={data}
+            view={view}
             onRowClick={onRowClick}
             width={"80px"}
             refetch={refetch}
@@ -431,7 +464,9 @@ const ObjectDataTable = ({
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
         {additionalRow}
       </CTableBody>
       {/* <Button

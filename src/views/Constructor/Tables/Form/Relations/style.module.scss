@@ -1,8 +1,9 @@
 .settingsBlock {
-  width: 450px;
-  min-width: 450px;
   background-color: #fff;
-  border-left: 1px solid #e5e9eb;
+  width: 550px;
+  min-width: 550px;
+  background-color: #fff;
+  display: flex;
 
 
   .additional {
@@ -38,10 +39,6 @@
     align-items: center;
     justify-content: space-between;
     height: 48px;
-    padding: 0 16px;
-    border-bottom: 1px solid #e5e9eb;
-    border-top: 1px solid #e5e9eb;
-    background-color: #f6f8f9;
   }
 
   .settingsBlockBody {
@@ -68,6 +65,7 @@
     justify-content: center;
     background-color: transparent;
     border: 1px dashed #6e8bb780;
+    border-radius: 6px;
     padding: 8px 16px;
     flex-grow: 1;
   }
@@ -90,7 +88,7 @@
 
 // cascading_input
 .cascading_input {
-  width: 400px;
+  width: 100%;
   height: 35px;
   background: #fff;
   border-radius: 4px;
@@ -123,7 +121,7 @@
   border-radius: 6px;
 
   .sectionHeader {
-    padding: 16px 12px;
+    padding: 8px;
     box-shadow: inset 0px -1px 0px #ebedee;
     display: flex;
     align-items: center;

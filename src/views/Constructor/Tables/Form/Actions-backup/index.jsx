@@ -11,7 +11,7 @@ import ActionForm from "./ActionForm";
 import styles from "./styles.module.scss";
 
 const Actions = ({ eventLabel }) => {
-  const { slug } = useParams();
+  const { tableSlug } = useParams();
   const [modalItemId, setModalItemId] = useState(undefined);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +24,10 @@ const Actions = ({ eventLabel }) => {
     isLoading,
     refetch: eventsRefetch,
   } = useQuery(
-    ["GET_EVENTS_LIST", slug],
-    () => eventService.getList({ table_slug: slug }),
+    ["GET_EVENTS_LIST", tableSlug],
+    () => eventService.getList({ table_slug: tableSlug }),
     {
-      enabled: !!slug,
+      enabled: !!tableSlug,
     }
   );
 

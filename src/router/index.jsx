@@ -1,7 +1,7 @@
 import ReloadRelations from "@/components/ReloadRelations";
-import {lazy, Suspense, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
@@ -381,11 +381,11 @@ const Router = () => {
           element={<ConstructorTablesFormPage />}
         />
         <Route
-          path="constructor/apps/:appId/objects/:id/:slug"
+          path="constructor/apps/:appId/objects/:id/:tableSlug"
           element={<ConstructorTablesFormPage />}
         />
         <Route
-          path="constructor/tables/:id/:slug"
+          path="constructor/tables/:id/:tableSlug"
           element={<ConstructorTablesFormPage />}
         />
         <Route

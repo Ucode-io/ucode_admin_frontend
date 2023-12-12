@@ -31,6 +31,9 @@ import constructorObjectService from "../../services/constructorObjectService";
 import { useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
 import { useRelationGetByIdQuery } from "../../services/relationService";
+import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLanguage";
+import { useSelector } from "react-redux";
+import { transliterate } from "../../utils/textTranslater";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -58,24 +61,26 @@ export default function FieldCreateModal({
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
+  const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
-  console.log("fieldData", watch());
+  console.log("fieldData", fieldData);
   console.log("tableSlug", tableSlug);
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
-    tableSlug: tableSlug,
-    id: fieldData?.attributes?.relation_data?.id,
-    queryParams: {
-      enabled: Boolean(fieldData?.attributes?.relation_data?.id),
-      onSuccess: (res) => {
-        console.log("res", res);
+  const { data: relationFieldData, isLoading: relationLoading } =
+    useRelationGetByIdQuery({
+      tableSlug: tableSlug,
+      id: fieldData?.attributes?.relation_data?.id,
+      queryParams: {
+        enabled: Boolean(fieldData?.attributes?.relation_data?.id),
+        onSuccess: (res) => {
+          console.log("res", res);
+        },
       },
-    },
-  });
+    });
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
@@ -107,6 +112,7 @@ export default function FieldCreateModal({
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
+      tableSlug: tableSlug,
     },
     queryParams: {
       enabled: Boolean(menuItem?.table_id),
@@ -218,6 +224,11 @@ export default function FieldCreateModal({
     setAnchorEl(null);
   };
 
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
+
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -242,21 +253,17 @@ export default function FieldCreateModal({
 
         <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
           <Box className={style.field}>
-            <FRow
-              label={"Label"}
-              componentClassName="flex gap-2 align-center"
-              required
-              classname={style.custom_label}
-            >
-              <HFTextField
-                className={style.input}
-                disabledHelperText
-                name="label"
-                control={control}
-                fullWidth
-                required
-                placeholder="Field name"
-              />
+            <FRow label="Label" classname={style.custom_label} required>
+              <Box style={{ display: "flex", gap: "6px" }}>
+                <HFTextFieldWithMultiLanguage
+                  control={control}
+                  name="attributes.label"
+                  fullWidth
+                  placeholder="Name"
+                  defaultValue={tableName}
+                  languages={languages}
+                />
+              </Box>
             </FRow>
             <FRow
               label={"Type"}

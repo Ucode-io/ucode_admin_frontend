@@ -1,13 +1,13 @@
 import React from "react";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../utils/applyDrag";
-import { Box, Button } from "@mui/material";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../utils/applyDrag";
+import {Box, Button} from "@mui/material";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import layoutService from "../../services/layoutService";
-import { store } from "../../store";
+import {store} from "../../store";
 
 export default function SectionBlockForModal({
   editAcces,
@@ -27,7 +27,7 @@ export default function SectionBlockForModal({
   setData,
   selectedTabIndex,
 }) {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const projectId = store.getState().company.projectId;
   const selectedTable = store.getState().menu.menuItem;
 
@@ -69,17 +69,19 @@ export default function SectionBlockForModal({
   };
 
   return (
-    <Container
-      groupName="1"
-      onDrop={onDropFields}
-      // orientation="horizontal"
-      dropPlaceholder={{ className: "drag-row-drop-preview" }}
-      getChildPayload={(i) => computedSections[index]?.fields?.[i] ?? {}}
-    >
+    // <Container
+    //   groupName="1"
+    //   onDrop={onDropFields}
+    //   // orientation="horizontal"
+    //   dropPlaceholder={{ className: "drag-row-drop-preview" }}
+    //   getChildPayload={(i) => computedSections[index]?.fields?.[i] ?? {}}
+    // >
+    <Box sx={{display: "flex", flexDirection: "column"}}>
       {!editAcces
         ? section.fields?.map(
             (field, fieldIndex) =>
-              (field?.is_visible_layout || field?.is_visible_layout === undefined) && (
+              (field?.is_visible_layout ||
+                field?.is_visible_layout === undefined) && (
                 <Draggable key={field.id}>
                   <Box
                     style={{
@@ -132,10 +134,15 @@ export default function SectionBlockForModal({
                   borderRadius: "50%",
                 }}
               >
-                {!field?.is_visible_layout ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                {!field?.is_visible_layout ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon />
+                )}
               </Button>
             </Box>
           ))}
-    </Container>
+    </Box>
+    // </Container>
   );
 }

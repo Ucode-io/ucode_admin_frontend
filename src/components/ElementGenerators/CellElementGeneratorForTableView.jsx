@@ -1,7 +1,7 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo} from "react";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
+import { Parser } from "hot-formula-parser";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
@@ -49,13 +49,14 @@ const CellElementGeneratorForTableView = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
   }
+  console.log("fieldfield", field);
 
   const computedSlug = useMemo(() => {
     if (!isNewRow) {
@@ -100,7 +101,7 @@ const CellElementGeneratorForTableView = ({
 
     if (!defaultValue) return undefined;
 
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field]);
@@ -459,6 +460,7 @@ const CellElementGeneratorForTableView = ({
         <HFSwitch
           disabled={isDisabled}
           isFormEdit
+          field={field}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}
@@ -575,6 +577,7 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isTransparent={true}
+          field={field}
         />
       );
 
@@ -596,7 +599,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

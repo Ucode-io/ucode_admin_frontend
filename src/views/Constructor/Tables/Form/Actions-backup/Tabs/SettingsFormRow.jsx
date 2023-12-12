@@ -19,7 +19,7 @@ const SettingsFormRow = ({
   nestedFieldName,
   removeField,
 }) => {
-  const { slug: table_slug } = useParams();
+  const { tableSlug: table_slug } = useParams();
 
   const table_slug_param =
     nestedFieldName === "after"

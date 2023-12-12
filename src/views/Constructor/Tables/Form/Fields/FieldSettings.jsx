@@ -247,6 +247,7 @@ const FieldSettings = ({
       },
     }
   );
+  console.log("field", field);
   useEffect(() => {
     const values = {
       attributes: {},
@@ -264,7 +265,7 @@ const FieldSettings = ({
         ...values,
         ...field,
       });
-      setFolder(field?.path);
+      setFolder(field?.attributes?.path);
     } else {
       reset(values);
     }

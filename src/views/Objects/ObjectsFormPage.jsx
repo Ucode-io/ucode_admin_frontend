@@ -1,4 +1,4 @@
-import {Save} from "@mui/icons-material";
+import {Add, Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQueryClient} from "react-query";
@@ -72,10 +72,13 @@ const ObjectsFormPage = ({
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    }, tableSlug);
+    const getLayout = layoutService.getList(
+      {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
+      tableSlug
+    );
 
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
@@ -116,10 +119,13 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    }, tableSlug);
+    const getLayout = layoutService.getList(
+      {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
+      tableSlug
+    );
 
     try {
       const [{layouts: layout = []}] = await Promise.all([getLayout]);
@@ -252,7 +258,7 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
-        getAllData={getAllData}
+          getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}

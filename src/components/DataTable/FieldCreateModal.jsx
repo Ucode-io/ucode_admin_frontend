@@ -59,9 +59,6 @@ export default function FieldCreateModal({
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
-  console.log("fieldData", fieldData);
-  console.log("tableSlug", tableSlug);
-
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
@@ -176,7 +173,6 @@ export default function FieldCreateModal({
               (filter) => filter.field_id === field.id
             )
         );
-        console.log("unCheckedFilters", unCheckedFilters);
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },

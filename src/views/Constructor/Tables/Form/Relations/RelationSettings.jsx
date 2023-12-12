@@ -356,7 +356,7 @@ const RelationSettings = ({
               <Card>
                 {drawerType === "SCHEMA" && (
                   <div className="p-2">
-                    <FRow label="Label" required>
+                    {/* <FRow label="Label" required>
                       <Box
                         style={{
                           display: "flex",
@@ -373,7 +373,7 @@ const RelationSettings = ({
                           />
                         ))}
                       </Box>
-                    </FRow>
+                    </FRow> */}
 
                     <FRow label="Label From" required>
                       <Box

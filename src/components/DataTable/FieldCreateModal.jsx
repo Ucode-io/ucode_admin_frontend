@@ -215,7 +215,7 @@ export default function FieldCreateModal({
     control,
     name: "label",
   });
-
+console.log('ssssssss', format)
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -239,13 +239,18 @@ export default function FieldCreateModal({
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
-          <Box className={style.field} style={{
-            display: "flex",
-            flexDirection: "column",
-          }}>
-            <Box sx={{
-              width: "100%",
-            }}>
+          <Box
+            className={style.field}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+              }}
+            >
               {/* <FRow label="Label" classname={style.custom_label} required>
                 <Box style={{ display: "flex", gap: "6px" }}>
                   <HFTextFieldWithMultiLanguage control={control} name="attributes.label" fullWidth placeholder="Name" defaultValue={tableName} languages={languages} />
@@ -279,20 +284,33 @@ export default function FieldCreateModal({
               </FRow>
             </Box>
 
-            <Box sx={{
-              width: "100%",
-            }}>
-              <FRow label="Field label" classname={style.custom_label} required>
-                <Box style={{ display: "flex", gap: "6px" }}>
-                  <HFTextFieldWithMultiLanguage control={control} name="attributes.label_from" fullWidth placeholder="Field label" defaultValue={tableName} languages={languages} />
-                </Box>
-              </FRow>
+            <Box
+              sx={{
+                width: "100%",
+              }}
+            >
+              {(format === "RELATION" || format === "LOOKUP" || format === "LOOKUPS") && (
+                <>
+                  <FRow label="Field label" classname={style.custom_label} required>
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label_from"
+                        fullWidth
+                        placeholder="Field label"
+                        defaultValue={tableName}
+                        languages={languages}
+                      />
+                    </Box>
+                  </FRow>
 
-              <FRow label="Tab label" classname={style.custom_label} required>
-                <Box style={{ display: "flex", gap: "6px" }}>
-                  <HFTextFieldWithMultiLanguage control={control} name="attributes.label_to" fullWidth placeholder="Tab label" defaultValue={tableName} languages={languages} />
-                </Box>
-              </FRow>
+                  <FRow label="Tab label" classname={style.custom_label} required>
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage control={control} name="attributes.label_to" fullWidth placeholder="Tab label" defaultValue={tableName} languages={languages} />
+                    </Box>
+                  </FRow>
+                </>
+              )}
             </Box>
           </Box>
           {formatIncludes?.includes(format) ? (

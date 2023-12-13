@@ -136,16 +136,22 @@ const AutoCompleteElement = ({
     setDialogState(null);
   };
   const [localOptions, setLocalOptions] = useState(options ?? []);
-
+  console.log("valueeeeeeeee", value, localOptions);
   const computedValue = useMemo(() => {
     if (!value?.length) return [];
 
     if (isMultiSelect)
-      return (
-        value?.map((el) =>
-          localOptions?.find((option) => option.value === el)
-        ) ?? []
-      );
+      if (Array.isArray(value)) {
+        return (
+          value?.map((el) =>
+            localOptions?.find((option) => option.value === el)
+          ) ?? []
+        );
+      } else {
+        return localOptions?.find((item) => {
+          item?.value === value;
+        });
+      }
     else return [localOptions?.find((option) => option.value === value[0])];
   }, [value, localOptions, isMultiSelect]);
 
@@ -206,7 +212,7 @@ const AutoCompleteElement = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={computedValue.length ? "" : placeholder}
+            placeholder={computedValue?.length ? "" : placeholder}
             // autoFocus={tabIndex === 1}
             sx={{
               "&.MuiInputAdornment-root": {

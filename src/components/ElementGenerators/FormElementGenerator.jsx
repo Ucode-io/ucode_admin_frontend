@@ -116,6 +116,11 @@ const FormElementGenerator = ({
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
+    if (
+      field?.relation_type !== "Many2One" ||
+      field?.relation_type !== "Many2Many"
+    )
+      return defaultValue;
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (field?.type === "SINGLE_LINE") return defaultValue;
@@ -129,6 +134,8 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
+
+  console.log("defaultValue", defaultValue);
 
   const isDisabled = useMemo(() => {
     const { attributes } = field;

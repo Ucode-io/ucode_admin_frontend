@@ -1,11 +1,11 @@
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { Button, Checkbox } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import {Button, Checkbox} from "@mui/material";
+import {useVirtualizer} from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
@@ -139,7 +139,7 @@ const TableRow = ({
 
                 <span
                   className="data_table__row_number"
-                  style={{ width: "35px" }}
+                  style={{width: "35px"}}
                 >
                   {limit === "all"
                     ? rowIndex + 1
@@ -228,6 +228,7 @@ const TableRow = ({
                         data={data}
                         onRowClick={onRowClick}
                         width={width}
+                        isTableView={isTableView}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -235,7 +236,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td style={{ height: "30px" }}>
+            <td style={{height: "30px"}}>
               <div
                 style={{
                   display: "flex",
@@ -328,10 +329,7 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span
-                className="data_table__row_number"
-                style={{ width: "35px" }}
-              >
+              <span className="data_table__row_number" style={{width: "35px"}}>
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -391,6 +389,7 @@ const TableRow = ({
             >
               <TableDataForm
                 relOptions={relOptions}
+                isTableView={isTableView}
                 tableView={tableView}
                 tableSlug={tableSlug}
                 fields={columns}
@@ -515,10 +514,7 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span
-                className="data_table__row_number"
-                style={{ width: "35px" }}
-              >
+              <span className="data_table__row_number" style={{width: "35px"}}>
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -578,6 +574,7 @@ const TableRow = ({
             >
               <TableDataForm
                 relOptions={relOptions}
+                isTableView={isTableView}
                 tableView={tableView}
                 tableSlug={tableSlug}
                 fields={columns}

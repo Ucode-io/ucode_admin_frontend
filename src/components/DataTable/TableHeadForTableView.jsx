@@ -3,21 +3,21 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import FunctionsIcon from "@mui/icons-material/Functions";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import PlaylistAddCircleIcon from "@mui/icons-material/PlaylistAddCircle";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import { Button, Menu } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
+import {Button, Menu} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import {useDispatch} from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
-import { paginationActions } from "../../store/pagination/pagination.slice";
-import { CTableHeadCell } from "../CTable";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import {paginationActions} from "../../store/pagination/pagination.slice";
+import {CTableHeadCell} from "../CTable";
 import "./style.scss";
 
 export default function TableHeadForTableView({
@@ -56,7 +56,7 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -126,13 +126,18 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
 
   const computedViewSummaries = useMemo(() => {
-    if (view?.attributes?.summaries?.find((item) => item?.field_name === column?.id)) return true;
+    if (
+      view?.attributes?.summaries?.find(
+        (item) => item?.field_name === column?.id
+      )
+    )
+      return true;
     else return false;
   }, [view?.attributes?.summaries, column]);
 
@@ -156,17 +161,31 @@ export default function TableHeadForTableView({
       children: [
         {
           id: 8,
-          title: `Sort ${sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "Z -> A" : "A -> Z"}`,
+          title: `Sort ${
+            sortedDatas?.find((item) => item.field === column.id)?.order ===
+            "ASC"
+              ? "Z -> A"
+              : "A -> Z"
+          }`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             const field = column.id;
-            const order = sortedDatas?.find((item) => item.field === column.id)?.order === "ASC" ? "DESC" : "ASC";
-            dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
+            const order =
+              sortedDatas?.find((item) => item.field === column.id)?.order ===
+              "ASC"
+                ? "DESC"
+                : "ASC";
+            dispatch(
+              paginationActions.setSortValues({tableSlug, field, order})
+            );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
-              const index = newSortedDatas.findIndex((item) => item.field === column.id);
+              const index = newSortedDatas.findIndex(
+                (item) => item.field === column.id
+              );
               if (index !== -1) {
-                newSortedDatas[index].order = newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+                newSortedDatas[index].order =
+                  newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
               } else {
                 newSortedDatas.push({
                   field: column.id,
@@ -192,18 +211,32 @@ export default function TableHeadForTableView({
         },
         {
           id: 19,
-          title: `${view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"} text`,
-          icon: view?.attributes?.textWrap?.[column?.id] ? <WrapTextOutlinedIcon /> : <AlignHorizontalLeftIcon />,
+          title: `${
+            view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
+          } text`,
+          icon: view?.attributes?.textWrap?.[column?.id] ? (
+            <WrapTextOutlinedIcon />
+          ) : (
+            <AlignHorizontalLeftIcon />
+          ),
           onClickAction: () => {
-            textWrapChangeHandler(column, !view?.attributes?.textWrap?.[column?.id] ? true : false);
+            textWrapChangeHandler(
+              column,
+              !view?.attributes?.textWrap?.[column?.id] ? true : false
+            );
           },
         },
         {
           id: 10,
-          title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"} column`,
+          title: `${
+            view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
+          } column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
-            fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
+            fixColumnChangeHandler(
+              column,
+              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
+            );
           },
         },
       ],
@@ -249,6 +282,7 @@ export default function TableHeadForTableView({
 
   const handleAddSummary = (item, type) => {
     let result = [];
+    console.log("itemmmmmmmm", item);
 
     if (type === "add") {
       const newSummary = {
@@ -256,9 +290,19 @@ export default function TableHeadForTableView({
         formula_name: item?.value,
       };
 
-      result = Array.from(new Map([newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [item.field_name, item])).values());
+      result = Array.from(
+        new Map(
+          [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
+            item.field_name,
+            item,
+          ])
+        ).values()
+      );
+      console.log("result", result);
     } else if (type === "unset") {
-      result = view?.attributes?.summaries?.filter((element) => element?.field_name !== item?.id);
+      result = view?.attributes?.summaries?.filter(
+        (element) => element?.field_name !== item?.id
+      );
     }
 
     const computedValues = {
@@ -269,13 +313,13 @@ export default function TableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedValues).then(() => {
-      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+    constructorViewService.update(tableSlug, computedValues).then(() => {
+      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
       handleSummaryClose();
       handleClose();
     });
   };
-console.log('column', column)
+  console.log("column", column);
   return (
     <>
       <CTableHeadCell
@@ -288,12 +332,33 @@ console.log('column', column)
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "normal",
-          minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-          width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-          position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-          left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-          backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
-          zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+          minWidth: tableSize?.[pageName]?.[column.id]
+            ? tableSize?.[pageName]?.[column.id]
+            : "auto",
+          width: tableSize?.[pageName]?.[column.id]
+            ? tableSize?.[pageName]?.[column.id]
+            : "auto",
+          position: `${
+            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+              ? "sticky"
+              : "relative"
+          }`,
+          left: view?.attributes?.fixedColumns?.[column?.id]
+            ? `${calculateWidthFixedColumn(column.id) + 80}px`
+            : "0",
+          backgroundColor: `${
+            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+              ? "#F6F6F6"
+              : "#fff"
+          }`,
+          zIndex: `${
+            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+              ? "1"
+              : "0"
+          }`,
         }}
       >
         <div
@@ -438,7 +503,7 @@ console.log('column', column)
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{ horizontal: "right" }}
+        anchorOrigin={{horizontal: "right"}}
         PaperProps={{
           elevation: 0,
           sx: {

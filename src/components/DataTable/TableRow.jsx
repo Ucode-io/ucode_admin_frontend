@@ -1,11 +1,11 @@
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { Button, Checkbox } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import {Button, Checkbox} from "@mui/material";
+import {useVirtualizer} from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
@@ -55,7 +55,9 @@ const TableRow = ({
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
-      setSelectedObjectsForDelete(selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid));
+      setSelectedObjectsForDelete(
+        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
+      );
     } else {
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
@@ -137,7 +139,7 @@ const TableRow = ({
 
                 <span
                   className="data_table__row_number"
-                  style={{ width: "35px" }}
+                  style={{width: "35px"}}
                 >
                   {limit === "all"
                     ? rowIndex + 1
@@ -148,9 +150,14 @@ const TableRow = ({
                 <Checkbox
                   className="table_multi_checkbox"
                   style={{
-                    display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
+                    display:
+                      selectedObjectsForDelete?.find(
+                        (item) => item?.guid === row?.guid
+                      ) && "block",
                   }}
-                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                  checked={selectedObjectsForDelete?.find(
+                    (item) => item?.guid === row?.guid
+                  )}
                   onChange={() => {
                     changeSetDelete(row);
                   }}
@@ -160,7 +167,8 @@ const TableRow = ({
 
             {columns.map(
               (virtualColumn) =>
-                virtualColumn?.attributes?.field_permission?.view_permission && (
+                virtualColumn?.attributes?.field_permission
+                  ?.view_permission && (
                   <CTableCell
                     key={virtualColumn.id}
                     className={`overflow-ellipsis ${tableHeight}`}
@@ -173,18 +181,33 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id] ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px` : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        ? `${
+                            calculateWidthFixedColumn(virtualColumn.id) + 80
+                          }px`
+                        : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id] ? "1" : "0"
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualColumn?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                          ? "1"
+                          : "0"
                       }`,
                     }}
                   >
@@ -205,6 +228,7 @@ const TableRow = ({
                         data={data}
                         onRowClick={onRowClick}
                         width={width}
+                        isTableView={isTableView}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -230,7 +254,14 @@ const TableRow = ({
                   }}
                 >
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                    <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() =>
+                        row.guid
+                          ? onDeleteClick(row, rowIndex)
+                          : remove(rowIndex)
+                      }
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -240,13 +271,12 @@ const TableRow = ({
             </td>
 
             <td>
-              <div
-                style={{ display: "flex", gap: "5px", padding: "3px" }}
-              ></div>
+              <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
             </td>
           </CTableRow>
         </>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
         <CTableRow
         // onClick={() => {
         //   onRowClick(row, rowIndex);
@@ -303,8 +333,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span className="data_table__row_number" style={{width: "35px"}}>
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
 
@@ -333,16 +365,35 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm
                 relOptions={relOptions}
+                isTableView={isTableView}
                 tableView={tableView}
                 tableSlug={tableSlug}
                 fields={columns}
@@ -379,34 +430,36 @@ const TableRow = ({
             </PermissionWrapperV2>
           </CTableCell> */}
           <td>
-              <div
+            <div
+              style={{
+                display: "flex",
+                gap: "5px",
+                padding: "3px",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CTableCell
                 style={{
-                  display: "flex",
-                  gap: "5px",
-                  padding: "3px",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  padding: 0,
+                  borderRight: "none",
+                  borderBottom: "none",
                 }}
               >
-                <CTableCell
-                  style={{
-                    padding: 0,
-                    borderRight: "none",
-                    borderBottom: "none",
-                  }}
-                >
-                  <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                    <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </PermissionWrapperV2>
-                </CTableCell>
-                {/* <GeneratePdfFromTable row={row} /> */}
-              </div>
-            </td>
-
-           
-
+                <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() =>
+                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                    }
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </PermissionWrapperV2>
+              </CTableCell>
+              {/* <GeneratePdfFromTable row={row} /> */}
+            </div>
+          </td>
         </CTableRow>
       ) : (
         <CTableRow
@@ -465,8 +518,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span className="data_table__row_number" style={{width: "35px"}}>
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
 
@@ -495,16 +550,35 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm
                 relOptions={relOptions}
+                isTableView={isTableView}
                 tableView={tableView}
                 tableSlug={tableSlug}
                 fields={columns}

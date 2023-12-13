@@ -608,3 +608,27 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
   }
 };
+export const FormatTypes = (format) => {
+  switch (format) {
+    case "RELATION":
+      return true;
+    case "LOOKUP":
+      return true;
+    case "LOOKUPS":
+      return true;
+    default:
+      return false;
+  }
+};
+export const ValueTypes = (value) => {
+  switch (value) {
+    case "Many2One":
+      return true;
+    case "Many2Many":
+      return true;
+    case "Recursive":
+      return true;
+    default:
+      return false;
+  }
+};

@@ -46,7 +46,6 @@ const CellElementGeneratorForTableView = ({
   data,
   isNewRow,
 }) => {
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const { i18n } = useTranslation();
@@ -56,7 +55,6 @@ const CellElementGeneratorForTableView = ({
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
   }
-  console.log("fieldfield", field);
 
   const computedSlug = useMemo(() => {
     if (!isNewRow) {

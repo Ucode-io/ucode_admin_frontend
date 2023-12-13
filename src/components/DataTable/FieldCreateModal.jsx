@@ -4,6 +4,8 @@ import React, { useMemo, useState } from "react";
 import style from "./field.module.scss";
 import {
   FormatOptionType,
+  FormatTypes,
+  ValueTypes,
   dateFieldFormats,
   fieldFormats,
   fileFieldFormats,
@@ -234,7 +236,6 @@ export default function FieldCreateModal({
     control,
     name: "label",
   });
-  console.log("ssssssss", format);
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -270,63 +271,21 @@ export default function FieldCreateModal({
                 width: "100%",
               }}
             >
-              {format !== "RELATION" &&
-                format !== "LOOKUP" &&
-                format !== "LOOKUPS" && (
-                  <FRow label="Label" classname={style.custom_label} required>
-                    <Box style={{ display: "flex", gap: "6px" }}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label"
-                        fullWidth
-                        placeholder="Name"
-                        defaultValue={tableName}
-                        languages={languages}
-                      />
-                    </Box>
-                  </FRow>
-                )}
-              <FRow
-                label={"Type"}
-                componentClassName="flex gap-2 align-center"
-                required
-                classname={style.custom_label}
-              >
-                <HFSelect
-                  className={style.input}
-                  disabledHelperText
-                  options={fieldData ? fieldFormats : newFieldTypes}
-                  name="attributes.format"
-                  control={control}
-                  disabled={fieldData}
-                  fullWidth
-                  required
-                  onChange={(e) => {
-                    if (e === "NUMBER") {
-                      setValue("type", "NUMBER");
-                    } else if (e === "DATE") {
-                      setValue("type", "DATE");
-                    } else if (e === "SINGLE_LINE") {
-                      setValue("type", "SINGLE_LINE");
-                    } else if (e === "FILE") {
-                      setValue("type", "FILE");
-                    } else {
-                      setValue("type", e);
-                    }
-                  }}
-                  placeholder="Select type"
-                />
-              </FRow>
-            </Box>
-
-            <Box
-              sx={{
-                width: "100%",
-              }}
-            >
-              {(format === "RELATION" ||
-                format === "LOOKUP" ||
-                format === "LOOKUPS") && (
+              {!ValueTypes(values?.type) && !FormatTypes(format) ? (
+                <FRow label="Label" classname={style.custom_label} required>
+                  <Box style={{ display: "flex", gap: "6px" }}>
+                    <HFTextFieldWithMultiLanguage
+                      control={control}
+                      name="attributes.label"
+                      fullWidth
+                      placeholder="Name"
+                      defaultValue={tableName}
+                      languages={languages}
+                    />
+                  </Box>
+                </FRow>
+              ) : null}
+              {FormatTypes(format) || ValueTypes(values?.type) ? (
                 <>
                   <FRow
                     label="Field label"
@@ -362,8 +321,39 @@ export default function FieldCreateModal({
                     </Box>
                   </FRow>
                 </>
-              )}
+              ) : null}
             </Box>
+            <FRow
+              label={"Type"}
+              componentClassName="flex gap-2 align-center"
+              required
+              classname={style.custom_label}
+            >
+              <HFSelect
+                className={style.input}
+                disabledHelperText
+                options={fieldData ? fieldFormats : newFieldTypes}
+                name="attributes.format"
+                control={control}
+                disabled={fieldData}
+                fullWidth
+                required
+                onChange={(e) => {
+                  if (e === "NUMBER") {
+                    setValue("type", "NUMBER");
+                  } else if (e === "DATE") {
+                    setValue("type", "DATE");
+                  } else if (e === "SINGLE_LINE") {
+                    setValue("type", "SINGLE_LINE");
+                  } else if (e === "FILE") {
+                    setValue("type", "FILE");
+                  } else {
+                    setValue("type", e);
+                  }
+                }}
+                placeholder="Select type"
+              />
+            </FRow>
           </Box>
           {formatIncludes?.includes(format) ? (
             <FRow

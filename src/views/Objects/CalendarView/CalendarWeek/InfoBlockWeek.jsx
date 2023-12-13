@@ -1,9 +1,9 @@
-import {Box, Typography} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import styles from "../style.module.scss";
-import {dateValidFormat} from "../../../../utils/dateValidFormat";
-import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
+import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 const flex = {
   display: "flex",
@@ -11,7 +11,7 @@ const flex = {
   columnGap: "6px",
 };
 
-const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
+const InfoBlockWeek = ({ viewFields, data, isSingleLine }) => {
   if (isSingleLine)
     return (
       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
@@ -24,8 +24,6 @@ const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
           : ""}
       </div>
     );
-
-  console.log("dastatatatatatatata", data.calendar?.elementFromTime);
 
   return (
     <div className={`${styles.infoBlock}`}>
@@ -62,7 +60,7 @@ const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
             </Box>
           ) : field.type === "MULTISELECT" ? (
             <MultiselectCellColoredElement
-              style={{padding: "2px 5px", marginBottom: 4}}
+              style={{ padding: "2px 5px", marginBottom: 4 }}
               value={data[field.slug]}
               field={field}
             />

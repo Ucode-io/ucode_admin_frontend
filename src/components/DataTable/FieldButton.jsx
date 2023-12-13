@@ -106,7 +106,6 @@ export default function FieldButton({
         updateView(res?.id);
       },
     });
-
   const onSubmit = (values) => {
     const data = {
       ...values,
@@ -137,16 +136,20 @@ export default function FieldButton({
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
     };
-    if (fieldData && values?.type !== "RELATION") {
-      updateField({ data, tableSlug });
-    } else if (values?.type !== "RELATION") {
-      createField({ data, tableSlug });
+    if (!fieldData) {
+      if (values?.type !== "RELATION") {
+        createField({ data, tableSlug });
+      }
+      if (values?.type === "RELATION") {
+        createRelation({ data: relationData, tableSlug });
+      }
     }
-
-    if (fieldData && values?.type === "RELATION") {
-      updateRelation({ data: relationData, tableSlug });
-    } else if (values?.type === "RELATION") {
-      createRelation({ data: relationData, tableSlug });
+    if (fieldData) {
+      if (values?.view_fields) {
+        updateRelation({ data: values, tableSlug });
+      } else {
+        updateField({ data, tableSlug });
+      }
     }
   };
 

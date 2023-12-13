@@ -64,6 +64,8 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
     }
   };
 
+  console.log("visibleFields", visibleFields);
+
   return (
     <div>
       <Button
@@ -189,77 +191,85 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
               onDrop={onDrop}
               dropPlaceholder={{ className: "drag-row-drop-preview" }}
             >
-              {visibleFields.map((column, index) => (
-                <Draggable key={column?.id}>
-                  <div
-                    key={column?.id}
-                    style={{
-                      display: "flex",
-                      backgroundColor: "#fff",
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: 1,
-                        border: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
-                        minWidth: "200px",
-                      }}
-                    >
+              {visibleFields.map(
+                (column, index) => (
+                  console.log("column", column),
+                  (
+                    <Draggable key={column?.id}>
                       <div
+                        key={column?.id}
                         style={{
-                          width: 20,
-                          height: 20,
-                          marginRight: 5,
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          backgroundColor: "#fff",
                         }}
                       >
-                        {column?.type ? (
-                          columnIcons(column?.type)
-                        ) : (
-                          <LinkIcon />
-                        )}
+                        <div
+                          style={{
+                            flex: 1,
+                            border: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "8px 0px",
+                            margin: "-1px -1px 0 0",
+                            minWidth: "200px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 20,
+                              height: 20,
+                              marginRight: 5,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            {column?.type ? (
+                              columnIcons(column?.type)
+                            ) : (
+                              <LinkIcon />
+                            )}
+                          </div>
+                          {column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.attributes?.[
+                              `label_from_${i18n.language}`
+                            ] ||
+                            column?.label}
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            alignItems: "center",
+                            padding: "8px 0px",
+                            margin: "-1px -1px 0 0",
+                            width: 70,
+                            border: 0,
+                            paddingLeft: 0,
+                            paddingRight: 0,
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            width: "70px",
+                          }}
+                        >
+                          <Switch
+                            size="small"
+                            checked={currentView?.columns?.includes(column?.id)}
+                            onChange={(e) => {
+                              updateView(
+                                e.target.checked
+                                  ? [...currentView?.columns, column?.id]
+                                  : currentView?.columns?.filter(
+                                      (el) => el !== column?.id
+                                    )
+                              );
+                            }}
+                          />
+                        </div>
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
-                        column?.label}
-                    </div>
-                    <div
-                      style={{
-                        flex: 1,
-                        alignItems: "center",
-                        padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
-                        width: 70,
-                        border: 0,
-                        paddingLeft: 0,
-                        paddingRight: 0,
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        width: "70px",
-                      }}
-                    >
-                      <Switch
-                        size="small"
-                        checked={currentView?.columns?.includes(column?.id)}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? [...currentView?.columns, column?.id]
-                              : currentView?.columns?.filter(
-                                  (el) => el !== column?.id
-                                )
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Draggable>
-              ))}
+                    </Draggable>
+                  )
+                )
+              )}
 
               {unVisibleFields?.map((column, index) => (
                 <div
@@ -291,8 +301,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                     >
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ??
-                      column?.label}
+                    {column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.attributes?.[`label_from_${i18n.language}`] ||
+                      column.label}
                   </div>
                   <div
                     style={{

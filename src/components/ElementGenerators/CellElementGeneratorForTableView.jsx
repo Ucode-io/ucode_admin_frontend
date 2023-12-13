@@ -27,6 +27,7 @@ import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 
 const parser = new Parser();
 
@@ -44,6 +45,7 @@ const CellElementGeneratorForTableView = ({
   setFormValue,
   index,
   data,
+  isTableView,
   isNewRow,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
@@ -310,6 +312,23 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+        />
+      );
+
+    case "INTERNATION_PHONE":
+      return (
+        <HFInternationPhone
+          control={control}
+          isBlackBg={isBlackBg}
+          isTableView={isTableView}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          fullWidth
+          required={field?.required}
+          placeholder={field.attributes?.placeholder}
+          mask={"(99) 999-99-99"}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
         />
       );
 

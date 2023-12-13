@@ -364,7 +364,7 @@ const NewRelationSection = ({
 
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
-  console.log("relatedTable", relatedTable);
+
   return (
     <>
       {selectedManyToManyRelation && (

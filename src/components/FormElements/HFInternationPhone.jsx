@@ -1,5 +1,5 @@
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import styles from "./style.module.scss";
 import "react-phone-number-input/style.css";
@@ -25,9 +25,11 @@ const HFInternationPhone = ({
   tabIndex,
   placeholder,
   defaultValue,
+  isTableView,
   ...props
 }) => {
   const classes = useStyles();
+  console.log("isTableView", isTableView);
   return (
     <Controller
       control={control}
@@ -37,14 +39,14 @@ const HFInternationPhone = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <PhoneInput
           placeholder="Enter phone number"
-          value={value}
+          value={value?.includes("+") ? value : `+${value}`}
           onChange={onChange}
           defaultCountry="UZ"
           international
-          className={styles.phoneNumber}
+          className={isTableView ? styles.inputTable : styles.phoneNumber}
           name={name}
           limitMaxLength={true}
           {...props}

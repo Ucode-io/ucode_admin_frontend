@@ -137,16 +137,17 @@ export default function FieldButton({
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
     };
-    if (fieldData && values?.type !== "RELATION") {
-      updateField({ data, tableSlug });
-    } else if (values?.type !== "RELATION") {
+    if (!fieldData && values?.type !== "RELATION") {
       createField({ data, tableSlug });
     }
-
-    if (fieldData && values?.type === "RELATION") {
-      updateRelation({ data: relationData, tableSlug });
-    } else if (values?.type === "RELATION") {
+    if (fieldData && values?.attributes?.format !== "RELATION") {
+      updateField({ data, tableSlug });
+    }
+    if (!fieldData && values?.type === "RELATION") {
       createRelation({ data: relationData, tableSlug });
+    }
+    if (fieldData && values?.attributes?.format === "RELATION") {
+      updateRelation({ data: values, tableSlug });
     }
   };
 

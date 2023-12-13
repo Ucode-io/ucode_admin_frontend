@@ -7,7 +7,8 @@ const relationService = {
     requestV2.get(`/relations/${tableSlug}`, { params, headers }),
   getByID: ({ tableSlug, id }) =>
     requestV2.get(`/relations/${tableSlug}/${id}`),
-  update: (data, tableSlug) => requestV2.put(`/relations/${tableSlug}`, data),
+  update: ({ data, tableSlug }) =>
+    requestV2.put(`/relations/${tableSlug}`, data),
   create: ({ data, tableSlug }) =>
     requestV2.post(`/relations/${tableSlug}`, data),
   delete: ({ id, tableSlug }) =>

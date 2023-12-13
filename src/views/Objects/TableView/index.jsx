@@ -217,6 +217,8 @@ const TableView = ({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
+  console.log('fieldsMap', fieldsMap)
+
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 

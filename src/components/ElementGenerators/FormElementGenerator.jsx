@@ -103,7 +103,7 @@ const FormElementGenerator = ({
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
-
+    
     return field?.slug;
   }, [field?.id, field?.slug, activeLang, field?.enable_multilanguage]);
 
@@ -158,7 +158,7 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-
+console.log('field', field)
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (

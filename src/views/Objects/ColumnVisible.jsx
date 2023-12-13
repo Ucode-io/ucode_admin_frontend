@@ -6,7 +6,16 @@ import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
-export default function ColumnVisible({ selectedTabIndex, views, columns, relationColumns, isLoading, form, text = "Columns", width = "" }) {
+export default function ColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+  text = "Columns",
+  width = "",
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
@@ -30,7 +39,9 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
       columns:
         computedColumns?.map((el) => ({
           ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
         })) ?? [],
     });
   }, [selectedTabIndex, views, form, computedColumns]);
@@ -130,7 +141,15 @@ export default function ColumnVisible({ selectedTabIndex, views, columns, relati
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <ColumnsTab form={form} updateView={updateView} isMenu={true} views={views} selectedTabIndex={selectedTabIndex} computedColumns={computedColumns} columns={columns} />
+          <ColumnsTab
+            form={form}
+            updateView={updateView}
+            isMenu={true}
+            views={views}
+            selectedTabIndex={selectedTabIndex}
+            computedColumns={computedColumns}
+            columns={columns}
+          />
         )}
       </Menu>
     </div>

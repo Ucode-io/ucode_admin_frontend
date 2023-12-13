@@ -18,7 +18,7 @@ const HFSwitch = ({
   ...props
 }) => {
   const id = useId();
-
+  console.log("fieldfield", field);
   return (
     <Controller
       control={control}

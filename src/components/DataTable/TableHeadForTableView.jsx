@@ -376,11 +376,11 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`label_from_${i18n?.language}`] ??
-              column?.attributes?.[`label_${i18n?.language}`] ??
-              column?.attributes?.[`title_${i18n?.language}`] ??
-              column?.attributes?.[`name_${i18n?.language}`] ??
-              column.label}
+            {column?.attributes?.[`label_from_${i18n?.language}`] ||
+              column?.attributes?.[`label_${i18n?.language}`] ||
+              column?.attributes?.[`title_${i18n?.language}`] ||
+              column?.attributes?.[`name_${i18n?.language}`] ||
+              column?.label}
           </span>
 
           <Button

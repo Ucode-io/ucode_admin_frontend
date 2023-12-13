@@ -3,21 +3,21 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import FunctionsIcon from "@mui/icons-material/Functions";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import PlaylistAddCircleIcon from "@mui/icons-material/PlaylistAddCircle";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import { Button, Menu } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
+import {Button, Menu} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import {useDispatch} from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
-import { paginationActions } from "../../store/pagination/pagination.slice";
-import { CTableHeadCell } from "../CTable";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import {paginationActions} from "../../store/pagination/pagination.slice";
+import {CTableHeadCell} from "../CTable";
 import "./style.scss";
 
 export default function TableHeadForTableView({
@@ -56,7 +56,7 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -126,7 +126,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
@@ -176,7 +176,7 @@ export default function TableHeadForTableView({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({ tableSlug, field, order })
+              paginationActions.setSortValues({tableSlug, field, order})
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -282,6 +282,7 @@ export default function TableHeadForTableView({
 
   const handleAddSummary = (item, type) => {
     let result = [];
+    console.log("itemmmmmmmm", item);
 
     if (type === "add") {
       const newSummary = {
@@ -297,6 +298,7 @@ export default function TableHeadForTableView({
           ])
         ).values()
       );
+      console.log("result", result);
     } else if (type === "unset") {
       result = view?.attributes?.summaries?.filter(
         (element) => element?.field_name !== item?.id
@@ -311,8 +313,8 @@ export default function TableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedValues).then(() => {
-      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+    constructorViewService.update(tableSlug, computedValues).then(() => {
+      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
       handleSummaryClose();
       handleClose();
     });
@@ -500,7 +502,7 @@ export default function TableHeadForTableView({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{ horizontal: "right" }}
+        anchorOrigin={{horizontal: "right"}}
         PaperProps={{
           elevation: 0,
           sx: {

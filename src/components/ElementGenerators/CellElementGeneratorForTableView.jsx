@@ -97,6 +97,14 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
+    if (field.relation_type !== "Many2One" || field?.type !== "LOOKUP") {
+      if (Array.isArray(defaultValue)) {
+        return defaultValue[0];
+      } else {
+        return defaultValue;
+      }
+    }
+
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
 
@@ -106,6 +114,8 @@ const CellElementGeneratorForTableView = ({
 
     return error ? undefined : result;
   }, [field]);
+
+  console.log("defaultValue", defaultValue);
 
   useEffect(() => {
     tables?.forEach((table) => {

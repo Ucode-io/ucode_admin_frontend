@@ -67,13 +67,23 @@ export default function FieldCreateModal({
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
 
-  const { data: relationFieldData, isLoading: relationLoading } = useRelationGetByIdQuery({
+  const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
       enabled: Boolean(fieldData?.attributes?.relation_data?.id),
       onSuccess: (res) => {
-        console.log("res", res);
+        reset({
+          ...res,
+          table_from: res?.table_from?.slug ?? "",
+          table_to: res?.table_to?.slug ?? "",
+          type: res?.type ?? "",
+          id: res?.id ?? "",
+          editable: res?.editable ?? false,
+          summaries: res?.summaries ?? [],
+          view_fields: res?.view_fields?.map((field) => field.id) ?? [],
+          field_name: res?.label,
+        });
       },
     },
   });
@@ -157,12 +167,16 @@ export default function FieldCreateModal({
               return null;
             })
             .filter((field) => field) ?? [];
-        const unCheckedColumns = fields.filter((field) => !values.columns?.includes(field.id));
+        const unCheckedColumns = fields.filter(
+          (field) => !values.columns?.includes(field.id)
+        );
 
         const checkedFilters =
           values.quick_filters
             ?.map((filter) => {
-              const field = fields.find((field) => field.id === filter.field_id);
+              const field = fields.find(
+                (field) => field.id === filter.field_id
+              );
               if (field)
                 return {
                   ...field,
@@ -172,7 +186,12 @@ export default function FieldCreateModal({
             })
             .filter((field) => field) ?? [];
 
-        const unCheckedFilters = fields.filter((field) => !values.quick_filters?.some((filter) => filter.field_id === field.id));
+        const unCheckedFilters = fields.filter(
+          (field) =>
+            !values.quick_filters?.some(
+              (filter) => filter.field_id === field.id
+            )
+        );
         console.log("unCheckedFilters", unCheckedFilters);
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
@@ -251,14 +270,28 @@ export default function FieldCreateModal({
                 width: "100%",
               }}
             >
-              {format !== "RELATION" && format !== "LOOKUP" && format !== "LOOKUPS" && (
-                <FRow label="Label" classname={style.custom_label} required>
-                  <Box style={{ display: "flex", gap: "6px" }}>
-                    <HFTextFieldWithMultiLanguage control={control} name="attributes.label" fullWidth placeholder="Name" defaultValue={tableName} languages={languages} />
-                  </Box>
-                </FRow>
-              )}
-              <FRow label={"Type"} componentClassName="flex gap-2 align-center" required classname={style.custom_label}>
+              {format !== "RELATION" &&
+                format !== "LOOKUP" &&
+                format !== "LOOKUPS" && (
+                  <FRow label="Label" classname={style.custom_label} required>
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
+                      />
+                    </Box>
+                  </FRow>
+                )}
+              <FRow
+                label={"Type"}
+                componentClassName="flex gap-2 align-center"
+                required
+                classname={style.custom_label}
+              >
                 <HFSelect
                   className={style.input}
                   disabledHelperText
@@ -291,9 +324,15 @@ export default function FieldCreateModal({
                 width: "100%",
               }}
             >
-              {(format === "RELATION" || format === "LOOKUP" || format === "LOOKUPS") && (
+              {(format === "RELATION" ||
+                format === "LOOKUP" ||
+                format === "LOOKUPS") && (
                 <>
-                  <FRow label="Field label" classname={style.custom_label} required>
+                  <FRow
+                    label="Field label"
+                    classname={style.custom_label}
+                    required
+                  >
                     <Box style={{ display: "flex", gap: "6px" }}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
@@ -306,9 +345,20 @@ export default function FieldCreateModal({
                     </Box>
                   </FRow>
 
-                  <FRow label="Tab label" classname={style.custom_label} required>
+                  <FRow
+                    label="Tab label"
+                    classname={style.custom_label}
+                    required
+                  >
                     <Box style={{ display: "flex", gap: "6px" }}>
-                      <HFTextFieldWithMultiLanguage control={control} name="attributes.label_to" fullWidth placeholder="Tab label" defaultValue={tableName} languages={languages} />
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label_to"
+                        fullWidth
+                        placeholder="Tab label"
+                        defaultValue={tableName}
+                        languages={languages}
+                      />
                     </Box>
                   </FRow>
                 </>
@@ -316,7 +366,12 @@ export default function FieldCreateModal({
             </Box>
           </Box>
           {formatIncludes?.includes(format) ? (
-            <FRow label={"Format"} componentClassName="flex gap-2 align-center" required classname={style.custom_label}>
+            <FRow
+              label={"Format"}
+              componentClassName="flex gap-2 align-center"
+              required
+              classname={style.custom_label}
+            >
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -346,15 +401,25 @@ export default function FieldCreateModal({
           <div>
             {format === "MULTISELECT" && (
               <Box className={style.dropdown}>
-                <Container lockAxis="y" orientation="vertical" onDrop={onDrop} dragHandleSelector=".column-drag-handle">
+                <Container
+                  lockAxis="y"
+                  orientation="vertical"
+                  onDrop={onDrop}
+                  dragHandleSelector=".column-drag-handle"
+                >
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
-                        <FRow label={`Option ${index + 1}`} className={style.option}>
+                        <FRow
+                          label={`Option ${index + 1}`}
+                          className={style.option}
+                        >
                           <span
                             className={style.startAdornment}
                             style={{
-                              background: watch(`attributes.options.${index}.color`),
+                              background: watch(
+                                `attributes.options.${index}.color`
+                              ),
                             }}
                           ></span>
 
@@ -368,12 +433,19 @@ export default function FieldCreateModal({
                             className={style.input}
                             endAdornment={
                               <Box className={style.adornment}>
-                                <p onClick={(e) => handleOpenColor(e, index)}>Add color</p>
-                                <CloseIcon onClick={() => dropdownRemove(index)} />
+                                <p onClick={(e) => handleOpenColor(e, index)}>
+                                  Add color
+                                </p>
+                                <CloseIcon
+                                  onClick={() => dropdownRemove(index)}
+                                />
                               </Box>
                             }
                             customOnChange={(e) => {
-                              setValue(`attributes.options.${index}.value`, e.target.value.replace(/ /g, "_"));
+                              setValue(
+                                `attributes.options.${index}.value`,
+                                e.target.value.replace(/ /g, "_")
+                              );
                             }}
                           />
                         </FRow>
@@ -398,7 +470,10 @@ export default function FieldCreateModal({
                               key={colorIndex}
                               style={{ backgroundColor: color }}
                               onClick={() => {
-                                setValue(`attributes.options.${idx}.color`, color);
+                                setValue(
+                                  `attributes.options.${idx}.color`,
+                                  color
+                                );
                                 setValue(`attributes.has_color`, true);
                                 handleCloseColor();
                               }}
@@ -427,7 +502,15 @@ export default function FieldCreateModal({
               {watch("attributes.advanced_type") ? (
                 <>
                   <Box className={style.formula}>
-                    <HFTextArea className={style.input} disabledHelperText name="attributes.formula" control={control} fullWidth required placeholder="Formula" />
+                    <HFTextArea
+                      className={style.input}
+                      disabledHelperText
+                      name="attributes.formula"
+                      control={control}
+                      fullWidth
+                      required
+                      placeholder="Formula"
+                    />
                   </Box>
                   <h2>Fields list:</h2>
                   {fields.map((field) => (
@@ -449,7 +532,10 @@ export default function FieldCreateModal({
                     placeholder="Select variable"
                   />
 
-                  <span className={`math_${mathType?.label}`} onClick={(e) => setMathEl(e.currentTarget)}>
+                  <span
+                    className={`math_${mathType?.label}`}
+                    onClick={(e) => setMathEl(e.currentTarget)}
+                  >
                     {mathType?.value}
                   </span>
                   <HFSelect
@@ -510,7 +596,13 @@ export default function FieldCreateModal({
           )}
 
           {format === "RELATION" && !fieldData ? (
-            <RelationFieldForm control={control} watch={watch} setValue={setValue} fieldWatch={fieldWatch} relatedTableSlug={relatedTableSlug} />
+            <RelationFieldForm
+              control={control}
+              watch={watch}
+              setValue={setValue}
+              fieldWatch={fieldWatch}
+              relatedTableSlug={relatedTableSlug}
+            />
           ) : null}
           <Box className={style.button_group}>
             <Button variant="contained" color="error" onClick={handleClick}>

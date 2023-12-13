@@ -129,7 +129,6 @@ const MenuRow = ({
       },
     }));
   };
-  console.log("apppppp", app);
   return (
     <>
       {app?.type === "FOLDER" ? (

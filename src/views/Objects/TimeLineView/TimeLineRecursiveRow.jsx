@@ -32,7 +32,11 @@ export default function TimeLineRecursiveRow({
     ?.view_fields?.map((field) => field?.slug);
 
   useEffect(() => {
-    if (openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label)) {
+    if (
+      openedRows.includes(
+        lastLabels?.length ? lastLabels + "." + item?.label : item?.label
+      )
+    ) {
       setOpen(true);
     } else {
       setOpen(false);
@@ -40,24 +44,37 @@ export default function TimeLineRecursiveRow({
   }, [item, openedRows, lastLabels]);
 
   const handleClick = () => {
-    const isCurrentlyOpen = openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label);
+    const isCurrentlyOpen = openedRows.includes(
+      lastLabels?.length ? lastLabels + "." + item?.label : item?.label
+    );
 
     setOpen(!isCurrentlyOpen);
 
     if (!isCurrentlyOpen) {
-      setOpenedRows([...openedRows, lastLabels?.length ? lastLabels + "." + item?.label : item?.label]);
+      setOpenedRows([
+        ...openedRows,
+        lastLabels?.length ? lastLabels + "." + item?.label : item?.label,
+      ]);
     } else {
-      setOpenedRows(openedRows.filter((row) => row !== (lastLabels?.length ? lastLabels + "." + item?.label : item?.label)));
+      setOpenedRows(
+        openedRows.filter(
+          (row) =>
+            row !==
+            (lastLabels?.length ? lastLabels + "." + item?.label : item?.label)
+        )
+      );
     }
   };
 
   useEffect(() => {
     if (item?.group_by_type === "LOOKUP") {
-      constructorObjectService.getById(item?.group_by_slug, item?.label).then((res) => {
-        if (res?.data?.response) {
-          setLabel(res?.data?.response);
-        }
-      });
+      constructorObjectService
+        .getById(item?.group_by_slug, item?.label)
+        .then((res) => {
+          if (res?.data?.response) {
+            setLabel(res?.data?.response);
+          }
+        });
     }
   }, [item]);
 
@@ -65,7 +82,6 @@ export default function TimeLineRecursiveRow({
     const slugs = viewFields?.map((item) => item) ?? [];
     return slugs.map((slug) => get(label, slug, "")).join(" ");
   }, [label, viewFields]);
-  console.log("wwwwwww", `${10 / (level + 1)}`);
   return (
     <div>
       <div className={styles.group_by_column}>
@@ -75,7 +91,9 @@ export default function TimeLineRecursiveRow({
           style={{
             // backgroundColor: sub ? "#FFF" : "#f2f4f7",
             // backgroundColor: sub ? `rgba(242, 244, 247, ${1 / (level + 1)})` : "#f2f4f7",
-            backgroundColor: sub ? `rgba(192, 197, 206, ${1 - (level + 1) * 0.3})` : "#C0C5CE",
+            backgroundColor: sub
+              ? `rgba(192, 197, 206, ${1 - (level + 1) * 0.3})`
+              : "#C0C5CE",
             cursor: item?.data?.[0]?.data?.length ? "pointer" : "",
             display: "flex",
             alignItems: "center",
@@ -93,7 +111,9 @@ export default function TimeLineRecursiveRow({
             }}
           >
             {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
-            {item?.data?.[0]?.data && <>{open ? <ExpandLess /> : <ExpandMore />}</>}
+            {item?.data?.[0]?.data && (
+              <>{open ? <ExpandLess /> : <ExpandMore />}</>
+            )}
           </div>
         </div>
         {item?.data &&
@@ -105,7 +125,9 @@ export default function TimeLineRecursiveRow({
                     openedRows={openedRows}
                     setOpenedRows={setOpenedRows}
                     sub={true}
-                    level={option?.data?.length ? level + 1 : index + 1 + (level + 1)}
+                    level={
+                      option?.data?.length ? level + 1 : index + 1 + (level + 1)
+                    }
                     groupItem={option}
                     fieldsMap={fieldsMap}
                     view={view}
@@ -118,7 +140,11 @@ export default function TimeLineRecursiveRow({
                     calendar_from_slug={calendar_from_slug}
                     calendar_to_slug={calendar_to_slug}
                     visible_field={visible_field}
-                    lastLabels={lastLabels?.length ? lastLabels + "." + item?.label : item?.label}
+                    lastLabels={
+                      lastLabels?.length
+                        ? lastLabels + "." + item?.label
+                        : item?.label
+                    }
                   />
                 </Collapse>
               )

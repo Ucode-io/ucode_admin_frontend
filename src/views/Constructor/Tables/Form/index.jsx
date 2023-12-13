@@ -64,7 +64,6 @@ const ConstructorTablesFormPage = () => {
     mode: "all",
   });
 
-  console.log("mainForm", mainForm);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const list = useSelector((state) => state.constructorTable.list);
 
@@ -187,7 +186,6 @@ const ConstructorTablesFormPage = () => {
   };
 
   const createType = (data) => {
-    console.log("data", data);
     menuSettingsService
       .create({
         parent_id: menuItem?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
@@ -216,7 +214,6 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        console.log("resresres", res);
         navigate(-1);
         createType(res);
       })

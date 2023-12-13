@@ -142,7 +142,6 @@ const DataWeekCard = ({
   const handleMouseLeave = () => {
     setIsHover(false);
   };
-  console.log("viewFields", viewFields);
   return (
     <>
       <div

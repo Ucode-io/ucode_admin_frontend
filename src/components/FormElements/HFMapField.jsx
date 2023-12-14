@@ -26,6 +26,7 @@ const HFMapField = ({
     lat: "",
     long: "",
   });
+  console.log("name", field);
 
   useEffect(() => {
     const handleGeolocationError = (error) => {

@@ -38,7 +38,7 @@ export default function FieldButton({
   const dispatch = useDispatch();
   const menuItem = useSelector((state) => state.menu.menuItem);
   const { control, watch, setValue, reset, handleSubmit } = useForm();
-  const slug = transliterate(watch(`attributes.label_${languages[0].slug}`));
+  const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);

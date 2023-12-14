@@ -218,7 +218,7 @@ const ColumnsTab = ({
                     {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
-                    column?.attributes?.[`label_from_${i18n.language}`] ??
+                    column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}
                 </div>
                 <div

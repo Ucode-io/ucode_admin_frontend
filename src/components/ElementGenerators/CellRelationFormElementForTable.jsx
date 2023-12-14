@@ -51,6 +51,8 @@ const CellRelationFormElementForTableView = ({
 }) => {
   const classes = useStyles();
 
+  console.log("relOptions", relOptions);
+
   if (!isLayout)
     return (
       <Controller
@@ -231,8 +233,9 @@ const AutoCompleteElement = ({
     },
     {
       enabled:
-        (!!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!!field?.attributes?.function_path && Boolean(debouncedValue)),
+        !relOptions?.length &&
+        ((!!field?.attributes?.function_path && Boolean(page > 1)) ||
+          (!!field?.attributes?.function_path && Boolean(debouncedValue))),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -244,7 +247,14 @@ const AutoCompleteElement = ({
   );
 
   const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    [
+      "GET_OBJECT_LIST",
+      debouncedValue,
+      autoFiltersValue,
+      value,
+      page,
+      field?.table_slug,
+    ],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(

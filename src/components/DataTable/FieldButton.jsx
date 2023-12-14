@@ -15,6 +15,7 @@ import constructorViewService from "../../services/constructorViewService";
 import { useParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
 import {
+  useRelationFieldUpdateMutation,
   useRelationUpdateMutation,
   useRelationsCreateMutation,
 } from "../../services/relationService";
@@ -97,7 +98,7 @@ export default function FieldButton({
     });
 
   const { mutate: updateRelation, isLoading: realationUpdateLoading } =
-    useRelationUpdateMutation({
+    useRelationFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
         setFieldOptionAnchor(null);
@@ -153,6 +154,8 @@ export default function FieldButton({
     }
   };
 
+  const generatorLabel = () => {};
+
   useEffect(() => {
     if (fieldData) {
       reset({
@@ -162,6 +165,7 @@ export default function FieldButton({
           format: fieldData?.type,
         },
       });
+      console.log("dfdfddf");
     } else {
       reset({
         attributes: {

@@ -237,7 +237,6 @@ const RelationSettings = ({
     const result = applyDrag(values.filtersList, dragResult);
     if (result) setValue("filtersList", result);
   };
-
   const submitHandler = (values) => {
     const data = {
       ...values,
@@ -382,7 +381,7 @@ const RelationSettings = ({
                       >
                         {languages?.map((lang) => (
                           <HFTextField
-                            name={`attributes.label_from_${lang?.slug}`}
+                            name={`attributes.label_${lang?.slug}`}
                             control={control}
                             placeholder={`Relation Label From (${lang?.slug})`}
                             fullWidth

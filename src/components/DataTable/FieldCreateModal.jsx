@@ -1,19 +1,15 @@
 import "./style.scss";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import style from "./field.module.scss";
 import {
   FormatOptionType,
   FormatTypes,
   ValueTypes,
-  dateFieldFormats,
   fieldFormats,
-  fileFieldFormats,
   formatIncludes,
   math,
   newFieldTypes,
-  numberFieldFormats,
-  textFieldFormats,
 } from "../../utils/constants/fieldTypes";
 import FRow from "../FormElements/FRow";
 import HFTextField from "../FormElements/HFTextField";
@@ -30,7 +26,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import HFTextArea from "../FormElements/HFTextArea";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import { useRelationGetByIdQuery } from "../../services/relationService";
 import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLanguage";
@@ -52,6 +48,7 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
 }) {
+  const queryClient = useQueryClient();
   const format = useWatch({
     control,
     name: "attributes.format",
@@ -68,6 +65,7 @@ export default function FieldCreateModal({
   const values = watch();
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
+  console.log("fieldData", Boolean(fieldData?.attributes?.relation_data?.id));
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
@@ -234,6 +232,8 @@ export default function FieldCreateModal({
     control,
     name: "label",
   });
+
+  console.log("val", values);
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -293,7 +293,7 @@ export default function FieldCreateModal({
                     <Box style={{ display: "flex", gap: "6px" }}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
-                        name="attributes.label_from"
+                        name="attributes.label"
                         fullWidth
                         placeholder="Field label"
                         defaultValue={tableName}

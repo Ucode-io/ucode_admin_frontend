@@ -28,6 +28,7 @@ import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 
 const parser = new Parser();
 
@@ -48,8 +49,10 @@ const CellElementGeneratorForTableView = ({
   isTableView,
   isNewRow,
 }) => {
+  console.log("fieldfieldfield", field);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
+  const checkRequiredField = field?.required;
   const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -429,6 +432,20 @@ const CellElementGeneratorForTableView = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
+        />
+      );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <HFDateTimePickerWithout
+          control={control}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          mask={"99.99.9999"}
+          required={checkRequiredField}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
         />
       );
 

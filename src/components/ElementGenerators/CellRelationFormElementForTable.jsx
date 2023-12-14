@@ -1,12 +1,12 @@
-import {Box, Popover, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
+import { Box, Popover, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 import useDebounce from "../../hooks/useDebounce";
@@ -15,10 +15,10 @@ import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import AddIcon from "@mui/icons-material/Add";
-import Select, {components} from "react-select";
-import {pageToOffset} from "../../utils/pageToOffset";
+import Select, { components } from "react-select";
+import { pageToOffset } from "../../utils/pageToOffset";
 import ClearIcon from "@mui/icons-material/Clear";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import LaunchIcon from "@mui/icons-material/Launch";
 
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +57,7 @@ const CellRelationFormElementForTableView = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -142,7 +142,7 @@ const AutoCompleteElement = ({
   isNewRow,
   setFormValue = () => {},
 }) => {
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -155,7 +155,7 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const customStyles = {
     control: (provided, state) => ({
@@ -172,6 +172,10 @@ const AutoCompleteElement = ({
       ...provided,
       width: "100%",
       border: "none",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      display: "flex",
     }),
     option: (provided, state) => ({
       ...provided,
@@ -203,7 +207,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -239,7 +243,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
@@ -266,7 +270,8 @@ const AutoCompleteElement = ({
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)),
+        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
+        !relOptions?.length,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -320,7 +325,7 @@ const AutoCompleteElement = ({
 
     if (!field?.attributes?.autofill) return;
 
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -352,7 +357,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -394,12 +399,12 @@ const AutoCompleteElement = ({
           e.preventDefault();
         }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
+        style={{ display: "flex", alignItems: "center" }}
       >
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relation", zIndex: 99}}
+            sx={{ position: "relation", zIndex: 99 }}
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
@@ -429,7 +434,7 @@ const AutoCompleteElement = ({
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
         >
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
@@ -455,7 +460,7 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{p: 1}}>Create new object</Typography>
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
           </Popover>
         </span>
       )}
@@ -470,7 +475,7 @@ const AutoCompleteElement = ({
 
       <Select
         inputValue={inputValue}
-        onInputChange={(newInputValue, {action}) => {
+        onInputChange={(newInputValue, { action }) => {
           if (action !== "reset") {
             setInputValue(newInputValue);
             inputChangeHandler(newInputValue);
@@ -501,13 +506,13 @@ const AutoCompleteElement = ({
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, {action}) => {
+        onChange={(newValue, { action }) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
           >
             Создать новый
           </span>

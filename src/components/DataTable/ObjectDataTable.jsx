@@ -1,12 +1,12 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import {Button} from "@mui/material";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import { Button } from "@mui/material";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import {
   CTable,
@@ -88,7 +88,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -143,7 +143,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -169,7 +169,9 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";

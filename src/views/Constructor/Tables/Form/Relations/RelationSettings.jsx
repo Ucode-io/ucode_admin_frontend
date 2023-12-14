@@ -117,7 +117,6 @@ const RelationSettings = ({
   const params = {
     language_setting: i18n?.language,
   };
-  console.log("relatedTableSlug", relatedTableSlug);
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],

@@ -246,9 +246,9 @@ const RelationSettings = ({
       ...values,
       relation_table_slug: tableSlug,
       // compute columns
-      columns: values.columnsList
-        ?.filter((el) => el.is_checked)
-        ?.map((el) => el.id),
+      // columns: values.columnsList
+      //   ?.filter((el) => el.is_checked)
+      //   ?.map((el) => el.id),
       // compute filters
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
@@ -539,52 +539,6 @@ const RelationSettings = ({
                       watch={watch}
                       setValue={setValue}
                     />
-
-                    <div>
-                      <div className={styles.settingsBlockHeader}>
-                        <h2>Columns</h2>
-
-                        <Checkbox
-                          icon={<VisibilityOff />}
-                          checkedIcon={<RemoveRedEye />}
-                          checked={onlyCheckedColumnsVisible}
-                          onChange={(e, val) =>
-                            setOnlyCheckedColumnsVisible(val)
-                          }
-                        />
-                      </div>
-
-                      {fieldsLoading || relationLoading ? (
-                        <RingLoaderWithWrapper />
-                      ) : (
-                        <Container
-                          lockAxis="y"
-                          onDrop={onColumnsPositionChange}
-                        >
-                          {computedColumnsList?.map((field, index) => (
-                            <Draggable key={field.id}>
-                              <div className={styles.draggableRow}>
-                                <IconButton className={styles.dragButton}>
-                                  <DragIndicator />
-                                </IconButton>
-                                <p className={styles.label}>
-                                  {field?.attributes[
-                                    `label_${i18n?.language}`
-                                  ] ?? field.label}
-                                </p>
-
-                                <HFCheckbox
-                                  control={control}
-                                  name={`columnsList[${index}].is_checked`}
-                                  icon={<VisibilityOff />}
-                                  checkedIcon={<RemoveRedEye />}
-                                />
-                              </div>
-                            </Draggable>
-                          ))}
-                        </Container>
-                      )}
-                    </div>
 
                     <div className={styles.settingsBlockHeader}>
                       <h2>Filters</h2>

@@ -53,7 +53,6 @@ const RelationCreateForm = ({
   const getFieldOptions = (table_from) => {
     if (!table_from) return null;
     constructorObjectService.getList(table_from, {data: {}}).then((res) => {
-      console.log("res", res);
       setFieldOptions((prev) => [
         ...prev,
         ...res?.data?.fields?.map((item) => ({

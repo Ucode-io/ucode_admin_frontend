@@ -152,9 +152,6 @@ const RelationSectionForModal = ({
           objects: values.multi.map((item) => ({
             ...item,
             guid: item?.guid ?? undefined,
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
             [fieldSlug]: id,
           })),
         },

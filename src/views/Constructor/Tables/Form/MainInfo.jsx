@@ -18,6 +18,7 @@ import { LoginStrategy } from "../../../../mock/FolderSettings";
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import style from "./main.module.scss";
 import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
+import constructorTableService from "../../../../services/constructorTableService";
 
 const MainInfo = ({ control, watch }) => {
   const { slug } = useParams();
@@ -68,13 +69,10 @@ const MainInfo = ({ control, watch }) => {
     ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
       if (!slug) return false;
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         slug,
         {
-          data: {
-            limit: 0,
-            offset: 0,
-          },
+          data: {},
         },
         params
       );

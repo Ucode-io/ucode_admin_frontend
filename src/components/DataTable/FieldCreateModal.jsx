@@ -23,10 +23,10 @@ import RelationFieldForm from "./RelationFieldForm";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HFTextArea from "../FormElements/HFTextArea";
 import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
 import { useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
 import { useRelationGetByIdQuery } from "../../services/relationService";
+import constructorTableService from "../../services/constructorTableService";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -88,7 +88,6 @@ export default function FieldCreateModal({
   const open = Boolean(anchorEl);
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
-  console.log("anchorEl", anchorEl);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
@@ -121,7 +120,7 @@ export default function FieldCreateModal({
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
           data: { limit: 0, offset: 0 },

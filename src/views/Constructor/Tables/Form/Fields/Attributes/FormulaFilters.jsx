@@ -16,6 +16,7 @@ import useTabRouter from "../../../../../../hooks/useTabRouter";
 import constructorObjectService from "../../../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
+import constructorTableService from "../../../../../../services/constructorTableService";
 
 function FormulaFilters({
   summary,
@@ -45,7 +46,7 @@ function FormulaFilters({
   const {data: fields = []} = useQuery(
     ["GET_OBJECT_LIST", selectedTableSlug, i18n?.language],
     () => {
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         selectedTableSlug,
         {
           data: {

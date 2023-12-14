@@ -1,25 +1,24 @@
-import {Box, Popover, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import LaunchIcon from "@mui/icons-material/Launch";
+import { Box, Popover, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import Select, { components } from "react-select";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import useDebounce from "../../hooks/useDebounce";
-import CascadingElement from "./CascadingElement";
-import RelationGroupCascading from "./RelationGroupCascading";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import { pageToOffset } from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
-import AddIcon from "@mui/icons-material/Add";
-import Select, {components} from "react-select";
-import {pageToOffset} from "../../utils/pageToOffset";
-import ClearIcon from "@mui/icons-material/Clear";
-import {useTranslation} from "react-i18next";
-import LaunchIcon from "@mui/icons-material/Launch";
+import CascadingElement from "./CascadingElement";
+import RelationGroupCascading from "./RelationGroupCascading";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {

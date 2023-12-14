@@ -246,7 +246,7 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(
+      return constructorObjectService.getListV2(
         tableSlug,
         {
           data: {

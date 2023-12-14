@@ -235,7 +235,7 @@ const AutoCompleteElement = memo(
         field?.attributes?.view_fields,
       ],
       () => {
-        return constructorObjectService.getList(
+        return constructorObjectService.getListV2(
           tableSlug,
           {
             data: {

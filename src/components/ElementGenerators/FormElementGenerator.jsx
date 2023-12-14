@@ -135,8 +135,6 @@ const FormElementGenerator = ({
     isUserId,
   ]);
 
-  console.log("defaultValue", defaultValue);
-
   const isDisabled = useMemo(() => {
     const { attributes } = field;
 
@@ -165,7 +163,6 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-  console.log("field", field);
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (

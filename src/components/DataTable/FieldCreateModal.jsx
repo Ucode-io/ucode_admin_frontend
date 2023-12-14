@@ -108,7 +108,6 @@ export default function FieldCreateModal({
   const open = Boolean(anchorEl);
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
-  console.log("anchorEl", anchorEl);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
@@ -194,7 +193,6 @@ export default function FieldCreateModal({
               (filter) => filter.field_id === field.id
             )
         );
-        console.log("unCheckedFilters", unCheckedFilters);
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },

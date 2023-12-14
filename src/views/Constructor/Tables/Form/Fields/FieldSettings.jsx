@@ -247,7 +247,6 @@ const FieldSettings = ({
       },
     }
   );
-  console.log("field", field);
   useEffect(() => {
     const values = {
       attributes: {},

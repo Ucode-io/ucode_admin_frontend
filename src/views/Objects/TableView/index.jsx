@@ -73,7 +73,6 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-  console.log("slugslugslugslug", tableSlug);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -216,8 +215,6 @@ const TableView = ({
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
   }, [view, fieldsMap]);
-
-  console.log("fieldsMap", fieldsMap);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};

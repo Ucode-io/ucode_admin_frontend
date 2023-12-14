@@ -101,8 +101,6 @@ const RelationSettings = ({
       values.type === "LOOKUPS"
     );
   }, [values.type, values.table_from, tableSlug]);
-  console.log("isViewFieldsVisible", isViewFieldsVisible);
-  console.log("slug", tableSlug);
 
   const computedColumnsList = useMemo(() => {
     if (onlyCheckedColumnsVisible) return values.columnsList;

@@ -14,13 +14,13 @@ const HFTimePicker = ({
   control,
   className,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isBlackBg,
   name,
   isTransparent = false,
   disabled,
   label,
-    tabIndex,
+  tabIndex,
   isFormEdit = false,
   width,
   inputProps,
@@ -45,8 +45,8 @@ const HFTimePicker = ({
             isBlackBg={isBlackBg}
             value={value}
             onChange={(val) => {
-              onChange(val)
-              isNewTableView && updateObject()
+              onChange(val);
+              isNewTableView && updateObject();
             }}
             isTransparent={isTransparent}
           />

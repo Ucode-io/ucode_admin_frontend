@@ -234,8 +234,6 @@ const LayoutSidebar = ({ appId }) => {
     }
   };
 
-  console.log("selectedApp", selectedApp);
-
   return (
     <>
       <div

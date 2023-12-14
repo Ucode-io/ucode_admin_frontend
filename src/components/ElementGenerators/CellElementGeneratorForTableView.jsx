@@ -18,7 +18,6 @@ import HFPassword from "../FormElements/HFPassword";
 import HFSwitch from "../FormElements/HFSwitch";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
-import HFTimePicker from "../FormElements/HFTimePicker";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import CellElementGenerator from "./CellElementGenerator";
@@ -29,6 +28,7 @@ import CellRelationFormElementForTableView from "./CellRelationFormElementForTab
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
+import HFTimePicker from "../FormElements/HFTimePicker";
 
 const parser = new Parser();
 
@@ -49,7 +49,6 @@ const CellElementGeneratorForTableView = ({
   isTableView,
   isNewRow,
 }) => {
-  console.log("fieldfieldfield", field);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const checkRequiredField = field?.required;
@@ -116,8 +115,6 @@ const CellElementGeneratorForTableView = ({
 
     return error ? undefined : result;
   }, [field]);
-
-  console.log("defaultValue", defaultValue);
 
   useEffect(() => {
     tables?.forEach((table) => {

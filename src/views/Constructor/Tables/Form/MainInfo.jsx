@@ -22,7 +22,6 @@ import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HF
 const MainInfo = ({ control, watch }) => {
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
-  console.log("slug", tableSlug);
 
   const params = {
     language_setting: i18n?.language,

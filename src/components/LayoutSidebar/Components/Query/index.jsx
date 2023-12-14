@@ -192,7 +192,6 @@ const Queries = () => {
       },
     },
   });
-  console.log("variables", variables);
   const onSubmit = (values) => {
     if (!!values.id) {
       updateQuery({

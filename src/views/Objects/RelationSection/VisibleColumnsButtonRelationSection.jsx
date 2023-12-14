@@ -1,15 +1,15 @@
-import React, {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-import {applyDrag} from "../../../utils/applyDrag";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
-import {Container, Draggable} from "react-smooth-dnd";
-import {columnIcons} from "../../../utils/constants/columnIcons";
+import { applyDrag } from "../../../utils/applyDrag";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import { Container, Draggable } from "react-smooth-dnd";
+import { columnIcons } from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function VisibleColumnsButtonRelationSection({
   currentView,
@@ -19,8 +19,8 @@ export default function VisibleColumnsButtonRelationSection({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
-  const {id} = useParams();
+  const { i18n } = useTranslation();
+  const { id } = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -34,7 +34,6 @@ export default function VisibleColumnsButtonRelationSection({
   };
 
   const updateView = (data) => {
-    console.log("dataaaaaaaaaaa", data);
     setIsLoading(true);
     relationService
       .update(
@@ -54,7 +53,6 @@ export default function VisibleColumnsButtonRelationSection({
         setIsLoading(false);
       });
   };
-  console.log("currentView", currentView);
   const visibleFields = useMemo(() => {
     return currentView?.columns?.map((id) => fieldsMap[id]) ?? [];
   }, [currentView?.columns, fieldsMap]);
@@ -71,7 +69,6 @@ export default function VisibleColumnsButtonRelationSection({
       updateView(result.map((el) => el.id));
     }
   };
-  console.log("visibleFields", unVisibleFields, currentView);
   return (
     <div>
       <Button
@@ -85,7 +82,7 @@ export default function VisibleColumnsButtonRelationSection({
         onClick={handleClick}
       >
         {isLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -196,7 +193,7 @@ export default function VisibleColumnsButtonRelationSection({
             </div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
             >
               {visibleFields.map((column, index) => (
                 <Draggable key={column?.id}>

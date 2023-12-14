@@ -60,20 +60,23 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     const selectedId = updatedGroupColumn[index].id;
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
+      const columnIndex = updatedColumns.findIndex(
+        (item) => item?.id === selectedId
+      );
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns.splice(columnIndex, 1)[0];
         updatedColumns.unshift(filteredColumn);
       }
       replace(updatedColumns);
     } else {
-      const columnIndex = updatedColumns.findIndex((item) => item?.id === selectedId);
+      const columnIndex = updatedColumns.findIndex(
+        (item) => item?.id === selectedId
+      );
 
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns[columnIndex];
         updatedColumns.splice(columnIndex, 1);
         updatedColumns.splice(1, 0, filteredColumn);
-        console.log("updatedColumns", updatedColumns);
         replace(updatedColumns);
       }
     }
@@ -99,9 +102,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       }}
     >
       <div className={styles.table} style={{}}>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
           {groupColumn?.map((column, index) =>
-            (!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`) ? null : (
+            (!form.watch(`attributes.group_by_columns.${index}.is_checked`) &&
+              isWhatChecked?.length === 2) ||
+            !form.watch(`columns.${index}.is_checked`) ? null : (
               <Draggable key={column.id}>
                 <div key={column.id} className={styles.row}>
                   <div
@@ -143,9 +151,17 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
                     }}
                   >
                     <Switch
-                      disabled={(!form.watch(`attributes.group_by_columns.${index}.is_checked`) && isWhatChecked?.length === 2) || !form.watch(`columns.${index}.is_checked`)}
+                      disabled={
+                        (!form.watch(
+                          `attributes.group_by_columns.${index}.is_checked`
+                        ) &&
+                          isWhatChecked?.length === 2) ||
+                        !form.watch(`columns.${index}.is_checked`)
+                      }
                       size="small"
-                      checked={form.watch(`attributes.group_by_columns.${index}.is_checked`)}
+                      checked={form.watch(
+                        `attributes.group_by_columns.${index}.is_checked`
+                      )}
                       onChange={(e) => {
                         onSwitchChange(e, index);
                       }}

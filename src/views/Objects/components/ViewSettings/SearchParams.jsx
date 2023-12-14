@@ -1,6 +1,6 @@
-import {Switch} from "@mui/material";
-import React, {useEffect} from "react";
-import {columnIcons} from "../../../../utils/constants/columnIcons";
+import { Switch } from "@mui/material";
+import React, { useEffect } from "react";
+import { columnIcons } from "../../../../utils/constants/columnIcons";
 
 export default function SearchParams({
   checkedColumns,
@@ -14,7 +14,6 @@ export default function SearchParams({
       setCheckedColumns([...checkedColumns, slug]);
     }
   };
-  console.log("checkedColumns", checkedColumns);
   const selectAll = () => {
     setCheckedColumns(columns.map((el) => el.slug));
   };
@@ -50,7 +49,7 @@ export default function SearchParams({
               gap: "10px",
             }}
           >
-            <div style={{textAlign: "end"}}>All</div>
+            <div style={{ textAlign: "end" }}>All</div>
           </div>
 
           <div>
@@ -85,7 +84,7 @@ export default function SearchParams({
             >
               <div>{columnIcons(column.type)}</div>
 
-              <div style={{textAlign: "end"}}>{column.label}</div>
+              <div style={{ textAlign: "end" }}>{column.label}</div>
             </div>
 
             <div>

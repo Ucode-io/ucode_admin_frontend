@@ -69,7 +69,6 @@ const ObjectsPage = () => {
       },
     }
   );
-  console.log("fieldsMapfieldsMap", fieldsMap);
 
   useEffect(() => {
     queryTab

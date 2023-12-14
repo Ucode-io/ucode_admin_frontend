@@ -287,7 +287,6 @@ const RelationTable = forwardRef(
       {
         enabled: !!relatedTableSlug,
         select: ({ data }) => {
-          console.log("data", data);
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
@@ -373,7 +372,6 @@ const RelationTable = forwardRef(
                 )
               ),
       }));
-      console.log("tableData", tableData);
       tableData?.length &&
         computedRelationFields?.forEach((item, index) => {
           constructorObjectService
@@ -390,7 +388,6 @@ const RelationTable = forwardRef(
               },
             })
             .then((res) => {
-              console.log("resrelopttion", res);
               if (relOptions?.length > 0) {
                 setRelOptions((prev) => {
                   const updatedOptions = prev.map((option) => {

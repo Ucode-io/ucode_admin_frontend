@@ -282,7 +282,6 @@ export default function TableHeadForTableView({
 
   const handleAddSummary = (item, type) => {
     let result = [];
-    console.log("itemmmmmmmm", item);
 
     if (type === "add") {
       const newSummary = {
@@ -318,7 +317,6 @@ export default function TableHeadForTableView({
       handleClose();
     });
   };
-  console.log("column", column);
   return (
     <>
       <CTableHeadCell

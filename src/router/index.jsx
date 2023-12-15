@@ -102,12 +102,15 @@ const Router = () => {
   const location = useLocation();
   const isAuth = useSelector((state) => state.auth.isAuth);
   const auth = useSelector((state) => state.auth);
+  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
   const applications = useSelector((state) => state.application.list);
   const cashbox = useSelector((state) => state.cashbox.data);
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
-  const parts = auth?.clientType?.default_page?.split("/");
+  const parts = auth?.clientType?.default_page
+    ? auth?.clientType?.default_page?.split("/")
+    : companyDefaultLink.split("/");
   const result =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
@@ -118,7 +121,11 @@ const Router = () => {
     // if (!applications.length || !applications[0].permission?.read)
     //   return "/settings/constructor/apps";
     // return "/settings/constructor/apps";
-    return auth?.clientType?.default_page?.length
+    return (
+      auth?.clientType?.default_page?.length
+        ? auth?.clientType?.default_page?.length
+        : companyDefaultLink
+    )
       ? result
       : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
   }, [location.pathname, applications, result]);

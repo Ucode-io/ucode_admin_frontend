@@ -5,9 +5,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
-import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
@@ -30,11 +28,6 @@ const MainInfo = ({ control, watch }) => {
   const tableName = useWatch({
     control,
     name: "label",
-  });
-
-  const description = useWatch({
-    control,
-    name: "description",
   });
 
   const { fields } = useFieldArray({
@@ -116,7 +109,12 @@ const MainInfo = ({ control, watch }) => {
 
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
-      label: item?.label ?? "",
+      label:
+        item?.attributes?.label_en ||
+        item?.attributes?.label_ru ||
+        item?.attributes?.label ||
+        item?.label ||
+        "",
       value: item?.slug ?? "",
     }));
   }, [computedTableFields]);

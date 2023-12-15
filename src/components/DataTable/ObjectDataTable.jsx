@@ -85,6 +85,9 @@ const ObjectDataTable = ({
   view,
   navigateToForm,
   refetch,
+  relatedTable,
+  fieldsMap,
+  getAllData,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -99,7 +102,7 @@ const ObjectDataTable = ({
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
   const test = useParams();
-
+console.log('sssssss', summaries, columns, data)
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
@@ -288,6 +291,9 @@ const ObjectDataTable = ({
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  relatedTable={relatedTable}
+                  fieldsMap={fieldsMap}
+                  getAllData={getAllData}
                   currentView={currentView}
                   column={column}
                   isRelationTable={isRelationTable}

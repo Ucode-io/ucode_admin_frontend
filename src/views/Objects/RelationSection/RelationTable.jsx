@@ -48,7 +48,8 @@ const RelationTable = forwardRef(
       formVisible,
       selectedTab,
       type,
-      relatedTable,
+      relatedTable = {},
+      getAllData = () => {},
     },
     ref
   ) => {
@@ -526,6 +527,9 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
+              relatedTable={relatedTable}
+              fieldsMap={fieldsMap}
+              getAllData={getAllData}
               relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
@@ -568,7 +572,7 @@ const RelationTable = forwardRef(
               }
               limit={limit}
               setLimit={setLimit}
-              summaries={getRelatedTabeSlug.summaries}
+              summaries={relatedTable?.attributes.summaries}
               isChecked={(row) => selectedObjects?.includes(row.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}

@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -41,10 +41,15 @@ export default function TimeLineBlock({
 
   useEffect(() => {
     if (calendar_from_slug === calendar_to_slug) {
-      dispatch(showAlert("Date from and date to are same. Please select different dates!", "error"));
+      dispatch(
+        showAlert(
+          "Date from and date to are same. Please select different dates!",
+          "error"
+        )
+      );
     }
   }, [calendar_from_slug, calendar_to_slug]);
-console.log('ssssssss', data)
+
   return (
     <div
       className={styles.main_container}
@@ -54,7 +59,13 @@ console.log('ssssssss', data)
     >
       {view?.attributes?.group_by_columns?.length !== 0 && (
         <div className={styles.group_by}>
-          <div className={`${styles.fakeDiv} ${selectedType === "month" ? styles.month : ""}`}>Columns</div>
+          <div
+            className={`${styles.fakeDiv} ${
+              selectedType === "month" ? styles.month : ""
+            }`}
+          >
+            Columns
+          </div>
 
           {calendar_from_slug !== calendar_to_slug && (
             <div className={styles.group_by_columns}>
@@ -86,7 +97,12 @@ console.log('ssssssss', data)
         ref={scrollContainerRef}
         // onScroll={handleScroll}
       >
-        <TimeLineDatesRow focusedDays={focusedDays} datesList={datesList} zoomPosition={zoomPosition} selectedType={selectedType} />
+        <TimeLineDatesRow
+          focusedDays={focusedDays}
+          datesList={datesList}
+          zoomPosition={zoomPosition}
+          selectedType={selectedType}
+        />
 
         {calendar_from_slug !== calendar_to_slug && (
           <TimeLineDayDataBlock

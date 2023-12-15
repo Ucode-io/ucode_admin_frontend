@@ -1,10 +1,11 @@
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { Collapse, alpha } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import React, { useEffect, useMemo, useState } from "react";
+import {Collapse, alpha} from "@mui/material";
+import {get} from "@ngard/tiny-get";
+import React, {useEffect, useMemo, useState} from "react";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./styles.module.scss";
+import {useQuery} from "react-query";
 
 export default function TimeLineRecursiveRow({
   groupItem: item,
@@ -26,7 +27,7 @@ export default function TimeLineRecursiveRow({
   lastLabels = "",
 }) {
   const [open, setOpen] = useState(false);
-  const [label, setLabel] = useState({});
+  // const [label, setLabel] = useState({});
   const viewFields = Object.values(fieldsMap)
     .find((field) => field?.table_slug === item?.group_by_slug)
     ?.view_fields?.map((field) => field?.slug);
@@ -66,17 +67,30 @@ export default function TimeLineRecursiveRow({
     }
   };
 
-  useEffect(() => {
-    if (item?.group_by_type === "LOOKUP") {
-      constructorObjectService
-        .getById(item?.group_by_slug, item?.label)
-        .then((res) => {
-          if (res?.data?.response) {
-            setLabel(res?.data?.response);
-          }
-        });
+  // useEffect(() => {
+  //   if (item?.group_by_type === "LOOKUP") {
+  //     constructorObjectService
+  //       .getById(item?.group_by_slug, item?.label)
+  //       .then((res) => {
+  //         if (res?.data?.response) {
+  //           setLabel(res?.data?.response);
+  //         }
+  //       });
+  //   }
+  // }, [item]);
+
+  const {data: label} = useQuery(
+    ["GET_OBJECT_LIST_BY_ID", item],
+    () => {
+      return constructorObjectService.getById(item?.group_by_slug, item?.label);
+    },
+    {
+      enabled: Boolean(item?.group_by_type === "LOOKUP"),
+      select: (res) => {
+        return res?.data?.response ?? [];
+      },
     }
-  }, [item]);
+  );
 
   const computedValue = useMemo(() => {
     const slugs = viewFields?.map((item) => item) ?? [];

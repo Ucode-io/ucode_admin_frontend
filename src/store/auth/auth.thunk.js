@@ -7,6 +7,7 @@ import {companyActions} from "../company/company.slice";
 export const loginAction = createAsyncThunk(
   "auth/login",
   async (data, {dispatch}) => {
+    console.log("dataaaaaaaaa", data);
     try {
       const res = await authService.login(data);
       dispatch(
@@ -19,6 +20,7 @@ export const loginAction = createAsyncThunk(
       dispatch(companyActions.setCompanyId(res?.user?.company_id));
       dispatch(companyActions.setProjectId(data.project_id));
       dispatch(companyActions.setEnvironmentId(res?.environment_id));
+      dispatch(companyActions.setDefaultPage(data?.default_page));
       await authService
         .updateToken({
           refresh_token: res.token.access_token,

@@ -53,11 +53,12 @@ const TableRow = ({
 }) => {
   const navigate = useNavigate();
   const parentRef = useRef(null);
+
   const virtualizer = useVirtualizer({
     count: columns.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 30,
-    overscan: 10,
+    overscan: 5,
   });
 
   const changeSetDelete = (row) => {
@@ -150,12 +151,12 @@ const TableRow = ({
               </div>
             </CTableCell>
 
-            {virtualizer.getVirtualItems().map((virtualRow, virtualIndex) => {
-              const virtualRowObject = columns?.[virtualRow.index];
+            {columns.map((virtualRow, virtualIndex) => {
+              // const virtualRowObject = columns?.[virtualRow.index];
               return (
-                virtualRowObject?.attributes?.field_permission?.view_permission && (
+                virtualRow?.attributes?.field_permission?.view_permission && (
                   <CTableCell
-                    key={virtualRowObject.guid}
+                    key={virtualRow.guid}
                     className={`overflow-ellipsis ${tableHeight}`}
                     style={{
                       minWidth: "220px",
@@ -166,18 +167,18 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? `${calculateWidthFixedColumn(virtualRowObject.id) + 80}px` : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualRow?.id] ? `${calculateWidthFixedColumn(virtualRow.id) + 80}px` : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? "1" : "0"
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id] ? "1" : "0"
                       }`,
                     }}
                   >
@@ -187,7 +188,7 @@ const TableRow = ({
                         tableView={tableView}
                         tableSlug={tableSlug}
                         fields={columns}
-                        field={virtualRowObject}
+                        field={virtualRow}
                         getValues={getValues}
                         mainForm={mainForm}
                         row={row}
@@ -200,7 +201,7 @@ const TableRow = ({
                         width={width}
                       />
                     ) : (
-                      <CellElementGenerator field={virtualRowObject} row={row} />
+                      <CellElementGenerator field={virtualRow} row={row} />
                     )}
                   </CTableCell>
                 )

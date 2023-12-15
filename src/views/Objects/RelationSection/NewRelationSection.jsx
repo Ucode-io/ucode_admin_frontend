@@ -48,7 +48,7 @@ const NewRelationSection = ({
   errors,
 }) => {
   const [data, setData] = useState([]);
-
+  const many2many = selectedTab?.relation?.type === "Many2Many";
   const filteredRelations = useMemo(() => {
     const rel = data?.filter((relation) => relation?.table_id);
     return rel?.filter((item) => {
@@ -152,6 +152,7 @@ const NewRelationSection = ({
       [relationId]: value,
     }));
   };
+
   const navigateToCreatePage = () => {
     let mapped = {
       [`${tableSlug}_id`]: idFromParams ?? "",
@@ -428,14 +429,13 @@ const NewRelationSection = ({
                         )
                       )}
                     </TabList>
-
                     <div className="flex gap-2">
                       <CustomActionsButton
                         tableSlug={selectedRelation?.relatedTable}
                         selectedObjects={selectedObjects}
                         setSelectedObjects={setSelectedObjects}
                       />
-                      {relatedTable && (
+                      {relatedTable && many2many ? (
                         <RectangleIconButton
                           color="success"
                           size="small"
@@ -444,7 +444,7 @@ const NewRelationSection = ({
                         >
                           <Add style={{ color: "#007AFF" }} />
                         </RectangleIconButton>
-                      )}
+                      ) : null}
 
                       {/* {formVisible ? (
                       <>

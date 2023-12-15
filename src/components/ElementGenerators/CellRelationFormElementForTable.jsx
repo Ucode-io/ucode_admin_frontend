@@ -158,7 +158,7 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const { i18n } = useTranslation();
-
+  console.log("localValue", localValue);
   const customStyles = {
     control: (provided, state) => ({
       ...provided,

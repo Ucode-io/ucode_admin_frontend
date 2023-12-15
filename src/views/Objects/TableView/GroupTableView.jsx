@@ -220,7 +220,7 @@ const GroupTableView = ({
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
           view_type: "TABLE",
           offset: pageToOffset(currentPage, limit),

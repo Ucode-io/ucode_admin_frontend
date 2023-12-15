@@ -38,6 +38,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import constructorTableService from "../../../../../services/constructorTableService";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -94,7 +95,7 @@ const FieldSettings = ({
     ["GET_VIEWS_AND_FIELDS", { slug }],
     () => {
       if (!slug) return false;
-      return constructorObjectService.getList(slug, {
+      return constructorTableService.getTableInfo(slug, {
         data: { limit: 10, offset: 0, app_id: appId },
       });
     },

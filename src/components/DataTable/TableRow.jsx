@@ -53,6 +53,12 @@ const TableRow = ({
 }) => {
   const navigate = useNavigate();
   const parentRef = useRef(null);
+  const virtualizer = useVirtualizer({
+    count: columns.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 30,
+    overscan: 10,
+  });
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
@@ -94,7 +100,7 @@ const TableRow = ({
     <>
       {!relationAction ? (
         <>
-          <CTableRow style={style} ref={parentRef}>
+          <CTableRow style={style} parentRef={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -144,11 +150,12 @@ const TableRow = ({
               </div>
             </CTableCell>
 
-            {columns.map(
-              (virtualColumn) =>
-                virtualColumn?.attributes?.field_permission?.view_permission && (
+            {virtualizer.getVirtualItems().map((virtualRow, virtualIndex) => {
+              const virtualRowObject = columns?.[virtualRow.index];
+              return (
+                virtualRowObject?.attributes?.field_permission?.view_permission && (
                   <CTableCell
-                    key={virtualColumn.id}
+                    key={virtualRowObject.guid}
                     className={`overflow-ellipsis ${tableHeight}`}
                     style={{
                       minWidth: "220px",
@@ -159,18 +166,18 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id] ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px` : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? `${calculateWidthFixedColumn(virtualRowObject.id) + 80}px` : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualColumn?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualColumn?.id] ? "1" : "0"
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? "1" : "0"
                       }`,
                     }}
                   >
@@ -180,7 +187,7 @@ const TableRow = ({
                         tableView={tableView}
                         tableSlug={tableSlug}
                         fields={columns}
-                        field={virtualColumn}
+                        field={virtualRowObject}
                         getValues={getValues}
                         mainForm={mainForm}
                         row={row}
@@ -193,11 +200,12 @@ const TableRow = ({
                         width={width}
                       />
                     ) : (
-                      <CellElementGenerator field={virtualColumn} row={row} />
+                      <CellElementGenerator field={virtualRowObject} row={row} />
                     )}
                   </CTableCell>
                 )
-            )}
+              );
+            })}
             <td style={{ height: "30px" }}>
               <div
                 style={{

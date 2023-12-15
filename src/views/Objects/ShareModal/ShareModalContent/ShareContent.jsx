@@ -50,7 +50,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { data: clientTypeList } = useQuery(
     ["GET_OBJECT_LIST", "client_type"],
     () => {
-      return constructorObjectService.getList("client_type", {
+      return constructorObjectService.getListV2("client_type", {
         data: {},
       });
     },
@@ -70,7 +70,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { data: getRoleList } = useQuery(
     ["GET_OBJECT_LIST", client_type],
     () => {
-      return constructorObjectService.getList("role", {
+      return constructorObjectService.getListV2("role", {
         data: {
           client_type_id: client_type,
         },

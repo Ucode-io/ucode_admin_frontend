@@ -93,7 +93,7 @@ function FormulaFilters({
   const {data: filtersValue = []} = useQuery(
     ["GET_OBJECT_LIST", selectedSlug, debouncedValue],
     () => {
-      return constructorObjectService.getList(selectedSlug, {
+      return constructorObjectService.getListV2(selectedSlug, {
         data: {
           limit: 10,
           offset: 0,

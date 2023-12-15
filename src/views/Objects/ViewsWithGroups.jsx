@@ -32,6 +32,7 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import PageFallback from "../../components/PageFallback";
 
 const ViewsWithGroups = ({
   views,
@@ -49,9 +50,8 @@ const ViewsWithGroups = ({
   const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
-  const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
+  // const [analyticsRes, setAnalyticsRes] = useState(null);
+  // const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
@@ -134,32 +134,32 @@ const ViewsWithGroups = ({
     );
   };
 
-  function dateIsValid(date) {
-    return date instanceof Date && !isNaN(date);
-  }
+  // function dateIsValid(date) {
+  //   return date instanceof Date && !isNaN(date);
+  // }
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
-  useEffect(() => {
-    if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
-      setIsFinancialCalendarLoading(true);
-      constructorObjectService
-        .getFinancialAnalytics(tableSlug, {
-          data: {
-            start: dateFilters?.$gte,
-            end: dateFilters?.$lt,
-            view_id: view?.id,
-          },
-        })
-        .then((res) => {
-          setAnalyticsRes(res.data);
-        })
-        .finally(() => setIsFinancialCalendarLoading(false));
-    }
-  }, [dateFilters, tableSlug, view?.id, view?.type]);
+  // useEffect(() => {
+  //   if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
+  //     setIsFinancialCalendarLoading(true);
+  //     constructorObjectService
+  //       .getFinancialAnalytics(tableSlug, {
+  //         data: {
+  //           start: dateFilters?.$gte,
+  //           end: dateFilters?.$lt,
+  //           view_id: view?.id,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         setAnalyticsRes(res.data);
+  //       })
+  //       .finally(() => setIsFinancialCalendarLoading(false));
+  //   }
+  // }, [dateFilters, tableSlug, view?.id, view?.type]);
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
@@ -188,6 +188,7 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
+  // if (fieldsMap?.length && views?.length) return <PageFallback />;
   return (
     <>
       <FiltersBlock
@@ -517,18 +518,20 @@ const ViewsWithGroups = ({
                         fieldsMap={fieldsMap}
                         tab={tab}
                       />
-                    ) : view?.type === "FINANCE CALENDAR" ? (
-                      <FinancialCalendarView
-                        view={view}
-                        filters={filters}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                        isLoading={isFinancialCalendarLoading}
-                        financeDate={analyticsRes?.response || []}
-                        financeTotal={analyticsRes?.total_amount || []}
-                        totalBalance={analyticsRes?.balance}
-                      />
-                    ) : (
+                    ) 
+                    // : view?.type === "FINANCE CALENDAR" ? (
+                    //   <FinancialCalendarView
+                    //     view={view}
+                    //     filters={filters}
+                    //     fieldsMap={fieldsMap}
+                    //     tab={tab}
+                    //     isLoading={isFinancialCalendarLoading}
+                    //     financeDate={analyticsRes?.response || []}
+                    //     financeTotal={analyticsRes?.total_amount || []}
+                    //     totalBalance={analyticsRes?.balance}
+                    //   />
+                    // )
+                     : (
                       <TableView
                         isVertical
                         setCurrentPage={setCurrentPage}
@@ -573,18 +576,20 @@ const ViewsWithGroups = ({
                       view={view}
                       fieldsMap={fieldsMap}
                     />
-                  ) : view?.type === "FINANCE CALENDAR" ? (
-                    <FinancialCalendarView
-                      control={control}
-                      view={view}
-                      filters={filters}
-                      fieldsMap={fieldsMap}
-                      isLoading={isFinancialCalendarLoading}
-                      financeDate={analyticsRes?.response || []}
-                      financeTotal={analyticsRes?.total_amount || []}
-                      totalBalance={analyticsRes?.balance || []}
-                    />
-                  ) : (
+                  ) 
+                  // : view?.type === "FINANCE CALENDAR" ? (
+                  //   <FinancialCalendarView
+                  //     control={control}
+                  //     view={view}
+                  //     filters={filters}
+                  //     fieldsMap={fieldsMap}
+                  //     isLoading={isFinancialCalendarLoading}
+                  //     financeDate={analyticsRes?.response || []}
+                  //     financeTotal={analyticsRes?.total_amount || []}
+                  //     totalBalance={analyticsRes?.balance || []}
+                  //   />
+                  // ) 
+                  : (
                     <TableView
                       visibleColumns={visibleColumns}
                       setCurrentPage={setCurrentPage}

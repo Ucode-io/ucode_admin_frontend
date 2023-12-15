@@ -23,6 +23,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import PageFallback from "../../../components/PageFallback";
 
 const TableView = ({
   filterVisible,
@@ -412,31 +413,52 @@ const TableView = ({
     getOptionsList();
   }, [tableData, computedRelationFields]);
 
-  const getLayoutList = () => {
-    layoutService
-      .getList(
+  const currentLanguage = useMemo(() => {
+    return i18n?.language;
+  }, [i18n?.language]);
+
+  const {
+    data: { layoutList } = {
+      layoutList: [],
+    },
+    refetchLayouts,
+    isLoading: layoutLoader,
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT_LIST",
+      {
+        tableSlug,
+        currentLanguage,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getList(
         {
           "table-slug": tableSlug,
           language_setting: i18n?.language,
           is_default: true,
         },
         tableSlug
-      )
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
-        });
+      );
+    },
+    enabled: !!tableSlug,
+    select: (res) => {
+      return {
+        layoutList: res?.layouts ?? [],
+      };
+    },
+    onSuccess: (data) => {
+      data?.layoutList?.find((layout) => {
+        if (layout.type === "PopupLayout") {
+          setLayoutType("PopupLayout");
+          return true;
+        } else {
+          setLayoutType("SimpleLayout");
+          return false;
+        }
       });
-  };
-
-  // const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-  //   tableSlug,
-  // });
-
-  const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObjects((prev) => [...prev, row.guid]);
-    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid));
-  };
+    },
+  });
 
   const deleteHandler = async (row) => {
     setDeleteLoader(true);
@@ -497,10 +519,6 @@ const TableView = ({
   }, [tableData, reset]);
 
   useEffect(() => {
-    getLayoutList();
-  }, [tableSlug, i18n?.language]);
-
-  useEffect(() => {
     refetch();
     dispatch(quickFiltersActions.setQuickFiltersCount(view?.attributes?.quick_filters?.length ?? 0));
     setFilterVisible(view?.attributes?.quick_filters?.length > 0 ? true : false);
@@ -527,7 +545,7 @@ const TableView = ({
         </div>
       }
       {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
-      <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
+      <div style={{ display: "flex", alignItems: "flex-start", width: filterVisible ? "calc(100% - 200px)" : "100%" }} id="data-table">
         <ObjectDataTable
           refetch={refetch}
           filterVisible={filterVisible}

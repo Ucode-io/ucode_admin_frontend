@@ -128,8 +128,8 @@ const Router = () => {
     )
       ? result
       : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
-  }, [location.pathname, applications, result]);
-  console.log("redirectLink", redirectLink);
+  }, [location.pathname, applications, result, companyDefaultLink]);
+
   if (!isAuth)
     return (
       <Suspense fallback={<p> Loading...</p>}>

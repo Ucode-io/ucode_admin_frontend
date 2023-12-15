@@ -64,7 +64,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
-      return constructorObjectService.getList(selectedTable?.slug, {
+      return constructorObjectService.getListV2(selectedTable?.slug, {
         data: queryPayload,
       });
     },

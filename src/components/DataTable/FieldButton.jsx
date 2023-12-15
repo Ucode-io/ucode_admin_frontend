@@ -208,7 +208,9 @@ export default function FieldButton({
         setValue={setValue}
         target={target}
       />
-      <FieldCreateModal
+      {
+        fieldCreateAnchor && (
+          <FieldCreateModal
         anchorEl={fieldCreateAnchor}
         setAnchorEl={setFieldCreateAnchor}
         watch={watch}
@@ -223,6 +225,9 @@ export default function FieldButton({
         fieldData={fieldData}
         handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
+        )
+      }
+      
     </div>
   );
 }

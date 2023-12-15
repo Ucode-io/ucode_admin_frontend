@@ -6,26 +6,24 @@ import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
+import { quickFiltersActions } from "../../../store/filter/quick_filter";
 import { generateGUID } from "../../../utils/generateID";
 import { mergeStringAndState } from "../../../utils/jsonPath";
 import { listToMap } from "../../../utils/listToMap";
 import { pageToOffset } from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import { quickFiltersActions } from "../../../store/filter/quick_filter";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import PageFallback from "../../../components/PageFallback";
 
 const TableView = ({
   filterVisible,
@@ -55,7 +53,6 @@ const TableView = ({
   checkedColumns,
   getValues,
   searchText,
-  setDataLength,
   setSelectedObjects,
   selectedLinkedObject,
   selectedTabIndex,
@@ -68,15 +65,10 @@ const TableView = ({
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const { id, tableSlug, appId } = useParams();
-  const permissions = useSelector((state) => state.auth.permissions);
-  const { new_list } = useSelector((state) => state.filter);
+  const { id, slug, tableSlug, appId } = useParams();
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-  console.log("slugslugslugslug", tableSlug);
-  const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
-  );
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
   const [limit, setLimit] = useState(20);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -290,12 +282,6 @@ const TableView = ({
       "GET_TABLE_INFO",
       {
         tableSlug,
-        // searchText,
-        // sortedDatas,
-        // currentPage,
-        // checkedColumns,
-        // limit,
-        // filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
       },
     ],
@@ -311,6 +297,7 @@ const TableView = ({
       };
     },
   });
+
   const {
     data: { tableData, pageCount } = {
       tableData: [],
@@ -328,7 +315,7 @@ const TableView = ({
         searchText,
         sortedDatas,
         currentPage,
-        checkedColumns,
+        // checkedColumns,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
@@ -462,34 +449,52 @@ const TableView = ({
     getOptionsList();
   }, [tableData, computedRelationFields]);
 
-  const getLayoutList = () => {
-    layoutService
-      .getList(
+  const currentLanguage = useMemo(() => {
+    return i18n?.language;
+  }, [i18n?.language]);
+
+  const {
+    data: { layoutList } = {
+      layoutList: [],
+    },
+    refetchLayouts,
+    isLoading: layoutLoader,
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT_LIST",
+      {
+        tableSlug,
+        currentLanguage,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getList(
         {
           "table-slug": tableSlug,
           language_setting: i18n?.language,
           is_default: true,
         },
         tableSlug
-      )
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
-        });
+      );
+    },
+    enabled: !!tableSlug,
+    select: (res) => {
+      return {
+        layoutList: res?.layouts ?? [],
+      };
+    },
+    onSuccess: (data) => {
+      data?.layoutList?.find((layout) => {
+        if (layout.type === "PopupLayout") {
+          setLayoutType("PopupLayout");
+          return true;
+        } else {
+          setLayoutType("SimpleLayout");
+          return false;
+        }
       });
-  };
-
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
-
-  const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObjects((prev) => [...prev, row.guid]);
-    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid));
-  };
+    },
+  });
 
   const deleteHandler = async (row) => {
     setDeleteLoader(true);
@@ -500,25 +505,6 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
-  useEffect(() => {
-    layoutService
-      .getList(
-        {
-          "table-slug": tableSlug,
-          language_setting: i18n?.language,
-          is_default: true,
-        },
-        tableSlug
-      )
-      .then((res) => {
-        res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
-        });
-      });
-  }, [tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -577,10 +563,6 @@ const TableView = ({
   }, [tableData, reset]);
 
   useEffect(() => {
-    getLayoutList();
-  }, [tableSlug, i18n?.language]);
-
-  useEffect(() => {
     refetch();
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
@@ -615,10 +597,7 @@ const TableView = ({
         </div>
       }
       {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
-      <div
-        style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
-        id="data-table"
-      >
+      <div style={{ display: "flex", alignItems: "flex-start", width: filterVisible ? "calc(100% - 200px)" : "100%" }} id="data-table">
         <ObjectDataTable
           refetch={refetch}
           filterVisible={filterVisible}
@@ -654,7 +633,7 @@ const TableView = ({
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}
-          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+          // onCheckboxChange={!!customEvents?.length && onCheckboxChange}
           filters={filters}
           filterChangeHandler={filterChangeHandler}
           onRowClick={navigateToEditPage}

@@ -26,6 +26,7 @@ export const CTable = ({
   defaultLimit,
   view,
   filterVisible,
+  parentRef
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -39,6 +40,7 @@ export const CTable = ({
           overflow: loader ? "hidden" : "auto",
           width: "100%",
         }}
+        ref={parentRef}
       >
         {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
       </div>
@@ -119,9 +121,9 @@ export const CTableBody = forwardRef(
   }
 );
 
-export const CTableRow = ({ children, className, ...props }) => {
+export const CTableRow = ({children, className, parentRef, ...props}) => {
   return (
-    <tr className={`CTableRow ${className}`} {...props}>
+    <tr className={`CTableRow ${className}`} {...props} ref={parentRef}>
       {children}
     </tr>
   );

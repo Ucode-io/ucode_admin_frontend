@@ -9,12 +9,9 @@ import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService, {
-  useTableByIdQuery,
-} from "../../../../services/constructorTableService";
+import constructorTableService from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
 import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
@@ -22,15 +19,15 @@ import { createConstructorTableAction } from "../../../../store/constructorTable
 import { generateGUID } from "../../../../utils/generateID";
 import { listToMap } from "../../../../utils/listToMap";
 
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import { useTranslation } from "react-i18next";
-import menuSettingsService from "../../../../services/menuSettingsService";
-import { useQueryClient } from "react-query";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -77,12 +74,12 @@ const ConstructorTablesFormPage = () => {
       table_slug: tableSlug,
     });
 
-    const getActions = constructorCustomEventService.getList(
-      {
-        table_slug: tableSlug,
-      },
-      tableSlug
-    );
+    // const getActions = constructorCustomEventService.getList(
+    //   {
+    //     table_slug: slug,
+    //   },
+    //   slug
+    // );
 
     const getLayouts = layoutService
       .getList(
@@ -97,12 +94,7 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([
-        getTableData,
-        getActions,
-        getViewRelations,
-        getLayouts,
-      ]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getViewRelations, getLayouts]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,

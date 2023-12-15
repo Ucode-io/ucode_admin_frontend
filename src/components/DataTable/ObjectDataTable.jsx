@@ -25,6 +25,7 @@ import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const ObjectDataTable = ({
   relOptions,
@@ -244,12 +245,14 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
-  const relationFields = useMemo(() => {
-    return columns?.filter(
-      (item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS"
-    );
-  }, [columns]);
+  const parentRef = useRef(null);
 
+  const virtualizer = useVirtualizer({
+    count: isRelationTable ? fields?.length : data?.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => elementHeight,
+    overscan: 10,
+  });
   return (
     <CTable
       disablePagination={disablePagination}
@@ -269,6 +272,7 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
       view={view}
       filterVisible={filterVisible}
+      parentRef={parentRef}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
@@ -371,46 +375,51 @@ const ObjectDataTable = ({
       >
         {(isRelationTable ? fields : data).length > 0 &&
           columns.length > 0 &&
-          (isRelationTable ? fields : data)?.map((row, rowIndex) => (
-            <TableRow
-              relOptions={relOptions}
-              tableView={tableView}
-              width={"80px"}
-              remove={remove}
-              watch={watch}
-              getValues={getValues}
-              control={control}
-              key={row.id}
-              row={row}
-              mainForm={mainForm}
-              formVisible={formVisible}
-              rowIndex={rowIndex}
-              isTableView={isTableView}
-              selectedObjectsForDelete={selectedObjectsForDelete}
-              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-              isRelationTable={isRelationTable}
-              relatedTableSlug={relatedTableSlug}
-              onRowClick={onRowClick}
-              isChecked={isChecked}
-              calculateWidthFixedColumn={calculateWidthFixedColumn}
-              onCheckboxChange={onCheckboxChange}
-              currentPage={currentPage}
-              limit={limit}
-              setFormValue={setFormValue}
-              columns={columns}
-              tableHeight={tableHeight}
-              tableSettings={tableSettings}
-              pageName={pageName}
-              calculateWidth={calculateWidth}
-              tableSlug={tableSlug}
-              onDeleteClick={onDeleteClick}
-              relationAction={relationAction}
-              onChecked={onChecked}
-              relationFields={fields}
-              data={data}
-              view={view}
-            />
-          ))}
+          virtualizer.getVirtualItems()?.map((virtualRow, index) => {
+            const virtualRowObject = isRelationTable ? fields?.[virtualRow.index] : data?.[virtualRow.index];
+            return (
+              columns && (
+                <TableRow
+                  key={virtualRowObject?.guid}
+                  relOptions={relOptions}
+                  tableView={tableView}
+                  width={"80px"}
+                  remove={remove}
+                  watch={watch}
+                  getValues={getValues}
+                  control={control}
+                  row={virtualRowObject}
+                  mainForm={mainForm}
+                  formVisible={formVisible}
+                  rowIndex={index}
+                  isTableView={isTableView}
+                  selectedObjectsForDelete={selectedObjectsForDelete}
+                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                  isRelationTable={isRelationTable}
+                  relatedTableSlug={relatedTableSlug}
+                  onRowClick={onRowClick}
+                  isChecked={isChecked}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  onCheckboxChange={onCheckboxChange}
+                  currentPage={currentPage}
+                  limit={limit}
+                  setFormValue={setFormValue}
+                  columns={columns}
+                  tableHeight={tableHeight}
+                  tableSettings={tableSettings}
+                  pageName={pageName}
+                  calculateWidth={calculateWidth}
+                  tableSlug={tableSlug}
+                  onDeleteClick={onDeleteClick}
+                  relationAction={relationAction}
+                  onChecked={onChecked}
+                  relationFields={fields}
+                  data={data}
+                  view={view}
+                />
+              )
+            );
+          })}
 
         {addNewRow && (
           <AddDataColumn

@@ -52,6 +52,13 @@ const TableRow = ({
   style,
 }) => {
   const navigate = useNavigate();
+  const parentRef = useRef(null);
+  const virtualizer = useVirtualizer({
+    count: columns.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 30,
+    overscan: 10,
+  });
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
@@ -62,16 +69,6 @@ const TableRow = ({
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
   };
-
-  const parentRef = useRef(null);
-
-  const virtualizer = useVirtualizer({
-    horizontal: true,
-    count: 10,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
-    overscan: 5,
-  });
 
   if (formVisible)
     return (
@@ -105,7 +102,7 @@ const TableRow = ({
     <>
       {!relationAction ? (
         <>
-          <CTableRow style={style} ref={parentRef}>
+          <CTableRow style={style} parentRef={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -137,13 +134,8 @@ const TableRow = ({
                   <OpenInFullIcon />
                 </Button>
 
-                <span
-                  className="data_table__row_number"
-                  style={{width: "35px"}}
-                >
-                  {limit === "all"
-                    ? rowIndex + 1
-                    : (currentPage - 1) * limit + rowIndex + 1}
+                <span className="data_table__row_number" style={{ width: "35px" }}>
+                  {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
                 </span>
 
@@ -165,12 +157,12 @@ const TableRow = ({
               </div>
             </CTableCell>
 
-            {columns.map(
-              (virtualColumn) =>
-                virtualColumn?.attributes?.field_permission
-                  ?.view_permission && (
+            {virtualizer.getVirtualItems().map((virtualRow, virtualIndex) => {
+              const virtualRowObject = columns?.[virtualRow.index];
+              return (
+                virtualRowObject?.attributes?.field_permission?.view_permission && (
                   <CTableCell
-                    key={virtualColumn.id}
+                    key={virtualRowObject.guid}
                     className={`overflow-ellipsis ${tableHeight}`}
                     style={{
                       minWidth: "220px",
@@ -181,33 +173,18 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                        ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) + 80
-                          }px`
-                        : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? `${calculateWidthFixedColumn(virtualRowObject.id) + 80}px` : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                          ? "1"
-                          : "0"
+                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRowObject?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRowObject?.id] ? "1" : "0"
                       }`,
                     }}
                   >
@@ -217,7 +194,7 @@ const TableRow = ({
                         tableView={tableView}
                         tableSlug={tableSlug}
                         fields={columns}
-                        field={virtualColumn}
+                        field={virtualRowObject}
                         getValues={getValues}
                         mainForm={mainForm}
                         row={row}
@@ -231,12 +208,13 @@ const TableRow = ({
                         isTableView={isTableView}
                       />
                     ) : (
-                      <CellElementGenerator field={virtualColumn} row={row} />
+                      <CellElementGenerator field={virtualRowObject} row={row} />
                     )}
                   </CTableCell>
                 )
-            )}
-            <td style={{height: "30px"}}>
+              );
+            })}
+            <td style={{ height: "30px" }}>
               <div
                 style={{
                   display: "flex",
@@ -269,35 +247,14 @@ const TableRow = ({
                 <GeneratePdfFromTable row={row} />
               </div>
             </td>
+
+            <td>
+              <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
+            </td>
           </CTableRow>
         </>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
-        !relationAction?.action_relations ? (
-        <CTableRow
-        // onClick={() => {
-        //   onRowClick(row, rowIndex);
-        // }}
-        >
-          {/* <CTableCell
-            align="center"
-            className="data_table__number_cell"
-            style={{
-              padding: "0 4px",
-              minWidth: width,
-              position: "sticky",
-              left: "0",
-              backgroundColor: "#F6F6F6",
-              zIndex: "1",
-            }}
-          >
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
-            {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
-              </div>
-            )}
-          </CTableCell> */}
-
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+        <CTableRow>
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -329,23 +286,9 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
-                {limit === "all"
-                  ? rowIndex + 1
-                  : (currentPage - 1) * limit + rowIndex + 1}
-                {/* {rowIndex + 1} */}
+              <span className="data_table__row_number" style={{ width: "35px" }}>
+                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
               </span>
-
-              {/* <Checkbox
-                className="table_multi_checkbox"
-                style={{
-                  display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
-                }}
-                checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
-                onChange={() => {
-                  changeSetDelete(row);
-                }}
-              /> */}
             </div>
           </CTableCell>
 
@@ -407,24 +350,6 @@ const TableRow = ({
               />
             </CTableCell>
           ))}
-          {/* <CTableCell
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-              <RectangleIconButton
-                color="error"
-                onClick={() => {
-                  onDeleteClick(row, rowIndex);
-                }}
-              >
-                <Delete color="error" />
-              </RectangleIconButton>
-            </PermissionWrapperV2>
-          </CTableCell> */}
           <td>
             <div
               style={{
@@ -443,17 +368,11 @@ const TableRow = ({
                 }}
               >
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() =>
-                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                    }
-                  >
+                  <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
               </CTableCell>
-              {/* <GeneratePdfFromTable row={row} /> */}
             </div>
           </td>
         </CTableRow>
@@ -463,26 +382,6 @@ const TableRow = ({
             onChecked(row?.guid);
           }}
         >
-          {/* <CTableCell
-            align="center"
-            className="data_table__number_cell"
-            style={{
-              padding: "0 4px",
-              minWidth: width,
-              position: "sticky",
-              left: "0",
-              backgroundColor: "#F6F6F6",
-              zIndex: "1",
-            }}
-          >
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
-            {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
-              </div>
-            )}
-          </CTableCell> */}
-
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -514,23 +413,9 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
-                {limit === "all"
-                  ? rowIndex + 1
-                  : (currentPage - 1) * limit + rowIndex + 1}
-                {/* {rowIndex + 1} */}
+              <span className="data_table__row_number" style={{ width: "35px" }}>
+                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
               </span>
-
-              {/* <Checkbox
-                  className="table_multi_checkbox"
-                  style={{
-                    display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
-                  }}
-                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
-                  onChange={() => {
-                    changeSetDelete(row);
-                  }}
-                /> */}
             </div>
           </CTableCell>
 

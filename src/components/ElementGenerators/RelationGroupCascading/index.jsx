@@ -70,7 +70,7 @@ const RelationGroupCascading = ({
   const getAllData = async () => {
     setTableLoader(true);
     try {
-      const { data } = await constructorObjectService.getList(
+      const { data } = await constructorObjectService.getListV2(
         field?.attributes?.cascading_tree_table_slug,
         {
           data: {},

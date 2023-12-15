@@ -195,21 +195,15 @@ const NewRelationSection = ({
 
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(
-        getRelatedTabeSlug.relatedTable,
-        {
-          data: {
-            objects: values.multi.map((item) => ({
-              ...item,
-              guid: item?.guid ?? undefined,
-              doctors_id_2: getValue(item, "doctors_id_2"),
-              doctors_id_3: getValue(item, "doctors_id_3"),
-              specialities_id: getValue(item, "specialities_id"),
-              [fieldSlug]: id,
-            })),
-          },
-        }
-      ),
+      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? undefined,
+            [fieldSlug]: id,
+          })),
+        },
+      }),
     {
       enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {

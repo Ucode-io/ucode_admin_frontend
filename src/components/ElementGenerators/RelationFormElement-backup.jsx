@@ -110,7 +110,7 @@ const AutoCompleteElement = ({
   const getOptions = (search) => {
     setLoader(true)
     constructorObjectService
-      .getList(tableSlug, { data: { search } })
+      .getListV2(tableSlug, { data: { search } })
       .then((res) => {
         if(JSON.stringify(res.data.response) !== JSON.stringify(options)) setOptions(res.data.response ?? [])
       })

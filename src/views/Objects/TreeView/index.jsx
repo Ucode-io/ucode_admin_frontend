@@ -37,7 +37,7 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
         groupFieldName = `${groupField.id.split("#")[0]}_id`;
       if (groupField?.slug) groupFieldName = groupField?.slug;
 
-      const {data} = await constructorObjectService.getList(tableSlug, {
+      const {data} = await constructorObjectService.getListV2(tableSlug, {
         data: {
           offset: 0,
           ...filters,

@@ -8,7 +8,7 @@ function Many2ManyValue({field, value}) {
   const {data: options = []} = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug, value],
     () => {
-      return constructorObjectService.getList(field?.table_slug, {
+      return constructorObjectService.getListV2(field?.table_slug, {
         data: {guid: value},
       });
     },

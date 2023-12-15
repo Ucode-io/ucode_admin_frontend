@@ -8,6 +8,7 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
+import constructorTableService from "../../../../services/constructorTableService";
 
 const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab, setTab }) => {
   const { tableSlug, appId } = useParams();
@@ -26,7 +27,7 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorTableService.getTableInfo(tableSlug, {
         data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
       });
     },

@@ -29,20 +29,7 @@ import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 
 const parser = new Parser();
 
-const NewCellElementGenerator = ({
-  field,
-  fields,
-  isBlackBg = false,
-  row,
-  relationfields,
-  isWrapField,
-  updateObject,
-  control,
-  setFormValue,
-  index,
-  data,
-}) => {
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
+const NewCellElementGenerator = ({ field, fields, isBlackBg = false, row, relationfields, isWrapField, updateObject, control, setFormValue, index, data }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const { i18n } = useTranslation();
@@ -87,13 +74,10 @@ const NewCellElementGenerator = ({
   //   name: computedSlug,
   // });
 
-  const isDisabled =
-    field.attributes?.disabled ||
-    !field.attributes?.field_permission?.edit_permission;
+  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
 
   const defaultValue = useMemo(() => {
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -105,8 +89,7 @@ const NewCellElementGenerator = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
 
     if (!defaultValue) return undefined;
 
@@ -484,15 +467,7 @@ const NewCellElementGenerator = ({
 
     case "ICON":
       return (
-        <HFIconPicker
-          isFormEdit
-          control={control}
-          updateObject={updateObject}
-          isNewTableView={true}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-        />
+        <HFIconPicker isFormEdit control={control} updateObject={updateObject} isNewTableView={true} name={computedSlug} required={field.required} defaultValue={defaultValue} />
       );
     case "MAP":
       return (

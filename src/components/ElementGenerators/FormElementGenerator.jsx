@@ -134,7 +134,6 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
-
   const isDisabled = useMemo(() => {
     const { attributes } = field;
 

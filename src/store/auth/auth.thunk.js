@@ -7,7 +7,6 @@ import {companyActions} from "../company/company.slice";
 export const loginAction = createAsyncThunk(
   "auth/login",
   async (data, {dispatch}) => {
-    console.log("dataaaaaaaaa", data);
     try {
       const res = await authService.login(data);
       dispatch(

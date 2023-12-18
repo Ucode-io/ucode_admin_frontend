@@ -1,6 +1,6 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
 
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
@@ -9,19 +9,19 @@ import PageFallback from "../../../components/PageFallback";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { listToMap } from "../../../utils/listToMap";
-import { objectToArray } from "../../../utils/objectToArray";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import { Filter } from "../components/FilterGenerator";
+import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
-import { useForm } from "react-hook-form";
-import { Drawer } from "@mui/material";
+import {useForm} from "react-hook-form";
+import {Drawer} from "@mui/material";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { generateGUID } from "../../../utils/generateID";
+import {generateGUID} from "../../../utils/generateID";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const RelationTable = forwardRef(
   (
@@ -48,20 +48,21 @@ const RelationTable = forwardRef(
       formVisible,
       selectedTab,
       type,
-      relatedTable,
+      relatedTable = {},
+      getAllData = () => {},
     },
     ref
   ) => {
-    const { appId, tableSlug } = useParams();
+    const {appId, tableSlug} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { navigateToForm } = useTabRouter();
+    const {navigateToForm} = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
 
     const paginationInfo = useSelector(
@@ -127,13 +128,13 @@ const RelationTable = forwardRef(
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({ table_id: id });
+        const getFieldsData = constructorFieldService.getList({table_id: id});
 
         const getRelations = constructorRelationService.getList({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         });
-        const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        const [{relations = []}, {fields = []}] = await Promise.all([
           getRelations,
           getFieldsData,
         ]);
@@ -286,7 +287,7 @@ const RelationTable = forwardRef(
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({ data }) => {
+        select: ({data}) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
@@ -325,7 +326,7 @@ const RelationTable = forwardRef(
           //   ?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({ field_id }) => fieldsMap[field_id])
+            ?.map(({field_id}) => fieldsMap[field_id])
             ?.filter((el) => el);
 
           return {
@@ -427,7 +428,7 @@ const RelationTable = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
+    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -450,7 +451,7 @@ const RelationTable = forwardRef(
       }
     );
 
-    const { data: { custom_events: customEvents = [] } = {} } =
+    const {data: {custom_events: customEvents = []} = {}} =
       useCustomActionsQuery({
         tableSlug: relatedTableSlug,
       });
@@ -481,7 +482,7 @@ const RelationTable = forwardRef(
         await constructorObjectService.deleteMultiple(tableSlug, {
           ids: selectedObjectsForDelete.map((i) => i.guid),
         });
-        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
       } finally {
         setDeleteLoader(false);
       }
@@ -526,6 +527,9 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
+              relatedTable={relatedTable}
+              fieldsMap={fieldsMap}
+              getAllData={getAllData}
               relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
@@ -568,8 +572,8 @@ const RelationTable = forwardRef(
               }
               limit={limit}
               setLimit={setLimit}
-              summaries={getRelatedTabeSlug.summaries}
-              isChecked={(row) => selectedObjects?.includes(row.guid)}
+              summaries={relatedTable?.attributes?.summaries}
+              isChecked={(row) => selectedObjects?.includes(row?.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
               title={"Сначала нужно создать объект"}

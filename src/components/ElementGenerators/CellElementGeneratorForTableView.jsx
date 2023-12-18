@@ -115,8 +115,6 @@ const CellElementGeneratorForTableView = ({
     return error ? undefined : result;
   }, [field]);
 
-  console.log("defaultValue", defaultValue);
-
   useEffect(() => {
     tables?.forEach((table) => {
       if (table.table_slug === relationTableSlug) {

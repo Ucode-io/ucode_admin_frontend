@@ -1,6 +1,6 @@
 import ReloadRelations from "@/components/ReloadRelations";
 import {lazy, Suspense, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
@@ -77,6 +77,7 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import TablesPage from "../views/Constructor/AllTables";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
+import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -137,13 +138,34 @@ const Router = () => {
     auth?.clientType?.default_page,
   ]);
 
+  const subdomain =
+    window.location.hostname === "localhost"
+      ? "ett.u-code.io"
+      : window.location.hostname;
+
+  const {data, isLoading} = useLoginMicrofrontendQuery({
+    params: {
+      subdomain,
+    },
+  });
+
+  const dispatch = useDispatch();
+
+  const microfrontendUrl = data?.function?.url;
+  const microfrontendLink = microfrontendUrl
+    ? `https://${microfrontendUrl}/assets/remoteEntry.js`
+    : undefined;
+
   if (!isAuth)
     return (
       <Suspense fallback={<p> Loading...</p>}>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
-            <Route path="login" element={<Login />} />
+            {microfrontendUrl &&
+              window.location.hostname !== "app.u-code.io" && (
+                <Route path="login" element={<Login />} />
+              )}
             <Route path="invite-user" element={<Invite />} />
             <Route path="registration" element={<Registration />} />
             <Route path="*" element={<Navigate to="/login" />} />

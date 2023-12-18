@@ -1,25 +1,19 @@
 import ReloadRelations from "@/components/ReloadRelations";
 import {lazy, Suspense, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
-import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
-import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
 import EmailPage from "../components/LayoutSidebar/Components/Email";
 import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
-import MinioPage from "../components/LayoutSidebar/Components/Minio";
-import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 import NotificationPage from "../components/LayoutSidebar/Components/Notification";
 import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import Queries from "../components/LayoutSidebar/Components/Query";
-import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
-import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
@@ -28,7 +22,6 @@ import AnalyticsLayout from "../layouts/AnalyticsLayout";
 import CashboxLayout from "../layouts/CashboxLayout";
 import MainLayout from "../layouts/MainLayout";
 import SettingsLayout from "../layouts/SettingsLayout";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import DashboardList from "../views/Analytics/Dashboard";
 import DashboardCreatePage from "../views/Analytics/Dashboard/DashboardCreatePage";
 import DashboardSettings from "../views/Analytics/Dashboard/DashboardSettings";
@@ -39,7 +32,6 @@ import DashboardDetailPage from "../views/Analytics/Dashboard/Detail";
 import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
-import Invite from "../views/Auth/Invite";
 import Login from "../views/Auth/Login";
 import Registration from "../views/Auth/Registration";
 import CashboxAppointments from "../views/Cashbox/Appointments";
@@ -48,7 +40,6 @@ import CashboxClosing from "../views/Cashbox/Closing";
 import CashboxOpening from "../views/Cashbox/Opening";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
-import TablesPage from "../views/Constructor/AllTables";
 import AppsPage from "../views/Constructor/Apps";
 import AppsForm from "../views/Constructor/Apps/AppsForm";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
@@ -63,8 +54,6 @@ import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PivotTableView from "../views/Objects/PivotTableView";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
@@ -74,10 +63,21 @@ import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import ResourceDetail from "../views/Resources/Detail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
-import UsersList from "../views/Users/UsersList";
 import WebPage from "../views/WebPage";
+import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
+import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
+import Invite from "../views/Auth/Invite";
+import UsersList from "../views/Users/UsersList";
+import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
+import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
+import TablesPage from "../views/Constructor/AllTables";
+import MinioPage from "../components/LayoutSidebar/Components/Minio";
+import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
+import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -143,24 +143,13 @@ const Router = () => {
       ? "ett.u-code.io"
       : window.location.hostname;
 
-  const {data, isLoading} = useLoginMicrofrontendQuery({
-    params: {
-      subdomain,
-    },
-  });
-  const microfrontendUrl = data?.function?.url;
-  console.log("testttt", window.location.hostname);
   if (!isAuth)
     return (
       <Suspense fallback={<p> Loading...</p>}>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
-            {window.location.hostname === "localhost" &&
-              microfrontendUrl &&
-              window.location.hostname !== "app.u-code.io" && (
-                <Route path="login" element={<Login />} />
-              )}
+            <Route path="login" element={<Login />} />
             <Route path="invite-user" element={<Invite />} />
             <Route path="registration" element={<Registration />} />
             <Route path="*" element={<Navigate to="/login" />} />

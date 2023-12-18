@@ -155,6 +155,7 @@ const Router = () => {
         path="/main"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
       >
+        <Route index element={<Navigate to={redirectLink} />} />
         <Route
           path=":appId/users-list"
           element={
@@ -163,9 +164,6 @@ const Router = () => {
             </Suspense>
           }
         />
-        {console.log("redirectLink", redirectLink)}
-        <Route index element={<Navigate to={redirectLink} />} />
-
         <Route path=":appId" element={<div></div>} />
 
         <Route path=":appId/chat" element={<Chat />}>

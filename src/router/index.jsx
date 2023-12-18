@@ -115,13 +115,10 @@ const Router = () => {
   const result =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
+  console.log("result", parts);
+  console.log("companyDefaultLink", companyDefaultLink);
+
   const redirectLink = useMemo(() => {
-    // if (location.pathname.includes("settings"))
-    //   return "/settings/constructor/apps";
-    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    // if (!applications.length || !applications[0].permission?.read)
-    //   return "/settings/constructor/apps";
-    // return "/settings/constructor/apps";
     if (
       auth?.clientType?.default_page?.length
         ? auth?.clientType?.default_page?.length
@@ -134,6 +131,8 @@ const Router = () => {
       return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
     }
   }, [location.pathname, applications, result, companyDefaultLink]);
+
+  console.log("redirectLink", redirectLink);
 
   if (!isAuth)
     return (

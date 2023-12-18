@@ -111,6 +111,7 @@ const Router = () => {
   const parts = auth?.clientType?.default_page
     ? auth?.clientType?.default_page?.split("/")
     : companyDefaultLink.split("/");
+
   const result =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
@@ -129,7 +130,7 @@ const Router = () => {
       ? result
       : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
   }, [location.pathname, applications, result, companyDefaultLink]);
-
+  console.log("partsparts", parts, redirectLink);
   if (!isAuth)
     return (
       <Suspense fallback={<p> Loading...</p>}>
@@ -162,7 +163,7 @@ const Router = () => {
             </Suspense>
           }
         />
-
+        {console.log("redirectLink", redirectLink)}
         <Route index element={<Navigate to={redirectLink} />} />
 
         <Route path=":appId" element={<div></div>} />

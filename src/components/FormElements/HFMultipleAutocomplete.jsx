@@ -136,7 +136,7 @@ const AutoCompleteElement = ({
     setDialogState(null);
   };
   const [localOptions, setLocalOptions] = useState(options ?? []);
-  console.log("valueeeeeeeee", value, localOptions);
+
   const computedValue = useMemo(() => {
     if (!value?.length) return [];
 

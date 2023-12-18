@@ -1,7 +1,7 @@
 import ReloadRelations from "@/components/ReloadRelations";
-import { lazy, Suspense, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {lazy, Suspense, useMemo, useState} from "react";
+import {useSelector} from "react-redux";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
@@ -115,24 +115,27 @@ const Router = () => {
   const result =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
-  console.log("result", parts);
-  console.log("companyDefaultLink", companyDefaultLink);
-
   const redirectLink = useMemo(() => {
-    if (
+    // if (location.pathname.includes("settings"))
+    //   return "/settings/constructor/apps";
+    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
+    // if (!applications.length || !applications[0].permission?.read)
+    //   return "/settings/constructor/apps";
+    // return "/settings/constructor/apps";
+    return (
       auth?.clientType?.default_page?.length
         ? auth?.clientType?.default_page?.length
         : companyDefaultLink
-    ) {
-      console.log("iffffffff");
-      return result;
-    } else {
-      console.log("elseeeeeee");
-      return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
-    }
-  }, [location.pathname, applications, result, companyDefaultLink]);
-
-  console.log("redirectLink", redirectLink);
+    )
+      ? result
+      : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
+  }, [
+    location.pathname,
+    applications,
+    result,
+    companyDefaultLink,
+    auth?.clientType?.default_page,
+  ]);
 
   if (!isAuth)
     return (
@@ -158,7 +161,6 @@ const Router = () => {
         path="/main"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
       >
-        <Route index element={<Navigate to={redirectLink} />} />
         <Route
           path=":appId/users-list"
           element={
@@ -167,6 +169,9 @@ const Router = () => {
             </Suspense>
           }
         />
+
+        <Route index element={<Navigate to={redirectLink} />} />
+
         <Route path=":appId" element={<div></div>} />
 
         <Route path=":appId/chat" element={<Chat />}>

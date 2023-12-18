@@ -78,6 +78,7 @@ import TablesPage from "../views/Constructor/AllTables";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
+import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -143,21 +144,52 @@ const Router = () => {
       ? "ett.u-code.io"
       : window.location.hostname;
 
+  const {data, isLoading} = useLoginMicrofrontendQuery({
+    params: {
+      subdomain,
+    },
+  });
+
+  const microfrontendUrl = data?.function?.url;
+
   if (!isAuth)
-    return (
-      <Suspense fallback={<p> Loading...</p>}>
-        <Routes>
-          <Route path="/" element={<AuthLayout />}>
-            <Route index element={<Navigate to="/login " />} />
-            <Route path="login" element={<Login />} />
-            <Route path="invite-user" element={<Invite />} />
-            <Route path="registration" element={<Registration />} />
+    if (microfrontendUrl && window.location.hostname !== "localhost")
+      return (
+        <Suspense fallback={<p> Loading...</p>}>
+          <Routes>
+            <Route index element={<Navigate to={redirectLink} />} />
+            <Route path="/">
+              <Route index element={<Navigate to="/login " />} />
+              <Route
+                path="login"
+                element={
+                  <LoginMicrofrontend
+                    microfrontendUrl={microfrontendUrl}
+                    isLoading={isLoading}
+                  />
+                }
+              />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Route>
             <Route path="*" element={<Navigate to="/login" />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </Suspense>
-    );
+          </Routes>
+        </Suspense>
+      );
+    else
+      return (
+        <Suspense fallback={<p> Loading...</p>}>
+          <Routes>
+            <Route path="/" element={<AuthLayout />}>
+              <Route index element={<Navigate to="/login " />} />
+              <Route path="login" element={<Login />} />
+              <Route path="invite-user" element={<Invite />} />
+              <Route path="registration" element={<Registration />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </Suspense>
+      );
 
   return (
     <Routes>

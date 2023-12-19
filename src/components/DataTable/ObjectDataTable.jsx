@@ -27,6 +27,7 @@ import TableRow from "./TableRow";
 import "./style.scss";
 
 const ObjectDataTable = ({
+  selectedTab,
   relOptions,
   filterVisible,
   tableView,
@@ -268,6 +269,8 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
       view={view}
       filterVisible={filterVisible}
+      selectedTab={selectedTab}
+      isRelationTable={isRelationTable}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (

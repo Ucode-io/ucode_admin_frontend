@@ -276,7 +276,11 @@ const AutoCompleteElement = ({
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"
-                    onClick={getTagProps({index})?.onDelete}
+                    style={{cursor: "pointer"}}
+                    onClick={() => {
+                      getTagProps({index})?.onDelete();
+                      onFormChange(undefined);
+                    }}
                   />
                 )}
               </div>

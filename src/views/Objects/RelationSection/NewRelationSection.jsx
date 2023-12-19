@@ -361,7 +361,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-
+  console.log("selectedTab", selectedTab);
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
 

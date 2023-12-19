@@ -544,7 +544,6 @@ const TableView = ({
           </Box>
         </div>
       }
-      {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
       <div style={{ display: "flex", alignItems: "flex-start", width: filterVisible ? "calc(100% - 200px)" : "100%" }} id="data-table">
         <ObjectDataTable
           refetch={refetch}
@@ -581,7 +580,6 @@ const TableView = ({
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}
-          // onCheckboxChange={!!customEvents?.length && onCheckboxChange}
           filters={filters}
           filterChangeHandler={filterChangeHandler}
           onRowClick={navigateToEditPage}
@@ -600,7 +598,6 @@ const TableView = ({
           {...props}
         />
       </div>
-      {/* </PermissionWrapperV2> */}
 
       <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
 

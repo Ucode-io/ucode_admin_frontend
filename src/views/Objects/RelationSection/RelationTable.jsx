@@ -1,29 +1,26 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { Drawer } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
 import PageFallback from "../../../components/PageFallback";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
+import constructorRelationService from "../../../services/constructorRelationService";
+import { generateGUID } from "../../../utils/generateID";
 import { listToMap } from "../../../utils/listToMap";
 import { objectToArray } from "../../../utils/objectToArray";
 import { pageToOffset } from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { Filter } from "../components/FilterGenerator";
 import styles from "./style.module.scss";
-import { set } from "date-fns";
-import { useForm, useWatch } from "react-hook-form";
-import { Drawer } from "@mui/material";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { generateGUID } from "../../../utils/generateID";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import constructorFieldService from "../../../services/constructorFieldService";
-import constructorRelationService from "../../../services/constructorRelationService";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 
 const RelationTable = forwardRef(
   (
@@ -81,15 +78,6 @@ const RelationTable = forwardRef(
         show_in_menu: true,
         fields: [],
         app_id: appId,
-        // sections: [
-        //   {
-        //     column: "SINGLE",
-        //     fields: [],
-        //     label: "Детали",
-        //     id: generateGUID(),
-        //     icon: "circle-info.svg",
-        //   },
-        // ],
         summary_section: {
           id: generateGUID(),
           label: "Summary",
@@ -277,10 +265,6 @@ const RelationTable = forwardRef(
             ?.map((el) => fieldsMap[el])
             ?.filter((el) => el);
 
-          // const columns = getRelatedTabeSlug.columns
-          //   ?.map((id, index) => fieldsMap[id])
-          //   ?.filter((el) => el);
-
           const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
 
           return {
@@ -297,22 +281,10 @@ const RelationTable = forwardRef(
       }
     );
 
-    // useEffect(() => {
-    //   if (tableData?.length > 0) {
-    //     reset({
-    //       multi: tableData.map((i) => i),
-    //     });
-    //   }
-    // }, [tableData, reset]);
-
     const computedRelationFields = useMemo(() => {
       return Object.values(fieldsMap)?.filter((element) => {
         return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
       });
-
-      // return computedFields?.filter((item) => {
-      //   return view?.columns?.includes(item?.id);
-      // });
     }, [fieldsMap]);
 
     const getOptionsList = () => {
@@ -403,10 +375,7 @@ const RelationTable = forwardRef(
     });
 
     const navigateToEditPage = (row) => {
-      // if (rowClickType.value === "detail_page") {
       navigateToForm(relatedTableSlug, "EDIT", row);
-      // } else {
-      // }
     };
 
     const navigateToTablePage = () => {
@@ -417,7 +386,6 @@ const RelationTable = forwardRef(
       });
     };
     const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-    const [deleteLoader, setDeleteLoader] = useState(false);
 
     const multipleDelete = async () => {
       try {
@@ -426,25 +394,9 @@ const RelationTable = forwardRef(
         });
         queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
       } finally {
-        setDeleteLoader(false);
+        
       }
     };
-
-    // const { mutateAsync } = useMutation(
-    //   (values) => {
-    //     if (values.guid)
-    //       return constructorObjectService.update(relatedTableSlug, {
-    //         data: values,
-    //       })
-    //     else constructorObjectService.create(relatedTableSlug, { data: values })
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       setCreateFormVisible(false)
-    //       queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTableSlug])
-    //     },
-    //   }
-    // )
 
     if (loader) return <PageFallback />;
     return (

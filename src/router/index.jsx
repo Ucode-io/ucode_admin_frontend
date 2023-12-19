@@ -147,7 +147,7 @@ const Router = () => {
   const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
-      enabled: Boolean(!auth),
+      enabled: Boolean(!isAuth),
     },
   });
 

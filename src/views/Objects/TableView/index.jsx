@@ -23,7 +23,6 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import PageFallback from "../../../components/PageFallback";
 
 const TableView = ({
   filterVisible,
@@ -79,7 +78,6 @@ const TableView = ({
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
-  const { i18n } = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
   const [combinedTableData, setCombinedTableData] = useState([]);
 
@@ -449,50 +447,34 @@ const TableView = ({
     getOptionsList();
   }, [tableData, computedRelationFields]);
 
-  const currentLanguage = useMemo(() => {
-    return i18n?.language;
-  }, [i18n?.language]);
-
   const {
-    data: { layoutList } = {
-      layoutList: [],
+    data: { layout } = {
+      layout: [],
     },
-    refetchLayouts,
-    isLoading: layoutLoader,
   } = useQuery({
     queryKey: [
-      "GET_LAYOUT_LIST",
+      "GET_LAYOUT",
       {
         tableSlug,
-        currentLanguage,
       },
     ],
     queryFn: () => {
-      return layoutService.getList(
-        {
-          "table-slug": tableSlug,
-          language_setting: i18n?.language,
-          is_default: true,
-        },
-        tableSlug
-      );
+      return layoutService.getLayout(tableSlug, menuItem?.id);
     },
-    enabled: !!tableSlug,
-    select: (res) => {
+    select: (data) => {
       return {
-        layoutList: res?.layouts ?? [],
+        layout: data ?? {},
       };
     },
     onSuccess: (data) => {
-      data?.layoutList?.find((layout) => {
-        if (layout.type === "PopupLayout") {
-          setLayoutType("PopupLayout");
-          return true;
-        } else {
-          setLayoutType("SimpleLayout");
-          return false;
-        }
-      });
+      if (data?.layout?.type === "PopupLayout") {
+        setLayoutType("PopupLayout");
+      } else {
+        setLayoutType("SimpleLayout");
+      }
+    },
+    onError: (error) => {
+      console.error("ssssssswww", error);
     },
   });
 
@@ -596,7 +578,6 @@ const TableView = ({
           </Box>
         </div>
       }
-      {/* <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}> */}
       <div style={{ display: "flex", alignItems: "flex-start", width: filterVisible ? "calc(100% - 200px)" : "100%" }} id="data-table">
         <ObjectDataTable
           refetch={refetch}
@@ -633,7 +614,6 @@ const TableView = ({
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}
-          // onCheckboxChange={!!customEvents?.length && onCheckboxChange}
           filters={filters}
           filterChangeHandler={filterChangeHandler}
           onRowClick={navigateToEditPage}
@@ -652,13 +632,8 @@ const TableView = ({
           {...props}
         />
       </div>
-      {/* </PermissionWrapperV2> */}
 
-      <ModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        selectedRow={selectedRow}
-      />
+      {open && <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} menuItem={menuItem} layout={layout} />}
 
       <Drawer
         open={drawerState}

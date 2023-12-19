@@ -1,20 +1,20 @@
-import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import { Add, InsertDriveFile } from "@mui/icons-material";
-import { Card, Divider } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Add, InsertDriveFile} from "@mui/icons-material";
+import {Card, Divider} from "@mui/material";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useMutation, useQuery} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
-import { listToMap } from "../../../utils/listToMap";
+import {store} from "../../../store";
+import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -56,7 +56,7 @@ const NewRelationSection = ({
     });
   }, [data]);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
@@ -65,7 +65,7 @@ const NewRelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -123,7 +123,7 @@ const NewRelationSection = ({
   //   },
   // });
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -194,7 +194,7 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  const { mutate: updateMultipleObject } = useMutation(
+  const {mutate: updateMultipleObject} = useMutation(
     (values) =>
       constructorObjectService.updateMultipleObject(
         getRelatedTabeSlug.relatedTable,
@@ -336,7 +336,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: { fieldsMap } = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -354,7 +354,7 @@ const NewRelationSection = ({
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -442,7 +442,7 @@ const NewRelationSection = ({
                           onClick={navigateToCreatePage}
                           disabled={!id}
                         >
-                          <Add style={{ color: "#007AFF" }} />
+                          <Add style={{color: "#007AFF"}} />
                         </RectangleIconButton>
                       ) : null}
 

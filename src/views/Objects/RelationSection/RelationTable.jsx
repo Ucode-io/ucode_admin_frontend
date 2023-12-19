@@ -527,9 +527,7 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
-              relatedTable={relatedTable}
-              fieldsMap={fieldsMap}
-              getAllData={getAllData}
+              selectedTab={selectedTab}
               relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}

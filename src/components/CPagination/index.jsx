@@ -22,6 +22,8 @@ const CPagination = ({
   setLimit = () => {},
   disablePagination,
   filterVisible,
+  selectedTab,
+  isRelationTable,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -120,7 +122,12 @@ const CPagination = ({
             onClick={() => {
               if (view?.attributes?.url_object) {
                 objectNavigate();
-              } else navigateToForm(tableSlug);
+              } else
+                navigateToForm(
+                  isRelationTable
+                    ? selectedTab?.relation?.relation_table_slug
+                    : tableSlug
+                );
             }}
           >
             <AddIcon style={{color: "#007AFF"}} />

@@ -25,6 +25,8 @@ export const CTable = ({
   setLimit,
   defaultLimit,
   view,
+  selectedTab,
+  isRelationTable,
   filterVisible,
 }) => {
   return (
@@ -58,6 +60,8 @@ export const CTable = ({
           setLimit={setLimit}
           defaultLimit={defaultLimit}
           view={view}
+          selectedTab={selectedTab}
+          isRelationTable={isRelationTable}
         />
       )}
     </Paper>

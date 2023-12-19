@@ -126,12 +126,12 @@ const ViewsWithGroups = ({
     reset,
     setValue: setFormValue,
     getValues,
+    formState: {errors},
   } = useForm({
     defaultValues: {
       multi: [],
     },
   });
-
   const {fields, remove, append} = useFieldArray({
     control,
     name: "multi",

@@ -86,6 +86,7 @@ const HFMultipleAutocomplete = ({
             width={width}
             label={label}
             // tabIndex={tabIndex}
+            required={required}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
             hasIcon={hasIcon}
@@ -115,6 +116,7 @@ const AutoCompleteElement = ({
   hasColor,
   // tabIndex,
   hasIcon,
+  required,
   classes,
   placeholder,
   onFormChange,
@@ -284,6 +286,10 @@ const AutoCompleteElement = ({
       />
       {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
+      )}
+
+      {Boolean(!value?.length && required) && (
+        <FormHelperText error>{"This field is required"}</FormHelperText>
       )}
       <Dialog open={!!dialogState} onClose={handleClose}>
         <AddOptionBlock

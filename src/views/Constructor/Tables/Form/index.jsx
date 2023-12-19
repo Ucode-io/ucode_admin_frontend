@@ -62,9 +62,8 @@ const ConstructorTablesFormPage = () => {
     mode: "all",
   });
 
-  console.log('mainForm', mainForm)
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const list = useSelector((state) => state.constructorTable.list);
+  // const list = useSelector((state) => state.constructorTable.list);
 
   const getData = async () => {
     setLoader(true);
@@ -164,7 +163,6 @@ const ConstructorTablesFormPage = () => {
   };
 
   const createType = (data) => {
-    console.log("data", data);
     menuSettingsService
       .create({
         parent_id: menuItem?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
@@ -193,7 +191,6 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        console.log("resresres", res);
         navigate(-1);
         createType(res);
       })
@@ -204,67 +201,67 @@ const ConstructorTablesFormPage = () => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    const computedLayouts = data.layouts.map((layout) => ({
-      ...layout,
-      summary_fields: layout?.summary_fields?.map((item) => {
-        return {
-          ...item,
-          field_name: item?.field_name ?? item?.title ?? item?.label,
-        };
-      }),
-      tabs: layout?.tabs?.map((tab) => {
-        if (
-          tab.type === "Many2Many" ||
-          tab.type === "Many2Dynamic" ||
-          tab.type === "Recursive" ||
-          tab.type === "Many2One" ||
-          tab.relation_type === "Many2Many" ||
-          tab.relation_type === "Many2Dynamic" ||
-          tab.relation_type === "Recursive" ||
-          tab.relation_type === "Many2One"
-        ) {
-          return {
-            order: tab?.order ?? 0,
-            label: tab.title ?? tab.label,
-            field_name: tab?.title ?? tab.label ?? tab?.field_name,
-            type: "relation",
-            layout_id: layout.id,
-            relation_id: tab.id,
-            relation: {
-              ...tab,
-            },
-          };
-        } else {
-          return {
-            ...tab,
-            sections: tab?.sections?.map((section, index) => ({
-              ...section,
-              order: index,
-              fields: section?.fields?.map((field, index) => ({
-                ...field,
-                order: index,
-                field_name: field?.title ?? field.label,
-              })),
-            })),
-          };
-        }
-      }),
-    }));
+    // const computedLayouts = data.layouts.map((layout) => ({
+    //   ...layout,
+    //   summary_fields: layout?.summary_fields?.map((item) => {
+    //     return {
+    //       ...item,
+    //       field_name: item?.field_name ?? item?.title ?? item?.label,
+    //     };
+    //   }),
+    //   tabs: layout?.tabs?.map((tab) => {
+    //     if (
+    //       tab.type === "Many2Many" ||
+    //       tab.type === "Many2Dynamic" ||
+    //       tab.type === "Recursive" ||
+    //       tab.type === "Many2One" ||
+    //       tab.relation_type === "Many2Many" ||
+    //       tab.relation_type === "Many2Dynamic" ||
+    //       tab.relation_type === "Recursive" ||
+    //       tab.relation_type === "Many2One"
+    //     ) {
+    //       return {
+    //         order: tab?.order ?? 0,
+    //         label: tab.title ?? tab.label,
+    //         field_name: tab?.title ?? tab.label ?? tab?.field_name,
+    //         type: "relation",
+    //         layout_id: layout.id,
+    //         relation_id: tab.id,
+    //         relation: {
+    //           ...tab,
+    //         },
+    //       };
+    //     } else {
+    //       return {
+    //         ...tab,
+    //         sections: tab?.sections?.map((section, index) => ({
+    //           ...section,
+    //           order: index,
+    //           fields: section?.fields?.map((field, index) => ({
+    //             ...field,
+    //             order: index,
+    //             field_name: field?.title ?? field.label,
+    //           })),
+    //         })),
+    //       };
+    //     }
+    //   }),
+    // }));
 
-    const updateLayoutData = layoutService.update(
-      {
-        layouts: computedLayouts,
-        table_id: id,
-        project_id: projectId,
-      },
-      slug
-    );
+    // const updateLayoutData = layoutService.update(
+    //   {
+    //     layouts: computedLayouts,
+    //     table_id: id,
+    //     project_id: projectId,
+    //   },
+    //   slug
+    // );
 
     Promise.all([
       updateTableData,
       // updateSectionData,
       // updateViewRelationsData,
-      updateLayoutData,
+      // updateLayoutData,
     ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
@@ -287,7 +284,11 @@ const ConstructorTablesFormPage = () => {
     else getData();
   }, [id]);
 
+  const [selectedTab, setSelectedTab] = useState(0);
+
   if (loader) return <PageFallback />;
+
+  console.log("ssssssss");
 
   return (
     <>
@@ -297,12 +298,12 @@ const ConstructorTablesFormPage = () => {
             <Tabs direction={"ltr"}>
               <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
                 <TabList>
-                  <Tab>Details</Tab>
-                  <Tab>Layouts</Tab>
-                  <Tab>Fields</Tab>
-                  {id && <Tab>Relations</Tab>}
-                  {id && <Tab>Actions</Tab>}
-                  {id && <Tab>Custom errors</Tab>}
+                  <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
+                  <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
+                  <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
+                  {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
+                  {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
+                  {id && <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>}
                 </TabList>
               </HeaderSettings>
 
@@ -344,18 +345,23 @@ const ConstructorTablesFormPage = () => {
           </>
         )}
       </div>
-      <Footer
-        extra={
-          <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Close
-            </SecondaryButton>
-            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
-              <Save /> Save
-            </PrimaryButton>
-          </>
-        }
-      />
+
+      {selectedTab === 1 ? (
+        ""
+      ) : (
+        <Footer
+          extra={
+            <>
+              <SecondaryButton onClick={() => navigate(-1)} color="error">
+                Close
+              </SecondaryButton>
+              <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+                <Save /> Save
+              </PrimaryButton>
+            </>
+          }
+        />
+      )}
     </>
   );
 };

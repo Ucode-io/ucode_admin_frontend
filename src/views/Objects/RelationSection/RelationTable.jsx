@@ -25,7 +25,6 @@ import styles from "./style.module.scss";
 const RelationTable = forwardRef(
   (
     {
-      setDataLength,
       getValues,
       relation,
       shouldGet,
@@ -246,7 +245,6 @@ const RelationTable = forwardRef(
         select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / paginiation);
-          setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
 

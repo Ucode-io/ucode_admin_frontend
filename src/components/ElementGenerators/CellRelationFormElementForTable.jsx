@@ -356,8 +356,6 @@ const AutoCompleteElement = ({ relOptions, tableView, field, value, tableSlug, n
     if (value) getValueData();
   }, [value, allOptions]);
 
-  console.log('sssssssss')
-
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div

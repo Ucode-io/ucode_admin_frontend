@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -21,6 +21,7 @@ import {Delete} from "@mui/icons-material";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
+  const { appId } = useParams()
   const location = useLocation();
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
@@ -44,6 +45,10 @@ const MicrofrontendPage = () => {
       setList(res);
     });
   };
+
+  const navigateToGithub = () => {
+    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&redirect_uri=${window.location.origin}/main/${appId}/microfrontend/github/create`)
+  }
 
   useEffect(() => {
     getMicrofrontendList();
@@ -98,6 +103,7 @@ const MicrofrontendPage = () => {
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
               <TableRowButton colSpan={5} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

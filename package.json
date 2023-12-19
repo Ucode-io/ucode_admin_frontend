@@ -168,6 +168,7 @@
     "esbuild": "^0.14.39",
     "eslint": "^8.13.0",
     "eslint-config-react-app": "^7.0.1",
+    "prettier": "^3.1.1",
     "react-css-modules": "^4.7.11",
     "rollup-plugin-visualizer": "^5.6.0",
     "sass": "^1.50.0",

@@ -79,6 +79,7 @@ import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
+import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -291,6 +292,7 @@ const Router = () => {
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+          <Route path="github/create" element={<GithubMicrofrontendForm />} />
         </Route>
 
         <Route path=":appId/tables">

@@ -221,10 +221,16 @@ $main-color: #0365f2;
       width: 5px;
     }
 
+
+
     &::-webkit-scrollbar-thumb {
-      background: none;
+      background: #D4DAE2;
       border-radius: 10px;
     }
+
+    // &::-webkit-scrollbar-thumb:hover {
+    //   background: #007AFF;
+    // }
 
     .nav-block {
       // padding: 12px;

@@ -279,7 +279,6 @@ const AutoCompleteElement = ({
                     style={{cursor: "pointer"}}
                     onClick={() => {
                       getTagProps({index})?.onDelete();
-                      onFormChange(null);
                     }}
                   />
                 )}

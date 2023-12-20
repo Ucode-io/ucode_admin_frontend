@@ -10,11 +10,11 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
 
 export default function LayoutsItem({ element, index, mainForm, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
-  const { tableSlug } = useParams();
+  const { slug } = useParams();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = () => {
-    layoutService.update(watchLayout, tableSlug);
+    layoutService.update(watchLayout, slug);
   };
 
   return (

@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
-import React, { useMemo } from "react";
-import { useMutation } from "react-query";
+import {Box} from "@mui/material";
+import React, {useMemo} from "react";
+import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 

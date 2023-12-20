@@ -1,11 +1,11 @@
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { Button, Checkbox } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import {Button, Checkbox} from "@mui/material";
+import {useVirtualizer} from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
@@ -63,39 +63,15 @@ const TableRow = ({
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
-      setSelectedObjectsForDelete(selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid));
+      setSelectedObjectsForDelete(
+        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
+      );
     } else {
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
   };
 
-  if (formVisible)
-    return (
-      <TableRowForm
-        onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
-        remove={remove}
-        watch={watch}
-        onCheckboxChange={onCheckboxChange}
-        checkboxValue={checkboxValue}
-        row={row}
-        key={key}
-        formVisible={formVisible}
-        currentPage={currentPage}
-        limit={limit}
-        control={control}
-        setFormValue={setFormValue}
-        rowIndex={rowIndex}
-        columns={columns}
-        tableHeight={tableHeight}
-        tableSettings={tableSettings}
-        pageName={pageName}
-        calculateWidth={calculateWidth}
-        tableSlug={tableSlug}
-        relationFields={relationFields}
-        data={data}
-      />
-    );
+  if (formVisible) return "dsadasda";
 
   return (
     <>
@@ -133,17 +109,27 @@ const TableRow = ({
                   <OpenInFullIcon />
                 </Button>
 
-                <span className="data_table__row_number" style={{ width: "35px" }}>
-                  {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+                <span
+                  className="data_table__row_number"
+                  style={{width: "35px"}}
+                >
+                  {limit === "all"
+                    ? rowIndex + 1
+                    : (currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
                 </span>
 
                 <Checkbox
                   className="table_multi_checkbox"
                   style={{
-                    display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
+                    display:
+                      selectedObjectsForDelete?.find(
+                        (item) => item?.guid === row?.guid
+                      ) && "block",
                   }}
-                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                  checked={selectedObjectsForDelete?.find(
+                    (item) => item?.guid === row?.guid
+                  )}
                   onChange={() => {
                     changeSetDelete(row);
                   }}
@@ -167,18 +153,31 @@ const TableRow = ({
                       lineHeight: "normal",
                       padding: "0 5px",
                       position: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualRow?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualRow?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualRow?.id] ? `${calculateWidthFixedColumn(virtualRow.id) + 80}px` : "0",
+                      left: view?.attributes?.fixedColumns?.[virtualRow?.id]
+                        ? `${calculateWidthFixedColumn(virtualRow.id) + 80}px`
+                        : "0",
                       backgroundColor: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id]
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualRow?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualRow?.id]
                           ? "#F6F6F6"
                           : "#fff"
                       }`,
                       zIndex: `${
-                        tableSettings?.[pageName]?.find((item) => item?.id === virtualRow?.id)?.isStiky || view?.attributes?.fixedColumns?.[virtualRow?.id] ? "1" : "0"
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === virtualRow?.id
+                        )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualRow?.id]
+                          ? "1"
+                          : "0"
                       }`,
                     }}
                   >
@@ -207,7 +206,7 @@ const TableRow = ({
                 )
               );
             })}
-            <td style={{ height: "30px" }}>
+            <td style={{height: "30px"}}>
               <div
                 style={{
                   display: "flex",
@@ -225,7 +224,14 @@ const TableRow = ({
                   }}
                 >
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                    <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() =>
+                        row.guid
+                          ? onDeleteClick(row, rowIndex)
+                          : remove(rowIndex)
+                      }
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -235,11 +241,12 @@ const TableRow = ({
             </td>
 
             <td>
-              <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
+              <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
             </td>
           </CTableRow>
         </>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
         <CTableRow>
           <CTableCell
             align="center"
@@ -272,8 +279,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span className="data_table__row_number" style={{width: "35px"}}>
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
               </span>
             </div>
           </CTableCell>
@@ -290,12 +299,30 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm
@@ -335,7 +362,12 @@ const TableRow = ({
                 }}
               >
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                  <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() =>
+                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                    }
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
@@ -380,8 +412,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{ width: "35px" }}>
-                {limit === "all" ? rowIndex + 1 : (currentPage - 1) * limit + rowIndex + 1}
+              <span className="data_table__row_number" style={{width: "35px"}}>
+                {limit === "all"
+                  ? rowIndex + 1
+                  : (currentPage - 1) * limit + rowIndex + 1}
               </span>
             </div>
           </CTableCell>
@@ -398,12 +432,30 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-                left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id) + 80}px` : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "relative"
                 }`,
-                zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "1"
+                    : "0"
+                }`,
               }}
             >
               <TableDataForm

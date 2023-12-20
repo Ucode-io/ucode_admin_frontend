@@ -50,7 +50,7 @@ export const Filter = ({
   tableSlug,
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-  console.log("fieldfield", field);
+
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {

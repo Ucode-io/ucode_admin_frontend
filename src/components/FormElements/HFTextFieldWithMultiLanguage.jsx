@@ -73,19 +73,21 @@ export default function HFTextFieldWithMultiLanguage({
         defaultValue={defaultValue}
       />
 
-      <Badge badgeContent={selectedLanguage} color="primary">
-        <Button
-          id="basic-button"
-          variant="outlined"
-          color="inherit"
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClick}
-        >
-          <TranslateIcon />
-        </Button>
-      </Badge>
+      {languages?.length > 1 && (
+        <Badge badgeContent={selectedLanguage} color="primary">
+          <Button
+            id="basic-button"
+            variant="outlined"
+            color="inherit"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <TranslateIcon />
+          </Button>
+        </Badge>
+      )}
 
       <Menu
         id="basic-menu"

@@ -8,6 +8,7 @@ import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
+import layoutService from "../../../../../services/layoutService";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
   const { id } = useParams();
@@ -24,6 +25,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
+  const { slug } = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
@@ -39,6 +41,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const setModal = (index, e) => {
@@ -52,6 +55,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       return element;
     });
     mainForm.setValue("layouts", newLayout);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const setSectionTab = (index, e) => {
@@ -68,6 +72,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const languages = useSelector((state) => state.languages.list);
@@ -96,7 +101,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
             <CTableCell width={60} />
           </CTableHead>
 
-          {layouts?.map((element, index) => (
+          {!isLoading && layouts?.map((element, index) => (
             <LayoutsItem
               element={element}
               index={index}

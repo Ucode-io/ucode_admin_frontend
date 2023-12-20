@@ -288,8 +288,6 @@ const ConstructorTablesFormPage = () => {
 
   if (loader) return <PageFallback />;
 
-  console.log("ssssssss");
-
   return (
     <>
       <div className="pageWithStickyFooter">

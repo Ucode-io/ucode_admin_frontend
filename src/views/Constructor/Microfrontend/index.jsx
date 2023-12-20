@@ -47,7 +47,7 @@ const MicrofrontendPage = () => {
   };
 
   const navigateToGithub = () => {
-    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&redirect_uri=${window.location.origin}/main/${appId}/microfrontend/github/create`)
+    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&redirect_uri=${window.location.origin}/main/${appId}/microfrontend/github/create&scope=read:user,repo`)
   }
 
   useEffect(() => {

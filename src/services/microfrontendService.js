@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import httpsRequest from "../utils/httpsRequest";
 
 const microfrontendService = {
@@ -9,6 +9,7 @@ const microfrontendService = {
   create: (data) => httpsRequest.post("/v2/functions/micro-frontend", data),
   update: (data) => httpsRequest.put("/v2/functions/micro-frontend", data),
   delete: (id) => httpsRequest.delete(`/v2/functions/micro-frontend/${id}`),
+  createWebhook: (data) => httpsRequest.post('/v2/webhook/create', data)
 };
 
 export const useMicrofrontendListQuery = ({
@@ -23,5 +24,13 @@ export const useMicrofrontendListQuery = ({
     queryParams
   );
 };
+
+export const useMicrofrontendCreateWebhookMutation = (mutationSettings) => {
+  return useMutation(
+    ({ data, githubToken }) =>
+      microfrontendService.createWebhook(data),
+    mutationSettings
+  );
+}
 
 export default microfrontendService;

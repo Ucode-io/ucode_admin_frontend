@@ -13,8 +13,12 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
   const { slug } = useParams();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
-  const updateCurrentLayout = () => {
-    layoutService.update(watchLayout, slug);
+  const updateCurrentLayout = (menuId) => {
+    const currentUpdatedLayout = {
+      ...watchLayout,
+      menu_id: menuId,
+    };
+    layoutService.update(currentUpdatedLayout, slug);
   };
 
   return (
@@ -103,7 +107,7 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
                 minWidth: "200px",
               }}
             >
-              <HFSelect control={mainForm.control} onChange={updateCurrentLayout} name={`layouts.${index}.menu_id`} options={menus} />
+              <HFSelect control={mainForm.control} onChange={(e) => updateCurrentLayout(e)} name={`layouts.${index}.menu_id`} options={menus} />
             </Box>
           </Box>
         </Box>

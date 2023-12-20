@@ -198,6 +198,7 @@ const ObjectsFormPage = ({
           table_slug: tableSlug,
           user_id: isUserId,
         });
+        dispatch(showAlert("Successfully created", "success"));
         if (modal) {
           handleClose();
           queryClient.refetchQueries(

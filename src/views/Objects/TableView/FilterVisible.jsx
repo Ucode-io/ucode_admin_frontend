@@ -1,13 +1,13 @@
-import { Box, Button, CircularProgress, Menu, Skeleton } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import {Box, Button, CircularProgress, Menu, Skeleton} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FiltersTab from "../components/ViewSettings/FiltersTab";
-import { useDispatch } from "react-redux";
-import { quickFiltersActions } from "../../../store/filter/quick_filter";
+import {useDispatch} from "react-redux";
+import {quickFiltersActions} from "../../../store/filter/quick_filter";
 import styles from "./styles.module.scss";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 const customStyles = {
   gap: "5px",
@@ -21,10 +21,19 @@ const customStyles = {
   cursor: "pointer",
 };
 
-export default function FilterVisible({ selectedTabIndex, columns, views, relationColumns, isLoading, form, text = "" }) {
+export default function FilterVisible({
+  onChange,
+  selectedTabIndex,
+  columns,
+  views,
+  relationColumns,
+  isLoading,
+  form,
+  text = "",
+}) {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [filterAnchor, setFilterAnchor] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -69,13 +78,19 @@ export default function FilterVisible({ selectedTabIndex, columns, views, relati
 
   return (
     <div>
-      <Box variant={"text"} className={styles.add_filter} sx={customStyles} onClick={handleClickFilter}>
+      <Box
+        variant={"text"}
+        className={styles.add_filter}
+        sx={customStyles}
+        onClick={handleClickFilter}
+      >
         <FilterAltOutlinedIcon color={"#A8A8A8"} />
         Add Filters
       </Box>
       <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
         <FiltersTab
           form={form}
+          onChange={onChange}
           updateView={updateView}
           isMenu={true}
           views={views}

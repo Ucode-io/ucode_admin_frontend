@@ -39,8 +39,8 @@ export default function TimeLineView({
   setViews,
   isViewLoading,
 }) {
-  const {tableSlug} = useParams();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { tableSlug } = useParams();
+  const { filters } = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -90,10 +90,10 @@ export default function TimeLineView({
   };
 
   // FOR DATA
-  const {data: {data} = {data: []}, isLoading} = useQuery(
+  const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, filters, dateFilters, view},
+      { tableSlug, filters, dateFilters, view },
     ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
@@ -126,10 +126,10 @@ export default function TimeLineView({
 
   // FOR TABLE INFO
   const {
-    data: {fields, visibleColumns, visibleRelationColumns} = {data: []},
+    data: { fields, visibleColumns, visibleRelationColumns } = { data: [] },
     isLoading: tableInfoLoading,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
+    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -758,14 +758,9 @@ const promiseGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(
-        groupField?.type === "LOOKUP"
-          ? groupField.slug?.slice(0, -3)
-          : groupField.slug?.slice(0, -4),
-        {
-          data: computedFilters ?? {},
-        }
-      );
+      constructorObjectService.getListV2(groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4), {
+        data: computedFilters ?? {},
+      });
 
     return {
       queryKey: [

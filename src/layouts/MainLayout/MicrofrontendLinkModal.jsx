@@ -12,8 +12,8 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
 import { store } from "../../store";
+import { useSelector } from "react-redux";
 
 const MicrofrontendLinkModal = ({
   closeModal,

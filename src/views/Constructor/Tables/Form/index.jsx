@@ -9,7 +9,6 @@ import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
 import constructorTableService from "../../../../services/constructorTableService";
@@ -20,15 +19,15 @@ import { createConstructorTableAction } from "../../../../store/constructorTable
 import { generateGUID } from "../../../../utils/generateID";
 import { listToMap } from "../../../../utils/listToMap";
 
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import { useTranslation } from "react-i18next";
-import menuSettingsService from "../../../../services/menuSettingsService";
-import { useQueryClient } from "react-query";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -63,10 +62,11 @@ const ConstructorTablesFormPage = () => {
   });
 
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const list = useSelector((state) => state.constructorTable.list);
+  // const list = useSelector((state) => state.constructorTable.list);
 
   const getData = async () => {
     setLoader(true);
+    const params = {};
 
     const getTableData = constructorTableService.getById(id);
 
@@ -74,12 +74,12 @@ const ConstructorTablesFormPage = () => {
       table_slug: tableSlug,
     });
 
-    const getActions = constructorCustomEventService.getList(
-      {
-        table_slug: tableSlug,
-      },
-      tableSlug
-    );
+    // const getActions = constructorCustomEventService.getList(
+    //   {
+    //     table_slug: slug,
+    //   },
+    //   slug
+    // );
 
     const getLayouts = layoutService
       .getList(
@@ -94,12 +94,7 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([
-        getTableData,
-        getActions,
-        getViewRelations,
-        getLayouts,
-      ]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getViewRelations, getLayouts]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -221,67 +216,67 @@ const ConstructorTablesFormPage = () => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    const computedLayouts = data.layouts.map((layout) => ({
-      ...layout,
-      summary_fields: layout?.summary_fields?.map((item) => {
-        return {
-          ...item,
-          field_name: item?.field_name ?? item?.title ?? item?.label,
-        };
-      }),
-      tabs: layout?.tabs?.map((tab) => {
-        if (
-          tab.type === "Many2Many" ||
-          tab.type === "Many2Dynamic" ||
-          tab.type === "Recursive" ||
-          tab.type === "Many2One" ||
-          tab.relation_type === "Many2Many" ||
-          tab.relation_type === "Many2Dynamic" ||
-          tab.relation_type === "Recursive" ||
-          tab.relation_type === "Many2One"
-        ) {
-          return {
-            order: tab?.order ?? 0,
-            label: tab.title ?? tab.label,
-            field_name: tab?.title ?? tab.label ?? tab?.field_name,
-            type: "relation",
-            layout_id: layout.id,
-            relation_id: tab.id,
-            relation: {
-              ...tab,
-            },
-          };
-        } else {
-          return {
-            ...tab,
-            sections: tab?.sections?.map((section, index) => ({
-              ...section,
-              order: index,
-              fields: section?.fields?.map((field, index) => ({
-                ...field,
-                order: index,
-                field_name: field?.title ?? field.label,
-              })),
-            })),
-          };
-        }
-      }),
-    }));
+    // const computedLayouts = data.layouts.map((layout) => ({
+    //   ...layout,
+    //   summary_fields: layout?.summary_fields?.map((item) => {
+    //     return {
+    //       ...item,
+    //       field_name: item?.field_name ?? item?.title ?? item?.label,
+    //     };
+    //   }),
+    //   tabs: layout?.tabs?.map((tab) => {
+    //     if (
+    //       tab.type === "Many2Many" ||
+    //       tab.type === "Many2Dynamic" ||
+    //       tab.type === "Recursive" ||
+    //       tab.type === "Many2One" ||
+    //       tab.relation_type === "Many2Many" ||
+    //       tab.relation_type === "Many2Dynamic" ||
+    //       tab.relation_type === "Recursive" ||
+    //       tab.relation_type === "Many2One"
+    //     ) {
+    //       return {
+    //         order: tab?.order ?? 0,
+    //         label: tab.title ?? tab.label,
+    //         field_name: tab?.title ?? tab.label ?? tab?.field_name,
+    //         type: "relation",
+    //         layout_id: layout.id,
+    //         relation_id: tab.id,
+    //         relation: {
+    //           ...tab,
+    //         },
+    //       };
+    //     } else {
+    //       return {
+    //         ...tab,
+    //         sections: tab?.sections?.map((section, index) => ({
+    //           ...section,
+    //           order: index,
+    //           fields: section?.fields?.map((field, index) => ({
+    //             ...field,
+    //             order: index,
+    //             field_name: field?.title ?? field.label,
+    //           })),
+    //         })),
+    //       };
+    //     }
+    //   }),
+    // }));
 
-    const updateLayoutData = layoutService.update(
-      {
-        layouts: computedLayouts,
-        table_id: id,
-        project_id: projectId,
-      },
-      tableSlug
-    );
+    // const updateLayoutData = layoutService.update(
+    //   {
+    //     layouts: computedLayouts,
+    //     table_id: id,
+    //     project_id: projectId,
+    //   },
+    //   slug
+    // );
 
     Promise.all([
       updateTableData,
       // updateSectionData,
       // updateViewRelationsData,
-      updateLayoutData,
+      // updateLayoutData,
     ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
@@ -304,6 +299,8 @@ const ConstructorTablesFormPage = () => {
     else getData();
   }, [id]);
 
+  const [selectedTab, setSelectedTab] = useState(0);
+
   if (loader) return <PageFallback />;
 
   return (
@@ -320,12 +317,12 @@ const ConstructorTablesFormPage = () => {
                 sticky
               >
                 <TabList>
-                  <Tab>Details</Tab>
-                  <Tab>Layouts</Tab>
-                  <Tab>Fields</Tab>
-                  {id && <Tab>Relations</Tab>}
-                  {id && <Tab>Actions</Tab>}
-                  {id && <Tab>Custom errors</Tab>}
+                  <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
+                  <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
+                  <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
+                  {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
+                  {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
+                  {id && <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>}
                 </TabList>
               </HeaderSettings>
 
@@ -382,22 +379,23 @@ const ConstructorTablesFormPage = () => {
           </>
         )}
       </div>
-      <Footer
-        extra={
-          <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Close
-            </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
-              <Save /> Save
-            </PrimaryButton>
-          </>
-        }
-      />
+
+      {selectedTab === 1 ? (
+        ""
+      ) : (
+        <Footer
+          extra={
+            <>
+              <SecondaryButton onClick={() => navigate(-1)} color="error">
+                Close
+              </SecondaryButton>
+              <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+                <Save /> Save
+              </PrimaryButton>
+            </>
+          }
+        />
+      )}
     </>
   );
 };

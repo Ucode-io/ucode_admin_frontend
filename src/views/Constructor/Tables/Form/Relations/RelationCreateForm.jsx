@@ -14,6 +14,7 @@ import style from "./style.module.scss";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import {PlusIcon} from "../../../../../assets/icons/icon";
+import constructorTableService from "../../../../../services/constructorTableService";
 
 const options = [
   {
@@ -52,8 +53,7 @@ const RelationCreateForm = ({
 
   const getFieldOptions = (table_from) => {
     if (!table_from) return null;
-    constructorObjectService.getList(table_from, {data: {}}).then((res) => {
-      console.log("res", res);
+    constructorTableService.getTableInfo(table_from, {data: {}}).then((res) => {
       setFieldOptions((prev) => [
         ...prev,
         ...res?.data?.fields?.map((item) => ({

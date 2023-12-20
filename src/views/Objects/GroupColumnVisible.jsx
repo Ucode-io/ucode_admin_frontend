@@ -106,6 +106,7 @@ export default function GroupColumnVisible({
       .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: watchedGroupColumns
             ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),

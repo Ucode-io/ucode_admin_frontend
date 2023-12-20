@@ -26,6 +26,9 @@ import styles from "./style.module.scss";
 import HFTextField from "../../../FormElements/HFTextField";
 import QueryForClickHouse from "./Detail/QueryForClickHouse";
 import QuerySettings from "./Detail/QuerySettings";
+import DrawerCard from "../../../DrawerCard";
+import CommitButton from "../../../CommitButton";
+import QueryCommitsView from "./Commits";
 
 const flex = {
   display: "flex",
@@ -307,6 +310,11 @@ const Queries = () => {
                 />
               )}
             />
+            {/* <CommitButton
+              onClick={openCommitView}
+              info={form.watch("commit_info")}
+              variant="outline"
+            /> */}
           </HeaderLeftSide>
 
           <HeaderExtraSide h="full" mr="30px" gap="15px">
@@ -415,9 +423,26 @@ const Queries = () => {
             )}
           </Box>
 
-          <Box height="calc(100vh - 50px)" width="300px" minWidth="300px">
-            <QuerySettings form={form} queryVariables={variables} />
-          </Box>
+          {commitViewIsOpen ? (
+            <DrawerCard
+              title={"Table Drawer"}
+              onClose={closeCommitView}
+              open={commitViewIsOpen}
+              footer={false}
+              titleStyle={{ color: "#fff" }}
+              sx={{
+                ".MuiPaper-root": {
+                  background: "#303940",
+                },
+              }}
+            >
+              <QueryCommitsView closeView={closeCommitView} form={form} />
+            </DrawerCard>
+          ) : (
+            <Box height="calc(100vh - 50px)" width="300px" minWidth="300px">
+              <QuerySettings form={form} queryVariables={variables} />
+            </Box>
+          )}
         </Box>
       </Box>
     </FormProvider>

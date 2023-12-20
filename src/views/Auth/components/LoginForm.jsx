@@ -12,7 +12,6 @@ import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
 import { store } from "../../../store";
@@ -27,16 +26,21 @@ import RecoverPassword from "./RecoverPassword";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
+import HFNumberField from "../../../components/FormElements/HFNumberField";
+import HFInternationPhone from "../../../components/FormElements/HFInternationPhone";
 
 const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [oneLogin, setOneLogin] = useState(false);
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [codeAppValue, setCodeAppValue] = useState({});
+  const [type, setType] = useState("");
+  console.log("type", type);
 
   const { control, handleSubmit, watch, setValue, reset, getValues } =
     useForm();
@@ -158,15 +162,43 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmit = (values) => {
-    getCompany(values);
+    if (selectedTabIndex === 0) {
+      getCompany(values);
+    }
+    if (selectedTabIndex === 1) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "phone",
+        });
+      } else {
+        getSendCodeApp({ ...values, type: "PHONE" });
+      }
+    }
+    if (selectedTabIndex === 2) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "email",
+        });
+      } else {
+        getSendCodeApp({ ...values, type: "EMAIL" });
+      }
+    }
   };
 
   const getCompany = (values) => {
+    setType(values?.type);
+    const data = {
+      password: values?.password ? values?.password : null,
+      username: values?.username ? values?.password : null,
+      [values?.type]: values?.recipient,
+      ...values,
+    };
     companyService
-      .getCompanyList({
-        password: values?.password,
-        username: values?.username,
-      })
+      .getCompanyList(data)
       .then((res) => {
         if (res?.companies) {
           setIsUserId(res?.user_id);
@@ -179,11 +211,24 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         }
 
         if (index === 1) register(values);
-        setOneLogin(true);
       })
       .catch((err) => {
-        setOneLogin(false);
         setLoading(false);
+      });
+  };
+
+  const getSendCodeApp = (values) => {
+    authService
+      .sendCodeApp({
+        recipient: values?.recipient,
+        text: "You otp code is",
+        type: values?.type,
+      })
+      .then((res) => {
+        setCodeAppValue(res);
+      })
+      .catch((err) => {
+        console.log("eerrrrrrr", err);
       });
   };
 
@@ -200,6 +245,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
+    const data = {
+      ...getFormValue,
+      sms_id: codeAppValue?.sms_id,
+    };
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -211,7 +260,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
-        onSubmitDialog(getFormValue);
+        onSubmitDialog(data);
       } else if (
         !getFormValue?.username ||
         !getFormValue?.password ||
@@ -364,7 +413,11 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         <RecoverPassword setFormType={setFormType} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-          <Tabs direction={"ltr"}>
+          <Tabs
+            selected={selectedTabIndex}
+            direction={"ltr"}
+            onSelect={(index) => setSelectedTabIndex(index)}
+          >
             {formType === "LOGIN" ? (
               <div style={{ padding: "0 20px" }}>
                 <TabList>
@@ -378,44 +431,46 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                   style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
                 >
                   <TabPanel>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("login")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="username"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.login")}
-                        autoFocus
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <AccountCircle style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("password")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="password"
-                        type="password"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.password")}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
+                    <>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("login")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="username"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.login")}
+                          autoFocus
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <AccountCircle style={{ fontSize: "30px" }} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("password")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="password"
+                          type="password"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.password")}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock style={{ fontSize: "30px" }} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                    </>
 
                     {
                       <Button
@@ -430,6 +485,88 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         Forgot password?
                       </Button>
                     }
+                  </TabPanel>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Phone")}</p>
+                      {/* <HFTextField
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{ fontSize: "30px" }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      /> */}
+                      <HFInternationPhone
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
+                  </TabPanel>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Email")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        type="email"
+                        placeholder={t("enter.email")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{ fontSize: "30px" }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
                   </TabPanel>
                 </div>
               </div>

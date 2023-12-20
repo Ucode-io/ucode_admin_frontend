@@ -146,6 +146,7 @@ const ObjectsPage = () => {
                 ) : (
                   <>
                     <ViewsWithGroups
+                      visibleColumns={visibleColumns}
                       visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}

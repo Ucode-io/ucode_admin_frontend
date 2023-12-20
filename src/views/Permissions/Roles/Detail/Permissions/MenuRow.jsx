@@ -129,7 +129,6 @@ const MenuRow = ({
       },
     }));
   };
-
   return (
     <>
       {app?.type === "FOLDER" ? (
@@ -148,7 +147,7 @@ const MenuRow = ({
               alignItems="center"
             >
               {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title${i18n?.language}`] ??
+                app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}
               <Button
                 variant="text"
@@ -217,7 +216,7 @@ const MenuRow = ({
               alignItems="center"
             >
               {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title${i18n?.language}`] ??
+                app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}
             </Box>
           </CTableCell>

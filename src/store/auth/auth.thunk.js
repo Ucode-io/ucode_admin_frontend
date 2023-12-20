@@ -1,12 +1,12 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth/authService";
-import {authActions} from "./auth.slice";
-import {store} from "..";
-import {companyActions} from "../company/company.slice";
+import { authActions } from "./auth.slice";
+import { store } from "..";
+import { companyActions } from "../company/company.slice";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
-  async (data, {dispatch}) => {
+  async (data, { dispatch }) => {
     try {
       const res = await authService.login(data);
       dispatch(

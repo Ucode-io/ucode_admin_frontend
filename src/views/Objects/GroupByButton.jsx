@@ -24,7 +24,7 @@ export default function GroupByButton({
   text = "Tab group",
 }) {
   const form = useForm();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

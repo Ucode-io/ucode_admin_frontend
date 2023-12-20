@@ -1,25 +1,24 @@
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import LaunchIcon from "@mui/icons-material/Launch";
 import { Box, Popover, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
+import Select, { components } from "react-select";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import useDebounce from "../../hooks/useDebounce";
-import CascadingElement from "./CascadingElement";
-import RelationGroupCascading from "./RelationGroupCascading";
+import { pageToOffset } from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
-import AddIcon from "@mui/icons-material/Add";
-import Select, { components } from "react-select";
-import { pageToOffset } from "../../utils/pageToOffset";
-import ClearIcon from "@mui/icons-material/Clear";
-import { useTranslation } from "react-i18next";
-import LaunchIcon from "@mui/icons-material/Launch";
+import CascadingElement from "./CascadingElement";
+import RelationGroupCascading from "./RelationGroupCascading";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -129,21 +128,7 @@ const CellRelationFormElementForTableView = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({
-  relOptions,
-  tableView,
-  field,
-  value,
-  tableSlug,
-  name,
-  disabled,
-  isBlackBg,
-  setValue,
-  index,
-  control,
-  isNewRow,
-  setFormValue = () => {},
-}) => {
+const AutoCompleteElement = ({ relOptions, tableView, field, value, tableSlug, name, disabled, isBlackBg, setValue, index, control, isNewRow, setFormValue = () => {} }) => {
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -158,7 +143,7 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const { i18n } = useTranslation();
-  console.log("localValue", localValue);
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -212,30 +197,22 @@ const AutoCompleteElement = ({
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
     () => {
-      return request.post(
-        `/invoke_function/${field?.attributes?.function_path}`,
-        {
-          params: {
-            from_input: true,
-          },
-          data: {
-            table_slug: tableSlug,
-            ...autoFiltersValue,
-            search: debouncedValue,
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
-          },
-        }
-      );
+      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        params: {
+          from_input: true,
+        },
+        data: {
+          table_slug: tableSlug,
+          ...autoFiltersValue,
+          search: debouncedValue,
+          limit: 10,
+          offset: pageToOffset(page, 10),
+          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
+        },
+      });
     },
     {
-      enabled:
-        !relOptions?.length &&
-        ((!!field?.attributes?.function_path && Boolean(page > 1)) ||
-          (!!field?.attributes?.function_path && Boolean(debouncedValue))),
+      enabled: (!!field?.attributes?.function_path && Boolean(page > 1)) || (!!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -247,14 +224,7 @@ const AutoCompleteElement = ({
   );
 
   const { data: optionsFromLocale } = useQuery(
-    [
-      "GET_OBJECT_LIST",
-      debouncedValue,
-      autoFiltersValue,
-      value,
-      page,
-      field?.table_slug,
-    ],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -278,10 +248,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled:
-        (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
+      enabled: (!field?.attributes?.function_path && Boolean(page > 1)) || (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -291,19 +258,14 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (data?.options?.length) {
-          setAllOptions((prevOptions) => [
-            ...(prevOptions ?? []),
-            ...(data.options ?? []),
-          ]);
+          setAllOptions((prevOptions) => [...(prevOptions ?? []), ...(data.options ?? [])]);
         }
       },
     }
   );
 
   const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(
-      new Set(allOptions?.map(JSON.stringify))
-    ).map(JSON.parse);
+    const uniqueObjects = Array.from(new Set(allOptions?.map(JSON.stringify))).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions]);
 
@@ -389,9 +351,7 @@ const AutoCompleteElement = ({
   }
 
   useEffect(() => {
-    const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
-    );
+    const matchingOption = relOptions?.find((item) => item?.table_slug === field?.table_slug);
 
     if (matchingOption) {
       setAllOptions(matchingOption.response);
@@ -442,16 +402,8 @@ const AutoCompleteElement = ({
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
-        <span
-          onClick={() => openFormModal(tableSlug)}
-          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-        >
-          <AddIcon
-            aria-owns={openPopover ? "mouse-over-popover" : undefined}
-            aria-haspopup="true"
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
-          />
+        <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
           <Popover
             id="mouse-over-popover"
             sx={{
@@ -475,13 +427,7 @@ const AutoCompleteElement = ({
         </span>
       )}
 
-      {tableSlugFromProps && (
-        <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
-          tableSlug={tableSlugFromProps}
-        />
-      )}
+      {tableSlugFromProps && <ModalDetailPage open={open} setOpen={setOpen} tableSlug={tableSlugFromProps} />}
 
       <Select
         inputValue={inputValue}
@@ -520,10 +466,7 @@ const AutoCompleteElement = ({
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (
-          <span
-            onClick={() => navigateToForm(tableSlug)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
+          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
             Создать новый
           </span>
         )}
@@ -532,13 +475,9 @@ const AutoCompleteElement = ({
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
         }}
-        getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
-        }
+        getOptionLabel={(option) => `${getRelationFieldTabsLabel(field, option)}`}
         getOptionValue={(option) => option.value}
-        isOptionSelected={(option, value) =>
-          value.some((val) => val.value === value)
-        }
+        isOptionSelected={(option, value) => value.some((val) => val.value === value)}
         blurInputOnSelect
       />
     </div>

@@ -54,7 +54,6 @@ const GithubMicrofrontendForm = () => {
       username: "",
       repo_name: "",
       branch: "",
-      githubToken: searchParams.get("access_token")
     },
   });
 
@@ -108,7 +107,10 @@ const GithubMicrofrontendForm = () => {
   })
 
   const onSubmit = (values) => {
-    create(values)
+    create({
+      ...values,
+      github_token: searchParams.get("access_token")
+    })
   };
 
   useEffect(() => {

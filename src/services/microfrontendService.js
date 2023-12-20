@@ -27,7 +27,7 @@ export const useMicrofrontendListQuery = ({
 
 export const useMicrofrontendCreateWebhookMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, githubToken }) =>
+    (data) =>
       microfrontendService.createWebhook(data),
     mutationSettings
   );

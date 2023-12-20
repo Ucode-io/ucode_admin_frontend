@@ -1,7 +1,7 @@
 import TranslateIcon from "@mui/icons-material/Translate";
-import { Badge, Button, Menu, MenuItem } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
+import {Badge, Button, Menu, MenuItem} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useWatch} from "react-hook-form";
 import HFTextField from "./HFTextField";
 
 export default function HFTextFieldWithMultiLanguage({
@@ -27,7 +27,9 @@ export default function HFTextFieldWithMultiLanguage({
   customOnChange = () => {},
   ...props
 }) {
-  const [selectedLanguage, setSelectedLanguage] = useState(languages?.[0]?.slug);
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    languages?.[0]?.slug
+  );
   const [fieldName, setFieldName] = useState(name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -55,25 +57,37 @@ export default function HFTextFieldWithMultiLanguage({
     control,
   });
 
-  const defaultValue = useMemo(() => watch[fieldName] ?? "", [watch, fieldName]);
+  const defaultValue = useMemo(
+    () => watch[fieldName] ?? "",
+    [watch, fieldName]
+  );
 
   return (
     <>
-      <HFTextField key={fieldName} control={control} name={fieldName} fullWidth placeholder={fieldPlaceholder} defaultValue={defaultValue} />
+      <HFTextField
+        key={fieldName}
+        control={control}
+        name={fieldName}
+        fullWidth
+        placeholder={fieldPlaceholder}
+        defaultValue={defaultValue}
+      />
 
-      <Badge badgeContent={selectedLanguage} color="primary">
-        <Button
-          id="basic-button"
-          variant="outlined"
-          color="inherit"
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClick}
-        >
-          <TranslateIcon />
-        </Button>
-      </Badge>
+      {languages?.length > 1 && (
+        <Badge badgeContent={selectedLanguage} color="primary">
+          <Button
+            id="basic-button"
+            variant="outlined"
+            color="inherit"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <TranslateIcon />
+          </Button>
+        </Badge>
+      )}
 
       <Menu
         id="basic-menu"

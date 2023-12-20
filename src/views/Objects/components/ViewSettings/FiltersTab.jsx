@@ -26,7 +26,14 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import LinkIcon from "@mui/icons-material/Link";
 
-const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
+const FiltersTab = ({
+  form,
+  onChange,
+  updateView,
+  views,
+  computedColumns,
+  isLoading,
+}) => {
   const {i18n} = useTranslation();
 
   const checkedColumns = useMemo(() => {
@@ -105,7 +112,7 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
       DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
     };
   }, []);
-
+  console.log("allColumns", allColumns);
   return (
     <div
       style={{
@@ -183,7 +190,9 @@ const FiltersTab = ({form, updateView, views, computedColumns, isLoading}) => {
                   (filtered) => filtered?.id === column.id
                 )}
                 onChange={(e, val) => {
+                  console.log("entered", column, onChange);
                   changeHandler(e.target.checked, column);
+                  onChange(undefined, column?.path_slug ?? column.slug);
                 }}
               />
             </div>

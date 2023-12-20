@@ -1,5 +1,5 @@
-import { TextField } from "@mui/material";
-import { useMemo, useState } from "react";
+import {TextField} from "@mui/material";
+import {useMemo, useState} from "react";
 
 import CSelect from "../../../../components/CSelect";
 import TableColumnFilter from "../../../../components/TableColumnFilter";
@@ -10,13 +10,7 @@ import FilterAutoComplete from "./FilterAutocomplete";
 import DateFilter from "./DateFilter";
 import BooleanFilter from "./BooleanFilter";
 
-const FilterGenerator = ({
-  field,
-  name,
-  filters = {},
-  onChange,
-  tableSlug,
-}) => {
+const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -31,7 +25,7 @@ const FilterGenerator = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{display: "flex", alignItems: "center"}}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
       {/* <TableColumnFilter>
         <Filter

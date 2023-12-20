@@ -46,7 +46,12 @@ const RelationFormElement = ({
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
 
-  const computedLabel = field?.attributes?.[`label_from_${i18n?.language}`] ?? field?.attributes?.[`label_${i18n?.language}`] ?? field?.label ?? field?.title;
+  const computedLabel =
+    field?.attributes?.[`label_${i18n?.language}`] ||
+    field?.attributes?.[`label_${i18n?.language}`] ||
+    column?.attributes?.[`label_from_${i18n?.language}`] ||
+    field?.label ||
+    field?.title;
 
   const required = useMemo(() => {
     if (window.location.pathname?.includes("settings")) {
@@ -92,7 +97,11 @@ const RelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow label={value} onLabelChange={onChange} required={checkRequiredField}>
+        <FEditableRow
+          label={value}
+          onLabelChange={onChange}
+          required={checkRequiredField}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -176,7 +185,10 @@ const AutoCompleteElement = ({
   };
 
   const computedIds = useMemo(() => {
-    if (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
       return clientTypeID;
     } else {
       return ids;
@@ -205,25 +217,31 @@ const AutoCompleteElement = ({
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-          from_input: true,
-        },
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: pageToOffset(page, 10),
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {
+            from_input: true,
+          },
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
@@ -268,7 +286,8 @@ const AutoCompleteElement = ({
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
@@ -290,10 +309,16 @@ const AutoCompleteElement = ({
     } else {
       return optionsFromLocale?.options ?? [];
     }
-  }, [optionsFromFunctions?.options, optionsFromLocale?.options, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions?.options,
+    optionsFromLocale?.options,
+    field?.attributes?.function_path,
+  ]);
 
   const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(new Set(allOptions.map(JSON.stringify))).map(JSON.parse);
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
     return uniqueObjects ?? [];
   }, [allOptions, options]);
 
@@ -341,7 +366,10 @@ const AutoCompleteElement = ({
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
 
-    if (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
     }
@@ -408,10 +436,15 @@ const AutoCompleteElement = ({
     }
   }
 
+  console.log("computedOptions", computedOptions);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
-        <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
           Создать новый
         </div>
       )}
@@ -452,8 +485,10 @@ const AutoCompleteElement = ({
           <Select
             isDisabled={
               disabled ||
-              (field?.attributes?.object_id_from_jwt && field?.id?.split("#")?.[0] === "client_type") ||
-              (Boolean(field?.attributes?.is_user_id_default) && localValue?.length !== 0)
+              (field?.attributes?.object_id_from_jwt &&
+                field?.id?.split("#")?.[0] === "client_type") ||
+              (Boolean(field?.attributes?.is_user_id_default) &&
+                localValue?.length !== 0)
             }
             options={allOptions ?? []}
             isClearable={true}
@@ -471,7 +506,11 @@ const AutoCompleteElement = ({
               setInputValue(e ?? null);
               inputChangeHandler(e);
             }}
-            getOptionLabel={(option) => field?.attributes?.view_fields?.map((el) => `${option[el?.slug]} `)}
+            getOptionLabel={(option) =>
+              field?.attributes?.view_fields?.map(
+                (el) => `${option[el?.slug]} `
+              )
+            }
             getOptionValue={(option) => option?.guid}
             components={{
               DropdownIndicator: () => null,

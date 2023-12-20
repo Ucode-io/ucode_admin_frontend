@@ -85,7 +85,6 @@ const NewSection = ({
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
-  console.log("sectionFields", sectionFields);
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>

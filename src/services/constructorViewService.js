@@ -5,8 +5,6 @@ const constructorViewService = {
   getList: (tableSlug, params) =>
     requestV2.get(`/views/${tableSlug}`, { params }),
   update: (tableSlug, data) => {
-    console.log("tableSlug", tableSlug);
-    console.log("data", data);
     return requestV2.put(`/views/${tableSlug}`, data);
   },
   create: (tableSlug, data) => requestV2.post(`/views/${tableSlug}`, data),

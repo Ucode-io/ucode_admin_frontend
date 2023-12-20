@@ -5,14 +5,14 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import {Controller, useWatch} from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import {Parser} from "hot-formula-parser";
-import {useEffect} from "react";
+import { Parser } from "hot-formula-parser";
+import { useEffect } from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
-import {useState} from "react";
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {Lock} from "@mui/icons-material";
+import { useState } from "react";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { Lock } from "@mui/icons-material";
 import FunctionsIcon from "@mui/icons-material/Functions";
 
 const parser = new Parser();
@@ -55,7 +55,7 @@ const HFFormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
-    const {error, result} = parser.parse(computedFormula);
+    const { error, result } = parser.parse(computedFormula);
 
     let newValue = error ?? result;
     const prevValue = values[name];
@@ -67,7 +67,6 @@ const HFFormulaField = ({
   useEffect(() => {
     updateValue();
   }, []);
-  console.log("disableddisabled", disabled);
   return (
     <Controller
       control={control}
@@ -78,7 +77,7 @@ const HFFormulaField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
           value={
@@ -117,7 +116,7 @@ const HFFormulaField = ({
           autoFocus={tabIndex === 1}
           helperText={!disabledHelperText && error?.message}
           InputProps={{
-            inputProps: {tabIndex},
+            inputProps: { tabIndex },
             readOnly: disabled,
             style: disabled
               ? {
@@ -131,7 +130,7 @@ const HFFormulaField = ({
             endAdornment: (
               <InputAdornment position="end">
                 <Box
-                  style={{display: "flex", alignItems: "center", gap: "10px"}}
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                   <Tooltip
                     title={formulaIsVisible ? "Hide formula" : "Show formula"}
@@ -151,7 +150,7 @@ const HFFormulaField = ({
                   {disabled && (
                     <Tooltip title="This field is disabled for this role!">
                       <InputAdornment position="start">
-                        <Lock style={{fontSize: "20px"}} />
+                        <Lock style={{ fontSize: "20px" }} />
                       </InputAdornment>
                     </Tooltip>
                   )}

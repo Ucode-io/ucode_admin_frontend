@@ -104,6 +104,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     reset,
     setValue: setFormValue,
     getValues,
+    formState: {errors},
   } = useForm({
     defaultValues: {
       multi: [],

@@ -500,7 +500,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <AccountCircle style={{fontSize: "30px"}} />
+                              <AccountCircle style={{ fontSize: "30px" }} />
                             </InputAdornment>
                           ),
                         }}

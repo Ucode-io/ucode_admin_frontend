@@ -79,10 +79,10 @@ const HFSelect = ({
                     )),
                   ])
                 : options?.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <MenuItem key={option?.value} value={option?.value}>
                       <div className="flex align-center gap-2">
-                        {option?.icon && columnIcons(option.value)}
-                        {option.label}
+                        {option?.icon && columnIcons(option?.value)}
+                        {option?.label}
                       </div>
                     </MenuItem>
                   ))}

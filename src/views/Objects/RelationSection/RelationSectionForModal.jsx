@@ -55,7 +55,7 @@ const RelationSectionForModal = ({
   let [searchParams] = useSearchParams();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
+  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
@@ -94,7 +94,7 @@ const RelationSectionForModal = ({
   };
 
   useEffect(() => {
-    layoutService.getLayout(tableSlug, menuItem?.id).then((res) => {
+    layoutService.getLayout(tableSlug, appId).then((res) => {
       const layout = {
         ...res,
         tabs: res?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),

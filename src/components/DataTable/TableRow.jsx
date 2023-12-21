@@ -351,9 +351,14 @@ const TableRow = React.memo(
                 {/* <Checkbox
                   className="table_multi_checkbox"
                   style={{
-                    display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
+                    display:
+                      selectedObjectsForDelete?.find(
+                        (item) => item?.guid === row?.guid
+                      ) && "block",
                   }}
-                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                  checked={selectedObjectsForDelete?.find(
+                    (item) => item?.guid === row?.guid
+                  )}
                   onChange={() => {
                     changeSetDelete(row);
                   }}
@@ -366,7 +371,7 @@ const TableRow = React.memo(
                 virtualColumn?.attributes?.field_permission
                   ?.view_permission && (
                   <CTableCell
-                    key={virtualColumn.id}
+                    key={virtualColumn.guid}
                     className={`overflow-ellipsis ${tableHeight}`}
                     style={{
                       minWidth: "220px",
@@ -385,9 +390,7 @@ const TableRow = React.memo(
                           : "relative"
                       }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                        ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) + 80
-                          }px`
+                        ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
@@ -431,7 +434,8 @@ const TableRow = React.memo(
                     )}
                   </CTableCell>
                 )
-            )}
+              )
+            }
             <td style={{height: "30px"}}>
               <div
                 style={{

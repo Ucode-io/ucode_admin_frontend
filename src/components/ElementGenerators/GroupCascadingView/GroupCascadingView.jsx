@@ -42,7 +42,7 @@ const GroupCascadingView = ({
 
   const getServices = (item) => {
     constructorObjectService
-      .getList(relTableSLug, {
+      .getListV2(relTableSLug, {
         data: { [field?.attributes?.cascading_tree?.field_slug]: item?.guid },
       })
       .then((res) => {

@@ -1,11 +1,11 @@
-import { addDays, format } from "date-fns";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import {addDays, format} from "date-fns";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import Moveable from "react-moveable";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {useParams} from "react-router-dom";
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 
@@ -24,7 +24,7 @@ export default function TimeLineDayDataBlockItem({
   groupByList,
 }) {
   const ref = useRef();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [target, setTarget] = useState();
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
@@ -45,21 +45,53 @@ export default function TimeLineDayDataBlockItem({
 
   const startDate = useMemo(() => {
     return datesList && calendar_from_slug
-      ? datesList?.findIndex(
-          (date) => format(date ? new Date(date) : new Date(), "dd.MM.yyyy") === format(data[calendar_from_slug] ? new Date(data[calendar_from_slug]) : new Date(), "dd.MM.yyyy")
-        )
+      ? datesList?.findIndex((date) => {
+          const currentDate = date ? new Date(date) : null;
+          const selectedDate = data?.[calendar_from_slug]
+            ? new Date(data?.[calendar_from_slug])
+            : null;
+          const isValidCurrentDate =
+            currentDate instanceof Date && !isNaN(currentDate);
+          const isValidSelectedDate =
+            selectedDate instanceof Date && !isNaN(selectedDate);
+
+          if (isValidCurrentDate && isValidSelectedDate) {
+            return (
+              format(currentDate, "dd.MM.yyyy") ===
+              format(selectedDate, "dd.MM.yyyy")
+            );
+          }
+
+          return false;
+        })
       : null;
   }, [datesList, calendar_from_slug, data]);
 
   const differenceInDays = useMemo(() => {
-    const days = Math.ceil((new Date(data?.[calendar_to_slug]) - new Date(data?.[calendar_from_slug])) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(
+      (new Date(data?.[calendar_to_slug]) -
+        new Date(data?.[calendar_from_slug])) /
+        (1000 * 60 * 60 * 24)
+    );
     return days;
   }, [data, calendar_from_slug, calendar_to_slug]);
 
   useEffect(() => {
     if (!ref.current) return null;
     setTarget(ref.current);
-  }, [ref, view, data, calendar_from_slug, calendar_to_slug, groupbyFields, visible_field, groupByList, levelIndex, datesList, zoomPosition]);
+  }, [
+    ref,
+    view,
+    data,
+    calendar_from_slug,
+    calendar_to_slug,
+    groupbyFields,
+    visible_field,
+    groupByList,
+    levelIndex,
+    datesList,
+    zoomPosition,
+  ]);
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -68,13 +100,25 @@ export default function TimeLineDayDataBlockItem({
 
     if (position.translate[0] < 0) {
       newDatePosition = [
-        addDays(new Date(data[calendar_from_slug]), (-position.translate[0] * -1) / (zoomPosition * 30)),
-        addDays(new Date(data[calendar_to_slug]), (-position.translate[0] * -1) / (zoomPosition * 30)),
+        addDays(
+          new Date(data[calendar_from_slug]),
+          (-position.translate[0] * -1) / (zoomPosition * 30)
+        ),
+        addDays(
+          new Date(data[calendar_to_slug]),
+          (-position.translate[0] * -1) / (zoomPosition * 30)
+        ),
       ];
     } else if (position.translate[0] > 0) {
       newDatePosition = [
-        addDays(new Date(data[calendar_from_slug]), position.translate[0] / (zoomPosition * 30)),
-        addDays(new Date(data[calendar_to_slug]), position.translate[0] / (zoomPosition * 30)),
+        addDays(
+          new Date(data[calendar_from_slug]),
+          position.translate[0] / (zoomPosition * 30)
+        ),
+        addDays(
+          new Date(data[calendar_to_slug]),
+          position.translate[0] / (zoomPosition * 30)
+        ),
       ];
     }
 
@@ -95,7 +139,13 @@ export default function TimeLineDayDataBlockItem({
 
   const onResizeEndToUpdate = (position, width) => {
     if (!position) return null;
-    let newDatePosition = [datesList[position.drag.left / (zoomPosition * 30)], addDays(datesList[position.drag.left / (zoomPosition * 30)], width / (zoomPosition * 30))];
+    let newDatePosition = [
+      datesList[position.drag.left / (zoomPosition * 30)],
+      addDays(
+        datesList[position.drag.left / (zoomPosition * 30)],
+        width / (zoomPosition * 30)
+      ),
+    ];
     const computedData = {
       ...data,
       [calendar_from_slug]: newDatePosition[0],
@@ -111,14 +161,20 @@ export default function TimeLineDayDataBlockItem({
       });
   };
 
-  const onDrag = ({ target, beforeTranslate }) => {
+  const onDrag = ({target, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     const [x, y] = beforeTranslate;
     target.style.transform = `translate(${x}px, 0)`;
-    setFocusedDays([datesList[startDate + Math.round(x / (zoomPosition * 30))], addDays(datesList[startDate + Math.round(x / (zoomPosition * 30))], differenceInDays - 1)]);
+    setFocusedDays([
+      datesList[startDate + Math.round(x / (zoomPosition * 30))],
+      addDays(
+        datesList[startDate + Math.round(x / (zoomPosition * 30))],
+        differenceInDays - 1
+      ),
+    ]);
   };
 
-  const onDragEnd = ({ lastEvent }) => {
+  const onDragEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onDragEndToUpdate(lastEvent, lastEvent.width);
@@ -128,18 +184,25 @@ export default function TimeLineDayDataBlockItem({
 
   // ----------RESIZE ACTIONS----------------------
 
-  const onResize = ({ target, width, drag }) => {
+  const onResize = ({target, width, drag}) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.width = `${width}px`;
     target.style.transform = `translateX(${beforeTranslate[0]}px)`;
     setFocusedDays([
-      datesList[startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))],
-      addDays(datesList[startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))], width / (zoomPosition * 30) - 1),
+      datesList[
+        startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+      ],
+      addDays(
+        datesList[
+          startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+        ],
+        width / (zoomPosition * 30) - 1
+      ),
     ]);
   };
 
-  const onResizeEnd = ({ lastEvent }) => {
+  const onResizeEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onResizeEndToUpdate(lastEvent, lastEvent.width);
@@ -152,7 +215,9 @@ export default function TimeLineDayDataBlockItem({
       <div
         className={styles.dataBlock}
         style={{
-          top: view?.attributes?.group_by_columns?.length === 0 && `${level * 32}px`,
+          top:
+            view?.attributes?.group_by_columns?.length === 0 &&
+            `${level * 32}px`,
           left: `${startDate * (zoomPosition * 30)}px`,
           width: `${zoomPosition * 30 * differenceInDays}px`,
           cursor: "pointer",
@@ -169,10 +234,19 @@ export default function TimeLineDayDataBlockItem({
             height: "100%",
           }}
         >
-          <CellElementGenerator row={data} field={computedColumnsFor?.find((field) => field?.slug === visible_field)} />
+          <CellElementGenerator
+            row={data}
+            field={computedColumnsFor?.find(
+              (field) => field?.slug === visible_field
+            )}
+          />
         </div>
       </div>
-      <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+      />
 
       {startDate === -1 || level === -1 ? (
         ""
@@ -188,7 +262,7 @@ export default function TimeLineDayDataBlockItem({
           keepRatio={false}
           origin={false}
           renderDirections={["w", "e"]}
-          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+          padding={{left: 0, top: 0, right: 0, bottom: 0}}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
           onResize={onResize}

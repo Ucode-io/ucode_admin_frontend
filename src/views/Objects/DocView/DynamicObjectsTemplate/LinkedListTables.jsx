@@ -18,6 +18,7 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import constructorRelationService from "../../../../services/constructorRelationService";
 import styles from "./style.module.scss";
 import ClearIcon from "@mui/icons-material/Clear";
+import constructorTableService from "../../../../services/constructorTableService";
 
 function LinkedListTables({
   selectedOutputTable,
@@ -195,7 +196,7 @@ function LinkedListTables({
     ["GET_OBJECT_LIST_TABLE", selectTableSlug, state, debouncedObjectValue],
     () => {
       // if (state === undefined) return null;
-      return constructorObjectService.getList(selectTableSlug, {
+      return constructorObjectService.getListV2(selectTableSlug, {
         data: {
           view_fields: [getSubtitleFieldSlug],
           search: debouncedObjectValue.trim(),
@@ -237,7 +238,7 @@ function LinkedListTables({
     ["GET_OBJECT_LIST", outputTableSlug, computedLinkedObjects, debouncedValue],
     () => {
       if (outputTableSlug === undefined) return null;
-      return constructorObjectService.getList(outputTableSlug, {
+      return constructorTableService.getTableInfo(outputTableSlug, {
         data: {
           view_fields: [subttitleFieldSlug],
           search: debouncedValue.trim(),

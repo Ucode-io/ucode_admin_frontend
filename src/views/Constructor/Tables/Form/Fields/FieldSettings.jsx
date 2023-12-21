@@ -1,4 +1,4 @@
-import {Close} from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
@@ -9,36 +9,36 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import {TreeView} from "@mui/x-tree-view";
-import {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import { TreeView } from "@mui/x-tree-view";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 import constructorFieldService, {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../../../services/constructorFieldService";
-import constructorObjectService from "../../../../../services/constructorObjectService";
+import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import {useMenuListQuery} from "../../../../../services/menuService";
-import {store} from "../../../../../store";
+import { useMenuListQuery } from "../../../../../services/menuService";
+import { store } from "../../../../../store";
 import {
   fieldButtons,
   fieldTypesOptions,
 } from "../../../../../utils/constants/fieldTypes";
-import {generateGUID} from "../../../../../utils/generateID";
+import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
-import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -99,8 +99,8 @@ const FieldSettings = ({
     ["GET_VIEWS_AND_FIELDS", {slug}],
     () => {
       if (!slug) return false;
-      return constructorObjectService.getList(slug, {
-        data: {limit: 10, offset: 0, app_id: appId},
+      return constructorTableService.getTableInfo(slug, {
+        data: { limit: 10, offset: 0, app_id: appId },
       });
     },
     {

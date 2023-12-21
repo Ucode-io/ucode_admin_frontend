@@ -22,8 +22,8 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
 
-const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -67,19 +67,16 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    });
+    const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
       const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
       setSections(sortSections(sections));
-      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
+      setSummary(layout?.summary_fields ?? []);
 
-      const defaultLayout = layout?.find((el) => el.is_default === true);
+      const defaultLayout = layout;
 
       const relations =
         defaultLayout?.tabs?.map((el) => ({
@@ -102,14 +99,11 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    });
+    const getLayout = layoutService.getLayout(tableSlug, appId);
 
     try {
       const [{ layouts: layout = [] }] = await Promise.all([getLayout]);
-      const defaultLayout = layout?.find((el) => el.is_default === true);
+      const defaultLayout = layout;
       setSections(sortSections(sections));
 
       const relations =
@@ -180,7 +174,6 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, modal = fals
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));

@@ -50,7 +50,7 @@ function CascadingElement({
   const {data: options} = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
     () => {
-      return constructorObjectService.getList(
+      return constructorObjectService.getListV2(
         tableSlug,
         {
           data: {
@@ -121,7 +121,7 @@ function CascadingElement({
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     constructorObjectService
-      .getList(
+      .getListV2(
         field?.attributes?.cascadings[field?.attributes?.cascadings?.length - 1]
           ?.table_slug,
         {data: {}}

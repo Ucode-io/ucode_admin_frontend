@@ -1,20 +1,14 @@
-import {TextField} from "@mui/material";
-import {useMemo, useState} from "react";
-
-import CSelect from "../../../../components/CSelect";
-import TableColumnFilter from "../../../../components/TableColumnFilter";
+import { TextField } from "@mui/material";
+import { useMemo, useState } from "react";
 import TableOrderingButton from "../../../../components/TableOrderingButton";
-import DefaultFilter from "./DefaultFilter";
-import RelationFilter from "./RelationFilter";
-import FilterAutoComplete from "./FilterAutocomplete";
-import DateFilter from "./DateFilter";
 import BooleanFilter from "./BooleanFilter";
+import DateFilter from "./DateFilter";
+import DefaultFilter from "./DefaultFilter";
+import FilterAutoComplete from "./FilterAutocomplete";
+import RelationFilter from "./RelationFilter";
 
-const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
-  const orderingType = useMemo(
-    () => filters.order?.[name],
-    [filters.order, name]
-  );
+const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => {
+  const orderingType = useMemo(() => filters.order?.[name], [filters.order, name]);
 
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order");
@@ -25,31 +19,17 @@ const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
   };
 
   return (
-    <div style={{display: "flex", alignItems: "center"}}>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
-      {/* <TableColumnFilter>
-        <Filter
-          field={field}
-          name={name}
-          filters={filters}
-          onChange={onChange}
-          tableSlug={tableSlug}
-        />
-      </TableColumnFilter> */}
     </div>
   );
 };
 
 export default FilterGenerator;
 
-export const Filter = ({
-  field = {},
-  name,
-  filters = {},
-  onChange,
-  tableSlug,
-}) => {
+export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
+
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
@@ -66,20 +46,10 @@ export const Filter = ({
     });
   }, [field.attributes?.options, field.type]);
 
-  // if (field.type === "LOOKUP" || field.type === "LOOKUPS") return <RelationFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
-
   switch (field.type) {
     case "LOOKUP":
     case "LOOKUPS":
-      return (
-        <RelationFilter
-          field={field}
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          tableSlug={tableSlug}
-        />
-      );
+      return <RelationFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
 
     case "PICK_LIST":
     case "MULTISELECT":
@@ -93,18 +63,6 @@ export const Filter = ({
           label={field.label}
           field={field}
         />
-
-        // <FormControl style={{ width: "100%" }}>
-        //   <CSelect
-        //     value={filters[name] ?? ""}
-        //     onChange={(e) => onChange(e.target.value, name)}
-        //     size="small"
-        //     fullWidth
-        //     disabledHelperText
-        //     options={computedOptions}
-        //     placeholder={field.label}
-        //   />
-        // </FormControl>
       );
 
     case "PHOTO":
@@ -112,27 +70,7 @@ export const Filter = ({
 
     case "DATE":
     case "DATE_TIME":
-      return (
-        <DateFilter
-          value={filters[name]}
-          onChange={(val) => onChange(val, name)}
-        />
-        // <DatePicker
-        //   inputFormat="dd.MM.yyyy"
-        //   mask="__.__.____"
-        //   toolbarFormat="dd.MM.yyyy"
-        //   value={filters[name] ?? ""}
-        //   onChange={(val) => onChange(val, name)}
-        //   renderInput={(params) => (
-        //     <TextField
-        //       {...params}
-        //       error={false}
-        //       style={{ width: "100%" }}
-        //       size="small"
-        //     />
-        //   )}
-        // />
-      );
+      return <DateFilter value={filters[name]} onChange={(val) => onChange(val, name)} />;
 
     case "NUMBER":
       return (
@@ -147,24 +85,9 @@ export const Filter = ({
       );
 
     case "SWITCH":
-      return (
-        <BooleanFilter
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          field={field}
-        />
-      );
+      return <BooleanFilter filters={filters} onChange={onChange} name={name} field={field} />;
 
     default:
-      return (
-        <DefaultFilter
-          field={field}
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          tableSlug={tableSlug}
-        />
-      );
+      return <DefaultFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
   }
 };

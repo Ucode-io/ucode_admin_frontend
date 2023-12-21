@@ -57,7 +57,7 @@ function CascadingItem({
   const {data: searchServices} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue],
     () => {
-      return constructorObjectService.getList(
+      return constructorObjectService.getListV2(
         tableSlug,
         {
           data: {
@@ -108,7 +108,7 @@ function CascadingItem({
               [levelSlug]: item?.guid,
             };
       constructorObjectService
-        .getList(cascading[cascadingLength - 1 - level]?.table_slug, {
+        .getListV2(cascading[cascadingLength - 1 - level]?.table_slug, {
           data: {...data, input: true},
         })
         .then((res) => {

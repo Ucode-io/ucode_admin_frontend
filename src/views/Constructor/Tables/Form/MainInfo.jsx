@@ -1,21 +1,21 @@
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../components/FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
+import { LoginStrategy } from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
-import { LoginStrategy } from "../../../../mock/FolderSettings";
-import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import style from "./main.module.scss";
-import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const MainInfo = ({ control, watch }) => {
   const { tableSlug } = useParams();
@@ -64,10 +64,7 @@ const MainInfo = ({ control, watch }) => {
       return constructorObjectService.getList(
         tableSlug,
         {
-          data: {
-            limit: 0,
-            offset: 0,
-          },
+          data: {},
         },
         params
       );

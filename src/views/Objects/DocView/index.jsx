@@ -26,6 +26,7 @@ import RedactorBlock from "./RedactorBlock";
 import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
 import { useTranslation } from "react-i18next";
+import constructorTableService from "../../../services/constructorTableService";
 
 const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const redactorRef = useRef();
@@ -78,7 +79,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
       i18n?.language,
     ],
     () => {
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         selectedLinkedTableSlug,
         {
           data: { limit: 0, offset: 0, with_relations: true },

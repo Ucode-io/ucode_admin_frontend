@@ -69,7 +69,6 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
                   <Switch
                     onChange={() => {
                       setDefault(index);
-                      updateCurrentLayout();
                     }}
                     checked={element.is_default ?? false}
                   />
@@ -81,7 +80,6 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
                   <Switch
                     onChange={(e) => {
                       setModal(index, e);
-                      updateCurrentLayout();
                     }}
                     checked={element.type === "SimpleLayout" ? false : true}
                   />
@@ -93,7 +91,6 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
                   <Switch
                     onChange={(e) => {
                       setSectionTab(index, e);
-                      updateCurrentLayout();
                     }}
                     checked={element?.is_visible_section ?? false}
                   />

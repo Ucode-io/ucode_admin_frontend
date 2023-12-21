@@ -2,7 +2,7 @@ import {Delete} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import {Button, Checkbox} from "@mui/material";
 import {useVirtualizer} from "@tanstack/react-virtual";
-import {useRef} from "react";
+import React, {useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import {CTableCell, CTableRow} from "../CTable";

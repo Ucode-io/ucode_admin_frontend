@@ -25,13 +25,14 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           is_default: !element.is_default,
         };
       }
@@ -49,6 +50,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           type: e.target.checked ? "PopupLayout" : "SimpleLayout",
         };
       }
@@ -63,6 +65,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           is_visible_section: !element.is_visible_section,
         };
       }

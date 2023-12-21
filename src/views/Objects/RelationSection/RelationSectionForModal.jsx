@@ -285,7 +285,11 @@ const RelationSectionForModal = ({
                         <>
                           <Tab
                             key={el.id}
-                            className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                            className={`${styles.tabs_item} ${
+                              selectedTabIndex === index
+                                ? "custom-selected-tab"
+                                : "custom-tab"
+                            }`}
                             onClick={() => {
                               setSelectedIndex(index);
                               onSelect(el);
@@ -317,7 +321,12 @@ const RelationSectionForModal = ({
                               borderRadius: "50%",
                             }}
                           >
-                            {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                            {el?.attributes?.is_visible_layout ||
+                            el?.attributes?.is_visible_layout === undefined ? (
+                              <VisibilityOffIcon />
+                            ) : (
+                              <VisibilityIcon />
+                            )}
                           </Button>
 
                           <Divider orientation="vertical" flexItem />

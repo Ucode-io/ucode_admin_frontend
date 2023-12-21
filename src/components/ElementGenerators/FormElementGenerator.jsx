@@ -103,7 +103,7 @@ const FormElementGenerator = ({
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
-    
+
     return field?.slug;
   }, [field?.id, field?.slug, activeLang, field?.enable_multilanguage]);
 
@@ -134,9 +134,6 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
-
-  console.log("defaultValue", defaultValue);
-
   const isDisabled = useMemo(() => {
     const { attributes } = field;
 
@@ -165,7 +162,6 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-console.log('field', field)
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (
@@ -229,6 +225,21 @@ console.log('field', field)
   }
 
   switch (field.type) {
+    case "MAP":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMapField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
     case "SCAN_BARCODE":
       return valueGenerator ? (
         <InventoryBarCode
@@ -611,21 +622,6 @@ console.log('field', field)
             control={control}
             name={computedSlug}
             key={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={checkRequiredField}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            field={field}
-            {...props}
-          />
-        </FRow>
-      );
-    case "MAP":
-      return (
-        <FRow label={label} required={field.required}>
-          <HFMapField
-            control={control}
-            name={computedSlug}
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             defaultValue={defaultValue}

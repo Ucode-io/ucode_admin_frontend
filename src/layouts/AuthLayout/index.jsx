@@ -32,11 +32,14 @@ const AuthLayout = () => {
 
   if (microfrontendUrl && window.location.hostname !== "localhost")
     return (
-      <MicrofrontendComponent
-        loginAction={(authData) => dispatch(loginAction(authData))}
-        key={microfrontendLink}
-        link={microfrontendLink}
-      />
+      <>
+        <MicrofrontendComponent
+          loginAction={(authData) => dispatch(loginAction(authData))}
+          key={microfrontendLink}
+          link={microfrontendLink}
+        />
+        <Outlet />
+      </>
     );
 
   return (

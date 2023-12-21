@@ -50,6 +50,8 @@ const CellRelationFormElementForTableView = ({
 }) => {
   const classes = useStyles();
 
+  console.log("relOptions", relOptions);
+
   if (!isLayout)
     return (
       <Controller
@@ -157,6 +159,10 @@ const AutoCompleteElement = ({ relOptions, tableView, field, value, tableSlug, n
       ...provided,
       width: "100%",
       border: "none",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      display: "flex",
     }),
     option: (provided, state) => ({
       ...provided,

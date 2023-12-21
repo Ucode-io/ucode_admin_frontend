@@ -86,6 +86,7 @@ const HFMultipleAutocomplete = ({
             width={width}
             label={label}
             // tabIndex={tabIndex}
+            required={required}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
             hasIcon={hasIcon}
@@ -115,6 +116,7 @@ const AutoCompleteElement = ({
   hasColor,
   // tabIndex,
   hasIcon,
+  required,
   classes,
   placeholder,
   onFormChange,
@@ -141,11 +143,17 @@ const AutoCompleteElement = ({
     if (!value?.length) return [];
 
     if (isMultiSelect)
-      return (
-        value?.map((el) =>
-          localOptions?.find((option) => option.value === el)
-        ) ?? []
-      );
+      if (Array.isArray(value)) {
+        return (
+          value?.map((el) =>
+            localOptions?.find((option) => option.value === el)
+          ) ?? []
+        );
+      } else {
+        return localOptions?.find((item) => {
+          item?.value === value;
+        });
+      }
     else return [localOptions?.find((option) => option.value === value[0])];
   }, [value, localOptions, isMultiSelect]);
 
@@ -206,7 +214,7 @@ const AutoCompleteElement = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={computedValue.length ? "" : placeholder}
+            placeholder={computedValue?.length ? "" : placeholder}
             // autoFocus={tabIndex === 1}
             sx={{
               "&.MuiInputAdornment-root": {
@@ -268,7 +276,11 @@ const AutoCompleteElement = ({
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"
-                    onClick={getTagProps({index})?.onDelete}
+                    style={{cursor: "pointer"}}
+                    onClick={() => {
+                      getTagProps({index})?.onDelete();
+                      onFormChange(null);
+                    }}
                   />
                 )}
               </div>
@@ -278,6 +290,10 @@ const AutoCompleteElement = ({
       />
       {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
+      )}
+
+      {Boolean(!value?.length && required) && (
+        <FormHelperText error>{"This field is required"}</FormHelperText>
       )}
       <Dialog open={!!dialogState} onClose={handleClose}>
         <AddOptionBlock

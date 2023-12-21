@@ -101,8 +101,6 @@ const RelationSettings = ({
       values.type === "LOOKUPS"
     );
   }, [values.type, values.table_from, tableSlug]);
-  console.log("isViewFieldsVisible", isViewFieldsVisible);
-  console.log("slug", tableSlug);
 
   const computedColumnsList = useMemo(() => {
     if (onlyCheckedColumnsVisible) return values.columnsList;
@@ -117,7 +115,6 @@ const RelationSettings = ({
   const params = {
     language_setting: i18n?.language,
   };
-  console.log("relatedTableSlug", relatedTableSlug);
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
@@ -240,7 +237,6 @@ const RelationSettings = ({
     const result = applyDrag(values.filtersList, dragResult);
     if (result) setValue("filtersList", result);
   };
-
   const submitHandler = (values) => {
     const data = {
       ...values,
@@ -385,7 +381,7 @@ const RelationSettings = ({
                       >
                         {languages?.map((lang) => (
                           <HFTextField
-                            name={`attributes.label_from_${lang?.slug}`}
+                            name={`attributes.label_${lang?.slug}`}
                             control={control}
                             placeholder={`Relation Label From (${lang?.slug})`}
                             fullWidth

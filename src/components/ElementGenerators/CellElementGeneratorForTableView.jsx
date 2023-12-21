@@ -26,6 +26,7 @@ const CellElementGeneratorForTableView = ({
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
+  const checkRequiredField = field?.required;
   const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -86,8 +87,6 @@ const CellElementGeneratorForTableView = ({
 
     return error ? undefined : result;
   }, [field, userId, objectIdFromJWT]);
-
-  console.log("defaultValue", defaultValue);
 
   useEffect(() => {
     tables?.forEach((table) => {

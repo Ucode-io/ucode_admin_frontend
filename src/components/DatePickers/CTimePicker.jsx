@@ -1,23 +1,31 @@
-import DatePicker from "react-multi-date-picker"
-import TimePickerPlugin from "./Plugins/TimePickerPlugin"
-import "react-multi-date-picker/styles/layouts/mobile.css"
-import "./style2.scss"
-import { Box, InputAdornment, TextField, Tooltip } from "@mui/material"
-import { DateRange, Lock, Today } from "@mui/icons-material"
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DatePicker from "react-multi-date-picker";
+import TimePickerPlugin from "./Plugins/TimePickerPlugin";
+import "react-multi-date-picker/styles/layouts/mobile.css";
+import "./style2.scss";
+import { Box, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { DateRange, Lock, Today } from "@mui/icons-material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const CTimePicker = ({ value, onChange, classes, isBlackBg, isTransparent = false, isFormEdit, tabIndex, disabled }) => {
+const CTimePicker = ({
+  value,
+  onChange,
+  classes,
+  isBlackBg,
+  isTransparent = false,
+  isFormEdit,
+  tabIndex,
+  disabled,
+}) => {
   const getValue = () => {
-    if (!value) return ""
+    if (!value) return "";
 
-    const result = new Date()
+    const result = new Date();
 
-    result.setHours(value.split(":")?.[0])
-    result.setMinutes(value.split(":")?.[1])
+    result.setHours(value.split(":")?.[0]);
+    result.setMinutes(value.split(":")?.[1]);
 
-    return result
-  }
-
+    return result;
+  };
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -31,46 +39,53 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isTransparent = fals
             autoFocus={tabIndex === 1}
             autoComplete="off"
             InputProps={{
-                inputProps: { tabIndex },
+              inputProps: { tabIndex },
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
-              style: isTransparent ? {
-                background: "transparent",
-              } : disabled
-                    ? {
-                        background: "#c0c0c039",
-                      }
-                    : {
-                        background: isBlackBg ? "#2A2D34" : "",
-                        color: isBlackBg ? "#fff" : "",
-                      },
+              style: isTransparent
+                ? {
+                    background: "transparent",
+                  }
+                : disabled
+                ? {
+                    background: "#c0c0c039",
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                  },
               endAdornment: (
                 <InputAdornment position="end">
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <AccessTimeIcon style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
-                        {disabled && (
-                          <Tooltip title="This field is disabled for this role!">
-                            <Lock style={{ fontSize: "20px" }} />
-                          </Tooltip>
-                        )}
-                      </Box>
-                    </InputAdornment>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <AccessTimeIcon
+                      style={{
+                        color: isBlackBg ? "#fff" : "",
+                        fontSize: "20px",
+                      }}
+                    />
+                    {disabled && (
+                      <Tooltip title="This field is disabled for this role!">
+                        <Lock style={{ fontSize: "20px" }} />
+                      </Tooltip>
+                    )}
+                  </Box>
+                </InputAdornment>
               ),
             }}
             className={`${isFormEdit ? "custom_textfield" : ""}`}
           />
-        )
+        );
       }}
       disableDayPicker
       plugins={[<TimePickerPlugin disablePreview />]}
       format="HH:mm"
       value={getValue()}
       onChange={(date) => {
-        onChange(date?.isValid ? date.format("HH:mm") : "")
+        onChange(date?.isValid ? date.format("HH:mm") : "");
       }}
     />
-  )
-}
+  );
+};
 
-export default CTimePicker
+export default CTimePicker;

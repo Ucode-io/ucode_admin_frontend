@@ -116,8 +116,8 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, appId, navigate, navigateAndSaveHistory});
-    if (activeRequest) {
+    NavigateByType({element, appId, navigate});
+    if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
     if (element.type === "PERMISSION") {

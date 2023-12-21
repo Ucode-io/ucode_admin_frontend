@@ -27,7 +27,7 @@ export default function TimeLineRecursiveRow({
   lastLabels = "",
 }) {
   const [open, setOpen] = useState(false);
-  // const [label, setLabel] = useState({});
+  const [label, setLabel] = useState({});
   const viewFields = Object.values(fieldsMap)
     .find((field) => field?.table_slug === item?.group_by_slug)
     ?.view_fields?.map((field) => field?.slug);
@@ -77,7 +77,7 @@ export default function TimeLineRecursiveRow({
           }
         });
     }
-  );
+  }, [item]);
 
   const computedValue = useMemo(() => {
     const slugs = viewFields?.map((item) => item) ?? [];

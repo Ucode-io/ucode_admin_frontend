@@ -31,7 +31,6 @@ const MainInfo = ({
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
-  console.log("firstprojectId", projectId);
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -77,7 +76,7 @@ const MainInfo = ({
             <NewFormCard
               key={section.id}
               title={
-                section?.attributes?.[`label_${activeLang}`] ?? section.label
+                section?.attributes?.[`label_${i18n.language}`] ?? section.label
               }
               className={styles.formCard}
               icon={section.icon}

@@ -310,7 +310,7 @@ const ConstructorTablesFormPage = () => {
               </TabPanel>
 
               <TabPanel>
-                <Layout mainForm={mainForm} getRelationFields={getRelationFields} />
+                <Layout mainForm={mainForm} getRelationFields={getRelationFields} getData={getData}/>
               </TabPanel>
 
               <TabPanel>

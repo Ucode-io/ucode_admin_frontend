@@ -8,7 +8,7 @@ import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
 
-const Layout = ({ mainForm, getRelationFields }) => {
+const Layout = ({ mainForm, getRelationFields, getData }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({ mode: "onChange" });
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
@@ -99,7 +99,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} />
+        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} getData={getData}/>
       )}
 
       <div className={styles.page}>

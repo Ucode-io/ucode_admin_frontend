@@ -10,7 +10,7 @@ import layoutService from "../../../../../services/layoutService";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
 
-function NewlayoutList({ setSelectedLayout, mainForm }) {
+function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
   const { id } = useParams();
   const [selectedOptions, setSelectedOptions] = useState([]);
 
@@ -117,6 +117,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
           {!isLoading &&
             layouts?.map((element, index) => (
               <LayoutsItem
+              getData={getData}
                 element={element}
                 index={index}
                 mainForm={mainForm}

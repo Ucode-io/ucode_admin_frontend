@@ -9,8 +9,8 @@ import { CTableCell, CTableRow } from "../../../../../components/CTable";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
 
-export default function LayoutsItem({ element, index, mainForm, allMenus, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
-  const { tableSlug, appId } = useParams();
+export default function LayoutsItem({ element, index, getData, mainForm, allMenus, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
+  const { slug } = useParams();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -18,7 +18,7 @@ export default function LayoutsItem({ element, index, mainForm, allMenus, menus,
       ...watchLayout,
       menu_id: menuId,
     };
-    layoutService.update(currentUpdatedLayout, tableSlug);
+    layoutService.update(currentUpdatedLayout, slug);
   };
 
   const options = useMemo(() => {
@@ -26,6 +26,13 @@ export default function LayoutsItem({ element, index, mainForm, allMenus, menus,
       return value !== "";
     });
   }, [watchLayout?.menu_id, allMenus, menus]);
+
+  const removeHandle = (index) => {
+    const layout = mainForm.watch(`layouts.${index}`);
+    layoutService.remove(slug, layout?.id).then((res) => {
+      remove(index);
+    });
+  };
 
   return (
     <CTableRow key={element.id}>
@@ -122,7 +129,11 @@ export default function LayoutsItem({ element, index, mainForm, allMenus, menus,
             <Edit color="success" />
           </RectangleIconButton>
 
-          <RectangleIconButton color="error" onClick={() => remove(index)}>
+          {/* <RectangleIconButton color="error" onClick={() => remove(index)}>
+            <Delete color="error" />
+          </RectangleIconButton> */}
+
+          <RectangleIconButton color="error" onClick={() => removeHandle(index)}>
             <Delete color="error" />
           </RectangleIconButton>
         </Box>

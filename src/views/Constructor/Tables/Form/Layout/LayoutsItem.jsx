@@ -10,7 +10,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
 
 export default function LayoutsItem({ element, index, getData, mainForm, allMenus, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
-  const { slug } = useParams();
+  const { tableSlug } = useParams();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -18,7 +18,7 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
       ...watchLayout,
       menu_id: menuId,
     };
-    layoutService.update(currentUpdatedLayout, slug);
+    layoutService.update(currentUpdatedLayout, tableSlug);
   };
 
   const options = useMemo(() => {
@@ -29,7 +29,7 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
 
   const removeHandle = (index) => {
     const layout = mainForm.watch(`layouts.${index}`);
-    layoutService.remove(slug, layout?.id).then((res) => {
+    layoutService.remove(tableSlug, layout?.id).then((res) => {
       remove(index);
     });
   };

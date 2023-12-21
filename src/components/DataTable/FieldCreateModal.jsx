@@ -4,7 +4,7 @@ import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";

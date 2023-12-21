@@ -25,7 +25,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
-  const { slug } = useParams();
+  const { tableSlug } = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
@@ -41,7 +41,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setModal = (index, e) => {
@@ -55,7 +55,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       return element;
     });
     mainForm.setValue("layouts", newLayout);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setSectionTab = (index, e) => {
@@ -72,7 +72,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const languages = useSelector((state) => state.languages.list);

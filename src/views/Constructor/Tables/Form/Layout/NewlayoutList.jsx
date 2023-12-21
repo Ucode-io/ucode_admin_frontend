@@ -1,17 +1,19 @@
 import { Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { CTable, CTableCell, CTableHead } from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
+import layoutService from "../../../../../services/layoutService";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
-import layoutService from "../../../../../services/layoutService";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
   const { id } = useParams();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
   const {
     fields: layouts,
     append,
@@ -94,6 +96,14 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
     },
   });
 
+  const watchLayouts = mainForm.watch("layouts");
+
+  const nonSelectedOptionsMenu = useMemo(() => {
+    const selectedMenuIds = Array.from(new Set(watchLayouts?.map((layout) => layout?.menu_id)));
+    const nonSelectedOptionsMenu = menus?.filter((menu) => !selectedMenuIds?.includes(menu?.value));
+    return nonSelectedOptionsMenu;
+  }, [watchLayouts?.map((item) => item?.menu_id), menus]);
+
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>
@@ -104,20 +114,24 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
             <CTableCell width={60} />
           </CTableHead>
 
-          {!isLoading && layouts?.map((element, index) => (
-            <LayoutsItem
-              element={element}
-              index={index}
-              mainForm={mainForm}
-              menus={menus}
-              remove={remove}
-              setModal={setModal}
-              setDefault={setDefault}
-              setSectionTab={setSectionTab}
-              navigateToEditForm={navigateToEditForm}
-              languages={languages}
-            />
-          ))}
+          {!isLoading &&
+            layouts?.map((element, index) => (
+              <LayoutsItem
+                element={element}
+                index={index}
+                mainForm={mainForm}
+                menus={nonSelectedOptionsMenu}
+                allMenus={menus}
+                remove={remove}
+                setModal={setModal}
+                setDefault={setDefault}
+                setSectionTab={setSectionTab}
+                navigateToEditForm={navigateToEditForm}
+                languages={languages}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+              />
+            ))}
 
           <TableRowButton
             colSpan={4}

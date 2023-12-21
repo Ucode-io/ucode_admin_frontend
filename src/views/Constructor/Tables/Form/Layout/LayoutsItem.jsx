@@ -1,6 +1,6 @@
 import { Delete, Edit } from "@mui/icons-material";
 import { Box, FormControlLabel, Switch } from "@mui/material";
-import React from "react";
+import React, { useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import AutoWidthInput from "../../../../../components/AutoWidthInput";
@@ -9,7 +9,7 @@ import { CTableCell, CTableRow } from "../../../../../components/CTable";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
 
-export default function LayoutsItem({ element, index, mainForm, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
+export default function LayoutsItem({ element, index, mainForm, allMenus, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
   const { tableSlug, appId } = useParams();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
@@ -20,6 +20,12 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
     };
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
+
+  const options = useMemo(() => {
+    return [...menus, allMenus && watchLayout?.menu_id && allMenus.find((item) => item?.value === watchLayout?.menu_id)].filter(function (value) {
+      return value !== "";
+    });
+  }, [watchLayout?.menu_id, allMenus, menus]);
 
   return (
     <CTableRow key={element.id}>
@@ -104,7 +110,7 @@ export default function LayoutsItem({ element, index, mainForm, menus, remove, s
                 minWidth: "200px",
               }}
             >
-              <HFSelect control={mainForm.control} onChange={(e) => updateCurrentLayout(e)} name={`layouts.${index}.menu_id`} options={menus} />
+              <HFSelect control={mainForm.control} onChange={(e) => updateCurrentLayout(e)} name={`layouts.${index}.menu_id`} options={options} />
             </Box>
           </Box>
         </Box>

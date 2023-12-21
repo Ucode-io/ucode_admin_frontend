@@ -16,7 +16,7 @@ export default function LayoutsItem({ element, index, mainForm, allMenus, menus,
   const updateCurrentLayout = (menuId) => {
     const currentUpdatedLayout = {
       ...watchLayout,
-      menu_id: appId,
+      menu_id: menuId,
     };
     layoutService.update(currentUpdatedLayout, tableSlug);
   };

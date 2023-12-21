@@ -1,18 +1,14 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import {Box, Button, Tooltip} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useParams} from "react-router-dom";
+import { Box, Button, Tooltip } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { store } from "../../store";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {store} from "../../store";
-import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
-import projectService from "../../services/projectService";
-import {useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
 
 const MainInfo = ({
   computedSections,
@@ -89,7 +85,7 @@ const MainInfo = ({
                       key={field.id}
                       isMultiLanguage={isMultiLanguage}
                       field={field}
-                      control={control}
+                      control={control} // react-hook-form  
                       setFormValue={setFormValue}
                       fieldsList={fieldsList}
                       formTableSlug={tableSlug}

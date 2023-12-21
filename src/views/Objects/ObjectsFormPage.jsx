@@ -116,7 +116,7 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList(tableSlug, appId, {
+    const getLayout = layoutService.getLayout(tableSlug, appId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });

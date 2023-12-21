@@ -67,7 +67,7 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
+    const getLayout = layoutService.getLayout(tableSlug, appId);
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
 

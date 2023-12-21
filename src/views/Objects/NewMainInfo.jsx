@@ -1,18 +1,14 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
-import NewFormCard from "./components/NewFormCard";
-import styles from "./style.module.scss";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { store } from "../../store";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import projectService from "../../services/projectService";
-import { useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import NewFormCard from "./components/NewFormCard";
+import styles from "./style.module.scss";
 
 const MainInfo = ({
   computedSections,
@@ -73,40 +69,35 @@ const MainInfo = ({
             </div>
           )}
 
-          {computedSections &&
-            computedSections?.map((section) => (
-              <NewFormCard
-                key={section.id}
-                title={
-                  section?.attributes?.[`label_${i18n.language}`] ??
-                  section.label
-                }
-                className={styles.formCard}
-                icon={section.icon}
-              >
-                <div className={styles.newformColumn}>
-                  {section?.fields &&
-                    section?.fields?.map((field) => (
-                      <Box
-                        style={{ display: "flex", alignItems: "flex-start" }}
-                      >
-                        <FormElementGenerator
-                          key={field.id}
-                          isMultiLanguage={isMultiLanguage}
-                          field={field}
-                          control={control}
-                          setFormValue={setFormValue}
-                          fieldsList={fieldsList}
-                          formTableSlug={tableSlug}
-                          relatedTable={relatedTable}
-                          activeLang={activeLang}
-                          errors={errors}
-                        />
-                      </Box>
-                    ))}
-                </div>
-              </NewFormCard>
-            ))}
+          {computedSections.map((section) => (
+            <NewFormCard
+              key={section.id}
+              title={
+                section?.attributes?.[`label_${i18n.language}`] ?? section.label
+              }
+              className={styles.formCard}
+              icon={section.icon}
+            >
+              <div className={styles.newformColumn}>
+                {section.fields?.map((field) => (
+                  <Box style={{display: "flex", alignItems: "flex-start"}}>
+                    <FormElementGenerator
+                      key={field.id}
+                      isMultiLanguage={isMultiLanguage}
+                      field={field}
+                      control={control} // react-hook-form  
+                      setFormValue={setFormValue}
+                      fieldsList={fieldsList}
+                      formTableSlug={tableSlug}
+                      relatedTable={relatedTable}
+                      activeLang={activeLang}
+                      errors={errors}
+                    />
+                  </Box>
+                ))}
+              </div>
+            </NewFormCard>
+          ))}
         </div>
       ) : (
         <div className={styles.hideSideCard}>

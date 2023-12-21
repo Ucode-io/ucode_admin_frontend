@@ -99,7 +99,7 @@ const GroupCascadingViews = ({
       language_setting: i18n?.language,
     };
     try {
-      const {data} = await constructorObjectService.getList(
+      const {data} = await constructorObjectService.getListV2(
         field?.attributes?.cascading_tree?.table_slug,
         {
           data: {offset: 0, limit: 10},

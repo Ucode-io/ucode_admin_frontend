@@ -1,22 +1,19 @@
-import {Delete, Edit} from "@mui/icons-material";
-import {Box, FormControlLabel, Switch} from "@mui/material";
-import React from "react";
-import {useFieldArray} from "react-hook-form";
-import {useParams} from "react-router-dom";
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import {
-  CTable,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../../../components/CTable";
-import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import { Box } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { CTable, CTableCell, CTableHead } from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
-import {useSelector} from "react-redux";
+import layoutService from "../../../../../services/layoutService";
+import { useMenuListQuery } from "../../../../../services/menuService";
+import LayoutsItem from "./LayoutsItem";
 
-function NewlayoutList({setSelectedLayout, mainForm}) {
-  const {id} = useParams();
+function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
+  const { id } = useParams();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
   const {
     fields: layouts,
     append,
@@ -30,12 +27,14 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
+  const { slug, appId } = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           is_default: !element.is_default,
         };
       }
@@ -45,6 +44,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const setModal = (index, e) => {
@@ -52,12 +52,14 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           type: e.target.checked ? "PopupLayout" : "SimpleLayout",
         };
       }
       return element;
     });
     mainForm.setValue("layouts", newLayout);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const setSectionTab = (index, e) => {
@@ -65,6 +67,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       if (i === index) {
         return {
           ...element,
+          menu_id: appId,
           is_visible_section: !element.is_visible_section,
         };
       }
@@ -74,12 +77,35 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
   };
 
   const languages = useSelector((state) => state.languages.list);
+  const [menus, setMenus] = useState([]);
+  const menuItem = useSelector((state) => state.menu.menuItem);
+
+  const { isLoading } = useMenuListQuery({
+    params: {
+      table_id: menuItem?.table_id,
+    },
+    queryParams: {
+      enabled: Boolean(true),
+      onSuccess: (res) => {
+        setMenus(res?.menus?.map((menu) => ({ label: menu?.label, value: menu?.id })));
+      },
+    },
+  });
+
+  const watchLayouts = mainForm.watch("layouts");
+
+  const nonSelectedOptionsMenu = useMemo(() => {
+    const selectedMenuIds = Array.from(new Set(watchLayouts?.map((layout) => layout?.menu_id)));
+    const nonSelectedOptionsMenu = menus?.filter((menu) => !selectedMenuIds?.includes(menu?.value));
+    return nonSelectedOptionsMenu;
+  }, [watchLayouts?.map((item) => item?.menu_id), menus]);
 
   return (
-    <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
+    <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
@@ -88,85 +114,25 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
             <CTableCell width={60} />
           </CTableHead>
 
-          {layouts?.map((element, index) => (
-            <CTableRow key={element.id}>
-              <CTableCell>{index + 1}</CTableCell>
-              <CTableCell>
-                <Box
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {languages?.map((lang) => (
-                    <HFAutoWidthInput
-                      onClick={(e) => e.stopPropagation()}
-                      control={mainForm.control}
-                      placeholder={`Название ${lang.slug}`}
-                      name={`layouts.${index}.attributes.label_${lang.slug}`}
-                      inputStyle={{
-                        border: "none",
-                        outline: "none",
-                        fontWeight: 500,
-                        background: "transparent",
-                      }}
-                    />
-                  ))}
-
-                  <Box style={{display: "flex", alignItems: "center"}}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={() => setDefault(index)}
-                          checked={element.is_default ?? false}
-                        />
-                      }
-                      label={"Default"}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(e) => setModal(index, e)}
-                          checked={
-                            element.type === "SimpleLayout" ? false : true
-                          }
-                        />
-                      }
-                      label={"Modal"}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(e) => setSectionTab(index, e)}
-                          checked={element?.is_visible_section ?? false}
-                        />
-                      }
-                      label={"Remove Tabs"}
-                    />
-                  </Box>
-                </Box>
-              </CTableCell>
-
-              <CTableCell>
-                <Box style={{display: "flex", gap: "5px"}}>
-                  <RectangleIconButton
-                    color="success"
-                    onClick={() => navigateToEditForm(element)}
-                  >
-                    <Edit color="success" />
-                  </RectangleIconButton>
-
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => remove(index)}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </Box>
-              </CTableCell>
-            </CTableRow>
-          ))}
+          {!isLoading &&
+            layouts?.map((element, index) => (
+              <LayoutsItem
+              getData={getData}
+                element={element}
+                index={index}
+                mainForm={mainForm}
+                menus={nonSelectedOptionsMenu}
+                allMenus={menus}
+                remove={remove}
+                setModal={setModal}
+                setDefault={setDefault}
+                setSectionTab={setSectionTab}
+                navigateToEditForm={navigateToEditForm}
+                languages={languages}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+              />
+            ))}
 
           <TableRowButton
             colSpan={4}

@@ -1,15 +1,14 @@
 import { Collapse } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { mainActions } from "../../../../../store/main/main.slice";
 import NewLayoutSettings from "./NewLayoutSettings";
 import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
 
-const Layout = ({ mainForm, getRelationFields }) => {
+const Layout = ({ mainForm, getRelationFields, getData }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({ mode: "onChange" });
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
@@ -18,7 +17,6 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);
   const [selectedTab, setSelectedTab] = useState({});
-  const languages = useSelector((state) => state.languages.list);
 
   const selectedLayoutIndex = useMemo(() => {
     if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
@@ -62,11 +60,6 @@ const Layout = ({ mainForm, getRelationFields }) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(false));
   }, [dispatch]);
 
-  // const selectedLayoutIndex = useMemo(() => {
-  //   if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
-  //   return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
-  // }, [selectedLayout]);
-
   const {
     fields: sectionTabs,
     insert: insertSectionTab,
@@ -106,24 +99,10 @@ const Layout = ({ mainForm, getRelationFields }) => {
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} />
+        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} getData={getData}/>
       )}
 
       <div className={styles.page}>
-        {/* <SectionsBlock
-          mainForm={mainForm}
-          layoutForm={layoutForm}
-          openFieldsBlock={openFieldsBlock}
-          openFieldSettingsBlock={openFieldSettingsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-        />
-
-        <RelationsBlock
-          mainForm={mainForm}
-          openFieldsBlock={openFieldsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-        /> */}
-
         <Collapse in={settingsBlockVisible} unmountOnExit orientation="horizontal">
           <SettingsBlock
             updateSectionTab={updateSectionTab}

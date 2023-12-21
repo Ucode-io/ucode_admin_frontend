@@ -22,16 +22,12 @@ const Sidebar = ({ elements = [], environment }) => {
   const [visible, setVisible] = useState(false);
   const projectId = useSelector((state) => state.auth.projectId);
   const [rightBlockVisible, setRightBlockVisible] = useState(true);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
+  const applicationElements = useSelector((state) => state.constructorTable.applications);
 
   const selectedMenuItem = useMemo(() => {
     const activeElement = elements.find((el) => {
       if (location.pathname === el.path) return true;
-      return el.children?.some((child) =>
-        location.pathname.includes(child.path)
-      );
+      return el.children?.some((child) => location.pathname.includes(child.path));
     });
     return activeElement;
   }, [location.pathname, elements]);
@@ -44,12 +40,9 @@ const Sidebar = ({ elements = [], environment }) => {
     if (selectedMenuItem?.children) setRightBlockVisible(true);
   }, [selectedMenuItem]);
 
-  const { data: projectInfo } = useQuery(
-    ["GET_PROJECT_BY_ID", projectId],
-    () => {
-      return projectService.getById(projectId);
-    }
-  );
+  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+    return projectService.getById(projectId);
+  });
   const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
     return constructorTableService.getFolderList(projectId);
   });
@@ -86,11 +79,7 @@ const Sidebar = ({ elements = [], environment }) => {
           }}
         >
           <div className={styles.headerLogo}>
-            <img
-              className={styles.logo}
-              src={projectInfo?.logo ?? companyLogo}
-              alt="logo"
-            />
+            <img className={styles.logo} src={projectInfo?.logo ?? companyLogo} alt="logo" />
             {visible && <h2>{projectInfo?.title}</h2>}
           </div>
           {visible && (
@@ -107,20 +96,11 @@ const Sidebar = ({ elements = [], environment }) => {
           }}
         >
           <div className={styles.menuItemsBlock}>
-            <Container
-              lockAxis="y"
-              onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            >
+            <Container lockAxis="y" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
               {elements
                 .filter((element) => element.icon)
                 .map((element) => (
-                  <Tooltip
-                    placement="right"
-                    followCursor
-                    key={element.id}
-                    title={element.title}
-                  >
+                  <Tooltip placement="right" followCursor key={element.id} title={element.title}>
                     <Box className={styles.dragBox}>
                       <Draggable key={element.id}>
                         {visible ? (
@@ -128,35 +108,17 @@ const Sidebar = ({ elements = [], environment }) => {
                             <NavLink
                               key={element.id}
                               to={element.path ?? element.children?.[0]?.path}
-                              className={`${styles.menuItem} ${
-                                selectedMenuItem?.id === element.id
-                                  ? styles.active
-                                  : ""
-                              }`}
+                              className={`${styles.menuItem} ${selectedMenuItem?.id === element.id ? styles.active : ""}`}
                               style={{
-                                color:
-                                  selectedMenuItem?.id === element.id
-                                    ? environment?.data?.active_color || "#fff"
-                                    : environment?.data?.color || "#6E8BB7",
-                                background:
-                                  selectedMenuItem?.id === element.id
-                                    ? environment?.data?.active_background ||
-                                      "#007AFF"
-                                    : "",
+                                color: selectedMenuItem?.id === element.id ? environment?.data?.active_color || "#fff" : environment?.data?.color || "#6E8BB7",
+                                background: selectedMenuItem?.id === element.id ? environment?.data?.active_background || "#007AFF" : "",
                               }}
                               // onClick={setVisibBlock}
                             >
                               {typeof element.icon === "string" ? (
                                 <div className={styles.noficationButton}>
-                                  <IconGenerator
-                                    icon={element.icon}
-                                    size={18}
-                                  />
-                                  {element?.count_notifications && (
-                                    <span className={styles.notificationNum}>
-                                      {element?.count_notifications ?? 0}
-                                    </span>
-                                  )}
+                                  <IconGenerator icon={element.icon} size={18} />
+                                  {element?.count_notifications && <span className={styles.notificationNum}>{element?.count_notifications ?? 0}</span>}
                                 </div>
                               ) : (
                                 // <IconPickerItem icon="FaAdobe" size={24} />
@@ -169,32 +131,17 @@ const Sidebar = ({ elements = [], environment }) => {
                           <NavLink
                             key={element.id}
                             to={element.path ?? element.children?.[0]?.path}
-                            className={`${styles.menuItem} ${
-                              selectedMenuItem?.id === element.id
-                                ? styles.active
-                                : ""
-                            }`}
+                            className={`${styles.menuItem} ${selectedMenuItem?.id === element.id ? styles.active : ""}`}
                             style={{
-                              color:
-                                selectedMenuItem?.id === element.id
-                                  ? environment?.data?.active_color || "#fff"
-                                  : environment?.data?.color || "#6E8BB7",
-                              background:
-                                selectedMenuItem?.id === element.id
-                                  ? environment?.data?.active_background ||
-                                    "#007AFF"
-                                  : "",
+                              color: selectedMenuItem?.id === element.id ? environment?.data?.active_color || "#fff" : environment?.data?.color || "#6E8BB7",
+                              background: selectedMenuItem?.id === element.id ? environment?.data?.active_background || "#007AFF" : "",
                             }}
                             // onClick={setVisibBlock}
                           >
                             {typeof element.icon === "string" ? (
                               <div className={styles.noficationButtons}>
                                 <IconGenerator icon={element.icon} size={18} />
-                                {element?.count_notifications && (
-                                  <span className={styles.notificationNums}>
-                                    {element?.count_notifications ?? 0}
-                                  </span>
-                                )}
+                                {element?.count_notifications && <span className={styles.notificationNums}>{element?.count_notifications ?? 0}</span>}
                               </div>
                             ) : (
                               // <IconPickerItem icon="FaAdobe" size={24} />
@@ -248,33 +195,20 @@ const Sidebar = ({ elements = [], environment }) => {
         </div>
       </div>
 
-      <Collapse
-        in={rightBlockVisible && selectedMenuItem?.children}
-        orientation="horizontal"
-        unmountOnExit
-      >
+      <Collapse in={rightBlockVisible && selectedMenuItem?.children} orientation="horizontal" unmountOnExit>
         <div className={styles.rightSide}>
           <div className={styles.header}>
             <Typography className={styles.title} variant="h4">
               {selectedMenuItem?.title}
             </Typography>
-            <div
-              className={styles.closeButton}
-              onClick={() => setRightBlockVisible(false)}
-            >
+            <div className={styles.closeButton} onClick={() => setRightBlockVisible(false)}>
               <KeyboardDoubleArrowLeftIcon />
             </div>
           </div>
 
           <div className={styles.menuItemsBlock}>
             {selectedMenuItem?.children?.map((childMenuItem) => (
-              <NavLink
-                to={childMenuItem.path}
-                key={childMenuItem.key}
-                className={({ isActive }) =>
-                  `${styles.menuItem} ${isActive ? styles.active : ""}`
-                }
-              >
+              <NavLink to={childMenuItem.path} key={childMenuItem.key} className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ""}`}>
                 {childMenuItem.title}
               </NavLink>
             ))}

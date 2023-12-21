@@ -34,7 +34,6 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           is_default: !element.is_default,
         };
       }
@@ -52,7 +51,6 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           type: e.target.checked ? "PopupLayout" : "SimpleLayout",
         };
       }
@@ -67,7 +65,6 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           is_visible_section: !element.is_visible_section,
         };
       }
@@ -140,6 +137,7 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
               append({
                 table_id: id,
                 type: "SimpleLayout",
+                "menu_id": "",
                 label: "New",
                 attributes: {},
               })

@@ -29,7 +29,7 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -72,13 +72,10 @@ const ObjectsFormPage = ({
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getList(
-      {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      },
-      tableSlug
-    );
+    const getLayout = layoutService.getLayout(tableSlug, appId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    });
 
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
@@ -119,13 +116,10 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList(
-      {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      },
-      tableSlug
-    );
+    const getLayout = layoutService.getList(tableSlug, appId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    });
 
     try {
       const [{ layouts: layout = [] }] = await Promise.all([getLayout]);

@@ -457,7 +457,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, menuItem?.id);
+      return layoutService.getLayout(tableSlug, appId);
     },
     select: (data) => {
       return {

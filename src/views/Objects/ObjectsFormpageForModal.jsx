@@ -23,7 +23,7 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
 
 const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -99,7 +99,7 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
+    const getLayout = layoutService.getLayout(tableSlug, appId);
 
     try {
       const [{ layouts: layout = [] }] = await Promise.all([getLayout]);

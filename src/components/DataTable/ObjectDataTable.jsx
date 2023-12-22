@@ -1,11 +1,11 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Button } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import {Button} from "@mui/material";
+import {useVirtualizer} from "@tanstack/react-virtual";
+import React, {useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useParams} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import {
   CTable,
@@ -23,6 +23,7 @@ import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
+import AddDataColumn from "./AddDataColumn";
 
 const ObjectDataTable = React.memo(
   ({
@@ -96,6 +97,7 @@ const ObjectDataTable = React.memo(
     const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
     const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
     const [fieldData, setFieldData] = useState(null);
+    const [addNewRow, setAddNewRow] = useState(false);
 
     const popupRef = useRef(null);
     useOnClickOutside(popupRef, () => setColumnId(""));
@@ -236,41 +238,48 @@ const ObjectDataTable = React.memo(
       return totalWidth;
     };
 
-  const parentRef = useRef(null);
+    const parentRef = useRef(null);
 
-  const virtualizer = useVirtualizer({
-    count: isRelationTable ? fields?.length : data?.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => elementHeight,
-    overscan: 10,
-  });
+    const virtualizer = useVirtualizer({
+      count: isRelationTable ? fields?.length : data?.length,
+      getScrollElement: () => parentRef.current,
+      estimateSize: () => elementHeight,
+      overscan: 10,
+    });
 
-  
-  return (
-    <CTable
-      disablePagination={disablePagination}
-      removableHeight={removableHeight}
-      count={pagesCount}
-      page={currentPage}
-      isTableView={isTableView}
-      setCurrentPage={onPaginationChange}
-      loader={loader}
-      multipleDelete={multipleDelete}
-      selectedObjectsForDelete={selectedObjectsForDelete}
-      tableStyle={tableStyle}
-      wrapperStyle={wrapperStyle}
-      paginationExtraButton={paginationExtraButton}
-      limit={limit}
-      setLimit={setLimit}
-      defaultLimit={defaultLimit}
-      view={view}
-      filterVisible={filterVisible}
-      parentRef={parentRef}
-    >
-      <CTableHead>
-        {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
-        <CTableRow>
-          <CellCheckboxNoSign formVisible={formVisible} data={data} />
+    return (
+      <CTable
+        disablePagination={disablePagination}
+        removableHeight={removableHeight}
+        count={pagesCount}
+        page={currentPage}
+        isTableView={isTableView}
+        setCurrentPage={onPaginationChange}
+        loader={loader}
+        multipleDelete={multipleDelete}
+        selectedObjectsForDelete={selectedObjectsForDelete}
+        tableStyle={tableStyle}
+        wrapperStyle={wrapperStyle}
+        paginationExtraButton={paginationExtraButton}
+        limit={limit}
+        setLimit={setLimit}
+        defaultLimit={defaultLimit}
+        view={view}
+        filterVisible={filterVisible}
+        parentRef={parentRef}
+      >
+        <CTableHead>
+          {formVisible && selectedRow.length > 0 && (
+            <MultipleUpdateRow
+              columns={data}
+              fields={columns}
+              watch={watch}
+              setFormValue={setFormValue}
+              control={control}
+            />
+          )}
+          <CTableRow>
+            <CellCheckboxNoSign formVisible={formVisible} data={data} />
             {columns.map(
               (column, index) =>
                 column?.attributes?.field_permission?.view_permission && (
@@ -352,54 +361,84 @@ const ObjectDataTable = React.memo(
           </CTableRow>
         </CTableHead>
 
-      <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
-        {(isRelationTable ? fields : data).length > 0 &&
-          columns.length > 0 &&
-          virtualizer.getVirtualItems()?.map((virtualRow, index) => {
-            const virtualRowObject = isRelationTable ? fields?.[virtualRow.index] : data?.[virtualRow.index];
-            return (
-              columns && (
-                <TableRow
-                  key={virtualRowObject?.guid}
-                  relOptions={relOptions}
-                  tableView={tableView}
-                  width={"80px"}
-                  remove={remove}
-                  watch={watch}
-                  getValues={getValues}
-                  control={control}
-                  row={virtualRowObject}
-                  mainForm={mainForm}
-                  formVisible={formVisible}
-                  rowIndex={index}
-                  isTableView={isTableView}
-                  selectedObjectsForDelete={selectedObjectsForDelete}
-                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                  isRelationTable={isRelationTable}
-                  relatedTableSlug={relatedTableSlug}
-                  onRowClick={onRowClick}
-                  isChecked={isChecked}
-                  calculateWidthFixedColumn={calculateWidthFixedColumn}
-                  onCheckboxChange={onCheckboxChange}
-                  currentPage={currentPage}
-                  limit={limit}
-                  setFormValue={setFormValue}
-                  columns={columns}
-                  tableHeight={tableHeight}
-                  tableSettings={tableSettings}
-                  pageName={pageName}
-                  calculateWidth={calculateWidth}
-                  tableSlug={tableSlug}
-                  onDeleteClick={onDeleteClick}
-                  relationAction={relationAction}
-                  onChecked={onChecked}
-                  relationFields={fields}
-                  data={data}
-                  view={view}
-                />
-              )
-            );
-          })}
+        <CTableBody
+          columnsCount={columns.length}
+          dataLength={dataLength || data?.length}
+          title={title}
+        >
+          {(isRelationTable ? fields : data).length > 0 &&
+            columns.length > 0 &&
+            virtualizer.getVirtualItems()?.map((virtualRow, index) => {
+              const virtualRowObject = isRelationTable
+                ? fields?.[virtualRow.index]
+                : data?.[virtualRow.index];
+              return (
+                columns && (
+                  <TableRow
+                    key={virtualRowObject?.guid}
+                    relOptions={relOptions}
+                    tableView={tableView}
+                    width={"80px"}
+                    remove={remove}
+                    watch={watch}
+                    getValues={getValues}
+                    control={control}
+                    row={virtualRowObject}
+                    mainForm={mainForm}
+                    formVisible={formVisible}
+                    rowIndex={index}
+                    isTableView={isTableView}
+                    selectedObjectsForDelete={selectedObjectsForDelete}
+                    setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                    isRelationTable={isRelationTable}
+                    relatedTableSlug={relatedTableSlug}
+                    onRowClick={onRowClick}
+                    isChecked={isChecked}
+                    calculateWidthFixedColumn={calculateWidthFixedColumn}
+                    onCheckboxChange={onCheckboxChange}
+                    currentPage={currentPage}
+                    limit={limit}
+                    setFormValue={setFormValue}
+                    columns={columns}
+                    tableHeight={tableHeight}
+                    tableSettings={tableSettings}
+                    pageName={pageName}
+                    calculateWidth={calculateWidth}
+                    tableSlug={tableSlug}
+                    onDeleteClick={onDeleteClick}
+                    relationAction={relationAction}
+                    onChecked={onChecked}
+                    relationFields={fields}
+                    data={data}
+                    view={view}
+                  />
+                )
+              );
+            })}
+
+          {addNewRow && (
+            <AddDataColumn
+              rows={isRelationTable ? fields : data}
+              columns={columns}
+              isRelationTable={isRelationTable}
+              setAddNewRow={setAddNewRow}
+              isTableView={isTableView}
+              relOptions={relOptions}
+              tableView={tableView}
+              tableSlug={relatedTableSlug ?? tableSlug}
+              fields={columns}
+              getValues={getValues}
+              mainForm={mainForm}
+              control={control}
+              setFormValue={setFormValue}
+              relationfields={fields}
+              data={data}
+              view={view}
+              onRowClick={onRowClick}
+              width={"80px"}
+              refetch={refetch}
+            />
+          )}
 
           <CTableRow>
             <CTableCell
@@ -422,7 +461,7 @@ const ObjectDataTable = React.memo(
                 }}
                 onClick={() => {
                   // navigateToForm(tableSlug);
-                  // setAddNewRow(true);
+                  setAddNewRow(true);
                 }}
               >
                 <AddRoundedIcon />
@@ -430,11 +469,14 @@ const ObjectDataTable = React.memo(
             </CTableCell>
           </CTableRow>
 
-        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
-        {additionalRow}
-      </CTableBody>
-    </CTable>
-  );
-});
+          {!!summaries?.length && (
+            <SummaryRow summaries={summaries} columns={columns} data={data} />
+          )}
+          {additionalRow}
+        </CTableBody>
+      </CTable>
+    );
+  }
+);
 
 export default ObjectDataTable;

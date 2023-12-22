@@ -23,6 +23,7 @@ import {useMicrofrontendCreateWebhookMutation} from "@/services/microfrontendSer
 import {useDispatch} from "react-redux";
 import {alertActions} from "@/store/alert/alert.slice";
 import {showAlert} from "@/store/alert/alert.thunk";
+import {useResourceListQuery, useResourceListQueryV2} from "@/services/resourceService";
 
 const frameworkOptions = [
   {
@@ -79,6 +80,7 @@ const GithubMicrofrontendForm = () => {
       onSuccess: (username) => setValue('username', username)
     },
   });
+
 
   const { data: repositories } = useGithubRepositoriesQuery({
     username: ownerUsername,

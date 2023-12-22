@@ -1,9 +1,9 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
@@ -14,12 +14,12 @@ import constructorRelationService from "../../../../services/constructorRelation
 import constructorTableService from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
-import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
-import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
-import { generateGUID } from "../../../../utils/generateID";
-import { listToMap } from "../../../../utils/listToMap";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
+import {generateGUID} from "../../../../utils/generateID";
+import {listToMap} from "../../../../utils/listToMap";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
 import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
@@ -31,12 +31,12 @@ import Relations from "./Relations";
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id, tableSlug, appId } = useParams();
+  const {id, tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const mainForm = useForm({
     defaultValues: {
@@ -92,7 +92,11 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getViewRelations, getLayouts]);
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        getTableData,
+        getViewRelations,
+        getLayouts,
+      ]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -124,7 +128,7 @@ const ConstructorTablesFormPage = () => {
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -320,7 +324,9 @@ const ConstructorTablesFormPage = () => {
                   <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
                   {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
                   {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
-                  {id && <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>
+                  )}
                 </TabList>
               </HeaderSettings>
 
@@ -329,7 +335,12 @@ const ConstructorTablesFormPage = () => {
               </TabPanel>
 
               <TabPanel>
-                <Layout mainForm={mainForm} getRelationFields={getRelationFields} getData={getData}/>
+                <Layout
+                  mainForm={mainForm}
+                  getRelationFields={getRelationFields}
+                  getData={getData}
+                  setSelectedTabLayout={setSelectedTab}
+                />
               </TabPanel>
 
               <TabPanel>
@@ -384,7 +395,11 @@ const ConstructorTablesFormPage = () => {
               <SecondaryButton onClick={() => navigate(-1)} color="error">
                 Close
               </SecondaryButton>
-              <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={mainForm.handleSubmit(onSubmit)}
+                loading={btnLoader}
+              >
                 <Save /> Save
               </PrimaryButton>
             </>

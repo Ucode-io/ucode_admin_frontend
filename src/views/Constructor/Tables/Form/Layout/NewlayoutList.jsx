@@ -1,19 +1,27 @@
-import { Box } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { CTable, CTableCell, CTableHead } from "../../../../../components/CTable";
+import {Box} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import {CTable, CTableCell, CTableHead} from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
-import { useMenuListQuery } from "../../../../../services/menuService";
+import {useMenuListQuery} from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
+import {useTranslation} from "react-i18next";
 
-function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
-  const { id } = useParams();
+function NewlayoutList({
+  setSelectedLayout,
+  mainForm,
+  getData,
+  setSelectedTabLayout,
+}) {
+  const {id} = useParams();
+  const {i18n} = useTranslation();
   const [selectedOptions, setSelectedOptions] = useState([]);
-
+  const [createLayout, setCreateLayout] = useState(false);
+  console.log("i18ni18n", i18n);
   const {
     fields: layouts,
     append,
@@ -27,7 +35,7 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
@@ -81,14 +89,16 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
   const [menus, setMenus] = useState([]);
   const menuItem = useSelector((state) => state.menu.menuItem);
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       table_id: menuItem?.table_id,
     },
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
-        setMenus(res?.menus?.map((menu) => ({ label: menu?.label, value: menu?.id })));
+        setMenus(
+          res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
+        );
       },
     },
   });
@@ -96,13 +106,17 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
   const watchLayouts = mainForm.watch("layouts");
 
   const nonSelectedOptionsMenu = useMemo(() => {
-    const selectedMenuIds = Array.from(new Set(watchLayouts?.map((layout) => layout?.menu_id)));
-    const nonSelectedOptionsMenu = menus?.filter((menu) => !selectedMenuIds?.includes(menu?.value));
+    const selectedMenuIds = Array.from(
+      new Set(watchLayouts?.map((layout) => layout?.menu_id))
+    );
+    const nonSelectedOptionsMenu = menus?.filter(
+      (menu) => !selectedMenuIds?.includes(menu?.value)
+    );
     return nonSelectedOptionsMenu;
   }, [watchLayouts?.map((item) => item?.menu_id), menus]);
 
   return (
-    <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
+    <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
       <TableCard>
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
@@ -114,7 +128,7 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
           {!isLoading &&
             layouts?.map((element, index) => (
               <LayoutsItem
-              getData={getData}
+                getData={getData}
                 element={element}
                 index={index}
                 mainForm={mainForm}
@@ -128,20 +142,24 @@ function NewlayoutList({ setSelectedLayout, mainForm, getData }) {
                 languages={languages}
                 selectedOptions={selectedOptions}
                 setSelectedOptions={setSelectedOptions}
+                createLayout={createLayout}
               />
             ))}
 
           <TableRowButton
             colSpan={4}
-            onClick={() =>
+            onClick={() => {
               append({
                 table_id: id,
                 type: "SimpleLayout",
-                "menu_id": "",
-                label: "New",
-                attributes: {},
-              })
-            }
+                label: "New Layout",
+                attributes: {
+                  [`label_${i18n?.language}`]: "New Layout",
+                },
+              });
+              setCreateLayout(true);
+              setSelectedTabLayout(1);
+            }}
           />
         </CTable>
       </TableCard>

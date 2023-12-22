@@ -247,7 +247,6 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
-  console.log("datadata", data);
   return (
     <>
       {selectedManyToManyRelation && (

@@ -143,6 +143,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
+  console.log("allTabsallTabs", allTabs);
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>

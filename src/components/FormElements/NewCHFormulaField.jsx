@@ -1,9 +1,9 @@
-import { numberWithSpaces } from "@/utils/formatNumbers";
+import {numberWithSpaces} from "@/utils/formatNumbers";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useEffect, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import {IconButton, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 
 const parser = new Parser();
@@ -48,7 +48,7 @@ const NewCHFFormulaField = ({
       if (typeof value === "string") value = `${value}`;
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
-    const { error, result } = parser?.parse(computedFormula);
+    const {error, result} = parser?.parse(computedFormula);
     let newValue = error ?? result;
     if (newValue !== currentValue) setFormValue(name, newValue);
   };
@@ -68,7 +68,7 @@ const NewCHFFormulaField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
           size="small"
           value={

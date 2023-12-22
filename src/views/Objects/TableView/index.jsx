@@ -1,10 +1,10 @@
-import { Box, Drawer } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {Box, Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -13,11 +13,11 @@ import constructorObjectService from "../../../services/constructorObjectService
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { quickFiltersActions } from "../../../store/filter/quick_filter";
-import { generateGUID } from "../../../utils/generateID";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import { listToMap } from "../../../utils/listToMap";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {quickFiltersActions} from "../../../store/filter/quick_filter";
+import {generateGUID} from "../../../utils/generateID";
+import {mergeStringAndState} from "../../../utils/jsonPath";
+import {listToMap} from "../../../utils/listToMap";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
@@ -64,10 +64,12 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug, appId} = useParams();
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
-  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
+  const paginationInfo = useSelector(
+    (state) => state?.pagination?.paginationInfo
+  );
   const [limit, setLimit] = useState(20);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -447,7 +449,7 @@ const TableView = ({
   }, [tableData, computedRelationFields]);
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -577,7 +579,14 @@ const TableView = ({
           </Box>
         </div>
       }
-      <div style={{ display: "flex", alignItems: "flex-start", width: filterVisible ? "calc(100% - 200px)" : "100%" }} id="data-table">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          width: filterVisible ? "calc(100% - 200px)" : "100%",
+        }}
+        id="data-table"
+      >
         <ObjectDataTable
           refetch={refetch}
           filterVisible={filterVisible}
@@ -632,7 +641,15 @@ const TableView = ({
         />
       </div>
 
-      {open && <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} menuItem={menuItem} layout={layout} />}
+      {open && (
+        <ModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+        />
+      )}
 
       <Drawer
         open={drawerState}

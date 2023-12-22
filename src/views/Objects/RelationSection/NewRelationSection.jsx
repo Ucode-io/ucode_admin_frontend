@@ -191,7 +191,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-  console.log("relations", relations);
+
   return (
     <>
       {selectedManyToManyRelation && (

@@ -1,5 +1,5 @@
-import {Paper} from "@mui/material";
-import {forwardRef} from "react";
+import { Paper } from "@mui/material";
+import { forwardRef } from "react";
 import CPagination from "../CPagination";
 import EmptyDataComponent from "../EmptyDataComponent";
 import TableLoader from "../TableLoader/index";
@@ -28,6 +28,7 @@ export const CTable = ({
   selectedTab,
   isRelationTable,
   filterVisible,
+  parentRef
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -41,6 +42,7 @@ export const CTable = ({
           overflow: loader ? "hidden" : "auto",
           width: "100%",
         }}
+        ref={parentRef}
       >
         {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
       </div>
@@ -68,11 +70,11 @@ export const CTable = ({
   );
 };
 
-export const CTableHead = ({children}) => {
+export const CTableHead = ({ children }) => {
   return <thead className="CTableHead">{children}</thead>;
 };
 
-export const CTableHeadRow = ({children}) => {
+export const CTableHeadRow = ({ children }) => {
   return <tr className="CTableHeadRow">{children}</tr>;
 };
 
@@ -82,7 +84,11 @@ export const CTableHeadCell = ({
   buttonsCell = false,
   ...props
 }) => {
-  return <th {...props}>{children}</th>;
+  return (
+    <th {...props} className={className}>
+      {children}
+    </th>
+  );
 };
 
 export const CTableBody = forwardRef(
@@ -119,9 +125,9 @@ export const CTableBody = forwardRef(
   }
 );
 
-export const CTableRow = ({children, className, ...props}) => {
+export const CTableRow = ({children, className, parentRef, ...props}) => {
   return (
-    <tr className={`CTableRow ${className}`} {...props}>
+    <tr className={`CTableRow ${className}`} {...props} ref={parentRef}>
       {children}
     </tr>
   );

@@ -50,7 +50,6 @@ export default function FieldButton({
       setDrawerState(column);
     }
   };
-
   const updateView = (column) => {
     constructorViewService
       .update(tableSlug, {
@@ -195,7 +194,6 @@ export default function FieldButton({
         <span
           style={{
             whiteSpace: "nowrap",
-            padding: "10px 4px",
             color: "#747474",
             fontSize: "13px",
             fontStyle: "normal",
@@ -214,7 +212,9 @@ export default function FieldButton({
         setValue={setValue}
         target={target}
       />
-      <FieldCreateModal
+      {
+        fieldCreateAnchor && (
+          <FieldCreateModal
         anchorEl={fieldCreateAnchor}
         setAnchorEl={setFieldCreateAnchor}
         watch={watch}
@@ -229,6 +229,9 @@ export default function FieldButton({
         fieldData={fieldData}
         handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
+        )
+      }
+      
     </div>
   );
 }

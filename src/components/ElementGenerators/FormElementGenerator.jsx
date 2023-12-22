@@ -77,7 +77,7 @@ const FormElementGenerator = ({
         field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " "
       );
     }
-  }, [field, activeLang]);
+  }, [field, activeLang, i18n.language]);
 
   tables?.forEach((table) => {
     if (table?.table_slug === relationTableSlug) {

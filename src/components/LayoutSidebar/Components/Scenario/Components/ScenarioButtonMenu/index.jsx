@@ -27,7 +27,7 @@ const ScenarioButtonMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -37,6 +37,9 @@ const ScenarioButtonMenu = ({
               height: 32,
               ml: -0.5,
               mr: 1,
+            },
+            "& .MuiList-root": {
+              padding: 0,
             },
           },
         }}

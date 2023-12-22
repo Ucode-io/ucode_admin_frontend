@@ -67,28 +67,15 @@ export default function TimeLineRecursiveRow({
     }
   };
 
-  // useEffect(() => {
-  //   if (item?.group_by_type === "LOOKUP") {
-  //     constructorObjectService
-  //       .getById(item?.group_by_slug, item?.label)
-  //       .then((res) => {
-  //         if (res?.data?.response) {
-  //           setLabel(res?.data?.response);
-  //         }
-  //       });
-  //   }
-  // }, [item]);
-
-  const {data: label} = useQuery(
-    ["GET_OBJECT_LIST_BY_ID", item],
-    () => {
-      return constructorObjectService.getById(item?.group_by_slug, item?.label);
-    },
-    {
-      enabled: Boolean(item?.group_by_type === "LOOKUP"),
-      select: (res) => {
-        return res?.data?.response ?? [];
-      },
+  useEffect(() => {
+    if (item?.group_by_type === "LOOKUP") {
+      constructorObjectService
+        .getById(item?.group_by_slug, item?.label)
+        .then((res) => {
+          if (res?.data?.response) {
+            setLabel(res?.data?.response);
+          }
+        });
     }
   );
 

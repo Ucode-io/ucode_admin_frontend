@@ -9,6 +9,7 @@ import {listToMap} from "../../../../utils/listToMap";
 import {Filter} from "../../../Objects/components/FilterGenerator";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
+import constructorTableService from "../../../../services/constructorTableService";
 
 const RelationTable = ({relation = {}}) => {
   const {slug} = useParams();
@@ -41,10 +42,10 @@ const RelationTable = ({relation = {}}) => {
     ["GET_VIEW_RELATION_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return null;
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: {limit: 0, offset: 0},
+          data: {},
         },
         params
       );

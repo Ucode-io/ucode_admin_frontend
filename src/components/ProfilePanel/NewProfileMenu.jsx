@@ -434,7 +434,7 @@ const NewProfilePanel = ({
 
           <Box
             style={{
-              height: "240px",
+              height: "calc((100% / 2) + 13px)",
               display: "flex",
             }}
           >

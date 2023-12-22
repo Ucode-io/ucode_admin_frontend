@@ -63,8 +63,5 @@ export const useClientTypeUpdateMutation = (mutationSettings) => {
 };
 
 export const useClientTypeDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, projectId }) => clientTypeService.delete({ id, projectId }),
-    mutationSettings
-  );
+  return useMutation((id) => clientTypeService.delete(id), mutationSettings);
 };

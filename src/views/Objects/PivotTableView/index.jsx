@@ -18,12 +18,12 @@ import PivotTable from "./PivotTable";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import useBooleanState from "../../../hooks/useBooleanState";
 import ClickActionPages from "./PivotTable/ClickActionPages";
-import ClickActionModalContent from "./PivotTable/ClickActionModalContent";
 import styles from "./PivotTable/styles.module.scss";
 import PivotTemplatesPopover from "./PivotTemplate/PivotTemplatesPopover";
 import PivotTemplateModalContent from "./PivotTemplate/PivotTemplateModalContent";
 import useDownloader from "../../../hooks/useDownloader";
 import pivotService from "../../../services/pivotService";
+import ClickActionModalContent from "./PivotTable/ClickActionModalContent";
 
 export default function PivotTableView() {
   const dispatch = useDispatch();

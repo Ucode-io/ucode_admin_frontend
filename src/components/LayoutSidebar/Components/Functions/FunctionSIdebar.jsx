@@ -243,12 +243,12 @@ const FunctionSidebar = ({
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div className="label" style={labelStyle}>
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>

@@ -16,6 +16,7 @@ import { LoginStrategy } from "../../../../mock/FolderSettings";
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import style from "./main.module.scss";
 import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
+import constructorTableService from "../../../../services/constructorTableService";
 
 const MainInfo = ({ control, watch }) => {
   const { tableSlug } = useParams();
@@ -64,10 +65,7 @@ const MainInfo = ({ control, watch }) => {
       return constructorObjectService.getList(
         tableSlug,
         {
-          data: {
-            limit: 0,
-            offset: 0,
-          },
+          data: {},
         },
         params
       );

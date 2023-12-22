@@ -75,7 +75,6 @@ const InputWithValueOffer = ({
   const getVariableValue = (element) => {
     form.setValue(name, `{{${element?.key}}}`);
     getElementBetween(form);
-    setValue(newValue);
   };
   return (
     <div

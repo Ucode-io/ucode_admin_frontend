@@ -54,7 +54,7 @@ vault:
   secretName: vault-secrets
   variables:
     VAULT_TOKEN: vault_token
-    SECRETS_PATH: 
+    SECRETS_PATH:
 
 environment: {}
 volumes:
@@ -91,14 +91,10 @@ ingress:
         - host: "app.u-code.io"
           path: /
           servicePort: 80
-        - host: "ett.u-code.io"
-          path: /
-          servicePort: 80
       tls:
         - secretName: admin-frontend-tls
           hosts:
             - "app.u-code.io"
-            - "ett.u-code.io"
 
 resources:
   {}
@@ -115,7 +111,6 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-  #
 
 nodeSelector: {}
 

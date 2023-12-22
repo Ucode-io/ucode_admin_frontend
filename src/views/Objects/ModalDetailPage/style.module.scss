@@ -23,44 +23,10 @@
 }
 
 .card {
-  width: 950px;
+  min-width: 700px;
   margin: 0 50px;
-  padding: 0 0 10px 0;
   border: none;
   max-height: calc(100vh - 100px);
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    box-shadow: inset 0px -1px 0px #e5e9eb;
-
-    .cardTitle {
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 24px;
-    }
-
-    .closeIcon {
-      font-size: 20px;
-    }
-  }
-
-  .body {
-    display: flex;
-    align-items: flex-start;
-  }
-}
-
-.cardModal {
-  // min-width: 700px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
 
   .header {
     display: flex;
@@ -114,6 +80,7 @@
   }
 
   .body {
+
     .wrapper {
       display: flex;
       padding: 16px 24px;
@@ -131,8 +98,12 @@
         border: 1px solid rgb(221, 217, 217);
         border-radius: 4px;
         cursor: pointer;
+
+
       }
     }
+
+
   }
 }
 
@@ -351,7 +322,7 @@
     span {
       display: block;
       border-radius: 50%;
-      background-color: #f76659;
+      background-color: #F76659;
       padding: 2px;
       color: #fff;
       position: absolute;
@@ -440,6 +411,8 @@
     }
 
     p {
+
+
       &:hover {
         color: #0e73f6;
       }
@@ -484,6 +457,7 @@
       }
     }
   }
+
   .field_summary_item {
     min-width: 125px;
     box-sizing: border-box;
@@ -507,6 +481,7 @@
       font-weight: 500;
       height: 42px;
     }
+
     p {
       min-width: 70px;
       max-width: 100px;

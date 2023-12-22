@@ -7,7 +7,7 @@ import { applyDrag } from "../../../../utils/applyDrag";
 import { columnIcons } from "../../../../utils/constants/columnIcons";
 import styles from "./style.module.scss";
 
-const GroupByTab = ({ form, updateView, isMenu }) => {
+const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
   const {
     fields: columns,
     move,
@@ -16,6 +16,19 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     control: form.control,
     name: "columns",
     keyName: "key",
+  });
+
+  const initialCheckedColumns = initialColumns?.map((item) => {
+    return {
+      ...item,
+      is_checked: columns.find((el) => item.id === el.id).is_checked,
+    };
+  });
+  const initialGroupCheckedColumns = initialColumns?.map((item) => {
+    return {
+      ...item,
+      is_checked: false,
+    };
   });
 
   const {
@@ -75,9 +88,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
 
       if (columnIndex !== -1) {
         const filteredColumn = updatedColumns[columnIndex];
-        updatedColumns.splice(columnIndex, 1);
-        updatedColumns.splice(1, 0, filteredColumn);
+        if (isWhatChecked.length > 1) {
+          updatedColumns.splice(columnIndex, 1);
+          updatedColumns.splice(1, 0, filteredColumn);
+        }
         replace(updatedColumns);
+        if (isWhatChecked.length === 1) {
+          replace(initialCheckedColumns);
+        }
       }
     }
 
@@ -86,9 +104,14 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       updatedGroupColumn.unshift(groupMovedColumn);
       replaceGroup(updatedGroupColumn);
     } else {
-      const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
-      updatedGroupColumn.splice(1, 0, groupMovedColumn);
+      if (isWhatChecked.length > 1) {
+        const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
+        updatedGroupColumn.splice(1, 0, groupMovedColumn);
+      }
       replaceGroup(updatedGroupColumn);
+      if (isWhatChecked.length === 1) {
+        replaceGroup(initialGroupCheckedColumns);
+      }
     }
   };
 

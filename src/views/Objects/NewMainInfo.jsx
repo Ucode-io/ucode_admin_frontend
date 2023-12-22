@@ -31,7 +31,7 @@ const MainInfo = ({
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
-
+  console.log("firstprojectId", projectId);
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -73,40 +73,35 @@ const MainInfo = ({
             </div>
           )}
 
-          {computedSections &&
-            computedSections?.map((section) => (
-              <NewFormCard
-                key={section.id}
-                title={
-                  section?.attributes?.[`label_${i18n.language}`] ??
-                  section.label
-                }
-                className={styles.formCard}
-                icon={section.icon}
-              >
-                <div className={styles.newformColumn}>
-                  {section?.fields &&
-                    section?.fields?.map((field) => (
-                      <Box
-                        style={{ display: "flex", alignItems: "flex-start" }}
-                      >
-                        <FormElementGenerator
-                          key={field.id}
-                          isMultiLanguage={isMultiLanguage}
-                          field={field}
-                          control={control}
-                          setFormValue={setFormValue}
-                          fieldsList={fieldsList}
-                          formTableSlug={tableSlug}
-                          relatedTable={relatedTable}
-                          activeLang={activeLang}
-                          errors={errors}
-                        />
-                      </Box>
-                    ))}
-                </div>
-              </NewFormCard>
-            ))}
+          {computedSections.map((section) => (
+            <NewFormCard
+              key={section.id}
+              title={
+                section?.attributes?.[`label_${activeLang}`] ?? section.label
+              }
+              className={styles.formCard}
+              icon={section.icon}
+            >
+              <div className={styles.newformColumn}>
+                {section.fields?.map((field) => (
+                  <Box style={{display: "flex", alignItems: "flex-start"}}>
+                    <FormElementGenerator
+                      key={field.id}
+                      isMultiLanguage={isMultiLanguage}
+                      field={field}
+                      control={control}
+                      setFormValue={setFormValue}
+                      fieldsList={fieldsList}
+                      formTableSlug={tableSlug}
+                      relatedTable={relatedTable}
+                      activeLang={activeLang}
+                      errors={errors}
+                    />
+                  </Box>
+                ))}
+              </div>
+            </NewFormCard>
+          ))}
         </div>
       ) : (
         <div className={styles.hideSideCard}>

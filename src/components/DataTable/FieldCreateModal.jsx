@@ -1,7 +1,17 @@
-import "./style.scss";
+import CloseIcon from "@mui/icons-material/Close";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import style from "./field.module.scss";
+import React, { useMemo, useState } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import constructorTableService from "../../services/constructorTableService";
+import { useFieldsListQuery } from "../../services/fieldService";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -9,29 +19,18 @@ import {
   fieldFormats,
   formatIncludes,
   math,
-  newFieldTypes,
+  newFieldTypes
 } from "../../utils/constants/fieldTypes";
-import FRow from "../FormElements/FRow";
-import HFTextField from "../FormElements/HFTextField";
-import HFSelect from "../FormElements/HFSelect";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../utils/applyDrag";
-import { useFieldsListQuery } from "../../services/fieldService";
-import CloseIcon from "@mui/icons-material/Close";
 import { colorList } from "../ColorPicker/colorList";
+import FRow from "../FormElements/FRow";
+import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
-import RelationFieldForm from "./RelationFieldForm";
-import SettingsIcon from "@mui/icons-material/Settings";
 import HFTextArea from "../FormElements/HFTextArea";
-import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
-import { useQuery, useQueryClient } from "react-query";
-import { useTranslation } from "react-i18next";
-import { useRelationGetByIdQuery } from "../../services/relationService";
+import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLanguage";
-import { useSelector } from "react-redux";
-import { transliterate } from "../../utils/textTranslater";
+import RelationFieldForm from "./RelationFieldForm";
+import style from "./field.module.scss";
+import "./style.scss";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -139,7 +138,7 @@ export default function FieldCreateModal({
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
           data: { limit: 0, offset: 0 },

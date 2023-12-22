@@ -1,15 +1,17 @@
-import { Autocomplete, TextField } from "@mui/material";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useRef, useState } from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import { pageToOffset } from "../../utils/pageToOffset";
+import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -17,14 +19,6 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import constructorFunctionService from "../../services/constructorFunctionService";
-import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
-import request from "../../utils/request";
-import { useSelector } from "react-redux";
-import Select from "react-select";
-import { useTranslation } from "react-i18next";
-import { pageToOffset } from "../../utils/pageToOffset";
 
 const RelationFormElement = ({
   control,
@@ -268,7 +262,7 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(
+      return constructorObjectService.getListV2(
         tableSlug,
         {
           data: {
@@ -496,7 +490,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            options={computedOptions ?? []}
+            options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}
@@ -504,10 +498,9 @@ const AutoCompleteElement = ({
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);
-              // console.log('eeeeeeeeeeee', e.guid)
               // setLocalValue(e.guid);
             }}
-            onMenuScrollToBottom={loadMoreItems}
+            // onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

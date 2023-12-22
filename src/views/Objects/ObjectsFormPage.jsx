@@ -72,7 +72,7 @@ const ObjectsFormPage = ({
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getLayout(tableSlug, appId, {
+    const getLayoutData = layoutService.getLayout(tableSlug, appId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -80,22 +80,24 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{data = {}}, {layouts: layout = []}] = await Promise.all([
+      const [{data = {}}, layoutData] = await Promise.all([
         getFormData,
-        getLayout,
+        getLayoutData,
       ]);
-      setSections(sortSections(sections));
-      setSummary(
-        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
-      );
 
-      const defaultLayout = layout?.find((el) => el.is_default === true);
+      // Access dynamic keys of layoutData
+      const layoutKeys = Object.keys(layoutData);
+      const layout = layoutKeys.length > 0 ? layoutData[layoutKeys[0]] : [];
+
+      setSections(sortSections(sections));
+
+      const defaultLayout = layoutData;
 
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
           ...el.relation,
-        })) ?? [];
+        })) || [];
 
       setTableRelations(
         relations.map((relation) => ({
@@ -109,7 +111,7 @@ const ObjectsFormPage = ({
 
       if (!selectedTab?.relation_id) reset(data?.response ?? {});
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoader(false);
     }
@@ -122,8 +124,9 @@ const ObjectsFormPage = ({
     });
 
     try {
-      const [{layouts: layout = []}] = await Promise.all([getLayout]);
-      const defaultLayout = layout?.find((el) => el.is_default === true);
+      const [layoutData] = await Promise.all([getLayout]);
+      const defaultLayout = layoutData;
+
       setSections(sortSections(sections));
 
       const relations =
@@ -229,9 +232,9 @@ const ObjectsFormPage = ({
     else getFields();
   }, [id, tableInfo, selectedTabIndex]);
 
-  useEffect(() => {
-    getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language]);
+  // useEffect(() => {
+  //   getFields();
+  // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
 
   // const getSubtitleValue = useMemo(() => {
   //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
@@ -252,10 +255,10 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
-        getAllData={getAllData}
+          getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
-          relations={tableRelations}
+          relations={tableRelations ?? []}
           control={control}
           getValues={getValues}
           handleSubmit={handleSubmit}

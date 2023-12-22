@@ -1,10 +1,10 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
-import { Drawer } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
+import {Drawer} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -14,12 +14,12 @@ import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
-import { generateGUID } from "../../../utils/generateID";
-import { listToMap } from "../../../utils/listToMap";
-import { objectToArray } from "../../../utils/objectToArray";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {generateGUID} from "../../../utils/generateID";
+import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { Filter } from "../components/FilterGenerator";
+import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
 
 const RelationTable = forwardRef(
@@ -51,19 +51,21 @@ const RelationTable = forwardRef(
     },
     ref
   ) => {
-    const { appId } = useParams();
+    const {appId} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { navigateToForm } = useTabRouter();
+    const {navigateToForm} = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
 
-    const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
+    const paginationInfo = useSelector(
+      (state) => state?.pagination?.paginationInfo
+    );
 
     const filterChangeHandler = (value, name) => {
       setFilters({
@@ -96,7 +98,9 @@ const RelationTable = forwardRef(
     });
 
     const paginiation = useMemo(() => {
-      const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
+      const getObject = paginationInfo.find(
+        (el) => el?.tableSlug === tableSlug
+      );
 
       return getObject?.pageLimit ?? limit;
     }, [paginationInfo, tableSlug]);
@@ -113,17 +117,21 @@ const RelationTable = forwardRef(
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({ table_id: id });
+        const getFieldsData = constructorFieldService.getList({table_id: id});
 
         const getRelations = constructorRelationService.getList({
           table_slug: slug,
           relation_table_slug: slug,
         });
-        const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+        const [{relations = []}, {fields = []}] = await Promise.all([
+          getRelations,
+          getFieldsData,
+        ]);
         mainForm.setValue("fields", fields);
         const relationsWithRelatedTableSlug = relations?.map((relation) => ({
           ...relation,
-          relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+          relatedTableSlug:
+            relation.table_to?.slug === slug ? "table_from" : "table_to",
         }));
 
         const layoutRelations = [];
@@ -131,11 +139,14 @@ const RelationTable = forwardRef(
 
         relationsWithRelatedTableSlug?.forEach((relation) => {
           if (
-            (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
-            (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+            (relation.type === "Many2One" &&
+              relation.table_from?.slug === slug) ||
+            (relation.type === "One2Many" &&
+              relation.table_to?.slug === slug) ||
             relation.type === "Recursive" ||
             (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-            (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+            (relation.type === "Many2Dynamic" &&
+              relation.table_from?.slug === slug)
           ) {
             layoutRelations.push(relation);
           } else {
@@ -149,7 +160,10 @@ const RelationTable = forwardRef(
           attributes: {
             fields: relation.view_fields ?? [],
           },
-          label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+          label:
+            relation?.label ?? relation[relation.relatedTableSlug]?.label
+              ? relation[relation.relatedTableSlug]?.label
+              : relation?.title,
         }));
 
         mainForm.setValue("relations", relations);
@@ -163,7 +177,7 @@ const RelationTable = forwardRef(
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
     }, [relation, selectedTab?.relation_id]);
-
+    console.log("relation", relation);
     useEffect(() => {
       if (getRelatedTabeSlug?.default_editable) {
         setFormVisible(true);
@@ -187,15 +201,25 @@ const RelationTable = forwardRef(
     const computedFilters = useMemo(() => {
       const relationFilter = {};
 
-      if (getRelatedTabeSlug?.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id;
-      else if (getRelatedTabeSlug?.type === "Many2Dynamic") relationFilter[`${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`] = id;
+      if (getRelatedTabeSlug?.type === "Many2Many")
+        relationFilter[`${tableSlug}_ids`] = id;
+      else if (getRelatedTabeSlug?.type === "Many2Dynamic")
+        relationFilter[
+          `${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`
+        ] = id;
       else relationFilter[`${tableSlug}_id`] = id;
 
       return {
         ...filters,
         ...relationFilter,
       };
-    }, [filters, tableSlug, id, getRelatedTabeSlug?.type, getRelatedTabeSlug?.relation_field_slug]);
+    }, [
+      filters,
+      tableSlug,
+      id,
+      getRelatedTabeSlug?.type,
+      getRelatedTabeSlug?.relation_field_slug,
+    ]);
 
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
@@ -204,6 +228,7 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.permission?.view_permission]);
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
 
     function customSortArray(a, b) {
       const commonItems = a?.filter((item) => b.includes(item));
@@ -213,7 +238,17 @@ const RelationTable = forwardRef(
       return sortedArray;
     }
 
-    const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [], fieldsMap = {} } = {}, refetch, isLoading: dataFetchingLoading } = useQuery(
+    const {
+      data: {
+        tableData = [],
+        pageCount = 1,
+        columns = [],
+        quickFilters = [],
+        fieldsMap = {},
+      } = {},
+      refetch,
+      isLoading: dataFetchingLoading,
+    } = useQuery(
       [
         "GET_OBJECT_LIST",
         relatedTableSlug,
@@ -242,18 +277,30 @@ const RelationTable = forwardRef(
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({ data }) => {
+        select: ({data}) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / paginiation);
+          const pageCount =
+            isNaN(data?.count) || tableData.length === 0
+              ? 1
+              : Math.ceil(data.count / paginiation);
 
           const fieldsMap = listToMap(data.fields);
 
-          setFieldSlug(Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)?.slug);
+          // setFieldSlug(
+          //   Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
+          //     ?.slug
+          // );
 
           const array = [];
           for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
-            if (getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)) {
-              if (getRelatedTabeSlug?.attributes?.fixedColumns[key]) array.push({ id: key, value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key] });
+            if (
+              getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)
+            ) {
+              if (getRelatedTabeSlug?.attributes?.fixedColumns[key])
+                array.push({
+                  id: key,
+                  value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key],
+                });
             }
           }
           const columns = customSortArray(
@@ -263,7 +310,9 @@ const RelationTable = forwardRef(
             ?.map((el) => fieldsMap[el])
             ?.filter((el) => el);
 
-          const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
+          const quickFilters = getRelatedTabeSlug.quick_filters
+            ?.map(({field_id}) => fieldsMap[field_id])
+            ?.filter((el) => el);
 
           return {
             tableData,
@@ -289,7 +338,13 @@ const RelationTable = forwardRef(
       const computedIds = computedRelationFields?.map((item) => ({
         table_slug: item?.slug,
         ids:
-          item?.type === "LOOKUP" ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug]))) : Array.from(new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))),
+          item?.type === "LOOKUP"
+            ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+            : Array.from(
+                new Set(
+                  [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
+                )
+              ),
       }));
 
       tableData?.length &&
@@ -301,7 +356,9 @@ const RelationTable = forwardRef(
                 offset: 0,
                 additional_request: {
                   additional_field: "guid",
-                  additional_values: computedIds?.find((computedItem) => computedItem?.table_slug === item?.slug)?.ids,
+                  additional_values: computedIds?.find(
+                    (computedItem) => computedItem?.table_slug === item?.slug
+                  )?.ids,
                 },
               },
             })
@@ -345,7 +402,7 @@ const RelationTable = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
+    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -368,9 +425,10 @@ const RelationTable = forwardRef(
       }
     );
 
-    const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-      tableSlug: relatedTableSlug,
-    });
+    const {data: {custom_events: customEvents = []} = {}} =
+      useCustomActionsQuery({
+        tableSlug: relatedTableSlug,
+      });
 
     const navigateToEditPage = (row) => {
       navigateToForm(relatedTableSlug, "EDIT", row);
@@ -379,20 +437,23 @@ const RelationTable = forwardRef(
     const navigateToTablePage = () => {
       navigate(`/main/${appId}/object/${relatedTableSlug}`, {
         state: {
-          [`${tableSlug}_${getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"}`]: id,
+          [`${tableSlug}_${
+            getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
+          }`]: id,
         },
       });
     };
-    const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
+    const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState(
+      []
+    );
 
     const multipleDelete = async () => {
       try {
         await constructorObjectService.deleteMultiple(tableSlug, {
           ids: selectedObjectsForDelete.map((i) => i.guid),
         });
-        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
       } finally {
-        
       }
     };
 
@@ -404,7 +465,13 @@ const RelationTable = forwardRef(
             {quickFilters.map((field) => (
               <FRow key={field.id}>
                 {/* label={field.label} */}
-                <Filter field={field} name={field.slug} tableSlug={relatedTableSlug} filters={filters} onChange={filterChangeHandler} />
+                <Filter
+                  field={field}
+                  name={field.slug}
+                  tableSlug={relatedTableSlug}
+                  filters={filters}
+                  onChange={filterChangeHandler}
+                />
               </FRow>
             ))}
           </div>
@@ -442,9 +509,17 @@ const RelationTable = forwardRef(
               onPaginationChange={setCurrentPage}
               filters={filters}
               filterChangeHandler={filterChangeHandler}
-              paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage}>Все</SecondaryButton>}
+              paginationExtraButton={
+                id && (
+                  <SecondaryButton onClick={navigateToTablePage}>
+                    Все
+                  </SecondaryButton>
+                )
+              }
               createFormVisible={createFormVisible[getRelatedTabeSlug.id]}
-              setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
+              setCreateFormVisible={(val) =>
+                setCreateFormVisible(relation.id, val)
+              }
               limit={limit}
               setLimit={setLimit}
               summaries={getRelatedTabeSlug.summaries}
@@ -471,7 +546,12 @@ const RelationTable = forwardRef(
           )}
         </div>
 
-        <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+        <Drawer
+          open={drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}

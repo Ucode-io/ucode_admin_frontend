@@ -1,17 +1,17 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import { InsertDriveFile } from "@mui/icons-material";
-import { Card, Divider } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {InsertDriveFile} from "@mui/icons-material";
+import {Card, Divider} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
-import { listToMap } from "../../../utils/listToMap";
+import {store} from "../../../store";
+import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -42,13 +42,16 @@ const NewRelationSection = ({
   errors,
 }) => {
   const [data, setData] = useState([]);
-  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
-  const { i18n } = useTranslation();
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
+  const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -74,10 +77,12 @@ const NewRelationSection = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const { fields, remove, update } = useFieldArray({
+  const {fields, remove, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -94,7 +99,7 @@ const NewRelationSection = ({
 
   useEffect(() => {
     const result = {
-      [filteredRelations?.id]: false
+      [filteredRelations?.id]: false,
     };
 
     setRelationsCreateFormVisible(result);
@@ -133,7 +138,11 @@ const NewRelationSection = ({
       .then((res) => {
         const layout = {
           ...res,
-          tabs: res?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),
+          tabs: res?.tabs?.filter(
+            (tab) =>
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+          ),
         };
         setData(layout);
       });
@@ -156,7 +165,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: { fieldsMap } = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -174,7 +183,7 @@ const NewRelationSection = ({
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -182,129 +191,154 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-
+  console.log("relations", relations);
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
       {data ? (
         <Card className={styles.card}>
-            <Tabs
-              className={"react_detail"}
-              selectedIndex={selectedTabIndex}
-              onSelect={(index) => {
-                setSelectedTabIndex(index);
-              }}
-            >
-              {!data?.is_visible_section && (
-                <div className={styles.cardHeader}>
-                  <TabList className={styles.tabList}>
-                    {data?.tabs?.map((el, index) => (
-                      <Tab
-                        key={el.id}
-                        className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
-                        onClick={() => {
-                          setSelectedIndex(index);
-                          onSelect(el);
-                        }}
-                      >
-                        {data?.view_relation_type === "FILE" && (
-                          <>
-                            <InsertDriveFile /> Файлы
-                          </>
-                        )}
-                        <div className="flex align-center gap-2 text-nowrap">
-                          {el?.attributes?.[`label_${i18n.language}`]
-                            ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[`label_${i18n.language}`]
-                            ? el?.relation?.attributes?.[`label_${i18n.language}`]
-                            : el?.label ?? el?.title}
-                        </div>
-                      </Tab>
-                    ))}
-                  </TabList>
+          <Tabs
+            className={"react_detail"}
+            selectedIndex={selectedTabIndex}
+            onSelect={(index) => {
+              setSelectedTabIndex(index);
+            }}
+          >
+            {!data?.is_visible_section && (
+              <div className={styles.cardHeader}>
+                <TabList className={styles.tabList}>
+                  {data?.tabs?.map((el, index) => (
+                    <Tab
+                      key={el.id}
+                      className={`${styles.tabs_item} ${
+                        selectedTabIndex === index
+                          ? "custom-selected-tab"
+                          : "custom-tab"
+                      }`}
+                      onClick={() => {
+                        setSelectedIndex(index);
+                        onSelect(el);
+                      }}
+                    >
+                      {data?.view_relation_type === "FILE" && (
+                        <>
+                          <InsertDriveFile /> Файлы
+                        </>
+                      )}
+                      <div className="flex align-center gap-2 text-nowrap">
+                        {el?.attributes?.[`label_${i18n.language}`]
+                          ? el?.attributes?.[`label_${i18n.language}`]
+                          : el?.relation?.attributes?.[`label_${i18n.language}`]
+                          ? el?.relation?.attributes?.[`label_${i18n.language}`]
+                          : el?.label ?? el?.title}
+                      </div>
+                    </Tab>
+                  ))}
+                </TabList>
 
-                  <div className="flex gap-2">
-                    <CustomActionsButton tableSlug={selectedRelation?.relatedTable} selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} />
+                <div className="flex gap-2">
+                  <CustomActionsButton
+                    tableSlug={selectedRelation?.relatedTable}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
+                  />
 
-                    {data[selectedTabIndex]?.multiple_insert && (
-                      <MultipleInsertButton view={filteredRelations[selectedTabIndex]} tableSlug={filteredRelations[selectedTabIndex].relatedTable} />
-                    )}
+                  {data[selectedTabIndex]?.multiple_insert && (
+                    <MultipleInsertButton
+                      view={filteredRelations[selectedTabIndex]}
+                      tableSlug={
+                        filteredRelations[selectedTabIndex].relatedTable
+                      }
+                    />
+                  )}
 
-                    {getRelatedTabeSlug && (
-                      <>
-                        <FixColumnsRelationSection relatedTable={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
-                        <Divider orientation="vertical" flexItem />
-                        <VisibleColumnsButtonRelationSection currentView={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {loader ? (
-                <PageFallback />
-              ) : (
-                data?.tabs?.map((el, index) => (
-                  <TabPanel key={el.id}>
-                    {!selectedTab?.relation_id ? (
-                      <NewMainInfo
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                      />
-                    ) : data?.relatedTable === "file" ? (
-                      <FilesSection
-                        setFormValue={setFormValue}
-                        remove={remove}
-                        reset={reset}
-                        watch={watch}
-                        control={control}
-                        formVisible={formVisible}
-                        relation={data}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                      />
-                    ) : (
-                      <RelationTable
-                        ref={myRef}
-                        loader={loader}
-                        remove={remove}
-                        reset={reset}
-                        selectedTabIndex={selectedTabIndex}
-                        watch={watch}
-                        selectedTab={selectedTab}
-                        control={control}
-                        getValues={getValues}
-                        setFormValue={setFormValue}
-                        fields={fields}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        key={selectedTab.id}
-                        relation={relations}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        tableSlug={tableSlug}
-                        id={id}
-                        type={type}
+                  {getRelatedTabeSlug && (
+                    <>
+                      <FixColumnsRelationSection
+                        relatedTable={getRelatedTabeSlug}
                         fieldsMap={fieldsMap}
-                        relatedTable={relatedTable}
+                        getAllData={getAllData}
                       />
-                    )}
-                  </TabPanel>
-                ))
-              )}
-            </Tabs>
+                      <Divider orientation="vertical" flexItem />
+                      <VisibleColumnsButtonRelationSection
+                        currentView={getRelatedTabeSlug}
+                        fieldsMap={fieldsMap}
+                        getAllData={getAllData}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
 
+            {loader ? (
+              <PageFallback />
+            ) : (
+              data?.tabs?.map((el, index) => (
+                <TabPanel key={el.id}>
+                  {!selectedTab?.relation_id ? (
+                    <NewMainInfo
+                      control={control}
+                      loader={loader}
+                      isMultiLanguage={isMultiLanguage}
+                      computedSections={computedSections}
+                      setFormValue={setFormValue}
+                      relatedTable={relatedTable}
+                      relation={data}
+                      selectedIndex={selectedIndex}
+                      errors={errors}
+                    />
+                  ) : data?.relatedTable === "file" ? (
+                    <FilesSection
+                      setFormValue={setFormValue}
+                      remove={remove}
+                      reset={reset}
+                      watch={watch}
+                      control={control}
+                      formVisible={formVisible}
+                      relation={data}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                    />
+                  ) : (
+                    <RelationTable
+                      ref={myRef}
+                      loader={loader}
+                      remove={remove}
+                      reset={reset}
+                      selectedTabIndex={selectedTabIndex}
+                      watch={watch}
+                      selectedTab={selectedTab}
+                      control={control}
+                      getValues={getValues}
+                      setFormValue={setFormValue}
+                      fields={fields}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
+                      key={selectedTab.id}
+                      relation={relations}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
+                      tableSlug={tableSlug}
+                      id={id}
+                      type={type}
+                      fieldsMap={fieldsMap}
+                      relatedTable={relatedTable}
+                    />
+                  )}
+                </TabPanel>
+              ))
+            )}
+          </Tabs>
         </Card>
       ) : null}
     </>

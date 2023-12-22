@@ -21,7 +21,7 @@ function NewlayoutList({
   const {i18n} = useTranslation();
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [createLayout, setCreateLayout] = useState(false);
-  console.log("i18ni18n", i18n);
+
   const {
     fields: layouts,
     append,
@@ -157,8 +157,8 @@ function NewlayoutList({
                   [`label_${i18n?.language}`]: "New Layout",
                 },
               });
-              setCreateLayout(true);
               setSelectedTabLayout(1);
+              setCreateLayout(true);
             }}
           />
         </CTable>

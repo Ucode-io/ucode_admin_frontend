@@ -310,7 +310,7 @@ const ConstructorTablesFormPage = () => {
       <div className="pageWithStickyFooter">
         {id ? (
           <>
-            <Tabs direction={"ltr"}>
+            <Tabs selectedIndex={selectedTab} direction={"ltr"}>
               <HeaderSettings
                 title="Objects"
                 subtitle={id ? mainForm.getValues("label") : "Добавить"}

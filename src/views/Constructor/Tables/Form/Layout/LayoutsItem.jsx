@@ -24,7 +24,8 @@ export default function LayoutsItem({
   navigateToEditForm,
   languages,
 }) {
-  const {slug} = useParams();
+  const {tableSlug} = useParams();
+
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {

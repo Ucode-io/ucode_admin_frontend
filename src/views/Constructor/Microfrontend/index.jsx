@@ -103,7 +103,7 @@ const MicrofrontendPage = () => {
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
               <TableRowButton colSpan={5} onClick={navigateToCreateForm} />
-              <TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />
+              {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

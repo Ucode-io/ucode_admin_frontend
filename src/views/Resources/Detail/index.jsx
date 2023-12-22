@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Box, Button} from "@mui/material";
 import {useEnvironmentsListQuery} from "../../../services/environmentService";
 import {
@@ -25,6 +25,7 @@ import {resourceTypes} from "../../../utils/resourceConstants";
 import resourceVariableService from "../../../services/resourceVariableService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {useGithubLoginMutation, useGithubUserQuery} from "@/services/githubService";
 
 const headerStyle = {
   width: "100%",
@@ -38,6 +39,7 @@ const headerStyle = {
 };
 
 const ResourceDetail = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const {projectId, resourceId} = useParams();
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
@@ -53,6 +55,7 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
+      resource_type: searchParams.get('code') || searchParams.get('access_token') ? 5 : 0
     },
   });
 
@@ -131,7 +134,8 @@ const ResourceDetail = () => {
     useResourceCreateMutationV2({
       onSuccess: () => {
         // successToast();
-        navigate(-1);
+        dispatch(showAlert('Successfully created', 'success'))
+        navigate('/main');
       },
     });
 
@@ -172,6 +176,32 @@ const ResourceDetail = () => {
       }
     );
 
+  useGithubUserQuery({
+    token: searchParams.get("access_token"),
+    enabled: !!searchParams.get("access_token"),
+    queryParams: {
+      select: (res) => res?.data?.login,
+      onSuccess: (username) => setValue('integration_resource.username', username)
+    },
+  });
+
+  const { mutate: githubLogin, isLoading: githubLoginIsLoading } = useGithubLoginMutation({
+    onSuccess: (res) => {
+      setSearchParams({ access_token: res.access_token });
+    },
+    onError: () => {
+      // navigate(microfrontendListPageLink);
+    },
+  });
+
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) {
+      githubLogin({ code });
+    }
+  }, [])
+
   const onSubmit = (values) => {
     const computedValues2 = {
       ...values,
@@ -185,7 +215,13 @@ const ResourceDetail = () => {
       id:
         selectedEnvironment?.[0].resource_environment_id ??
         variables?.environment_id,
+
+      integration_resource: {
+        username: values.integration_resource?.username,
+        token: searchParams.get('access_token') ?? values.integration_resource?.token
+      }
     };
+
     if (isEditPage) {
       updateResourceV2({
         name: values?.name,
@@ -204,7 +240,7 @@ const ResourceDetail = () => {
           dispatch(showAlert(err, "error"));
         });
     } else {
-      if (values?.resource_type === 4) {
+      if (values?.resource_type === 4 || values?.resource_type === 5)  {
         delete computedValues2.resource_type;
 
         createResourceV2(computedValues2);

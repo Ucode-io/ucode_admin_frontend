@@ -87,9 +87,9 @@ const ObjectsFormPage = ({
 
       // Access dynamic keys of layoutData
       const layoutKeys = Object.keys(layoutData);
-      const layout = layoutKeys.length > 0 ? layoutData[layoutKeys[0]] : [];
 
       setSections(sortSections(sections));
+      setSummary(layoutData.summary_fields ?? []);
 
       const defaultLayout = layoutData;
 
@@ -128,7 +128,7 @@ const ObjectsFormPage = ({
       const defaultLayout = layoutData;
 
       setSections(sortSections(sections));
-
+      console.log("layoutData", layoutData);
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,

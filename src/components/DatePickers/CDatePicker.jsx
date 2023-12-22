@@ -1,21 +1,34 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import { Box, InputAdornment, TextField, Tooltip } from "@mui/material";
-import { Lock, Today } from "@mui/icons-material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {Lock, Today} from "@mui/icons-material";
 import InputMask from "react-input-mask";
-import { useRef } from "react";
+import {useRef} from "react";
 
-import { locale } from "./Plugins/locale";
+import {locale} from "./Plugins/locale";
 import CustomNavButton from "./Plugins/CustomNavButton";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "./style2.scss";
 
-const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, mask, isTransparent = false, tabIndex, classes, placeholder }) => {
+const CDatePicker = ({
+  value,
+  onChange,
+  disabled,
+  isBlackBg,
+  name,
+  isFormEdit,
+  mask,
+  isTransparent = false,
+  tabIndex,
+  classes,
+  placeholder,
+}) => {
   const datePickerRef = useRef();
   return (
     <DatePicker
       disabled={disabled}
       ref={datePickerRef}
+      portal={document.body}
       render={(value, openCalendar, handleChange) => {
         document.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
@@ -24,7 +37,12 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, m
           }
         });
         return (
-          <InputMask mask={mask} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+          <InputMask
+            mask={mask}
+            value={value ?? undefined}
+            onChange={handleChange}
+            disabled={disabled}
+          >
             {(InputProps) => (
               <TextField
                 size="small"
@@ -37,13 +55,13 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, m
                 autoFocus={tabIndex === 1}
                 InputProps={{
                   ...InputProps,
-                  inputProps: { tabIndex },
+                  inputProps: {tabIndex},
                   readOnly: disabled,
                   classes: {
                     input: isBlackBg ? classes.input : "",
                   },
                   style: isTransparent
-                    ? { background: "transparent" }
+                    ? {background: "transparent"}
                     : disabled
                     ? {
                         background: "#c0c0c039",
@@ -54,11 +72,16 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, m
                       },
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Today style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
+                      <Box sx={{display: "flex", alignItems: "center"}}>
+                        <Today
+                          style={{
+                            color: isBlackBg ? "#fff" : "",
+                            fontSize: "20px",
+                          }}
+                        />
                         {disabled && (
                           <Tooltip title="This field is disabled for this role!">
-                            <Lock style={{ fontSize: "20px" }} />
+                            <Lock style={{fontSize: "20px"}} />
                           </Tooltip>
                         )}
                       </Box>
@@ -74,7 +97,6 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, m
       renderButton={<CustomNavButton />}
       plugins={[weekends()]}
       weekStartDayIndex={1}
-      portal
       locale={locale}
       className="datePicker"
       format="DD.MM.YYYY"

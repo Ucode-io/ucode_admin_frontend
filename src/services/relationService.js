@@ -8,6 +8,8 @@ const relationService = {
   getByID: ({ tableSlug, id }) =>
     requestV2.get(`/relations/${tableSlug}/${id}`),
   update: (data, tableSlug) => requestV2.put(`/relations/${tableSlug}`, data),
+  updateRelation: ({ data, tableSlug }) =>
+    requestV2.put(`/relations/${tableSlug}`, data),
   create: ({ data, tableSlug }) =>
     requestV2.post(`/relations/${tableSlug}`, data),
   delete: ({ id, tableSlug }) =>
@@ -42,6 +44,14 @@ export const useRelationGetByIdQuery = ({ tableSlug, id, queryParams }) => {
 export const useRelationUpdateMutation = (mutationSettings) => {
   return useMutation(
     ({ data, tableSlug }) => relationService.update({ data, tableSlug }),
+    mutationSettings
+  );
+};
+
+export const useRelationFieldUpdateMutation = (mutationSettings) => {
+  return useMutation(
+    ({ data, tableSlug }) =>
+      relationService.updateRelation({ data, tableSlug }),
     mutationSettings
   );
 };

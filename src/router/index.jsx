@@ -1,6 +1,6 @@
 import ReloadRelations from "@/components/ReloadRelations";
 import {lazy, Suspense, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
@@ -77,6 +77,8 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import TablesPage from "../views/Constructor/AllTables";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
+import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
+import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -102,12 +104,16 @@ const Router = () => {
   const location = useLocation();
   const isAuth = useSelector((state) => state.auth.isAuth);
   const auth = useSelector((state) => state.auth);
+  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
   const applications = useSelector((state) => state.application.list);
   const cashbox = useSelector((state) => state.cashbox.data);
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
-  const parts = auth?.clientType?.default_page?.split("/");
+  const parts = auth?.clientType?.default_page
+    ? auth?.clientType?.default_page?.split("/")
+    : companyDefaultLink.split("/");
+
   const result =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
@@ -118,26 +124,73 @@ const Router = () => {
     // if (!applications.length || !applications[0].permission?.read)
     //   return "/settings/constructor/apps";
     // return "/settings/constructor/apps";
-    return auth?.clientType?.default_page?.length
+    return (
+      auth?.clientType?.default_page?.length
+        ? auth?.clientType?.default_page?.length
+        : companyDefaultLink
+    )
       ? result
       : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
-  }, [location.pathname, applications, result]);
+  }, [
+    location.pathname,
+    applications,
+    result,
+    companyDefaultLink,
+    auth?.clientType?.default_page,
+  ]);
+
+  const subdomain =
+    window.location.hostname === "localhost"
+      ? "ett.u-code.io"
+      : window.location.hostname;
+
+  const {data, isLoading} = useLoginMicrofrontendQuery({
+    params: {
+      subdomain,
+      enabled: Boolean(!isAuth),
+    },
+  });
+
+  const microfrontendUrl = data?.function?.url;
 
   if (!isAuth)
-    return (
-      <Suspense fallback={<p> Loading...</p>}>
-        <Routes>
-          <Route path="/" element={<AuthLayout />}>
-            <Route index element={<Navigate to="/login " />} />
-            <Route path="login" element={<Login />} />
-            <Route path="invite-user" element={<Invite />} />
-            <Route path="registration" element={<Registration />} />
+    if (microfrontendUrl && window.location.hostname !== "localhost")
+      return (
+        <Suspense fallback={<p> Loading...</p>}>
+          <Routes>
+            <Route index element={<Navigate to={redirectLink} />} />
+            <Route path="/">
+              <Route index element={<Navigate to="/login " />} />
+              <Route
+                path="login"
+                element={
+                  <LoginMicrofrontend
+                    microfrontendUrl={microfrontendUrl}
+                    isLoading={isLoading}
+                  />
+                }
+              />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Route>
             <Route path="*" element={<Navigate to="/login" />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </Suspense>
-    );
+          </Routes>
+        </Suspense>
+      );
+    else
+      return (
+        <Suspense fallback={<p> Loading...</p>}>
+          <Routes>
+            <Route path="/" element={<AuthLayout />}>
+              <Route index element={<Navigate to="/login " />} />
+              <Route path="login" element={<Login />} />
+              <Route path="invite-user" element={<Invite />} />
+              <Route path="registration" element={<Registration />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </Suspense>
+      );
 
   return (
     <Routes>
@@ -381,11 +434,11 @@ const Router = () => {
           element={<ConstructorTablesFormPage />}
         />
         <Route
-          path="constructor/apps/:appId/objects/:id/:slug"
+          path="constructor/apps/:appId/objects/:id/:tableSlug"
           element={<ConstructorTablesFormPage />}
         />
         <Route
-          path="constructor/tables/:id/:slug"
+          path="constructor/tables/:id/:tableSlug"
           element={<ConstructorTablesFormPage />}
         />
         <Route

@@ -59,8 +59,11 @@ const RelationSectionForModal = ({
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
 
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
@@ -143,7 +146,9 @@ const RelationSectionForModal = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
   useEffect(() => {
@@ -237,11 +242,15 @@ const RelationSectionForModal = ({
     setData(newTabs);
     updateLayout(newTabs);
   };
-
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
 
       <Card className={styles.card}>

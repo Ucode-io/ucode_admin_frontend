@@ -1,16 +1,16 @@
-import { format, setHours, setMinutes } from "date-fns";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {format, setHours, setMinutes} from "date-fns";
+import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./day.module.scss";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import "./moveable.scss";
 import useTimeList from "../../../hooks/useTimeList";
 import InfoBlock from "./InfoBlock";
-import { Menu } from "@mui/material";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import {Menu} from "@mui/material";
+import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import CalendarStatusSelect from "../components/CalendarStatusSelect";
-import { dateValidFormat } from "../../../utils/dateValidFormat";
+import {dateValidFormat} from "../../../utils/dateValidFormat";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 import Moveable from "react-moveable";
 
@@ -26,19 +26,18 @@ const DataDayCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
-  const { tableSlug } = useParams();
-  const { timeList } = useTimeList(view.time_interval);
+  const {tableSlug} = useParams();
+  const {timeList} = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
   const [frame] = useState({
     translate: [0, info.calendar?.startPosition ?? 0],
   });
 
-  console.log("target", target)
-
   useEffect(() => {
-    if (!ref?.current) return null;
-    setTarget(ref.current);
+    if (ref?.current) {
+      setTarget(ref?.current);
+    }
   }, [ref]);
 
   const onPositionChange = (position, height) => {
@@ -85,12 +84,12 @@ const DataDayCard = ({
     e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
   };
 
-  const onDrag = ({ target, beforeTranslate }) => {
+  const onDrag = ({target, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     target.style.transform = `translateY(${beforeTranslate[1]}px)`;
   };
 
-  const onDragEnd = ({ lastEvent }) => {
+  const onDragEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onPositionChange(lastEvent, lastEvent.height);
@@ -104,7 +103,7 @@ const DataDayCard = ({
     e.dragStart && e.dragStart.set(frame.translate);
   };
 
-  const onResize = ({ target, height, drag }) => {
+  const onResize = ({target, height, drag}) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.height = `${height}px`;
@@ -113,7 +112,7 @@ const DataDayCard = ({
     else setIsSingleLine(false);
   };
 
-  const onResizeEnd = ({ lastEvent }) => {
+  const onResizeEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onPositionChange(lastEvent.drag, lastEvent.height);
@@ -158,11 +157,11 @@ const DataDayCard = ({
           height: info.calendar?.height,
         }}
         onClick={openMenu}
-       w
+        w
       >
         <div
           className={styles.resizing}
-          style={{ background: infoBlockBg, height: "100%" }}
+          style={{background: infoBlockBg, height: "100%"}}
         >
           <div
             className={styles.infoCard}
@@ -188,9 +187,9 @@ const DataDayCard = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        classes={{list: styles.menu, paper: styles.paper}}
+        transformOrigin={{horizontal: "center", vertical: "top"}}
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}
       >
         <div className={styles.popupHeader}>
           <p className={styles.time}>
@@ -225,7 +224,7 @@ const DataDayCard = ({
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
-                style={{ padding: "2px 5px", marginBottom: 4 }}
+                style={{padding: "2px 5px", marginBottom: 4}}
                 value={info[field.slug]}
                 field={field}
               />
@@ -252,7 +251,7 @@ const DataDayCard = ({
         keepRatio={false}
         origin={false}
         renderDirections={["s", "n"]}
-        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        padding={{left: 0, top: 0, right: 0, bottom: 0}}
         onDragStart={onDragStart}
         onDrag={onDrag}
         onDragEnd={onDragEnd}

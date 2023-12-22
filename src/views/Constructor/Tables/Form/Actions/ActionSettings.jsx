@@ -49,14 +49,15 @@ const ActionSettings = ({
   formType,
   height,
 }) => {
-  const {slug} = useParams();
+  const {tableSlug} = useParams();
+  console.log("sluggggggggg", tableSlug);
   const languages = useSelector((state) => state.languages.list);
 
   const [loader, setLoader] = useState(false);
 
   const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
-      table_slug: slug,
+      table_slug: tableSlug,
     },
   });
 
@@ -81,7 +82,7 @@ const ActionSettings = ({
     setLoader(true);
 
     constructorCustomEventService
-      .create(data, slug)
+      .create(data, tableSlug)
       .then((res) => {
         closeSettingsBlock();
         onCreate(res);
@@ -93,7 +94,7 @@ const ActionSettings = ({
     setLoader(true);
 
     constructorCustomEventService
-      .update(data, slug)
+      .update(data, tableSlug)
       .then((res) => {
         closeSettingsBlock();
         onUpdate(data);
@@ -206,7 +207,7 @@ const ActionSettings = ({
             <TableActions
               control={control}
               typeList={typeList}
-              slug={slug}
+              slug={tableSlug}
               watch={watch}
               setValue={setValue}
             />

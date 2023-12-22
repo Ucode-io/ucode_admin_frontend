@@ -23,7 +23,7 @@ const MainInfo = ({
   isMultiLanguage,
   errors,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
@@ -41,14 +41,14 @@ const MainInfo = ({
     return fields;
   }, [relation]);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   if (loader) return <PageFallback />;
 
@@ -103,7 +103,7 @@ const MainInfo = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{color: "#000"}} />
+              <KeyboardTabIcon style={{ color: "#000" }} />
             </button>
           </Tooltip>
         </div>

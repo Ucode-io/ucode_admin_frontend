@@ -24,7 +24,8 @@ export default function LayoutsItem({
   navigateToEditForm,
   languages,
 }) {
-  const {slug} = useParams();
+  const {tableSlug} = useParams();
+
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -32,7 +33,7 @@ export default function LayoutsItem({
       ...watchLayout,
       menu_id: menuId,
     };
-    layoutService.update(currentUpdatedLayout, slug);
+    layoutService.update(currentUpdatedLayout, tableSlug);
   };
 
   const options = useMemo(() => {
@@ -48,7 +49,7 @@ export default function LayoutsItem({
 
   const removeHandle = (index) => {
     const layout = mainForm.watch(`layouts.${index}`);
-    layoutService.remove(slug, layout?.id ?? layout?.table_id).then((res) => {
+    layoutService.remove(tableSlug, layout?.id).then((res) => {
       remove(index);
     });
   };

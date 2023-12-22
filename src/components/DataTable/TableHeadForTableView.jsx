@@ -3,6 +3,7 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import FunctionsIcon from "@mui/icons-material/Functions";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import PlaylistAddCircleIcon from "@mui/icons-material/PlaylistAddCircle";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
@@ -17,8 +18,8 @@ import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
 import { paginationActions } from "../../store/pagination/pagination.slice";
 import { CTableHeadCell } from "../CTable";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import "./style.scss";
+import relationService from "../../services/relationService";
 
 export default function TableHeadForTableView({
   column,
@@ -50,6 +51,9 @@ export default function TableHeadForTableView({
   setFieldCreateAnchor,
   setFieldData,
   refetch,
+  relatedTable,
+  fieldsMap,
+  getAllData,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
@@ -117,6 +121,12 @@ export default function TableHeadForTableView({
       });
   };
 
+  const updateRelationView = (data) => {
+    relationService.update(data, view?.relatedTable).then((res) => {
+      getAllData();
+    });
+  };
+
   const deleteField = (column) => {
     constructorFieldService.delete(column).then((res) => {
       constructorViewService
@@ -147,6 +157,9 @@ export default function TableHeadForTableView({
           onClickAction: (e) => {
             setFieldCreateAnchor(e.currentTarget);
             setFieldData(column);
+            if (column?.attributes?.relation_data?.id) {
+              queryClient.refetchQueries(["RELATION_GET_BY_ID", { tableSlug, id: column?.attributes?.relation_data?.id }]);
+            }
           },
         },
       ],
@@ -269,13 +282,27 @@ export default function TableHeadForTableView({
       },
     };
 
-    constructorViewService.update(computedValues).then(() => {
-      queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-      handleSummaryClose();
-      handleClose();
-    });
+    const computedValuesForRelationView = {
+      ...relatedTable,
+      table_from: view?.table_from?.slug,
+      table_to: view?.table_to?.slug,
+      view_fields: view?.view_fields?.map((el) => el.id),
+      attributes: {
+        ...relatedTable?.attributes,
+        summaries: result ?? [],
+      },
+    };
+
+    if (isRelationTable) {
+      updateRelationView(computedValuesForRelationView);
+    } else {
+      constructorViewService.update(tableSlug, computedValues).then(() => {
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        handleSummaryClose();
+        handleClose();
+      });
+    }
   };
-console.log('column', column)
   return (
     <>
       <CTableHeadCell

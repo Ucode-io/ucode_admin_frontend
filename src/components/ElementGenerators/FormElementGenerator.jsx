@@ -116,6 +116,11 @@ const FormElementGenerator = ({
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
+    if (
+      field?.relation_type !== "Many2One" ||
+      field?.relation_type !== "Many2Many"
+    )
+      return defaultValue;
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (field?.type === "SINGLE_LINE") return defaultValue;
@@ -129,7 +134,6 @@ const FormElementGenerator = ({
     objectIdFromJWT,
     isUserId,
   ]);
-
   const isDisabled = useMemo(() => {
     const {attributes} = field;
 
@@ -158,7 +162,6 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (
@@ -222,6 +225,21 @@ const FormElementGenerator = ({
   }
 
   switch (field.type) {
+    case "MAP":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMapField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
     case "SCAN_BARCODE":
       return valueGenerator ? (
         <InventoryBarCode
@@ -604,21 +622,6 @@ const FormElementGenerator = ({
             control={control}
             name={computedSlug}
             key={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={checkRequiredField}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            field={field}
-            {...props}
-          />
-        </FRow>
-      );
-    case "MAP":
-      return (
-        <FRow label={label} required={field.required}>
-          <HFMapField
-            control={control}
-            name={computedSlug}
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             defaultValue={defaultValue}

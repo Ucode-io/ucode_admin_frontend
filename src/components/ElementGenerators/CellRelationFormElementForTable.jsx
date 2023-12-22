@@ -50,6 +50,8 @@ const CellRelationFormElementForTableView = ({
 }) => {
   const classes = useStyles();
 
+  console.log("relOptions", relOptions);
+
   if (!isLayout)
     return (
       <Controller
@@ -141,7 +143,6 @@ const AutoCompleteElement = ({ relOptions, tableView, field, value, tableSlug, n
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const { i18n } = useTranslation();
-
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -157,6 +158,10 @@ const AutoCompleteElement = ({ relOptions, tableView, field, value, tableSlug, n
       ...provided,
       width: "100%",
       border: "none",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      display: "flex",
     }),
     option: (provided, state) => ({
       ...provided,

@@ -58,6 +58,9 @@ const CDateTimePickerWithout = ({
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
                     },
+                    "& input": {
+                      padding: "5px !important",
+                    },
                     width: "150px",
                   }}
                   fullWidth
@@ -117,6 +120,9 @@ const CDateTimePickerWithout = ({
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
+                    },
+                    "& input": {
+                      padding: "5px !important",
                     },
                     width: "150px",
                   }}

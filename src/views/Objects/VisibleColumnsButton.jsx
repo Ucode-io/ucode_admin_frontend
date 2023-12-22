@@ -225,7 +225,8 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                           <LinkIcon />
                         )}
                       </div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
+                      {column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.attributes?.[`label_${i18n.language}`] ||
                         column?.label}
                     </div>
                     <div
@@ -291,8 +292,9 @@ export default function VisibleColumnsButton({ currentView, fieldsMap }) {
                     >
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ??
-                      column?.label}
+                    {column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column.label}
                   </div>
                   <div
                     style={{

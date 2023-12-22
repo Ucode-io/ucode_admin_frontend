@@ -1,10 +1,10 @@
-import {Box, Switch, Typography} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "../../../../utils/applyDrag";
+import { Box, Switch, Typography } from "@mui/material";
+import { useEffect, useMemo } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -37,9 +37,9 @@ const ColumnsTab = ({
   selectedTabIndex,
   computedColumns,
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
-  const {fields: columns, move} = useFieldArray({
+  const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
     keyName: "key",
@@ -162,7 +162,7 @@ const ColumnsTab = ({
         >
           <div
             className={styles.cell}
-            style={{flex: 1, border: 0, paddingLeft: 0, paddingRight: 0}}
+            style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}
           >
             <b>All</b>
           </div>
@@ -188,7 +188,7 @@ const ColumnsTab = ({
         </div>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{className: "drag-row-drop-preview"}}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
         >
           {columns.map((column, index) => (
             <Draggable key={column.id}>
@@ -218,6 +218,7 @@ const ColumnsTab = ({
                     {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
+                    column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}
                 </div>
                 <div

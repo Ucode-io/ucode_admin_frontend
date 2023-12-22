@@ -15,7 +15,7 @@ import TableRowButton from "../../../../../components/TableRowButton";
 const Relations = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-  const { slug } = useParams();
+  const { tableSlug } = useParams();
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "relations",
@@ -26,7 +26,6 @@ const Relations = ({ mainForm, getRelationFields }) => {
   const openEditForm = (field, index) => {
     setDrawerState(field);
   };
-
   const updateRelations = async () => {
     setLoader(true);
 
@@ -39,7 +38,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
     if (!id) updateRelations();
     else {
       constructorRelationService
-        .delete(field.id, slug)
+        .delete(field.id, tableSlug)
         .then((res) => updateRelations());
     }
   };

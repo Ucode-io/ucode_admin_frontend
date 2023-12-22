@@ -6,12 +6,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import { Button, Divider, Menu } from "@mui/material";
-import { add, differenceInDays, endOfMonth, set, startOfMonth } from "date-fns";
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueries, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {Button, Divider, Menu} from "@mui/material";
+import {add, differenceInDays, endOfMonth, set, startOfMonth} from "date-fns";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueries, useQuery, useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import FRow from "../../../components/FormElements/FRow";
@@ -20,23 +20,34 @@ import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorViewService from "../../../services/constructorViewService";
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
-import { listToMap } from "../../../utils/listToMap";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import {listToMap} from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
-import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
+import {selectElementFromEndOfString} from "../../../utils/selectElementFromEnd";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import TimeLineBlock from "./TimeLineBlock";
 import TimeLineGroupBy from "./TimeLineGroupBy";
 import style from "./styles.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
 
-export default function TimeLineView({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews, isViewLoading }) {
-  const { tableSlug } = useParams();
-  const { filters } = useFilters(tableSlug, view.id);
+export default function TimeLineView({
+  view,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  views,
+  selectedTable,
+  setViews,
+  isViewLoading,
+}) {
+  const {tableSlug} = useParams();
+  const {filters} = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-  const [dateFilters, setDateFilters] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
+  const [dateFilters, setDateFilters] = useState([
+    startOfMonth(new Date()),
+    endOfMonth(new Date()),
+  ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [dataFromQuery, setDataFromQuery] = useState([]);
 
@@ -45,7 +56,9 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   }, [views, selectedTabIndex]);
 
   const groupFieldIds = view.group_fields;
-  const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter((el) => el);
+  const groupFields = groupFieldIds
+    .map((id) => fieldsMap[id])
+    .filter((el) => el);
 
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return [];
@@ -54,7 +67,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }));
+      result.push(add(dateFilters[0], {days: i}));
     }
     return result;
   }, [dateFilters]);
@@ -77,8 +90,11 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   };
 
   // FOR DATA
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters, dateFilters, view }],
+  const {data: {data} = {data: []}, isLoading} = useQuery(
+    [
+      "GET_OBJECTS_LIST_WITH_RELATIONS",
+      {tableSlug, filters, dateFilters, view},
+    ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -87,7 +103,8 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
           gte: dateFilters[0],
           lte: dateFilters[1],
           with_relations: true,
-          builder_service_view_id: view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
+          builder_service_view_id:
+            view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
         },
       });
     },
@@ -108,8 +125,11 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   }, [data]);
 
   // FOR TABLE INFO
-  const { data: { fields, visibleColumns, visibleRelationColumns } = { data: [] }, isLoading: tableInfoLoading } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
+  const {
+    data: {fields, visibleColumns, visibleRelationColumns} = {data: []},
+    isLoading: tableInfoLoading,
+  } = useQuery(
+    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -211,7 +231,7 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   const handleScrollClick = () => {
     const scrollToDiv = document.getElementById("todayDate");
     if (scrollToDiv) {
-      scrollToDiv.scrollIntoView({ behavior: "smooth" });
+      scrollToDiv.scrollIntoView({behavior: "smooth"});
     }
   };
 
@@ -223,7 +243,9 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
   });
 
   const computedColumns = useMemo(() => {
-    const filteredFields = fields?.filter((el) => el?.type === "DATE" || el?.type === "DATE_TIME");
+    const filteredFields = fields?.filter(
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+    );
     return listToOptions(filteredFields, "label", "slug");
   }, [fields]);
 
@@ -290,7 +312,6 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
         queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
-  console.log("eeeeeeee", view);
   useEffect(() => {
     form.setValue("group_fields", view?.group_fields);
   }, [view, form]);
@@ -336,7 +357,11 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
             alignItems: "center",
           }}
         >
-          <CRangePicker interval={"months"} value={dateFilters} onChange={setDateFilters} />
+          <CRangePicker
+            interval={"months"}
+            value={dateFilters}
+            onChange={setDateFilters}
+          />
           <Button
             variant="text"
             sx={{
@@ -367,7 +392,9 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
               gap: "3px",
             }}
           >
-            <span>{types.find((item) => item.value === selectedType).title}</span>
+            <span>
+              {types.find((item) => item.value === selectedType).title}
+            </span>
             {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </Button>
 
@@ -499,13 +526,25 @@ export default function TimeLineView({ view, selectedTabIndex, setSelectedTabInd
             >
               <div>
                 <FRow label="Time from">
-                  <HFSelect options={computedColumns} control={form.control} name="calendar_from_slug" />
+                  <HFSelect
+                    options={computedColumns}
+                    control={form.control}
+                    name="calendar_from_slug"
+                  />
                 </FRow>
                 <FRow label="Time to">
-                  <HFSelect options={computedColumns} control={form.control} name="calendar_to_slug" />
+                  <HFSelect
+                    options={computedColumns}
+                    control={form.control}
+                    name="calendar_to_slug"
+                  />
                 </FRow>
                 <FRow label="Visible field">
-                  <HFSelect options={listToOptions(fields, "label", "slug")} control={form.control} name="visible_field" />
+                  <HFSelect
+                    options={listToOptions(fields, "label", "slug")}
+                    control={form.control}
+                    name="visible_field"
+                  />
                 </FRow>
               </div>
               <Button variant="contained" onClick={saveSettings}>
@@ -676,7 +715,7 @@ const queryGenerator = (groupFields, filters = {}) => {
 
 const promiseGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug];
-  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const defaultFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   const relationFilters = {};
 
@@ -700,7 +739,7 @@ const promiseGenerator = (groupField, filters = {}) => {
       relationFilters[slug] = value;
     }
   });
-  const computedFilters = { ...defaultFilters, ...relationFilters };
+  const computedFilters = {...defaultFilters, ...relationFilters};
 
   if (groupField?.type === "PICK_LIST") {
     return {
@@ -727,7 +766,10 @@ const promiseGenerator = (groupField, filters = {}) => {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
         {
-          tableSlug: groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4),
+          tableSlug:
+            groupField?.type === "LOOKUP"
+              ? groupField.slug?.slice(0, -3)
+              : groupField.slug?.slice(0, -4),
           filters: computedFilters,
         },
       ],

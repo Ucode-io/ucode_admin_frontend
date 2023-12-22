@@ -1,13 +1,10 @@
-import {IconButton, InputAdornment, TextField, Tooltip} from "@mui/material";
-import {Controller, useWatch} from "react-hook-form";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import {Parser} from "hot-formula-parser";
-import {useEffect} from "react";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {useState} from "react";
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {fi} from "date-fns/locale";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 import FunctionsIcon from "@mui/icons-material/Functions";
+import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Parser } from "hot-formula-parser";
+import { useEffect, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 
 const parser = new Parser();
 
@@ -42,19 +39,18 @@ const NewCHFFormulaField = ({
   });
 
   const updateValue = () => {
-    // let computedFormula = formula;
-    // const fieldsListSorted = fieldsList
-    //   ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-    //   : [];
-    // fieldsListSorted?.forEach((field) => {
-    //   let value = values?.[field?.slug] ?? 0;
-    //   if (typeof value === "string") value = `${value}`;
-    //   computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-    // });
-    // const {error, result} = parser?.parse(computedFormula);
-    // let newValue = error ?? result;
-    // // const prevValue = values[name]
-    // if (newValue !== currentValue) setFormValue(name, newValue);
+    let computedFormula = formula;
+    const fieldsListSorted = fieldsList
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+      : [];
+    fieldsListSorted?.forEach((field) => {
+      let value = values?.[field?.slug] ?? 0;
+      if (typeof value === "string") value = `${value}`;
+      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+    });
+    const { error, result } = parser?.parse(computedFormula);
+    let newValue = error ?? result;
+    if (newValue !== currentValue) setFormValue(name, newValue);
   };
 
   useDebouncedWatch(updateValue, [values], 300);
@@ -72,7 +68,7 @@ const NewCHFFormulaField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
           value={

@@ -21,7 +21,7 @@ function NewlayoutList({
   const {i18n} = useTranslation();
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [createLayout, setCreateLayout] = useState(false);
-  console.log("i18ni18n", i18n);
+
   const {
     fields: layouts,
     append,
@@ -35,14 +35,13 @@ function NewlayoutList({
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
-  const {slug, appId} = useParams();
+  const {tableSlug, appId} = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           is_default: !element.is_default,
         };
       }
@@ -52,7 +51,7 @@ function NewlayoutList({
       };
     });
     mainForm.setValue("layouts", newLayouts);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setModal = (index, e) => {
@@ -60,14 +59,13 @@ function NewlayoutList({
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           type: e.target.checked ? "PopupLayout" : "SimpleLayout",
         };
       }
       return element;
     });
     mainForm.setValue("layouts", newLayout);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setSectionTab = (index, e) => {
@@ -75,7 +73,6 @@ function NewlayoutList({
       if (i === index) {
         return {
           ...element,
-          menu_id: appId,
           is_visible_section: !element.is_visible_section,
         };
       }
@@ -85,7 +82,7 @@ function NewlayoutList({
       };
     });
     mainForm.setValue("layouts", newLayouts);
-    layoutService.update(mainForm.watch(`layouts.${index}`), slug);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const languages = useSelector((state) => state.languages.list);
@@ -160,8 +157,8 @@ function NewlayoutList({
                   [`label_${i18n?.language}`]: "New Layout",
                 },
               });
-              setCreateLayout(true);
               setSelectedTabLayout(1);
+              setCreateLayout(true);
             }}
           />
         </CTable>

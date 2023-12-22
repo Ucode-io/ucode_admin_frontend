@@ -1,19 +1,19 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Box, Button, Tooltip } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import {Box, Button, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useParams} from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
 import layoutService from "../../services/layoutService";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { store } from "../../store";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {store} from "../../store";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../utils/applyDrag";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../utils/applyDrag";
 import SectionBlockForModal from "./SectionBlockForModal";
 
 const MainInfoForModal = ({
@@ -32,7 +32,7 @@ const MainInfoForModal = ({
   setData,
   data,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
@@ -50,14 +50,14 @@ const MainInfoForModal = ({
     return fields;
   }, [relation]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const selectedTable = store.getState().menu.menuItem;
 
   const updateLayout = (newData) => {
@@ -101,7 +101,9 @@ const MainInfoForModal = ({
 
   const isVisibleSection = (section) => {
     if (editAcces) return true;
-    const isVisible = section?.fields?.some((field) => field?.is_visible_layout);
+    const isVisible = section?.fields?.some(
+      (field) => field?.is_visible_layout
+    );
     return isVisible;
   };
 
@@ -142,50 +144,57 @@ const MainInfoForModal = ({
           {isMultiLanguage && (
             <div className={styles.language}>
               {projectInfo?.language?.map((lang) => (
-                <Button className={activeLang === lang?.short_name && styles.active} onClick={() => setActiveLang(lang?.short_name)}>
+                <Button
+                  className={activeLang === lang?.short_name && styles.active}
+                  onClick={() => setActiveLang(lang?.short_name)}
+                >
                   {lang?.name}
                 </Button>
               ))}
             </div>
           )}
 
-          <Container groupName="1" onDrop={onDropSections} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => computedSections?.[i] ?? {}}>
-            {computedSections?.map(
-              (section, index) =>
-                isVisibleSection(section) && (
-                  <Draggable key={section.id}>
-                    <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
-                      <div className={styles.newformColumn}>
-                        <SectionBlockForModal
-                          index={index}
-                          data={data}
-                          setData={setData}
-                          computedSections={computedSections}
-                          editAcces={editAcces}
-                          section={section}
-                          control={control}
-                          setFormValue={setFormValue}
-                          fieldsList={fieldsList}
-                          formTableSlug={tableSlug}
-                          relatedTable={relatedTable}
-                          activeLang={activeLang}
-                          errors={errors}
-                          isMultiLanguage={isMultiLanguage}
-                          toggleFields={toggleFields}
-                          selectedTabIndex={selectedTabIndex}
-                        />
-                      </div>
-                    </NewFormCard>
-                  </Draggable>
-                )
-            )}
-          </Container>
+          {computedSections?.map(
+            (section, index) =>
+              isVisibleSection(section) && (
+                <NewFormCard
+                  key={section.id}
+                  title={
+                    section?.attributes?.[`label_${i18n.language}`] ??
+                    section.label
+                  }
+                  className={styles.formCard}
+                  icon={section.icon}
+                >
+                  <div className={styles.newformColumn}>
+                    <SectionBlockForModal
+                      index={index}
+                      data={data}
+                      setData={setData}
+                      computedSections={computedSections}
+                      editAcces={editAcces}
+                      section={section}
+                      control={control}
+                      setFormValue={setFormValue}
+                      fieldsList={fieldsList}
+                      formTableSlug={tableSlug}
+                      relatedTable={relatedTable}
+                      activeLang={activeLang}
+                      errors={errors}
+                      isMultiLanguage={isMultiLanguage}
+                      toggleFields={toggleFields}
+                      selectedTabIndex={selectedTabIndex}
+                    />
+                  </div>
+                </NewFormCard>
+              )
+          )}
         </div>
       ) : (
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{ color: "#000" }} />
+              <KeyboardTabIcon style={{color: "#000"}} />
             </button>
           </Tooltip>
         </div>

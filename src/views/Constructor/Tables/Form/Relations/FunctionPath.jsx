@@ -12,19 +12,9 @@ function FunctionPath({ control, watch, functions, setValue }) {
 
   return (
     <>
-      {/* <div className={styles.settingsBlockHeader}>
-        <h2>Functions</h2>
-      </div> */}
-      <div className="p-2">
-        <div className={styles.input_control}>
-          <HFSelect
-            control={control}
-            name="function_path"
-            options={functions}
-          />
-
-          <Button onClick={clear}>Clear Function</Button>
-        </div>
+      <div className={styles.input_control}>
+        <HFSelect control={control} name="function_path" options={functions} />
+        <Button onClick={clear}>Clear Function</Button>
       </div>
     </>
   );

@@ -307,6 +307,23 @@ export const dateFieldFormats = [
     icon: "minus.svg",
   },
 ];
+export const fileFieldFormats = [
+  {
+    icon: "image.svg",
+    label: "Photo",
+    value: "PHOTO",
+  },
+  {
+    icon: "video.svg",
+    label: "Video",
+    value: "VIDEO",
+  },
+  {
+    icon: "file.svg",
+    label: "File",
+    value: "FILE",
+  },
+];
 
 export const newFieldTypes = [
   {
@@ -386,6 +403,134 @@ export const newFieldTypes = [
   },
 ];
 
+export const fieldFormats = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "hashtag.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "calendar.svg",
+  },
+  {
+    label: "Dropdown",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
+  },
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+  {
+    label: "Formula",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "RELATION",
+    icon: "link-simple.svg",
+  },
+  {
+    label: "File",
+    value: "FILE",
+    icon: "file.svg",
+  },
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Phone",
+    value: "PHONE",
+    icon: "phone.svg",
+  },
+  {
+    label: "Email",
+    value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Password",
+    value: "PASSWORD",
+    icon: "lock.svg",
+  },
+  {
+    label: "Color",
+    value: "COLOR",
+    icon: "colon-sign.svg",
+  },
+  {
+    label: "File",
+    value: "BARCODE",
+    icon: "barcode.svg",
+  },
+  {
+    icon: "image.svg",
+    label: "File",
+    value: "PHOTO",
+  },
+  {
+    icon: "video.svg",
+    label: "File",
+    value: "VIDEO",
+  },
+  {
+    icon: "file.svg",
+    label: "File",
+    value: "FILE",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE_TIME_WITHOUT_TIME_ZONE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "TIME",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE_TIME",
+    icon: "minus.svg",
+  },
+  {
+    label: "Text",
+    value: "MULTI_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "FLOAT",
+    icon: "minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "LOOKUP",
+    icon: "minus.svg",
+  },
+];
+
 export const math = [
   {
     label: "plus",
@@ -419,3 +564,71 @@ export const fieldButtons = [
     value: "AUTOFILL",
   },
 ];
+
+export const formatIncludes = [
+  "NUMBER",
+  "DATE",
+  "SINGLE_LINE",
+  "FILE",
+  "FLOAT",
+  "DATE_TIME",
+  "DATE_TIME_WITHOUT_TIME_ZONE",
+  "TIME",
+  "BARCODE",
+  "PHOTO",
+  "VIDEO",
+  "MULTI_LINE",
+];
+
+export const FormatOptionType = (item) => {
+  switch (item) {
+    case "DATE":
+      return dateFieldFormats;
+    case "DATE_TIME":
+      return dateFieldFormats;
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return dateFieldFormats;
+    case "TIME":
+      return dateFieldFormats;
+    case "FILE":
+      return fileFieldFormats;
+    case "PHOTO":
+      return fileFieldFormats;
+    case "VIDEO":
+      return fileFieldFormats;
+    case "SINGLE_LINE":
+      return textFieldFormats;
+    case "MULTI_LINE":
+      return textFieldFormats;
+    case "NUMBER":
+      return numberFieldFormats;
+    case "FLOAT":
+      return numberFieldFormats;
+    default:
+      return textFieldFormats;
+  }
+};
+export const FormatTypes = (format) => {
+  switch (format) {
+    case "RELATION":
+      return true;
+    case "LOOKUP":
+      return true;
+    case "LOOKUPS":
+      return true;
+    default:
+      return false;
+  }
+};
+export const ValueTypes = (value) => {
+  switch (value) {
+    case "Many2One":
+      return true;
+    case "Many2Many":
+      return true;
+    case "Recursive":
+      return true;
+    default:
+      return false;
+  }
+};

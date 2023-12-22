@@ -9,10 +9,17 @@ export const loginAction = createAsyncThunk(
   async (data, {dispatch}) => {
     try {
       const res = await authService.login(data);
-      dispatch(authActions.loginSuccess({...res, project_id: data.project_id}));
+      dispatch(
+        authActions.loginSuccess({
+          ...res,
+          project_id: data.project_id,
+          environment_ids: data?.environment_ids,
+        })
+      );
       dispatch(companyActions.setCompanyId(res?.user?.company_id));
       dispatch(companyActions.setProjectId(data.project_id));
       dispatch(companyActions.setEnvironmentId(res?.environment_id));
+      dispatch(companyActions.setDefaultPage(data?.default_page));
       await authService
         .updateToken({
           refresh_token: res.token.access_token,

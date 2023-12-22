@@ -35,7 +35,6 @@ const RelationTable = forwardRef(
       loader,
       selectedObjects,
       setSelectedObjects,
-      tableSlug,
       setFieldSlug,
       id,
       reset,
@@ -47,11 +46,12 @@ const RelationTable = forwardRef(
       formVisible,
       selectedTab,
       type,
-      relatedTable,
+      relatedTable = {},
+      getAllData = () => {},
     },
     ref
   ) => {
-    const {appId} = useParams();
+    const {appId, tableSlug} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const {navigateToForm} = useTabRouter();
@@ -120,8 +120,8 @@ const RelationTable = forwardRef(
         const getFieldsData = constructorFieldService.getList({table_id: id});
 
         const getRelations = constructorRelationService.getList({
-          table_slug: slug,
-          relation_table_slug: slug,
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
         });
         const [{relations = []}, {fields = []}] = await Promise.all([
           getRelations,
@@ -131,7 +131,7 @@ const RelationTable = forwardRef(
         const relationsWithRelatedTableSlug = relations?.map((relation) => ({
           ...relation,
           relatedTableSlug:
-            relation.table_to?.slug === slug ? "table_from" : "table_to",
+            relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
         }));
 
         const layoutRelations = [];
@@ -140,13 +140,13 @@ const RelationTable = forwardRef(
         relationsWithRelatedTableSlug?.forEach((relation) => {
           if (
             (relation.type === "Many2One" &&
-              relation.table_from?.slug === slug) ||
+              relation.table_from?.slug === tableSlug) ||
             (relation.type === "One2Many" &&
-              relation.table_to?.slug === slug) ||
+              relation.table_to?.slug === tableSlug) ||
             relation.type === "Recursive" ||
             (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
             (relation.type === "Many2Dynamic" &&
-              relation.table_from?.slug === slug)
+              relation.table_from?.slug === tableSlug)
           ) {
             layoutRelations.push(relation);
           } else {
@@ -346,7 +346,6 @@ const RelationTable = forwardRef(
                 )
               ),
       }));
-
       tableData?.length &&
         computedRelationFields?.forEach((item, index) => {
           constructorObjectService
@@ -480,6 +479,7 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
+              selectedTab={selectedTab}
               relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
@@ -522,8 +522,8 @@ const RelationTable = forwardRef(
               }
               limit={limit}
               setLimit={setLimit}
-              summaries={getRelatedTabeSlug.summaries}
-              isChecked={(row) => selectedObjects?.includes(row.guid)}
+              summaries={relatedTable?.attributes?.summaries}
+              isChecked={(row) => selectedObjects?.includes(row?.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
               title={"Сначала нужно создать объект"}
@@ -555,7 +555,7 @@ const RelationTable = forwardRef(
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
-            onSubmit={(index, field) => update(index, field)}
+            // onSubmit={(index, field) => update(index, field)}
             field={drawerState}
             formType={drawerState}
             mainForm={mainForm}

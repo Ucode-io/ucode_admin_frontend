@@ -1,5 +1,5 @@
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 import CDatePicker from "../DatePickers/CDatePicker";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,8 +36,8 @@ const HFDatePicker = ({
       control={control}
       name={name}
       disabled
-      defaultValue={defaultValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <div className={className}>
           <CDatePicker
             isFormEdit={isFormEdit}

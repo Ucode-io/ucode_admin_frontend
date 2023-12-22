@@ -150,7 +150,7 @@ export default function TimeLineGroupBy({
             >
               {checkedColumns?.map((column) => (
                 <Draggable
-                  key={column.id}
+                  key={column?.id}
                   style={{
                     overflow: "visible",
                     display: "flex",
@@ -168,10 +168,10 @@ export default function TimeLineGroupBy({
                       gap: "10px",
                     }}
                   >
-                    <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
+                    <div>{columnIcons[column?.type] ?? <LinkIcon />}</div>
                     <div>
                       {column?.attributes?.[`label_${i18n.language}`] ??
-                        column.label}
+                        column?.label}
                     </div>
                   </div>
 
@@ -189,7 +189,7 @@ export default function TimeLineGroupBy({
 
               {allColumns?.unCheckedColumns?.map((item) => (
                 <div
-                  key={item.id}
+                  key={item?.id}
                   style={{
                     overflow: "visible",
                     display: "flex",
@@ -206,10 +206,10 @@ export default function TimeLineGroupBy({
                       gap: "10px",
                     }}
                   >
-                    <div>{columnIcons[item.type] ?? <LinkIcon />}</div>
+                    <div>{columnIcons[item?.type] ?? <LinkIcon />}</div>
                     <div>
                       {item?.attributes?.[`label_${i18n.language}`] ??
-                        item.label}
+                        item?.label}
                     </div>
                   </div>
 

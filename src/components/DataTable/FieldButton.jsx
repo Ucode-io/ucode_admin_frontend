@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import style from "./field.module.scss";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CTableHeadCell } from "../CTable";
 import FieldOptionModal from "./FieldOptionModal";
@@ -12,14 +11,15 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
-import { useTranslation } from "react-i18next";
 import constructorViewService from "../../services/constructorViewService";
 import { useParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
 import {
+  useRelationFieldUpdateMutation,
   useRelationUpdateMutation,
   useRelationsCreateMutation,
 } from "../../services/relationService";
+import { transliterate } from "../../utils/textTranslater";
 
 export default function FieldButton({
   openFieldSettings,
@@ -34,11 +34,12 @@ export default function FieldButton({
   setDrawerStateField,
 }) {
   const queryClient = useQueryClient();
-  const { i18n } = useTranslation();
+  const languages = useSelector((state) => state.languages.list);
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const menuItem = useSelector((state) => state.menu.menuItem);
   const { control, watch, setValue, reset, handleSubmit } = useForm();
+  const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -84,6 +85,7 @@ export default function FieldButton({
         updateView(res?.id);
       },
     });
+
   const { mutate: createRelation, isLoading: realationLoading } =
     useRelationsCreateMutation({
       onSuccess: (res) => {
@@ -94,8 +96,9 @@ export default function FieldButton({
         updateView(res?.id);
       },
     });
+
   const { mutate: updateRelation, isLoading: realationUpdateLoading } =
-    useRelationUpdateMutation({
+    useRelationFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
         setFieldOptionAnchor(null);
@@ -104,19 +107,18 @@ export default function FieldButton({
         updateView(res?.id);
       },
     });
-
   const onSubmit = (values) => {
     const data = {
       ...values,
-      slug: values?.label?.replace(/ /g, "_"),
+      slug: slug,
       table_id: menuItem?.table_id,
+      label: slug,
       index: "string",
       required: false,
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
       attributes: {
         ...values.attributes,
-        [`label_${i18n?.language}`]: values.label,
         formula: values?.attributes?.advanced_type
           ? values?.attributes?.formula
           : values?.attributes?.from_formula +
@@ -134,29 +136,36 @@ export default function FieldButton({
       multiple_insert: false,
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
-      attributes: {
-        ...values.attributes,
-        [`label_${i18n?.language}`]: values.label,
-      },
     };
-    if (fieldData && values?.type !== "RELATION") {
-      updateField({ data, tableSlug });
-    } else if (values?.type !== "RELATION") {
-      createField({ data, tableSlug });
+    if (!fieldData) {
+      if (values?.type !== "RELATION") {
+        createField({ data, tableSlug });
+      }
+      if (values?.type === "RELATION") {
+        createRelation({ data: relationData, tableSlug });
+      }
     }
-
-    if (fieldData && values?.type === "RELATION") {
-      updateRelation({ data: relationData, tableSlug });
-    } else if (values?.type === "RELATION") {
-      createRelation({ data: relationData, tableSlug });
+    if (fieldData) {
+      if (values?.view_fields) {
+        updateRelation({ data: values, tableSlug });
+      } else {
+        updateField({ data, tableSlug });
+      }
     }
   };
+
+  const generatorLabel = () => {};
 
   useEffect(() => {
     if (fieldData) {
       reset({
         ...fieldData,
+        attributes: {
+          ...fieldData.attributes,
+          format: fieldData?.type,
+        },
       });
+      console.log("dfdfddf");
     } else {
       reset({
         attributes: {

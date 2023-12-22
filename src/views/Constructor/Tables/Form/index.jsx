@@ -9,7 +9,6 @@ import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
 import constructorTableService from "../../../../services/constructorTableService";
@@ -19,21 +18,20 @@ import {constructorTableActions} from "../../../../store/constructorTable/constr
 import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
 import {generateGUID} from "../../../../utils/generateID";
 import {listToMap} from "../../../../utils/listToMap";
-
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import {useTranslation} from "react-i18next";
-import menuSettingsService from "../../../../services/menuSettingsService";
-import {useQueryClient} from "react-query";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {id, slug, appId} = useParams();
+  const {id, tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
@@ -71,7 +69,7 @@ const ConstructorTablesFormPage = () => {
     const getTableData = constructorTableService.getById(id);
 
     const getViewRelations = constructorViewRelationService.getList({
-      table_slug: slug,
+      table_slug: tableSlug,
     });
 
     // const getActions = constructorCustomEventService.getList(
@@ -84,10 +82,10 @@ const ConstructorTablesFormPage = () => {
     const getLayouts = layoutService
       .getList(
         {
-          "table-slug": slug,
+          "table-slug": tableSlug,
           language_setting: i18n?.language,
         },
-        slug
+        tableSlug
       )
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);
@@ -116,14 +114,19 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList({table_id: id});
+      const getFieldsData = constructorFieldService.getList(
+        {
+          table_id: id,
+        },
+        tableSlug
+      );
 
       const getRelations = constructorRelationService.getList(
         {
-          table_slug: slug,
-          relation_table_slug: slug,
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
         },
-        slug
+        tableSlug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
@@ -133,7 +136,7 @@ const ConstructorTablesFormPage = () => {
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -142,12 +145,13 @@ const ConstructorTablesFormPage = () => {
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
           (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
           (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+            relation.table_from?.slug === tableSlug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -343,7 +347,7 @@ const ConstructorTablesFormPage = () => {
                 <Fields
                   getRelationFields={getRelationFields}
                   mainForm={mainForm}
-                  slug={slug}
+                  slug={tableSlug}
                 />
               </TabPanel>
 

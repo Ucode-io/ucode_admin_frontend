@@ -34,7 +34,6 @@ const CDateTimePicker = ({
               value={value ?? undefined}
               onChange={handleChange}
               disabled={disabled}
-              portalTarget={document.body}
             >
               {(InputProps) => (
                 <TextField
@@ -168,7 +167,6 @@ const CDateTimePicker = ({
         format="HH:mm"
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
-        portalTarget={document}
       />
       {showCopyBtn && (
         <CopyToClipboard copyText={value} style={{marginLeft: 8}} />

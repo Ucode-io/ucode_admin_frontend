@@ -25,6 +25,7 @@ const HFInternationPhone = ({
   tabIndex,
   placeholder,
   defaultValue,
+  isTableView,
   ...props
 }) => {
   const classes = useStyles();
@@ -40,11 +41,11 @@ const HFInternationPhone = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <PhoneInput
           placeholder="Enter phone number"
-          value={value}
+          value={value?.includes("+") ? value : `+${value}`}
           onChange={onChange}
           defaultCountry="UZ"
           international
-          className={styles.phoneNumber}
+          className={isTableView ? styles.inputTable : styles.phoneNumber}
           name={name}
           limitMaxLength={true}
           {...props}

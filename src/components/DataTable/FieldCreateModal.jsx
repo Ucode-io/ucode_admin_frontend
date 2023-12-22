@@ -1,32 +1,36 @@
-import "./style.scss";
+import CloseIcon from "@mui/icons-material/Close";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import style from "./field.module.scss";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import constructorTableService from "../../services/constructorTableService";
+import { useFieldsListQuery } from "../../services/fieldService";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
-  dateFieldFormats,
+  FormatOptionType,
+  FormatTypes,
+  ValueTypes,
+  fieldFormats,
+  formatIncludes,
   math,
   newFieldTypes,
-  numberFieldFormats,
-  textFieldFormats,
 } from "../../utils/constants/fieldTypes";
-import FRow from "../FormElements/FRow";
-import HFTextField from "../FormElements/HFTextField";
-import HFSelect from "../FormElements/HFSelect";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../utils/applyDrag";
-import { useFieldsListQuery } from "../../services/fieldService";
-import CloseIcon from "@mui/icons-material/Close";
 import { colorList } from "../ColorPicker/colorList";
+import FRow from "../FormElements/FRow";
+import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
-import RelationFieldForm from "./RelationFieldForm";
-import SettingsIcon from "@mui/icons-material/Settings";
 import HFTextArea from "../FormElements/HFTextArea";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { useTranslation } from "react-i18next";
-import { useRelationGetByIdQuery } from "../../services/relationService";
-import constructorTableService from "../../services/constructorTableService";
+import HFTextField from "../FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLanguage";
+import RelationFieldForm from "./RelationFieldForm";
+import style from "./field.module.scss";
+import "./style.scss";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -43,6 +47,7 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
 }) {
+  const queryClient = useQueryClient();
   const format = useWatch({
     control,
     name: "attributes.format",
@@ -54,6 +59,7 @@ export default function FieldCreateModal({
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
+  const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
   const { tableSlug } = useParams();
@@ -65,7 +71,17 @@ export default function FieldCreateModal({
     queryParams: {
       enabled: Boolean(fieldData?.attributes?.relation_data?.id),
       onSuccess: (res) => {
-        console.log("res", res);
+        reset({
+          ...res,
+          table_from: res?.table_from?.slug ?? "",
+          table_to: res?.table_to?.slug ?? "",
+          type: res?.type ?? "",
+          id: res?.id ?? "",
+          editable: res?.editable ?? false,
+          summaries: res?.summaries ?? [],
+          view_fields: res?.view_fields?.map((field) => field.id) ?? [],
+          field_name: res?.label,
+        });
       },
     },
   });
@@ -99,6 +115,7 @@ export default function FieldCreateModal({
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
+      tableSlug: tableSlug,
     },
     queryParams: {
       enabled: Boolean(menuItem?.table_id),
@@ -209,6 +226,12 @@ export default function FieldCreateModal({
     setAnchorEl(null);
   };
 
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
+
+  console.log("val", values);
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -232,23 +255,70 @@ export default function FieldCreateModal({
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
-          <Box className={style.field}>
-            <FRow
-              label={"Label"}
-              componentClassName="flex gap-2 align-center"
-              required
-              classname={style.custom_label}
+          <Box
+            className={style.field}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+              }}
             >
-              <HFTextField
-                className={style.input}
-                disabledHelperText
-                name="label"
-                control={control}
-                fullWidth
-                required
-                placeholder="Field name"
-              />
-            </FRow>
+              {!ValueTypes(values?.type) && !FormatTypes(format) ? (
+                <FRow label="Label" classname={style.custom_label} required>
+                  <Box style={{ display: "flex", gap: "6px" }}>
+                    <HFTextFieldWithMultiLanguage
+                      control={control}
+                      name="attributes.label"
+                      fullWidth
+                      placeholder="Name"
+                      defaultValue={tableName}
+                      languages={languages}
+                    />
+                  </Box>
+                </FRow>
+              ) : null}
+              {FormatTypes(format) || ValueTypes(values?.type) ? (
+                <>
+                  <FRow
+                    label="Field label"
+                    classname={style.custom_label}
+                    required
+                  >
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Field label"
+                        defaultValue={tableName}
+                        languages={languages}
+                      />
+                    </Box>
+                  </FRow>
+
+                  <FRow
+                    label="Tab label"
+                    classname={style.custom_label}
+                    required
+                  >
+                    <Box style={{ display: "flex", gap: "6px" }}>
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label_to"
+                        fullWidth
+                        placeholder="Tab label"
+                        defaultValue={tableName}
+                        languages={languages}
+                      />
+                    </Box>
+                  </FRow>
+                </>
+              ) : null}
+            </Box>
             <FRow
               label={"Type"}
               componentClassName="flex gap-2 align-center"
@@ -258,7 +328,7 @@ export default function FieldCreateModal({
               <HFSelect
                 className={style.input}
                 disabledHelperText
-                options={newFieldTypes}
+                options={fieldData ? fieldFormats : newFieldTypes}
                 name="attributes.format"
                 control={control}
                 disabled={fieldData}
@@ -271,6 +341,8 @@ export default function FieldCreateModal({
                     setValue("type", "DATE");
                   } else if (e === "SINGLE_LINE") {
                     setValue("type", "SINGLE_LINE");
+                  } else if (e === "FILE") {
+                    setValue("type", "FILE");
                   } else {
                     setValue("type", e);
                   }
@@ -279,9 +351,7 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          {format === "NUMBER" ||
-          format === "DATE" ||
-          format === "SINGLE_LINE" ? (
+          {formatIncludes?.includes(format) ? (
             <FRow
               label={"Format"}
               componentClassName="flex gap-2 align-center"
@@ -291,15 +361,7 @@ export default function FieldCreateModal({
               <HFSelect
                 className={style.input}
                 disabledHelperText
-                options={
-                  format === "NUMBER"
-                    ? numberFieldFormats
-                    : format === "DATE"
-                    ? dateFieldFormats
-                    : format === "SINGLE_LINE"
-                    ? textFieldFormats
-                    : null
-                }
+                options={FormatOptionType(format)}
                 name="type"
                 control={control}
                 disabled={fieldData}

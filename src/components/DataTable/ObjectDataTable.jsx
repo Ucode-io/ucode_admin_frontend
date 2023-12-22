@@ -1,16 +1,21 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { Button } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import AddDataColumn from "./AddDataColumn";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import FieldButton from "./FieldButton";
 import MultipleUpdateRow from "./MultipleUpdateRow";
@@ -18,217 +23,218 @@ import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
-import { useVirtualizer } from "@tanstack/react-virtual";
 
-const ObjectDataTable = ({
-  relOptions,
-  filterVisible,
-  tableView,
-  data = [],
-  loader = false,
-  setDrawerState,
-  currentView,
-  setDrawerStateField,
-  removableHeight,
-  additionalRow,
-  mainForm,
-  elementHeight,
-  selectedView,
-  isTableView = false,
-  remove,
-  multipleDelete,
-  openFieldSettings,
-  sortedDatas,
-  fields = [],
-  isRelationTable,
-  disablePagination,
-  currentPage = 1,
-  onPaginationChange = () => {},
-  pagesCount = 1,
-  setSortedDatas,
-  columns = [],
-  relatedTableSlug,
-  watch,
-  getValues,
-  control,
-  setFormValue,
-  dataLength,
-  onDeleteClick,
-  onEditClick,
-  onRowClick = () => {},
-  filterChangeHandler = () => {},
-  filters,
-  disableFilters,
-  tableStyle,
-  wrapperStyle,
-  tableSlug,
-  isResizeble,
-  paginationExtraButton,
-  selectedObjectsForDelete,
-  setSelectedObjectsForDelete,
-  onCheckboxChange,
-  limit,
-  setLimit,
-  isChecked,
-  formVisible,
-  summaries,
-  relationAction,
-  onChecked,
-  defaultLimit,
-  title,
-  view,
-  navigateToForm,
-  refetch,
-}) => {
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const { i18n } = useTranslation();
-  const tableSize = useSelector((state) => state.tableSize.tableSize);
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
-  const [columnId, setColumnId] = useState("");
-  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
-  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
-  const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
-  const [fieldData, setFieldData] = useState(null);
-  const [addNewRow, setAddNewRow] = useState(false);
+const ObjectDataTable = React.memo(
+  ({
+    selectedTab,
+    relOptions,
+    filterVisible,
+    tableView,
+    data = [],
+    loader = false,
+    setDrawerState,
+    currentView,
+    setDrawerStateField,
+    removableHeight,
+    additionalRow,
+    mainForm,
+    elementHeight,
+    selectedView,
+    isTableView = false,
+    remove,
+    multipleDelete,
+    openFieldSettings,
+    sortedDatas,
+    fields = [],
+    isRelationTable,
+    disablePagination,
+    currentPage = 1,
+    onPaginationChange = () => {},
+    pagesCount = 1,
+    setSortedDatas,
+    columns = [],
+    relatedTableSlug,
+    watch,
+    getValues,
+    control,
+    setFormValue,
+    dataLength,
+    onDeleteClick,
+    onEditClick,
+    onRowClick = () => {},
+    filterChangeHandler = () => {},
+    filters,
+    disableFilters,
+    tableStyle,
+    wrapperStyle,
+    tableSlug,
+    isResizeble,
+    paginationExtraButton,
+    selectedObjectsForDelete,
+    setSelectedObjectsForDelete,
+    onCheckboxChange,
+    limit,
+    setLimit,
+    isChecked,
+    formVisible,
+    summaries,
+    relationAction,
+    onChecked,
+    defaultLimit,
+    title,
+    view,
+    navigateToForm,
+    refetch,
+  }) => {
+    const location = useLocation();
+    const dispatch = useDispatch();
+    const tableSize = useSelector((state) => state.tableSize.tableSize);
+    const selectedRow = useSelector((state) => state.selectedRow.selected);
+    const [columnId, setColumnId] = useState("");
+    const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+    const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+    const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+    const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
+    const [fieldData, setFieldData] = useState(null);
 
-  const popupRef = useRef(null);
-  useOnClickOutside(popupRef, () => setColumnId(""));
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
-  useEffect(() => {
-    if (!isResizeble) return;
-    const createResizableTable = function (table) {
-      if (!table) return;
-      const cols = table.querySelectorAll("th");
-      [].forEach.call(cols, function (col, idx) {
-        // Add a resizer element to the column
-        const resizer = document.createElement("span");
-        resizer.classList.add("resizer");
+    const popupRef = useRef(null);
+    useOnClickOutside(popupRef, () => setColumnId(""));
+    const pageName =
+      location?.pathname.split("/")[location.pathname.split("/").length - 1];
+    useEffect(() => {
+      if (!isResizeble) return;
+      const createResizableTable = function (table) {
+        if (!table) return;
+        const cols = table.querySelectorAll("th");
+        [].forEach.call(cols, function (col, idx) {
+          // Add a resizer element to the column
+          const resizer = document.createElement("span");
+          resizer.classList.add("resizer");
 
-        // Set the height
-        resizer.style.height = `${table.offsetHeight}px`;
+          // Set the height
+          resizer.style.height = `${table.offsetHeight}px`;
 
-        col.appendChild(resizer);
+          col.appendChild(resizer);
 
-        createResizableColumn(col, resizer, idx);
-      });
+          createResizableColumn(col, resizer, idx);
+        });
+      };
+
+      const createResizableColumn = function (col, resizer, idx) {
+        let x = 0;
+        let w = 0;
+
+        const mouseDownHandler = function (e) {
+          x = e.clientX;
+
+          const styles = window.getComputedStyle(col);
+          w = parseInt(styles.width, 10);
+
+          document.addEventListener("mousemove", mouseMoveHandler);
+          document.addEventListener("mouseup", mouseUpHandler);
+
+          resizer.classList.add("resizing");
+        };
+
+        const mouseMoveHandler = function (e) {
+          const dx = e.clientX - x;
+          const colID = col.getAttribute("id");
+          const colWidth = w + dx;
+          dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+          dispatch(
+            tableSizeAction.setTableSettings({
+              pageName,
+              colID,
+              colWidth,
+              isStiky: "ineffective",
+              colIdx: idx - 1,
+            })
+          );
+          col.style.width = `${colWidth}px`;
+        };
+
+        const mouseUpHandler = function () {
+          resizer.classList.remove("resizing");
+          document.removeEventListener("mousemove", mouseMoveHandler);
+          document.removeEventListener("mouseup", mouseUpHandler);
+        };
+
+        resizer.addEventListener("mousedown", mouseDownHandler);
+      };
+
+      createResizableTable(document.getElementById("resizeMe"));
+    }, [data, isResizeble, pageName, dispatch]);
+
+    const handleAutoSize = (colID, colIdx) => {
+      dispatch(
+        tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"})
+      );
+      const element = document.getElementById(colID);
+      element.style.width = "auto";
+      element.style.minWidth = "auto";
+      dispatch(
+        tableSizeAction.setTableSettings({
+          pageName,
+          colID,
+          colWidth: element.offsetWidth,
+          isStiky: "ineffective",
+          colIdx,
+        })
+      );
+      setColumnId("");
     };
 
-    const createResizableColumn = function (col, resizer, idx) {
-      let x = 0;
-      let w = 0;
-
-      const mouseDownHandler = function (e) {
-        x = e.clientX;
-
-        const styles = window.getComputedStyle(col);
-        w = parseInt(styles.width, 10);
-
-        document.addEventListener("mousemove", mouseMoveHandler);
-        document.addEventListener("mouseup", mouseUpHandler);
-
-        resizer.classList.add("resizing");
-      };
-
-      const mouseMoveHandler = function (e) {
-        const dx = e.clientX - x;
-        const colID = col.getAttribute("id");
-        const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
-        dispatch(
-          tableSizeAction.setTableSettings({
-            pageName,
-            colID,
-            colWidth,
-            isStiky: "ineffective",
-            colIdx: idx - 1,
-          })
-        );
-        col.style.width = `${colWidth}px`;
-      };
-
-      const mouseUpHandler = function () {
-        resizer.classList.remove("resizing");
-        document.removeEventListener("mousemove", mouseMoveHandler);
-        document.removeEventListener("mouseup", mouseUpHandler);
-      };
-
-      resizer.addEventListener("mousedown", mouseDownHandler);
+    const handlePin = (colID, colIdx) => {
+      dispatch(
+        tableSizeAction.setTableSettings({
+          pageName,
+          colID,
+          colWidth: currentColumnWidth,
+          isStiky: true,
+          colIdx,
+        })
+      );
+      setColumnId("");
     };
 
-    createResizableTable(document.getElementById("resizeMe"));
-  }, [data, isResizeble, pageName, dispatch]);
-
-  const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
-    const element = document.getElementById(colID);
-    element.style.width = "auto";
-    element.style.minWidth = "auto";
-    dispatch(
-      tableSizeAction.setTableSettings({
-        pageName,
-        colID,
-        colWidth: element.offsetWidth,
-        isStiky: "ineffective",
-        colIdx,
-      })
-    );
-    setColumnId("");
-  };
-
-  const handlePin = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSettings({
-        pageName,
-        colID,
-        colWidth: currentColumnWidth,
-        isStiky: true,
-        colIdx,
-      })
-    );
-    setColumnId("");
-  };
-
-  const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
-
-    if (index === 0) {
-      return 0;
-    } else if (colIdx === 0) {
-      return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
-      return 0;
-    } else {
-      return tableSettings?.[pageName]
+    const calculateWidth = (colId, index) => {
+      const colIdx = tableSettings?.[pageName]
         ?.filter((item) => item?.isStiky === true)
-        ?.slice(0, colIdx)
-        ?.reduce((acc, item) => acc + item?.colWidth, 0);
-    }
-  };
+        ?.findIndex((item) => item?.id === colId);
 
-  const calculateWidthFixedColumn = (colId) => {
-    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
+      if (index === 0) {
+        return 0;
+      } else if (colIdx === 0) {
+        return 0;
+      } else if (
+        tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+          .length === 1
+      ) {
+        return 0;
+      } else {
+        return tableSettings?.[pageName]
+          ?.filter((item) => item?.isStiky === true)
+          ?.slice(0, colIdx)
+          ?.reduce((acc, item) => acc + item?.colWidth, 0);
+      }
+    };
 
-    if (prevElementIndex === -1 || prevElementIndex === 0) {
-      return 0;
-    }
+    const calculateWidthFixedColumn = (colId) => {
+      const prevElementIndex = columns?.findIndex((item) => item.id === colId);
 
-    let totalWidth = 0;
+      if (prevElementIndex === -1 || prevElementIndex === 0) {
+        return 0;
+      }
 
-    for (let i = 0; i < prevElementIndex; i++) {
-      const element = document.querySelector(`[id='${columns?.[i].id}']`);
-      totalWidth += element?.offsetWidth || 0;
-    }
+      let totalWidth = 0;
 
-    return totalWidth;
-  };
+      for (let i = 0; i < prevElementIndex; i++) {
+        const element = document.querySelector(`[id='${columns?.[i].id}']`);
+        totalWidth += element?.offsetWidth || 0;
+      }
 
-  useEffect(() => {
-    if (!formVisible) {
-      dispatch(selectedRowActions.clear());
-    }
-  }, [formVisible]);
+      return totalWidth;
+    };
 
   const parentRef = useRef(null);
 
@@ -239,7 +245,7 @@ const ObjectDataTable = ({
     overscan: 10,
   });
 
-  console.log('columns', columns)
+  
   return (
     <CTable
       disablePagination={disablePagination}
@@ -265,84 +271,86 @@ const ObjectDataTable = ({
         {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
+            {columns.map(
+              (column, index) =>
+                column?.attributes?.field_permission?.view_permission && (
+                  <TableHeadForTableView
+                    currentView={currentView}
+                    column={column}
+                    isRelationTable={isRelationTable}
+                    index={index}
+                    pageName={pageName}
+                    sortedDatas={sortedDatas}
+                    setSortedDatas={setSortedDatas}
+                    setDrawerState={setDrawerState}
+                    setDrawerStateField={setDrawerStateField}
+                    tableSize={tableSize}
+                    tableSettings={tableSettings}
+                    view={view}
+                    selectedView={selectedView}
+                    calculateWidthFixedColumn={calculateWidthFixedColumn}
+                    handlePin={handlePin}
+                    handleAutoSize={handleAutoSize}
+                    popupRef={popupRef}
+                    columnId={columnId}
+                    setColumnId={setColumnId}
+                    setCurrentColumnWidth={setCurrentColumnWidth}
+                    isTableView={isTableView}
+                    FilterGenerator={FilterGenerator}
+                    filterChangeHandler={filterChangeHandler}
+                    filters={filters}
+                    tableSlug={tableSlug}
+                    disableFilters={disableFilters}
+                    setFieldCreateAnchor={setFieldCreateAnchor}
+                    setFieldData={setFieldData}
+                    refetch={refetch}
+                  />
+                )
+            )}
 
-          {columns.map(
-            (column, index) =>
-              column?.attributes?.field_permission?.view_permission && (
-                <TableHeadForTableView
-                  currentView={currentView}
-                  column={column}
-                  isRelationTable={isRelationTable}
-                  index={index}
-                  pageName={pageName}
-                  sortedDatas={sortedDatas}
-                  setSortedDatas={setSortedDatas}
-                  setDrawerState={setDrawerState}
-                  setDrawerStateField={setDrawerStateField}
-                  tableSize={tableSize}
-                  tableSettings={tableSettings}
-                  view={view}
-                  selectedView={selectedView}
-                  calculateWidthFixedColumn={calculateWidthFixedColumn}
-                  handlePin={handlePin}
-                  handleAutoSize={handleAutoSize}
-                  popupRef={popupRef}
-                  columnId={columnId}
-                  setColumnId={setColumnId}
-                  setCurrentColumnWidth={setCurrentColumnWidth}
-                  isTableView={isTableView}
-                  FilterGenerator={FilterGenerator}
-                  filterChangeHandler={filterChangeHandler}
-                  filters={filters}
-                  tableSlug={tableSlug}
-                  disableFilters={disableFilters}
-                  setFieldCreateAnchor={setFieldCreateAnchor}
-                  setFieldData={setFieldData}
-                  refetch={refetch}
-                />
-              )
-          )}
-
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
-            {(onDeleteClick || onEditClick) && (
-              <CTableHeadCell
-                style={{
-                  padding: "0",
-                }}
-              >
-                <span
+            <PermissionWrapperV2
+              tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+              type={["update", "delete"]}
+            >
+              {(onDeleteClick || onEditClick) && (
+                <CTableHeadCell
                   style={{
-                    whiteSpace: "nowrap",
-                    padding: "0px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    backgroundColor: "#fff",
+                    padding: "0",
                   }}
                 >
-                  Actions
-                </span>
-              </CTableHeadCell>
+                  <span
+                    style={{
+                      whiteSpace: "nowrap",
+                      padding: "0px 4px",
+                      color: "#747474",
+                      fontSize: "13px",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      lineHeight: "normal",
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    Actions
+                  </span>
+                </CTableHeadCell>
+              )}
+            </PermissionWrapperV2>
+            {!isRelationTable && (
+              <FieldButton
+                openFieldSettings={openFieldSettings}
+                view={view}
+                mainForm={mainForm}
+                fields={fields}
+                setFieldCreateAnchor={setFieldCreateAnchor}
+                fieldCreateAnchor={fieldCreateAnchor}
+                fieldData={fieldData}
+                setFieldData={setFieldData}
+                setDrawerState={setDrawerState}
+                setDrawerStateField={setDrawerStateField}
+              />
             )}
-          </PermissionWrapperV2>
-          {!isRelationTable && (
-            <FieldButton
-              openFieldSettings={openFieldSettings}
-              view={view}
-              mainForm={mainForm}
-              fields={fields}
-              setFieldCreateAnchor={setFieldCreateAnchor}
-              fieldCreateAnchor={fieldCreateAnchor}
-              fieldData={fieldData}
-              setFieldData={setFieldData}
-              setDrawerState={setDrawerState}
-              setDrawerStateField={setDrawerStateField}
-            />
-          )}
-        </CTableRow>
-      </CTableHead>
+          </CTableRow>
+        </CTableHead>
 
       <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
         {(isRelationTable ? fields : data).length > 0 &&
@@ -393,62 +401,40 @@ const ObjectDataTable = ({
             );
           })}
 
-        {addNewRow && (
-          <AddDataColumn
-            rows={isRelationTable ? fields : data}
-            columns={columns}
-            setAddNewRow={setAddNewRow}
-            isTableView={isTableView}
-            relOptions={relOptions}
-            tableView={tableView}
-            tableSlug={relatedTableSlug ?? tableSlug}
-            fields={columns}
-            getValues={getValues}
-            mainForm={mainForm}
-            control={control}
-            setFormValue={setFormValue}
-            relationfields={fields}
-            data={data}
-            onRowClick={onRowClick}
-            width={"80px"}
-            refetch={refetch}
-          />
-        )}
-
-        <CTableRow>
-          <CTableCell
-            align="center"
-            className="data_table__number_cell"
-            style={{
-              padding: "0",
-              position: "sticky",
-              left: "0",
-              backgroundColor: "#FFF",
-              zIndex: "1",
-            }}
-          >
-            <Button
-              variant="text"
+          <CTableRow>
+            <CTableCell
+              align="center"
+              className="data_table__number_cell"
               style={{
-                borderColor: "#F0F0F0",
-                borderRadius: "0px",
-                width: "100%",
-              }}
-              onClick={() => {
-                // navigateToForm(tableSlug);
-                setAddNewRow(true);
+                padding: "0",
+                position: "sticky",
+                left: "0",
+                backgroundColor: "#FFF",
+                zIndex: "1",
               }}
             >
-              <AddRoundedIcon />
-            </Button>
-          </CTableCell>
-        </CTableRow>
+              <Button
+                variant="text"
+                style={{
+                  borderColor: "#F0F0F0",
+                  borderRadius: "0px",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  // navigateToForm(tableSlug);
+                  // setAddNewRow(true);
+                }}
+              >
+                <AddRoundedIcon />
+              </Button>
+            </CTableCell>
+          </CTableRow>
 
         {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
         {additionalRow}
       </CTableBody>
     </CTable>
   );
-};
+});
 
 export default ObjectDataTable;

@@ -21,6 +21,7 @@ const CellElementGeneratorForTableView = ({
   setFormValue,
   index,
   data,
+  isTableView,
   isNewRow,
 }) => {
   const userId = useSelector((state) => state.auth.userId);

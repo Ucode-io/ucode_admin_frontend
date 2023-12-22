@@ -20,11 +20,12 @@ import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 import constructorFieldService, {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../../../services/constructorFieldService";
-import constructorObjectService from "../../../../../services/constructorObjectService";
+import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import { store } from "../../../../../store";
@@ -38,7 +39,6 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
-import constructorTableService from "../../../../../services/constructorTableService";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -53,8 +53,8 @@ const FieldSettings = ({
   getRelationFields,
   slug,
 }) => {
-  const { id, appId, tableSlug } = useParams();
-  const { handleSubmit, control, reset, watch, setValue } = useForm();
+  const {id, appId, tableSlug} = useParams();
+  const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
@@ -82,9 +82,13 @@ const FieldSettings = ({
     const fields = mainForm.getValues("fields") ?? [];
     mainForm.setValue(`fields`, [field, ...fields]);
   };
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -92,7 +96,7 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", { slug }],
+    ["GET_VIEWS_AND_FIELDS", {slug}],
     () => {
       if (!slug) return false;
       return constructorTableService.getTableInfo(slug, {
@@ -101,7 +105,7 @@ const FieldSettings = ({
     },
     {
       enabled: Boolean(!!slug),
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -115,7 +119,7 @@ const FieldSettings = ({
     }
   );
 
-  const { mutate: createNewField, isLoading: createLoading } =
+  const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
       onSuccess: (res) => {
         prepandFieldInForm(res);
@@ -124,7 +128,7 @@ const FieldSettings = ({
         addColumnToView(res);
       },
     });
-  const { mutate: updateOldField, isLoading: updateLoading } =
+  const {mutate: updateOldField, isLoading: updateLoading} =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         updateFieldInform(field);
@@ -141,7 +145,7 @@ const FieldSettings = ({
       show_label: true,
     };
     if (id || menuItem?.table_id) {
-      createNewField({ data, tableSlug: slug || tableSlug });
+      createNewField({data, tableSlug: slug || tableSlug});
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -161,14 +165,14 @@ const FieldSettings = ({
     }
   };
 
-  const { data: backetOptions } = useMenuListQuery({
+  const {data: backetOptions} = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
   });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
-      updateOldField({ data: field, tableSlug: tableSlug });
+      updateOldField({data: field, tableSlug: tableSlug});
     } else {
       updateFieldInform(field);
       closeSettingsBlock();
@@ -218,7 +222,7 @@ const FieldSettings = ({
     }));
   }, [layoutRelations]);
 
-  const { data: computedRelationFields } = useQuery(
+  const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -260,7 +264,7 @@ const FieldSettings = ({
         ...values,
         ...field,
       });
-      setFolder(field?.path);
+      setFolder(field?.attributes?.path);
     } else {
       reset(values);
     }
@@ -306,7 +310,7 @@ const FieldSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{ height }}>
+        <div className={styles.settingsBlockBody} style={{height}}>
           <form
             onSubmit={handleSubmit(submitHandler)}
             className={styles.fieldSettingsForm}
@@ -327,52 +331,30 @@ const FieldSettings = ({
                       className={styles.input}
                     />
                   </FRow>
-                  <Box className={styles.formrow}>
-                    <FRow
-                      label="Label"
-                      required
-                      classname={styles.custom_label}
-                    >
-                      <Box
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        {languages?.map((language) => {
-                          const fieldValue = watch(
-                            `attributes.label_${language?.slug}`
-                          );
-                          return (
-                            <HFTextField
-                              className={styles.input}
-                              disabledHelperText
-                              fullWidth
-                              name={`attributes.label_${language?.slug}`}
-                              control={control}
-                              placeholder={`Field Label (${language?.slug})`}
-                              autoFocus
-                              defaultValue={fieldValue || selectedField?.label}
-                            />
-                          );
-                        })}
-                      </Box>
-                    </FRow>
-
-                    <FRow label="Key" required classname={styles.custom_label}>
-                      <HFTextField
-                        className={styles.input}
-                        disabledHelperText
-                        fullWidth
-                        name="slug"
+                  <FRow label="Name" classname={styles.custom_label} required>
+                    <Box style={{display: "flex", gap: "6px"}}>
+                      <HFTextFieldWithMultiLanguage
                         control={control}
-                        placeholder="Field SLUG"
-                        required
-                        withTrim
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
                       />
-                    </FRow>
-                  </Box>
+                    </Box>
+                  </FRow>
+                  <FRow label="Key" required classname={styles.custom_label}>
+                    <HFTextField
+                      className={styles.input}
+                      disabledHelperText
+                      fullWidth
+                      name="slug"
+                      control={control}
+                      placeholder="Field SLUG"
+                      required
+                      withTrim
+                    />
+                  </FRow>
 
                   <DefaultValueBlock control={control} />
 
@@ -411,6 +393,15 @@ const FieldSettings = ({
                         ))}
                       </TreeView>
                     </FRow>
+                  )}
+                  {(fieldType === "SINGLE_LINE" ||
+                    fieldType === "MULTI_LINE") && (
+                    <HFCheckbox
+                      control={control}
+                      name="enable_multilanguage"
+                      label="Multi language"
+                      className="mb-1"
+                    />
                   )}
                 </Box>
               )}
@@ -516,7 +507,7 @@ const FieldSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || createLoading || updateLoading}
             >

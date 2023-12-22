@@ -234,8 +234,6 @@ const LayoutSidebar = ({ appId }) => {
     }
   };
 
-  console.log("selectedApp", selectedApp);
-
   return (
     <>
       <div
@@ -307,6 +305,7 @@ const LayoutSidebar = ({ appId }) => {
             style={{
               overflow: "auto",
             }}
+            className="p-nav-block"
           >
             {!menuList ? (
               <RingLoaderWithWrapper />

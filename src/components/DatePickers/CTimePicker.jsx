@@ -26,7 +26,6 @@ const CTimePicker = ({
 
     return result;
   };
-
   return (
     <DatePicker
       portal={document.body}
@@ -61,7 +60,10 @@ const CTimePicker = ({
                 <InputAdornment position="end">
                   <Box sx={{display: "flex", alignItems: "center"}}>
                     <AccessTimeIcon
-                      style={{color: isBlackBg ? "#fff" : "", fontSize: "20px"}}
+                      style={{
+                        color: isBlackBg ? "#fff" : "",
+                        fontSize: "20px",
+                      }}
                     />
                     {disabled && (
                       <Tooltip title="This field is disabled for this role!">

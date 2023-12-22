@@ -71,7 +71,7 @@ const RelationSettingsTest = ({
   formType,
   height,
 }) => {
-  const { appId, slug } = useParams();
+  const { appId, tableSlug } = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const form = useForm();
@@ -84,7 +84,7 @@ const RelationSettingsTest = ({
   const languages = useSelector((state) => state.languages.list);
   const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
-      table_from: slug,
+      table_from: tableSlug,
       auto_filters: [],
       action_relations: [],
     },
@@ -93,24 +93,24 @@ const RelationSettingsTest = ({
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
-    if (values?.attributes?.relation_data?.table_to === slug)
+    if (values?.attributes?.relation_data?.table_to === tableSlug)
       return values?.attributes?.relation_data?.table_from;
-    else if (values?.attributes?.relation_data?.table_from === slug)
+    else if (values?.attributes?.relation_data?.table_from === tableSlug)
       return values?.attributes?.relation_data?.table_to;
     return null;
-  }, [values, slug]);
+  }, [values, tableSlug]);
 
   const isViewFieldsVisible = useMemo(() => {
     return (
       (values?.attributes?.relation_data?.type === "Many2One" &&
-        values?.attributes?.relation_data?.table_from === slug) ||
+        values?.attributes?.relation_data?.table_from === tableSlug) ||
       values?.attributes?.relation_data?.type === "Many2Many" ||
       values?.attributes?.relation_data?.type === "Recursive"
     );
   }, [
     values?.attributes?.relation_data?.type,
     values?.attributes?.relation_data?.table_from,
-    slug,
+    tableSlug,
   ]);
 
   const computedColumnsList = useMemo(() => {
@@ -252,7 +252,7 @@ const RelationSettingsTest = ({
   const submitHandler = (values) => {
     const data = {
       ...values,
-      relation_table_slug: slug,
+      relation_table_slug: tableSlug,
       // compute columns
       columns: values.columnsList
         ?.filter((el) => el.is_checked)
@@ -285,7 +285,7 @@ const RelationSettingsTest = ({
             ...data,
             title: Object.values(data?.attributes).find((item) => item),
           },
-          slug
+          tableSlug
         )
         .then((res) => {
           updateRelations();
@@ -293,7 +293,7 @@ const RelationSettingsTest = ({
         .finally(() => setFormLoader(false));
     } else {
       constructorRelationService
-        .update(data, slug)
+        .update(data, tableSlug)
         .then((res) => {
           updateRelations();
         })

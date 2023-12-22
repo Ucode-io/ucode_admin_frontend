@@ -1,4 +1,4 @@
-import {Save} from "@mui/icons-material";
+import {Add, Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQueryClient} from "react-query";
@@ -118,7 +118,7 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList(tableSlug, appId, {
+    const getLayout = layoutService.getLayout(tableSlug, appId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -195,6 +195,7 @@ const ObjectsFormPage = ({
           table_slug: tableSlug,
           user_id: isUserId,
         });
+        dispatch(showAlert("Successfully created", "success"));
         if (modal) {
           handleClose();
           queryClient.refetchQueries(

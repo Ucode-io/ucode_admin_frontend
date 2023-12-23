@@ -35,10 +35,14 @@ function NewLayoutSettings({
   const watchLayout = mainForm
     .watch(`layouts`)
     .find((layout) => layout.id === selectedLayout.id);
-  console.log("watchLayout", watchLayout);
 
   const computedData = useMemo(() => {
-    return watchLayout?.tabs
+    return;
+  }, [watchLayout]);
+
+  const updateSelectedLayout = () => {
+    setLoader(true);
+    const data = watchLayout?.tabs
       ?.filter((item) => item?.type)
       ?.map((el) => ({
         ...el,
@@ -53,15 +57,10 @@ function NewLayoutSettings({
             ? ""
             : el?.id,
       }));
-  }, [watchLayout]);
 
-  console.log("computedData", computedData);
-
-  const updateSelectedLayout = () => {
-    setLoader(true);
-
+    console.log("wwwwwwww", watchLayout);
     layoutService
-      .update({...watchLayout, tabs: computedData}, tableSlug)
+      .update({...watchLayout, tabs: data}, tableSlug)
       .then(() => {
         dispatch(showAlert("Layout updated successfully!", "success"));
       })
@@ -70,7 +69,6 @@ function NewLayoutSettings({
       });
   };
 
-  console.log("wwwwwwww", watchLayout);
   return (
     <>
       <div className={styles.summary_section_layer}>

@@ -35,11 +35,10 @@ function NewLayoutSettings({
   const watchLayout = mainForm
     .watch(`layouts`)
     .find((layout) => layout.id === selectedLayout.id);
+  console.log("watchLayout", watchLayout);
 
-  const updateSelectedLayout = () => {
-    setLoader(true);
-
-    const result = watchLayout?.tabs
+  const computedData = useMemo(() => {
+    return watchLayout?.tabs
       ?.filter((item) => item?.id)
       ?.map((el) => ({
         ...el,
@@ -47,11 +46,20 @@ function NewLayoutSettings({
           ? "relation"
           : el?.type,
         relation_id: el?.type === "section" ? undefined : el?.id,
-        id: el?.type === "relation" ? el?.id : "",
+        id:
+          el?.type === "section"
+            ? el?.id
+            : el?.type === "Many2One"
+            ? ""
+            : el?.id,
       }));
+  }, [watchLayout]);
+
+  const updateSelectedLayout = () => {
+    setLoader(true);
 
     layoutService
-      .update({...watchLayout, tabs: result}, tableSlug)
+      .update({...watchLayout, tabs: computedData}, tableSlug)
       .then(() => {
         dispatch(showAlert("Layout updated successfully!", "success"));
       })

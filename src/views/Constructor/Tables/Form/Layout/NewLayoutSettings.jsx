@@ -39,7 +39,7 @@ function NewLayoutSettings({
   const computedData = useMemo(() => {
     return;
   }, [watchLayout]);
-
+  console.log("watchLayout", watchLayout);
   const updateSelectedLayout = () => {
     setLoader(true);
     const data = watchLayout?.tabs
@@ -49,7 +49,12 @@ function NewLayoutSettings({
         type: Boolean(el?.type !== "section" && el?.type === "Many2One")
           ? "relation"
           : el?.type,
-        relation_id: el?.type === "section" ? undefined : el?.id,
+        relation_id:
+          el?.type === "Many2One"
+            ? el?.id
+            : el?.type === "relation"
+            ? el?.relation?.id
+            : undefined,
         id:
           el?.type === "section"
             ? el?.id

@@ -27,6 +27,7 @@ import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -72,12 +73,13 @@ const ConstructorTablesFormPage = () => {
       table_slug: tableSlug,
     });
 
-    // const getActions = constructorCustomEventService.getList(
-    //   {
-    //     table_slug: slug,
-    //   },
-    //   slug
-    // );
+    const getActions = await constructorCustomEventService.getList(
+      {
+        table_slug: tableSlug,
+      },
+      tableSlug
+    );
+    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList(
@@ -94,6 +96,7 @@ const ConstructorTablesFormPage = () => {
     try {
       const [tableData, {custom_events: actions = []}] = await Promise.all([
         getTableData,
+        getActions,
         getViewRelations,
         getLayouts,
       ]);

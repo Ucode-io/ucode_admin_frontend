@@ -43,9 +43,11 @@ function NewLayoutSettings({
       ?.filter((item) => item?.id)
       ?.map((el) => ({
         ...el,
-        type: el?.type === "section" ? el?.type : "relation",
+        type: Boolean(el?.type !== "section" && el?.type === "Many2One")
+          ? "relation"
+          : el?.type,
         relation_id: el?.type === "section" ? undefined : el?.id,
-        id: "",
+        id: el?.type === "relation" ? el?.id : "",
       }));
 
     layoutService

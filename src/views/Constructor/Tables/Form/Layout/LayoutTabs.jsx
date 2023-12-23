@@ -52,6 +52,7 @@ function LayoutTabs({
     keyName: "key",
   });
   console.log("viewRelations", viewRelations);
+  console.log("viewRelations", viewRelations);
   const computedViewRelations = useMemo(() => {
     return viewRelations
       ?.map((relation) => {
@@ -76,6 +77,7 @@ function LayoutTabs({
       return;
 
     const result = applyDrag(sectionTabs, dropResult);
+    console.log("result", result);
 
     if (sectionTabs.find((tab) => tab?.id === dropResult?.payload?.id)) {
       replaceSectionTab(result);
@@ -130,7 +132,7 @@ function LayoutTabs({
   const allTabs = useMemo(() => {
     return [...sectionTabs];
   }, [sectionTabs]);
-
+  console.log("allTabs", allTabs);
   useEffect(() => {
     setSelectedTab(allTabs[0] ?? {});
   }, [allTabs]);
@@ -143,7 +145,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-  console.log("allTabsallTabs", allTabs);
+
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>

@@ -191,7 +191,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-
+  console.log("datadata", data);
   return (
     <>
       {selectedManyToManyRelation && (
@@ -233,7 +233,13 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        {el?.attributes?.[`label_${i18n.language}`]
+                        {el?.type === "relation"
+                          ? el?.relation?.attributes[
+                              `label_to_${i18n?.language}`
+                            ] ||
+                            el?.attributes[`label_to_${i18n?.language}`] ||
+                            el?.label
+                          : el?.attributes?.[`label_${i18n.language}`]
                           ? el?.attributes?.[`label_${i18n.language}`]
                           : el?.relation?.attributes?.[`label_${i18n.language}`]
                           ? el?.relation?.attributes?.[`label_${i18n.language}`]

@@ -45,6 +45,7 @@ function NewLayoutSettings({
         ...el,
         type: el?.type === "section" ? el?.type : "relation",
         relation_id: el?.type === "section" ? undefined : el?.id,
+        id: "",
       }));
 
     layoutService

@@ -51,7 +51,7 @@ function LayoutTabs({
     name: "view_relations",
     keyName: "key",
   });
-
+  console.log("viewRelations", viewRelations);
   const computedViewRelations = useMemo(() => {
     return viewRelations
       ?.map((relation) => {

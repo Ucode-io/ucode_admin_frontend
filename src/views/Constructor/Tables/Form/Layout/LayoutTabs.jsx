@@ -145,7 +145,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-
+  console.log("allTabsssss", allTabs);
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -201,7 +201,10 @@ function LayoutTabs({
                         // mainForm.watch(
                         //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
                         // ) ??
-                        tab?.attributes[`label_to_${i18n?.language}`] ||
+                        tab?.relation?.attributes?.[
+                          `label_to_${i18n?.language}`
+                        ] ||
+                        tab?.attributes?.[`label_to_${i18n?.language}`] ||
                         tab?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover

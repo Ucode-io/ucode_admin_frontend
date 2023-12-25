@@ -35,7 +35,7 @@ export default function LayoutsItem({
     };
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-
+  console.log("menusmenus", menus);
   const options = useMemo(() => {
     return [
       ...menus,
@@ -46,7 +46,7 @@ export default function LayoutsItem({
       return value !== "";
     });
   }, [watchLayout?.menu_id, allMenus, menus]);
-
+  console.log("options", options);
   const removeHandle = (index) => {
     const layout = mainForm.watch(`layouts.${index}`);
     layoutService.remove(tableSlug, layout?.id).then((res) => {

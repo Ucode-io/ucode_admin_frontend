@@ -1,9 +1,9 @@
-import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import CellElementGenerator from "./CellElementGenerator";
-import { fieldTypesComponent } from "./FieldTypesComponents";
+import {fieldTypesComponent} from "./FieldTypesComponents";
 
 const parser = new Parser();
 
@@ -26,7 +26,7 @@ const CellElementGeneratorForTableView = ({
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -54,10 +54,13 @@ const CellElementGeneratorForTableView = ({
     }
   }, [field, i18n?.language, index, isNewRow]);
 
-  const isDisabled = field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+  const isDisabled =
+    field.attributes?.disabled ||
+    !field.attributes?.field_permission?.edit_permission;
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -69,11 +72,12 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     if (!defaultValue) return undefined;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field, userId, objectIdFromJWT]);
@@ -108,6 +112,17 @@ const CellElementGeneratorForTableView = ({
     }
   }, [field.type]);
 
+  const computedPattern = useMemo(() => {
+    if (field?.type === "EMAIL") {
+      return {
+        pattern: {
+          value: /\S+@\S+\.\S+/,
+          message: "Incorrect email format",
+        },
+      };
+    }
+  }, [field?.type]);
+
   return (
     <CellElement
       relOptions={relOptions}
@@ -140,12 +155,7 @@ const CellElementGeneratorForTableView = ({
       computedSlug={computedSlug}
       fieldsList={fields}
       isTableView={true}
-      rules={{
-        pattern: {
-          value: /\S+@\S+\.\S+/,
-          message: "Incorrect email format",
-        },
-      }}
+      rules={{...computedPattern}}
     />
   );
 };

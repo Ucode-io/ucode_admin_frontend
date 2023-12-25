@@ -132,7 +132,7 @@ function LayoutTabs({
   const allTabs = useMemo(() => {
     return [...sectionTabs];
   }, [sectionTabs]);
-  console.log("allTabs", allTabs);
+
   useEffect(() => {
     setSelectedTab(allTabs[0] ?? {});
   }, [allTabs]);
@@ -145,7 +145,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-  console.log("allTabsssss", allTabs);
+
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>

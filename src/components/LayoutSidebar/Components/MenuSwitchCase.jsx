@@ -6,7 +6,7 @@ const typeHandlers = {
   MINIO_FOLDER: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/backet/${element?.id}`),
   TABLE: ({appId, element, navigate}) =>
-    navigate(`/main/${appId}/object/${element?.data?.table?.slug}`),
+    navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`),
   WIKI: ({appId, element, navigate}) =>
     navigate(
       `/main/${appId}/docs/note/${element?.parent_id}/${

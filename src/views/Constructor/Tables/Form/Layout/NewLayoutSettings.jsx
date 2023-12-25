@@ -70,7 +70,6 @@ function NewLayoutSettings({
       });
   };
 
-  console.log("wwwwwwww", watchLayout);
   return (
     <>
       <div className={styles.summary_section_layer}>

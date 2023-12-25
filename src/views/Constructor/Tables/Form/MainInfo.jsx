@@ -1,10 +1,10 @@
-import { Box } from "@mui/material";
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import {Box} from "@mui/material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
@@ -12,14 +12,14 @@ import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSele
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
-import { LoginStrategy } from "../../../../mock/FolderSettings";
+import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
 import style from "./main.module.scss";
 
-const MainInfo = ({ control, watch }) => {
-  const { tableSlug } = useParams();
-  const { i18n } = useTranslation();
+const MainInfo = ({control, watch}) => {
+  const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
 
   const params = {
     language_setting: i18n?.language,
@@ -30,13 +30,13 @@ const MainInfo = ({ control, watch }) => {
     name: "label",
   });
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -57,7 +57,7 @@ const MainInfo = ({ control, watch }) => {
     name: "attributes.auth_info",
   });
 
-  const { data: computedTableFields } = useQuery(
+  const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
       if (!tableSlug) return false;
@@ -107,11 +107,11 @@ const MainInfo = ({ control, watch }) => {
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
       label:
-        item?.attributes?.label_en ||
-        item?.attributes?.label_ru ||
-        item?.attributes?.label ||
-        item?.label ||
-        "",
+        item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+          ? item?.attributes?.[`label_to_${i18n?.language}`] ||
+            item?.attributes?.[`label_${i18n?.language}`] ||
+            item?.label
+          : item?.attributes?.[`label_${i18n?.language}`] || item?.label,
       value: item?.slug ?? "",
     }));
   }, [computedTableFields]);
@@ -122,21 +122,7 @@ const MainInfo = ({ control, watch }) => {
     <div className="p-2">
       <FormCard title="General">
         <FRow label="Name">
-          <Box style={{ display: "flex", gap: "6px" }}>
-            {/* {languages?.map((language) => {
-              const languageFieldName = `attributes.label_${language?.slug}`;
-              const fieldValue = watch(languageFieldName);
-              return (
-                <HFTextField
-                  control={control}
-                  name={languageFieldName}
-                  fullWidth
-                  placeholder={`Name (${language?.slug})`}
-                  defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
-                />
-              );
-            })} */}
-
+          <Box style={{display: "flex", gap: "6px"}}>
             <HFTextFieldWithMultiLanguage
               control={control}
               name="attributes.label"
@@ -159,7 +145,7 @@ const MainInfo = ({ control, watch }) => {
         </FRow>
 
         <Box
-          sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
+          sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
           className={style.checkbox}
         >
           <HFCheckbox

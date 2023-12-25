@@ -177,7 +177,7 @@ const RelationTable = forwardRef(
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
     }, [relation, selectedTab?.relation_id]);
-    console.log("relation", relation);
+
     useEffect(() => {
       if (getRelatedTabeSlug?.default_editable) {
         setFormVisible(true);
@@ -228,7 +228,6 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.permission?.view_permission]);
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
-    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
 
     function customSortArray(a, b) {
       const commonItems = a?.filter((item) => b.includes(item));

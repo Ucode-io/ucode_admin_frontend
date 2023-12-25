@@ -191,20 +191,21 @@ function LayoutTabs({
                     >
                       {mainForm.watch(
                         `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
-                      ) ??
+                      ) ||
                         mainForm.watch(
                           `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
-                        ) ??
+                        ) ||
                         mainForm.watch(
                           `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        ) ??
+                        ) ||
                         // mainForm.watch(
                         //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
                         // ) ??
-                        tab?.attributes?.[`label_${i18n?.language}`] ??
-                        tab?.title ??
-                        tab?.table_from?.label ??
-                        tab?.relation?.table_from?.label}
+                        tab?.relation?.attributes?.[
+                          `label_to_${i18n?.language}`
+                        ] ||
+                        tab?.attributes?.[`label_to_${i18n?.language}`] ||
+                        tab?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover
                           onEditClick={() => openFieldsBlock("RELATION")}

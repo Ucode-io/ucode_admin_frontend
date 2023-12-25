@@ -23,6 +23,7 @@ import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
+import AddDataColumn from "./AddDataColumn";
 
 const ObjectDataTable = React.memo(
   ({
@@ -96,6 +97,7 @@ const ObjectDataTable = React.memo(
     const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
     const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
     const [fieldData, setFieldData] = useState(null);
+    const [addNewRow, setAddNewRow] = useState(false);
 
     const popupRef = useRef(null);
     useOnClickOutside(popupRef, () => setColumnId(""));
@@ -416,6 +418,30 @@ const ObjectDataTable = React.memo(
               );
             })}
 
+          {addNewRow && (
+            <AddDataColumn
+              rows={isRelationTable ? fields : data}
+              columns={columns}
+              isRelationTable={isRelationTable}
+              setAddNewRow={setAddNewRow}
+              isTableView={isTableView}
+              relOptions={relOptions}
+              tableView={tableView}
+              tableSlug={relatedTableSlug ?? tableSlug}
+              fields={columns}
+              getValues={getValues}
+              mainForm={mainForm}
+              control={control}
+              setFormValue={setFormValue}
+              relationfields={fields}
+              data={data}
+              view={view}
+              onRowClick={onRowClick}
+              width={"80px"}
+              refetch={refetch}
+            />
+          )}
+
           <CTableRow>
             <CTableCell
               align="center"
@@ -437,7 +463,7 @@ const ObjectDataTable = React.memo(
                 }}
                 onClick={() => {
                   // navigateToForm(tableSlug);
-                  // setAddNewRow(true);
+                  setAddNewRow(true);
                 }}
               >
                 <AddRoundedIcon />

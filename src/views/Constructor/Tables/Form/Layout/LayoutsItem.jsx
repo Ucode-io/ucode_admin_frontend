@@ -31,11 +31,11 @@ export default function LayoutsItem({
   const updateCurrentLayout = (menuId) => {
     const currentUpdatedLayout = {
       ...watchLayout,
-      menu_id: menuId,
+      // menu_id: menuId,
     };
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-  console.log("menusmenus", menus);
+
   const options = useMemo(() => {
     return [
       ...menus,
@@ -43,10 +43,10 @@ export default function LayoutsItem({
         watchLayout?.menu_id &&
         allMenus.find((item) => item?.value === watchLayout?.menu_id),
     ].filter(function (value) {
-      return value !== "";
+      return value?.value;
     });
   }, [watchLayout?.menu_id, allMenus, menus]);
-  console.log("options", options);
+
   const removeHandle = (index) => {
     const layout = mainForm.watch(`layouts.${index}`);
     layoutService.remove(tableSlug, layout?.id).then((res) => {

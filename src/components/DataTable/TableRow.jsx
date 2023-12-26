@@ -390,7 +390,9 @@ const TableRow = React.memo(
                           : "relative"
                       }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                        ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
+                        ? `${
+                            calculateWidthFixedColumn(virtualColumn.id) + 80
+                          }px`
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
@@ -434,8 +436,7 @@ const TableRow = React.memo(
                     )}
                   </CTableCell>
                 )
-              )
-            }
+            )}
             <td style={{height: "30px"}}>
               <div
                 style={{

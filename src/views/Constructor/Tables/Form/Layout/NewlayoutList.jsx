@@ -96,7 +96,6 @@ function NewlayoutList({
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
-        console.log("resssssssss", res);
         setMenus(
           res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
         );

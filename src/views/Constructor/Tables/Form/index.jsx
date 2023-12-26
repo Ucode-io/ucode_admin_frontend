@@ -69,7 +69,7 @@ const ConstructorTablesFormPage = () => {
 
     const getTableData = constructorTableService.getById(id);
 
-    const getViewRelations = constructorViewRelationService.getList({
+    const getViewRelations = await constructorViewRelationService.getList({
       table_slug: tableSlug,
     });
 
@@ -79,7 +79,6 @@ const ConstructorTablesFormPage = () => {
       },
       tableSlug
     );
-    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList(

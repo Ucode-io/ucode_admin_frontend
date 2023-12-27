@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from "react";
-import styles from "./style.module.scss";
-import ValueGenerator from "../SummarySection/ValueGenerator";
-import { Button, Menu, MenuItem } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useTranslation } from "react-i18next";
-import layoutService from "../../../services/layoutService";
-import { useParams } from "react-router-dom";
-import { useWatch } from "react-hook-form";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { Box, Button, Menu, MenuItem } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import layoutService from "../../../services/layoutService";
+import ValueGenerator from "../SummarySection/ValueGenerator";
+import styles from "./style.module.scss";
 
 export default function SummarySectionValuesForModal({ control, computedSummary, editAcces, fieldsMap, setSummary, layout }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -70,43 +69,59 @@ export default function SummarySectionValuesForModal({ control, computedSummary,
           </div>
 
           {editAcces && (
-            <Button
-              sx={{
-                width: "32px",
-                height: "32px",
-                maxWidth: "32px",
-                minWidth: "32px",
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              onClick={() => removeFieldsFromSummary(field?.id)}
             >
-              <DeleteForeverIcon
-                style={{
-                  color: "red",
+              <Button
+                sx={{
+                  width: "32px",
+                  height: "32px",
+                  maxWidth: "32px",
+                  minWidth: "32px",
                 }}
-              />
-            </Button>
+                onClick={() => removeFieldsFromSummary(field?.id)}
+              >
+                <DeleteForeverIcon
+                  style={{
+                    color: "red",
+                  }}
+                />
+              </Button>
+            </Box>
           )}
         </>
       ))}
 
       {editAcces && (
         <>
-          <Button
-            variant="outlined"
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-            sx={{
-              width: "32px",
-              height: "32px",
-              maxWidth: "32px",
-              minWidth: "32px",
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <AddRoundedIcon />
-          </Button>
+            <Button
+              variant="outlined"
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              sx={{
+                width: "32px",
+                height: "32px",
+                maxWidth: "32px",
+                minWidth: "32px",
+              }}
+            >
+              <AddRoundedIcon />
+            </Button>
+          </Box>
 
           <Menu
             id="basic-menu"
@@ -117,16 +132,20 @@ export default function SummarySectionValuesForModal({ control, computedSummary,
               "aria-labelledby": "basic-button",
             }}
           >
-            {allFields?.map((field) => (
-              <MenuItem
-                onClick={() => {
-                  addFieldsToSummary(field?.value);
-                  handleClose();
-                }}
-              >
-                {field?.label}
-              </MenuItem>
-            ))}
+            {allFields?.length > 0 ? (
+              allFields?.map((field) => (
+                <MenuItem
+                  onClick={() => {
+                    addFieldsToSummary(field?.value);
+                    handleClose();
+                  }}
+                >
+                  {field?.label}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem onClick={handleClose}>No fields!</MenuItem>
+            )}
           </Menu>
         </>
       )}

@@ -1,11 +1,11 @@
-import { Add, InsertDriveFile } from "@mui/icons-material";
+import { InsertDriveFile } from "@mui/icons-material";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Box, Button, Card, Divider, Menu, MenuItem } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -25,8 +25,6 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -267,7 +265,7 @@ const RelationSectionForModal = ({
     setData(newTabs);
     updateLayout(newTabs);
   };
-
+  
   return (
     <>
       {selectedManyToManyRelation && (
@@ -377,7 +375,7 @@ const RelationSectionForModal = ({
                   )}
                 </Container>
 
-                {editAcces && (
+                {editAcces && relations?.length > 0 && (
                   <>
                     <Button
                       variant="outlined"

@@ -370,14 +370,11 @@ const ObjectDataTable = React.memo(
         >
           {(isRelationTable ? fields : data).length > 0 &&
             columns.length > 0 &&
-            virtualizer.getVirtualItems()?.map((virtualRow, index) => {
-              const virtualRowObject = isRelationTable
-                ? fields?.[virtualRow.index]
-                : data?.[virtualRow.index];
+            (isRelationTable ? fields : data)?.map((virtualRow, index) => {
               return (
                 columns && (
                   <TableRow
-                    key={virtualRowObject?.guid}
+                    key={virtualRow?.guid}
                     relOptions={relOptions}
                     tableView={tableView}
                     width={"80px"}
@@ -385,7 +382,7 @@ const ObjectDataTable = React.memo(
                     watch={watch}
                     getValues={getValues}
                     control={control}
-                    row={virtualRowObject}
+                    row={virtualRow}
                     mainForm={mainForm}
                     formVisible={formVisible}
                     rowIndex={index}

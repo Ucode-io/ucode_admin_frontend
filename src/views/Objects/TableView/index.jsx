@@ -557,6 +557,8 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
+  console.log('ssssssseeeee', tableData)
+
   return (
     <div className={styles.wrapper}>
       {

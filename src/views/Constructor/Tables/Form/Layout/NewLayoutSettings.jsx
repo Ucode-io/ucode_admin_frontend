@@ -35,7 +35,6 @@ function NewLayoutSettings({
   const watchLayout = mainForm
     .watch(`layouts`)
     .find((layout) => layout.id === selectedLayout.id);
-  console.log("watchLayout", watchLayout);
 
   const computedData = useMemo(() => {
     return watchLayout?.tabs
@@ -54,8 +53,6 @@ function NewLayoutSettings({
             : el?.id,
       }));
   }, [watchLayout]);
-
-  console.log("computedData", computedData);
 
   const updateSelectedLayout = () => {
     setLoader(true);

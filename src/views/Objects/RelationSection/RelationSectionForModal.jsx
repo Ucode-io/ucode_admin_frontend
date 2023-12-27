@@ -265,7 +265,7 @@ const RelationSectionForModal = ({
     setData(newTabs);
     updateLayout(newTabs);
   };
-
+  
   return (
     <>
       {selectedManyToManyRelation && (
@@ -379,7 +379,7 @@ const RelationSectionForModal = ({
                   )}
                 </Container>
 
-                {editAcces && (
+                {editAcces && relations?.length > 0 && (
                   <>
                     <Button
                       variant="outlined"

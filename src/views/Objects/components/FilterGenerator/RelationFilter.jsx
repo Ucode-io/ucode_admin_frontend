@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useQuery } from "react-query";
+import {useState} from "react";
+import {useQuery} from "react-query";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
+import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import FilterAutoComplete from "./FilterAutocomplete";
 
-const RelationFilter = ({ field = {}, filters, name, onChange }) => {
+const RelationFilter = ({field = {}, filters, name, onChange}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const {
-    data: { data: options = [] } = {
+    data: {data: options = []} = {
       data: [],
     },
   } = useQuery({
@@ -16,6 +16,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
       "GET_OBJECTS_LIST",
       {
         field,
+        debouncedValue,
       },
     ],
     queryFn: () => {
@@ -34,10 +35,11 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
     },
     select: (res) => {
       return {
-        data: res.data?.response?.map((el) => ({
-          label: getRelationFieldTabsLabel(field, el),
-          value: el.guid,
-        })) ?? []
+        data:
+          res.data?.response?.map((el) => ({
+            label: getRelationFieldTabsLabel(field, el),
+            value: el.guid,
+          })) ?? [],
       };
     },
   });

@@ -69,7 +69,7 @@ const FastFilter = ({
       })
     );
   };
-
+  console.log("computedFields", computedFields);
   return (
     <div
       className={styles.filtersBlock}
@@ -88,6 +88,7 @@ const FastFilter = ({
       ))}
 
       <FilterVisible
+        onChange={onChange}
         selectedTabIndex={selectedTabIndex}
         views={view}
         columns={visibleColumns}

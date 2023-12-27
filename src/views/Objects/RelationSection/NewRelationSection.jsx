@@ -42,13 +42,16 @@ const NewRelationSection = ({
   errors,
 }) => {
   const [data, setData] = useState([]);
-  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
-  const { i18n } = useTranslation();
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
+  const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -79,7 +82,7 @@ const NewRelationSection = ({
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const { fields, remove, update } = useFieldArray({
+  const {fields, remove, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -96,7 +99,7 @@ const NewRelationSection = ({
 
   useEffect(() => {
     const result = {
-      [filteredRelations?.id]: false
+      [filteredRelations?.id]: false,
     };
 
     setRelationsCreateFormVisible(result);
@@ -135,7 +138,11 @@ const NewRelationSection = ({
       .then((res) => {
         const layout = {
           ...res,
-          tabs: res?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),
+          tabs: res?.tabs?.filter(
+            (tab) =>
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+          ),
         };
         setData(layout);
       });
@@ -185,16 +192,6 @@ const NewRelationSection = ({
     }
   );
 
-  const TabLabel = (item) => {
-    if (item?.type === "section") {
-      return item?.attributes?.[`label_${i18n.language}`] || item?.label;
-    } else if (item?.type === "relation") {
-      return (
-        item?.relation?.attributes?.[`label_to_${i18n.language}`] || item?.label
-      );
-    }
-  };
-
   return (
     <>
       {selectedManyToManyRelation && (
@@ -207,20 +204,24 @@ const NewRelationSection = ({
       )}
       {data ? (
         <Card className={styles.card}>
-            <Tabs
-              className={"react_detail"}
-              selectedIndex={selectedTabIndex}
-              onSelect={(index) => {
-                setSelectedTabIndex(index);
-              }}
-            >
-              {!data?.is_visible_section && (
-                <div className={styles.cardHeader}>
+          <Tabs
+            className={"react_detail"}
+            selectedIndex={selectedTabIndex}
+            onSelect={(index) => {
+              setSelectedTabIndex(index);
+            }}
+          >
+            {!data?.is_visible_section && (
+              <div className={styles.cardHeader}>
                 <TabList className={styles.tabList}>
                   {data?.tabs?.map((el, index) => (
                     <Tab
                       key={el.id}
-                      className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                      className={`${styles.tabs_item} ${
+                        selectedTabIndex === index
+                          ? "custom-selected-tab"
+                          : "custom-tab"
+                      }`}
                       onClick={() => {
                         setSelectedIndex(index);
                         onSelect(el);
@@ -232,7 +233,13 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        {el?.attributes?.[`label_${i18n.language}`]
+                        {el?.type === "relation"
+                          ? el?.relation?.attributes?.[
+                              `label_to_${i18n?.language}`
+                            ] ||
+                            el?.attributes?.[`label_to_${i18n?.language}`] ||
+                            el?.label
+                          : el?.attributes?.[`label_${i18n.language}`]
                           ? el?.attributes?.[`label_${i18n.language}`]
                           : el?.relation?.attributes?.[`label_${i18n.language}`]
                           ? el?.relation?.attributes?.[`label_${i18n.language}`]
@@ -243,90 +250,101 @@ const NewRelationSection = ({
                 </TabList>
 
                 <div className="flex gap-2">
-                  <CustomActionsButton tableSlug={selectedRelation?.relatedTable} selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} />
+                  <CustomActionsButton
+                    tableSlug={selectedRelation?.relatedTable}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
+                  />
 
-                    {data[selectedTabIndex]?.multiple_insert && (
-                      <MultipleInsertButton
-                        view={filteredRelations[selectedTabIndex]}
-                        tableSlug={
-                          filteredRelations[selectedTabIndex].relatedTable
-                        }
-                      />
-                    )}
+                  {data[selectedTabIndex]?.multiple_insert && (
+                    <MultipleInsertButton
+                      view={filteredRelations[selectedTabIndex]}
+                      tableSlug={
+                        filteredRelations[selectedTabIndex].relatedTable
+                      }
+                    />
+                  )}
 
                   {getRelatedTabeSlug && (
                     <>
-                      <FixColumnsRelationSection relatedTable={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
+                      <FixColumnsRelationSection
+                        relatedTable={getRelatedTabeSlug}
+                        fieldsMap={fieldsMap}
+                        getAllData={getAllData}
+                      />
                       <Divider orientation="vertical" flexItem />
-                      <VisibleColumnsButtonRelationSection currentView={getRelatedTabeSlug} fieldsMap={fieldsMap} getAllData={getAllData} />
+                      <VisibleColumnsButtonRelationSection
+                        currentView={getRelatedTabeSlug}
+                        fieldsMap={fieldsMap}
+                        getAllData={getAllData}
+                      />
                     </>
                   )}
                 </div>
               </div>
-              )}
+            )}
 
-              {loader ? (
-                <PageFallback />
-              ) : (
-                data?.tabs?.map((el, index) => (
-                  <TabPanel key={el.id}>
-                    {!selectedTab?.relation_id ? (
-                      <NewMainInfo
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                      />
-                    ) : data?.relatedTable === "file" ? (
-                      <FilesSection
-                        setFormValue={setFormValue}
-                        remove={remove}
-                        reset={reset}
-                        watch={watch}
-                        control={control}
-                        formVisible={formVisible}
-                        relation={data}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                      />
-                    ) : (
-                      <RelationTable
-                        ref={myRef}
-                        loader={loader}
-                        remove={remove}
-                        reset={reset}
-                        selectedTabIndex={selectedTabIndex}
-                        watch={watch}
-                        selectedTab={selectedTab}
-                        control={control}
-                        getValues={getValues}
-                        setFormValue={setFormValue}
-                        fields={fields}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        key={selectedTab.id}
-                        relation={relations}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        tableSlug={tableSlug}
-                        id={id}
-                        type={type}
-                        fieldsMap={fieldsMap}
-                        relatedTable={relatedTable}
-                      />
-                    )}
-                  </TabPanel>
-                ))
-              )}
-            </Tabs>
-
+            {loader ? (
+              <PageFallback />
+            ) : (
+              data?.tabs?.map((el, index) => (
+                <TabPanel key={el.id}>
+                  {!selectedTab?.relation_id ? (
+                    <NewMainInfo
+                      control={control}
+                      loader={loader}
+                      isMultiLanguage={isMultiLanguage}
+                      computedSections={computedSections}
+                      setFormValue={setFormValue}
+                      relatedTable={relatedTable}
+                      relation={data}
+                      selectedIndex={selectedIndex}
+                      errors={errors}
+                    />
+                  ) : data?.relatedTable === "file" ? (
+                    <FilesSection
+                      setFormValue={setFormValue}
+                      remove={remove}
+                      reset={reset}
+                      watch={watch}
+                      control={control}
+                      formVisible={formVisible}
+                      relation={data}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                    />
+                  ) : (
+                    <RelationTable
+                      ref={myRef}
+                      loader={loader}
+                      remove={remove}
+                      reset={reset}
+                      selectedTabIndex={selectedTabIndex}
+                      watch={watch}
+                      selectedTab={selectedTab}
+                      control={control}
+                      getValues={getValues}
+                      setFormValue={setFormValue}
+                      fields={fields}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
+                      key={selectedTab.id}
+                      relation={relations}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
+                      tableSlug={tableSlug}
+                      id={id}
+                      type={type}
+                      fieldsMap={fieldsMap}
+                      relatedTable={relatedTable}
+                    />
+                  )}
+                </TabPanel>
+              ))
+            )}
+          </Tabs>
         </Card>
       ) : null}
     </>

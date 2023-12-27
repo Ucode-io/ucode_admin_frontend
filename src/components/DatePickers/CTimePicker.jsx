@@ -2,8 +2,8 @@ import DatePicker from "react-multi-date-picker";
 import TimePickerPlugin from "./Plugins/TimePickerPlugin";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "./style2.scss";
-import { Box, InputAdornment, TextField, Tooltip } from "@mui/material";
-import { DateRange, Lock, Today } from "@mui/icons-material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {DateRange, Lock, Today} from "@mui/icons-material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const CTimePicker = ({
@@ -28,6 +28,7 @@ const CTimePicker = ({
   };
   return (
     <DatePicker
+      portal={document.body}
       render={(value, openCalendar, handleChange) => {
         return (
           <TextField
@@ -39,7 +40,7 @@ const CTimePicker = ({
             autoFocus={tabIndex === 1}
             autoComplete="off"
             InputProps={{
-              inputProps: { tabIndex },
+              inputProps: {tabIndex},
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
@@ -57,7 +58,7 @@ const CTimePicker = ({
                   },
               endAdornment: (
                 <InputAdornment position="end">
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{display: "flex", alignItems: "center"}}>
                     <AccessTimeIcon
                       style={{
                         color: isBlackBg ? "#fff" : "",
@@ -66,7 +67,7 @@ const CTimePicker = ({
                     />
                     {disabled && (
                       <Tooltip title="This field is disabled for this role!">
-                        <Lock style={{ fontSize: "20px" }} />
+                        <Lock style={{fontSize: "20px"}} />
                       </Tooltip>
                     )}
                   </Box>

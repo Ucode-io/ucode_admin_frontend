@@ -1,16 +1,21 @@
-import { Collapse } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { mainActions } from "../../../../../store/main/main.slice";
+import {Collapse} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {mainActions} from "../../../../../store/main/main.slice";
 import NewLayoutSettings from "./NewLayoutSettings";
 import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
 
-const Layout = ({ mainForm, getRelationFields, getData }) => {
+const Layout = ({
+  mainForm,
+  getRelationFields,
+  getData,
+  setSelectedTabLayout = () => {},
+}) => {
   const dispatch = useDispatch();
-  const layoutForm = useForm({ mode: "onChange" });
+  const layoutForm = useForm({mode: "onChange"});
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
   const [selectedLayout, setSelectedLayout] = useState({});
   const [selectedField, setSelectedField] = useState(null);
@@ -20,13 +25,17 @@ const Layout = ({ mainForm, getRelationFields, getData }) => {
 
   const selectedLayoutIndex = useMemo(() => {
     if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
-    const selectedLayoutIndex = mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+    const selectedLayoutIndex = mainForm
+      .getValues("layouts")
+      .findIndex((layout) => layout?.id === selectedLayout?.id);
     if (selectedLayoutIndex === -1) return "notSelected";
     return selectedLayoutIndex;
   }, [selectedLayout, selectedTab]);
 
   const selectedTabIndex = useMemo(() => {
-    const selectedTabIndex = mainForm.getValues(`layouts.${selectedLayoutIndex}.tabs`)?.findIndex((tab) => tab?.id === selectedTab?.id);
+    const selectedTabIndex = mainForm
+      .getValues(`layouts.${selectedLayoutIndex}.tabs`)
+      ?.findIndex((tab) => tab?.id === selectedTab?.id);
     if (selectedTabIndex === -1) return "notSelected";
     return selectedTabIndex;
   }, [selectedTab, selectedLayout]);
@@ -99,11 +108,20 @@ const Layout = ({ mainForm, getRelationFields, getData }) => {
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} getData={getData}/>
+        <NewlayoutList
+          setSelectedLayout={setSelectedLayout}
+          mainForm={mainForm}
+          getData={getData}
+          setSelectedTabLayout={setSelectedTabLayout}
+        />
       )}
 
       <div className={styles.page}>
-        <Collapse in={settingsBlockVisible} unmountOnExit orientation="horizontal">
+        <Collapse
+          in={settingsBlockVisible}
+          unmountOnExit
+          orientation="horizontal"
+        >
           <SettingsBlock
             updateSectionTab={updateSectionTab}
             mainForm={mainForm}

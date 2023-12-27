@@ -53,8 +53,8 @@ const FieldSettings = ({
   getRelationFields,
   slug,
 }) => {
-  const { id, appId, tableSlug } = useParams();
-  const { handleSubmit, control, reset, watch, setValue } = useForm();
+  const {id, appId, tableSlug} = useParams();
+  const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
@@ -88,7 +88,7 @@ const FieldSettings = ({
   });
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -96,7 +96,7 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", { slug }],
+    ["GET_VIEWS_AND_FIELDS", {slug}],
     () => {
       if (!slug) return false;
       return constructorTableService.getTableInfo(slug, {
@@ -105,7 +105,7 @@ const FieldSettings = ({
     },
     {
       enabled: Boolean(!!slug),
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -119,7 +119,7 @@ const FieldSettings = ({
     }
   );
 
-  const { mutate: createNewField, isLoading: createLoading } =
+  const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
       onSuccess: (res) => {
         prepandFieldInForm(res);
@@ -128,7 +128,7 @@ const FieldSettings = ({
         addColumnToView(res);
       },
     });
-  const { mutate: updateOldField, isLoading: updateLoading } =
+  const {mutate: updateOldField, isLoading: updateLoading} =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         updateFieldInform(field);
@@ -145,7 +145,7 @@ const FieldSettings = ({
       show_label: true,
     };
     if (id || menuItem?.table_id) {
-      createNewField({ data, tableSlug: slug || tableSlug });
+      createNewField({data, tableSlug: slug || tableSlug});
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -165,14 +165,14 @@ const FieldSettings = ({
     }
   };
 
-  const { data: backetOptions } = useMenuListQuery({
+  const {data: backetOptions} = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
   });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
-      updateOldField({ data: field, tableSlug: tableSlug });
+      updateOldField({data: field, tableSlug: tableSlug});
     } else {
       updateFieldInform(field);
       closeSettingsBlock();
@@ -222,7 +222,7 @@ const FieldSettings = ({
     }));
   }, [layoutRelations]);
 
-  const { data: computedRelationFields } = useQuery(
+  const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -310,7 +310,7 @@ const FieldSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{ height }}>
+        <div className={styles.settingsBlockBody} style={{height}}>
           <form
             onSubmit={handleSubmit(submitHandler)}
             className={styles.fieldSettingsForm}
@@ -332,7 +332,7 @@ const FieldSettings = ({
                     />
                   </FRow>
                   <FRow label="Name" classname={styles.custom_label} required>
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label"
@@ -393,6 +393,15 @@ const FieldSettings = ({
                         ))}
                       </TreeView>
                     </FRow>
+                  )}
+                  {(fieldType === "SINGLE_LINE" ||
+                    fieldType === "MULTI_LINE") && (
+                    <HFCheckbox
+                      control={control}
+                      name="enable_multilanguage"
+                      label="Multi language"
+                      className="mb-1"
+                    />
                   )}
                 </Box>
               )}
@@ -498,7 +507,7 @@ const FieldSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || createLoading || updateLoading}
             >

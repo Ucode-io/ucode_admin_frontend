@@ -64,7 +64,6 @@ export default function FieldCreateModal({
   const values = watch();
   const { tableSlug } = useParams();
   const { i18n } = useTranslation();
-  console.log("fieldData", Boolean(fieldData?.attributes?.relation_data?.id));
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,

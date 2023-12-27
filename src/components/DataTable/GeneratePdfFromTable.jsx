@@ -1,11 +1,11 @@
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { Menu } from "@mui/material";
+import {Menu} from "@mui/material";
 import React from "react";
 import styles from "./GeneratePdfFromTable.module.scss";
 import PdfMenuList from "./PdfMenuList";
 
-export default function GeneratePdfFromTable({ row }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);  
+export default function GeneratePdfFromTable({row}) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     event.stopPropagation();
@@ -45,7 +45,7 @@ export default function GeneratePdfFromTable({ row }) {
           </MenuItem>
         ))} */}
 
-        <PdfMenuList />
+        <PdfMenuList handleClose={handleClose} row={row} />
       </Menu>
     </div>
   );

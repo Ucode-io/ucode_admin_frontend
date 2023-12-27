@@ -1,16 +1,31 @@
-import { Delete, Edit } from "@mui/icons-material";
-import { Box, FormControlLabel, Switch } from "@mui/material";
-import React, { useMemo } from "react";
-import { Controller } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import {Delete, Edit} from "@mui/icons-material";
+import {Box, FormControlLabel, Switch} from "@mui/material";
+import React, {useEffect, useMemo} from "react";
+import {Controller} from "react-hook-form";
+import {useParams} from "react-router-dom";
 import AutoWidthInput from "../../../../../components/AutoWidthInput";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
 
-export default function LayoutsItem({ element, index, getData, mainForm, allMenus, menus, remove, setModal, setDefault, setSectionTab, navigateToEditForm, languages }) {
-  const { slug } = useParams();
+export default function LayoutsItem({
+  createLayout,
+  element,
+  index,
+  getData,
+  mainForm,
+  allMenus,
+  menus,
+  remove,
+  setModal,
+  setDefault,
+  setSectionTab,
+  navigateToEditForm,
+  languages,
+}) {
+  const {tableSlug} = useParams();
+
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -18,21 +33,33 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
       ...watchLayout,
       menu_id: menuId,
     };
-    layoutService.update(currentUpdatedLayout, slug);
+    layoutService.update(currentUpdatedLayout, tableSlug);
   };
-
+  console.log("menusmenus", menus);
   const options = useMemo(() => {
-    return [...menus, allMenus && watchLayout?.menu_id && allMenus.find((item) => item?.value === watchLayout?.menu_id)].filter(function (value) {
+    return [
+      ...menus,
+      allMenus &&
+        watchLayout?.menu_id &&
+        allMenus.find((item) => item?.value === watchLayout?.menu_id),
+    ].filter(function (value) {
       return value !== "";
     });
   }, [watchLayout?.menu_id, allMenus, menus]);
-
+  console.log("options", options);
   const removeHandle = (index) => {
     const layout = mainForm.watch(`layouts.${index}`);
-    layoutService.remove(slug, layout?.id).then((res) => {
+    layoutService.remove(tableSlug, layout?.id).then((res) => {
       remove(index);
     });
   };
+
+  useEffect(() => {
+    if (createLayout) {
+      updateCurrentLayout();
+      getData();
+    }
+  }, [createLayout]);
 
   return (
     <CTableRow key={element.id}>
@@ -49,7 +76,7 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
             <Controller
               control={mainForm.control}
               name={`layouts.${index}.attributes.label_${lang.slug}`}
-              render={({ field: { onChange, value }, fieldState: { error } }) => (
+              render={({field: {onChange, value}, fieldState: {error}}) => (
                 <AutoWidthInput
                   value={value}
                   placeholder={`Название ${lang.slug}`}
@@ -76,7 +103,7 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
               marginLeft: "auto",
             }}
           >
-            <Box style={{ display: "flex", alignItems: "center" }}>
+            <Box style={{display: "flex", alignItems: "center"}}>
               <FormControlLabel
                 control={
                   <Switch
@@ -117,15 +144,23 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
                 minWidth: "200px",
               }}
             >
-              <HFSelect control={mainForm.control} onChange={(e) => updateCurrentLayout(e)} name={`layouts.${index}.menu_id`} options={options} />
+              <HFSelect
+                control={mainForm.control}
+                onChange={(e) => updateCurrentLayout(e)}
+                name={`layouts.${index}.menu_id`}
+                options={options}
+              />
             </Box>
           </Box>
         </Box>
       </CTableCell>
 
       <CTableCell>
-        <Box style={{ display: "flex", gap: "5px" }}>
-          <RectangleIconButton color="success" onClick={() => navigateToEditForm(element)}>
+        <Box style={{display: "flex", gap: "5px"}}>
+          <RectangleIconButton
+            color="success"
+            onClick={() => navigateToEditForm(element)}
+          >
             <Edit color="success" />
           </RectangleIconButton>
 
@@ -133,7 +168,10 @@ export default function LayoutsItem({ element, index, getData, mainForm, allMenu
             <Delete color="error" />
           </RectangleIconButton> */}
 
-          <RectangleIconButton color="error" onClick={() => removeHandle(index)}>
+          <RectangleIconButton
+            color="error"
+            onClick={() => removeHandle(index)}
+          >
             <Delete color="error" />
           </RectangleIconButton>
         </Box>

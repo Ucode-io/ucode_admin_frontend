@@ -34,7 +34,6 @@ const CDateTimePicker = ({
               value={value ?? undefined}
               onChange={handleChange}
               disabled={disabled}
-              portal={document.body}
             >
               {(InputProps) => (
                 <TextField

@@ -5,6 +5,13 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
+import {Drawer} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -20,6 +27,12 @@ import { objectToArray } from "../../../utils/objectToArray";
 import { pageToOffset } from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { Filter } from "../components/FilterGenerator";
+import {generateGUID} from "../../../utils/generateID";
+import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
 
 const RelationTable = forwardRef(
@@ -177,7 +190,7 @@ const RelationTable = forwardRef(
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
     }, [relation, selectedTab?.relation_id]);
-
+    console.log("relation", relation);
     useEffect(() => {
       if (getRelatedTabeSlug?.default_editable) {
         setFormVisible(true);
@@ -228,6 +241,7 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.permission?.view_permission]);
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
 
     function customSortArray(a, b) {
       const commonItems = a?.filter((item) => b.includes(item));
@@ -278,14 +292,17 @@ const RelationTable = forwardRef(
         enabled: !!relatedTableSlug,
         select: ({data}) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / paginiation);
+          const pageCount =
+            isNaN(data?.count) || tableData.length === 0
+              ? 1
+              : Math.ceil(data.count / paginiation);
 
           const fieldsMap = listToMap(data.fields);
 
-          setFieldSlug(
-            Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
-              ?.slug
-          );
+          // setFieldSlug(
+          //   Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
+          //     ?.slug
+          // );
 
           const array = [];
           for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
@@ -306,7 +323,9 @@ const RelationTable = forwardRef(
             ?.map((el) => fieldsMap[el])
             ?.filter((el) => el);
 
-          const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
+          const quickFilters = getRelatedTabeSlug.quick_filters
+            ?.map(({field_id}) => fieldsMap[field_id])
+            ?.filter((el) => el);
 
           return {
             tableData,
@@ -445,7 +464,6 @@ const RelationTable = forwardRef(
         });
         queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
       } finally {
-        
       }
     };
 
@@ -548,7 +566,7 @@ const RelationTable = forwardRef(
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
-            onSubmit={(index, field) => update(index, field)}
+            // onSubmit={(index, field) => update(index, field)}
             field={drawerState}
             formType={drawerState}
             mainForm={mainForm}

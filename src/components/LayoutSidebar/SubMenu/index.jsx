@@ -98,6 +98,7 @@ const SubMenu = ({
         });
     }
   };
+  console.log("childchild", child);
   return (
     <div
       className={`SubMenu ${

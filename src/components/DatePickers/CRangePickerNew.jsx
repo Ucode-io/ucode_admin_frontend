@@ -1,11 +1,11 @@
-import { Today } from "@mui/icons-material";
-import { InputAdornment, TextField } from "@mui/material";
+import {Today, Clear} from "@mui/icons-material";
+import {IconButton, InputAdornment, TextField} from "@mui/material";
 import DatePicker from "react-multi-date-picker";
 import CustomNavButton from "./Plugins/CustomNavButton";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import { locale } from "./Plugins/locale";
+import {locale} from "./Plugins/locale";
 
-const CRangePickerNew = ({ onChange, value, placeholder }) => {
+const CRangePickerNew = ({onChange, value, placeholder}) => {
   const changeHander = (val) => {
     const from = new Date(val[0]);
     const to = new Date(val[1]);
@@ -24,6 +24,10 @@ const CRangePickerNew = ({ onChange, value, placeholder }) => {
     }
   };
 
+  const clearHandler = () => {
+    onChange([]);
+  };
+
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -38,9 +42,19 @@ const CRangePickerNew = ({ onChange, value, placeholder }) => {
             placeholder={placeholder}
             InputProps={{
               endAdornment: (
-                <InputAdornment position="end">
-                  <Today />
-                </InputAdornment>
+                <>
+                  <InputAdornment position="end">
+                    <Today />
+                  </InputAdornment>
+                  {value?.length > 0 && (
+                    <span
+                      onClick={clearHandler}
+                      style={{margin: "5px 0 0 5px", cursor: "pointer"}}
+                    >
+                      <Clear />
+                    </span>
+                  )}
+                </>
               ),
             }}
           />

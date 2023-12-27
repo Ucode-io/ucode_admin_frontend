@@ -177,7 +177,6 @@ const LayoutSidebar = ({appId}) => {
     {
       enabled: Boolean(appId === "9e988322-cffd-484c-9ed6-460d8701551b"),
       onSuccess: (res) => {
-        console.log("ressssssssss 2", res);
         setChild(
           res.data.response?.map((row) => ({
             ...row,

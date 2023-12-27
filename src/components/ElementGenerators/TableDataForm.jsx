@@ -5,26 +5,10 @@ import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
 const TableDataForm = React.memo(
-  ({
-    relOptions,
-    isTableView,
-    tableView,
-    tableSlug,
-    fields,
-    field,
-    row,
-    getValues,
-    index,
-    control,
-    setFormValue,
-    relationfields,
-    data,
-    isWrap,
-    watch,
-  }) => {
-    const {mutate: updateObject} = useMutation(() =>
+  ({ relOptions, isTableView, tableView, tableSlug, fields, field, row, getValues, index, control, setFormValue, relationfields, data, isWrap, watch }) => {
+    const { mutate: updateObject } = useMutation(() =>
       constructorObjectService.update(tableSlug, {
-        data: {...getValues(`multi.${index}`)},
+        data: { ...getValues(`multi.${index}`) },
       })
     );
 
@@ -43,6 +27,8 @@ const TableDataForm = React.memo(
         .find((x) => x?.id === field?.id)?.status;
     }, [isWrap, field?.id]);
 
+    console.log('rrrrrrr', field)
+
     return (
       <Box
         style={{
@@ -52,12 +38,12 @@ const TableDataForm = React.memo(
         }}
       >
         <CellElementGeneratorForTableView
+          key={field?.id}
           relOptions={relOptions}
           isTableView={isTableView}
           tableView={tableView}
           tableSlug={tableSlug}
           name={`multi.${index}.${field.slug}`}
-          watch={watch}
           isWrapField={isWrapField}
           updateObject={updateObject}
           fields={fields}

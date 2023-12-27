@@ -22,7 +22,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
 
-const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
+const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fieldsMap, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
@@ -33,6 +33,7 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
     return tableSlugFromProps || tableSlugFromParam;
   }, [tableSlugFromParam, tableSlugFromProps]);
 
+  const [editAcces, setEditAccess] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
   const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
+  const [layout, setLayout] = useState({});
 
   const {
     handleSubmit,
@@ -63,8 +65,6 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
   });
   const tableInfo = store.getState().menu.menuItem;
 
-  console.log("wwwwwwwwww", selectedTab);
-
   const getAllData = async () => {
     setLoader(true);
     const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
@@ -72,14 +72,14 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([getFormData, getLayout]);
       setSections(sortSections(sections));
       setSummary(layout?.summary_fields ?? []);
 
-      const defaultLayout = layout;
+      setLayout(layout);
 
       const relations =
-        defaultLayout?.tabs?.map((el) => ({
+        layout?.tabs?.map((el) => ({
           ...el,
           ...el.relation,
         })) ?? [];
@@ -102,12 +102,13 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
     const getLayout = layoutService.getLayout(tableSlug, appId);
 
     try {
-      const [{ layouts: layout = [] }] = await Promise.all([getLayout]);
-      const defaultLayout = layout;
+      const [layout] = await Promise.all([getLayout]);
+
+      setLayout(layout);
       setSections(sortSections(sections));
 
       const relations =
-        defaultLayout?.tabs?.map((el) => ({
+        layout?.tabs?.map((el) => ({
           ...el,
           ...el.relation,
         })) ?? [];
@@ -199,7 +200,7 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
 
   return (
     <div className={styles.formPage}>
-      <SummarySectionValuesForModal computedSummary={summary} control={control} />
+      <SummarySectionValuesForModal computedSummary={summary} setSummary={setSummary} control={control} editAcces={editAcces} fieldsMap={fieldsMap} layout={layout} />
 
       <div className={styles.formArea}>
         <RelationSectionForModal
@@ -220,6 +221,9 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, mo
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
+          fieldsMap={fieldsMap}
+          editAcces={editAcces}
+          setEditAccess={setEditAccess}
         />
       </div>
       <Footer

@@ -1,20 +1,17 @@
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {Box, Button, Tooltip} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
-import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
+import { Button, Menu, MenuItem, Tooltip } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
 import layoutService from "../../services/layoutService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {store} from "../../store";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { store } from "../../store";
+import { applyDrag } from "../../utils/applyDrag";
+import SectionBlockForModal from "./SectionBlockForModal";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "../../utils/applyDrag";
-import SectionBlockForModal from "./SectionBlockForModal";
 
 const MainInfoForModal = ({
   computedSections,
@@ -31,8 +28,9 @@ const MainInfoForModal = ({
   editAcces,
   setData,
   data,
+  fieldsMapFromProps,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
@@ -50,14 +48,14 @@ const MainInfoForModal = ({
     return fields;
   }, [relation]);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const selectedTable = store.getState().menu.menuItem;
 
   const updateLayout = (newData) => {
@@ -66,7 +64,7 @@ const MainInfoForModal = ({
       project_id: projectId,
       table_id: selectedTable?.table_id,
     };
-    layoutService.update(computedData);
+    layoutService.update(newData, tableSlug);
   };
 
   const toggleFields = (field) => {
@@ -101,9 +99,7 @@ const MainInfoForModal = ({
 
   const isVisibleSection = (section) => {
     if (editAcces) return true;
-    const isVisible = section?.fields?.some(
-      (field) => field?.is_visible_layout
-    );
+    const isVisible = section?.fields?.some((field) => field?.is_visible_layout);
     return isVisible;
   };
 
@@ -130,6 +126,53 @@ const MainInfoForModal = ({
     updateLayout(newData);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const allFields = useMemo(() => {
+    return Object.values(fieldsMapFromProps).map((field) => {
+      return {
+        label: field?.attributes?.[`label_to_${i18n.language}`] ?? field?.label,
+        value: field?.id,
+      };
+    });
+  }, [fieldsMapFromProps]);
+
+  const addFieldsToSection = (fieldId, sectionIndex) => {
+    const newFields = {
+      ...data,
+      tabs: data?.tabs?.map((tab, tabIndex) => {
+        if (tabIndex === selectedTabIndex) {
+          return {
+            ...tab,
+            sections: tab?.sections?.map((section, index) => {
+              if (index === sectionIndex) {
+                return {
+                  ...section,
+                  fields: [...section?.fields, Object.values(fieldsMapFromProps)?.find((field) => field?.id === fieldId)],
+                };
+              } else {
+                return section;
+              }
+            }),
+          };
+        } else {
+          return tab;
+        }
+      }),
+    };
+    setData(newFields);
+    updateLayout(newFields);
+  };
+
   if (loader) return <PageFallback />;
 
   return (
@@ -144,10 +187,7 @@ const MainInfoForModal = ({
           {isMultiLanguage && (
             <div className={styles.language}>
               {projectInfo?.language?.map((lang) => (
-                <Button
-                  className={activeLang === lang?.short_name && styles.active}
-                  onClick={() => setActiveLang(lang?.short_name)}
-                >
+                <Button className={activeLang === lang?.short_name && styles.active} onClick={() => setActiveLang(lang?.short_name)}>
                   {lang?.name}
                 </Button>
               ))}
@@ -159,9 +199,43 @@ const MainInfoForModal = ({
               isVisibleSection(section) && (
                 <NewFormCard
                   key={section.id}
-                  title={
-                    section?.attributes?.[`label_${i18n.language}`] ??
-                    section.label
+                  title={section?.attributes?.[`label_${i18n.language}`] ?? section.label}
+                  topHeader={
+                    editAcces && (
+                      <>
+                        <Button
+                          variant="outlined"
+                          id="basic-button"
+                          aria-controls={open ? "basic-menu" : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={open ? "true" : undefined}
+                          onClick={handleClick}
+                        >
+                          <AddRoundedIcon />
+                        </Button>
+
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                          MenuListProps={{
+                            "aria-labelledby": "basic-button",
+                          }}
+                        >
+                          {allFields?.map((field) => (
+                            <MenuItem
+                              onClick={() => {
+                                addFieldsToSection(field?.value, index);
+                                handleClose();
+                              }}
+                            >
+                              {field?.label}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    )
                   }
                   className={styles.formCard}
                   icon={section.icon}
@@ -194,7 +268,7 @@ const MainInfoForModal = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{color: "#000"}} />
+              <KeyboardTabIcon style={{ color: "#000" }} />
             </button>
           </Tooltip>
         </div>

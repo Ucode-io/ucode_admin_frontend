@@ -51,7 +51,8 @@ const HFTextEditor = ({
               autoFocus={false}
               style={{
                 backgroundColor: `${isTransparent ? "transparent" : ""}`,
-                minWidth: "250px",
+                minWidth: "200px",
+                width: "100%",
               }}
             />
           </Suspense>

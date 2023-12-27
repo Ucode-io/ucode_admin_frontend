@@ -557,6 +557,8 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
+  console.log('ssssssseeeee', tableData)
+
   return (
     <div className={styles.wrapper}>
       {
@@ -648,6 +650,7 @@ const TableView = ({
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
+          fieldsMap={fieldsMap}
         />
       )}
 

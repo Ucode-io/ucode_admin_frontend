@@ -65,14 +65,6 @@ const TableRow = ({
 
   const parentRef = useRef(null);
 
-  const virtualizer = useVirtualizer({
-    horizontal: true,
-    count: 10,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
-    overscan: 5,
-  });
-
   if (formVisible)
     return (
       <TableRowForm

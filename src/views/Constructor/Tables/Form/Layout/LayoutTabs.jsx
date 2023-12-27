@@ -76,7 +76,6 @@ function LayoutTabs({
       return;
 
     const result = applyDrag(sectionTabs, dropResult);
-    console.log("result", result);
 
     if (sectionTabs.find((tab) => tab?.id === dropResult?.payload?.id)) {
       replaceSectionTab(result);

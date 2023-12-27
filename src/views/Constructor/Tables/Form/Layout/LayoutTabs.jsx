@@ -51,8 +51,7 @@ function LayoutTabs({
     name: "view_relations",
     keyName: "key",
   });
-  console.log("viewRelations", viewRelations);
-  console.log("viewRelations", viewRelations);
+
   const computedViewRelations = useMemo(() => {
     return viewRelations
       ?.map((relation) => {
@@ -234,6 +233,7 @@ function LayoutTabs({
           if (tab.id === selectedTab?.id) {
             return tab?.type === "section" ? (
               <NewSectionsBlock
+                index={index}
                 mainForm={mainForm}
                 layoutForm={layoutForm}
                 openFieldsBlock={openFieldsBlock}

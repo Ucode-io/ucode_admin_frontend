@@ -39,7 +39,7 @@ function NewLayoutSettings({
   const computedData = useMemo(() => {
     return;
   }, [watchLayout]);
-  console.log("watchLayout", watchLayout);
+
   const updateSelectedLayout = () => {
     setLoader(true);
     const data = watchLayout?.tabs
@@ -63,7 +63,6 @@ function NewLayoutSettings({
             : el?.id,
       }));
 
-    console.log("wwwwwwww", watchLayout);
     layoutService
       .update({...watchLayout, tabs: data}, tableSlug)
       .then(() => {

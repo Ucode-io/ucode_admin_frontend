@@ -66,9 +66,7 @@ const ViewTabSelector = ({
     setSettingsModalVisible(false);
     if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
   };
-console.log('tableSlug', tableSlug)
   const deleteView = (id) => {
-    console.log('sssssssss222222')
     constructorViewService.delete(id, tableSlug).then(() => {
       navigate("/reload", {
         state: {

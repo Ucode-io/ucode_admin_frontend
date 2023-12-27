@@ -165,7 +165,6 @@ export default function FieldButton({
           format: fieldData?.type,
         },
       });
-      console.log("dfdfddf");
     } else {
       reset({
         attributes: {

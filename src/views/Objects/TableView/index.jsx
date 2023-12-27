@@ -648,6 +648,7 @@ const TableView = ({
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
+          fieldsMap={fieldsMap}
         />
       )}
 

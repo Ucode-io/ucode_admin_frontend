@@ -79,7 +79,6 @@ const ConstructorTablesFormPage = () => {
       },
       tableSlug
     );
-    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList(

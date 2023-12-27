@@ -436,8 +436,6 @@ const AutoCompleteElement = ({
     }
   }
 
-  console.log("computedOptions", computedOptions);
-
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

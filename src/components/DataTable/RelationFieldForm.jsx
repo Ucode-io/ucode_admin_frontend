@@ -56,8 +56,6 @@ export default function RelationFieldForm({
     }
   );
 
-  console.log("relatedTableFields", relatedTableFields);
-
   return (
     <Box className={style.relation}>
       <HFSelect

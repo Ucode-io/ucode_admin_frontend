@@ -63,7 +63,6 @@ function NewLayoutSettings({
             : el?.id,
       }));
 
-    console.log("wwwwwwww", watchLayout);
     layoutService
       .update({...watchLayout, tabs: data}, tableSlug)
       .then(() => {

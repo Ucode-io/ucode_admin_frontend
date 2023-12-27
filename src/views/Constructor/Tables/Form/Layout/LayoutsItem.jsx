@@ -31,7 +31,14 @@ export default function LayoutsItem({
   const updateCurrentLayout = (menuId) => {
     const currentUpdatedLayout = {
       ...watchLayout,
-      // menu_id: menuId,
+      menu_id: menuId,
+    };
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  };
+
+  const updateChosenLayout = () => {
+    const currentUpdatedLayout = {
+      ...watchLayout,
     };
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
@@ -56,7 +63,7 @@ export default function LayoutsItem({
 
   useEffect(() => {
     if (createLayout) {
-      updateCurrentLayout();
+      updateChosenLayout();
       getData();
     }
   }, [createLayout]);

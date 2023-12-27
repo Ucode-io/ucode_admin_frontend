@@ -5,13 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useNavigate, useParams} from "react-router-dom";
-import {Drawer} from "@mui/material";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -27,12 +20,6 @@ import { objectToArray } from "../../../utils/objectToArray";
 import { pageToOffset } from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { Filter } from "../components/FilterGenerator";
-import {generateGUID} from "../../../utils/generateID";
-import {listToMap} from "../../../utils/listToMap";
-import {objectToArray} from "../../../utils/objectToArray";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
 
 const RelationTable = forwardRef(

@@ -240,7 +240,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-
+  console.log("allOptions", allOptions);
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
@@ -292,9 +292,14 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
-    return uniqueObjects ?? [];
+    return (
+      uniqueObjects?.map((option) => ({
+        label: getRelationFieldTabsLabel(field, option),
+        value: option?.guid,
+      })) ?? []
+    );
   }, [allOptions]);
-
+  console.log("computedOptions", computedOptions);
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -520,13 +525,7 @@ const AutoCompleteElement = ({
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
         }}
-        getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
-        }
         getOptionValue={(option) => option.value}
-        isOptionSelected={(option, value) =>
-          value.some((val) => val.value === value)
-        }
         blurInputOnSelect
       />
     </div>

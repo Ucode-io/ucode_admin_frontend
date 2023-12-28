@@ -28,6 +28,8 @@ import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
+import HFDateDatePickerWithoutTimeZoneTable from "../FormElements/HFDatePickerWithoutTimeZone";
 
 const parser = new Parser();
 
@@ -128,7 +130,7 @@ const CellElementGeneratorForTableView = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
-
+  console.log("fielddddddddd", field);
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -411,6 +413,21 @@ const CellElementGeneratorForTableView = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
+        />
+      );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <HFDateDatePickerWithoutTimeZoneTable
+          control={control}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          mask={"99.99.9999"}
+          required={field?.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          isNewTableView={true}
         />
       );
 

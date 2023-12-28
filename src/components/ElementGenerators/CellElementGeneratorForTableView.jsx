@@ -30,6 +30,7 @@ import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import HFDateDatePickerWithoutTimeZoneTable from "../FormElements/HFDatePickerWithoutTimeZone";
+import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
 
 const parser = new Parser();
 
@@ -49,6 +50,7 @@ const CellElementGeneratorForTableView = ({
   data,
   isTableView,
   isNewRow,
+  newColumn = false,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
@@ -133,8 +135,29 @@ const CellElementGeneratorForTableView = ({
 
   switch (field.type) {
     case "LOOKUP":
-      return (
+      return !newColumn ? (
         <CellRelationFormElementForTableView
+          relOptions={relOptions}
+          isNewRow={isNewRow}
+          tableView={tableView}
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      ) : (
+        <CellRelationFormElementForNewColumn
           relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}

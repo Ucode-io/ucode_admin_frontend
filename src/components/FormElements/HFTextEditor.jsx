@@ -42,6 +42,7 @@ const HFTextEditor = ({
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               theme="snow"
+              value={value}
               defaultValue={value}
               onChange={(val) => {
                 onChange(val);

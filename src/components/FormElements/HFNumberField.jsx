@@ -43,7 +43,6 @@ const HFNumberField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        console.log("valueeeeeeeeee", value);
         return (
           <Box
             style={

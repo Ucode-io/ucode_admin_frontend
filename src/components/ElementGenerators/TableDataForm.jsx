@@ -1,14 +1,30 @@
-import { Box } from "@mui/material";
-import React, { useMemo } from "react";
-import { useMutation } from "react-query";
+import {Box} from "@mui/material";
+import React, {useMemo} from "react";
+import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
 const TableDataForm = React.memo(
-  ({ relOptions, isTableView, tableView, tableSlug, fields, field, row, getValues, index, control, setFormValue, relationfields, data, isWrap, watch }) => {
-    const { mutate: updateObject } = useMutation(() =>
+  ({
+    relOptions,
+    isTableView,
+    tableView,
+    tableSlug,
+    fields,
+    field,
+    row,
+    getValues,
+    index,
+    control,
+    setFormValue,
+    relationfields,
+    data,
+    isWrap,
+    watch,
+  }) => {
+    const {mutate: updateObject} = useMutation(() =>
       constructorObjectService.update(tableSlug, {
-        data: { ...getValues(`multi.${index}`) },
+        data: {...getValues(`multi.${index}`)},
       })
     );
 
@@ -26,8 +42,6 @@ const TableDataForm = React.memo(
         })
         .find((x) => x?.id === field?.id)?.status;
     }, [isWrap, field?.id]);
-
-    console.log('rrrrrrr', field)
 
     return (
       <Box

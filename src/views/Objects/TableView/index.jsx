@@ -488,13 +488,22 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-  console.log("idddddddd", id);
+
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
     } else {
-      !id ? navigateToDetailPage(row) : navigateToForm(tableSlug);
+      navigateToDetailPage(row);
+    }
+  };
+
+  const navigateCreatePage = (row) => {
+    if (layoutType === "PopupLayout") {
+      setSelectedRow(row);
+      setOpen(true);
+    } else {
+      navigateToForm(tableSlug);
     }
   };
 
@@ -619,7 +628,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
-          navigateToEditPage={navigateToEditPage}
+          navigateToEditPage={navigateCreatePage}
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}

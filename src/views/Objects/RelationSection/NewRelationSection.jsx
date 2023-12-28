@@ -71,14 +71,15 @@ const NewRelationSection = ({
   }, [relations, selectedTab]);
 
   useEffect(() => {
-    if (data?.[0]?.tabs?.length > 0) {
-      setSelectTab(data?.[0]?.tabs?.[0]);
+    if (data?.tabs?.length > 0) {
+      setSelectTab(data?.tabs?.[0]);
     }
   }, [data, setSelectTab]);
 
   useEffect(() => {
+    console.log("queryTab", queryTab);
     queryTab
-      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
@@ -191,7 +192,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-  console.log("datadata", data);
+
   return (
     <>
       {selectedManyToManyRelation && (

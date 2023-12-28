@@ -85,6 +85,7 @@ const ObjectDataTable = React.memo(
     title,
     view,
     navigateToForm,
+    navigateToEditPage,
     refetch,
   }) => {
     const location = useLocation();
@@ -269,6 +270,7 @@ const ObjectDataTable = React.memo(
         view={view}
         filterVisible={filterVisible}
         parentRef={parentRef}
+        navigateToEditPage={navigateToEditPage}
       >
         <CTableHead>
           {formVisible && selectedRow.length > 0 && (

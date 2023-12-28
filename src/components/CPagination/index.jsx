@@ -1,13 +1,13 @@
-import {Button, Pagination} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { Button, Pagination } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import CSelect from "../CSelect";
 import styles from "./style.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import useTabRouter from "../../hooks/useTabRouter";
-import {useNavigate, useParams} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {paginationActions} from "../../store/pagination/pagination.slice";
-import {useMemo} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import { useMemo } from "react";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 
 const CPagination = ({
@@ -24,16 +24,15 @@ const CPagination = ({
   filterVisible,
   selectedTab,
   isRelationTable,
+  navigateToEditPage,
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
-  );
+  const paginationInfo = useSelector((state) => state?.pagination?.paginationInfo);
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -42,18 +41,14 @@ const CPagination = ({
   }, [paginationInfo]);
 
   const options = [
-    {value: "all", label: "All"},
-    // {
-    //   value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    //   label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    // },
-    {value: 10, label: 10},
-    {value: 15, label: 15},
-    {value: 20, label: 20},
-    {value: 25, label: 25},
-    {value: 30, label: 30},
-    {value: 35, label: 35},
-    {value: 40, label: 40},
+    { value: "all", label: "All" },
+    { value: 10, label: 10 },
+    { value: 15, label: 15 },
+    { value: 20, label: 20 },
+    { value: 25, label: 25 },
+    { value: 30, label: 30 },
+    { value: 35, label: 35 },
+    { value: 40, label: 40 },
   ];
 
   const getLimitValue = (item) => {
@@ -69,7 +64,7 @@ const CPagination = ({
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
   };
-
+  console.log("isRelationTable", isRelationTable);
   return (
     <div
       style={{
@@ -92,7 +87,7 @@ const CPagination = ({
                 size="small"
                 value={paginiation ?? limit}
                 onChange={(e) => getLimitValue(e.target.value)}
-                inputProps={{style: {borderRadius: 50}}}
+                inputProps={{ style: { borderRadius: 50 } }}
                 endAdornment={null}
                 sx={null}
               />
@@ -122,26 +117,19 @@ const CPagination = ({
             onClick={() => {
               if (view?.attributes?.url_object) {
                 objectNavigate();
-              } else
-                navigateToForm(
-                  isRelationTable
-                    ? selectedTab?.relation?.relation_table_slug
-                    : tableSlug
-                );
+              } else {
+                isRelationTable ? navigateToForm(selectedTab?.relation?.relation_table_slug) : navigateToEditPage("NEW");
+              }
             }}
           >
-            <AddIcon style={{color: "#007AFF"}} />
+            <AddIcon style={{ color: "#007AFF" }} />
             Add object
           </Button>
         )}
 
         {!disablePagination && !isGroupByTable && (
           <>
-            <Pagination
-              color="primary"
-              onChange={(e, val) => setCurrentPage(val)}
-              {...props}
-            />
+            <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
             {paginationExtraButton}
           </>
         )}

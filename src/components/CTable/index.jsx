@@ -28,7 +28,8 @@ export const CTable = ({
   selectedTab,
   isRelationTable,
   filterVisible,
-  parentRef
+  parentRef,
+  navigateToEditPage
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -64,6 +65,7 @@ export const CTable = ({
           view={view}
           selectedTab={selectedTab}
           isRelationTable={isRelationTable}
+          navigateToEditPage={navigateToEditPage}
         />
       )}
     </Paper>

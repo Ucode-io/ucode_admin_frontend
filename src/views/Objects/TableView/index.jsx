@@ -590,6 +590,7 @@ const TableView = ({
         id="data-table"
       >
         <ObjectDataTable
+          navigateToEditPage={navigateToEditPage}
           refetch={refetch}
           filterVisible={filterVisible}
           currentView={currentView}
@@ -651,6 +652,7 @@ const TableView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
+          refetch={refetch}
         />
       )}
 

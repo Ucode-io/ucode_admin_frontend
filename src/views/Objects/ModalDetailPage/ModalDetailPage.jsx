@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
 import styles from "./style.module.scss";
 
-export default function ModalDetailPage({ open, setOpen, tableSlug, selectedRow, dateInfo, menuItem, layout, fieldsMap }) {
+export default function ModalDetailPage({ open, setOpen, tableSlug, selectedRow, dateInfo, refetch, menuItem, layout, fieldsMap }) {
   const [fullScreen, setFullScreen] = useState(false);
   const handleClose = () => {
     setOpen(false);
@@ -28,6 +28,7 @@ export default function ModalDetailPage({ open, setOpen, tableSlug, selectedRow,
         </div>
 
         <ObjectsFormPageForModal
+          refetch={refetch}
           menuItem={menuItem}
           layout={layout}
           selectedRow={selectedRow}

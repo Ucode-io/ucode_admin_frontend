@@ -1,20 +1,18 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import constructorObjectService from "../../services/constructorObjectService";
+import { showAlert } from "../../store/alert/alert.thunk";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
 import NewTableDataForm from "../ElementGenerators/NewTableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import constructorObjectService from "../../services/constructorObjectService";
-import { useQueryClient } from "react-query";
-import { showAlert } from "../../store/alert/alert.thunk";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import React from "react";
 
 const AddDataColumn = React.memo(
   ({ columns, isTableView, relOptions, getValues, mainForm, relationfields, data, onRowClick, width, rows, setAddNewRow, refetch, view, isRelationTable }) => {
-    const queryClient = useQueryClient();
     const dispatch = useDispatch();
     const { tableSlug, id } = useParams();
 
@@ -35,12 +33,12 @@ const AddDataColumn = React.memo(
         .create(computedTableSlug, {
           data: {
             ...values,
-            [computedSlug]: id,
+            [isRelationTable && computedSlug]: id,
           },
         })
         .then((res) => {
           setAddNewRow(false);
-          dispatch(showAlert("Successfully updated!", "success"));
+          dispatch(showAlert("Successfully created!", "success"));
         })
         .catch((e) => {
           console.log("ERROR: ", e);

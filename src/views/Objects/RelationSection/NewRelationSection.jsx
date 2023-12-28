@@ -1,5 +1,5 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import {InsertDriveFile} from "@mui/icons-material";
+import {Add, InsertDriveFile} from "@mui/icons-material";
 import {Card, Divider} from "@mui/material";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray} from "react-hook-form";
@@ -20,6 +20,9 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
+import constructorObjectService from "../../../services/constructorObjectService";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -51,6 +54,8 @@ const NewRelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
+  const [jwtObjects, setJwtObjects] = useState([]);
   const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
@@ -59,6 +64,7 @@ const NewRelationSection = ({
   let [searchParams] = useSearchParams();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
+  const tables = useSelector((state) => state?.auth?.tables);
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -69,6 +75,10 @@ const NewRelationSection = ({
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
   }, [relations, selectedTab]);
+
+  const relationFieldSlug = useMemo(() => {
+    return relations.find((item) => item?.type === "Many2Dynamic");
+  }, [relations]);
 
   useEffect(() => {
     if (data?.tabs?.length > 0) {
@@ -83,7 +93,7 @@ const NewRelationSection = ({
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const {fields, remove, update} = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -115,6 +125,24 @@ const NewRelationSection = ({
 
   /*****************************JWT START*************************/
 
+  const navigateToCreatePage = () => {
+    let mapped = {
+      [`${tableSlug}_id`]: idFromParams ?? "",
+    };
+    defaultValuesFromJwt.forEach((el) => {
+      let keys = Object.keys(el);
+      let values = Object.values(el);
+      mapped[keys[0]] = values[0];
+    });
+    // const relation = filteredRelations[selectedTabIndex];
+    if (getRelatedTabeSlug?.type === "Many2Many")
+      setSelectedManyToManyRelation(getRelatedTabeSlug);
+    else {
+      append(mapped);
+      setFormVisible(true);
+    }
+  };
+
   const computedSections = useMemo(() => {
     const sections = [];
     data?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
@@ -129,6 +157,33 @@ const NewRelationSection = ({
   };
 
   /*****************************JWT END*************************/
+
+  useEffect(() => {
+    getRelatedTabeSlug &&
+      constructorObjectService
+        .getList(
+          getRelatedTabeSlug?.relatedTable,
+          {
+            data: {
+              offset: 0,
+              limit: 0,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+                idFromParams,
+            },
+          },
+          {
+            language_setting: i18n?.language,
+          }
+        )
+        .then((res) => {
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
+        })
+        .catch((a) => console.log("error", a));
+  }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
   useEffect(() => {
     layoutService
@@ -148,6 +203,24 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id, i18n?.language]);
+
+  useEffect(() => {
+    let tableSlugsFromObj = jwtObjects?.map((item) => {
+      return item?.table_slug;
+    });
+
+    let computeJwtObjs = tableSlugsFromObj?.map((item) => {
+      return tables?.filter((table) => item === table?.table_slug);
+    });
+
+    setDefaultValuesFromJwt(
+      computeJwtObjs?.map((item) => {
+        return {
+          [`${item?.[0]?.table_slug}_id`]: item?.[0]?.object_id,
+        };
+      })
+    );
+  }, [jwtObjects, tables]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -256,6 +329,17 @@ const NewRelationSection = ({
                     selectedObjects={selectedObjects}
                     setSelectedObjects={setSelectedObjects}
                   />
+
+                  {relatedTable && (
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={navigateToCreatePage}
+                      disabled={!id}
+                    >
+                      <Add style={{color: "#007AFF"}} />
+                    </RectangleIconButton>
+                  )}
 
                   {data[selectedTabIndex]?.multiple_insert && (
                     <MultipleInsertButton

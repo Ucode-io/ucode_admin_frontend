@@ -454,7 +454,7 @@ const FieldSettings = ({
                       <HFCheckbox
                         control={control}
                         name="unique"
-                        label="Avoid duplicate values"
+                        label="Duplicate"
                         labelClassName={styles.custom_label}
                       />
                     </Box>

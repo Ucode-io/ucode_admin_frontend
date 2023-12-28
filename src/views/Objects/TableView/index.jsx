@@ -488,13 +488,13 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
+  console.log("idddddddd", id);
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
     } else {
-      id ? navigateToDetailPage(row) : navigateToForm(tableSlug);
+      !id ? navigateToDetailPage(row) : navigateToForm(tableSlug);
     }
   };
 

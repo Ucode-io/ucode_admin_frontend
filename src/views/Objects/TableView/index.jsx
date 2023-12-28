@@ -557,8 +557,6 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  console.log('ssssssseeeee', tableData)
-
   return (
     <div className={styles.wrapper}>
       {
@@ -621,6 +619,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
+          navigateToEditPage={navigateToEditPage}
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}
@@ -651,6 +650,7 @@ const TableView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
+          refetch={refetch}
         />
       )}
 

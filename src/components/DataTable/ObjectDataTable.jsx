@@ -51,6 +51,7 @@ const ObjectDataTable = ({
   getValues,
   control,
   setFormValue,
+  navigateToEditPage,
   dataLength,
   onDeleteClick,
   onEditClick,
@@ -252,6 +253,7 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
       view={view}
       filterVisible={filterVisible}
+      navigateToEditPage={navigateToEditPage}
       parentRef={parentRef}
     >
       <CTableHead>

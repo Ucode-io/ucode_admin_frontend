@@ -28,6 +28,7 @@ export const CTable = ({
   selectedTab,
   isRelationTable,
   filterVisible,
+  navigateToEditPage,
   parentRef
 }) => {
   return (
@@ -64,6 +65,7 @@ export const CTable = ({
           view={view}
           selectedTab={selectedTab}
           isRelationTable={isRelationTable}
+          navigateToEditPage={navigateToEditPage}
         />
       )}
     </Paper>

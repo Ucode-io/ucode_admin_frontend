@@ -22,7 +22,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
 
-const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fieldsMap, modal = false, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
+const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fieldsMap, modal = false, refetch, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
@@ -146,7 +146,10 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fi
         }
       })
       .catch((e) => console.log("ERROR: ", e))
-      .finally(() => setBtnLoader(false));
+      .finally(() => {
+        setBtnLoader(false);
+        refetch();
+      });
   };
   const create = (data) => {
     setBtnLoader(true);
@@ -177,7 +180,10 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fi
         dispatch(showAlert("Successfully updated!", "success"));
       })
       .catch((e) => console.log("ERROR: ", e))
-      .finally(() => setBtnLoader(false));
+      .finally(() => {
+        setBtnLoader(false);
+        refetch();
+      });
   };
 
   const onSubmit = (data) => {

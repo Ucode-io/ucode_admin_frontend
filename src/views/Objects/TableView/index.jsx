@@ -494,7 +494,7 @@ const TableView = ({
       setSelectedRow(row);
       setOpen(true);
     } else {
-      navigateToDetailPage(row);
+      id ? navigateToDetailPage(row) : navigateToForm(tableSlug);
     }
   };
 

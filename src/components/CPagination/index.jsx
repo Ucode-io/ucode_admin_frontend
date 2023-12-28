@@ -122,7 +122,7 @@ const CPagination = ({
               if (view?.attributes?.url_object) {
                 objectNavigate();
               } else {
-                isRelationTable ? navigateToForm(isRelationTable ? selectedTab?.relation?.relation_table_slug : tableSlug) : navigateToEditPage("NEW");
+                isRelationTable ? navigateToForm(isRelationTable ? selectedTab?.relation?.relation_table_slug : tableSlug) : navigateToEditPage(tableSlug);
               }
             }}
           >

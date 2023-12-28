@@ -254,7 +254,7 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: [value],
             },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            view_fields: field?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
             limit: 10,
             offset: pageToOffset(page, 10),

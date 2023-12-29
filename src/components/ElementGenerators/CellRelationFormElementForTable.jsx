@@ -4,7 +4,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import {Box, Popover, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -47,6 +47,7 @@ const CellRelationFormElementForTableView = ({
   relationfields,
   data,
   isNewRow,
+  isTableView,
 }) => {
   const classes = useStyles();
 
@@ -108,6 +109,7 @@ const CellRelationFormElementForTableView = ({
                 !isNewRow && updateObject();
               }}
               field={field}
+              isTableView={isTableView}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}
               error={error}
@@ -139,6 +141,7 @@ const AutoCompleteElement = ({
   index,
   control,
   isNewRow,
+  isTableView,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
@@ -269,7 +272,7 @@ const AutoCompleteElement = ({
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
         (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
+        Boolean(!relOptions?.length && isNewRow),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -283,6 +286,12 @@ const AutoCompleteElement = ({
             ...(prevOptions ?? []),
             ...(data.options ?? []),
           ]);
+        }
+
+        if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
+          console.log("entereddddd 2");
+          setLocalValue(null);
+          setValue("");
         }
       },
     }
@@ -427,6 +436,12 @@ const AutoCompleteElement = ({
     </components.SingleValue>
   );
 
+  const autofilterDisable = useMemo(() => {
+    if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
+      return true;
+    } else return false;
+  }, [autoFiltersValue]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -479,7 +494,7 @@ const AutoCompleteElement = ({
             inputChangeHandler(newInputValue);
           }
         }}
-        isDisabled={disabled}
+        isDisabled={disabled || autofilterDisable}
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}

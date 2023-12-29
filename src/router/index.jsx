@@ -80,6 +80,8 @@ import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/compon
 import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
+import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
+import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -292,6 +294,13 @@ const Router = () => {
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+          <Route path="github/create" element={<GithubMicrofrontendForm />} />
+        </Route>
+
+        <Route path=":appId/openfaas-functions">
+          <Route index element={<OpenFaasFunctionPage />} />
+          <Route path="create" element={<OpenFaasFunctionForm />} />
+          <Route path=":functionId" element={<OpenFaasFunctionForm />} />
           <Route path="github/create" element={<GithubMicrofrontendForm />} />
         </Route>
 

@@ -57,6 +57,9 @@ const ObjectsFormPage = ({
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
 
+  const {deleteTab} = useTabRouter();
+  const {pathname} = useLocation();
+
   const {
     handleSubmit,
     control,
@@ -233,6 +236,11 @@ const ObjectsFormPage = ({
     else getFields();
   }, [id, tableInfo, selectedTabIndex]);
 
+  const clickHandler = () => {
+    deleteTab(pathname);
+    navigate(-1);
+  };
+
   // useEffect(() => {
   //   getFields();
   // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
@@ -280,7 +288,7 @@ const ObjectsFormPage = ({
         extra={
           <>
             <SecondaryButton
-              onClick={() => (modal ? handleClose() : navigate(-1))}
+              onClick={() => (modal ? handleClose() : clickHandler())}
               color="error"
             >
               Close

@@ -1,20 +1,36 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useMemo, useState } from "react";
-import { useRef } from "react";
+import {useMemo, useState} from "react";
+import {useRef} from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { Box, Button, CircularProgress, InputAdornment, Popover, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  InputAdornment,
+  Popover,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
-import { useNavigate } from "react-router-dom";
-import { Lock } from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import {Lock} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView = false, tabIndex, field }) => {
+const ImageUpload = ({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  isNewTableView = false,
+  tabIndex,
+  field,
+}) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,6 +53,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
       })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
+        handleClose();
       })
       .finally(() => setLoading(false));
   };
@@ -84,7 +101,11 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
         // </div>
 
         <>
-          <div className="uploadedImage" aria-describedby={id} onClick={handleClick}>
+          <div
+            className="uploadedImage"
+            aria-describedby={id}
+            onClick={handleClick}
+          >
             <div className="img">
               <img
                 src={value}
@@ -229,7 +250,15 @@ const ImageUpload = ({ value, onChange, className = "", disabled, isNewTableView
             height: "25px",
           }}
         >
-          <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
+          <input
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
+            onChange={inputChangeHandler}
+            disabled={disabled}
+          />
           <UploadFileIcon
             style={{
               color: "#747474",

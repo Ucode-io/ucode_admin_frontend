@@ -141,6 +141,7 @@ const CellElementGeneratorForTableView = ({
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
+          isTableView={true}
           isFormEdit
           isBlackBg={isBlackBg}
           updateObject={updateObject}

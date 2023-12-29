@@ -77,7 +77,7 @@ export default function TimeLineRecursiveRow({
           }
         });
     }
-  );
+  }, [item]);
 
   const computedValue = useMemo(() => {
     const slugs = viewFields?.map((item) => item) ?? [];

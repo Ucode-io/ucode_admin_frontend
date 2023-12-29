@@ -25,11 +25,7 @@ export const useFunctionsListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useFunctionByIdQuery = ({
-  params = {},
-  functionId,
-  queryParams,
-} = {}) => {
+export const useFunctionByIdQuery = ({ params = {}, functionId, queryParams } = {}) => {
   return useQuery(
     ["FUNCTION_BY_ID", { params, functionId }],
     () => {
@@ -48,8 +44,5 @@ export const useFunctionCreateMutation = (mutationSettings) => {
 };
 
 export const useFunctionDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    (functionId) => functionService.delete(functionId),
-    mutationSettings
-  );
+  return useMutation((functionId) => functionService.delete(functionId), mutationSettings);
 };

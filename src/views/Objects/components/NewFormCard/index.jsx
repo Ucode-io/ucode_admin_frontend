@@ -16,6 +16,7 @@ const NewFormCard = ({ title, children, icon, extra, topHeader }) => {
       <div style={{
         display: "flex",
         alignItems: "flex-start",
+        width: "100%",
       }}>
         <div className={styles.header}>
           <div className={styles.headerLeftSide}>

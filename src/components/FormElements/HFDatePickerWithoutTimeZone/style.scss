@@ -100,17 +100,18 @@ rmdp-day.rmdp-today.highlight span {
 }
 
 .main_wrapper {
-  display: flex;
+  display: grid !important;
   align-items: center;
   justify-content: space-between;
+  grid-template-columns: 2fr 2fr 1fr;
+  width: 100%;
+  // .rmdp-container:first-child {
+  //   width: 50%;
+  // }
 
-  .rmdp-container:first-child {
-    width: 50%;
-  }
-
-  .rmdp-container:last-child {
-    width: 60%;
-  }
+  // .rmdp-container:last-child {
+  //   width: 60%;
+  // }
 }
 
 .custom_textfield div fieldset {

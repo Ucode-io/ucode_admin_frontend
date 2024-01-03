@@ -43,13 +43,29 @@ export default function MultiLineCellFormElement({ control, computedSlug, isWrap
             isWrapField
               ? {
                   height: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "8px",
                 }
-              : {}
+              : {
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "8px",
+                }
           }
         >
           {stripHtmlTags(`${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}` ?? "")}
         </p>
-        <Button onClick={handleOpen}>
+        <Button
+          onClick={handleOpen}
+          sx={{
+            width: "30px",
+            height: "30px",
+            minWidth: "30px",
+          }}
+        >
           <ZoomOutMapIcon />
         </Button>
       </Box>

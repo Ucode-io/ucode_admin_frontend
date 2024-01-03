@@ -1,5 +1,5 @@
-import { FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
+import {FormHelperText} from "@mui/material";
+import {Controller} from "react-hook-form";
 import FileUpload from "../Upload/FileUpload.jsx";
 import NewFileUpload from "../Upload/NewFileUpload.jsx";
 
@@ -16,6 +16,7 @@ const HFFileUpload = ({
   field,
   ...props
 }) => {
+  console.log("fielddddddd", field);
   return (
     <Controller
       control={control}
@@ -25,7 +26,7 @@ const HFFileUpload = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <NewFileUpload
             name={name}

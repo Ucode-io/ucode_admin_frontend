@@ -159,7 +159,7 @@ const NewRelationSection = ({
   /*****************************JWT END*************************/
 
   useEffect(() => {
-    getRelatedTabeSlug &&
+    Boolean(getRelatedTabeSlug && relationFieldSlug) &&
       constructorObjectService
         .getList(
           getRelatedTabeSlug?.relatedTable,

@@ -23,6 +23,9 @@ const HFDateDatePickerWithoutTimeZoneTable = ({
   defaultValue,
   isNewTableView,
   isTransparent = false,
+  field,
+  updateObject,
+  isTableView,
 }) => {
   const classes = useStyles();
   const value = useWatch({
@@ -50,6 +53,9 @@ const HFDateDatePickerWithoutTimeZoneTable = ({
             disabled={disabled}
             isTransparent={isTransparent}
             isNewTableView={isNewTableView}
+            field={field}
+            updateObject={updateObject}
+            isTableView={isTableView}
           />
         );
       }}

@@ -25,9 +25,13 @@ const CDateDatePickerNoTimeZoneTable = ({
   isNewTableView,
   showCopyBtn = true,
   disabled = false,
+  field,
+  updateObject,
+  isTableView,
 }) => {
   const onChangeHandler = (val) => {
     onChange(val ? format(new Date(val), "dd.MM.yyyy HH:mm") : "");
+    if (isTableView) updateObject();
   };
 
   const computedValue = useMemo(() => {

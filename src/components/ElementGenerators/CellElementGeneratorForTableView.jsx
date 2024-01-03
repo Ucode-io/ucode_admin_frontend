@@ -446,12 +446,15 @@ const CellElementGeneratorForTableView = ({
           control={control}
           name={computedSlug}
           tabIndex={field?.tabIndex}
+          updateObject={updateObject}
+          isTableView={isTableView}
           mask={"99.99.9999"}
           required={field?.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           disabled={isDisabled}
           isNewTableView={true}
+          field={field}
         />
       );
 

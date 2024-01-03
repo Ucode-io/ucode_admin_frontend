@@ -338,7 +338,7 @@ const TableView = ({
                 ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
-            : undefined,
+            : "",
         },
       });
     },

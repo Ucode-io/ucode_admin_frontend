@@ -175,7 +175,7 @@ const AutoCompleteElement = ({
     control: (provided) => ({
       ...provided,
       border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
-      maxWidth: "300px",
+      // maxWidth: "300px",
       minWidth: "200px",
     }),
     menu: (provided) => ({

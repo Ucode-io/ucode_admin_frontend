@@ -72,12 +72,13 @@ const FormElementGenerator = ({
         ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
         : "";
     } else {
-      if (field?.attributes?.show_label === false) return "";
-      return (
-        field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " "
-      );
+      if (field?.show_label === false) return "";
+      else
+        return (
+          field?.attributes?.[`label_${i18n.language}`] || field?.label || " "
+        );
     }
-  }, [field, activeLang]);
+  }, [field, activeLang, i18n?.language]);
 
   tables?.forEach((table) => {
     if (table?.table_slug === relationTableSlug) {

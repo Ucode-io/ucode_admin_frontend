@@ -53,7 +53,7 @@ const NewCHFFormulaField = ({
     if (newValue !== currentValue) setFormValue(name, newValue);
   };
 
-  useDebouncedWatch(updateValue, [values], 300);
+  // useDebouncedWatch(updateValue, [values], 300);
 
   useEffect(() => {
     updateValue();

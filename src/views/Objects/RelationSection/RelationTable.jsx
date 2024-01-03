@@ -220,7 +220,7 @@ const RelationTable = forwardRef(
       getRelatedTabeSlug?.type,
       getRelatedTabeSlug?.relation_field_slug,
     ]);
-
+    console.log("computedFilters", computedFilters);
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
       if (getRelatedTabeSlug?.permission?.view_permission) return true;

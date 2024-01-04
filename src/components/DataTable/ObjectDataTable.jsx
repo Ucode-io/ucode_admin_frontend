@@ -448,19 +448,21 @@ const ObjectDataTable = ({
               zIndex: "1",
             }}
           >
-            <Button
-              variant="text"
-              style={{
-                borderColor: "#F0F0F0",
-                borderRadius: "0px",
-                width: "100%",
-              }}
-              onClick={() => {
-                setAddNewRow(true);
-              }}
-            >
-              <AddRoundedIcon />
-            </Button>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+              <Button
+                variant="text"
+                style={{
+                  borderColor: "#F0F0F0",
+                  borderRadius: "0px",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  setAddNewRow(true);
+                }}
+              >
+                <AddRoundedIcon />
+              </Button>
+            </PermissionWrapperV2>
           </CTableCell>
         </CTableRow>
 

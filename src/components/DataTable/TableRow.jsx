@@ -221,6 +221,7 @@ const TableRow = ({
                         onRowClick={onRowClick}
                         width={width}
                         isTableView={isTableView}
+                        view={view}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -411,6 +412,7 @@ const TableRow = ({
                       onRowClick={onRowClick}
                       width={width}
                       isTableView={isTableView}
+                      view={view}
                     />
                   ) : (
                     <CellElementGenerator field={virtualColumn} row={row} />
@@ -586,6 +588,7 @@ const TableRow = ({
                 data={data}
                 onRowClick={onRowClick}
                 width={width}
+                view={view}
               />
             </CTableCell>
           ))}

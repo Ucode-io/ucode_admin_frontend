@@ -1,21 +1,21 @@
-import {get} from "@ngard/tiny-get";
-import {useMemo} from "react";
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
-import {numberWithSpaces} from "../../utils/formatNumbers";
-import {parseBoolean} from "../../utils/parseBoolean";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {formatDate} from "../../utils/dateFormatter";
-import LogoDisplay from "../LogoDisplay";
-import TableTag from "../TableTag";
-import DownloadIcon from "@mui/icons-material/Download";
-import Many2ManyValue from "./Many2ManyValue";
-import {generateLink} from "../../utils/generateYandexLink";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
-import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import DescriptionIcon from "@mui/icons-material/Description";
+import DownloadIcon from "@mui/icons-material/Download";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import {get} from "@ngard/tiny-get";
+import {useMemo} from "react";
+import {formatDate} from "../../utils/dateFormatter";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {generateLink} from "../../utils/generateYandexLink";
+import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import {parseBoolean} from "../../utils/parseBoolean";
+import IconGenerator from "../IconPicker/IconGenerator";
+import LogoDisplay from "../LogoDisplay";
+import TableTag from "../TableTag";
+import Many2ManyValue from "./Many2ManyValue";
+import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -176,15 +176,18 @@ const CellElementGenerator = ({field = {}, row}) => {
 
     case "PHOTO":
       return (
-        <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <LogoDisplay url={value} />
-        </span>
+        console.log("valueeeeeeee", value),
+        (
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <LogoDisplay url={value} />
+          </span>
+        )
       );
 
     case "MAP":

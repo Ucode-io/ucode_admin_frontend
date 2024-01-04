@@ -3,6 +3,7 @@ import React, {useMemo} from "react";
 import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
+import CellElementGenerator from "./CellElementGenerator";
 
 const TableDataForm = React.memo(
   ({
@@ -21,6 +22,7 @@ const TableDataForm = React.memo(
     data,
     isWrap,
     watch,
+    view,
   }) => {
     const {mutate: updateObject} = useMutation(() =>
       constructorObjectService.update(tableSlug, {
@@ -51,6 +53,9 @@ const TableDataForm = React.memo(
           boxSizing: "border-box",
         }}
       >
+        {/* {view?.attributes?.table_editable ? (
+          <CellElementGenerator field={field} row={row} />
+        ) : ( */}
         <CellElementGeneratorForTableView
           key={field?.id}
           relOptions={relOptions}
@@ -69,6 +74,7 @@ const TableDataForm = React.memo(
           relationfields={relationfields}
           data={data}
         />
+        {/* )} */}
       </Box>
     );
   }

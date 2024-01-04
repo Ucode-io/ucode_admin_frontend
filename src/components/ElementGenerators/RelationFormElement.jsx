@@ -194,6 +194,7 @@ const AutoCompleteElement = ({
       return ids;
     }
   }, [field]);
+  console.log("computedIds", computedIds);
 
   const autoFiltersFieldFroms = useMemo(() => {
     setPage(1);
@@ -269,7 +270,7 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             additional_request: {
               additional_field: "guid",
-              additional_values: [computedIds],
+              additional_values: [computedIds ?? value],
             },
             view_fields: field.attributes?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
@@ -412,7 +413,7 @@ const AutoCompleteElement = ({
         }, 1);
       }
     });
-  }, [computedValue, field]);
+  }, [computedValue, field, value]);
 
   useEffect(() => {
     if (value) getValueData();
@@ -435,7 +436,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-
+  console.log("localValue", field, localValue, computedOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -496,8 +497,6 @@ const AutoCompleteElement = ({
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);
-              // console.log('eeeeeeeeeeee', e.guid)
-              // setLocalValue(e.guid);
             }}
             onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}

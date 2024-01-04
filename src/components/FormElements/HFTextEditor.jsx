@@ -1,9 +1,9 @@
-import {lazy, Suspense} from "react";
-import {Controller, useWatch} from "react-hook-form";
-
+import { lazy, Suspense } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
+import "./reactQuill.scss"
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -29,7 +29,7 @@ const HFTextEditor = ({
   });
 
   return (
-    <FRowMultiLine label={label} required={field?.required}>
+    <FRowMultiLine label={label} required={field?.required} extraClassName={isNewTableView ? "tableView" : ""}>
       <Controller
         control={control}
         name={name}
@@ -38,7 +38,7 @@ const HFTextEditor = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({field: {onChange, ref}, fieldState: {error}}) => (
+        render={({ field: { onChange, ref }, fieldState: { error } }) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               theme="snow"
@@ -54,21 +54,10 @@ const HFTextEditor = ({
                 backgroundColor: `${isTransparent ? "transparent" : ""}`,
                 minWidth: "200px",
                 width: "100%",
+                border: "1px solid #FFF",
               }}
             />
           </Suspense>
-          // <TextField
-          //   size="small"
-          //   value={value}
-          //   onChange={(e) =>
-          //     onChange(withTrim ? e.target.value?.trim() : e.target.value)
-          //   }
-          //   name={name}
-          //   error={error}
-          //   fullWidth={fullWidth}
-          //   helperText={!disabledHelperText && error?.message}
-          //   {...props}
-          // />
         )}
       ></Controller>
     </FRowMultiLine>

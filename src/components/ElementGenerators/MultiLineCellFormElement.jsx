@@ -59,16 +59,18 @@ export default function MultiLineCellFormElement({ control, computedSlug, isWrap
                   height: "16px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  width: "100%",
                   marginRight: "8px",
                   cursor: "text",
+                  minHeight: "16px",
                 }
               : {
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  width: "100%",
                   marginRight: "8px",
                   cursor: "text",
+                  minHeight: "16px",
                 }
           }
         >

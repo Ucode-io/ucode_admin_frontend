@@ -53,28 +53,28 @@ const TableDataForm = React.memo(
           boxSizing: "border-box",
         }}
       >
-        {view?.attributes?.table_editable ? (
+        {/* {view?.attributes?.table_editable ? (
           <CellElementGenerator field={field} row={row} />
-        ) : (
-          <CellElementGeneratorForTableView
-            key={field?.id}
-            relOptions={relOptions}
-            isTableView={isTableView}
-            tableView={tableView}
-            tableSlug={tableSlug}
-            name={`multi.${index}.${field.slug}`}
-            isWrapField={isWrapField}
-            updateObject={updateObject}
-            fields={fields}
-            field={field}
-            row={row}
-            index={index}
-            control={control}
-            setFormValue={setFormValue}
-            relationfields={relationfields}
-            data={data}
-          />
-        )}
+        ) : ( */}
+        <CellElementGeneratorForTableView
+          key={field?.id}
+          relOptions={relOptions}
+          isTableView={isTableView}
+          tableView={tableView}
+          tableSlug={tableSlug}
+          name={`multi.${index}.${field.slug}`}
+          isWrapField={isWrapField}
+          updateObject={updateObject}
+          fields={fields}
+          field={field}
+          row={row}
+          index={index}
+          control={control}
+          setFormValue={setFormValue}
+          relationfields={relationfields}
+          data={data}
+        />
+        {/* )} */}
       </Box>
     );
   }

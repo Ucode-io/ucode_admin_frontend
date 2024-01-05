@@ -344,18 +344,20 @@ const ObjectDataTable = ({
             )}
           </PermissionWrapperV2>
           {!isRelationTable && (
-            <FieldButton
-              openFieldSettings={openFieldSettings}
-              view={view}
-              mainForm={mainForm}
-              fields={fields}
-              setFieldCreateAnchor={setFieldCreateAnchor}
-              fieldCreateAnchor={fieldCreateAnchor}
-              fieldData={fieldData}
-              setFieldData={setFieldData}
-              setDrawerState={setDrawerState}
-              setDrawerStateField={setDrawerStateField}
-            />
+            <PermissionWrapperV2 type={"add_field"}>
+              <FieldButton
+                openFieldSettings={openFieldSettings}
+                view={view}
+                mainForm={mainForm}
+                fields={fields}
+                setFieldCreateAnchor={setFieldCreateAnchor}
+                fieldCreateAnchor={fieldCreateAnchor}
+                fieldData={fieldData}
+                setFieldData={setFieldData}
+                setDrawerState={setDrawerState}
+                setDrawerStateField={setDrawerStateField}
+              />
+            </PermissionWrapperV2>
           )}
         </CTableRow>
       </CTableHead>

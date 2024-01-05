@@ -346,7 +346,10 @@ const ObjectDataTable = ({
             )}
           </PermissionWrapperV2>
           {!isRelationTable && (
-            <PermissionWrapperV2 type={"add_field"}>
+            <PermissionWrapperV2
+              tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+              type={"add_field"}
+            >
               <FieldButton
                 openFieldSettings={openFieldSettings}
                 view={view}

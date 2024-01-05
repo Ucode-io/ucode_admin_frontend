@@ -259,7 +259,9 @@ const TableRow = ({
                     </RectangleIconButton>
                   </PermissionWrapperV2>
                 </CTableCell>
-                <GeneratePdfFromTable row={row} />
+                <PermissionWrapperV2 type={"pdf_action"}>
+                  <GeneratePdfFromTable row={row} />
+                </PermissionWrapperV2>
               </div>
             </td>
 

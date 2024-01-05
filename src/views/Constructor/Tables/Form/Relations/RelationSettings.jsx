@@ -7,19 +7,12 @@ import {
   RemoveRedEye,
   VisibilityOff,
 } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Divider,
-  IconButton,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, Card, Checkbox, Divider, IconButton} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -31,8 +24,8 @@ import constructorFunctionService from "../../../../../services/constructorFunct
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import {applyDrag} from "../../../../../utils/applyDrag";
+import {relationTyes} from "../../../../../utils/constants/relationTypes";
 import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
 import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
@@ -43,10 +36,11 @@ import FunctionPath from "./FunctionPath";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { fieldButtons } from "../../../../../utils/constants/fieldTypes";
-import { useRelationGetByIdQuery } from "../../../../../services/relationService";
+import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
+import {fieldButtons} from "../../../../../utils/constants/fieldTypes";
+import {useRelationGetByIdQuery} from "../../../../../services/relationService";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 
 const relationViewTypes = [
   {
@@ -66,18 +60,18 @@ const RelationSettings = ({
   formType,
   height,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const form = useForm();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
     useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] =
     useState(true);
   const languages = useSelector((state) => state.languages.list);
-  const { handleSubmit, control, reset, watch, setValue } = useForm({
+  const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
       table_from: tableSlug,
       auto_filters: [],
@@ -116,21 +110,21 @@ const RelationSettings = ({
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorObjectService.getList(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({ data }) => {
+      onSuccess: ({data}) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -178,7 +172,7 @@ const RelationSettings = ({
     }
   );
 
-  const { data: functions = [] } = useQuery(
+  const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -197,7 +191,7 @@ const RelationSettings = ({
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+  const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
   });
 
@@ -293,7 +287,7 @@ const RelationSettings = ({
     if (formType === "CREATE") return;
   }, [relation]);
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: relation?.attributes?.relation_data?.id || relation?.id,
     queryParams: {
@@ -343,7 +337,7 @@ const RelationSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{ height }}>
+        <div className={styles.settingsBlockBody} style={{height}}>
           <form
             onSubmit={handleSubmit(submitHandler)}
             className={styles.fieldSettingsForm}
@@ -352,25 +346,6 @@ const RelationSettings = ({
               <Card>
                 {drawerType === "SCHEMA" && (
                   <div className="p-2">
-                    {/* <FRow label="Label" required>
-                      <Box
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        {languages?.map((lang) => (
-                          <HFTextField
-                            name={`attributes.label_${lang?.slug}`}
-                            control={control}
-                            placeholder={`Relation Label (${lang?.slug})`}
-                            fullWidth
-                          />
-                        ))}
-                      </Box>
-                    </FRow> */}
-
                     <FRow label="Label From" required>
                       <Box
                         style={{
@@ -494,6 +469,14 @@ const RelationSettings = ({
                         />
                       </div>
 
+                      <div className={styles.sectionHeader}>
+                        <HFSwitch
+                          control={control}
+                          name="attributes.table_editable"
+                          label={"Disable Edit table"}
+                        />
+                      </div>
+
                       {watch().multiple_insert && (
                         <div className={styles.sectionBody}>
                           <div className={styles.formRow}>
@@ -541,7 +524,7 @@ const RelationSettings = ({
                       <Checkbox
                         icon={
                           <PushPinOutlined
-                            style={{ transform: "rotate(45deg)" }}
+                            style={{transform: "rotate(45deg)"}}
                           />
                         }
                         checkedIcon={<PushPin />}
@@ -568,7 +551,7 @@ const RelationSettings = ({
                                 name={`filtersList[${index}].is_checked`}
                                 icon={
                                   <PushPinOutlined
-                                    style={{ transform: "rotate(45deg)" }}
+                                    style={{transform: "rotate(45deg)"}}
                                   />
                                 }
                                 checkedIcon={<PushPin />}
@@ -617,7 +600,7 @@ const RelationSettings = ({
                       <h2>Table Actions</h2>
                     </Box>
 
-                    <Box style={{ padding: 0, marginBottom: "10px" }}>
+                    <Box style={{padding: 0, marginBottom: "10px"}}>
                       <TableActions
                         control={control}
                         watch={watch}
@@ -648,7 +631,7 @@ const RelationSettings = ({
               <PrimaryButton
                 size="large"
                 className={styles.button}
-                style={{ width: "100%" }}
+                style={{width: "100%"}}
                 onClick={handleSubmit(submitHandler)}
                 loader={formLoader || loader}
               >

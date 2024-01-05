@@ -349,7 +349,6 @@ export default function TableHeadForTableView({
     }
   };
 
-  console.log("column", column);
   return (
     <>
       <CTableHeadCell

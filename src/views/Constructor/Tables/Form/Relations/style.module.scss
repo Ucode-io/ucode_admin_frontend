@@ -5,7 +5,6 @@
   background-color: #fff;
   display: flex;
 
-
   .additional {
     display: flex;
     flex-direction: column;
@@ -16,7 +15,7 @@
     .active {
       justify-content: start;
       color: #fff;
-      background: #007AFF;
+      background: #007aff;
     }
 
     .inactive {
@@ -25,7 +24,7 @@
 
       &:hover {
         color: #656f7d;
-        background: #F5F6FA;
+        background: #f5f6fa;
       }
     }
   }
@@ -42,7 +41,7 @@
   }
 
   .settingsBlockBody {
-    height: calc(100vh - 56px - 56px - 48px);
+    height: calc(100vh - 56px - 56px);
     overflow: auto;
   }
 
@@ -100,7 +99,8 @@
 .cascading_collapse {
   width: 400px;
 
-  .cascading_collapse_item {}
+  .cascading_collapse_item {
+  }
 
   .collapse_item {
     padding-left: 5px;

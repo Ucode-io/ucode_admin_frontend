@@ -1,10 +1,10 @@
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useNavigate, useParams} from "react-router-dom";
 import {Drawer} from "@mui/material";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -220,7 +220,7 @@ const RelationTable = forwardRef(
       getRelatedTabeSlug?.type,
       getRelatedTabeSlug?.relation_field_slug,
     ]);
-    console.log("computedFilters", computedFilters);
+
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
       if (getRelatedTabeSlug?.permission?.view_permission) return true;

@@ -2,8 +2,8 @@ import {Box} from "@mui/material";
 import React, {useMemo} from "react";
 import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
+import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
-import CellElementGenerator from "./CellElementGenerator";
 
 const TableDataForm = React.memo(
   ({
@@ -53,28 +53,28 @@ const TableDataForm = React.memo(
           boxSizing: "border-box",
         }}
       >
-        {/* {view?.attributes?.table_editable ? (
-          <CellElementGenerator field={field} row={row} />
-        ) : ( */}
-        <CellElementGeneratorForTableView
-          key={field?.id}
-          relOptions={relOptions}
-          isTableView={isTableView}
-          tableView={tableView}
-          tableSlug={tableSlug}
-          name={`multi.${index}.${field.slug}`}
-          isWrapField={isWrapField}
-          updateObject={updateObject}
-          fields={fields}
-          field={field}
-          row={row}
-          index={index}
-          control={control}
-          setFormValue={setFormValue}
-          relationfields={relationfields}
-          data={data}
-        />
-        {/* )} */}
+        {view?.attributes?.table_editable ? (
+          <CellElementGeneratorForTable field={field} row={row} />
+        ) : (
+          <CellElementGeneratorForTableView
+            key={field?.id}
+            relOptions={relOptions}
+            isTableView={isTableView}
+            tableView={tableView}
+            tableSlug={tableSlug}
+            name={`multi.${index}.${field.slug}`}
+            isWrapField={isWrapField}
+            updateObject={updateObject}
+            fields={fields}
+            field={field}
+            row={row}
+            index={index}
+            control={control}
+            setFormValue={setFormValue}
+            relationfields={relationfields}
+            data={data}
+          />
+        )}
       </Box>
     );
   }

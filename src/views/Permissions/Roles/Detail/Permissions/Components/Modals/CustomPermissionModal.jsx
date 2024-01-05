@@ -1,5 +1,5 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Checkbox, Modal, Typography } from "@mui/material";
+import {Box, Card, Checkbox, Modal, Typography} from "@mui/material";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -45,6 +45,16 @@ const CustomPermissionModal = ({
       name: "Settings",
       controlName: "settings",
     },
+    {
+      guid: "6",
+      name: "Pdf action",
+      controlName: "pdf_action",
+    },
+    {
+      guid: "7",
+      name: "Add field",
+      controlName: "add_field",
+    },
   ];
 
   const updateView = (val) => {
@@ -54,6 +64,8 @@ const CustomPermissionModal = ({
       automation: val ? "Yes" : "No",
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
+      pdf_action: val ? "Yes" : "No",
+      add_field: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };

@@ -74,6 +74,7 @@ export default function TableHeadForTableView({
   };
   const handleSummaryClose = () => {
     setSummaryOpen(null);
+    handleClose();
   };
 
   const fixColumnChangeHandler = (column, e) => {
@@ -118,11 +119,14 @@ export default function TableHeadForTableView({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
       });
   };
 
   const updateRelationView = (data) => {
     relationService.update(data, view?.relatedTable).then((res) => {
+      refetch();
+      handleSummaryClose();
       getAllData();
     });
   };
@@ -218,6 +222,7 @@ export default function TableHeadForTableView({
           icon: <PlaylistAddCircleIcon />,
           arrowIcon: <KeyboardArrowRightIcon />,
           onClickAction: (e) => {
+            console.log("relation_table_slug", column);
             if (computedViewSummaries) {
               handleAddSummary(column, "unset");
             } else {
@@ -326,7 +331,7 @@ export default function TableHeadForTableView({
         summaries: result ?? [],
       },
     };
-
+    console.log("viewwwwwwwwwwww", view);
     const computedValuesForRelationView = {
       ...relatedTable,
       table_from: view?.table_from?.slug,
@@ -336,6 +341,7 @@ export default function TableHeadForTableView({
         ...relatedTable?.attributes,
         summaries: result ?? [],
       },
+      relation_table_slug: column?.table_slug,
     };
 
     if (isRelationTable) {
@@ -487,10 +493,6 @@ export default function TableHeadForTableView({
                   <div
                     onClick={(e) => {
                       child.onClickAction(e);
-                      handleClose();
-                      if (child?.id !== 18) {
-                        handleClose();
-                      }
                     }}
                     style={{
                       display: "flex",

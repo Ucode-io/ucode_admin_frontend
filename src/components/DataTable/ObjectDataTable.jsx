@@ -243,7 +243,7 @@ const ObjectDataTable = ({
     estimateSize: () => elementHeight,
     overscan: 10,
   });
-
+  console.log("summaries", summaries);
   return (
     <CTable
       disablePagination={disablePagination}

@@ -16,10 +16,10 @@ import {useQueryClient} from "react-query";
 import {useDispatch} from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
+import relationService from "../../services/relationService";
 import {paginationActions} from "../../store/pagination/pagination.slice";
 import {CTableHeadCell} from "../CTable";
 import "./style.scss";
-import relationService from "../../services/relationService";
 
 export default function TableHeadForTableView({
   column,
@@ -54,7 +54,9 @@ export default function TableHeadForTableView({
   relatedTable,
   fieldsMap,
   getAllData,
+  relationAction,
 }) {
+  console.log("relationAction", relationAction);
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
@@ -93,7 +95,7 @@ export default function TableHeadForTableView({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-
+  console.log("columnnnnnnnnn", column);
   const textWrapChangeHandler = (column, e) => {
     const computedData = {
       ...currentView,
@@ -309,7 +311,6 @@ export default function TableHeadForTableView({
         field_name: column?.id,
         formula_name: item?.value,
       };
-
       result = Array.from(
         new Map(
           [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
@@ -331,7 +332,7 @@ export default function TableHeadForTableView({
         summaries: result ?? [],
       },
     };
-    console.log("viewwwwwwwwwwww", view);
+
     const computedValuesForRelationView = {
       ...relatedTable,
       table_from: view?.table_from?.slug,
@@ -341,7 +342,8 @@ export default function TableHeadForTableView({
         ...relatedTable?.attributes,
         summaries: result ?? [],
       },
-      relation_table_slug: column?.table_slug,
+      relation_table_slug:
+        relationAction?.relation_table_slug || column?.table_slug,
     };
 
     if (isRelationTable) {

@@ -457,7 +457,6 @@ const RelationTable = forwardRef(
 
     if (loader) return <PageFallback />;
 
-    console.log("relatedTable", relatedTable);
     return (
       <div assName={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (

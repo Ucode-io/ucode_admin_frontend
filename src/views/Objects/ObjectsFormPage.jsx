@@ -248,7 +248,7 @@ const ObjectsFormPage = ({
   // const getSubtitleValue = useMemo(() => {
   //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
   // }, [tableInfo]);
-  console.log("tableRelations", tableRelations);
+
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>

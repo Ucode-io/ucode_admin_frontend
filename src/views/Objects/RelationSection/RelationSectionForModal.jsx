@@ -274,7 +274,7 @@ const RelationSectionForModal = ({
     setData(newTabs);
     updateLayout(newTabs);
   };
-  console.log("getRelatedTabeSlug", getRelatedTabeSlug);
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -581,6 +581,7 @@ const RelationSectionForModal = ({
                       setSelectedObjects={setSelectedObjects}
                       tableSlug={tableSlug}
                       id={id}
+                      getAllData={getAllData}
                       type={type}
                     />
                   )}

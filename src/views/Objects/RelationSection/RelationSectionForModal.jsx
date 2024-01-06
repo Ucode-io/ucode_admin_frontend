@@ -25,6 +25,7 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
+import menuService from "../../../services/menuService";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -60,7 +61,22 @@ const RelationSectionForModal = ({
   const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  const menuItem = store.getState().menu.menuItem;
+
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
+
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
 

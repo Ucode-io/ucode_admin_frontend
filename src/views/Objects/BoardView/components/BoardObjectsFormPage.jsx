@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
 import { store } from "../../../../store";
@@ -22,6 +22,7 @@ import PermissionWrapperV2 from "../../../../components/PermissionWrapper/Permis
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import styles from "./style.module.scss";
 import Footer from "../../../../components/Footer";
+import menuService from "../../../../services/menuService";
 
 const BoardObjectsFormPage = ({
   tableSlugFromProps,
@@ -54,9 +55,23 @@ const BoardObjectsFormPage = ({
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
 
   const {
     handleSubmit,
@@ -66,9 +81,8 @@ const BoardObjectsFormPage = ({
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
+    defaultValues: { ...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false },
   });
-  const tableInfo = store.getState().menu.menuItem;
 
   const getAllData = async () => {
     setLoader(true);
@@ -190,14 +204,14 @@ const BoardObjectsFormPage = ({
   };
 
   useEffect(() => {
-    if (!tableInfo) return;
+    if (!menuItem) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, selectedTabIndex]);
+  }, [id, menuItem, selectedTabIndex]);
 
   useEffect(() => {
     getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language]);
+  }, [id, menuItem, selectedTabIndex, i18n?.language]);
 
   return (
     <div className={styles.formPage}>

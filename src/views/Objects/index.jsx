@@ -16,6 +16,7 @@ import { store } from "../../store";
 import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
+import menuService from "../../services/menuService";
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams();
@@ -76,7 +77,20 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(0);
   }, [queryTab]);
 
-  const menuItem = store.getState().menu.menuItem;
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
   return (

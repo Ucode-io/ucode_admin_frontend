@@ -3,11 +3,11 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { Button, Modal, Popover } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -20,6 +20,7 @@ import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from '@mui/icons-material/ClearAll';
+import menuService from "../../../../services/menuService";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -42,10 +43,24 @@ const ViewTabSelector = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const [typeNewView, setTypeNewView] = useState(null);
-  const selectedTable = store.getState().menu.menuItem;
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const { i18n } = useTranslation();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -101,8 +116,8 @@ const ViewTabSelector = ({
           </div>
 
           <div className={style.title}>
-            <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
-            <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
+            <IconGenerator className={style.icon} icon={menuItem?.isChild ? menuItem?.icon : menuItem?.icon} />
+            <h3>{menuItem?.label ?? menuItem?.title}</h3>
           </div>
         </div>
         <div className={style.appTabs}>

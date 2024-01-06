@@ -3,7 +3,7 @@ import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import { Button, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
 import layoutService from "../../services/layoutService";
 import { useProjectGetByIdQuery } from "../../services/projectService";
@@ -12,6 +12,7 @@ import { applyDrag } from "../../utils/applyDrag";
 import SectionBlockForModal from "./SectionBlockForModal";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
+import menuService from "../../services/menuService";
 
 const MainInfoForModal = ({
   computedSections,
@@ -56,7 +57,21 @@ const MainInfoForModal = ({
     }
   }, [isMultiLanguage, projectInfo]);
   const { i18n } = useTranslation();
-  const selectedTable = store.getState().menu.menuItem;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedTable, setSelectedTable] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setSelectedTable(res);
+      });
+    }
+  }, []);
 
   const updateLayout = (newData) => {
     const computedData = {

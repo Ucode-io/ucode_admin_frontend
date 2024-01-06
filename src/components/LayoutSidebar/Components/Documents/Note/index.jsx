@@ -1,12 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import {
-  useNoteByIdQuery,
-  useNoteCreateMutation,
-  useNoteUpdateMutation,
-} from "../../../../../services/noteService";
+import { useNoteByIdQuery, useNoteCreateMutation, useNoteUpdateMutation } from "../../../../../services/noteService";
 import { store } from "../../../../../store";
 import { useGetSingleObjectDocumentQuery } from "../../../../../services/templateNoteShareService";
 import { showAlert } from "../../../../../store/alert/alert.thunk";
@@ -17,6 +13,7 @@ import HFTextField from "../../../../FormElements/HFTextField";
 import EditorJs from "../Components/EditorJS";
 import styles from "./style.module.scss";
 import { folderIds } from "../../../SidebarRecursiveBlock/mock/folders";
+import menuService from "../../../../../services/menuService";
 
 const Note = () => {
   const form = useForm();
@@ -26,7 +23,21 @@ const Note = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const menuItem = useSelector((state) => state.menu.menuItem);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
 
   const token = queryParams.get("token");
 
@@ -41,25 +52,24 @@ const Note = () => {
     },
   });
 
-  const { data: createdShareDocument = {}, isLoading: loadingFromTokenDoc } =
-    useGetSingleObjectDocumentQuery({
-      params: {
-        "project-id": projectId,
-      },
-      data: {
-        token: token,
-      },
-      queryParams: {
-        onSuccess: (res) =>
-          res.data
-            ? form.reset({
-                json: res.data.json,
-                title: res.data.title,
-              })
-            : null,
-        enabled: Boolean(token),
-      },
-    });
+  const { data: createdShareDocument = {}, isLoading: loadingFromTokenDoc } = useGetSingleObjectDocumentQuery({
+    params: {
+      "project-id": projectId,
+    },
+    data: {
+      token: token,
+    },
+    queryParams: {
+      onSuccess: (res) =>
+        res.data
+          ? form.reset({
+              json: res.data.json,
+              title: res.data.title,
+            })
+          : null,
+      enabled: Boolean(token),
+    },
+  });
 
   useEffect(() => {
     if (!Boolean(noteId)) {
@@ -119,20 +129,11 @@ const Note = () => {
       >
         <Header border="none">
           <HeaderLeftSide flex={1}>
-            <HFTextField
-              control={form.control}
-              name="title"
-              className={styles.input}
-            />
+            <HFTextField control={form.control} name="title" className={styles.input} />
           </HeaderLeftSide>
         </Header>
 
-        <EditorJs
-          control={form.control}
-          name={"json"}
-          isLoading={isLoading}
-          loadingFromTokenDoc={loadingFromTokenDoc}
-        />
+        <EditorJs control={form.control} name={"json"} isLoading={isLoading} loadingFromTokenDoc={loadingFromTokenDoc} />
         <Header border="none">
           <HeaderRightSide flex={1}>
             <Button variant="contained" onClick={form.handleSubmit(onSubmit)}>

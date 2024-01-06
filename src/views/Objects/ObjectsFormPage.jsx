@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -21,6 +21,7 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
+import menuService from "../../services/menuService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -53,7 +54,23 @@ const ObjectsFormPage = ({
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem?.data?.table?.is_login_table;
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
+
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
 
@@ -69,9 +86,9 @@ const ObjectsFormPage = ({
     getValues,
     formState: {errors},
   } = useForm({
-    defaultValues: {...state, ...dateInfo, invite: isInvite ? invite : false},
+    defaultValues: {...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false},
   });
-  const tableInfo = store.getState().menu.menuItem;
+
 
   const getAllData = async () => {
     setLoader(true);
@@ -231,10 +248,10 @@ const ObjectsFormPage = ({
   };
 
   useEffect(() => {
-    if (!tableInfo) return;
+    if (!menuItem) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, selectedTabIndex]);
+  }, [id, menuItem, selectedTabIndex]);
 
   const clickHandler = () => {
     deleteTab(pathname);

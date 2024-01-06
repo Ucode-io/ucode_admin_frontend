@@ -3,7 +3,7 @@ import { Box, Card, Modal, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
@@ -12,13 +12,29 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import menuService from "../../services/menuService";
 
 const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
-  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "TABLE") {
@@ -140,7 +156,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
                     control={control} 
                     required
                     name={`attributes.label_${language?.slug}`} 
-                    defaultValue={fieldValue || menuItemLabel}
+                    defaultValue={fieldValue || menuItem?.label}
                   />
                 );
               })

@@ -344,6 +344,7 @@ export default function TableHeadForTableView({
       },
       relation_table_slug:
         relationAction?.relation_table_slug || column?.table_slug,
+      id: relationAction?.relation_id,
     };
 
     if (isRelationTable) {

@@ -53,10 +53,9 @@ export default function TableHeadForTableView({
   refetch,
   relatedTable,
   fieldsMap,
-  getAllData,
+  getAllData = () => {},
   relationAction,
 }) {
-  console.log("relationAction", relationAction);
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
@@ -95,7 +94,7 @@ export default function TableHeadForTableView({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-  console.log("columnnnnnnnnn", column);
+
   const textWrapChangeHandler = (column, e) => {
     const computedData = {
       ...currentView,
@@ -127,9 +126,8 @@ export default function TableHeadForTableView({
 
   const updateRelationView = (data) => {
     relationService.update(data, view?.relatedTable).then((res) => {
-      refetch();
-      handleSummaryClose();
       getAllData();
+      handleSummaryClose();
     });
   };
 
@@ -224,7 +222,6 @@ export default function TableHeadForTableView({
           icon: <PlaylistAddCircleIcon />,
           arrowIcon: <KeyboardArrowRightIcon />,
           onClickAction: (e) => {
-            console.log("relation_table_slug", column);
             if (computedViewSummaries) {
               handleAddSummary(column, "unset");
             } else {
@@ -360,7 +357,6 @@ export default function TableHeadForTableView({
       constructorViewService.update(tableSlug, computedValues).then(() => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
         handleSummaryClose();
-        handleClose();
       });
     }
   };

@@ -85,6 +85,7 @@ const ObjectDataTable = ({
   view,
   navigateToForm,
   refetch,
+  getAllData = () => {},
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -243,7 +244,7 @@ const ObjectDataTable = ({
     estimateSize: () => elementHeight,
     overscan: 10,
   });
-
+  console.log("summaries", summaries);
   return (
     <CTable
       disablePagination={disablePagination}
@@ -313,6 +314,7 @@ const ObjectDataTable = ({
                   setFieldCreateAnchor={setFieldCreateAnchor}
                   setFieldData={setFieldData}
                   refetch={refetch}
+                  getAllData={getAllData}
                 />
               )
           )}

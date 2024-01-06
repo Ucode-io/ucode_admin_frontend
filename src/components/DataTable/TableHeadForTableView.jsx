@@ -333,8 +333,15 @@ export default function TableHeadForTableView({
       },
     };
 
+    const relationData = {
+      ...relationAction?.relation,
+      table_from: relationAction?.relation?.table_from?.slug,
+      table_to: relationAction?.relation?.table_to?.slug,
+    };
+
     const computedValuesForRelationView = {
       ...relatedTable,
+      ...relationData,
       table_from: view?.table_from?.slug,
       table_to: view?.table_to?.slug,
       view_fields: view?.view_fields?.map((el) => el.id),

@@ -44,7 +44,6 @@ const NewRelationSection = ({
   selectedTab,
   errors,
 }) => {
-  console.log("relatedTable", relatedTable);
   const [data, setData] = useState([]);
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;

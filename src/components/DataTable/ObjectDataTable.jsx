@@ -244,7 +244,7 @@ const ObjectDataTable = ({
     estimateSize: () => elementHeight,
     overscan: 10,
   });
-  console.log("summaries", summaries);
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -286,6 +286,7 @@ const ObjectDataTable = ({
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
                   currentView={currentView}
+                  relationAction={relationAction}
                   column={column}
                   isRelationTable={isRelationTable}
                   index={index}

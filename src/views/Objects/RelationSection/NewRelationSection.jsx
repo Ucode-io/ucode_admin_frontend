@@ -217,7 +217,7 @@ const NewRelationSection = ({
         };
         setData(layout);
       });
-  }, [tableSlug, menuItem.table_id, i18n?.language]);
+  }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {

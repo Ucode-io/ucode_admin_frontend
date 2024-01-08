@@ -142,7 +142,7 @@ const RelationSectionForModal = ({
       };
       setData(layout2);
     });
-  }, [tableSlug, menuItem.table_id, i18n?.language, menuItem?.id]);
+  }, [tableSlug, menuItem?.table_id, i18n?.language, menuItem?.id]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];

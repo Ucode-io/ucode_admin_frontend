@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
@@ -21,8 +21,9 @@ import styles from "./style.module.scss";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
+import menuService from "../../services/menuService";
 
-const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fieldsMap, modal = false, refetch, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
+const ObjectsFormPageForModal = ({ tableSlugFromProps, handleClose, fieldsMap, modal = false, refetch, selectedRow, dateInfo, fullScreen, setFullScreen = () => {} }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
@@ -48,10 +49,25 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fi
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
   const [layout, setLayout] = useState({});
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
 
   const {
     handleSubmit,
@@ -61,9 +77,8 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fi
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
+    defaultValues: { ...state, ...dateInfo, invite: isInvite ? menuService?.data?.table?.is_login_table : false },
   });
-  const tableInfo = store.getState().menu.menuItem;
 
   const getAllData = async () => {
     setLoader(true);
@@ -195,14 +210,14 @@ const ObjectsFormPageForModal = ({ tableSlugFromProps, menuItem, handleClose, fi
   };
 
   useEffect(() => {
-    if (!tableInfo) return;
+    if (!menuItem) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language, selectedTab]);
+  }, [id, menuItem, selectedTabIndex, i18n?.language, selectedTab]);
 
   useEffect(() => {
     getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language, selectedTab]);
+  }, [id, menuItem, selectedTabIndex, i18n?.language, selectedTab]);
 
   return (
     <div className={styles.formPage}>

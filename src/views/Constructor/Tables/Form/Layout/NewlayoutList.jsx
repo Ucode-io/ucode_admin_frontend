@@ -1,13 +1,13 @@
 import {Box} from "@mui/material";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useFieldArray} from "react-hook-form";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {CTable, CTableCell, CTableHead} from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
-import {useMenuListQuery} from "../../../../../services/menuService";
+import menuService, {useMenuListQuery} from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
 import {useTranslation} from "react-i18next";
 
@@ -87,8 +87,23 @@ function NewlayoutList({
 
   const languages = useSelector((state) => state.languages.list);
   const [menus, setMenus] = useState([]);
-  const menuItem = useSelector((state) => state.menu.menuItem);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
+  
   const {isLoading} = useMenuListQuery({
     params: {
       table_id: menuItem?.table_id,

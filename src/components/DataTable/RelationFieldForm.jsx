@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import HFSelect from "../FormElements/HFSelect";
 import "./style.scss";
 import style from "./field.module.scss";
@@ -9,19 +9,27 @@ import listToOptions from "../../utils/listToOptions";
 import constructorFieldService from "../../services/constructorFieldService";
 import { useQuery } from "react-query";
 import HFMultipleSelect from "../FormElements/HFMultipleSelect";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import menuService from "../../services/menuService";
 
-export default function RelationFieldForm({
-  control,
-  watch,
-  setValue,
-  fieldWatch,
-  relatedTableSlug,
-}) {
+export default function RelationFieldForm({ control, watch, setValue, fieldWatch, relatedTableSlug }) {
   const { tableSlug } = useParams();
   const envId = store.getState().company.environmentId;
-  const menuItem = useSelector((state) => state.menu.menuItem);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     setValue("table_from", menuItem?.data.table?.slug);
@@ -40,10 +48,7 @@ export default function RelationFieldForm({
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorFieldService.getList(
-        { table_slug: relatedTableSlug },
-        relatedTableSlug
-      );
+      return constructorFieldService.getList({ table_slug: relatedTableSlug }, relatedTableSlug);
     },
     {
       select: ({ fields }) => {
@@ -83,16 +88,7 @@ export default function RelationFieldForm({
       />
       {fieldWatch.relation_type !== "Recursive" && (
         <>
-          <HFSelect
-            disabledHelperText
-            options={tables}
-            name="table_to"
-            control={control}
-            fullWidth
-            required
-            placeholder="Table to"
-            className={style.input}
-          />
+          <HFSelect disabledHelperText options={tables} name="table_to" control={control} fullWidth required placeholder="Table to" className={style.input} />
           <HFMultipleSelect
             disabledHelperText
             options={relatedTableFields}

@@ -23,6 +23,7 @@ import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
 import constructorObjectService from "../../../services/constructorObjectService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import menuService from "../../../services/menuService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -48,7 +49,22 @@ const NewRelationSection = ({
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  const menuItem = store.getState().menu.menuItem;
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -61,7 +77,6 @@ const NewRelationSection = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [type, setType] = useState(null);
-  let [searchParams] = useSearchParams();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);

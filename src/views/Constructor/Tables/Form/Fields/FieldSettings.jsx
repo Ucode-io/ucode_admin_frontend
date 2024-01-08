@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -27,7 +27,7 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import { useMenuListQuery } from "../../../../../services/menuService";
+import menuService, { useMenuListQuery } from "../../../../../services/menuService";
 import { store } from "../../../../../store";
 import {
   fieldButtons,
@@ -56,7 +56,23 @@ const FieldSettings = ({
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
-  const menuItem = store.getState().menu.menuItem;
+  
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);

@@ -4,22 +4,16 @@ import { CTableHeadCell } from "../CTable";
 import FieldOptionModal from "./FieldOptionModal";
 import FieldCreateModal from "./FieldCreateModal";
 import { useForm } from "react-hook-form";
-import {
-  useFieldCreateMutation,
-  useFieldUpdateMutation,
-} from "../../services/constructorFieldService";
+import { useFieldCreateMutation, useFieldUpdateMutation } from "../../services/constructorFieldService";
 import { useDispatch, useSelector } from "react-redux";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
 import constructorViewService from "../../services/constructorViewService";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
-import {
-  useRelationFieldUpdateMutation,
-  useRelationUpdateMutation,
-  useRelationsCreateMutation,
-} from "../../services/relationService";
+import { useRelationFieldUpdateMutation, useRelationUpdateMutation, useRelationsCreateMutation } from "../../services/relationService";
 import { transliterate } from "../../utils/textTranslater";
+import menuService from "../../services/menuService";
 
 export default function FieldButton({
   openFieldSettings,
@@ -35,12 +29,12 @@ export default function FieldButton({
 }) {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const menuItem = useSelector((state) => state.menu.menuItem);
+  const [menuItem, setMenuItem] = useState(null);
   const { control, watch, setValue, reset, handleSubmit } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
-
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
   const handleOpenFieldDrawer = (column) => {
@@ -50,6 +44,18 @@ export default function FieldButton({
       setDrawerState(column);
     }
   };
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
 
   const updateView = (column) => {
     constructorViewService
@@ -64,49 +70,45 @@ export default function FieldButton({
       });
   };
 
-  const { mutate: createField, isLoading: createLoading } =
-    useFieldCreateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful created", "success"));
-        updateView(res?.id);
-      },
-    });
+  const { mutate: createField, isLoading: createLoading } = useFieldCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful created", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const { mutate: updateField, isLoading: updateLoading } =
-    useFieldUpdateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const { mutate: updateField, isLoading: updateLoading } = useFieldUpdateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const { mutate: createRelation, isLoading: realationLoading } =
-    useRelationsCreateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const { mutate: createRelation, isLoading: realationLoading } = useRelationsCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const { mutate: updateRelation, isLoading: realationUpdateLoading } =
-    useRelationFieldUpdateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const { mutate: updateRelation, isLoading: realationUpdateLoading } = useRelationFieldUpdateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
   const onSubmit = (values) => {
     const data = {
       ...values,
@@ -121,11 +123,7 @@ export default function FieldButton({
         ...values.attributes,
         formula: values?.attributes?.advanced_type
           ? values?.attributes?.formula
-          : values?.attributes?.from_formula +
-            " " +
-            values?.attributes?.math?.value +
-            " " +
-            values?.attributes?.to_formula,
+          : values?.attributes?.from_formula + " " + values?.attributes?.math?.value + " " + values?.attributes?.to_formula,
       },
     };
     const relationData = {
@@ -206,33 +204,24 @@ export default function FieldButton({
           <AddRoundedIcon />
         </span>
       </CTableHeadCell>
-      <FieldOptionModal
-        anchorEl={fieldOptionAnchor}
-        setAnchorEl={setFieldOptionAnchor}
-        setFieldCreateAnchor={setFieldCreateAnchor}
-        setValue={setValue}
-        target={target}
-      />
-      {
-        fieldCreateAnchor && (
-          <FieldCreateModal
-        anchorEl={fieldCreateAnchor}
-        setAnchorEl={setFieldCreateAnchor}
-        watch={watch}
-        control={control}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        target={target}
-        setFieldOptionAnchor={setFieldOptionAnchor}
-        reset={reset}
-        menuItem={menuItem}
-        fieldData={fieldData}
-        handleOpenFieldDrawer={handleOpenFieldDrawer}
-      />
-        )
-      }
-      
+      <FieldOptionModal anchorEl={fieldOptionAnchor} setAnchorEl={setFieldOptionAnchor} setFieldCreateAnchor={setFieldCreateAnchor} setValue={setValue} target={target} />
+      {fieldCreateAnchor && (
+        <FieldCreateModal
+          anchorEl={fieldCreateAnchor}
+          setAnchorEl={setFieldCreateAnchor}
+          watch={watch}
+          control={control}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          target={target}
+          setFieldOptionAnchor={setFieldOptionAnchor}
+          reset={reset}
+          menuItem={menuItem}
+          fieldData={fieldData}
+          handleOpenFieldDrawer={handleOpenFieldDrawer}
+        />
+      )}
     </div>
   );
 }

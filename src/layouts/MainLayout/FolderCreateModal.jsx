@@ -22,7 +22,6 @@ const FolderCreateModal = ({
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
 
   const onSubmit = (data) => {
     if (modalType === "create") {

@@ -11,11 +11,11 @@ export default function useTabRouter() {
   const tabs = useSelector((state) => state.tabRouter.tabs)
   const { drop } = useAliveController()
 
-  const navigateToForm = (tableSlug, type = "CREATE", row = {}, state) => {
+  const navigateToForm = (tableSlug, type = "CREATE", row = {}, state, menuId) => {
     if (type === "CREATE") {
       const id = generateID()
 
-      const link = `/main/${appId}/object/${tableSlug}/create/${id}`
+      const link = `/main/${appId}/object/${tableSlug}/create/${id}?menuId=${menuId}`
 
       const newTab = {
         id,
@@ -28,7 +28,7 @@ export default function useTabRouter() {
       return
     }
 
-    const link = `/main/${appId}/object/${tableSlug}/${row.guid}`
+    const link = `/main/${appId}/object/${tableSlug}/${row.guid}?menuId=${menuId}`
 
     const tab = tabs.find((tab) => tab.link === link)
 

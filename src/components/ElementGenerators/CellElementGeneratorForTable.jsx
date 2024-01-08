@@ -23,6 +23,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {makeStyles} from "@mui/styles";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import IconPicker from "../IconPicker";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -227,10 +228,10 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
         </Box>
       );
 
-    case "ICO":
+    case "ICON":
       return (
         <Box className={classes.box}>
-          <IconGenerator icon={value} />
+          <IconGenerator color={"#007AFF"} icon={value} />
         </Box>
       );
 

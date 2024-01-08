@@ -109,6 +109,8 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     return getExten?.[getExten?.length - 1];
   };
 
+  const formula = field?.attributes?.formula ?? "";
+
   if (field.render) {
     return field.render(row);
   }
@@ -217,11 +219,9 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     case "FORMULA_FRONTEND":
       return (
         <Box className={classes.formula_box}>
-          {value !== undefined && typeof value === "number"
-            ? numberWithSpaces(value?.toFixed(1))
-            : value === undefined
-            ? value
-            : 0}
+          {formula && typeof value === "number"
+            ? numberWithSpaces(value)
+            : value}
 
           <FunctionsIcon />
         </Box>

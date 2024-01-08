@@ -47,7 +47,7 @@ const ObjectsFormPage = ({
   const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);

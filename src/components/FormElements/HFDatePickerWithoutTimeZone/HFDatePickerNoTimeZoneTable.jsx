@@ -1,35 +1,58 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
-import { DateRange, Lock } from "@mui/icons-material";
-import { Box, InputAdornment, TextField, Tooltip } from "@mui/material";
+import {DateRange, Lock} from "@mui/icons-material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
 import InputMask from "react-input-mask";
-import "./style2.scss";
-import { locale } from "./Plugins/locale";
 import "react-multi-date-picker/styles/layouts/mobile.css";
-import CopyToClipboard from "../CopyToClipboard";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {format, parse} from "date-fns";
+import {useMemo} from "react";
+import "./style.scss";
+import {locale} from "../../DatePickers/Plugins/locale";
+import CopyToClipboard from "../../CopyToClipboard";
 
-const CDateTimePicker = ({
+const CDateDatePickerNoTimeZoneTable = ({
   value,
   placeholder,
   isBlackBg,
-  isNewTableView,
   classes,
   onChange,
   isFormEdit,
-  isTransparent = false,
   tabIndex,
   mask,
+  isTransparent,
+  isNewTableView,
   showCopyBtn = true,
   disabled = false,
+  field,
+  updateObject,
+  isTableView,
 }) => {
+  const onChangeHandler = (val) => {
+    onChange(val ? format(new Date(val), "dd.MM.yyyy HH:mm") : "");
+    if (isTableView) updateObject();
+  };
+
+  const computedValue = useMemo(() => {
+    if (!value) return "";
+
+    if (value.includes("Z")) return new Date(value);
+
+    return parse(value, "dd.MM.yyyy HH:mm", new Date());
+  }, [value]);
+
   return (
     <div className="main_wrapper">
       <DatePicker
-        portal={document.body}
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={mask} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={mask}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -40,22 +63,19 @@ const CDateTimePicker = ({
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
-                      borderTopRightRadius: 0,
-                      borderBottomRightRadius: 0,
                     },
-                    "& .MuiInputBase-input": {
-                      paddingTop: isNewTableView ? 0 : "10px",
-                      paddingBottom: isNewTableView ? 0 : "10px",
+                    "& input": {
+                      padding: "5px !important",
                     },
-                    width: "100%",
+                    width: "150px",
                   }}
                   fullWidth
-                  className={`${isFormEdit ? "custom_textfield" : ""}`}
+                  className={"custom_textfield"}
                   autoComplete="off"
                   autoFocus={tabIndex === 1}
                   InputProps={{
                     ...InputProps,
-                    inputProps: { tabIndex },
+                    inputProps: {tabIndex},
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
@@ -63,17 +83,16 @@ const CDateTimePicker = ({
                     style: isTransparent
                       ? {
                           background: "transparent",
+                          border: "none",
                         }
                       : disabled
-                        ? {
-                            background: "#c0c0c039",
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                          }
-                        : {
-                            background: isBlackBg ? "#2A2D34" : "",
-                            color: isBlackBg ? "#fff" : "",
-                          },
+                      ? {
+                          background: "#c0c0c039",
+                        }
+                      : {
+                          background: isBlackBg ? "#2A2D34" : "",
+                          color: isBlackBg ? "#fff" : "",
+                        },
                   }}
                 />
               )}
@@ -82,42 +101,45 @@ const CDateTimePicker = ({
         }}
         plugins={[weekends()]}
         weekStartDayIndex={1}
+        portal
         locale={locale}
-        portalTarget={document}
         format="DD.MM.YYYY"
-        value={new Date(value) || ""}
-        onChange={(val) => onChange(val ? new Date(val) : "")}
+        value={computedValue || ""}
+        onChange={onChangeHandler}
       />
       <DatePicker
         disableDayPicker
-        portal={document.body}
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={"99:99"} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={"99:99"}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
-                  portalTarget={document.body}
-                  portal={document.body}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   // size="small"
                   autoComplete="off"
                   placeholder={placeholder.split("#")[1]}
-                  className={`${isFormEdit ? "custom_textfield" : ""}`}
-                  style={{ border: "none" }}
+                  className={"custom_textfield"}
+                  style={{border: "none"}}
                   fullWidth
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
                     },
                     "& .MuiInputBase-input": {
                       paddingTop: isNewTableView ? 0 : "10px",
                       paddingBottom: isNewTableView ? 0 : "10px",
                     },
-                    width: "100%",
+                    "& input": {
+                      padding: "5px !important",
+                    },
+                    width: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,
@@ -129,18 +151,16 @@ const CDateTimePicker = ({
                           background: "transparent",
                         }
                       : disabled
-                        ? {
-                            background: "#c0c0c039",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                          }
-                        : {
-                            background: isBlackBg ? "#2A2D34" : "",
-                            color: isBlackBg ? "#fff" : "",
-                          },
+                      ? {
+                          background: "#c0c0c039",
+                        }
+                      : {
+                          background: isBlackBg ? "#2A2D34" : "",
+                          color: isBlackBg ? "#fff" : "",
+                        },
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{display: "flex", alignItems: "center"}}>
                           <DateRange
                             style={{
                               color: isBlackBg ? "#fff" : "",
@@ -149,7 +169,7 @@ const CDateTimePicker = ({
                           />
                           {disabled && (
                             <Tooltip title="This field is disabled for this role!">
-                              <Lock style={{ fontSize: "20px" }} />
+                              <Lock style={{fontSize: "20px"}} />
                             </Tooltip>
                           )}
                         </Box>
@@ -162,13 +182,16 @@ const CDateTimePicker = ({
           );
         }}
         plugins={[<TimePicker hideSeconds />]}
+        portal
         format="HH:mm"
-        value={new Date(value) || ""}
-        onChange={(val) => onChange(val ? new Date(val) : "")}
+        value={computedValue || ""}
+        onChange={onChangeHandler}
       />
-      {showCopyBtn && <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />}
+      {showCopyBtn && (
+        <CopyToClipboard copyText={value} style={{marginLeft: 8}} />
+      )}
     </div>
   );
 };
 
-export default CDateTimePicker;
+export default CDateDatePickerNoTimeZoneTable;

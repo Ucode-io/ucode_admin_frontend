@@ -2,7 +2,7 @@ import { useEffect, useId } from "react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -28,6 +28,7 @@ import { store } from "../../../store";
 import style from "../style.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import menuService from "../../../services/menuService";
 
 const BoardView = ({
   view,
@@ -54,7 +55,22 @@ const BoardView = ({
   const [tab, setTab] = useState();
   const { navigateToForm } = useTabRouter();
   const { filters } = useFilters(tableSlug, view.id);
-  const menuItem = store.getState().menu.menuItem;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;

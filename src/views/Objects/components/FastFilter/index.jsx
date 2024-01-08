@@ -69,7 +69,7 @@ const FastFilter = ({
       })
     );
   };
-  console.log("computedFields", computedFields);
+
   return (
     <div
       className={styles.filtersBlock}

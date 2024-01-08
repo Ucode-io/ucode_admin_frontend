@@ -6,6 +6,7 @@ import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import HFDatePicker from "../FormElements/HFDatePicker";
+import HFDateDatePickerWithoutTimeZoneTable from "../FormElements/HFDatePickerWithoutTimeZone";
 import HFDateTimePicker from "../FormElements/HFDateTimePicker";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
@@ -26,6 +27,7 @@ import InventoryBarCode from "../FormElements/InventoryBarcode";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
+import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 
@@ -47,6 +49,7 @@ const CellElementGeneratorForTableView = ({
   data,
   isTableView,
   isNewRow,
+  newColumn = false,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
@@ -131,8 +134,30 @@ const CellElementGeneratorForTableView = ({
 
   switch (field.type) {
     case "LOOKUP":
-      return (
+      return !newColumn ? (
         <CellRelationFormElementForTableView
+          relOptions={relOptions}
+          isNewRow={isNewRow}
+          tableView={tableView}
+          disabled={isDisabled}
+          isTableView={true}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      ) : (
+        <CellRelationFormElementForNewColumn
           relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}
@@ -411,6 +436,24 @@ const CellElementGeneratorForTableView = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           isTransparent={true}
+        />
+      );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <HFDateDatePickerWithoutTimeZoneTable
+          control={control}
+          name={computedSlug}
+          tabIndex={field?.tabIndex}
+          updateObject={updateObject}
+          isTableView={isTableView}
+          mask={"99.99.9999"}
+          required={field?.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          isNewTableView={true}
+          field={field}
         />
       );
 

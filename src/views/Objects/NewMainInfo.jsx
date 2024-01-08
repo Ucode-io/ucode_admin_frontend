@@ -77,9 +77,12 @@ const MainInfo = ({
               className={styles.formCard}
               icon={section.icon}
             >
-              <div className={styles.newformColumn}>
+              <div className={styles.newformColumn} style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr"
+              }}>
                 {section.fields?.map((field) => (
-                  <Box style={{display: "flex", alignItems: "flex-start"}}>
+                  <Box style={{display: "flex", alignItems: "flex-start", minWidth: "250px"}}>
                     <FormElementGenerator
                       key={field.id}
                       isMultiLanguage={isMultiLanguage}

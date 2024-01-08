@@ -92,7 +92,7 @@ rmdp-day.rmdp-today.highlight span {
     .rmdp-calendar {
       width: 100%;
 
-      .rmdp-day-picker>div {
+      .rmdp-day-picker > div {
         width: 100%;
       }
     }
@@ -105,17 +105,15 @@ rmdp-day.rmdp-today.highlight span {
   justify-content: space-between;
   grid-template-columns: 2fr 2fr 1fr;
   width: 100%;
-
-
   // .rmdp-container:first-child {
-  //   width: 33%;
-  // }
-
-  // .rmdp-container:nth-child(2) {
-  //   width: 33%;
+  //   width: 50%;
   // }
 
   // .rmdp-container:last-child {
   //   width: 60%;
   // }
+}
+
+.custom_textfield div fieldset {
+  border: none;
 }

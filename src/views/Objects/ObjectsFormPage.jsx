@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -13,6 +13,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
+import menuService from "../../services/menuService";
 import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
 import { sortSections } from "../../utils/sectionsOrderNumber";
@@ -53,9 +54,28 @@ const ObjectsFormPage = ({
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem?.data?.table?.is_login_table;
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
+
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
+
+  const {deleteTab} = useTabRouter();
+  const {pathname} = useLocation();
 
   const {
     handleSubmit,
@@ -66,9 +86,9 @@ const ObjectsFormPage = ({
     getValues,
     formState: {errors},
   } = useForm({
-    defaultValues: {...state, ...dateInfo, invite: isInvite ? invite : false},
+    defaultValues: {...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false},
   });
-  const tableInfo = store.getState().menu.menuItem;
+
 
   const getAllData = async () => {
     setLoader(true);
@@ -228,10 +248,15 @@ const ObjectsFormPage = ({
   };
 
   useEffect(() => {
-    if (!tableInfo) return;
+    if (!menuItem) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, selectedTabIndex]);
+  }, [id, menuItem, selectedTabIndex]);
+
+  const clickHandler = () => {
+    deleteTab(pathname);
+    navigate(-1);
+  };
 
   // useEffect(() => {
   //   getFields();
@@ -280,7 +305,7 @@ const ObjectsFormPage = ({
         extra={
           <>
             <SecondaryButton
-              onClick={() => (modal ? handleClose() : navigate(-1))}
+              onClick={() => (modal ? handleClose() : clickHandler())}
               color="error"
             >
               Close

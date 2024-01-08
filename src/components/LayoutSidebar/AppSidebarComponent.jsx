@@ -2,7 +2,7 @@ import "./style.scss";
 import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
 import {useEffect} from "react";
 import {BsThreeDots} from "react-icons/bs";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -34,12 +34,12 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
-
   const withoutPermission =
     element?.id === adminId || element?.id === analyticsId ? true : false;
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
+
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -56,7 +56,7 @@ const AppSidebar = ({
       }
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
-      navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
+      navigate(`/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`);
     } else if (element.type === "LINK") {
       if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
         navigate(
@@ -88,6 +88,10 @@ const AppSidebar = ({
   };
   const menuStyle = menuTemplate?.menu_template;
 
+  const [searchParams] = useSearchParams();
+
+  const menuItem = searchParams.get("menuId");
+
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
       .replace("{login_table_slug}", loginTableSlug)
@@ -111,10 +115,10 @@ const AppSidebar = ({
             e.stopPropagation();
             clickHandler();
           }}
-          className="parent-folder column-drag-handle"
+          className="parent-folder column-drag-handle awdaw"
           style={{
             background:
-              selectedApp?.id === element?.id
+              selectedApp?.id === element?.id || menuItem === element?.id
                 ? menuStyle?.active_background || "#007AFF"
                 : menuStyle?.background,
             color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",

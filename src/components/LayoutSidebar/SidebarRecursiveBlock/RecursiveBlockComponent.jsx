@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {BsThreeDots} from "react-icons/bs";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import {useMenuListQuery} from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
@@ -46,6 +46,7 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
   index,
+  menuItemId,
   selectedApp,
   userType = false,
 }) => {
@@ -178,6 +179,8 @@ const RecursiveBlock = ({
     }
   }, []);
 
+console.log('sssssssss', menuItem)
+
   return (
     <Draggable key={index}>
       <Box sx={{padding: "0 5px"}}>
@@ -196,7 +199,7 @@ const RecursiveBlock = ({
                 className="label"
                 style={{
                   color:
-                    menuItem?.id === element?.id
+                    menuItem?.id === element?.id || menuItemId === element?.id
                       ? menuStyle?.active_text
                       : menuStyle?.text,
                   opacity: element?.isChild && 0.6,

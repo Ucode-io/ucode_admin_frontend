@@ -4,7 +4,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import {Box, Popover, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CellRelationFormElementForTableView = ({
+const CellRelationFormElementForNewColumn = ({
   relOptions,
   tableView,
   isBlackBg,
@@ -47,7 +47,6 @@ const CellRelationFormElementForTableView = ({
   relationfields,
   data,
   isNewRow,
-  isTableView,
 }) => {
   const classes = useStyles();
 
@@ -109,7 +108,6 @@ const CellRelationFormElementForTableView = ({
                 !isNewRow && updateObject();
               }}
               field={field}
-              isTableView={isTableView}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}
               error={error}
@@ -141,9 +139,9 @@ const AutoCompleteElement = ({
   index,
   control,
   isNewRow,
-  isTableView,
   setFormValue = () => {},
 }) => {
+  console.log("fieldddddddddd", field);
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -272,7 +270,7 @@ const AutoCompleteElement = ({
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
         (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        Boolean(!relOptions?.length && isNewRow),
+        !relOptions?.length,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -281,17 +279,12 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
+        console.log("datatatatatata", data);
         if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),
           ]);
-        }
-
-        if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
-          console.log("entereddddd 2");
-          setLocalValue(null);
-          setValue("");
         }
       },
     }
@@ -301,7 +294,12 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
-    return uniqueObjects ?? [];
+    return (
+      uniqueObjects?.map((option) => ({
+        label: getRelationFieldTabsLabel(field, option),
+        value: option?.guid,
+      })) ?? []
+    );
   }, [allOptions]);
 
   const computedValue = useMemo(() => {
@@ -328,7 +326,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-    setValue(val?.guid ?? null);
+    setValue(val?.value ?? null);
 
     if (!field?.attributes?.autofill) return;
 
@@ -342,12 +340,12 @@ const AutoCompleteElement = ({
 
   const getValueData = async () => {
     const id = value;
-    const data = allOptions?.find((item) => item?.guid === id);
+    const data = computedOptions?.find((item) => item?.value === id);
 
     if (data?.prepayment_balance) {
       setFormValue("prepayment_balance", data?.prepayment_balance || 0);
     }
-
+    console.log("datadatadata", data);
     setLocalValue(data ? [data] : null);
   };
 
@@ -397,7 +395,7 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     if (value) getValueData();
-  }, [value, allOptions]);
+  }, [value, computedOptions]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
@@ -435,12 +433,6 @@ const AutoCompleteElement = ({
       </div>
     </components.SingleValue>
   );
-
-  const autofilterDisable = useMemo(() => {
-    if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
-      return true;
-    } else return false;
-  }, [autoFiltersValue]);
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -494,7 +486,7 @@ const AutoCompleteElement = ({
             inputChangeHandler(newInputValue);
           }
         }}
-        isDisabled={disabled || autofilterDisable}
+        isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}
@@ -530,22 +522,15 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         )}
-        menuShouldScrollIntoView
+        // menuShouldScrollIntoView
         styles={customStyles}
-        onPaste={(e) => {
-          console.log("eeeeeee -", e.clipboardData.getData("Text"));
-        }}
-        getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
-        }
-        getOptionValue={(option) => option.value}
-        isOptionSelected={(option, value) =>
-          value.some((val) => val.guid === value)
-        }
-        blurInputOnSelect
+        // onPaste={(e) => {
+        //   console.log("eeeeeee -", e.clipboardData.getData("Text"));
+        // }}
+        // blurInputOnSelect
       />
     </div>
   );
 };
 
-export default CellRelationFormElementForTableView;
+export default CellRelationFormElementForNewColumn;

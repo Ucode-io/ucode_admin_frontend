@@ -338,7 +338,7 @@ const TableView = ({
                 ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
-            : undefined,
+            : "",
         },
       });
     },
@@ -498,6 +498,15 @@ const TableView = ({
     }
   };
 
+  const navigateCreatePage = (row) => {
+    if (layoutType === "PopupLayout") {
+      setSelectedRow(row);
+      setOpen(true);
+    } else {
+      navigateToForm(tableSlug);
+    }
+  };
+
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
       const params = view.navigate?.params
@@ -619,6 +628,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
+          navigateToEditPage={navigateCreatePage}
           summaries={view?.attributes?.summaries}
           disableFilters
           isChecked={(row) => selectedObjects?.includes(row.guid)}
@@ -649,6 +659,7 @@ const TableView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
+          refetch={refetch}
         />
       )}
 

@@ -1,29 +1,30 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button} from "@mui/material";
-import {BsThreeDots} from "react-icons/bs";
+import { Box, Button } from "@mui/material";
+import { BsThreeDots } from "react-icons/bs";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";
-import {Container} from "react-smooth-dnd";
-import {applyDrag} from "../../../utils/applyDrag";
+import { Container } from "react-smooth-dnd";
+import { applyDrag } from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
-import {useState} from "react";
-import {useQueryClient} from "react-query";
-import {showAlert} from "../../../store/alert/alert.thunk";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
+import { showAlert } from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
-import {store} from "../../../store";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
+import { store } from "../../../store";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import { useSearchParams } from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -44,18 +45,28 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
-  const menuItem = useSelector((state) => state.menu.menuItem);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, [searchParams]);
+
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
-  const addPermission =
-    selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a280" ||
-    selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b";
+  const addPermission = selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a280" || selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b";
   const handleClick = () => {
-    navigator.clipboard.writeText(
-      `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
-    );
+    navigator.clipboard.writeText(`https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`);
     setIsCopied(true);
     dispatch(showAlert("Скопировано в буфер обмена", "success"));
     setTimeout(() => setIsCopied(false), 3000);
@@ -101,9 +112,7 @@ const SubMenu = ({
   console.log("childchild", child);
   return (
     <div
-      className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-      }`}
+      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
@@ -116,8 +125,7 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
-                selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
             </h2>
           )}
           <Box className="buttons">
@@ -200,40 +208,14 @@ const SubMenu = ({
               <RingLoaderWithWrapper />
             ) : (
               <div className="nav-block">
-                {selectedApp?.id === adminId && (
-                  <Permissions
-                    menuStyle={menuStyle}
-                    menuItem={menuItem}
-                    setElement={setElement}
-                    level={2}
-                    handleOpenNotify={handleOpenNotify}
-                  />
-                )}
-                {selectedApp?.id === adminId && (
-                  <Resources
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    level={2}
-                    menuItem={menuItem}
-                  />
-                )}
+                {selectedApp?.id === adminId && <Permissions menuStyle={menuStyle} menuItem={menuItem} setElement={setElement} level={2} handleOpenNotify={handleOpenNotify} />}
+                {selectedApp?.id === adminId && <Resources menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
-                  <Users
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    menuItem={menuItem}
-                    level={2}
-                    child={child}
-                    selectedApp={selectedApp}
-                  />
+                  <Users menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} child={child} selectedApp={selectedApp} />
                 )}
                 <div className="menu-element">
-                  {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-                  child?.length ? (
-                    <Container
-                      dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}
-                    >
+                  {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" && child?.length ? (
+                    <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
                       {child?.map((element, index) => (
                         <RecursiveBlock
                           key={element.id}
@@ -248,20 +230,15 @@ const SubMenu = ({
                           setSubMenuIsOpen={setSubMenuIsOpen}
                           menuStyle={menuStyle}
                           menuItem={menuItem}
+                          menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
                         />
                       ))}
                     </Container>
                   ) : null}
-                  {selectedApp?.id ===
-                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                    <DocumentsSidebar
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      menuItem={menuItem}
-                      level={2}
-                    />
+                  {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                    <DocumentsSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
                   )}
                 </div>
               </div>

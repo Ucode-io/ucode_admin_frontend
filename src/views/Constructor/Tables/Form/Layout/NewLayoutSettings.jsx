@@ -39,7 +39,7 @@ function NewLayoutSettings({
   const computedData = useMemo(() => {
     return;
   }, [watchLayout]);
-  console.log("watchLayout", watchLayout);
+
   const updateSelectedLayout = () => {
     setLoader(true);
     const data = watchLayout?.tabs

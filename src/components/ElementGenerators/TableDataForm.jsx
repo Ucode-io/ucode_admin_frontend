@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { default as React, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
@@ -52,12 +52,12 @@ const TableDataForm = React.memo(
         }}
       >
         <CellElementGeneratorForTableView
+          key={field?.id}
           relOptions={relOptions}
           isTableView={isTableView}
           tableView={tableView}
           tableSlug={tableSlug}
           name={`multi.${index}.${field.slug}`}
-          watch={watch}
           isWrapField={isWrapField}
           updateObject={updateObject}
           fields={fields}

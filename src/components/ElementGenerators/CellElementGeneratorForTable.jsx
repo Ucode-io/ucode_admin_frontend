@@ -122,7 +122,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
       return <Many2ManyValue field={field} value={value} />;
 
     case "LOOKUP":
-      return <Many2neValue field={field} value={value} />;
+      return <Many2neValue field={field} value={value} row={row} />;
 
     case "DATE":
       return (

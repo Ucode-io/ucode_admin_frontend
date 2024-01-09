@@ -1,10 +1,7 @@
-import React, {useEffect, useMemo} from "react";
-import {useQuery} from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
-import get from "lodash.get";
+import React from "react";
 import styles from "./style.module.scss";
 
-function Many2neValue({field, value}) {
+function Many2neValue({field, value, row}) {
   // useEffect(() => {
   //   let val;
 

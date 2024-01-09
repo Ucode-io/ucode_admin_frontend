@@ -79,10 +79,10 @@ const AppSidebar = ({
       const searchParams = new URLSearchParams(obj || {});
       return navigate({
         pathname: `/main/${element.id}/page/${element?.data?.microfrontend?.id}`,
-        search: `?${searchParams.toString()}`,
+        search: `?menuId=${element?.id}&${searchParams.toString()}`,
       });
     } else if (element.type === "WEBPAGE") {
-      navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}`);
+      navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`);
       setSubMenuIsOpen(false);
     }
   };

@@ -16,7 +16,7 @@ export const CTable = ({
   disablePagination,
   isTableView = false,
   isGroupByTable = false,
-  loader,
+  loader = false,
   multipleDelete,
   tableStyle = {},
   wrapperStyle = {},
@@ -29,7 +29,7 @@ export const CTable = ({
   isRelationTable,
   filterVisible,
   navigateToEditPage,
-  parentRef
+  parentRef,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -94,7 +94,7 @@ export const CTableBody = forwardRef(
     {
       children,
       columnsCount,
-      loader,
+      loader = false,
       title,
       selectedObjectsForDelete,
       dataLength,
@@ -102,6 +102,7 @@ export const CTableBody = forwardRef(
     },
     ref
   ) => {
+    console.log("loaderloader", loader);
     return (
       <>
         <TableLoader
@@ -112,11 +113,6 @@ export const CTableBody = forwardRef(
 
         <tbody className="CTableBody" {...props} ref={ref}>
           {children}
-          <EmptyDataComponent
-            columnsCount={columnsCount}
-            isVisible={!dataLength}
-            title={title}
-          />
         </tbody>
       </>
     );

@@ -289,7 +289,6 @@ const AutoCompleteElement = ({
         }
 
         if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
-          console.log("entereddddd 2");
           setLocalValue(null);
           setValue("");
         }

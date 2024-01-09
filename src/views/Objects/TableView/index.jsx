@@ -506,8 +506,9 @@ const TableView = ({
       navigateToForm(tableSlug);
     }
   };
-console.log('menuitem', menuItem)
+
   const navigateToDetailPage = (row) => {
+    console.log('ssssssss', view)
     if (view?.navigate?.params?.length || view?.navigate?.url) {
       const params = view.navigate?.params
         ?.map(
@@ -518,7 +519,6 @@ console.log('menuitem', menuItem)
             )}`
         )
         .join("&&");
-
 
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);

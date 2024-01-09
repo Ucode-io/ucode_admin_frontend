@@ -563,6 +563,10 @@ export const fieldButtons = [
     label: "Autofill",
     value: "AUTOFILL",
   },
+  {
+    label: "Auto filter",
+    value: "AUTO_FILTER",
+  }
 ];
 
 export const formatIncludes = [

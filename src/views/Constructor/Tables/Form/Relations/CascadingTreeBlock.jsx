@@ -32,8 +32,8 @@ const CascadingTreeBlock = ({ control, slug, setValue }) => {
   }, []);
 
   return (
-    <>
-      <div className={styles.settingsBlockHeader}>
+    <div className={styles.customRow}>
+      <div className={styles.customLabel}>
         <h2>Cascading Tree</h2>
       </div>
       <div className={styles.input_control}>
@@ -44,7 +44,7 @@ const CascadingTreeBlock = ({ control, slug, setValue }) => {
           onChange={handleChange}
         />
       </div>
-    </>
+    </div>
   );
 };
 

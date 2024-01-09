@@ -128,8 +128,11 @@ const ObjectsFormPage = ({
               : relation.table_from?.slug,
         }))
       );
-
-      if (!selectedTab?.relation_id) reset(data?.response ?? {});
+      
+      if (!selectedTab?.relation_id) {
+        reset(data?.response ?? {})
+        
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -248,7 +251,6 @@ const ObjectsFormPage = ({
   };
 
   useEffect(() => {
-    if (!menuItem) return;
     if (id) getAllData();
     else getFields();
   }, [id, menuItem, selectedTabIndex]);

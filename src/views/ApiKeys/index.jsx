@@ -1,6 +1,6 @@
-import { Delete } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -19,7 +19,7 @@ import TableRowButton from "../../components/TableRowButton";
 import UploadIcon from "@mui/icons-material/Upload";
 import exportToJsonService from "../../services/exportToJson";
 import useDownloader from "../../hooks/useDownloader";
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import apiKeyService from "../../services/apiKey.service";
 
@@ -27,7 +27,7 @@ const ApiKeyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { download } = useDownloader();
+  const {download} = useDownloader();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -70,7 +70,7 @@ const ApiKeyPage = () => {
     const params = {
       client_type_id: clientTypeId,
       role_id: roleId,
-      'environment-id': envId
+      "environment-id": envId,
     };
     apiKeyService
       .getList(projectId, params)
@@ -107,21 +107,21 @@ const ApiKeyPage = () => {
   return (
     <div>
       {/* <FiltersBlock> */}
-        <div
-          className="p-1"
-          style={{
-            display: "flex",
-            columnGap: "16px",
-            alignItems: "center",
-          }}
-        >
-          <h2>Api Keys</h2>
-          <SearchInput />
-        </div>
+      <div
+        className="p-1"
+        style={{
+          display: "flex",
+          columnGap: "16px",
+          alignItems: "center",
+        }}
+      >
+        <h2>Api Keys</h2>
+        <SearchInput />
+      </div>
       {/* </FiltersBlock> */}
 
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable loader={false} disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
@@ -130,7 +130,7 @@ const ApiKeyPage = () => {
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={4} dataLength={list.length}>
+          <CTableBody loader={false} columnsCount={4} dataLength={list.length}>
             {apiKeys?.map((element, index) => (
               <CTableRow
                 key={element.id}

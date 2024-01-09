@@ -51,8 +51,8 @@ const CascadingRelationSettings = ({
   }, [cascading]);
 
   return (
-    <>
-      <div className={styles.settingsBlockHeader}>
+    <div className={styles.customRow}>
+      <div className={styles.customLabel}>
         <h2>Cascading</h2>
       </div>
       <div className={styles.input_control}>
@@ -85,7 +85,7 @@ const CascadingRelationSettings = ({
           />
         </div>
       </Menu>
-    </>
+    </div>
   );
 };
 

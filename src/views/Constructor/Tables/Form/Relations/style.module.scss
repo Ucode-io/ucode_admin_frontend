@@ -38,6 +38,8 @@
     align-items: center;
     justify-content: space-between;
     height: 48px;
+    padding: 16px;
+    padding-bottom: 0;
   }
 
   .settingsBlockBody {
@@ -98,9 +100,6 @@
 
 .cascading_collapse {
   width: 400px;
-
-  .cascading_collapse_item {
-  }
 
   .collapse_item {
     padding-left: 5px;
@@ -218,4 +217,29 @@
 
 .inputPart {
   margin-bottom: 30px;
+}
+
+.customRow {
+  margin-bottom: 10px;
+  .customLabel {
+    h2 {
+      width: auto;
+      transform: translateY(0);
+      margin-bottom: 10px;
+      font-weight: bold;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+  }
+}
+
+.fieldSettingsForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.noShadow{
+  box-shadow: none !important;
 }

@@ -86,9 +86,7 @@ const LayoutSidebar = ({ appId }) => {
     queryParams: {
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        if (res?.menus) {
-          setChild(res.menus);
-        }
+        setChild(res.menus ?? []);
       },
     },
   });

@@ -24,6 +24,7 @@ import {makeStyles} from "@mui/styles";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import IconPicker from "../IconPicker";
+import Many2neValue from "./Many2OneValue";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -120,8 +121,8 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
-    // case "LOOKUP":
-    //   return value;
+    case "LOOKUP":
+      return <Many2neValue field={field} value={value} />;
 
     case "DATE":
       return (

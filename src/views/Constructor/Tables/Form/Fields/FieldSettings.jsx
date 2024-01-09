@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material";
+import {Close} from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
@@ -9,12 +9,12 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { TreeView } from "@mui/x-tree-view";
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
+import {TreeView} from "@mui/x-tree-view";
+import {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -27,13 +27,15 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import menuService, { useMenuListQuery } from "../../../../../services/menuService";
-import { store } from "../../../../../store";
+import menuService, {
+  useMenuListQuery,
+} from "../../../../../services/menuService";
+import {store} from "../../../../../store";
 import {
   fieldButtons,
   fieldTypesOptions,
 } from "../../../../../utils/constants/fieldTypes";
-import { generateGUID } from "../../../../../utils/generateID";
+import {generateGUID} from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
@@ -56,7 +58,6 @@ const FieldSettings = ({
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
-  
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -64,12 +65,12 @@ const FieldSettings = ({
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
 
@@ -116,7 +117,7 @@ const FieldSettings = ({
     () => {
       if (!slug) return false;
       return constructorTableService.getTableInfo(slug, {
-        data: { limit: 10, offset: 0, app_id: appId },
+        data: {limit: 10, offset: 0, app_id: appId},
       });
     },
     {
@@ -284,7 +285,7 @@ const FieldSettings = ({
     } else {
       reset(values);
     }
-  }, [field, formType, id, menuItem.table_id, reset]);
+  }, [field, formType, id, menuItem?.table_id, reset]);
 
   return (
     <div className={styles.settingsBlock}>

@@ -238,13 +238,6 @@ const ObjectDataTable = ({
 
   const parentRef = useRef(null);
 
-  const virtualizer = useVirtualizer({
-    count: isRelationTable ? fields?.length : data?.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => elementHeight,
-    overscan: 10,
-  });
-
   return (
     <CTable
       disablePagination={disablePagination}

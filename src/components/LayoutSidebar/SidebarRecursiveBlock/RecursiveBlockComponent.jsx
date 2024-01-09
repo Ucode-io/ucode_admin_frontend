@@ -1,23 +1,23 @@
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
-import {Box, Button, Collapse, Tooltip} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {BsThreeDots} from "react-icons/bs";
-import {useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Draggable} from "react-smooth-dnd";
-import {useMenuListQuery} from "../../../services/menuService";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { BsThreeDots } from "react-icons/bs";
+import { useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Draggable } from "react-smooth-dnd";
+import { useMenuListQuery } from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
-import {store} from "../../../store";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
+import { store } from "../../../store";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
-import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
+import { MenuFolderArrows, NavigateByType } from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
@@ -27,7 +27,7 @@ import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
-import {folderIds} from "./mock/folders";
+import { folderIds } from "./mock/folders";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -50,59 +50,27 @@ const RecursiveBlock = ({
   selectedApp,
   userType = false,
 }) => {
-  const activeStyle = activeStyles({menuItem, element, menuStyle, level});
+  const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const { appId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
-  const activeRequest =
-    element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
+  const activeRequest = element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
   const defaultLanguage = i18n?.language;
   const readPermission = element?.data?.permission?.read;
-  const withoutPermission =
-    element?.parent_id === adminId || element?.parent_id === analyticsId
-      ? true
-      : false;
-  const permission = defaultAdmin
-    ? readPermission || withoutPermission
-    : readPermission;
+  const withoutPermission = element?.parent_id === adminId || element?.parent_id === analyticsId ? true : false;
+  const permission = defaultAdmin ? readPermission || withoutPermission : readPermission;
+  const addButtonPermission = element?.type === "FOLDER" || (element?.type === "MINIO_FOLDER" && sidebarIsOpen) || element?.type === "WIKI_FOLDER";
+  const settingsButtonPermission = (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" && selectedApp?.id !== adminId) || !selectedApp?.is_static;
 
-  const addButtonPermission =
-    element?.type === "FOLDER" ||
-    (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ||
-    element?.type === "WIKI_FOLDER";
-
-  const settingsButtonPermission =
-    (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
-      selectedApp?.id !== adminId) ||
-    !selectedApp?.is_static;
-
-  const navigateAndSaveHistory = (elementItem) => {
-    const computedData = {
-      from_date: element?.data?.pivot?.from_data,
-      pivot_table_slug: element?.data?.pivot?.pivot_table_slug,
-      to_date: element?.data?.pivot?.to_date,
-      instance_id: element?.data?.pivot?.id,
-      template_name: element?.data?.pivot?.pivot_table_slug,
-      id: undefined,
-      status: "HISTORY",
-    };
-    if (elementItem?.data?.pivot?.status === "SAVED") {
-      pivotService.upsertPivotTemplate(computedData).then((res) => {
-        navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
-      });
-    } else {
-      navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
-    }
-  };
-  const {isLoading} = useMenuListQuery({
+  const { isLoading } = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -117,20 +85,14 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, appId, navigate});
+    NavigateByType({ element, appId, navigate });
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     }
-    if (
-      !pinIsEnabled &&
-      element.type !== "FOLDER" &&
-      element.type !== "USER_FOLDER" &&
-      element.type !== "MINIO_FOLDER" &&
-      element.type !== "WIKI_FOLDER"
-    ) {
+    if (!pinIsEnabled && element.type !== "FOLDER" && element.type !== "USER_FOLDER" && element.type !== "MINIO_FOLDER" && element.type !== "WIKI_FOLDER") {
       setSubMenuIsOpen(false);
     }
     setId(element?.id);
@@ -155,11 +117,7 @@ const RecursiveBlock = ({
     setElement(element);
     dispatch(menuActions.setMenuItem(element));
     if (selectedApp?.id !== adminId) {
-      if (
-        element?.type === "FOLDER" ||
-        (element?.type === "WIKI_FOLDER" &&
-          element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")
-      ) {
+      if (element?.type === "FOLDER" || (element?.type === "WIKI_FOLDER" && element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")) {
         handleOpenNotify(e, "FOLDER");
       } else if (element?.type === "TABLE") {
         handleOpenNotify(e, "TABLE");
@@ -179,11 +137,9 @@ const RecursiveBlock = ({
     }
   }, []);
 
-console.log('sssssssss', menuItem)
-
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}}>
+      <Box sx={{ padding: "0 5px" }}>
         <div className="parent-block column-drag-handle" key={element.id}>
           {permission ? (
             <Button
@@ -198,32 +154,19 @@ console.log('sssssssss', menuItem)
               <div
                 className="label"
                 style={{
-                  color:
-                    menuItem?.id === element?.id || menuItemId === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text,
+                  color: menuItem?.id === element?.id || menuItemId === element?.id ? menuStyle?.active_text : menuStyle?.text,
                   opacity: element?.isChild && 0.6,
                 }}
               >
                 {element?.type === "USER" && (
                   <PersonIcon
                     style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? "#fff"
-                          : "rgb(45, 108, 229)",
+                      color: menuItem?.id === element?.id ? "#fff" : "rgb(45, 108, 229)",
                     }}
                   />
                 )}
-                {MenuFolderArrows({element, childBlockVisible})}
-                <IconGenerator
-                  icon={
-                    element?.icon ||
-                    element?.data?.microfrontend?.icon ||
-                    element?.data?.webpage?.icon
-                  }
-                  size={18}
-                />
+                {MenuFolderArrows({ element, childBlockVisible })}
+                <IconGenerator icon={element?.icon || element?.data?.microfrontend?.icon || element?.data?.webpage?.icon} size={18} />
 
                 <Box
                   sx={{
@@ -234,18 +177,11 @@ console.log('sssssssss', menuItem)
                   }}
                 >
                   <Box>
-                    <p>
-                      {element?.attributes?.[`label_${defaultLanguage}`] ??
-                        element?.attributes?.[`title_${defaultLanguage}`] ??
-                        element?.label ??
-                        element?.name}
-                    </p>
+                    <p>{element?.attributes?.[`label_${defaultLanguage}`] ?? element?.attributes?.[`title_${defaultLanguage}`] ?? element?.label ?? element?.name}</p>
                   </Box>
                   {settingsButtonPermission && !userType ? (
                     <Box className="icon_group">
-                      {(element?.data?.permission?.delete ||
-                        element?.data?.permission?.update ||
-                        element?.data?.permission?.write) && (
+                      {(element?.data?.permission?.delete || element?.data?.permission?.update || element?.data?.permission?.write) && (
                         <Tooltip title="Settings" placement="top">
                           <Box className="extra_icon">
                             <BsThreeDots
@@ -254,10 +190,7 @@ console.log('sssssssss', menuItem)
                                 folderSettings(e);
                               }}
                               style={{
-                                color:
-                                  menuItem?.id === element?.id
-                                    ? menuStyle?.active_text
-                                    : menuStyle?.text || "",
+                                color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
                               }}
                             />
                           </Box>
@@ -277,10 +210,7 @@ console.log('sssssssss', menuItem)
                           menuAddClick(e);
                         }}
                         style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
+                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
                         }}
                       />
                     </Box>
@@ -314,37 +244,12 @@ console.log('sssssssss', menuItem)
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              <DataBase
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                level={2}
-              />
-              <MicroServiceSidebar
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <TableSettingSidebar
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <ApiKeyButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <RedirectButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <SmsOtpButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
+              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
+              <MicroServiceSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              <TableSettingSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              <SmsOtpButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
             </>
           )}
 
@@ -357,20 +262,8 @@ console.log('sssssssss', menuItem)
                 level={2}
               /> */}
 
-              <FunctionSidebar
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                level={2}
-                integrated={false}
-              />
-              <MicrofrontendSettingSidebar
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                element={element}
-                level={2}
-              />
+              <FunctionSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} integrated={false} />
+              <MicrofrontendSettingSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} element={element} level={2} />
             </>
           )}
 
@@ -382,12 +275,7 @@ console.log('sssssssss', menuItem)
                 level={2}
                 menuItem={menuItem}
               /> */}
-              <ApiSidebar
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                level={2}
-                menuItem={menuItem}
-              />
+              <ApiSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />
             </>
           )}
         </Collapse>

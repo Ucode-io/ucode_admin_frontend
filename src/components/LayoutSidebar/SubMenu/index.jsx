@@ -109,7 +109,7 @@ const SubMenu = ({
         });
     }
   };
-  console.log("childchild", child);
+  
   return (
     <div
       className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}

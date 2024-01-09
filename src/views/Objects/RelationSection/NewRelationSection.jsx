@@ -48,7 +48,7 @@ const NewRelationSection = ({
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  
+  console.log('loader', loader)
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -216,7 +216,7 @@ const NewRelationSection = ({
         };
         setData(layout);
       });
-  }, [tableSlug, menuItem.table_id, i18n?.language]);
+  }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {

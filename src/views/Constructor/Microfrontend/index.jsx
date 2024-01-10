@@ -1,5 +1,5 @@
-import {useDispatch} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -13,11 +13,13 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import SearchInput from "../../../components/SearchInput";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import microfrontendService from "../../../services/microfrontendService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
+import StatusPipeline from "./StatusPipeline";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
@@ -76,6 +78,7 @@ const MicrofrontendPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
+            <CTableCell>Статус</CTableCell>
             <CTableCell>Описание</CTableCell>
             <CTableCell>Cсылка</CTableCell>
             <CTableCell width={60}></CTableCell>
@@ -92,6 +95,9 @@ const MicrofrontendPage = () => {
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
+                <CTableCell>
+                  <StatusPipeline element={element} />
+                </CTableCell>
                 <CTableCell>{element?.description}</CTableCell>
                 <CTableCell>{element?.path}</CTableCell>
                 <CTableCell>

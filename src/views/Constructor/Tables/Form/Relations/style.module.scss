@@ -43,7 +43,7 @@
   }
 
   .settingsBlockBody {
-    height: calc(100vh - 56px - 56px - 48px);
+    height: calc(100vh - 56px - 56px);
     overflow: auto;
   }
 
@@ -100,9 +100,6 @@
 
 .cascading_collapse {
   width: 400px;
-
-  .cascading_collapse_item {
-  }
 
   .collapse_item {
     padding-left: 5px;

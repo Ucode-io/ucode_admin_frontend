@@ -438,6 +438,7 @@ const NewRelationSection = ({
                       type={type}
                       fieldsMap={fieldsMap}
                       relatedTable={relatedTable}
+                      getAllData={getAllData}
                     />
                   )}
                 </TabPanel>

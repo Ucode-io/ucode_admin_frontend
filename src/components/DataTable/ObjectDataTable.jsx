@@ -86,6 +86,7 @@ const ObjectDataTable = ({
   view,
   navigateToForm,
   refetch,
+  getAllData = () => {},
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -279,6 +280,7 @@ const ObjectDataTable = ({
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
                   currentView={currentView}
+                  relationAction={relationAction}
                   column={column}
                   isRelationTable={isRelationTable}
                   index={index}
@@ -307,6 +309,7 @@ const ObjectDataTable = ({
                   setFieldCreateAnchor={setFieldCreateAnchor}
                   setFieldData={setFieldData}
                   refetch={refetch}
+                  getAllData={getAllData}
                 />
               )
           )}
@@ -339,18 +342,23 @@ const ObjectDataTable = ({
             )}
           </PermissionWrapperV2>
           {!isRelationTable && (
-            <FieldButton
-              openFieldSettings={openFieldSettings}
-              view={view}
-              mainForm={mainForm}
-              fields={fields}
-              setFieldCreateAnchor={setFieldCreateAnchor}
-              fieldCreateAnchor={fieldCreateAnchor}
-              fieldData={fieldData}
-              setFieldData={setFieldData}
-              setDrawerState={setDrawerState}
-              setDrawerStateField={setDrawerStateField}
-            />
+            <PermissionWrapperV2
+              tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+              type={"add_field"}
+            >
+              <FieldButton
+                openFieldSettings={openFieldSettings}
+                view={view}
+                mainForm={mainForm}
+                fields={fields}
+                setFieldCreateAnchor={setFieldCreateAnchor}
+                fieldCreateAnchor={fieldCreateAnchor}
+                fieldData={fieldData}
+                setFieldData={setFieldData}
+                setDrawerState={setDrawerState}
+                setDrawerStateField={setDrawerStateField}
+              />
+            </PermissionWrapperV2>
           )}
         </CTableRow>
       </CTableHead>
@@ -441,19 +449,21 @@ const ObjectDataTable = ({
               zIndex: "1",
             }}
           >
-            <Button
-              variant="text"
-              style={{
-                borderColor: "#F0F0F0",
-                borderRadius: "0px",
-                width: "100%",
-              }}
-              onClick={() => {
-                setAddNewRow(true);
-              }}
-            >
-              <AddRoundedIcon />
-            </Button>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+              <Button
+                variant="text"
+                style={{
+                  borderColor: "#F0F0F0",
+                  borderRadius: "0px",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  setAddNewRow(true);
+                }}
+              >
+                <AddRoundedIcon />
+              </Button>
+            </PermissionWrapperV2>
           </CTableCell>
         </CTableRow>
 

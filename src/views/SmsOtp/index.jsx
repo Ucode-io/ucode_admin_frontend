@@ -1,6 +1,6 @@
-import { Delete } from "@mui/icons-material";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useSelector} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -14,7 +14,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import smsOtpService from "../../services/auth/smsOtpService";
 
 const SmsPage = () => {
@@ -87,7 +87,7 @@ const SmsPage = () => {
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={5} dataLength={list.length}>
+          <CTableBody loader={false} columnsCount={5} dataLength={list.length}>
             {smsOtp?.map((element, index) => (
               <CTableRow
                 key={element.id}

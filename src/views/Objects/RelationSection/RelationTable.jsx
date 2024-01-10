@@ -220,7 +220,7 @@ const RelationTable = forwardRef(
       getRelatedTabeSlug?.type,
       getRelatedTabeSlug?.relation_field_slug,
     ]);
-    console.log("computedFilters", computedFilters);
+
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
       if (getRelatedTabeSlug?.permission?.view_permission) return true;
@@ -452,8 +452,9 @@ const RelationTable = forwardRef(
       } finally {
       }
     };
-
+    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
     if (loader) return <PageFallback />;
+
     return (
       <div assName={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (
@@ -481,6 +482,7 @@ const RelationTable = forwardRef(
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
               remove={remove}
+              getAllData={getAllData}
               watch={watch}
               isRelationTable={true}
               isTableView={true}
@@ -519,7 +521,10 @@ const RelationTable = forwardRef(
               }
               limit={limit}
               setLimit={setLimit}
-              summaries={relatedTable?.attributes?.summaries}
+              summaries={
+                relatedTable?.attributes?.summaries ??
+                getRelatedTabeSlug?.attributes?.summaries
+              }
               isChecked={(row) => selectedObjects?.includes(row?.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}

@@ -223,7 +223,7 @@ const NewProfilePanel = ({
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
-  console.log("defaultLanguage", defaultLanguage);
+
   useEffect(() => {
     if (languages?.length) {
       if (languages?.length === 1) {

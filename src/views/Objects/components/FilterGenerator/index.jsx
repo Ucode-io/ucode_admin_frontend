@@ -86,6 +86,7 @@ export const Filter = ({
     case "PHOTO":
       return null;
 
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
     case "DATE":
     case "DATE_TIME":
       return (

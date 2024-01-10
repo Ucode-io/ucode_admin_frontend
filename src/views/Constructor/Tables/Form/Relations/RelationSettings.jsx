@@ -1,9 +1,17 @@
 import listToOptions from "@/utils/listToOptions";
-import { Close, DragIndicator, PushPin, PushPinOutlined, RemoveRedEye, VisibilityOff } from "@mui/icons-material";
+import {
+  Close,
+  DragIndicator,
+  PushPin,
+  PushPinOutlined
+} from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Card, Checkbox, Divider, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
@@ -11,13 +19,16 @@ import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
+import { useRelationGetByIdQuery } from "../../../../../services/relationService";
 import { applyDrag } from "../../../../../utils/applyDrag";
+import { fieldButtons } from "../../../../../utils/constants/fieldTypes";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
 import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
@@ -28,11 +39,6 @@ import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { fieldButtons } from "../../../../../utils/constants/fieldTypes";
-import { useRelationGetByIdQuery } from "../../../../../services/relationService";
 
 const relationViewTypes = [
   {
@@ -55,7 +61,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] = useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] = useState(true);
   const languages = useSelector((state) => state.languages.list);
-  const { handleSubmit, control, reset, watch, setValue } = useForm({
+  const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
       table_from: tableSlug,
       auto_filters: [],
@@ -94,21 +100,21 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorObjectService.getList(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({ data }) => {
+      onSuccess: ({data}) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -147,7 +153,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     }
   );
 
-  const { data: functions = [] } = useQuery(
+  const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -166,7 +172,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+  const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
   });
 
@@ -258,7 +264,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     if (formType === "CREATE") return;
   }, [relation]);
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: relation?.attributes?.relation_data?.id || relation?.id,
     queryParams: {
@@ -387,6 +393,14 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                       <HFCheckbox name="attributes.multiple_input" label={"Multiple input"} control={control} placeholder="Relation type" />
 
                       <HFCheckbox control={control} name="multiple_insert" label={"Multiple insert"} />
+
+                      <div className={styles.sectionHeader}>
+                        <HFSwitch
+                          control={control}
+                          name="attributes.table_editable"
+                          label={"Disable Edit table"}
+                        />
+                      </div>
 
                       {watch().multiple_insert && (
                         <div className={styles.sectionBody}>

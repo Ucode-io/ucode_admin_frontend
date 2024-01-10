@@ -221,6 +221,7 @@ const TableRow = ({
                         onRowClick={onRowClick}
                         width={width}
                         isTableView={isTableView}
+                        view={view}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -258,7 +259,9 @@ const TableRow = ({
                     </RectangleIconButton>
                   </PermissionWrapperV2>
                 </CTableCell>
-                <GeneratePdfFromTable row={row} />
+                <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
+                  <GeneratePdfFromTable row={row} />
+                </PermissionWrapperV2>
               </div>
             </td>
 
@@ -413,6 +416,7 @@ const TableRow = ({
                       onRowClick={onRowClick}
                       width={width}
                       isTableView={isTableView}
+                      view={view}
                     />
                   ) : (
                     <CellElementGenerator field={virtualColumn} row={row} />
@@ -588,6 +592,7 @@ const TableRow = ({
                 data={data}
                 onRowClick={onRowClick}
                 width={width}
+                view={view}
               />
             </CTableCell>
           ))}

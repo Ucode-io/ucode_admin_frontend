@@ -4,7 +4,7 @@ import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -82,6 +82,8 @@ const TableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [relOptions, setRelOptions] = useState([]);
   const [combinedTableData, setCombinedTableData] = useState([]);
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const mainForm = useForm({
     defaultValues: {
@@ -503,12 +505,10 @@ const TableView = ({
       setSelectedRow(row);
       setOpen(true);
     } else {
-      navigateToForm(tableSlug);
+      navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
     }
   };
-
   const navigateToDetailPage = (row) => {
-    console.log('ssssssss', view)
     if (view?.navigate?.params?.length || view?.navigate?.url) {
       const params = view.navigate?.params
         ?.map(

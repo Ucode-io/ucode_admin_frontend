@@ -102,7 +102,6 @@ export const CTableBody = forwardRef(
     },
     ref
   ) => {
-    console.log("loaderloader", loader);
     return (
       <>
         <TableLoader

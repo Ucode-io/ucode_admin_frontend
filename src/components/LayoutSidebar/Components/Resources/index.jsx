@@ -46,7 +46,6 @@ const dataBases = {
 const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
   const navigate = useNavigate();
   const {projectId, resourceId, appId} = useParams();
-
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [selected, setSelected] = useState({});
   const company = store.getState().company;
@@ -98,7 +97,7 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
   const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutation({
       onSuccess: () => {
-        refetch();
+        // refetch();
         handleClose();
       },
     });
@@ -114,7 +113,7 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
   const {mutate: addResourceFromCluster, isLoading: clusterLoading} =
     useResourceCreateFromClusterMutation({
       onSuccess: () => {
-        refetch();
+        // refetch();
       },
     });
 
@@ -137,13 +136,13 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
     setChildBlockVisible((prev) => !prev);
   };
 
-  const rowClickHandler = (id, element) => {
-    setSelected(element);
-    element.type === "FOLDER" && navigate(`/main/${adminId}`);
-    if (element.resource_type) setResourceId(element.id);
-    if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
-    setOpenedFolders((prev) => [...prev, id]);
-  };
+  // const rowClickHandler = (id, element) => {
+  //   setSelected(element);
+  //   element.type === "FOLDER" && navigate(`/main/${adminId}`);
+  //   if (element.resource_type) setResourceId(element.id);
+  //   if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
+  //   setOpenedFolders((prev) => [...prev, id]);
+  // };
 
   const navigateToCreateForm = () => {
     navigate(`/project/${projectId}/resources/create`);
@@ -195,7 +194,7 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       handleClick(e);
-                      handleOpenNotify(e, "CREATE_FOLDER");
+                      // handleOpenNotify(e, "CREATE_FOLDER");
                     }}
                     style={{
                       color:
@@ -219,7 +218,7 @@ const Resources = ({level = 1, menuStyle, setSubMenuIsOpen, menuItem}) => {
                       navigateToCreateForm();
                       navigate("/main/resources/create");
                       e.stopPropagation();
-                      handleOpenNotify(e, "CREATE_FOLDER");
+                      // handleOpenNotify(e, "CREATE_FOLDER");
                     }}
                     style={{
                       color:

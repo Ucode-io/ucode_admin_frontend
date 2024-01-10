@@ -24,6 +24,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import { store } from "../../../store";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import { useSearchParams } from "react-router-dom";
+import EnvironmentMenu from "../Components/EnvironmentMenu";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -240,6 +241,8 @@ const SubMenu = ({
                     <DocumentsSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
                   )}
                 </div>
+                {selectedApp?.id === adminId && <EnvironmentMenu menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />}
+
               </div>
             )}
 
@@ -256,7 +259,7 @@ const SubMenu = ({
                   justifyContent: "flex-start",
                 }}
               >
-                <div
+                <div  
                   style={{
                     display: "flex",
                     alignItems: "center",

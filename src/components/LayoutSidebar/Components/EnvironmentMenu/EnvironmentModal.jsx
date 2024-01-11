@@ -5,6 +5,8 @@ import { store } from "../../../../store";
 import httpsRequestV2 from "../../../../utils/httpsRequestV2";
 import EnvironmentsTable from "./EnvironmentsTable";
 import HistoriesTable from "./HistoriesTable";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../../store/alert/alert.thunk";
 
 const style = {
   position: "absolute",
@@ -26,14 +28,31 @@ export default function EnvironmentModal({ open, handleClose }) {
   const [versions, setVersions] = useState([]);
   const [versionLoading, setVersionLoading] = useState(false);
   const [selectedVersions, setSelectedVersions] = useState([]);
+  const companyStore = store.getState().company;
+  const environmentId = companyStore.environmentId;
+  const dispatch = useDispatch();
+
+  const updateVersions = () => {
+    const selectedVersionsIds = selectedVersions.map(version => version.id)
+
+    httpsRequestV2.put(`/version/history/${selectedEnvironment}`, {
+      "env_id": environmentId,
+      "ids": selectedVersionsIds,
+      "project_id": company.projectId
+    }).then(res => {
+      dispatch(showAlert("Successfully updated", "success"));
+    })
+  }
 
   const updateMigrate = () => {
     httpsRequestV2.post('/version/migrate', {
       "histories": selectedVersions
     }).then(res => {
-      console.log(res)
+      updateVersions()
     })
   }
+
+
 
   const { data: { environments } = [], isLoading: environmentLoading } = useEnvironmentListQuery({
     params: {
@@ -77,7 +96,7 @@ export default function EnvironmentModal({ open, handleClose }) {
               <CircularProgress />
             </Box>
           ) : selectedEnvironment ? (
-            <HistoriesTable histories={versions} setSelectedEnvironment={setSelectedEnvironment} selectedVersions={selectedVersions} setSelectedVersions={setSelectedVersions}/>
+            <HistoriesTable histories={versions} setSelectedEnvironment={setSelectedEnvironment} selectedVersions={selectedVersions} setSelectedVersions={setSelectedVersions} />
           ) : (
             <EnvironmentsTable setSelectedEnvironment={setSelectedEnvironment} environments={environments} />
           )}

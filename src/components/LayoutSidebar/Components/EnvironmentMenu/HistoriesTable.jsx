@@ -36,11 +36,12 @@ export default function HistoriesTable({ histories, setSelectedEnvironment, sele
               <TableCell align="left">Action Type</TableCell>
               <TableCell align="left">Action Source</TableCell>
               <TableCell align="left">Label</TableCell>
+              <TableCell align="left">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {histories?.map((history, index) => (
-              <HistoryRow history={history} index={index} handleSelectVersion={handleSelectVersion} selectedVersions={selectedVersions}/>
+              <HistoryRow history={history} index={index} handleSelectVersion={handleSelectVersion} selectedVersions={selectedVersions} />
             ))}
           </TableBody>
         </Table>

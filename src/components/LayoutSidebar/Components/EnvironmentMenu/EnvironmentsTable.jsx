@@ -2,7 +2,6 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import React from "react";
 
 export default function EnvironmentsTable({ environments, setSelectedEnvironment }) {
-  console.log("ssssssss", environments);
   return (
     <div style={{ height: 400, width: "100%" }}>
       <TableContainer component={Paper}>

@@ -1,7 +1,8 @@
-import { Checkbox, TableCell, TableRow } from "@mui/material";
+import { Button, Checkbox, TableCell, TableRow } from "@mui/material";
 import React, { useMemo } from "react";
 import { struct } from "pb-util";
 import { useTranslation } from "react-i18next";
+import JsonModalVersion from "./JsonModalVersion";
 
 export default function HistoryRow({ history, index, handleSelectVersion, selectedVersions }) {
   const { i18n } = useTranslation();
@@ -48,6 +49,9 @@ export default function HistoryRow({ history, index, handleSelectVersion, select
       </TableCell>
       <TableCell align="left" sx={{ padding: "16px 24px 16px 16px !important" }}>
         {label}
+      </TableCell>
+      <TableCell align="left" sx={{ padding: "16px 24px 16px 16px !important" }}>
+        <JsonModalVersion history={history} />
       </TableCell>
     </TableRow>
   );

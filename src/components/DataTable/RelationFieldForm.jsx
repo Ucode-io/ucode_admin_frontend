@@ -1,42 +1,34 @@
-import { Box } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import {Box} from "@mui/material";
+import React, {useEffect, useMemo} from "react";
 import HFSelect from "../FormElements/HFSelect";
 import "./style.scss";
 import style from "./field.module.scss";
-import { useTablesListQuery } from "../../services/tableService";
-import { store } from "../../store";
+import {useTablesListQuery} from "../../services/tableService";
+import {store} from "../../store";
 import listToOptions from "../../utils/listToOptions";
 import constructorFieldService from "../../services/constructorFieldService";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import HFMultipleSelect from "../FormElements/HFMultipleSelect";
-import { useParams, useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import menuService from "../../services/menuService";
+import {useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
-export default function RelationFieldForm({ control, watch, setValue, fieldWatch, relatedTableSlug }) {
-  const { tableSlug } = useParams();
+export default function RelationFieldForm({
+  control,
+  watch,
+  setValue,
+  fieldWatch,
+  relatedTableSlug,
+}) {
+  const {tableSlug} = useParams();
   const envId = store.getState().company.environmentId;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const menuItem = useSelector((state) => state.menu.menuItem);
 
   useEffect(() => {
     setValue("table_from", menuItem?.data.table?.slug);
   }, []);
 
-  const { data: tables } = useTablesListQuery({
-    params: { envId: envId },
+  const {data: tables} = useTablesListQuery({
+    params: {envId: envId},
     queryParams: {
       select: (res) => {
         return listToOptions(res.tables, "label", "slug");
@@ -44,14 +36,17 @@ export default function RelationFieldForm({ control, watch, setValue, fieldWatch
     },
   });
 
-  const { data: relatedTableFields } = useQuery(
+  const {data: relatedTableFields} = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorFieldService.getList({ table_slug: relatedTableSlug }, relatedTableSlug);
+      return constructorFieldService.getList(
+        {table_slug: relatedTableSlug},
+        relatedTableSlug
+      );
     },
     {
-      select: ({ fields }) => {
+      select: ({fields}) => {
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
@@ -67,9 +62,9 @@ export default function RelationFieldForm({ control, watch, setValue, fieldWatch
         className={style.input}
         disabledHelperText
         options={[
-          { label: "Single", value: "Many2One" },
-          { label: "Multi", value: "Many2Many" },
-          { label: "Recursive", value: "Recursive" },
+          {label: "Single", value: "Many2One"},
+          {label: "Multi", value: "Many2Many"},
+          {label: "Recursive", value: "Recursive"},
         ]}
         name="relation_type"
         control={control}
@@ -88,7 +83,16 @@ export default function RelationFieldForm({ control, watch, setValue, fieldWatch
       />
       {fieldWatch.relation_type !== "Recursive" && (
         <>
-          <HFSelect disabledHelperText options={tables} name="table_to" control={control} fullWidth required placeholder="Table to" className={style.input} />
+          <HFSelect
+            disabledHelperText
+            options={tables}
+            name="table_to"
+            control={control}
+            fullWidth
+            required
+            placeholder="Table to"
+            className={style.input}
+          />
           <HFMultipleSelect
             disabledHelperText
             options={relatedTableFields}

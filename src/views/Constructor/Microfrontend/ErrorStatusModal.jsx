@@ -1,6 +1,5 @@
-import { Box, CircularProgress, Modal, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import httpsRequestV2 from '../../../utils/httpsRequestV2';
+import { Box, Modal } from '@mui/material';
+import React from 'react';
 
 const style = {
   position: 'absolute',
@@ -20,22 +19,6 @@ const style = {
 };
 
 export default function ErrorStatusModal({ setOpenModal, element }) {
-  const [modalLoading, setModalLoading] = useState(false);
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    setModalLoading(true)
-    httpsRequestV2.post("/pipeline/log", {
-      repo_id: element?.repo_id
-    })
-      .then(res => {
-        setData(res)
-      })
-      .finally(() => {
-        setModalLoading(false)
-      })
-  }, [element])
-
   return (
     <Modal
       open={true}
@@ -44,28 +27,16 @@ export default function ErrorStatusModal({ setOpenModal, element }) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        {
-          modalLoading ? (<Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: "100%",
-            height: "100%"
-          }}>
-            <CircularProgress />
-          </Box>) : <Box sx={{
-            width: "100%",
-            height: "100%",
-            overflow: "auto"
-          }}>
-            <pre style={{ whiteSpace: 'pre-wrap', color: "#FFF" }}>
-              {data?.log ?? "No data!"}
-            </pre>
-          </Box>
-        }
-
+        <Box sx={{
+          width: "100%",
+          height: "100%",
+          overflow: "auto"
+        }}>
+          <pre style={{ whiteSpace: 'pre-wrap', color: "#FFF" }}>
+            {element?.error_message ?? "No data!"}
+          </pre>
+        </Box>
       </Box>
     </Modal>
-
   )
 }

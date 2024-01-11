@@ -454,7 +454,7 @@ const RelationTable = forwardRef(
       } finally {
       }
     };
-    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
+
     if (loader) return <PageFallback />;
 
     return (

@@ -1,5 +1,5 @@
-import { Box, Modal } from '@mui/material';
-import React from 'react';
+import { Box, Button, Modal } from '@mui/material';
+import React, { useState } from 'react';
 
 const style = {
   position: 'absolute',
@@ -19,6 +19,13 @@ const style = {
 };
 
 export default function ErrorStatusModal({ setOpenModal, element }) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(element?.error_message);
+    setIsCopied(true);
+  }
+
   return (
     <Modal
       open={true}
@@ -32,6 +39,15 @@ export default function ErrorStatusModal({ setOpenModal, element }) {
           height: "100%",
           overflow: "auto"
         }}>
+          <Box sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}>
+            <Button variant='outlined' onClick={copyToClipboard}>
+              {isCopied ? "Copied" : "Copy"}
+            </Button>
+          </Box>
           <pre style={{ whiteSpace: 'pre-wrap', color: "#FFF" }}>
             {element?.error_message ?? "No data!"}
           </pre>

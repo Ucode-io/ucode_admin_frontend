@@ -104,6 +104,8 @@ const AppSidebar = ({
 
   const defaultLanguage = i18n.language;
 
+  console.log("element", element);
+
   return (
     <Draggable key={index}>
       {permission ? (

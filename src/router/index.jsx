@@ -50,6 +50,10 @@ import DatabaseConfiguration from "../views/DataBase/Configuration";
 import EnvironmentPage from "../views/Environments";
 import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
+import SmsPage from "../views/SmsOtp";
+import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ObjectsPage from "../views/Objects";
@@ -61,10 +65,6 @@ import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectPage from "../views/Redirect";
 import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import ResourceDetail from "../views/Resources/Detail";
-import SmsPage from "../views/SmsOtp";
-import SmsFormPage from "../views/SmsOtp/SmsFormPage";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PivotTableView from "../views/Objects/PivotTableView";
 import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
 import WebPage from "../views/WebPage";
@@ -79,6 +79,9 @@ import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
+import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
+import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
+import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -291,6 +294,14 @@ const Router = () => {
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+          <Route path="github/create" element={<GithubMicrofrontendForm />} />
+        </Route>
+
+        <Route path=":appId/openfaas-functions">
+          <Route index element={<OpenFaasFunctionPage />} />
+          <Route path="create" element={<OpenFaasFunctionForm />} />
+          <Route path=":functionId" element={<OpenFaasFunctionForm />} />
+          <Route path="github/create" element={<GithubMicrofrontendForm />} />
         </Route>
 
         <Route path=":appId/tables">

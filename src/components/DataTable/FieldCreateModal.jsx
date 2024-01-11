@@ -19,7 +19,7 @@ import {
   fieldFormats,
   formatIncludes,
   math,
-  newFieldTypes,
+  newFieldTypes
 } from "../../utils/constants/fieldTypes";
 import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";

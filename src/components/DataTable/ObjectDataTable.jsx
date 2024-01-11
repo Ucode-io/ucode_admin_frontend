@@ -36,6 +36,7 @@ const ObjectDataTable = ({
   currentView,
   setDrawerStateField,
   removableHeight,
+  getValues,
   additionalRow,
   mainForm,
   elementHeight,
@@ -55,7 +56,6 @@ const ObjectDataTable = ({
   columns = [],
   relatedTableSlug,
   watch,
-  getValues,
   control,
   setFormValue,
   navigateToEditPage,
@@ -236,6 +236,11 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
+  // useEffect(() => {
+  //   if (!formVisible) {
+  //     dispatch(selectedRowActions.clear());
+  //   }
+  // }, [formVisible]);
 
   const parentRef = useRef(null);
 

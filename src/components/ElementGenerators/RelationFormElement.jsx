@@ -489,7 +489,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            options={computedOptions ?? []}
+            options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}
             value={localValue ?? []}
@@ -498,7 +498,7 @@ const AutoCompleteElement = ({
             onChange={(e) => {
               changeHandler(e);
             }}
-            onMenuScrollToBottom={loadMoreItems}
+            // onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

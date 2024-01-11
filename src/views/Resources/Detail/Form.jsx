@@ -1,12 +1,13 @@
-import React, {useMemo} from "react";
-import {Box, Button, Grid, Stack, Typography} from "@mui/material";
+import React, { useMemo } from "react";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import Footer from "../../../components/Footer";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import {resourceTypes} from "../../../utils/resourceConstants";
+import { resourceTypes } from "../../../utils/resourceConstants";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
-import {useWatch} from "react-hook-form";
-import {useLocation} from "react-router-dom";
+import { useWatch } from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import stringifyQueryParams from "@/utils/stringifyQueryParams";
 
 const headerStyle = {
   width: "100",
@@ -42,10 +43,33 @@ const Form = ({
     name: "resource_type",
   });
 
+  const onResourceTypeChange = (value) => {
+    // IF resource_type !== github
+    if (value !== 5) return;
+
+
+    const queryParams = {
+      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
+      redirect_uri: window.location.href,
+      scope: 'read:user,repo'
+    }
+
+    window.location.assign('https://github.com/login/oauth/authorize?' + stringifyQueryParams((queryParams)))
+
+    // Redirect to Github authorization page
+    // window.location.assign(
+    //   `https://github.com/login/oauth/authorize?client_id=${
+    //     import.meta.env.VITE_GITHUB_CLIENT_ID
+    //   }&redirect_uri=${
+    //     window.location.origin
+    //   }scope=read:user,repo`,
+    // );
+  };
+
   return (
     <Box
       flex={1}
-      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}
+      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
     >
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
@@ -64,7 +88,7 @@ const Form = ({
               fontWeight: "bold",
             }}
           >
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
+            <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>Name</Box>
             <HFTextField
               control={control}
               required
@@ -76,23 +100,42 @@ const Form = ({
             />
 
             <Box
-              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}
+              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
             >
               Type
             </Box>
             <HFSelect
               options={resourceTypes}
               control={control}
+              onChange={onResourceTypeChange}
               required
               name="resource_type"
               defaultValue={0}
               resurceType={resurceType}
               disabled={resurceType === 4}
             />
+
+            {resurceType === 5 && <>
+              <Box sx={{fontSize: "14px", marginTop: "10px", marginBottom: "15px"}}>Gihub username</Box>
+              <HFTextField
+                control={control}
+                required
+                name="integration_resource.username"
+                fullWidth
+                disabled
+                inputProps={{
+                  placeholder: "Github username",
+                }}
+              />
+            </>}
+
+
           </Box>
+
+
           {!isEditPage && (
-            <Box sx={{marginTop: "0px", padding: "15px"}} px={2}>
-              <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
+            <Box sx={{ marginTop: "0px", padding: "15px" }} px={2}>
+              <Box sx={{ fontSize: "14px", marginBottom: "10px" }}>
                 Environment
               </Box>
               <HFSelect
@@ -113,13 +156,13 @@ const Form = ({
 
         {selectedEnvironment?.length && (
           <>
-            <Box sx={{padding: "15px", fontSize: "24px"}}>
+            <Box sx={{ padding: "15px", fontSize: "24px" }}>
               <Typography variant="h6">Credentials</Typography>
             </Box>
 
             <Grid px={2} container spacing={2}>
-              <Grid item xs={6} sx={{paddingLeft: "0px"}}>
-                <Box width={50} sx={{fontSize: "14px"}}>
+              <Grid item xs={6} sx={{ paddingLeft: "0px" }}>
+                <Box width={50} sx={{ fontSize: "14px" }}>
                   Host
                 </Box>
                 <HFTextField
@@ -130,7 +173,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Port</Box>
+                <Box sx={{ fontSize: "14px" }}>Port</Box>
                 <HFTextField
                   fullWidth
                   control={control}
@@ -139,7 +182,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Username</Box>
+                <Box sx={{ fontSize: "14px" }}>Username</Box>
                 <HFTextField
                   control={control}
                   required
@@ -148,7 +191,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Database</Box>
+                <Box sx={{ fontSize: "14px" }}>Database</Box>
                 <HFTextField
                   control={control}
                   required
@@ -159,7 +202,7 @@ const Form = ({
               {true && (
                 <Grid item xs={6}>
                   <Box mb={4}>
-                    <Box sx={{fontSize: "14px"}}>Password</Box>
+                    <Box sx={{ fontSize: "14px" }}>Password</Box>
                     <HFTextField
                       fullWidth
                       control={control}

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
 import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
+import MenuButtonComponent from "../MenuButtonComponent";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";

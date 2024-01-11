@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material";
 import { Card, IconButton, Modal } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
 import styles from "./style.module.scss";
 

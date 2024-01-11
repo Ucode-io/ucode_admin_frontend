@@ -100,8 +100,6 @@ $main-color: #0365f2;
     }
   }
 
-
-
   .menu-button {
     display: flex;
     align-items: center;
@@ -216,9 +214,14 @@ $main-color: #0365f2;
     }
   }
 
-  .p-nav-block {
-    &::-webkit-scrollbar {
-      width: 5px;
+  .nav-block {
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &::-webkit-scrollbar-track {
+      background: #c0c0c01c;
     }
 
 

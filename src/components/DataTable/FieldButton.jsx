@@ -192,7 +192,6 @@ export default function FieldButton({
         <span
           style={{
             whiteSpace: "nowrap",
-            padding: "10px 4px",
             color: "#747474",
             fontSize: "13px",
             fontStyle: "normal",

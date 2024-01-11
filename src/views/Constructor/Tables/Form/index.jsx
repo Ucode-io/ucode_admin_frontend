@@ -80,6 +80,7 @@ const ConstructorTablesFormPage = () => {
 
   const getData = async () => {
     setLoader(true);
+    const params = {};
 
     const getTableData = constructorTableService.getById(id);
 

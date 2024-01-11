@@ -241,6 +241,11 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"code.svg"} size={18} />
             {queryFolder.label}
@@ -258,11 +263,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

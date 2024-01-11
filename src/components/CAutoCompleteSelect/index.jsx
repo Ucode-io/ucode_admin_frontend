@@ -14,6 +14,7 @@ const CAutoCompleteSelect = ({
   onFieldChange,
   tabIndex,
   disabled,
+  multiple = false,
 }) => {
   const computedValue = useMemo(() => {
     return options?.find((option) => option?.value === value) ?? null;
@@ -22,6 +23,7 @@ const CAutoCompleteSelect = ({
   return (
     <div>
       <Autocomplete
+        multiple={multiple}
         // disablePortal
         options={options}
         value={computedValue}

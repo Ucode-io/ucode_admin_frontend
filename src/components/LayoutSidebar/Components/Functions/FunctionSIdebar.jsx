@@ -5,15 +5,9 @@ import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-  useFunctionFolderDeleteMutation,
-  useFunctionFoldersListQuery,
-} from "../../../../services/functionFolderService";
-import {
-  useFunctionDeleteMutation,
-  useFunctionsListQuery,
-} from "../../../../services/functionService";
+import { useNavigate, useParams } from "react-router-dom";
+import { useFunctionFolderDeleteMutation, useFunctionFoldersListQuery } from "../../../../services/functionFolderService";
+import { useFunctionDeleteMutation, useFunctionsListQuery } from "../../../../services/functionService";
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -44,16 +38,10 @@ const functionFolder = {
   },
 };
 
-const FunctionSidebar = ({
-  setValue,
-  level = 1,
-  menuStyle,
-  setSubMenuIsOpen,
-  menuItem,
-  integrated = false,
-}) => {
+const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, menuItem, integrated = false }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
+  const { appId } = useParams();
   const navigate = useNavigate();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
@@ -93,38 +81,33 @@ const FunctionSidebar = ({
     setFunctionModalIsOpen(false);
   };
 
-  const { data: functionFolders, isLoading: folderLoading } =
-    useFunctionFoldersListQuery({
-      params: {
-        "project-id": company.projectId,
-      },
-      queryParams: {
-        select: (res) => res.function_folders,
-      },
-    });
+  const { data: functionFolders, isLoading: folderLoading } = useFunctionFoldersListQuery({
+    params: {
+      "project-id": company.projectId,
+    },
+    queryParams: {
+      select: (res) => res.function_folders,
+    },
+  });
 
-  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
-    useFunctionDeleteMutation({
-      onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
-    });
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } = useFunctionDeleteMutation({
+    onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
+  });
 
-  const { data: functions, isLoading: functionLoading } = useFunctionsListQuery(
-    {
-      params: {
-        "project-id": company.projectId,
-      },
-      queryParams: {
-        select: (res) => res.functions,
-      },
-    }
-  );
+  const { data: functions, isLoading: functionLoading } = useFunctionsListQuery({
+    params: {
+      "project-id": company.projectId,
+    },
+    queryParams: {
+      select: (res) => res.functions,
+    },
+  });
 
-  const { mutate: deleteFolder, isLoading: deleteLoading } =
-    useFunctionFolderDeleteMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries("FUNCTION_FOLDERS");
-      },
-    });
+  const { mutate: deleteFolder, isLoading: deleteLoading } = useFunctionFolderDeleteMutation({
+    onSuccess: () => {
+      queryClient.refetchQueries("FUNCTION_FOLDERS");
+    },
+  });
 
   const sidebarElements = useMemo(() => {
     return functionFolders?.map((folder) => ({
@@ -140,10 +123,7 @@ const FunctionSidebar = ({
             handleOpenNotify(e, "FOLDER", folder);
           }}
           style={{
-            color:
-              menuItem?.id === selected?.id
-                ? menuStyle?.active_text
-                : menuStyle?.text || "",
+            color: menuItem?.id === selected?.id ? menuStyle?.active_text : menuStyle?.text || "",
           }}
         />
       ),
@@ -163,10 +143,7 @@ const FunctionSidebar = ({
                 handleOpenNotify(e, "FUNCTION", func);
               }}
               style={{
-                color:
-                  menuItem?.id === selected?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                color: menuItem?.id === selected?.id ? menuStyle?.active_text : menuStyle?.text || "",
               }}
             />
           ),
@@ -186,11 +163,13 @@ const FunctionSidebar = ({
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(functionFolder));
     setSelected(functionFolder);
-    if (!pinIsEnabled && functionFolder.type !== "USER_FOLDER") {
-      setSubMenuIsOpen(false);
-    }
-    setChildBlockVisible((prev) => !prev);
-    !integrated && navigate(`/main/${adminId}`);
+    navigate(`/main/${appId}/openfaas-functions`);
+
+    // if (!pinIsEnabled && functionFolder.type !== "USER_FOLDER") {
+    //   setSubMenuIsOpen(false);
+    // }
+    // setChildBlockVisible((prev) => !prev);
+    // !integrated && navigate(`/main/${adminId}`);
   };
 
   // --CREATE FOLDERS--
@@ -208,29 +187,16 @@ const FunctionSidebar = ({
   };
 
   const activeStyle = {
-    backgroundColor:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
+    backgroundColor: functionFolder?.id === menuItem?.id ? menuStyle?.active_background || "#007AFF" : menuStyle?.background,
+    color: functionFolder?.id === menuItem?.id ? menuStyle?.active_text || "#fff" : menuStyle?.text,
     paddingLeft: updateLevel(level),
     borderRadius: "8px",
-  };
-  const iconStyle = {
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
+    display: menuItem?.id === "0" || (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const labelStyle = {
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
+    paddingLeft: "15px",
+    color: functionFolder?.id === menuItem?.id ? menuStyle?.active_text : menuStyle?.text,
   };
 
   return (
@@ -244,28 +210,9 @@ const FunctionSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>
-          <Box className="icon_group">
-            <Tooltip title="Create folder" placement="top">
-              <Box className="extra_icon">
-                <AddIcon
-                  size={13}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOpenNotify(e, "CREATE_FOLDER");
-                  }}
-                  style={iconStyle}
-                />
-              </Box>
-            </Tooltip>
-          </Box>
         </Button>
       </div>
 
@@ -298,19 +245,8 @@ const FunctionSidebar = ({
         openFunctionModal={openFunctionModal}
         deleteFunction={deleteFunction}
       />
-      {folderModalIsOpen && (
-        <FunctionFolderCreateModal
-          folder={selectedFolder}
-          closeModal={closeFolderModal}
-        />
-      )}
-      {functionModalIsOpen && (
-        <FunctionCreateModal
-          folder={selectedFolder}
-          func={selectedFunction}
-          closeModal={closeFunctionModal}
-        />
-      )}
+      {folderModalIsOpen && <FunctionFolderCreateModal folder={selectedFolder} closeModal={closeFolderModal} />}
+      {functionModalIsOpen && <FunctionCreateModal folder={selectedFolder} func={selectedFunction} closeModal={closeFunctionModal} />}
     </Box>
   );
 };

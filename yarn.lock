@@ -3444,7 +3444,7 @@
   resolved "https://registry.yarnpkg.com/@moxrbe/editorjs-break-line/-/editorjs-break-line-1.0.2.tgz#3fcb76b1a5f7ebe6c5d02ffeab8b8501ca7cfa96"
   integrity sha512-L8HgDTYXVDcfrB4Jo6IGSn/V1lQCJ2fpmJBdwbCBtTI8lTZcIH/ZLY3DPjx57U1omoOmTx1IURRGVZYB6ga25A==
 
-"@moxrbe/quote@^1.0.3":
+"@moxrbe/quote@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@moxrbe/quote/-/quote-1.0.4.tgz#7ee103e9183aa988702b8b91bb616b1c79b7927c"
   integrity sha512-sEolSD+mkiRYVuzr+aPJ8qAF68TSI6gS6vnxBbQhEBWczBafG1vZJ/JGiClaIa0Ss6NnV7v3/Di2XATzrK4BtQ==
@@ -10191,6 +10191,11 @@ prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
+
+prettier@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.1.1.tgz#6ba9f23165d690b6cbdaa88cb0807278f7019848"
+  integrity sha512-22UbSzg8luF4UuZtzgiUOfcGM8s4tjBv6dJRT7j275NXsy2jb4aJa4NNveul5x4eqlF1wuhuR2RElK71RvmVaw==
 
 print-js@^1.6.0:
   version "1.6.0"

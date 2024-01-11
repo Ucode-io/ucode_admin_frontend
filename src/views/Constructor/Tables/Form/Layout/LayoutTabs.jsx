@@ -242,6 +242,7 @@ function LayoutTabs({
                 setSelectedLayout={setSelectedLayout}
                 selectedTab={selectedTab}
                 sectionTabs={sectionTabs}
+                allTabs={allTabs}
               />
             ) : (
               <RelationTable

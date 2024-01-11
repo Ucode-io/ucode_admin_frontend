@@ -19,6 +19,7 @@ import TableActions from "./TableActions";
 import requestV2 from "../../../../../utils/requestV2";
 import {useSelector} from "react-redux";
 import {useTranslation} from "react-i18next";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
 const actionTypeList = [
   {label: "HTTP", value: "HTTP"},
@@ -66,7 +67,7 @@ const ActionSettings = ({
   const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return requestV2.get("/function");
+      return constructorFunctionService.getListV2({});
     },
     {
       onError: (err) => {

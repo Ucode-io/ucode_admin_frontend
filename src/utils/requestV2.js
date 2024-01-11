@@ -61,7 +61,7 @@ if (error?.response?.status === 401 && error?.response?.data?.data === "rpc erro
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
     } else {
-      console.log("ERRRRR =>", error);
+      console.log("ERRRRR =>", error)
       store.dispatch(showAlert("___ERROR___"));
     }
 
@@ -83,15 +83,15 @@ requestV2.interceptors.request.use(
       config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
     }
-    if (!config.params?.["project-id"]) {
-      if (config.params) {
-        config.params["project-id"] = projectId;
-      } else {
-        config.params = {
-          "project-id": projectId,
-        };
-      }
-    }
+    // if (!config.params?.["project-id"]) {
+    //   if (config.params) {
+    //     config.params["project-id"] = projectId;
+    //   } else {
+    //     config.params = {
+    //       "project-id": projectId,
+    //     };
+    //   }
+    // }
     return config;
   },
 

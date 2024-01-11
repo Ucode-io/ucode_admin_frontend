@@ -27,6 +27,11 @@ export const resourceTypes = [
     label: 'Rest',
     value: 4,
     icon: SiPostgresql
+  },
+  {
+    label: 'GitHub',
+    value: 5,
+    icon: SiPostgresql
   }
 ]
 

@@ -3,12 +3,15 @@ import React, { useMemo } from "react";
 import { struct } from "pb-util";
 import { useTranslation } from "react-i18next";
 import JsonModalVersion from "./JsonModalVersion";
+import { store } from "../../../../store";
 
 export default function HistoryRow({ history, index, handleSelectVersion, selectedVersions }) {
   const { i18n } = useTranslation();
   const decodedCurrentAttributes = struct.decode(history?.current?.attributes ?? {});
   const decodedPreviousAttributes = struct.decode(history?.previus?.attributes ?? {});
   const multiLanguageLabel = `label_${i18n.language}`;
+  const companyStore = store.getState().company;
+  const environmentId = companyStore.environmentId;
 
   const label = useMemo(() => {
     if (history?.action_type === "CREATE" || history?.action_type === "BULKWRITE") {
@@ -38,7 +41,7 @@ export default function HistoryRow({ history, index, handleSelectVersion, select
   return (
     <TableRow key={history.id}>
       <TableCell align="center" component="th" scope="row" sx={{ padding: "16px 24px 16px 16px !important" }}>
-        <Checkbox onChange={(e) => handleSelectVersion(e, index)} checked={selectedVersions.find((version) => version.id === history.id) ? true : false} />
+        <Checkbox onChange={(e) => handleSelectVersion(e, index)} checked={selectedVersions.find((version) => version.id === history.id) || history?.is_used?.[environmentId] ? true : false} />
       </TableCell>
 
       <TableCell align="left" sx={{ padding: "16px 24px 16px 16px !important" }}>

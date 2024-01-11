@@ -10,6 +10,7 @@ import SearchInput from "../../../components/SearchInput";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
 import constructorFunctionService from "../../../services/constructorFunctionService";
+import StatusPipeline from "../Microfrontend/StatusPipeline";
 
 export default function OpenFaasFunctionPage() {
   const navigate = useNavigate();
@@ -47,8 +48,6 @@ export default function OpenFaasFunctionPage() {
     getList();
   }, []);
 
-  console.log('list', list)
-
   return (
     <div>
       <HeaderSettings title={"Open faas функции"} backButtonLink={-1} />
@@ -71,6 +70,7 @@ export default function OpenFaasFunctionPage() {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
+            <CTableCell>Статус</CTableCell>
             <CTableCell>Path</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
@@ -79,6 +79,9 @@ export default function OpenFaasFunctionPage() {
               <CTableRow key={element.id} onClick={() => navigateToEditForm(element.id)}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
+                <CTableCell>
+                  <StatusPipeline element={element} />
+                </CTableCell>
                 <CTableCell>{element?.path}</CTableCell>
                 <CTableCell>
                   <RectangleIconButton color="error" onClick={() => deleteTable(element.id)}>

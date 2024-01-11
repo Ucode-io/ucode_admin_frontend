@@ -62,6 +62,7 @@ const NewProfilePanel = ({
     refresh_token: auth?.refreshToken,
     env_id: company.environmentId,
     project_id: company.projectId,
+    for_env: true,
   };
 
   const handleEnvNavigate = () => {
@@ -119,7 +120,7 @@ const NewProfilePanel = ({
 
   const refreshTokenFunc = (env_id) => {
     authService
-      .updateToken({...params, env_id: env_id})
+      .updateToken({...params, env_id: env_id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();

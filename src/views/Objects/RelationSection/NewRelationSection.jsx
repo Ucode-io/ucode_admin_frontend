@@ -49,19 +49,19 @@ const NewRelationSection = ({
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  console.log('loader', loader)
+  console.log("loader", loader);
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
 
@@ -345,16 +345,17 @@ const NewRelationSection = ({
                     setSelectedObjects={setSelectedObjects}
                   />
 
-                  {relatedTable && (
-                    <RectangleIconButton
-                      color="success"
-                      size="small"
-                      onClick={navigateToCreatePage}
-                      disabled={!id}
-                    >
-                      <Add style={{color: "#007AFF"}} />
-                    </RectangleIconButton>
-                  )}
+                  {selectedTab?.relation?.type === "Many2Many" &&
+                    relatedTable && (
+                      <RectangleIconButton
+                        color="success"
+                        size="small"
+                        onClick={navigateToCreatePage}
+                        disabled={!id}
+                      >
+                        <Add style={{color: "#007AFF"}} />
+                      </RectangleIconButton>
+                    )}
 
                   {data[selectedTabIndex]?.multiple_insert && (
                     <MultipleInsertButton

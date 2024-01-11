@@ -1,17 +1,17 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
-import { useFieldsListQuery } from "../../services/fieldService";
-import { useRelationGetByIdQuery } from "../../services/relationService";
-import { applyDrag } from "../../utils/applyDrag";
+import {useFieldsListQuery} from "../../services/fieldService";
+import {useRelationGetByIdQuery} from "../../services/relationService";
+import {applyDrag} from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -21,7 +21,7 @@ import {
   math,
   newFieldTypes
 } from "../../utils/constants/fieldTypes";
-import { colorList } from "../ColorPicker/colorList";
+import {colorList} from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -62,10 +62,10 @@ export default function FieldCreateModal({
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const { tableSlug } = useParams();
-  const { i18n } = useTranslation();
+  const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -112,7 +112,7 @@ export default function FieldCreateModal({
     }
   };
 
-  const { isLoading: fieldLoading } = useFieldsListQuery({
+  const {isLoading: fieldLoading} = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
@@ -122,7 +122,7 @@ export default function FieldCreateModal({
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
-            return { value: item.slug, label: item.label };
+            return {value: item.slug, label: item.label};
           })
         );
       },
@@ -133,21 +133,21 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({ data }) => {
+      onSuccess: ({data}) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -235,7 +235,7 @@ export default function FieldCreateModal({
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 350, left: 850 }}
+      anchorPosition={{top: 350, left: 850}}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -269,7 +269,7 @@ export default function FieldCreateModal({
             >
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                 <FRow label="Label" classname={style.custom_label} required>
-                  <Box style={{ display: "flex", gap: "6px" }}>
+                  <Box style={{display: "flex", gap: "6px"}}>
                     <HFTextFieldWithMultiLanguage
                       control={control}
                       name="attributes.label"
@@ -288,7 +288,7 @@ export default function FieldCreateModal({
                     classname={style.custom_label}
                     required
                   >
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label"
@@ -305,7 +305,7 @@ export default function FieldCreateModal({
                     classname={style.custom_label}
                     required
                   >
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label_to"
@@ -454,7 +454,7 @@ export default function FieldCreateModal({
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{ backgroundColor: color }}
+                              style={{backgroundColor: color}}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,

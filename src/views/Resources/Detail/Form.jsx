@@ -1,13 +1,12 @@
-import React, { useMemo } from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
-import Footer from "../../../components/Footer";
-import HFTextField from "../../../components/FormElements/HFTextField";
-import HFSelect from "../../../components/FormElements/HFSelect";
-import { resourceTypes } from "../../../utils/resourceConstants";
-import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
-import { useWatch } from "react-hook-form";
-import { useLocation } from "react-router-dom";
 import stringifyQueryParams from "@/utils/stringifyQueryParams";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import React, { useMemo } from "react";
+import { useWatch } from "react-hook-form";
+import Footer from "../../../components/Footer";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import HFTextField from "../../../components/FormElements/HFTextField";
+import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
+import { resourceTypes } from "../../../utils/resourceConstants";
 
 const headerStyle = {
   width: "100",
@@ -44,9 +43,7 @@ const Form = ({
   });
 
   const onResourceTypeChange = (value) => {
-    // IF resource_type !== github
     if (value !== 5) return;
-
 
     const queryParams = {
       client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
@@ -54,16 +51,7 @@ const Form = ({
       scope: 'read:user,repo'
     }
 
-    window.location.assign('https://github.com/login/oauth/authorize?' + stringifyQueryParams((queryParams)))
-
-    // Redirect to Github authorization page
-    // window.location.assign(
-    //   `https://github.com/login/oauth/authorize?client_id=${
-    //     import.meta.env.VITE_GITHUB_CLIENT_ID
-    //   }&redirect_uri=${
-    //     window.location.origin
-    //   }scope=read:user,repo`,
-    // );
+    window.location.assign('https://github.com/login/oauth/authorize?' + stringifyQueryParams(queryParams))
   };
 
   return (
@@ -116,7 +104,7 @@ const Form = ({
             />
 
             {resurceType === 5 && <>
-              <Box sx={{fontSize: "14px", marginTop: "10px", marginBottom: "15px"}}>Gihub username</Box>
+              <Box sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "15px" }}>Gihub username</Box>
               <HFTextField
                 control={control}
                 required
@@ -154,7 +142,7 @@ const Form = ({
 
         {/* <Divider /> */}
 
-        {selectedEnvironment?.length && (
+        {selectedEnvironment?.length > 0 && (
           <>
             <Box sx={{ padding: "15px", fontSize: "24px" }}>
               <Typography variant="h6">Credentials</Typography>

@@ -291,9 +291,9 @@ const AutoCompleteElement = ({
         <FormHelperText error>{error?.message}</FormHelperText>
       )}
 
-      {Boolean(!value?.length && required) && (
+      {/* {Boolean(!value?.length && required) && (
         <FormHelperText error>{"This field is required"}</FormHelperText>
-      )}
+      )} */}
       <Dialog open={!!dialogState} onClose={handleClose}>
         <AddOptionBlock
           dialogState={dialogState}

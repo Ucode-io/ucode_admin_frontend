@@ -54,7 +54,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
   const timeValue = useMemo(() => {
     if (typeof value === "object") return JSON.stringify(value);
     if (field?.type === "DATE_TIME_WITHOUT_TIME_ZONE") {
-      if (!isNaN(new Date(value))) {
+      if (value?.includes('Z')) {
         let dateObj = new Date(value);
 
         let formattedDate = dateObj.toLocaleString("en-US", {
@@ -118,7 +118,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
   if (field.render) {
     return field.render(row);
   }
-  console.log("fieldddddddddddddddddd", field);
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;

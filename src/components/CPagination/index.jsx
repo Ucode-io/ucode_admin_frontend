@@ -72,7 +72,7 @@ const CPagination = ({
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
   };
-  console.log("selectedTab", selectedTab);
+
   return (
     <div
       style={{

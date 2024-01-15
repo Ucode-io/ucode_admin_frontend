@@ -69,10 +69,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     },
   });
   const values = watch();
+
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === tableSlug) return values.table_from;
-    else if (values.table_from === tableSlug) return values.table_to;
+    else if (values.table_from === tableSlug) return values.to;
     return null;
   }, [values, tableSlug]);
 
@@ -215,7 +216,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   const submitHandler = (values) => {
     const data = {
       ...values,
-      relation_table_slug: tableSlug,
+      relation_table_slug: relatedTableSlug ?? tableSlug,
       // compute columns
       // columns: values.columnsList
       //   ?.filter((el) => el.is_checked)

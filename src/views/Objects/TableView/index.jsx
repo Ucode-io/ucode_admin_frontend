@@ -523,7 +523,7 @@ const TableView = ({
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? '');
     }
   };
 

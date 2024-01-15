@@ -377,11 +377,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                         <HFSelect name="view_type" control={control} placeholder="Relation field type" options={relationViewTypes} />
                       </FRow>
                     )}
-                    {isViewFieldsVisible && (
+                    {/* {isViewFieldsVisible && ( */}
                       <FRow label="View fields">
                         <HFMultipleSelect name="view_fields" control={control} options={computedFieldsListOptions} placeholder="View fields" allowClear />
                       </FRow>
-                    )}
+                    {/* )} */}
 
                     {values.type === "Many2Dynamic" && <DynamicRelationsBlock control={control} computedTablesList={computedTablesList} />}
                     <div className={styles.default_limit}>

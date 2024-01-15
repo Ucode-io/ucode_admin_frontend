@@ -1,34 +1,39 @@
-import {useMutation, useQuery} from "react-query";
+import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
 import requestV2 from "../utils/requestV2";
 
 const resourceService = {
-  getList: (params) => request.get(`/company/project/resource`, {params}),
-  getListV2: (params) => requestV2.get(`/company/project/resource`, {params}),
+  getList: (params) => request.get(`/company/project/resource`, { params }),
+  getListV2: (params) => requestV2.get(`/company/project/resource`, { params }),
   getVariableResources: (id) =>
     request.get(`/company/project/resource-variable/${id}`),
-  getByID: (id) => request.get(`/company/project/resource/${id}`),
-  getByIDV2: (id) => requestV2.get(`/company/project/resource/${id}`),
+  getByID: (id, params) =>
+    request.get(`/company/project/resource/${id}`, { params }),
+  getByIDV2: (id, params) =>
+    requestV2.get(`/company/project/resource/${id}`, { params }),
   create: (data) => request.post(`/company/project/resource`, data),
   createV2: (data) => requestV2.post(`/company/project/resource`, data),
   update: (data) => request.put(`/company/project/resource/${data.id}`, data),
-  updateV2: (data) => requestV2.put(`/company/project/resource`, data),
+  updateV2: (data) =>
+    requestV2.put(`/company/project/resource`, data, {
+      params: { type: data.type },
+    }),
   createFromCluster: (data) =>
     request.post("/company/project/create-resource", data),
   getResourceEnvironment: (id) =>
     request.get(`v1/company/project/resource-environment/${id}`),
   configureResource: (data) =>
     request.post("/v1/company/project/configure-resource", data),
-  delete: (data) => request.delete(`v1/company/project/resource`, {data}),
-  deleteV2: ({id}) => requestV2.delete(`/company/project/resource/${id}`),
-  reconnect: ({data, projectId}) => {
+  delete: (data) => request.delete(`v1/company/project/resource`, { data }),
+  deleteV2: ({ id }) => requestV2.delete(`/company/project/resource/${id}`),
+  reconnect: ({ data, projectId }) => {
     return request.post(`v1/company/project/resource/reconnect`, data, {
-      params: {"project-id": projectId},
+      params: { "project-id": projectId },
     });
   },
 };
 
-export const useResourceListQuery = ({params = {}, queryParams} = {}) => {
+export const useResourceListQuery = ({ params = {}, queryParams } = {}) => {
   return useQuery(
     ["RESOURCES", params],
     () => {
@@ -38,7 +43,7 @@ export const useResourceListQuery = ({params = {}, queryParams} = {}) => {
   );
 };
 
-export const useResourceListQueryV2 = ({params = {}, queryParams} = {}) => {
+export const useResourceListQueryV2 = ({ params = {}, queryParams } = {}) => {
   return useQuery(
     ["RESOURCESV2", params],
     () => {
@@ -48,7 +53,7 @@ export const useResourceListQueryV2 = ({params = {}, queryParams} = {}) => {
   );
 };
 
-export const useVariableResourceListQuery = ({id, queryParams} = {}) => {
+export const useVariableResourceListQuery = ({ id, queryParams } = {}) => {
   return useQuery(
     ["RESOURCES_VARIABLE", id],
     () => {
@@ -58,21 +63,29 @@ export const useVariableResourceListQuery = ({id, queryParams} = {}) => {
   );
 };
 
-export const useResourceGetByIdQuery = ({id, queryParams} = {}) => {
+export const useResourceGetByIdQuery = ({
+  id,
+  params = {},
+  queryParams,
+} = {}) => {
   return useQuery(
-    ["RESOURCE_BY_ID", id],
+    ["RESOURCE_BY_ID", { id, ...params }],
     () => {
-      return resourceService.getByID(id);
+      return resourceService.getByID(id, params);
     },
     queryParams
   );
 };
 
-export const useResourceGetByIdQueryV2 = ({id, queryParams} = {}) => {
+export const useResourceGetByIdQueryV2 = ({
+  id,
+  params = {},
+  queryParams,
+} = {}) => {
   return useQuery(
-    ["RESOURCE_BY_ID", id],
+    ["RESOURCE_BY_ID", { id, ...params }],
     () => {
-      return resourceService.getByIDV2(id);
+      return resourceService.getByIDV2(id, params);
     },
     queryParams
   );
@@ -85,14 +98,20 @@ export const useResourceCreateFromClusterMutation = (mutationSettings) => {
   );
 };
 
-export const useResourceReconnectMutation = ({projectId, mutationSettings}) => {
+export const useResourceReconnectMutation = ({
+  projectId,
+  mutationSettings,
+}) => {
   return useMutation(
-    (data) => resourceService.reconnect({data, projectId}),
+    (data) => resourceService.reconnect({ data, projectId }),
     mutationSettings
   );
 };
 
-export const useResourceEnvironmentGetByIdQuery = ({id, queryParams} = {}) => {
+export const useResourceEnvironmentGetByIdQuery = ({
+  id,
+  queryParams,
+} = {}) => {
   return useQuery(
     ["RESOURCE_ENVIRONMENT_BY_ID", id],
     () => {
@@ -108,7 +127,7 @@ export const useResourceDeleteMutation = (mutationSettings) => {
 
 export const useResourceDeleteMutationV2 = (mutationSettings) => {
   return useMutation(
-    ({id}) => resourceService.deleteV2({id}),
+    ({ id }) => resourceService.deleteV2({ id }),
     mutationSettings
   );
 };

@@ -51,16 +51,16 @@ const RelationTable = forwardRef(
     },
     ref
   ) => {
-    const {appId, tableSlug} = useParams();
+    const { appId, tableSlug } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {navigateToForm} = useTabRouter();
+    const { navigateToForm } = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const {i18n} = useTranslation();
+    const { i18n } = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
 
     const paginationInfo = useSelector(
@@ -117,13 +117,13 @@ const RelationTable = forwardRef(
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({table_id: id});
+        const getFieldsData = constructorFieldService.getList({ table_id: id });
 
         const getRelations = constructorRelationService.getList({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         });
-        const [{relations = []}, {fields = []}] = await Promise.all([
+        const [{ relations = [] }, { fields = [] }] = await Promise.all([
           getRelations,
           getFieldsData,
         ]);
@@ -276,7 +276,7 @@ const RelationTable = forwardRef(
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({data}) => {
+        select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
@@ -310,7 +310,7 @@ const RelationTable = forwardRef(
             ?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({field_id}) => fieldsMap[field_id])
+            ?.map(({ field_id }) => fieldsMap[field_id])
             ?.filter((el) => el);
 
           return {
@@ -400,7 +400,7 @@ const RelationTable = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
+    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -423,7 +423,7 @@ const RelationTable = forwardRef(
       }
     );
 
-    const {data: {custom_events: customEvents = []} = {}} =
+    const { data: { custom_events: customEvents = [] } = {} } =
       useCustomActionsQuery({
         tableSlug: relatedTableSlug,
       });
@@ -441,18 +441,20 @@ const RelationTable = forwardRef(
         },
       });
     };
-    const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
+    const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState(
+      []
+    );
 
     const multipleDelete = async () => {
       try {
         await constructorObjectService.deleteMultiple(tableSlug, {
           ids: selectedObjectsForDelete.map((i) => i.guid),
         });
-        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
       } finally {
       }
     };
-    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
+
     if (loader) return <PageFallback />;
 
     return (

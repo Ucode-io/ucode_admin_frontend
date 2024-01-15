@@ -1,11 +1,11 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import {Button} from "@mui/material";
-import {useVirtualizer} from "@tanstack/react-virtual";
-import React, {useEffect, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import { Button } from "@mui/material";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import {
   CTable,
@@ -143,7 +143,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -169,7 +169,9 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -236,6 +238,11 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
+  // useEffect(() => {
+  //   if (!formVisible) {
+  //     dispatch(selectedRowActions.clear());
+  //   }
+  // }, [formVisible]);
 
   const parentRef = useRef(null);
 

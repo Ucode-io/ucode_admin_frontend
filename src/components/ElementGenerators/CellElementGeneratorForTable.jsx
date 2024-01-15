@@ -23,8 +23,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {makeStyles} from "@mui/styles";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import IconPicker from "../IconPicker";
-import Many2neValue from "./Many2OneValue";
+import SingleLine from "./SingleLine";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -54,21 +53,24 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
 
   const timeValue = useMemo(() => {
     if (typeof value === "object") return JSON.stringify(value);
+    if (field?.type === "DATE_TIME_WITHOUT_TIME_ZONE") {
+      if (value?.includes('Z')) {
+        let dateObj = new Date(value);
 
-    let dateObj = new Date(value);
+        let formattedDate = dateObj.toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: "UTC",
+        });
 
-    let formattedDate = dateObj.toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-      timeZone: "UTC",
-    });
-
-    return formattedDate;
+        return formattedDate;
+      } else return value;
+    }
   }, [field, value]);
 
   const tablesList = useMemo(() => {
@@ -121,8 +123,8 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
-    case "LOOKUP":
-      return <Many2neValue field={field} value={value} row={row} />;
+    case "SINGLE_LINE":
+      return <SingleLine field={field} value={value} row={row} />;
 
     case "DATE":
       return (

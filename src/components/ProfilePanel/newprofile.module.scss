@@ -22,7 +22,8 @@
     .block {
       overflow-y: auto;
       padding: 8px;
-      height: 500px;
+      height: 100%;
+      min-height: 280px;
 
       &::-webkit-scrollbar {
         display: none;
@@ -44,6 +45,7 @@
       overflow-y: auto;
       padding: 8px;
       max-width: 200px;
+      min-height: 52px;
 
       &::-webkit-scrollbar {
         display: none;
@@ -64,6 +66,7 @@
       overflow-y: auto;
       padding: 8px;
       max-width: 200px;
+      min-height: 52px;
 
       &::-webkit-scrollbar {
         display: none;

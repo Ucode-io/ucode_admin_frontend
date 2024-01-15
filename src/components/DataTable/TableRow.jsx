@@ -1,7 +1,6 @@
 import { Delete } from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { Button, Checkbox } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
@@ -229,7 +228,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td style={{height: "30px"}}>
+            <td style={{ height: "30px" }}>
               <div
                 style={{
                   display: "flex",
@@ -330,7 +329,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -424,7 +426,7 @@ const TableRow = ({
                 </CTableCell>
               )
           )}
-          <td style={{height: "30px"}}>
+          <td style={{ height: "30px" }}>
             <div
               style={{
                 display: "flex",
@@ -457,7 +459,7 @@ const TableRow = ({
           </td>
 
           <td>
-            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
+            <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
           </td>
         </CTableRow>
       ) : (
@@ -517,7 +519,10 @@ const TableRow = ({
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}

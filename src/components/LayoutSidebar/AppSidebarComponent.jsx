@@ -1,8 +1,8 @@
 import "./style.scss";
 import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import {BsThreeDots} from "react-icons/bs";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,6 +32,8 @@ const AppSidebar = ({
   const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const auth = store.getState().auth;
+  const {appId} = useParams();
+
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -91,6 +93,7 @@ const AppSidebar = ({
   const [searchParams] = useSearchParams();
 
   const menuItem = searchParams.get("menuId");
+  console.log('menuItem',appId,  menuItem)
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -104,7 +107,7 @@ const AppSidebar = ({
 
   const defaultLanguage = i18n.language;
 
-  console.log("element", element);
+  const activeMenu = Boolean(appId !== 'c57eedc3-a954-4262-a0af-376c65b5a284' && appId === element?.id) || menuItem === element?.id
 
   return (
     <Draggable key={index}>
@@ -118,10 +121,10 @@ const AppSidebar = ({
           className="parent-folder column-drag-handle awdaw"
           style={{
             background:
-              selectedApp?.id === element?.id || menuItem === element?.id
-                ? menuStyle?.active_background || "#007AFF"
+            activeMenu
+                ? menuStyle?.active_background ?? "#007AFF"
                 : menuStyle?.background,
-            color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
+            color: Boolean(appId !== 'c57eedc3-a954-4262-a0af-376c65b5a284' && appId === element?.id) || menuItem === element?.id ? "#fff" : "#A8A8A8",
             borderRadius: "10px",
             margin: "0 10px",
           }}
@@ -144,7 +147,7 @@ const AppSidebar = ({
             style={{
               marginRight: sidebarIsOpen ? "8px" : "0px",
               color:
-                selectedApp?.id === element.id
+              activeMenu
                   ? menuStyle?.active_text
                   : menuStyle?.text || "",
             }}
@@ -159,9 +162,9 @@ const AppSidebar = ({
               }
               style={{
                 color:
-                  selectedApp?.id === element.id
+                activeMenu
                     ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                    : menuStyle?.text || "#A8A8A8",
               }}
             />
           )}
@@ -181,9 +184,9 @@ const AppSidebar = ({
                       }}
                       style={{
                         color:
-                          selectedApp?.id === element.id
+                        activeMenu
                             ? menuStyle?.active_text
-                            : menuStyle?.text || "",
+                            : menuStyle?.text ?? "#fff",
                       }}
                     />
                   </Box>
@@ -202,7 +205,7 @@ const AppSidebar = ({
                       size={13}
                       style={{
                         color:
-                          selectedApp?.id === element.id
+                        activeMenu
                             ? menuStyle?.active_text
                             : menuStyle?.text || "",
                       }}
@@ -224,7 +227,7 @@ const AppSidebar = ({
               }}
               style={{
                 color:
-                  selectedApp?.id === element.id
+                activeMenu
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
@@ -241,7 +244,7 @@ const AppSidebar = ({
               }}
               style={{
                 color:
-                  selectedApp?.id === element.id
+                activeMenu
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
@@ -258,7 +261,7 @@ const AppSidebar = ({
               }}
               style={{
                 color:
-                  selectedApp?.id === element.id
+                 selectedApp?.id === element.id
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
@@ -275,7 +278,7 @@ const AppSidebar = ({
               }}
               style={{
                 color:
-                  selectedApp?.id === element.id
+                activeMenu
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
@@ -285,7 +288,7 @@ const AppSidebar = ({
             <KeyboardArrowRightIcon
               style={{
                 color:
-                  selectedApp?.id === element.id
+                activeMenu
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
                 transform: selectedApp?.id === element.id && "rotate(90deg)",

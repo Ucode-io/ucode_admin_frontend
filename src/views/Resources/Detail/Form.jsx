@@ -1,13 +1,12 @@
-import React, { useMemo } from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
-import Footer from "../../../components/Footer";
-import HFTextField from "../../../components/FormElements/HFTextField";
-import HFSelect from "../../../components/FormElements/HFSelect";
-import { resourceTypes } from "../../../utils/resourceConstants";
-import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
-import { useWatch } from "react-hook-form";
-import { useLocation } from "react-router-dom";
 import stringifyQueryParams from "@/utils/stringifyQueryParams";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import React, { useMemo } from "react";
+import { useWatch } from "react-hook-form";
+import Footer from "../../../components/Footer";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import HFTextField from "../../../components/FormElements/HFTextField";
+import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
+import { resourceTypes, resources } from "../../../utils/resourceConstants";
 
 const headerStyle = {
   width: "100",
@@ -43,28 +42,27 @@ const Form = ({
     name: "resource_type",
   });
 
-  const onResourceTypeChange = (value) => {
-    // IF resource_type !== github
-    if (value !== 5) return;
+  const type = useWatch({
+    control,
+    name: "type",
+  });
 
+  const onResourceTypeChange = (value) => {
+    if (value !== 5) return;
 
     const queryParams = {
       client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
       redirect_uri: window.location.href,
-      scope: 'read:user,repo'
-    }
+      scope: "read:user,repo",
+    };
 
-    window.location.assign('https://github.com/login/oauth/authorize?' + stringifyQueryParams((queryParams)))
-
-    // Redirect to Github authorization page
-    // window.location.assign(
-    //   `https://github.com/login/oauth/authorize?client_id=${
-    //     import.meta.env.VITE_GITHUB_CLIENT_ID
-    //   }&redirect_uri=${
-    //     window.location.origin
-    //   }scope=read:user,repo`,
-    // );
+    window.location.assign(
+      "https://github.com/login/oauth/authorize?" +
+        stringifyQueryParams(queryParams)
+    );
   };
+
+  console.log("resurceType", resurceType);
 
   return (
     <Box
@@ -110,28 +108,50 @@ const Form = ({
               onChange={onResourceTypeChange}
               required
               name="resource_type"
-              defaultValue={0}
               resurceType={resurceType}
               disabled={resurceType === 4}
             />
 
-            {resurceType === 5 && <>
-              <Box sx={{fontSize: "14px", marginTop: "10px", marginBottom: "15px"}}>Gihub username</Box>
-              <HFTextField
-                control={control}
-                required
-                name="integration_resource.username"
-                fullWidth
-                disabled
-                inputProps={{
-                  placeholder: "Github username",
-                }}
-              />
-            </>}
-
-
+            {resurceType === 5 || type === "GITHUB" ? (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Type
+                </Box>
+                <HFSelect
+                  options={resources}
+                  control={control}
+                  required
+                  name="type"
+                  disabled={true}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}
+                >
+                  Gihub username
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="integration_resource.username"
+                  fullWidth
+                  disabled
+                  inputProps={{
+                    placeholder: "Github username",
+                  }}
+                />
+              </>
+            ) : null}
           </Box>
-
 
           {!isEditPage && (
             <Box sx={{ marginTop: "0px", padding: "15px" }} px={2}>
@@ -154,7 +174,7 @@ const Form = ({
 
         {/* <Divider /> */}
 
-        {selectedEnvironment?.length && (
+        {selectedEnvironment?.length > 0 && (
           <>
             <Box sx={{ padding: "15px", fontSize: "24px" }}>
               <Typography variant="h6">Credentials</Typography>

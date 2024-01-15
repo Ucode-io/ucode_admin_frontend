@@ -23,7 +23,8 @@ const authService = {
   resetUserPasswordV2: (data) =>
     requestAuth.put(`/v2/user/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
-  updateToken: (data) => authRequestV2.put(`/refresh`, data),
+  updateToken: (data, params) =>
+    authRequestV2.put(`/refresh`, data, {params: {for_env: params?.for_env}}),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
   verifyCode: (sms_id, otp, data) =>
     requestAuth.post(`/verify/${sms_id}/${otp}`, data),

@@ -62,6 +62,7 @@ const NewProfilePanel = ({
     refresh_token: auth?.refreshToken,
     env_id: company.environmentId,
     project_id: company.projectId,
+    for_env: true,
   };
 
   const handleEnvNavigate = () => {
@@ -119,7 +120,7 @@ const NewProfilePanel = ({
 
   const refreshTokenFunc = (env_id) => {
     authService
-      .updateToken({...params, env_id: env_id})
+      .updateToken({...params, env_id: env_id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
@@ -270,6 +271,7 @@ const NewProfilePanel = ({
           paper: settings ? styles.settingspaper : styles.profilepaper,
         }}
       >
+        
         <Box className={styles.leftblock}>
           <div className={styles.block}>
             <div className={styles.companyblock}>
@@ -330,7 +332,7 @@ const NewProfilePanel = ({
             />
           </div>
           <Divider />
-          {/* <div className={styles.block}> */}
+          <Box className={styles.block}>
           {permissions?.project_button && (
             <ProfileItem
               children={
@@ -389,11 +391,7 @@ const NewProfilePanel = ({
               }}
             />
           )}
-          {/* </div> */}
 
-          {permissions?.sms_button && <Divider />}
-
-          <div className={styles.block}>
             <ProfileItem
               children={
                 <GTranslateIcon
@@ -430,23 +428,8 @@ const NewProfilePanel = ({
                 </MenuItem>
               ))}
             </Menu>
-          </div>
-
-          <Box
-            style={{
-              height: "calc((100% / 2) + 13px)",
-              display: "flex",
-            }}
-          >
-            <Box
-              className={styles.block}
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-              }}
-            >
               <Box>
-                {defaultAdmin && (
+                {/* {defaultAdmin && (
                   <ProfileItem
                     children={
                       <WidgetsIcon
@@ -461,7 +444,7 @@ const NewProfilePanel = ({
                       closeMenu();
                     }}
                   />
-                )}
+                )} */}
                 {permissions?.menu_setting_button && (
                   <ProfileItem
                     children={
@@ -479,7 +462,6 @@ const NewProfilePanel = ({
                   />
                 )}
               </Box>
-            </Box>
           </Box>
         </Box>
         <Box className={styles.centerblock}>

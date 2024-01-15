@@ -18,7 +18,6 @@ import { constructorTableActions } from "../../../../store/constructorTable/cons
 import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
 import { generateGUID } from "../../../../utils/generateID";
 import { listToMap } from "../../../../utils/listToMap";
-
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
@@ -109,7 +108,12 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
+        getTableData,
+        getActions,
+        getViewRelations,
+        getLayouts,
+      ]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -141,11 +145,15 @@ const ConstructorTablesFormPage = () => {
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug: relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
+        relatedTableSlug:
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -153,11 +161,14 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === tableSlug) ||
-          (relation.type === "One2Many" && relation.table_to?.slug === tableSlug) ||
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" && relation.table_from?.slug === tableSlug)
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === tableSlug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -171,7 +182,10 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -314,14 +328,22 @@ const ConstructorTablesFormPage = () => {
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
-              <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
+              <HeaderSettings
+                title="Objects"
+                subtitle={id ? mainForm.getValues("label") : "Добавить"}
+                icon={mainForm.getValues("icon")}
+                backButtonLink={-1}
+                sticky
+              >
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
                   <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
                   <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
                   {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
                   {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
-                  {id && <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>
+                  )}
                 </TabList>
               </HeaderSettings>
 
@@ -330,16 +352,28 @@ const ConstructorTablesFormPage = () => {
               </TabPanel>
 
               <TabPanel>
-                <Layout mainForm={mainForm} getRelationFields={getRelationFields} getData={getData} setSelectedTabLayout={setSelectedTab} />
+                <Layout
+                  mainForm={mainForm}
+                  getRelationFields={getRelationFields}
+                  getData={getData}
+                  setSelectedTabLayout={setSelectedTab}
+                />
               </TabPanel>
 
               <TabPanel>
-                <Fields getRelationFields={getRelationFields} mainForm={mainForm} slug={tableSlug} />
+                <Fields
+                  getRelationFields={getRelationFields}
+                  mainForm={mainForm}
+                  slug={tableSlug}
+                />
               </TabPanel>
 
               {id && (
                 <TabPanel>
-                  <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
+                  <Relations
+                    mainForm={mainForm}
+                    getRelationFields={getRelationFields}
+                  />
                 </TabPanel>
               )}
               {id && (
@@ -357,7 +391,12 @@ const ConstructorTablesFormPage = () => {
           </>
         ) : (
           <>
-            <HeaderSettings title={id ? mainForm.getValues("label") : "Create table"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky></HeaderSettings>
+            <HeaderSettings
+              title={id ? mainForm.getValues("label") : "Create table"}
+              icon={mainForm.getValues("icon")}
+              backButtonLink={-1}
+              sticky
+            ></HeaderSettings>
 
             <MainInfo control={mainForm.control} watch={mainForm.watch} />
           </>
@@ -373,7 +412,11 @@ const ConstructorTablesFormPage = () => {
               <SecondaryButton onClick={() => navigate(-1)} color="error">
                 Close
               </SecondaryButton>
-              <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={mainForm.handleSubmit(onSubmit)}
+                loading={btnLoader}
+              >
                 <Save /> Save
               </PrimaryButton>
             </>

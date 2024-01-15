@@ -1,35 +1,26 @@
-import {Box, Button} from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {useNavigate, useParams} from "react-router-dom";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {updateLevel} from "../../../../utils/level";
-import {useQueryClient} from "react-query";
+import { updateLevel } from "../../../../utils/level";
+import { BsThreeDots } from "react-icons/bs";
 
 const RecursiveBlock = ({
   element,
-  selected,
-  menuStyle,
   level,
   clickHandler,
   childBlockVisible,
   deleteResource,
   setSubMenuIsOpen,
   deleteResourceV2,
-  resourceType,
+  handleOpenNotify,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const navigate = useNavigate();
 
   const activeStyle = {
-    backgroundColor:
-      selected?.id === element?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      selected?.id === element?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
     paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
@@ -50,23 +41,14 @@ const RecursiveBlock = ({
             onClick={(e) => {
               e.stopPropagation();
               setSubMenuIsOpen(false);
-              navigate(`/main/resources/${element?.id}`, {
+              navigate(`/main/resources/${element?.id}/${element.type}`, {
                 state: {
                   type: element?.type,
                 },
               });
             }}
           >
-            <div
-              className="label"
-              style={{
-                color:
-                  selected?.id === element?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text,
-                opacity: element?.isChild && 0.6,
-              }}
-            >
+            <div className="label">
               <IconGenerator icon={element?.icon} size={18} />
               {element?.title ?? element?.name}
             </div>
@@ -77,7 +59,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{cursor: "pointer"}}
+              sx={{ cursor: "pointer" }}
             >
               <DeleteIcon />
             </Box>
@@ -94,14 +76,9 @@ const RecursiveBlock = ({
           >
             <div
               className="label"
-              style={{
-                color:
-                  selected?.id === element?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text,
-                opacity: element?.isChild && 0.6,
-              }}
-              onClick={() => navigate(`/main/resources/${element?.id}`)}
+              onClick={() =>
+                navigate(`/main/resources/${element?.id}/${element.type}`)
+              }
             >
               <IconGenerator icon={element?.icon} size={18} />
               {element?.title ?? element?.name}
@@ -113,7 +90,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{cursor: "pointer"}}
+              sx={{ cursor: "pointer" }}
             >
               <DeleteIcon />
             </Box>
@@ -126,12 +103,6 @@ const RecursiveBlock = ({
                       onClick={(e) => {
                         e?.stopPropagation();
                         handleOpenNotify(e, "FOLDER");
-                      }}
-                      style={{
-                        color:
-                          selected?.id === element?.id
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
                       }}
                     />
                   </Box>
@@ -147,12 +118,6 @@ const RecursiveBlock = ({
                       onClick={(e) => {
                         e?.stopPropagation();
                         handleOpenNotify(e, "DAG");
-                      }}
-                      style={{
-                        color:
-                          selected?.id === element?.id
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
                       }}
                     />
                   </Box>

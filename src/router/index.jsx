@@ -312,7 +312,7 @@ const Router = () => {
 
         <Route path="resources">
           <Route path="create" element={<ResourceDetail />} />
-          <Route path=":resourceId" element={<ResourceDetail />} />
+          <Route path=":resourceId/:resourceType" element={<ResourceDetail />} />
 
           <Route path="elt">
             <Route path="connections">

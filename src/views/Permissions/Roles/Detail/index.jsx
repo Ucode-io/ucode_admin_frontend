@@ -63,6 +63,7 @@ const RoleDetail = () => {
         ...values?.data,
       },
       project_id: values?.project_id,
+      role_id: roleId,
     });
     updatePermissionMutate({
       menus: [...changedData],

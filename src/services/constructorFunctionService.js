@@ -1,3 +1,4 @@
+import { useMutation } from "react-query";
 import httpsRequestV2 from "../utils/httpsRequestV2";
 import request from "../utils/request";
 
@@ -7,7 +8,21 @@ const constructorFunctionService = {
   update: (data) => request.put("/function", data),
   create: (data) => request.post("/function", data),
   delete: (id, data) => request.delete(`/function/${id}`, data),
-  invoke: (data, params) => request.post("/invoke_function", data, {params}),
+  invoke: (data, params) => request.post("/invoke_function", data, { params }),
+};
+
+export const useFunctionV1UpdateMutation = (mutationSettings) => {
+  return useMutation(
+    (data) => constructorFunctionService.update(data),
+    mutationSettings
+  );
+};
+
+export const useFunctionV1CreateMutation = (mutationSettings) => {
+  return useMutation(
+    (data) => constructorFunctionService.create(data),
+    mutationSettings
+  );
 };
 
 export default constructorFunctionService;

@@ -79,7 +79,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
   const isViewFieldsVisible = useMemo(() => {
     return (
-      (values.type === "Many2One" && values.table_from === tableSlug) ||
+      (values.type === "Many2One" && values.table_from === relatedTableSlug) ||
       values.type === "Many2Many" ||
       values.type === "Recursive" ||
       values.type === "LOOKUP" ||
@@ -167,11 +167,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   );
 
   const computedFieldsListOptions = useMemo(() => {
-    return values.columnsList?.map((field) => ({
+    return values?.columnsList?.map((field) => ({
       label: field.label,
       value: field.id,
     }));
-  }, [values.columnsList]);
+  }, [values.columnsList, values]);
 
   const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
@@ -271,7 +271,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
-        console.log("res", res);
+
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",

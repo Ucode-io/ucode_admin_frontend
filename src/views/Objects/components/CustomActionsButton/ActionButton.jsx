@@ -29,7 +29,7 @@ const ActionButton = ({ event, id, control, disable }) => {
       return fileName;
     }
   }
-
+  console.log('eventevent', event)
   const invokeFunction = () => {
     const data = {
       function_id: event.event_path,
@@ -43,13 +43,15 @@ const ActionButton = ({ event, id, control, disable }) => {
       })
       .then((res) => {
         dispatch(showAlert("Success", "success"));
-        // queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
+
         let url = res?.data?.link ?? event?.url ?? "";
         if (res?.data?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));
         } else {
           if (event?.action_type === "HTTP") {
+            console.log('entered 1')
             if (event?.attributes?.use_refresh) {
+              console.log('entered 2')
               navigate("/reloadRelations", {
                 state: {
                   redirectUrl: window.location.pathname,

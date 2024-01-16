@@ -73,7 +73,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === tableSlug) return values.table_from;
-    else if (values.table_from === tableSlug) return values.to;
+    else if (values.table_from === tableSlug) return values.table_to;
     return null;
   }, [values, tableSlug]);
 

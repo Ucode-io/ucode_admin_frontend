@@ -168,7 +168,6 @@ const ObjectsPage = () => {
                       view={view}
                       fieldsMap={fieldsMap}
                       menuItem={menuItem}
-                      visibleColumns={visibleColumns}
                     />
                   </>
                 )}

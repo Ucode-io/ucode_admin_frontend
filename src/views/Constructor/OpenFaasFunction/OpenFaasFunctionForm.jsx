@@ -25,9 +25,11 @@ import {
 import Footer from "../../../components/Footer";
 import { useFunctionV1CreateMutation } from "../../../services/constructorFunctionService";
 import functionService, {
+  useFunctionByIdQuery,
   useFunctionCreateMutation,
   useFunctionUpdateMutation,
 } from "../../../services/functionService";
+import { useQueryClient } from "react-query";
 
 // const frameworkOptions = [
 //   {
@@ -50,6 +52,7 @@ export default function OpenFaasFunctionForm() {
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const microfrontendListPageLink = `/main/${appId}/openfaas-functions`;
 
@@ -131,24 +134,15 @@ export default function OpenFaasFunctionForm() {
       },
     });
 
-  const getData = () => {
-    setLoader(true);
-
-    functionService
-      .getById(functionId)
-      .then((res) => {
-        mainForm.reset(res);
-      })
-      .finally(() => setLoader(false));
-  };
-
-  useEffect(() => {
-    if (functionId) {
-      getData();
-    } else {
-      setLoader(false);
-    }
-  }, []);
+  const { isLoading } = useFunctionByIdQuery({
+    functionId,
+    queryParams: {
+      enabled: Boolean(functionId),
+      onSuccess: (res) => {
+        mainForm.reset({ ...res, resource_id: res.resource });
+      },
+    },
+  });
 
   const onSubmit = (data) => {
     if (functionId) updateFunction(data);
@@ -163,7 +157,7 @@ export default function OpenFaasFunctionForm() {
     }
   };
 
-  if (loader) return <PageFallback />;
+  if (isLoading) return <PageFallback />;
 
   return (
     <div>
@@ -191,6 +185,7 @@ export default function OpenFaasFunctionForm() {
               fullWidth
               options={resourceOptions}
               required
+              disabled={functionId}
             />
           </FRow>
 
@@ -202,6 +197,7 @@ export default function OpenFaasFunctionForm() {
                   control={mainForm.control}
                   options={repositories ?? []}
                   required
+                  disabled={functionId}
                 />
               </FRow>
 
@@ -211,6 +207,7 @@ export default function OpenFaasFunctionForm() {
                   control={mainForm.control}
                   options={branches}
                   required
+                  disabled={functionId}
                 />
               </FRow>
             </>
@@ -228,6 +225,7 @@ export default function OpenFaasFunctionForm() {
                 control={mainForm.control}
                 fullWidth
                 required
+                disabled={functionId}
               />
             </FRow>
           )}
@@ -244,9 +242,6 @@ export default function OpenFaasFunctionForm() {
               required
             />
           </FRow>
-          {/* <FRow label="Фреймворк" required>
-            <HFSelect name="framework_type" control={mainForm.control} options={frameworkOptions} defaultValue="REACT" required />
-          </FRow> */}
           {resourceId === "ucode_gitlab" && (
             <FRow label="Описания">
               <HFTextField

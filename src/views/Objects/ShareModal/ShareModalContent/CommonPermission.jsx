@@ -16,19 +16,12 @@ function CommonPermission({
           display: "flex",
           justifyContent: "space-between",
           gap: "10px",
-          padding: '15px'
+          padding: "15px",
+          paddingBottom: "0",
         }}
       >
-        <FRow label="Таблица" style={{ marginBottom: "0px" }}>
-        <HFSelect
-            control={control}
-            name={"table.slug"}
-            options={tablesList}
-            disabled
-          />
-        </FRow>
         <FRow label="Тип ползователя">
-        <HFSelect
+          <HFSelect
             control={control}
             name={"client_type"}
             options={clientTypeList}
@@ -37,7 +30,6 @@ function CommonPermission({
         <FRow label="Роль">
           <HFSelect control={control} name={"guid"} options={getRoleList} />
         </FRow>
-
       </Box>
     </>
   );

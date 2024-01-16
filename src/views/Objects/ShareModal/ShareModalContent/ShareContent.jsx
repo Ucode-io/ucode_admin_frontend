@@ -12,7 +12,14 @@ import tablePermissionService from "../../../../services/tablePermission";
 import ClearIcon from "@mui/icons-material/Clear";
 import ShareModalItems from "./ShareModalItems";
 
-function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
+function ShareContent({
+  handleClose,
+  control,
+  watch,
+  handleSubmit,
+  setValue,
+  reset,
+}) {
   const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
 
@@ -135,8 +142,6 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     });
   };
 
-
-
   return (
     <div className={styles.shareContent}>
       <div className={styles.shareHeader}>
@@ -157,6 +162,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           watch={watch}
           reset={reset}
           tableId={tableId}
+          setValue={setValue}
         />
       </div>
       <div className={styles.shareFooter}>

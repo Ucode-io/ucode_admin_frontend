@@ -11,7 +11,10 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
     getTablePermission?.current_user_permission.table?.record_permissions || {};
 
   const isCheckboxDisabled = (permissionName) => {
-    if (getUserPermission?.current_user_permission || currentPermissions[permissionName] === "No") {
+    if (
+      getUserPermission?.current_user_permission ||
+      currentPermissions[permissionName] === "No"
+    ) {
       return true;
     } else if (grantAccess && currentPermissions[permissionName] === "Yes") {
       return false;
@@ -19,16 +22,23 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
   };
 
   return (
-    <Box sx={{ padding: '0px 15px 15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee' }}>
-      <div>Тип доступа</div>
-      <Box sx={{display:'flex', }}>
+    <Box
+      sx={{
+        padding: "0px 15px 15px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        // borderBottom: "1px solid #eee",
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <div className={styles.checkBox}>
           <HFCheckboxRecord
             control={control}
             name="table.record_permissions.read"
             disabled={isCheckboxDisabled("read")}
           />
-          <div>View</div>
+          <p>View</p>
         </div>
         <div className={styles.checkBox}>
           <HFCheckboxRecord
@@ -36,7 +46,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.write"
             disabled={isCheckboxDisabled("write")}
           />
-          <div>Create</div>
+          <p>Create</p>
         </div>
         <div className={styles.checkBox}>
           <HFCheckboxRecord
@@ -44,7 +54,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.update"
             disabled={isCheckboxDisabled("update")}
           />
-          <div>Edit</div>
+          <p>Edit</p>
         </div>
         <div className={styles.checkBox}>
           <HFCheckboxRecord
@@ -52,7 +62,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.delete"
             disabled={isCheckboxDisabled("delete")}
           />
-          <div>Cancel</div>
+          <p>Cancel</p>
         </div>
         <div className={styles.checkBox}>
           <HFCheckbox
@@ -60,7 +70,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.is_public"
             disabled={isCheckboxDisabled("is_public")}
           />
-          <div>is_public</div>
+          <p>Is public</p>
         </div>
       </Box>
     </Box>

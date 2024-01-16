@@ -317,6 +317,7 @@ const ObjectsFormPage = ({
               control={control?._formValues}
               tableSlug={tableSlug}
               id={id}
+              getAllData={getAllData}
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}

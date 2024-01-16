@@ -93,7 +93,7 @@ const AppSidebar = ({
   const [searchParams] = useSearchParams();
 
   const menuItem = searchParams.get("menuId");
-  console.log('menuItem',appId,  menuItem)
+
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString

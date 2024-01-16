@@ -9,7 +9,7 @@ import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import useDownloader from "../../../../hooks/useDownloader";
 
-const ActionButton = ({ event, id, control, disable }) => {
+const ActionButton = ({ event, id, control, disable, getAllData }) => {
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ const ActionButton = ({ event, id, control, disable }) => {
       return fileName;
     }
   }
-  console.log('eventevent', event)
+
   const invokeFunction = () => {
     const data = {
       function_id: event.event_path,
@@ -44,21 +44,20 @@ const ActionButton = ({ event, id, control, disable }) => {
       .then((res) => {
         dispatch(showAlert("Success", "success"));
 
-        let url = res?.data?.link ?? event?.url ?? "";
-        if (res?.data?.status === "error") {
+        let url = res?.link ?? event?.url ?? "";
+        if (res?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));
         } else {
           if (event?.action_type === "HTTP") {
-            console.log('entered 1')
             if (event?.attributes?.use_refresh) {
-              console.log('entered 2')
               navigate("/reloadRelations", {
                 state: {
                   redirectUrl: window.location.pathname,
                 },
               });
             } else {
-              queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+              // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+              getAllData()
             }
           } else if (url) {
             Object.entries(res?.data ?? {}).forEach(([key, value]) => {

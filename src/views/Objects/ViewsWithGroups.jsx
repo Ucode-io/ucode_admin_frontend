@@ -2,11 +2,11 @@ import { MoreVertOutlined } from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Badge, Button, Divider, Menu, Switch } from "@mui/material";
+import { Backdrop, Badge, Button, Divider, Menu, Switch } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -31,6 +31,8 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import { useFieldSearchUpdateMutation } from "../../services/constructorFieldService";
+import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const ViewsWithGroups = ({
   views,
@@ -43,6 +45,7 @@ const ViewsWithGroups = ({
   visibleColumns,
 }) => {
   const { tableSlug } = useParams();
+  const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
@@ -133,6 +136,13 @@ const ViewsWithGroups = ({
     );
   };
 
+  const { mutate: updateField, isLoading: updateLoading } =
+    useFieldSearchUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
+      },
+    });
+
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
@@ -172,6 +182,14 @@ const ViewsWithGroups = ({
 
   return (
     <>
+      {updateLoading && (
+        <Backdrop
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+          open={true}
+        >
+          <RingLoaderWithWrapper />
+        </Backdrop>
+      )}
       <FiltersBlock
         extra={
           <>
@@ -293,6 +311,7 @@ const ViewsWithGroups = ({
                 checkedColumns={checkedColumns}
                 setCheckedColumns={setCheckedColumns}
                 columns={columnsForSearch}
+                updateField={updateField}
               />
             </Menu>
           </div>

@@ -1,25 +1,16 @@
-import { Switch } from "@mui/material";
+import { Backdrop, CircularProgress, Switch } from "@mui/material";
 import React, { useState } from "react";
 import { columnIcons } from "../../../../utils/constants/columnIcons";
-import { useFieldSearchUpdateMutation } from "../../../../services/constructorFieldService";
-import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 export default function SearchParams({
   checkedColumns,
   setCheckedColumns,
   columns,
+  updateField,
 }) {
-  const queryClient = useQueryClient();
   const [fields, setFields] = useState(columns);
   const { tableSlug } = useParams();
-
-  const { mutate: updateField, isLoading: updateLoading } =
-    useFieldSearchUpdateMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
-      },
-    });
 
   const changeHandler = (slug, e, index, isSearch) => {
     const updatedColumns = [...fields];
@@ -59,47 +50,19 @@ export default function SearchParams({
   const allEditTrue = fields?.every((column) => column.is_search === true);
 
   return (
-    <div>
-      <div
-        style={{
-          padding: "10px 14px",
-          minWidth: "200px",
-        }}
-      >
+    <>
+      <div>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #e0e0e0",
-            padding: "6px 0",
-            justifyContent: "space-between",
+            padding: "10px 14px",
+            minWidth: "200px",
           }}
         >
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <div style={{ textAlign: "end" }}>All</div>
-          </div>
-
-          <div>
-            <Switch
-              size="small"
-              onChange={(e) => toggleAllSearch(e.target.checked)}
-              checked={allEditTrue}
-            />
-          </div>
-        </div>
-
-        {fields.map((column, index) => (
-          <div
-            key={column.id}
-            style={{
-              display: "flex",
-              alignItems: "center",
+              borderBottom: "1px solid #e0e0e0",
               padding: "6px 0",
               justifyContent: "space-between",
             }}
@@ -111,21 +74,51 @@ export default function SearchParams({
                 gap: "10px",
               }}
             >
-              <div>{columnIcons(column.type)}</div>
-
-              <div style={{ textAlign: "end" }}>{column.label}</div>
+              <div style={{ textAlign: "end" }}>All</div>
             </div>
 
             <div>
               <Switch
                 size="small"
-                onChange={(e) => changeHandler(column.slug, e, index)}
-                checked={column.is_search}
+                onChange={(e) => toggleAllSearch(e.target.checked)}
+                checked={allEditTrue}
               />
             </div>
           </div>
-        ))}
+
+          {fields.map((column, index) => (
+            <div
+              key={column.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "6px 0",
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <div>{columnIcons(column.type)}</div>
+
+                <div style={{ textAlign: "end" }}>{column.label}</div>
+              </div>
+
+              <div>
+                <Switch
+                  size="small"
+                  onChange={(e) => changeHandler(column.slug, e, index)}
+                  checked={column.is_search}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

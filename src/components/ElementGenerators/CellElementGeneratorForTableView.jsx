@@ -54,7 +54,7 @@ const CellElementGeneratorForTableView = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -113,7 +113,7 @@ const CellElementGeneratorForTableView = ({
 
     if (!defaultValue) return undefined;
 
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field]);
@@ -673,7 +673,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

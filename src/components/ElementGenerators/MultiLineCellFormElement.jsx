@@ -17,7 +17,16 @@ const style = {
   p: 4,
 };
 
-export default function MultiLineCellFormElement({ control, computedSlug, isWrapField, updateObject, isNewTableView = false, field, isDisabled, ...props }) {
+export default function MultiLineCellFormElement({
+  control,
+  computedSlug,
+  isWrapField,
+  updateObject,
+  isNewTableView = false,
+  field,
+  isDisabled,
+  ...props
+}) {
   // const [open, setOpen] = React.useState(false);
   // const handleOpen = () => setOpen(true);
   // const handleClose = () => setOpen(false);
@@ -43,7 +52,7 @@ export default function MultiLineCellFormElement({ control, computedSlug, isWrap
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
+  console.log("valuevaluevalue", value);
   return (
     <>
       <Box
@@ -74,7 +83,11 @@ export default function MultiLineCellFormElement({ control, computedSlug, isWrap
                 }
           }
         >
-          {stripHtmlTags(`${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}` ?? "")}
+          {stripHtmlTags(
+            value
+              ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
+              : ""
+          )}
         </p>
 
         <Popover

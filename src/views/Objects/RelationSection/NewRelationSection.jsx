@@ -1,17 +1,17 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import {Add, InsertDriveFile} from "@mui/icons-material";
-import {Card, Divider} from "@mui/material";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Add, InsertDriveFile } from "@mui/icons-material";
+import { Card, Divider } from "@mui/material";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useParams, useSearchParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import {store} from "../../../store";
-import {listToMap} from "../../../utils/listToMap";
+import { store } from "../../../store";
+import { listToMap } from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -20,7 +20,7 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import constructorObjectService from "../../../services/constructorObjectService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import menuService from "../../../services/menuService";
@@ -46,7 +46,11 @@ const NewRelationSection = ({
   errors,
 }) => {
   const [data, setData] = useState([]);
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
+  const {
+    tableSlug: tableSlugFromParams,
+    id: idFromParams,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
@@ -72,7 +76,7 @@ const NewRelationSection = ({
   );
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [jwtObjects, setJwtObjects] = useState([]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -80,6 +84,7 @@ const NewRelationSection = ({
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
+  const menuId = searchParams.get("menuId");
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -108,7 +113,7 @@ const NewRelationSection = ({
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const {fields, remove, append, update} = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -202,7 +207,7 @@ const NewRelationSection = ({
 
   const getLayoutList = () => {
     layoutService
-      .getLayout(tableSlug, appId, {
+      .getLayout(tableSlug, menuId, {
         "table-slug": tableSlug,
         language_setting: i18n?.language,
       })
@@ -217,10 +222,10 @@ const NewRelationSection = ({
         };
         setData(layout);
       });
-  }
+  };
 
   useEffect(() => {
-    getLayoutList()
+    getLayoutList();
   }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   useEffect(() => {
@@ -258,7 +263,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap} = {
+    data: { fieldsMap } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -276,7 +281,7 @@ const NewRelationSection = ({
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -333,10 +338,14 @@ const NewRelationSection = ({
                             el?.attributes?.[`label_to_${i18n?.language}`] ||
                             el?.label
                           : el?.attributes?.[`label_${i18n.language}`]
-                          ? el?.attributes?.[`label_${i18n.language}`]
-                          : el?.relation?.attributes?.[`label_${i18n.language}`]
-                          ? el?.relation?.attributes?.[`label_${i18n.language}`]
-                          : el?.label ?? el?.title}
+                            ? el?.attributes?.[`label_${i18n.language}`]
+                            : el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
+                                ]
+                              ? el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
+                                ]
+                              : el?.label ?? el?.title}
                       </div>
                     </Tab>
                   ))}
@@ -357,7 +366,7 @@ const NewRelationSection = ({
                         onClick={navigateToCreatePage}
                         disabled={!id}
                       >
-                        <Add style={{color: "#007AFF"}} />
+                        <Add style={{ color: "#007AFF" }} />
                       </RectangleIconButton>
                     )}
 

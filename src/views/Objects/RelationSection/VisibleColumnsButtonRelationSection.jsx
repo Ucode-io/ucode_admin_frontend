@@ -85,7 +85,7 @@ export default function VisibleColumnsButtonRelationSection({
     );
   }, [data?.tabs[selectedTabIndex]?.attributes?.columns, data?.tabs[selectedTabIndex]?.relation?.columns, fieldsMap]);
 
-
+  console.log('visibleFields', visibleFields, data?.tabs?.[selectedTabIndex])
   const unVisibleFields = useMemo(() => {
     return allFields.filter(
       (field) => !data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(field.id)

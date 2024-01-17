@@ -49,7 +49,7 @@ const NewRelationSection = ({
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  console.log("loader", loader);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -95,11 +95,11 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  useEffect(() => {
-    if (data?.tabs?.length > 0) {
-      setSelectTab(data?.tabs?.[0]);
-    }
-  }, [data, setSelectTab]);
+  // useEffect(() => {
+  //   if (data?.tabs?.length > 0) {
+  //     setSelectTab(data?.tabs?.[0]);
+  //   }
+  // }, [data, setSelectTab]);
 
   useEffect(() => {
     console.log("queryTab", queryTab);
@@ -200,7 +200,7 @@ const NewRelationSection = ({
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
-  useEffect(() => {
+  const getLayoutList = () => {
     layoutService
       .getLayout(tableSlug, appId, {
         "table-slug": tableSlug,
@@ -217,6 +217,10 @@ const NewRelationSection = ({
         };
         setData(layout);
       });
+  }
+
+  useEffect(() => {
+    getLayoutList()
   }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   useEffect(() => {
@@ -378,6 +382,9 @@ const NewRelationSection = ({
                         currentView={getRelatedTabeSlug}
                         fieldsMap={fieldsMap}
                         getAllData={getAllData}
+                        selectedTabIndex={selectedTabIndex}
+                        getLayoutList={getLayoutList}
+                        data={data}
                       />
                     </>
                   )}
@@ -441,6 +448,7 @@ const NewRelationSection = ({
                       fieldsMap={fieldsMap}
                       relatedTable={relatedTable}
                       getAllData={getAllData}
+                      layoutData={data}
                     />
                   )}
                 </TabPanel>

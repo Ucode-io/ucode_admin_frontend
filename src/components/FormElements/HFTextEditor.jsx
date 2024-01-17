@@ -3,7 +3,7 @@ import { Controller, useWatch } from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
-import "./reactQuill.scss"
+import "./reactQuill.scss";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -29,7 +29,11 @@ const HFTextEditor = ({
   });
 
   return (
-    <FRowMultiLine label={label} required={field?.required} extraClassName={isNewTableView ? "tableView" : ""}>
+    <FRowMultiLine
+      label={label}
+      required={field?.required}
+      extraClassName={isNewTableView ? "tableView" : ""}
+    >
       <Controller
         control={control}
         name={name}

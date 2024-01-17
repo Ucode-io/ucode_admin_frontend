@@ -1,30 +1,63 @@
 import { Switch } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { columnIcons } from "../../../../utils/constants/columnIcons";
+import { useFieldSearchUpdateMutation } from "../../../../services/constructorFieldService";
+import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
 
 export default function SearchParams({
   checkedColumns,
   setCheckedColumns,
   columns,
 }) {
-  const changeHandler = (slug) => {
-    if (checkedColumns.includes(slug)) {
-      setCheckedColumns(checkedColumns.filter((el) => el !== slug));
-    } else {
-      setCheckedColumns([...checkedColumns, slug]);
-    }
-  };
-  const selectAll = () => {
-    setCheckedColumns(columns.map((el) => el.slug));
+  const queryClient = useQueryClient();
+  const [fields, setFields] = useState(columns);
+  const { tableSlug } = useParams();
+
+  const { mutate: updateField, isLoading: updateLoading } =
+    useFieldSearchUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
+      },
+    });
+
+  const changeHandler = (slug, e, index, isSearch) => {
+    const updatedColumns = [...fields];
+    updatedColumns[index] = {
+      ...updatedColumns[index],
+      is_search: e.target.checked,
+    };
+    setFields(updatedColumns);
+    updateField({
+      data: {
+        fields: updatedColumns,
+      },
+      tableSlug,
+    });
+    setCheckedColumns(
+      fields.filter((item) => item.is_search === true).map((item) => item.slug)
+    );
   };
 
-  const deselectAll = () => {
-    setCheckedColumns([]);
+  const toggleAllSearch = (isChecked) => {
+    const updatedColumns = columns.map((column) => ({
+      ...column,
+      is_search: isChecked,
+    }));
+    setFields(updatedColumns);
+    updateField({
+      data: {
+        fields: updatedColumns,
+      },
+      tableSlug,
+    });
+    setCheckedColumns(
+      fields.filter((item) => item.is_search === true).map((item) => item.slug)
+    );
   };
 
-  useEffect(() => {
-    selectAll();
-  }, []);
+  const allEditTrue = fields?.every((column) => column.is_search === true);
+
   return (
     <div>
       <div
@@ -55,17 +88,13 @@ export default function SearchParams({
           <div>
             <Switch
               size="small"
-              onChange={() =>
-                checkedColumns.length === columns.length
-                  ? deselectAll()
-                  : selectAll()
-              }
-              checked={checkedColumns.length === columns.length ? true : false}
+              onChange={(e) => toggleAllSearch(e.target.checked)}
+              checked={allEditTrue}
             />
           </div>
         </div>
 
-        {columns.map((column, index) => (
+        {fields.map((column, index) => (
           <div
             key={column.id}
             style={{
@@ -90,8 +119,8 @@ export default function SearchParams({
             <div>
               <Switch
                 size="small"
-                onChange={() => changeHandler(column.slug)}
-                checked={checkedColumns.includes(column.slug)}
+                onChange={(e) => changeHandler(column.slug, e, index)}
+                checked={column.is_search}
               />
             </div>
           </div>

@@ -82,12 +82,12 @@ const ObjectsPage = () => {
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
 
@@ -168,7 +168,6 @@ const ObjectsPage = () => {
                       view={view}
                       fieldsMap={fieldsMap}
                       menuItem={menuItem}
-                      visibleColumns={visibleColumns}
                     />
                   </>
                 )}

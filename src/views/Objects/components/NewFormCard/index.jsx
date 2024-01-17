@@ -13,11 +13,13 @@ const NewFormCard = ({ title, children, icon, extra, topHeader }) => {
       >
         {topHeader && <div>{topHeader}</div>}
       </div>
-      <div style={{
-        display: "flex",
-        alignItems: "flex-start",
-        width: "100%",
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
         <div className={styles.header}>
           <div className={styles.headerLeftSide}>
             {/* {icon && <div className={styles.iconBlock} >

@@ -64,12 +64,12 @@ const MainInfoForModal = ({
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setSelectedTable(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setSelectedTable(res);
+        });
     }
   }, []);
 
@@ -114,7 +114,9 @@ const MainInfoForModal = ({
 
   const isVisibleSection = (section) => {
     if (editAcces) return true;
-    const isVisible = section?.fields?.some((field) => field?.is_visible_layout);
+    const isVisible = section?.fields?.some(
+      (field) => field?.is_visible_layout
+    );
     return isVisible;
   };
 
@@ -172,7 +174,12 @@ const MainInfoForModal = ({
               if (index === sectionIndex) {
                 return {
                   ...section,
-                  fields: [...section?.fields, Object.values(fieldsMapFromProps)?.find((field) => field?.id === fieldId)],
+                  fields: [
+                    ...section?.fields,
+                    Object.values(fieldsMapFromProps)?.find(
+                      (field) => field?.id === fieldId
+                    ),
+                  ],
                 };
               } else {
                 return section;
@@ -202,7 +209,10 @@ const MainInfoForModal = ({
           {isMultiLanguage && (
             <div className={styles.language}>
               {projectInfo?.language?.map((lang) => (
-                <Button className={activeLang === lang?.short_name && styles.active} onClick={() => setActiveLang(lang?.short_name)}>
+                <Button
+                  className={activeLang === lang?.short_name && styles.active}
+                  onClick={() => setActiveLang(lang?.short_name)}
+                >
                   {lang?.name}
                 </Button>
               ))}
@@ -214,7 +224,10 @@ const MainInfoForModal = ({
               isVisibleSection(section) && (
                 <NewFormCard
                   key={section.id}
-                  title={section?.attributes?.[`label_${i18n.language}`] ?? section.label}
+                  title={
+                    section?.attributes?.[`label_${i18n.language}`] ??
+                    section.label
+                  }
                   topHeader={
                     editAcces && (
                       <>

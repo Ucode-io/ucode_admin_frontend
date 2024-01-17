@@ -49,9 +49,15 @@ export default function SectionBlockForModal({
     updateLayout(newFields);
   };
 
-  
   return (
-    <Box sx={{ display: "grid", gap: "10px", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "flex-end" }}>
+    <Box
+      sx={{
+        display: "grid",
+        gap: "10px",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        alignItems: "baseline",
+      }}
+    >
       {section.fields?.map((field, fieldIndex) => (
         <Box
           style={{

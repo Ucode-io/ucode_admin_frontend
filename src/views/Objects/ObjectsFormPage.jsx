@@ -128,7 +128,7 @@ const ObjectsFormPage = ({
               : relation.table_from?.slug,
         }))
       );
-      
+
       if (!selectedTab?.relation_id) {
         reset(data?.response ?? {})
         
@@ -151,7 +151,7 @@ const ObjectsFormPage = ({
       const defaultLayout = layoutData;
 
       setSections(sortSections(sections));
-      console.log("layoutData", layoutData);
+
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,

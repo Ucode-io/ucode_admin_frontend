@@ -77,7 +77,7 @@ const ConstructorTablesFormPage = () => {
         });
     }
   }, []);
-  console.log('menuItem', menuItem, appId)
+
   const getData = async () => {
     setLoader(true);
     const params = {};

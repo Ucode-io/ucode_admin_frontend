@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
@@ -9,13 +9,19 @@ import {columnIcons} from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
+import layoutService from "../../../services/layoutService";
+import menuService from "../../../services/menuService";
 
 export default function VisibleColumnsButtonRelationSection({
   currentView,
   fieldsMap,
   getAllData,
+  selectedTabIndex,
+  getLayoutList,
+  data
 }) {
+  const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
@@ -25,6 +31,9 @@ export default function VisibleColumnsButtonRelationSection({
     return Object.values(fieldsMap);
   }, [fieldsMap]);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -33,40 +42,56 @@ export default function VisibleColumnsButtonRelationSection({
     setAnchorEl(null);
   };
 
-  const updateView = (data) => {
+  const updateView = (datas) => {
+
     setIsLoading(true);
-    relationService
+
+    const result = data?.tabs;
+
+
+    const computeTabs = result?.map((item, index) => ({
+      ...item,
+      attributes: {
+    
+        columns: index === selectedTabIndex ? datas : item?.relation?.columns ?? {}}
+    }))
+
+    layoutService
       .update(
         {
-          ...currentView,
-          table_from: currentView?.table_from?.slug,
-          table_to: currentView?.table_to?.slug,
-          view_fields: currentView?.view_fields?.map((el) => el.id),
-          columns: data,
+         ...data,
+        tabs: computeTabs
         },
-        currentView?.relatedTable
+        tableSlug
       )
       .then(() => {
-        getAllData();
+        getAllData(); 
+
       })
       .finally(() => {
         setIsLoading(false);
+        getLayoutList();
       });
-  };
+
+
+  };  
+  
 
   const visibleFields = useMemo(() => {
     return (
-      currentView?.columns
+      data?.tabs?.[selectedTabIndex]?.attributes?.columns
         ?.map((id) => fieldsMap[id])
         ?.filter((el) => el?.type) ?? []
     );
-  }, [currentView?.columns, fieldsMap]);
+  }, [data?.tabs[selectedTabIndex]?.attributes?.columns, fieldsMap]);
+
 
   const unVisibleFields = useMemo(() => {
     return allFields.filter(
-      (field) => !currentView?.columns?.includes(field.id)
+      (field) => !data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(field.id)
     );
-  }, [allFields, currentView?.columns]);
+  }, [allFields, data?.tabs[selectedTabIndex]?.attributes?.columns]);
+
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -74,6 +99,21 @@ export default function VisibleColumnsButtonRelationSection({
       updateView(result.map((el) => el.id));
     }
   };
+
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
+
+
   return (
     <div>
       <Button
@@ -200,7 +240,7 @@ export default function VisibleColumnsButtonRelationSection({
               onDrop={onDrop}
               dropPlaceholder={{className: "drag-row-drop-preview"}}
             >
-              {visibleFields.map((column, index) => (
+              {visibleFields?.map((column, index) => (
                 <Draggable key={column?.id}>
                   <div
                     key={column?.id}
@@ -260,14 +300,14 @@ export default function VisibleColumnsButtonRelationSection({
                     >
                       <Switch
                         size="small"
-                        checked={currentView?.columns?.includes(column?.id)}
+                        checked={data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(column?.id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked
-                              ? currentView?.columns
-                                ? [...currentView?.columns, column?.id]
+                              ? data?.tabs[selectedTabIndex]?.attributes?.columns
+                                ? [...data?.tabs[selectedTabIndex]?.attributes?.columns, column?.id]
                                 : [column?.id]
-                              : currentView?.columns?.filter(
+                              : data?.tabs[selectedTabIndex]?.attributes?.columns?.filter(
                                   (el) => el !== column?.id
                                 )
                           );
@@ -333,14 +373,14 @@ export default function VisibleColumnsButtonRelationSection({
                   >
                     <Switch
                       size="small"
-                      checked={currentView?.columns?.includes(column?.id)}
+                      checked={data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(column?.id)}
                       onChange={(e) => {
                         updateView(
                           e.target.checked
-                            ? currentView?.columns
-                              ? [...currentView?.columns, column?.id]
+                            ? data?.tabs[selectedTabIndex]?.attributes?.columns
+                              ? [...data?.tabs[selectedTabIndex]?.attributes?.columns, column?.id]
                               : [column?.id]
-                            : currentView?.columns?.filter(
+                            : data?.tabs[selectedTabIndex]?.attributes?.columns?.filter(
                                 (el) => el !== column?.id
                               )
                         );

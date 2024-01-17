@@ -12,6 +12,7 @@ import relationService from "../../../services/relationService";
 import {useParams, useSearchParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
+import { current } from "@reduxjs/toolkit";
 
 export default function VisibleColumnsButtonRelationSection({
   currentView,
@@ -79,18 +80,17 @@ export default function VisibleColumnsButtonRelationSection({
 
   const visibleFields = useMemo(() => {
     return (
-      data?.tabs?.[selectedTabIndex]?.attributes?.columns
-        ?.map((id) => fieldsMap[id])
+      (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns)?.map((id) => fieldsMap[id])
         ?.filter((el) => el?.type) ?? []
     );
-  }, [data?.tabs[selectedTabIndex]?.attributes?.columns, fieldsMap]);
+  }, [data?.tabs[selectedTabIndex]?.attributes?.columns, data?.tabs[selectedTabIndex]?.relation?.columns, fieldsMap]);
 
 
   const unVisibleFields = useMemo(() => {
     return allFields.filter(
       (field) => !data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(field.id)
     );
-  }, [allFields, data?.tabs[selectedTabIndex]?.attributes?.columns]);
+  }, [allFields, data?.tabs[selectedTabIndex]?.attributes?.columns, data?.tabs[selectedTabIndex]?.relation?.columns]);
 
 
   const onDrop = (dropResult) => {
@@ -300,14 +300,14 @@ export default function VisibleColumnsButtonRelationSection({
                     >
                       <Switch
                         size="small"
-                        checked={data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(column?.id)}
+                        checked={(data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns)?.includes(column?.id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked
-                              ? data?.tabs[selectedTabIndex]?.attributes?.columns
-                                ? [...data?.tabs[selectedTabIndex]?.attributes?.columns, column?.id]
+                              ? data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns
+                                ? [...data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns, column?.id]
                                 : [column?.id]
-                              : data?.tabs[selectedTabIndex]?.attributes?.columns?.filter(
+                              : (data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns)?.filter(
                                   (el) => el !== column?.id
                                 )
                           );
@@ -373,14 +373,14 @@ export default function VisibleColumnsButtonRelationSection({
                   >
                     <Switch
                       size="small"
-                      checked={data?.tabs[selectedTabIndex]?.attributes?.columns?.includes(column?.id)}
+                      checked={(data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns)?.includes(column?.id)}
                       onChange={(e) => {
                         updateView(
                           e.target.checked
-                            ? data?.tabs[selectedTabIndex]?.attributes?.columns
-                              ? [...data?.tabs[selectedTabIndex]?.attributes?.columns, column?.id]
+                            ? data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns
+                              ? [...data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns, column?.id]
                               : [column?.id]
-                            : data?.tabs[selectedTabIndex]?.attributes?.columns?.filter(
+                            : (data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs[selectedTabIndex]?.relation?.columns)?.filter(
                                 (el) => el !== column?.id
                               )
                         );

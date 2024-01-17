@@ -103,14 +103,15 @@ function NewlayoutList({
     }
   }, []);
 
-  
+
   const {isLoading} = useMenuListQuery({
     params: {
-      table_id: menuItem?.table_id,
+      table_id: menuItem?.table_id ?? id,
     },
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
+        console.log('resssssssss', res)
         setMenus(
           res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
         );

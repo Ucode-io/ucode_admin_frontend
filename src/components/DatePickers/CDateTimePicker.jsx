@@ -29,7 +29,12 @@ const CDateTimePicker = ({
         portal={document.body}
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={mask} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={mask}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -46,6 +51,7 @@ const CDateTimePicker = ({
                     "& .MuiInputBase-input": {
                       paddingTop: isNewTableView ? 0 : "10px",
                       paddingBottom: isNewTableView ? 0 : "10px",
+                      padding: "16.5px 8px",
                     },
                     width: "100%",
                   }}
@@ -93,7 +99,12 @@ const CDateTimePicker = ({
         portal={document.body}
         render={(value, openCalendar, handleChange) => {
           return (
-            <InputMask mask={"99:99"} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
+            <InputMask
+              mask={"99:99"}
+              value={value ?? undefined}
+              onChange={handleChange}
+              disabled={disabled}
+            >
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -116,6 +127,7 @@ const CDateTimePicker = ({
                     "& .MuiInputBase-input": {
                       paddingTop: isNewTableView ? 0 : "10px",
                       paddingBottom: isNewTableView ? 0 : "10px",
+                      padding: "16.5px 4px",
                     },
                     width: "100%",
                   }}
@@ -166,7 +178,9 @@ const CDateTimePicker = ({
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
-      {showCopyBtn && <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />}
+      {showCopyBtn && (
+        <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      )}
     </div>
   );
 };

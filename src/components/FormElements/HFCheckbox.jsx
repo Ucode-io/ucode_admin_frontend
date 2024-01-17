@@ -13,6 +13,7 @@ const HFCheckbox = ({
   className,
   labelClassName,
   defaultValue = false,
+  isShowLable = true,
   ...props
 }) => {
   const id = useId();
@@ -47,12 +48,14 @@ const HFCheckbox = ({
             {...props}
             inputProps={tabIndex}
           />
-          <label
-            htmlFor={`checkbox-${id}`}
-            className={`label ${labelClassName}`}
-          >
-            {label}
-          </label>
+          {isShowLable && (
+            <label
+              htmlFor={`checkbox-${id}`}
+              className={`label ${labelClassName}`}
+            >
+              {label}
+            </label>
+          )}
         </div>
       )}
     ></Controller>

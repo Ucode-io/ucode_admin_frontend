@@ -6,10 +6,7 @@ const functionService = {
     httpsRequestV2.get("/function", {
       params,
     }),
-  getById: (params, functionId) =>
-    httpsRequestV2.get(`/function/${functionId}`, {
-      params,
-    }),
+  getById: (functionId) => httpsRequestV2.get(`/function/${functionId}`),
   update: (data) => httpsRequestV2.put("/function", data, {}),
   create: (data) => httpsRequestV2.post("/function", data, {}),
   delete: (functionId) => httpsRequestV2.delete(`/function/${functionId}`, {}),
@@ -25,11 +22,11 @@ export const useFunctionsListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useFunctionByIdQuery = ({ params = {}, functionId, queryParams } = {}) => {
+export const useFunctionByIdQuery = ({ functionId, queryParams } = {}) => {
   return useQuery(
-    ["FUNCTION_BY_ID", { params, functionId }],
+    ["FUNCTION_BY_ID", { functionId }],
     () => {
-      return functionService.getById(params, functionId);
+      return functionService.getById(functionId);
     },
     queryParams
   );
@@ -44,5 +41,10 @@ export const useFunctionCreateMutation = (mutationSettings) => {
 };
 
 export const useFunctionDeleteMutation = (mutationSettings) => {
-  return useMutation((functionId) => functionService.delete(functionId), mutationSettings);
+  return useMutation(
+    (functionId) => functionService.delete(functionId),
+    mutationSettings
+  );
 };
+
+export default functionService;

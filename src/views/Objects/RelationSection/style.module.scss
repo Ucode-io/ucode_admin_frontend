@@ -4,6 +4,7 @@
   height: 100%;
   width: 100%;
 
+
   .cardHeader {
     // height: 56px;
     display: flex;
@@ -11,16 +12,18 @@
     justify-content: space-between;
     padding: 0 12px;
     border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    padding: 10px 0;
     // border-bottom: 1px solid #e5e9eb;  
   }
+
   .tabList {
     width: calc(100% - 200px);
     overflow-x: scroll;
     display: flex;
     align-items: center;
-    
+
   }
+
   .tabs_item {
     border-radius: 4px;
     cursor: pointer;
@@ -76,14 +79,16 @@
   letter-spacing: 0em;
   text-align: left;
 }
+
 .menuBar {
   width: 180px;
 }
 
-.menuItems{
+.menuItems {
   padding: 10px 14px;
   min-width: 200px;
-  .menuItem{
+
+  .menuItem {
     padding: 6px 0;
     // border-bottom: 1px solid #eee;
     display: flex;

@@ -1,15 +1,15 @@
-import {MoreVertOutlined} from "@mui/icons-material";
+import { MoreVertOutlined } from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
-import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useQuery} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Backdrop, Badge, Button, Divider, Menu, Switch } from "@mui/material";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
@@ -17,8 +17,8 @@ import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import useFilters from "../../hooks/useFilters";
 import constructorObjectService from "../../services/constructorObjectService";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
 import TableView from "./TableView";
@@ -31,6 +31,8 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import { useFieldSearchUpdateMutation } from "../../services/constructorFieldService";
+import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const ViewsWithGroups = ({
   views,
@@ -42,10 +44,11 @@ const ViewsWithGroups = ({
   visibleRelationColumns,
   visibleColumns,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
+  const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   // const [analyticsRes, setAnalyticsRes] = useState(null);
@@ -53,7 +56,7 @@ const ViewsWithGroups = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -113,14 +116,14 @@ const ViewsWithGroups = ({
     reset,
     setValue: setFormValue,
     getValues,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       multi: [],
     },
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
@@ -133,16 +136,23 @@ const ViewsWithGroups = ({
     );
   };
 
+  const { mutate: updateField, isLoading: updateLoading } =
+    useFieldSearchUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
+      },
+    });
+
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
     navigate(url);
   };
-
+  console.log("Object.values(fieldsMap)", Object.values(fieldsMap));
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -156,17 +166,30 @@ const ViewsWithGroups = ({
         el?.type === "FORMULA_FRONTEND"
     );
   }, [view, fieldsMap]);
+  console.log("columnsForSearch", columnsForSearch);
 
   const selectAll = () => {
-    setCheckedColumns(columnsForSearch.map((el) => el.slug));
+    setCheckedColumns(
+      columnsForSearch
+        .filter((item) => item.is_search === true)
+        .map((item) => item.slug)
+    );
   };
 
   useEffect(() => {
     selectAll();
-  }, []);
+  }, [view, fieldsMap]);
 
   return (
     <>
+      {updateLoading && (
+        <Backdrop
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+          open={true}
+        >
+          <RingLoaderWithWrapper />
+        </Backdrop>
+      )}
       <FiltersBlock
         extra={
           <>
@@ -288,6 +311,7 @@ const ViewsWithGroups = ({
                 checkedColumns={checkedColumns}
                 setCheckedColumns={setCheckedColumns}
                 columns={columnsForSearch}
+                updateField={updateField}
               />
             </Menu>
           </div>
@@ -436,11 +460,11 @@ const ViewsWithGroups = ({
         <TableCard type="withoutPadding">
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
-              <div style={{display: "flex", alignItems: "center"}}>
-                <div className="title" style={{marginRight: "20px"}}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="title" style={{ marginRight: "20px" }}>
                   <h3>{view.table_label}</h3>
                 </div>
-                <TabList style={{border: "none"}}>
+                <TabList style={{ border: "none" }}>
                   {tabs?.map((tab) => (
                     <Tab
                       key={tab.value}
@@ -587,7 +611,7 @@ const queryGenerator = (groupField, filters = {}) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -610,7 +634,7 @@ const queryGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
+        { tableSlug: groupField.table_slug, filters: computedFilters },
       ],
       queryFn,
       select: (res) =>

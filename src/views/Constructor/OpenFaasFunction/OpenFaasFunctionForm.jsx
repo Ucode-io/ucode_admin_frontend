@@ -4,7 +4,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useResourceListQueryV2 } from "../../../services/resourceService";
 import listToOptions from "../../../utils/listToOptions";
-import microfrontendService, { useMicrofrontendCreateWebhookMutation } from "../../../services/microfrontendService";
+import microfrontendService, {
+  useMicrofrontendCreateWebhookMutation,
+} from "../../../services/microfrontendService";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import PageFallback from "../../../components/PageFallback";
 import HeaderSettings from "../../../components/HeaderSettings";
@@ -16,8 +18,18 @@ import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { Save } from "@mui/icons-material";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
-import { useGithubBranchesQuery, useGithubRepositoriesQuery } from "@/services/githubService";
+import {
+  useGithubBranchesQuery,
+  useGithubRepositoriesQuery,
+} from "@/services/githubService";
 import Footer from "../../../components/Footer";
+import { useFunctionV1CreateMutation } from "../../../services/constructorFunctionService";
+import functionService, {
+  useFunctionByIdQuery,
+  useFunctionCreateMutation,
+  useFunctionUpdateMutation,
+} from "../../../services/functionService";
+import { useQueryClient } from "react-query";
 
 // const frameworkOptions = [
 //   {
@@ -40,6 +52,7 @@ export default function OpenFaasFunctionForm() {
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const microfrontendListPageLink = `/main/${appId}/openfaas-functions`;
 
@@ -49,7 +62,7 @@ export default function OpenFaasFunctionForm() {
       name: "",
       // framework_type: "REACT",
       resource_id: "ucode_gitlab",
-      type: "FUNCTION"
+      type: "FUNCTION",
     },
   });
 
@@ -66,7 +79,10 @@ export default function OpenFaasFunctionForm() {
   });
 
   const resourceOptions = useMemo(() => {
-    return [{ value: "ucode_gitlab", label: "Ucode GitLab" }, ...listToOptions(resources, "username", "id", " (GitHub)")];
+    return [
+      { value: "ucode_gitlab", label: "Ucode GitLab" },
+      ...listToOptions(resources, "username", "id", " (GitHub)"),
+    ];
   }, [resources]);
 
   const selectedResource = useMemo(() => {
@@ -94,59 +110,44 @@ export default function OpenFaasFunctionForm() {
     },
   });
 
-  const { mutate: createWebHook, isLoading: createWebHookIsLoading } = useMicrofrontendCreateWebhookMutation({
-    onSuccess: () => {
-      dispatch(showAlert("Successfully created", "success"));
-      navigate(microfrontendListPageLink);
+  const { mutate: createWebHook, isLoading: createWebHookIsLoading } =
+    useMicrofrontendCreateWebhookMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully created", "success"));
+        navigate(-1);
+      },
+    });
+
+  const { mutate: createFunction, isLoading: createFunctionIsLoading } =
+    useFunctionCreateMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully created", "success"));
+        navigate(-1);
+      },
+    });
+
+  const { mutate: updateFunction, isLoading: updateFunctionIsLoading } =
+    useFunctionUpdateMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully updated", "success"));
+        navigate(-1);
+      },
+    });
+
+  const { isLoading } = useFunctionByIdQuery({
+    functionId,
+    queryParams: {
+      enabled: Boolean(functionId),
+      onSuccess: (res) => {
+        mainForm.reset({ ...res, resource_id: res.resource });
+      },
     },
   });
 
-  const createMicrofrontend = (data) => {
-    setBtnLoader(true);
-    microfrontendService
-      .create(data)
-      .then(() => {
-        navigate(microfrontendListPageLink);
-      })
-      .catch(() => setBtnLoader(false));
-  };
-
-  const updateMicrofrontend = (data) => {
-    setBtnLoader(true);
-
-    microfrontendService
-      .update({
-        ...data,
-      })
-      .then(() => {
-        navigate(microfrontendListPageLink);
-      })
-      .catch(() => setBtnLoader(false));
-  };
-
-  const getData = () => {
-    setLoader(true);
-
-    microfrontendService
-      .getById(functionId)
-      .then((res) => {
-        mainForm.reset(res);
-      })
-      .finally(() => setLoader(false));
-  };
-
-  useEffect(() => {
-    if (functionId) {
-      getData();
-    } else {
-      setLoader(false);
-    }
-  }, []);
-
   const onSubmit = (data) => {
-    if (functionId) updateMicrofrontend(data);
+    if (functionId) updateFunction(data);
     else {
-      if (resourceId === "ucode_gitlab") createMicrofrontend(data);
+      if (resourceId === "ucode_gitlab") createFunction(data);
       else
         createWebHook({
           ...data,
@@ -156,44 +157,100 @@ export default function OpenFaasFunctionForm() {
     }
   };
 
-  if (loader) return <PageFallback />;
+  if (isLoading) return <PageFallback />;
 
   return (
     <div>
-      <HeaderSettings title="Open faas функция" backButtonLink={-1} subtitle={functionId ? mainForm.watch("name") : "Новый"}></HeaderSettings>
+      <HeaderSettings
+        title="Open faas функция"
+        backButtonLink={-1}
+        subtitle={functionId ? mainForm.watch("name") : "Новый"}
+      ></HeaderSettings>
 
-      <form onSubmit={mainForm.handleSubmit(onSubmit)} className="p-2" style={{ height: "calc(100vh - 112px)", overflow: "auto" }}>
+      <form
+        onSubmit={mainForm.handleSubmit(onSubmit)}
+        className="p-2"
+        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
+      >
         <FormCard title="Детали" maxWidth={500}>
-          <FRow label={"Ресурс"} componentClassName="flex gap-2 align-center" required>
-            <HFSelect disabledHelperText name="resource_id" control={mainForm.control} fullWidth options={resourceOptions} required />
+          <FRow
+            label={"Ресурс"}
+            componentClassName="flex gap-2 align-center"
+            required
+          >
+            <HFSelect
+              disabledHelperText
+              name="resource_id"
+              control={mainForm.control}
+              fullWidth
+              options={resourceOptions}
+              required
+              disabled={functionId}
+            />
           </FRow>
 
           {resourceId !== "ucode_gitlab" && (
             <>
               <FRow label="Репозиторий" required>
-                <HFSelect name="repo_name" control={mainForm.control} options={repositories ?? []} required />
+                <HFSelect
+                  name="repo_name"
+                  control={mainForm.control}
+                  options={repositories ?? []}
+                  required
+                  disabled={functionId}
+                />
               </FRow>
 
               <FRow label="Ветка" required>
-                <HFSelect name="branch" control={mainForm.control} options={branches} required />
+                <HFSelect
+                  name="branch"
+                  control={mainForm.control}
+                  options={branches}
+                  required
+                  disabled={functionId}
+                />
               </FRow>
             </>
           )}
 
           {resourceId === "ucode_gitlab" && (
-            <FRow label={"Ссылка"} componentClassName="flex gap-2 align-center" required>
-              <HFTextField disabledHelperText name="path" control={mainForm.control} fullWidth required />
+            <FRow
+              label={"Ссылка"}
+              componentClassName="flex gap-2 align-center"
+              required
+            >
+              <HFTextField
+                disabledHelperText
+                name="path"
+                control={mainForm.control}
+                fullWidth
+                required
+                disabled={functionId}
+              />
             </FRow>
           )}
-          <FRow label={"Названия"} componentClassName="flex gap-2 align-center" required>
-            <HFTextField disabledHelperText name="name" control={mainForm.control} fullWidth required />
+          <FRow
+            label={"Названия"}
+            componentClassName="flex gap-2 align-center"
+            required
+          >
+            <HFTextField
+              disabledHelperText
+              name="name"
+              control={mainForm.control}
+              fullWidth
+              required
+            />
           </FRow>
-          {/* <FRow label="Фреймворк" required>
-            <HFSelect name="framework_type" control={mainForm.control} options={frameworkOptions} defaultValue="REACT" required />
-          </FRow> */}
           {resourceId === "ucode_gitlab" && (
             <FRow label="Описания">
-              <HFTextField name="description" control={mainForm.control} multiline rows={4} fullWidth />
+              <HFTextField
+                name="description"
+                control={mainForm.control}
+                multiline
+                rows={4}
+                fullWidth
+              />
             </FRow>
           )}
         </FormCard>
@@ -202,11 +259,22 @@ export default function OpenFaasFunctionForm() {
       <Footer
         extra={
           <>
-            <SecondaryButton onClick={() => navigate(microfrontendListPageLink)} color="error">
+            <SecondaryButton
+              onClick={() => navigate(microfrontendListPageLink)}
+              color="error"
+            >
               Close
             </SecondaryButton>
             <PermissionWrapperV2 tableSlug="app" type="update">
-              <PrimaryButton loader={btnLoader || createWebHookIsLoading} onClick={mainForm.handleSubmit(onSubmit)}>
+              <PrimaryButton
+                loader={
+                  btnLoader ||
+                  createWebHookIsLoading ||
+                  createFunctionIsLoading ||
+                  updateFunctionIsLoading
+                }
+                onClick={mainForm.handleSubmit(onSubmit)}
+              >
                 <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>

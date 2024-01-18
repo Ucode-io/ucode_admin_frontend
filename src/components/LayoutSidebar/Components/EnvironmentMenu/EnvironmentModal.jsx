@@ -31,8 +31,8 @@ export default function EnvironmentModal({ open, handleClose }) {
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
   const dispatch = useDispatch();
+  console.log("selectedVersions", selectedVersions);
 
-  console.log("selectedMigrate", selectedMigrate);
 
   const updateVersions = () => {
     const selectedVersionsIds = selectedVersions.map((version) => version.id);
@@ -146,15 +146,16 @@ export default function EnvironmentModal({ open, handleClose }) {
               Cancel
             </Button>
 
-            {selectedEnvironment && (
-              <Button
+            {selectedVersions?.length ? (
+                <Button
                 variant="outlined"
                 color="success"
                 onClick={updateMigrate}
               >
                 Miggrate
               </Button>
-            )}
+            ): null}
+            
           </Box>
         )}
       </Box>

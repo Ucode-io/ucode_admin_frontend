@@ -1,4 +1,4 @@
-import { Button, Checkbox, TableCell, TableRow } from "@mui/material";
+import { Checkbox } from "@mui/material";
 import React, { useMemo } from "react";
 import { struct } from "pb-util";
 import { useTranslation } from "react-i18next";
@@ -20,8 +20,6 @@ export default function HistoryRow({
     history?.previus?.attributes ?? {}
   );
   const multiLanguageLabel = `label_${i18n.language}`;
-  const companyStore = store.getState().company;
-  const environmentId = companyStore.environmentId;
 
   const label = useMemo(() => {
     if (
@@ -71,13 +69,15 @@ export default function HistoryRow({
     }
   }, [history, i18n.language]);
 
+  console.log("history", history);
+
   return (
     <CTableRow key={history.id}>
       <CTableCell>
         <Checkbox
           onChange={(e) => handleSelectVersion(e, index)}
-          checked={selectedVersions.find(
-            (version) => version.id === history.id
+          checked={selectedVersions.some(
+            (version) => version?.id === history?.id
           )}
         />
       </CTableCell>

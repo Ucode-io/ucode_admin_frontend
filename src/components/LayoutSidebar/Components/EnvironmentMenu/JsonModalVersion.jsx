@@ -1,6 +1,10 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import React from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { MdContentCopy } from "react-icons/md";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { useDispatch } from "react-redux";
+import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 
 const style = {
   position: "absolute",
@@ -24,6 +28,12 @@ export default function JsonModalVersion({ history }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const dispatch = useDispatch();
+
+  const copyToClipboard = (text) => {
+    dispatch(showAlert("Copied to clipboard", "success"));
+    navigator.clipboard.writeText(text);
+  };
 
   return (
     <div>
@@ -47,6 +57,7 @@ export default function JsonModalVersion({ history }) {
               position: "sticky",
               top: "0",
               backgroundColor: "#fff",
+              zIndex: 9999,
             }}
           >
             <Button
@@ -57,8 +68,9 @@ export default function JsonModalVersion({ history }) {
                 padding: "0px",
                 minWidth: "40px",
               }}
+              onClick={handleClose}
             >
-              <CloseRoundedIcon onClick={handleClose} />
+              <CloseRoundedIcon />
             </Button>
           </Box>
 
@@ -75,6 +87,21 @@ export default function JsonModalVersion({ history }) {
                 gap: "16px",
               }}
             >
+              <Typography variant="h5">
+                {history?.previus && "Previus"}
+              </Typography>
+              <Typography variant="h5">
+                {history?.current && "Current"}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns:
+                  history?.current && history?.previus ? "1fr 1fr" : "1fr",
+                gap: "16px",
+              }}
+            >
               {history?.current && history?.previus && (
                 <>
                   <Box
@@ -83,8 +110,23 @@ export default function JsonModalVersion({ history }) {
                       borderRadius: "10px",
                       padding: "16px",
                       color: "#fff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
                     }}
                   >
+                    <RectangleIconButton
+                      style={{
+                        marginLeft: "auto",
+                      }}
+                      onClick={() =>
+                        copyToClipboard(
+                          JSON.stringify(history?.current, null, 2)
+                        )
+                      }
+                    >
+                      <MdContentCopy />
+                    </RectangleIconButton>
                     <pre>{JSON.stringify(history?.current, null, 2)}</pre>
                   </Box>
 
@@ -94,13 +136,27 @@ export default function JsonModalVersion({ history }) {
                       borderRadius: "10px",
                       padding: "16px",
                       color: "#fff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
                     }}
                   >
+                    <RectangleIconButton
+                      style={{
+                        marginLeft: "auto",
+                      }}
+                      onClick={() =>
+                        copyToClipboard(
+                          JSON.stringify(history?.previus, null, 2)
+                        )
+                      }
+                    >
+                      <MdContentCopy />
+                    </RectangleIconButton>
                     <pre>{JSON.stringify(history?.previus, null, 2)}</pre>
                   </Box>
                 </>
               )}
-
               {history?.current && !history?.previus && (
                 <Box
                   sx={{
@@ -108,12 +164,21 @@ export default function JsonModalVersion({ history }) {
                     borderRadius: "10px",
                     padding: "16px",
                     color: "#fff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "end",
                   }}
                 >
+                  <RectangleIconButton
+                    onClick={() =>
+                      copyToClipboard(JSON.stringify(history?.current, null, 2))
+                    }
+                  >
+                    <MdContentCopy />
+                  </RectangleIconButton>
                   <pre>{JSON.stringify(history?.current, null, 2)}</pre>
                 </Box>
               )}
-
               {!history?.current && history?.previus && (
                 <Box
                   sx={{
@@ -121,8 +186,18 @@ export default function JsonModalVersion({ history }) {
                     borderRadius: "10px",
                     padding: "16px",
                     color: "#fff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "end",
                   }}
                 >
+                  <RectangleIconButton
+                    onClick={() =>
+                      copyToClipboard(JSON.stringify(history?.previus, null, 2))
+                    }
+                  >
+                    <MdContentCopy />
+                  </RectangleIconButton>
                   <pre>{JSON.stringify(history?.previus, null, 2)}</pre>
                 </Box>
               )}

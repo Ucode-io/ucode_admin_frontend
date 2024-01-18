@@ -49,6 +49,7 @@ export default function HistoriesTable({
 
       <TableCard withBorder borderRadius="md">
         <CTable
+          removableHeight={0}
           tableStyle={{
             height: "auto",
           }}

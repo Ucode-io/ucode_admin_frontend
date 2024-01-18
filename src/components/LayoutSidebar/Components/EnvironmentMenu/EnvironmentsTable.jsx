@@ -55,7 +55,7 @@ export default function EnvironmentsTable({
       <Box className={styles.projectradio}>
         <RadioGroup key={selectedEnvironment}>
           <Box className={styles.projectgroup}>
-            {environments?.map((item) => (
+            {environments?.map((item, index) => (
               <FormControlLabel
                 value={item?.id}
                 control={<Radio />}

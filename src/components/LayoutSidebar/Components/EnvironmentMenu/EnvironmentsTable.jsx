@@ -59,7 +59,7 @@ export default function EnvironmentsTable({
               <FormControlLabel
                 value={item?.id}
                 control={<Radio />}
-                label={<h4>{item?.name}</h4>}
+                label={<h4>{item?.name} {item?.id === company.environmentId ? "(Down)" : "(Up)"}</h4>}
                 className={
                   environments === item.id ? styles.active : styles.inactive
                 }

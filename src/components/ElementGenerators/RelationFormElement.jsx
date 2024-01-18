@@ -498,7 +498,7 @@ const AutoCompleteElement = ({
             onChange={(e) => {
               changeHandler(e);
             }}
-            // onMenuScrollToBottom={loadMoreItems}
+            onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

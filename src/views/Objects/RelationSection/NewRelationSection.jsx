@@ -107,7 +107,7 @@ const NewRelationSection = ({
   // }, [data, setSelectTab]);
 
   useEffect(() => {
-    console.log("queryTab", queryTab);
+
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
       : setSelectedTabIndex(0);

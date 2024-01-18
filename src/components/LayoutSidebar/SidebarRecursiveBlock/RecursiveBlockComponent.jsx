@@ -62,13 +62,25 @@ const RecursiveBlock = ({
   const [child, setChild] = useState();
   const [id, setId] = useState();
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
-  const activeRequest = element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
+  const activeRequest =
+    element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
   const defaultLanguage = i18n?.language;
   const readPermission = element?.data?.permission?.read;
-  const withoutPermission = element?.parent_id === adminId || element?.parent_id === analyticsId ? true : false;
-  const permission = defaultAdmin ? readPermission || withoutPermission : readPermission;
-  const addButtonPermission = element?.type === "FOLDER" || (element?.type === "MINIO_FOLDER" && sidebarIsOpen) || element?.type === "WIKI_FOLDER";
-  const settingsButtonPermission = (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" && selectedApp?.id !== adminId) || !selectedApp?.is_static;
+  const withoutPermission =
+    element?.parent_id === adminId || element?.parent_id === analyticsId
+      ? true
+      : false;
+  const permission = defaultAdmin
+    ? readPermission || withoutPermission
+    : readPermission;
+  const addButtonPermission =
+    element?.type === "FOLDER" ||
+    (element?.type === "MINIO_FOLDER" && sidebarIsOpen) ||
+    element?.type === "WIKI_FOLDER";
+  const settingsButtonPermission =
+    (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
+      selectedApp?.id !== adminId) ||
+    !selectedApp?.is_static;
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -92,7 +104,13 @@ const RecursiveBlock = ({
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     }
-    if (!pinIsEnabled && element.type !== "FOLDER" && element.type !== "USER_FOLDER" && element.type !== "MINIO_FOLDER" && element.type !== "WIKI_FOLDER") {
+    if (
+      !pinIsEnabled &&
+      element.type !== "FOLDER" &&
+      element.type !== "USER_FOLDER" &&
+      element.type !== "MINIO_FOLDER" &&
+      element.type !== "WIKI_FOLDER"
+    ) {
       setSubMenuIsOpen(false);
     }
     setId(element?.id);
@@ -117,7 +135,11 @@ const RecursiveBlock = ({
     setElement(element);
     dispatch(menuActions.setMenuItem(element));
     if (selectedApp?.id !== adminId) {
-      if (element?.type === "FOLDER" || (element?.type === "WIKI_FOLDER" && element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")) {
+      if (
+        element?.type === "FOLDER" ||
+        (element?.type === "WIKI_FOLDER" &&
+          element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")
+      ) {
         handleOpenNotify(e, "FOLDER");
       } else if (element?.type === "TABLE") {
         handleOpenNotify(e, "TABLE");
@@ -154,19 +176,32 @@ const RecursiveBlock = ({
               <div
                 className="label"
                 style={{
-                  color: menuItem?.id === element?.id || menuItemId === element?.id ? menuStyle?.active_text : menuStyle?.text,
+                  color:
+                    menuItem?.id === element?.id || menuItemId === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text,
                   opacity: element?.isChild && 0.6,
                 }}
               >
                 {element?.type === "USER" && (
                   <PersonIcon
                     style={{
-                      color: menuItem?.id === element?.id ? "#fff" : "rgb(45, 108, 229)",
+                      color:
+                        menuItem?.id === element?.id
+                          ? "#fff"
+                          : "rgb(45, 108, 229)",
                     }}
                   />
                 )}
                 {MenuFolderArrows({ element, childBlockVisible })}
-                <IconGenerator icon={element?.icon || element?.data?.microfrontend?.icon || element?.data?.webpage?.icon} size={18} />
+                <IconGenerator
+                  icon={
+                    element?.icon ||
+                    element?.data?.microfrontend?.icon ||
+                    element?.data?.webpage?.icon
+                  }
+                  size={18}
+                />
 
                 <Box
                   sx={{
@@ -177,11 +212,18 @@ const RecursiveBlock = ({
                   }}
                 >
                   <Box>
-                    <p>{element?.attributes?.[`label_${defaultLanguage}`] ?? element?.attributes?.[`title_${defaultLanguage}`] ?? element?.label ?? element?.name}</p>
+                    <p>
+                      {element?.attributes?.[`label_${defaultLanguage}`] ??
+                        element?.attributes?.[`title_${defaultLanguage}`] ??
+                        element?.label ??
+                        element?.name}
+                    </p>
                   </Box>
                   {settingsButtonPermission && !userType ? (
                     <Box className="icon_group">
-                      {(element?.data?.permission?.delete || element?.data?.permission?.update || element?.data?.permission?.write) && (
+                      {(element?.data?.permission?.delete ||
+                        element?.data?.permission?.update ||
+                        element?.data?.permission?.write) && (
                         <Tooltip title="Settings" placement="top">
                           <Box className="extra_icon">
                             <BsThreeDots
@@ -190,7 +232,10 @@ const RecursiveBlock = ({
                                 folderSettings(e);
                               }}
                               style={{
-                                color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                                color:
+                                  menuItem?.id === element?.id
+                                    ? menuStyle?.active_text
+                                    : menuStyle?.text || "",
                               }}
                             />
                           </Box>
@@ -210,7 +255,10 @@ const RecursiveBlock = ({
                           menuAddClick(e);
                         }}
                         style={{
-                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
                         }}
                       />
                     </Box>
@@ -244,12 +292,37 @@ const RecursiveBlock = ({
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
-              <MicroServiceSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <TableSettingSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <SmsOtpButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              <DataBase
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+              />
+              <MicroServiceSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <TableSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <ApiKeyButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <RedirectButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <SmsOtpButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
             </>
           )}
 
@@ -262,8 +335,20 @@ const RecursiveBlock = ({
                 level={2}
               /> */}
 
-              <FunctionSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} integrated={false} />
-              <MicrofrontendSettingSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} element={element} level={2} />
+              <FunctionSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+                integrated={false}
+              />
+              <MicrofrontendSettingSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                element={element}
+                level={2}
+              />
             </>
           )}
 
@@ -275,7 +360,12 @@ const RecursiveBlock = ({
                 level={2}
                 menuItem={menuItem}
               /> */}
-              <ApiSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />
+              <ApiSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                level={2}
+                menuItem={menuItem}
+              />
             </>
           )}
         </Collapse>

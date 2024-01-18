@@ -3,8 +3,14 @@ import React, { useState } from "react";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import EnvironmentModal from "./EnvironmentModal";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
-export default function EnvironmentMenu({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) {
+export default function EnvironmentMenu({
+  level = 1,
+  menuStyle,
+  setSubMenuIsOpen,
+  menuItem,
+}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -19,9 +25,8 @@ export default function EnvironmentMenu({ level = 1, menuStyle, setSubMenuIsOpen
               color: menuStyle?.text,
             }}
           >
-            <OpenInFullIcon />
-            <IconGenerator icon={"database.svg"} size={18} />
-            Environments
+            <LocalOfferIcon />
+            Environment changes
           </div>
         </Button>
       </div>

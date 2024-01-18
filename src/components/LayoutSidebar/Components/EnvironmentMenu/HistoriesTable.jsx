@@ -1,51 +1,85 @@
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Button, TableCell, Typography } from "@mui/material";
 import React from "react";
 import HistoryRow from "./HistoryRow";
+import styles from "./styles.module.scss";
+import TableCard from "../../../TableCard";
+import { CTable, CTableBody, CTableHead, CTableHeadRow } from "../../../CTable";
+import ClearIcon from "@mui/icons-material/Clear";
 
-export default function HistoriesTable({ histories, setSelectedEnvironment, selectedVersions, setSelectedVersions }) {
+export default function HistoriesTable({
+  histories,
+  setSelectedEnvironment,
+  selectedVersions,
+  setSelectedVersions,
+  setSelectedMigrate,
+  handleClose,
+}) {
   const handleSelectVersion = (e, index) => {
     if (e.target.checked) {
-      const versionsUntilIndex = histories.slice(0, index + 1)
-      setSelectedVersions(versionsUntilIndex)
+      const versionsUntilIndex = histories.slice(0, index + 1);
+      setSelectedVersions(versionsUntilIndex);
     } else {
-      const versionsUntilIndex = histories.slice(0, index)
-      setSelectedVersions(versionsUntilIndex)
+      const versionsUntilIndex = histories.slice(0, index);
+      setSelectedVersions(versionsUntilIndex);
     }
-  }
+  };
 
   return (
-    <div style={{ height: 400, width: "100%", overflow: "scroll" }}>
+    <div style={{ height: 400, width: "100%", overflow: "auto" }}>
+      <div className={styles.header}>
+        <Typography variant="h4">History</Typography>
+        <ClearIcon
+          color="primary"
+          onClick={handleClose}
+          width="46px"
+          style={{
+            cursor: "pointer",
+          }}
+        />
+      </div>
       <Box>
         <Button
-          onClick={() => setSelectedEnvironment(null)}
-          sx={{
-            marginBottom: "10px",
-          }}
+          className={styles.button}
+          onClick={() => setSelectedMigrate(null)}
         >
           <ArrowBackRoundedIcon />
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center" sx={{ width: "40px" }}>
-                Action
-              </TableCell>
-              <TableCell align="left">Action Type</TableCell>
-              <TableCell align="left">Action Source</TableCell>
-              <TableCell align="left">Label</TableCell>
-              <TableCell align="left">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+
+      <TableCard withBorder borderRadius="md">
+        <CTable
+          tableStyle={{
+            height: "auto",
+          }}
+          disablePagination={true}
+        >
+          <CTableHead>
+            <CTableHeadRow>
+              <TableCell width={40}>Action</TableCell>
+              <TableCell>Action Type</TableCell>
+              <TableCell>Action Source</TableCell>
+              <TableCell width={200}>Label</TableCell>
+              <TableCell width={130}>Action</TableCell>
+            </CTableHeadRow>
+          </CTableHead>
+          <CTableBody
+            style={{
+              overflow: "auto",
+            }}
+            dataLength={histories?.length}
+          >
             {histories?.map((history, index) => (
-              <HistoryRow history={history} index={index} handleSelectVersion={handleSelectVersion} selectedVersions={selectedVersions} />
+              <HistoryRow
+                history={history}
+                index={index}
+                handleSelectVersion={handleSelectVersion}
+                selectedVersions={selectedVersions}
+              />
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </CTableBody>
+        </CTable>
+      </TableCard>
     </div>
   );
 }

@@ -279,8 +279,14 @@ const SubMenu = ({
                     />
                   )}
                 </div>
-                {selectedApp?.id === adminId && <EnvironmentMenu menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />}
-
+                {selectedApp?.id === adminId && (
+                  <EnvironmentMenu
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    level={2}
+                    menuItem={menuItem}
+                  />
+                )}
               </div>
             )}
 
@@ -297,7 +303,7 @@ const SubMenu = ({
                   justifyContent: "flex-start",
                 }}
               >
-                <div  
+                <div
                   style={{
                     display: "flex",
                     alignItems: "center",

@@ -19,12 +19,12 @@ const style = {
   boxShadow: 24,
   borderRadius: "8px",
   outline: "none",
-  p: 1,
 };
 
 export default function EnvironmentModal({ open, handleClose }) {
   const company = store.getState().company;
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+  const [selectedMigrate, setSelectedMigrate] = useState(null);
   const [versions, setVersions] = useState([]);
   const [versionLoading, setVersionLoading] = useState(false);
   const [selectedVersions, setSelectedVersions] = useState([]);
@@ -32,42 +32,48 @@ export default function EnvironmentModal({ open, handleClose }) {
   const environmentId = companyStore.environmentId;
   const dispatch = useDispatch();
 
-  const updateVersions = () => {
-    const selectedVersionsIds = selectedVersions.map(version => version.id)
+  console.log("selectedMigrate", selectedMigrate);
 
-    httpsRequestV2.put(`/version/history/${selectedEnvironment}`, {
-      "env_id": environmentId,
-      "ids": selectedVersionsIds,
-      "project_id": company.projectId
-    }).then(res => {
-      dispatch(showAlert("Successfully updated", "success"));
-    })
-  }
+  const updateVersions = () => {
+    const selectedVersionsIds = selectedVersions.map((version) => version.id);
+
+    httpsRequestV2
+      .put(`/version/history/${selectedEnvironment}`, {
+        env_id: environmentId,
+        ids: selectedVersionsIds,
+        project_id: company.projectId,
+      })
+      .then((res) => {
+        dispatch(showAlert("Successfully updated", "success"));
+        handleClose();
+      });
+  };
 
   const updateMigrate = () => {
-    httpsRequestV2.post('/version/migrate', {
-      "histories": selectedVersions
-    }).then(res => {
-      updateVersions()
-    })
-  }
+    httpsRequestV2
+      .post("/version/migrate", {
+        histories: selectedVersions,
+      })
+      .then((res) => {
+        updateVersions();
+      });
+  };
 
-
-
-  const { data: { environments } = [], isLoading: environmentLoading } = useEnvironmentListQuery({
-    params: {
-      project_id: company.projectId,
-    },
-    onSuccess: (data) => {
-      return data;
-    },
-  });
+  const { data: { environments } = [], isLoading: environmentLoading } =
+    useEnvironmentListQuery({
+      params: {
+        project_id: company.projectId,
+      },
+      onSuccess: (data) => {
+        return data;
+      },
+    });
 
   useEffect(() => {
-    if (selectedEnvironment) {
+    if (selectedMigrate) {
       setVersionLoading(true);
       httpsRequestV2
-        .get(`/version/history/${selectedEnvironment}`)
+        .get(`/version/history/${selectedEnvironment}/${selectedMigrate}`, {})
         .then((res) => {
           setVersions(res.histories);
         })
@@ -75,10 +81,15 @@ export default function EnvironmentModal({ open, handleClose }) {
           setVersionLoading(false);
         });
     }
-  }, [selectedEnvironment]);
+  }, [selectedMigrate]);
 
   return (
-    <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
       <Box sx={style}>
         <Box>
           {environmentLoading || versionLoading ? (
@@ -95,33 +106,57 @@ export default function EnvironmentModal({ open, handleClose }) {
             >
               <CircularProgress />
             </Box>
-          ) : selectedEnvironment ? (
-            <HistoriesTable histories={versions} setSelectedEnvironment={setSelectedEnvironment} selectedVersions={selectedVersions} setSelectedVersions={setSelectedVersions} />
+          ) : selectedMigrate ? (
+            <HistoriesTable
+              histories={versions}
+              setSelectedEnvironment={setSelectedEnvironment}
+              selectedVersions={selectedVersions}
+              setSelectedMigrate={setSelectedMigrate}
+              setSelectedVersions={setSelectedVersions}
+              handleClose={handleClose}
+            />
           ) : (
-            <EnvironmentsTable setSelectedEnvironment={setSelectedEnvironment} environments={environments} />
+            <EnvironmentsTable
+              setSelectedEnvironment={setSelectedEnvironment}
+              environments={environments}
+              selectedEnvironment={selectedEnvironment}
+              handleClose={handleClose}
+              setSelectedMigrate={setSelectedMigrate}
+              selectedMigrate={selectedMigrate}
+              company={company}
+            />
           )}
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "16px",
-            gap: "8px",
-          }}
-        >
-          <Button variant="outlined" color="error" onClick={handleClose}>
-            Close
-          </Button>
+        {selectedMigrate && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "8px",
+              padding: "10px 15px",
+              borderTop: "1px solid #e5e9eb",
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => setSelectedVersions([])}
+            >
+              Cancel
+            </Button>
 
-          {
-            selectedEnvironment && (
-              <Button variant="outlined" color="success" onClick={updateMigrate}>
-                Save
+            {selectedEnvironment && (
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={updateMigrate}
+              >
+                Miggrate
               </Button>
-            )
-          }
-        </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Modal>
   );

@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import { useMemo, useState } from "react";
 import { useQueries, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useNoteFolderDeleteMutation,
@@ -59,7 +59,6 @@ const DocumentsSidebar = ({
   const { projectId } = useParams();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
 

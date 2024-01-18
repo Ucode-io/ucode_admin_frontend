@@ -353,7 +353,10 @@ const RelationSectionForModal = ({
                               </>
                             )}
                             <div className="flex align-center gap-2 text-nowrap">
-                              {el?.attributes?.[`label_${i18n.language}`]
+                              {el?.relation ? (
+                                el?.relation?.attributes?.[`label_to_${i18n?.language}`]
+                              ): (
+                                el?.attributes?.[`label_${i18n.language}`]
                                 ? el?.attributes?.[`label_${i18n.language}`]
                                 : el?.relation?.attributes?.[
                                     `label_${i18n.language}`
@@ -361,7 +364,8 @@ const RelationSectionForModal = ({
                                 ? el?.relation?.attributes?.[
                                     `label_${i18n.language}`
                                   ]
-                                : el?.label ?? el?.title}
+                                : el?.label ?? el?.title
+                              )}
                             </div>
                           </Tab>
 
@@ -406,15 +410,19 @@ const RelationSectionForModal = ({
                             </>
                           )}
                           <div className="flex align-center gap-2 text-nowrap">
-                            {el?.attributes?.[`label_${i18n.language}`]
-                              ? el?.attributes?.[`label_${i18n.language}`]
-                              : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              : el?.label ?? el?.title}
+                          {el?.relation ? (
+                                el?.relation?.attributes?.[`label_to_${i18n?.language}`]
+                              ): (
+                                el?.attributes?.[`label_${i18n.language}`]
+                                ? el?.attributes?.[`label_${i18n.language}`]
+                                : el?.relation?.attributes?.[
+                                    `label_${i18n.language}`
+                                  ]
+                                ? el?.relation?.attributes?.[
+                                    `label_${i18n.language}`
+                                  ]
+                                : el?.label ?? el?.title
+                              )}
                           </div>
                         </Tab>
                       )

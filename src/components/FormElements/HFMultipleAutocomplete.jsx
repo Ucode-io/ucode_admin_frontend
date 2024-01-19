@@ -26,6 +26,7 @@ import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useParams } from "react-router-dom";
 
 const filter = createFilterOptions();
 
@@ -129,6 +130,8 @@ const AutoCompleteElement = ({
   isBlackBg,
 }) => {
   const [dialogState, setDialogState] = useState(null);
+  const {appId} = useParams();
+
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
     setDialogState(inputValue);
@@ -258,7 +261,7 @@ const AutoCompleteElement = ({
           />
         )}
         noOptionsText={"No options"}
-        disabled={disabled}
+        disabled={appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6' ? true : disabled}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (

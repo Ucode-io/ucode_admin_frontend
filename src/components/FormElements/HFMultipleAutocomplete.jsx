@@ -184,7 +184,7 @@ const AutoCompleteElement = ({
   //     onFormChange(value);
   //   }
   // }, []);
-
+  console.log('appppppppppppp', appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6')
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
@@ -240,7 +240,7 @@ const AutoCompleteElement = ({
                     color: isBlackBg ? "#fff" : "inherit",
                   },
 
-              endAdornment: disabled && (
+              endAdornment: Boolean(appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6' || disabled) && (
                 <Tooltip
                   title="This field is disabled for this role!"
                   style={{

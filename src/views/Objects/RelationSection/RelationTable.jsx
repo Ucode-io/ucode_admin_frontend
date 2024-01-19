@@ -434,8 +434,7 @@ const RelationTable = forwardRef(
       });
 
     const navigateToEditPage = (row) => {
-      navigateToForm(relatedTableSlug, "EDIT", row, {},
-      menuId);
+      navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
     };
 
     const navigateToTablePage = () => {

@@ -100,11 +100,13 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  // useEffect(() => {
-  //   if (data?.tabs?.length > 0) {
-  //     setSelectTab(data?.tabs?.[0]);
-  //   }
-  // }, [data, setSelectTab]);
+  useEffect(() => {
+  if(!selectedTab) {
+    if (data?.tabs?.length > 0) {
+      setSelectTab(data?.tabs?.[0]);
+    }
+    }
+  }, [data, setSelectTab]);
 
   useEffect(() => {
 
@@ -406,7 +408,7 @@ const NewRelationSection = ({
             ) : (
               data?.tabs?.map((el, index) => (
                 <TabPanel key={el.id}>
-                  {!selectedTab?.relation_id ? (
+                  {selectedTab?.type === 'section' ? (
                     <NewMainInfo
                       control={control}
                       loader={loader}
@@ -445,7 +447,7 @@ const NewRelationSection = ({
                       fields={fields}
                       setFormVisible={setFormVisible}
                       formVisible={formVisible}
-                      key={selectedTab.id}
+                      key={selectedTab?.id}
                       relation={relations}
                       createFormVisible={relationsCreateFormVisible}
                       setCreateFormVisible={setCreateFormVisible}

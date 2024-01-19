@@ -555,12 +555,9 @@ export const fieldButtons = [
     label: "Schema",
     value: "SCHEMA",
   },
+
   {
-    label: "Validation",
-    value: "VALIDATION",
-  },
-  {
-    label: "Autofill",
+    label: "Additional",
     value: "AUTOFILL",
   },
   {

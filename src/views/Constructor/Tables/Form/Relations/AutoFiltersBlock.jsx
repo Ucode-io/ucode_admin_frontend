@@ -6,6 +6,8 @@ import RectangleIconButton from "../../../../../components/Buttons/RectangleIcon
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import constructorFieldService from "../../../../../services/constructorFieldService";
 import styles from "./style.module.scss";
+import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
+import { Button } from "@mui/material";
 
 const AutoFiltersBlock = ({ control, watch }) => {
   const { fields, append, remove } = useFieldArray({
@@ -81,8 +83,8 @@ const AutoFiltersBlock = ({ control, watch }) => {
           </RectangleIconButton>
         </div>
       ))}
-      <div className={styles.summaryButton} onClick={addNewAutoFilter}>
-        <button type="button">+ Создать новый</button>
+      <div className={styles.summaryButton} >
+        <Button onClick={addNewAutoFilter} variant="contained" style={{  fontSize: "14px" }}>Добавить</Button>
       </div>
     </>
   );

@@ -199,7 +199,7 @@ const ConstructorTablesFormPage = () => {
   const createType = (data) => {
     menuSettingsService
       .create({
-        parent_id: menuItem?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        parent_id: menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: "TABLE",
         table_id: data?.id,
         label: data?.label,

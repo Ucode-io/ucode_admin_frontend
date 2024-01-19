@@ -45,10 +45,14 @@ const NewRelationSection = ({
   errors,
 }) => {
   const [data, setData] = useState([]);
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
+  const {
+    tableSlug: tableSlugFromParams,
+    id: idFromParams,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  console.log("loader", loader);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -71,7 +75,7 @@ const NewRelationSection = ({
   );
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [jwtObjects, setJwtObjects] = useState([]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -79,6 +83,7 @@ const NewRelationSection = ({
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
+  const menuId = searchParams.get("menuId");
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -94,20 +99,20 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  useEffect(() => {
-    if (data?.tabs?.length > 0) {
-      setSelectTab(data?.tabs?.[0]);
-    }
-  }, [data, setSelectTab]);
+  // useEffect(() => {
+  //   if (data?.tabs?.length > 0) {
+  //     setSelectTab(data?.tabs?.[0]);
+  //   }
+  // }, [data, setSelectTab]);
 
   useEffect(() => {
-    console.log("queryTab", queryTab);
+
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const {fields, remove, append, update} = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -199,9 +204,9 @@ const NewRelationSection = ({
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
-  useEffect(() => {
+  const getLayoutList = () => {
     layoutService
-      .getLayout(tableSlug, appId, {
+      .getLayout(tableSlug, menuId, {
         "table-slug": tableSlug,
         language_setting: i18n?.language,
       })
@@ -216,6 +221,10 @@ const NewRelationSection = ({
         };
         setData(layout);
       });
+  };
+
+  useEffect(() => {
+    getLayoutList();
   }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   useEffect(() => {
@@ -253,7 +262,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap} = {
+    data: { fieldsMap } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -271,7 +280,7 @@ const NewRelationSection = ({
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -328,10 +337,14 @@ const NewRelationSection = ({
                             el?.attributes?.[`label_to_${i18n?.language}`] ||
                             el?.label
                           : el?.attributes?.[`label_${i18n.language}`]
-                          ? el?.attributes?.[`label_${i18n.language}`]
-                          : el?.relation?.attributes?.[`label_${i18n.language}`]
-                          ? el?.relation?.attributes?.[`label_${i18n.language}`]
-                          : el?.label ?? el?.title}
+                            ? el?.attributes?.[`label_${i18n.language}`]
+                            : el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
+                                ]
+                              ? el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
+                                ]
+                              : el?.label ?? el?.title}
                       </div>
                     </Tab>
                   ))}
@@ -352,7 +365,7 @@ const NewRelationSection = ({
                         onClick={navigateToCreatePage}
                         disabled={!id}
                       >
-                        <Add style={{color: "#007AFF"}} />
+                        <Add style={{ color: "#007AFF" }} />
                       </RectangleIconButton>
                     )}
 
@@ -377,6 +390,9 @@ const NewRelationSection = ({
                         currentView={getRelatedTabeSlug}
                         fieldsMap={fieldsMap}
                         getAllData={getAllData}
+                        selectedTabIndex={selectedTabIndex}
+                        getLayoutList={getLayoutList}
+                        data={data}
                       />
                     </>
                   )}
@@ -440,6 +456,7 @@ const NewRelationSection = ({
                       fieldsMap={fieldsMap}
                       relatedTable={relatedTable}
                       getAllData={getAllData}
+                      layoutData={data}
                     />
                   )}
                 </TabPanel>

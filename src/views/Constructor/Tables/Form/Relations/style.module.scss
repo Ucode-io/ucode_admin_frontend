@@ -59,15 +59,13 @@
   display: flex;
   margin-top: 8px;
 
-  button {
+  .button {
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
-    border: 1px dashed #6e8bb780;
     border-radius: 6px;
-    padding: 8px 16px;
     flex-grow: 1;
   }
 }
@@ -221,6 +219,7 @@
 
 .customRow {
   margin-bottom: 10px;
+
   .customLabel {
     h2 {
       width: auto;
@@ -240,6 +239,6 @@
   height: 100%;
 }
 
-.noShadow{
+.noShadow {
   box-shadow: none !important;
 }

@@ -16,7 +16,7 @@ export default function useTabRouter() {
     type = "CREATE",
     row = {},
     state,
-    menuId
+    menuId = ''
   ) => {
     if (type === "CREATE") {
       const id = generateID();

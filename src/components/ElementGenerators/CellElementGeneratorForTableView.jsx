@@ -30,6 +30,7 @@ import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
+import HFIncrementId from "../FormElements/HFIncrementId";
 
 const parser = new Parser();
 
@@ -198,6 +199,25 @@ const CellElementGeneratorForTableView = ({
           defaultValue={defaultValue}
         />
       );
+      
+      // case "INCREMENT_NUMBER":
+      //   return (
+      //     <HFIncrementId 
+      //       disabled={isDisabled}
+      //       isFormEdit
+      //       updateObject={updateObject}
+      //       isNewTableView={true}
+      //       isBlackBg={isBlackBg}
+      //       control={control}
+      //       name={computedSlug}
+      //       fullWidth
+      //       field={field}
+      //       required={field.required}
+      //       placeholder={field.attributes?.placeholder}
+      //       defaultValue={defaultValue} 
+      //     />
+      //   ) 
+
 
     case "SINGLE_LINE":
       return (

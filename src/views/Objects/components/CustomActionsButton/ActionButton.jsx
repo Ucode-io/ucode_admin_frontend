@@ -9,7 +9,7 @@ import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import useDownloader from "../../../../hooks/useDownloader";
 
-const ActionButton = ({ event, id, control, disable }) => {
+const ActionButton = ({ event, id, control, disable, getAllData }) => {
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
@@ -43,9 +43,9 @@ const ActionButton = ({ event, id, control, disable }) => {
       })
       .then((res) => {
         dispatch(showAlert("Success", "success"));
-        // queryClient.refetchQueries("GET_CUSTOM_ACTIONS", { tableSlug });
-        let url = res?.data?.link ?? event?.url ?? "";
-        if (res?.data?.status === "error") {
+
+        let url = res?.link ?? event?.url ?? "";
+        if (res?.status === "error") {
           dispatch(showAlert(/*res?.data?.message,*/ "error"));
         } else {
           if (event?.action_type === "HTTP") {
@@ -56,7 +56,8 @@ const ActionButton = ({ event, id, control, disable }) => {
                 },
               });
             } else {
-              queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+              // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+              getAllData()
             }
           } else if (url) {
             Object.entries(res?.data ?? {}).forEach(([key, value]) => {

@@ -169,8 +169,8 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const { i18n } = useTranslation();
-  console.log("valueeeeeeeeee", value);
+  const {i18n} = useTranslation();
+
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -194,7 +194,7 @@ const AutoCompleteElement = ({
       return ids;
     }
   }, [field]);
-  console.log("computedIds", computedIds);
+
 
   const autoFiltersFieldFroms = useMemo(() => {
     setPage(1);
@@ -436,7 +436,7 @@ const AutoCompleteElement = ({
       setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log("localValue", field, localValue, computedOptions);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -498,7 +498,7 @@ const AutoCompleteElement = ({
             onChange={(e) => {
               changeHandler(e);
             }}
-            // onMenuScrollToBottom={loadMoreItems}
+            onMenuScrollToBottom={loadMoreItems}
             inputChangeHandler={(e) => inputChangeHandler(e)}
             onInputChange={(e, newValue) => {
               setInputValue(e ?? null);

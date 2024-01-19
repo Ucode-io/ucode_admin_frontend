@@ -22,11 +22,12 @@
 
 .newmainCardSide {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180px);
   background: #fff;
   padding-top: 0;
   overflow: auto;
   padding-right: 0px;
+  border-right: 1px solid #b3b0b0;
   display: flex;
   flex-direction: column;
 }
@@ -47,6 +48,7 @@
   min-width: 100%;
   align-items: flex-start;
   gap: 20px;
+  margin-bottom: 40px;
 }
 
 .tableCardHeader {

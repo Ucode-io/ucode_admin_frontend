@@ -48,10 +48,12 @@ const RelationTable = forwardRef(
       type,
       relatedTable = {},
       getAllData = () => {},
+      layoutData
     },
     ref
   ) => {
-    const { appId, tableSlug } = useParams();
+
+    const {appId, tableSlug} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { navigateToForm } = useTabRouter();
@@ -302,8 +304,9 @@ const RelationTable = forwardRef(
                 });
             }
           }
+
           const columns = customSortArray(
-            getRelatedTabeSlug?.columns,
+            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ?? getRelatedTabeSlug?.columns,
             array.map((el) => el.id)
           )
             ?.map((el) => fieldsMap[el])

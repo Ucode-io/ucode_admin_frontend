@@ -3,6 +3,7 @@ import { Controller } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import styles from "./style.module.scss";
 import "react-phone-number-input/style.css";
+import { isString } from "lodash-es";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -41,7 +42,7 @@ const HFInternationPhone = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <PhoneInput
           placeholder="Enter phone number"
-          value={value?.includes("+") ? value : `+${value}`}
+          value={isString(value) ? (value?.includes("+") ?? '' ? value : `+${value}`) : ''}
           onChange={onChange}
           defaultCountry="UZ"
           international

@@ -30,7 +30,7 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -41,10 +41,10 @@ const ObjectsFormPage = ({
   }, [tableSlugFromParam, tableSlugFromProps]);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(false);
@@ -54,28 +54,28 @@ const ObjectsFormPage = ({
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
+  const menuId = searchParams.get("menuId");
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
 
-
   const isInvite = menu.invite;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
-  const {deleteTab} = useTabRouter();
-  const {pathname} = useLocation();
+  const { deleteTab } = useTabRouter();
+  const { pathname } = useLocation();
 
   const {
     handleSubmit,
@@ -84,15 +84,18 @@ const ObjectsFormPage = ({
     setValue: setFormValue,
     watch,
     getValues,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
-    defaultValues: {...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false},
+    defaultValues: {
+      ...state,
+      ...dateInfo,
+      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+    },
   });
-
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayoutData = layoutService.getLayout(tableSlug, appId, {
+    const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -100,7 +103,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{data = {}}, layoutData] = await Promise.all([
+      const [{ data = {} }, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -128,10 +131,9 @@ const ObjectsFormPage = ({
               : relation.table_from?.slug,
         }))
       );
-      
+
       if (!selectedTab?.relation_id) {
-        reset(data?.response ?? {})
-        
+        reset(data?.response ?? {});
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -141,7 +143,7 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, appId, {
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -151,7 +153,7 @@ const ObjectsFormPage = ({
       const defaultLayout = layoutData;
 
       setSections(sortSections(sections));
-      console.log("layoutData", layoutData);
+
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
@@ -178,7 +180,7 @@ const ObjectsFormPage = ({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -204,7 +206,7 @@ const ObjectsFormPage = ({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -317,6 +319,7 @@ const ObjectsFormPage = ({
               control={control?._formValues}
               tableSlug={tableSlug}
               id={id}
+              getAllData={getAllData}
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}

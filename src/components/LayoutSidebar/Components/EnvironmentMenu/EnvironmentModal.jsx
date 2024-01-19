@@ -58,6 +58,15 @@ export default function EnvironmentModal({ open, handleClose }) {
         updateVersions();
       });
   };
+  const updateDown = () => {
+    httpsRequestV2
+      .post("/version/down", {
+        histories: selectedVersions,
+      })
+      .then((res) => {
+        updateVersions();
+      });
+  };
 
   const { data: { environments } = [], isLoading: environmentLoading } =
     useEnvironmentListQuery({
@@ -150,7 +159,9 @@ export default function EnvironmentModal({ open, handleClose }) {
                 <Button
                 variant="outlined"
                 color="success"
-                onClick={updateMigrate}
+                onClick={() => {
+                  selectedMigrate === "miggrate"  ? updateMigrate() : updateDown()
+                }}
               >
                 Miggrate
               </Button>

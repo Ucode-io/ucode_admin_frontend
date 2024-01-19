@@ -20,7 +20,7 @@ export default function VisibleColumnsButtonRelationSection({
   getAllData,
   selectedTabIndex,
   getLayoutList,
-  data
+  data = {}
 }) {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);

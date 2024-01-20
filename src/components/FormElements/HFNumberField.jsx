@@ -25,7 +25,7 @@ const HFNumberField = ({
 }) => {
   const handleChange = (value, onChange) => {
     if (value.floatValue) {
-      onChange(value.floatValue);
+      onChange(value?.floatValue ||0);
       // isNewTableView && updateObject();
     } else {
       onChange("");
@@ -75,9 +75,9 @@ const HFNumberField = ({
               displayType="input"
               isNumericString={true}
               autoComplete="off"
-              allowNegative
+              // allowNegative
               fullWidth={fullWidth}
-              value={Boolean(value) ? value : 0}
+              value={parseInt(value) || 0}
               onValueChange={(value) => {
                 // const val = e.target.value;
                 // const valueWithoutSpaces = val.replaceAll(" ", "");

@@ -76,8 +76,8 @@ export const CTableHead = ({ children }) => {
   return <thead className="CTableHead">{children}</thead>;
 };
 
-export const CTableHeadRow = ({ children }) => {
-  return <tr className="CTableHeadRow">{children}</tr>;
+export const CTableHeadRow = ({ children, className }) => {
+  return <tr className={`CTableHeadRow ${className}`}>{children}</tr>;
 };
 
 export const CTableHeadCell = ({

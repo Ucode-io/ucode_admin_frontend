@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -64,6 +64,8 @@ const RelationTable = forwardRef(
     const [limit, setLimit] = useState(10);
     const { i18n } = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
+    const [searchParams] = useSearchParams();
+    const menuId = searchParams.get("menuId");
 
     const paginationInfo = useSelector(
       (state) => state?.pagination?.paginationInfo
@@ -432,7 +434,7 @@ const RelationTable = forwardRef(
       });
 
     const navigateToEditPage = (row) => {
-      navigateToForm(relatedTableSlug, "EDIT", row);
+      navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
     };
 
     const navigateToTablePage = () => {

@@ -51,7 +51,7 @@ const CDateTimePicker = ({
                     "& .MuiInputBase-input": {
                       paddingTop: isNewTableView ? 0 : "10px",
                       paddingBottom: isNewTableView ? 0 : "10px",
-                      padding: "16.5px 8px",
+                      padding: "8.5px 8px",
                     },
                     width: "100%",
                   }}
@@ -127,7 +127,7 @@ const CDateTimePicker = ({
                     "& .MuiInputBase-input": {
                       paddingTop: isNewTableView ? 0 : "10px",
                       paddingBottom: isNewTableView ? 0 : "10px",
-                      padding: "16.5px 4px",
+                      padding: "8.5px 4px",
                     },
                     width: "100%",
                   }}

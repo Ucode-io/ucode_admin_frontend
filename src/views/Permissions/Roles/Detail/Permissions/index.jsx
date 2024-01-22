@@ -13,6 +13,12 @@ import TableRow from "./TableRow";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
+import InfoIcon from '@mui/icons-material/Info'
+import styles from "../../../style.module.scss";
+import { permissions } from "./mock";
+import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
+import { GoInfo } from "react-icons/go";
+
 
 const Permissions = ({
   control,
@@ -23,6 +29,11 @@ const Permissions = ({
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
+  const [modalData, setModalData] = useState(null)
+
+  const closeModal = () => {
+    setModalData(null)
+  }
 
   const tables = useWatch({
     control,
@@ -78,7 +89,7 @@ const Permissions = ({
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
-                        <CTableCell rowSpan={2} w={200}>
+                        <CTableCell rowSpan={2} w={200} className={styles.sticky_header}>
                           Объекты
                         </CTableCell>
                         <CTableCell colSpan={5}>
@@ -86,11 +97,13 @@ const Permissions = ({
                             Record permissions
                           </Box>
                         </CTableCell>
-                        <CTableCell rowSpan={2}>Field permissions</CTableCell>
-                        <CTableCell rowSpan={2}>Action permissions</CTableCell>
-                        <CTableCell rowSpan={2}>Relation permission</CTableCell>
-                        <CTableCell rowSpan={2}>View permission</CTableCell>
-                        <CTableCell rowSpan={2}>Custom permission</CTableCell>
+                        {permissions.map((item) => (
+                          <CTableCell rowSpan={2}>
+                          <Box display={"flex"} alignItems={"center"} columnGap={"4px"}>
+                            {item.title} <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => setModalData(item)}/>
+                          </Box>
+                          </CTableCell>
+                        ))}
                       </CTableHeadRow>
                       <CTableHeadRow>
                         <CTableCell>
@@ -268,6 +281,9 @@ const Permissions = ({
           </Card>
         </div>
       </Tabs>
+      {modalData && (
+        <PermissionInfoModal modalData={modalData} closeModal={closeModal}/>
+      )}
     </>
   );
 };

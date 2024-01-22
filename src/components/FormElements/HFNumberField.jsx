@@ -77,7 +77,7 @@ const HFNumberField = ({
               autoComplete="off"
               allowNegative
               fullWidth={fullWidth}
-              value={value || 0}
+              value={Boolean(value) ? value : 0}
               onValueChange={(value) => {
                 handleChange(value, onChange);
               }}

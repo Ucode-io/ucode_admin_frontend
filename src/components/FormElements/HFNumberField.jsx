@@ -75,21 +75,10 @@ const HFNumberField = ({
               displayType="input"
               isNumericString={true}
               autoComplete="off"
-              // allowNegative
+              allowNegative
               fullWidth={fullWidth}
-              value={parseInt(value) || 0}
+              value={value || 0}
               onValueChange={(value) => {
-                // const val = e.target.value;
-                // const valueWithoutSpaces = val.replaceAll(" ", "");
-
-                // if (!value.value) {
-                //   onChange("");
-                // } else {
-                //   if (value.value.at(-1) === ".") {
-                //     onChange(value.value);
-                //   } else onChange(!isNaN(Number(value.value)) ? Number(value.value) : "");
-                // }
-                // isNewTableView && updateObject();
                 handleChange(value, onChange);
               }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${

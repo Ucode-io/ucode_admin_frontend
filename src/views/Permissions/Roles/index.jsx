@@ -54,13 +54,9 @@ const RolePage = () => {
 
   return (
     <div className={styles.role}>
-      <TableCard type={"withoutPadding"}>
+      <TableCard type={"withBody"}>
         <CTable
           tableStyle={{
-            borderRadius: "0px",
-            borderLeft: "0px",
-            borderRight: "0px",
-            borderBottom: "0px",
             marginTop: "10px",
           }}
           disablePagination
@@ -80,8 +76,6 @@ const RolePage = () => {
               <CTableRow
                 key={element.guid}
                 onClick={() => {
-                  // setModalType("UPDATE");
-                  // setRoleId(element?.guid);
                   navigateToDetailPage(element.guid);
                 }}
               >

@@ -42,22 +42,20 @@ const PermissionDetail = () => {
       >
         <Card style={{paddingBottom: "0px", borderRadius: "0"}}>
           <TabList>
-            <Tab>Инфо</Tab>
-            <Tab>Роли</Tab>
+            <Tab>Роль</Tab>
+            <Tab>Связь</Tab>
           </TabList>
 
           <TabPanel style={{marginTop: "8px"}}>
-            <div style={{padding: "10px 10px 0 10px"}}>
+            <div style={{padding: "10px 10px 0 10px", maxWidth: "30%"}}>
               <FRow label="Name">
                 <HFTextField control={control} name="name" fullWidth />
               </FRow>
             </div>
-            <div style={{marginTop: "15px"}}>
-              <ConnectionPage />
-            </div>
+            <RolePage />
           </TabPanel>
           <TabPanel>
-            <RolePage />
+            <ConnectionPage />
           </TabPanel>
         </Card>
       </Tabs>

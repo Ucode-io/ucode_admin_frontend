@@ -84,7 +84,7 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  console.log('menuIdmenuId', menuId, appId)
+
 
   const mainForm = useForm({
     defaultValues: {
@@ -509,6 +509,7 @@ const TableView = ({
       navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
     }
   };
+
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
       const params = view.navigate?.params
@@ -524,7 +525,7 @@ const TableView = ({
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? '');
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 

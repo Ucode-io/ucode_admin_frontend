@@ -117,7 +117,6 @@ const AddDataColumn = React.memo(
               }}>
             <div
               style={{
-                minWidth: "80px",
                 display: "flex",
                 gap: "5px",
                 padding: "3px",

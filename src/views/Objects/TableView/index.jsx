@@ -84,7 +84,7 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  console.log('menuIdmenuId', menuId, appId)
+
 
   const mainForm = useForm({
     defaultValues: {

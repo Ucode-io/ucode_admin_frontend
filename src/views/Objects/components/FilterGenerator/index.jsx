@@ -37,7 +37,7 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
-  console.log("fileddddddddddd", field);
+
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const computedOptions = useMemo(() => {

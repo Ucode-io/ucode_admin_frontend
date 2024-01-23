@@ -550,7 +550,7 @@ export const math = [
   },
 ];
 
-export const fieldButtons = [
+export const relationFieldButtons = [
   {
     label: "Schema",
     value: "SCHEMA",
@@ -558,6 +558,25 @@ export const fieldButtons = [
 
   {
     label: "Additional",
+    value: "AUTOFILL",
+  },
+  {
+    label: "Auto filter",
+    value: "AUTO_FILTER",
+  }
+];
+
+export const fieldButtons = [
+  {
+    label: "Schema",
+    value: "SCHEMA",
+  },
+  {
+    label: "Validation",
+    value: "VALIDATION",
+  },
+  {
+    label: "Autofill",
     value: "AUTOFILL",
   },
   {

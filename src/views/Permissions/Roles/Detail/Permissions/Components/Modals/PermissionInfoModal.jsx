@@ -27,7 +27,7 @@ const PermissionInfoModal = ({
             flexDirection: "column",
             alignItems: "center"
           }}>
-            <img src={modalData.image} alt="admin" style={{maxWidth: "600px"}} />
+            {modalData.image && (<img src={modalData.image} alt="admin" style={{maxWidth: "600px"}} />)}
             <div
             className={styles.text}
             dangerouslySetInnerHTML={{

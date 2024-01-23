@@ -15,7 +15,7 @@ import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
 import InfoIcon from '@mui/icons-material/Info'
 import styles from "../../../style.module.scss";
-import { permissions } from "./mock";
+import { permissions, recordPermission } from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
 import { GoInfo } from "react-icons/go";
 
@@ -93,8 +93,8 @@ const Permissions = ({
                           Объекты
                         </CTableCell>
                         <CTableCell colSpan={5}>
-                          <Box sx={{justifyContent: "center", display: "flex"}}>
-                            Record permissions
+                          <Box display={"flex"} alignItems={"center"} justifyContent="center" columnGap={"4px"}>
+                          Record permissions <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => setModalData(recordPermission)}/>
                           </Box>
                         </CTableCell>
                         {permissions.map((item) => (

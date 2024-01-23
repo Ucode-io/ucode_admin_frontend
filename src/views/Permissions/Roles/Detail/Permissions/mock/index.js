@@ -1,5 +1,5 @@
 export const permissions = [
-    {
+  {
       title: "Field permissions",
       type: "field",
       image: "/img/field.jpeg",
@@ -30,3 +30,10 @@ export const permissions = [
       content: "This is content"
     },
   ];
+
+  export const recordPermission = {
+    title: "Record permissions",
+    type: "field",
+    image: null,
+    content: "<span>Read Permission:</span> <br /><br /> <span>Description:</span> Read permission allows users to view the contents of a table. Users with read access can execute SELECT queries to retrieve data from the specified table. This permission is essential for users who need to gather information from the table without making any modifications. <br /><br /> <span>Add (Insert) Permission:</span> <br /><br /> <span>Description:</span> Add, or insert, permission grants users the ability to add new records to the table. Users with this permission can execute INSERT queries to populate the table with new data. It is useful for users who need to contribute new information to the dataset. <br /><br /> <span>Edit (Update) Permission:</span> <br /><br /> <span>Description:</span> Edit, or update, permission enables users to modify existing data within the table. Users with this permission can execute UPDATE queries to change the values stored in specific fields. This permission is crucial for users who need to keep data up-to-date or correct inaccuracies. <br /><br /> <span>Delete Permission:</span> <br /><br /> <span>Description:</span> Delete permission allows users to remove records from the table. Users with this permission can execute DELETE queries to eliminate specific records based on certain criteria. It is a powerful permission that should be granted cautiously to avoid accidental or unauthorized data loss."
+  }

@@ -1,9 +1,8 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { Button } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -12,7 +11,6 @@ import {
   CTableBody,
   CTableCell,
   CTableHead,
-  CTableHeadCell,
   CTableRow,
 } from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
@@ -321,51 +319,13 @@ const ObjectDataTable = ({
               )
           )}
 
-          <PermissionWrapperV2
-            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-            type={["update", "delete"]}
-          >
-            {(onDeleteClick || onEditClick) && (
-              <CTableHeadCell
-                style={{
-                  padding: "0",
-                  minWidth: "85px",
-                  color: "#262626",
-                  fontSize: "13px",
-                  fontStyle: "normal",
-                  fontWeight: 400,
-                  lineHeight: "normal",
-                  padding: "0 5px",
-                  position: `sticky`,
-                  right: "0",
-                  backgroundColor: `#fff`,
-                  zIndex: `0`,
-                  borderLeft: '1px solid #eee'
-                }}
-              >
-                <span
-                  style={{
-                    whiteSpace: "nowrap",
-                    padding: "0px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  Actions
-                </span>
-              </CTableHeadCell>
-            )}
-          </PermissionWrapperV2>
-          {!isRelationTable && (
+          
+           {!isRelationTable && (
             <PermissionWrapperV2
               tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
               type={"add_field"}
             >
-              <FieldButton
+                <FieldButton
                 openFieldSettings={openFieldSettings}
                 view={view}
                 mainForm={mainForm}
@@ -377,8 +337,8 @@ const ObjectDataTable = ({
                 setDrawerState={setDrawerState}
                 setDrawerStateField={setDrawerStateField}
               />
-            </PermissionWrapperV2>
-          )}
+              </PermissionWrapperV2>
+            )} 
         </CTableRow>
       </CTableHead>
 

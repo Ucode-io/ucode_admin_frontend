@@ -138,7 +138,7 @@ const MicrofrontendForm = () => {
     microfrontendService
       .getById(microfrontendId)
       .then((res) => {
-        mainForm.reset(res);
+        mainForm.reset({ ...res, repo_name: res.name, resource_id: res.resource });
       })
       .finally(() => setLoader(false));
   };
@@ -192,6 +192,7 @@ const MicrofrontendForm = () => {
               fullWidth
               options={resourceOptions}
               required
+              disabled={microfrontendId}
             />
           </FRow>
 
@@ -203,6 +204,7 @@ const MicrofrontendForm = () => {
                   control={mainForm.control}
                   options={repositories ?? []}
                   required
+                  disabled={microfrontendId}
                 />
               </FRow>
 
@@ -212,6 +214,7 @@ const MicrofrontendForm = () => {
                   control={mainForm.control}
                   options={branches}
                   required
+                  disabled={microfrontendId}
                 />
               </FRow>
             </>
@@ -229,6 +232,7 @@ const MicrofrontendForm = () => {
                 control={mainForm.control}
                 fullWidth
                 required
+                disabled={microfrontendId}
               />
             </FRow>
           )}
@@ -239,7 +243,7 @@ const MicrofrontendForm = () => {
           >
             <HFTextField
               disabledHelperText
-              name="name"
+              name="provided_name"
               control={mainForm.control}
               fullWidth
               required
@@ -252,6 +256,7 @@ const MicrofrontendForm = () => {
               options={frameworkOptions}
               defaultValue="REACT"
               required
+              disabled={microfrontendId}
             />
           </FRow>
           {resourceId === "ucode_gitlab" && (

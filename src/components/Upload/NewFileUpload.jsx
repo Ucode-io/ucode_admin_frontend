@@ -1,24 +1,16 @@
-import React, { useRef, useState } from "react";
-import fileService from "../../services/fileService";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {
   Box,
   Button,
-  CircularProgress,
-  InputAdornment,
   Popover,
-  Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
-import { Lock } from "@mui/icons-material";
-import DownloadIcon from "@mui/icons-material/Download";
-import CancelIcon from "@mui/icons-material/Cancel";
-import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import FilePresentIcon from "@mui/icons-material/FilePresent";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
+import React, { useRef, useState } from "react";
+import fileService from "../../services/fileService";
 
 export default function NewFileUpload({
   value,
@@ -38,7 +30,7 @@ export default function NewFileUpload({
 
   const inputChangeHandler = (e) => {
     setLoading(true);
-    console.log("field", field);
+
     const file = e.target.files[0];
 
     const data = new FormData();
@@ -79,15 +71,6 @@ export default function NewFileUpload({
   return (
     <div className={`Gallery ${className}`}>
       {value && (
-        // <div className="block" onClick={() => imageClickHandler()}>
-        //   <button className="close-btn" type="button" onClick={(e) => closeButtonHandler(e)}>
-        //     <CancelIcon />
-        //   </button>
-        //   <a href={value} className="" download target="_blank" rel="noreferrer">
-        //     <DownloadIcon style={{ width: "25px", height: "25px", fontSize: "30px" }} />
-        //   </a>
-        // </div>
-
         <>
           <Box className="uploadedFile">
             <Button
@@ -242,6 +225,7 @@ export default function NewFileUpload({
             minWidth: "25px",
             width: "25px",
             height: "25px",
+            paddingLeft: '15px'
           }}
         >
           <input
@@ -262,7 +246,6 @@ export default function NewFileUpload({
         </Button>
       )}
 
-      {/* {previewVisible && ""} */}
     </div>
   );
 }

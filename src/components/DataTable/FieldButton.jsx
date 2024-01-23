@@ -178,10 +178,18 @@ export default function FieldButton({
         width={10}
         style={{
           position: "fixed",
-          right: "0",
-          width: "100%",
           background: "#fff",
-          maxWidth: "90px",
+          maxWidth: "85px",
+          minWidth: "86px",
+          color: "#262626",
+          lineHeight: "normal",
+          padding: "5px 5px",
+          right: "0",
+          backgroundColor: `#fff`,
+          zIndex: `0`,
+          borderLeft: '1px solid #eee',
+          height: '35px',
+          borderBottom: 'none'
         }}
         onClick={(e) => {
           setFieldOptionAnchor(e.currentTarget);
@@ -200,7 +208,7 @@ export default function FieldButton({
             backgroundColor: "#fff",
           }}
         >
-          <AddRoundedIcon />
+          <AddRoundedIcon style={{marginTop: '3px'}} />
         </span>
       </CTableHeadCell>
       <FieldOptionModal anchorEl={fieldOptionAnchor} setAnchorEl={setFieldOptionAnchor} setFieldCreateAnchor={setFieldCreateAnchor} setValue={setValue} target={target} />

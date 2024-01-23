@@ -439,7 +439,21 @@ const TableRow = ({
                 </CTableCell>
               )
           )}
-          <td style={{height: "30px"}}>
+          <td style={{
+            height: "30px",
+            minWidth: "85px",
+            color: "#262626",
+            fontSize: "13px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "normal",
+            padding: "0 5px",
+            position: `${"sticky"}`,
+            right: "0",
+            backgroundColor: `${ "#fff" }`,
+            zIndex: `${"0"}`,
+            borderLeft: '1px solid #eee'
+            }}>
             <div
               style={{
                 display: "flex",
@@ -471,9 +485,9 @@ const TableRow = ({
             </div>
           </td>
 
-          <td>
+          {/* <td>
             <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
-          </td>
+          </td> */}
         </CTableRow>
       ) : (
         <CTableRow

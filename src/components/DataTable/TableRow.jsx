@@ -280,11 +280,11 @@ const TableRow = ({
               </div>
             </td>
 
-            <td>
+            {/* <td>
               <div
                 style={{ display: "flex", gap: "5px", padding: "3px" }}
               ></div>
-            </td>
+            </td> */}
           </CTableRow>
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||

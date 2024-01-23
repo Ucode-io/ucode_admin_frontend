@@ -139,7 +139,7 @@ export default function OpenFaasFunctionForm() {
     queryParams: {
       enabled: Boolean(functionId),
       onSuccess: (res) => {
-        mainForm.reset({ ...res, resource_id: res.resource });
+        mainForm.reset({ ...res, resource_id: res.resource, repo_name: res.name });
       },
     },
   });
@@ -236,7 +236,7 @@ export default function OpenFaasFunctionForm() {
           >
             <HFTextField
               disabledHelperText
-              name="name"
+              name="provided_name"
               control={mainForm.control}
               fullWidth
               required

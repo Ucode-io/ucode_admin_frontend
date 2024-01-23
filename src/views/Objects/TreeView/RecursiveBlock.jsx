@@ -23,6 +23,8 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const { navigateToForm } = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const children = useMemo(() => {
     return data.filter((el) => el[`${tableSlug}_id`] === row.guid);
@@ -36,11 +38,11 @@ const RecursiveBlock = ({
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug, "CREATE", null, {
       [`${tableSlug}_id`]: row.guid,
-    });
+    }, menuId);
   };
 
   const navigateToEditPage = () => {
-    navigateToForm(tableSlug, "EDIT", row);
+    navigateToForm(tableSlug, "EDIT", row, {}, menuId);
   };
 
   const deleteHandler = async (id) => {

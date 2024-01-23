@@ -1,7 +1,7 @@
 import {useEffect, useMemo} from "react";
 import {useState} from "react";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -20,6 +20,8 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
@@ -59,7 +61,7 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   };
 
   const navigateToCreatePage = () => {
-    navigateToForm(tableSlug, "CREATE", null);
+    navigateToForm(tableSlug, "CREATE", null, {}, menuId);
   };
 
   useEffect(() => {

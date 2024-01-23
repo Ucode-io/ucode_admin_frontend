@@ -84,6 +84,7 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  console.log('menuIdmenuId', menuId, appId)
 
   const mainForm = useForm({
     defaultValues: {
@@ -505,7 +506,7 @@ const TableView = ({
       setSelectedRow(row);
       setOpen(true);
     } else {
-      navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
+      navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
     }
   };
   const navigateToDetailPage = (row) => {

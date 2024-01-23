@@ -180,7 +180,7 @@ export default function FieldButton({
           position: "fixed",
           background: "#fff",
           maxWidth: "85px",
-          minWidth: "86px",
+          minWidth: "90px",
           color: "#262626",
           lineHeight: "normal",
           padding: "5px 5px",
@@ -188,8 +188,7 @@ export default function FieldButton({
           backgroundColor: `#fff`,
           zIndex: `0`,
           borderLeft: '1px solid #eee',
-          height: '35px',
-          borderBottom: 'none'
+          height: '25px !important',
         }}
         onClick={(e) => {
           setFieldOptionAnchor(e.currentTarget);

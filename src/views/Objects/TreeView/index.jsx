@@ -23,9 +23,6 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 
-  const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
 

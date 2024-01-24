@@ -1,8 +1,6 @@
-import {Box} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useWatch} from "react-hook-form";
-import {useMutation} from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
+import { Box } from "@mui/material";
+import React, { useMemo } from "react";
+import { useMutation } from "react-query";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
 export default function NewTableDataForm({

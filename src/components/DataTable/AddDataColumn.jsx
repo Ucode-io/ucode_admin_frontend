@@ -54,7 +54,7 @@ const AddDataColumn = React.memo(
           align="center"
           className="data_table__number_cell"
           style={{
-            padding: "0 4px",
+            padding: "4px 4px",
             minWidth: "80px",
             position: "sticky",
             left: "0",
@@ -69,7 +69,7 @@ const AddDataColumn = React.memo(
             align="center"
             className="data_table__number_cell"
             style={{
-              padding: "0 4px",
+              padding: "4px 4px",
               minWidth: "80px",
               position: "sticky",
               left: "0",
@@ -97,15 +97,24 @@ const AddDataColumn = React.memo(
           align="center"
           className="data_table__number_cell"
           style={{
-            padding: "0 4px",
-            minWidth: "80px",
             position: "sticky",
-            left: "0",
             backgroundColor: "#fff",
             zIndex: "1",
+            minWidth: "85px",
+            color: "#262626",
+            fontSize: "13px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "normal",
+            padding: "0 5px",
+            right: "0",
+            borderLeft: '1px solid #eee'
           }}
         >
-          <td>
+          <td 
+            style={{
+                border: 'none'
+              }}>
             <div
               style={{
                 minWidth: "80px",

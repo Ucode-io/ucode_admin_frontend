@@ -16,7 +16,7 @@ const NewFormCard = ({ title, children, icon, extra, topHeader }) => {
       <div
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "baseline",
           width: "100%",
         }}
       >

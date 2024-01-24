@@ -67,6 +67,9 @@ const RelationSectionForModal = ({
   const id = idFromProps ?? idFromParams;
 
   const [menuItem, setMenuItem] = useState(null);
+  const menuId = searchParams.get("menuId");
+
+  
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
@@ -103,7 +106,6 @@ const RelationSectionForModal = ({
       [relationId]: value,
     }));
   };
-
   const computedSections = useMemo(() => {
     const sections = [];
     data?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
@@ -168,7 +170,7 @@ const RelationSectionForModal = ({
     if (data?.tabs?.length > 0) {
       setSelectTab(data?.tabs?.[0]);
     }
-  }, [data, setSelectTab]);
+  }, []);
 
   useEffect(() => {
     queryTab
@@ -294,6 +296,32 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
+  const getLayoutList = () => {
+    layoutService
+      .getLayout(tableSlug, menuId, {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      })
+      .then((res) => {
+        const layout = {
+          ...res,
+          tabs: res?.tabs?.filter(
+            (tab) =>
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+          ),
+        };
+        setData(layout);
+      })
+      .finally(() => {
+        setSelectTab(relations[selectedTabIndex]);
+      })
+  };
+
+  useEffect(() => {
+    getLayoutList();
+  }, [tableSlug, menuItem?.table_id, i18n?.language]);
+  
   return (
     <>
       {selectedManyToManyRelation && (
@@ -533,6 +561,9 @@ const RelationSectionForModal = ({
                     currentView={getRelatedTabeSlug}
                     fieldsMap={fieldsMap}
                     getAllData={getAllData}
+                    getLayoutList={getLayoutList}
+                    selectedTabIndex={selectedTabIndex}
+                    data={data}
                   />
                 </>
               )}
@@ -610,6 +641,7 @@ const RelationSectionForModal = ({
                       id={id}
                       getAllData={getAllData}
                       type={type}
+                      layoutData={data}
                     />
                   )}
                 </TabPanel>

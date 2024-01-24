@@ -20,7 +20,6 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const {navigateToForm} = useTabRouter();
-
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 

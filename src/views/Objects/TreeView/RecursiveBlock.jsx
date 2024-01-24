@@ -3,7 +3,7 @@ import { Collapse } from "@mui/material";
 import { get } from "@ngard/tiny-get";
 import { useState } from "react";
 import { useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import CollapseIcon from "../../../components/CollapseIcon";
@@ -23,6 +23,8 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const { navigateToForm } = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const children = useMemo(() => {
     return data.filter((el) => el[`${tableSlug}_id`] === row.guid);
@@ -36,11 +38,11 @@ const RecursiveBlock = ({
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug, "CREATE", null, {
       [`${tableSlug}_id`]: row.guid,
-    });
+    }, menuId);
   };
 
   const navigateToEditPage = () => {
-    navigateToForm(tableSlug, "EDIT", row);
+    navigateToForm(tableSlug, "EDIT", row, {}, menuId);
   };
 
   const deleteHandler = async (id) => {

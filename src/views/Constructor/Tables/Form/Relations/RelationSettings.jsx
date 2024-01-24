@@ -1,46 +1,33 @@
 import listToOptions from "@/utils/listToOptions";
 import {
-  Close,
-  DragIndicator,
-  PushPin,
-  PushPinOutlined
+  Close
 } from "@mui/icons-material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box, Button, Card, Checkbox, Divider, IconButton } from "@mui/material";
+import { Box, Button, Card, Divider, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import { useRelationGetByIdQuery } from "../../../../../services/relationService";
 import { applyDrag } from "../../../../../utils/applyDrag";
-import { fieldButtons } from "../../../../../utils/constants/fieldTypes";
+import { relationFieldButtons } from "../../../../../utils/constants/fieldTypes";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
-import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
-import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
-import CascadingTreeBlock from "./CascadingTreeBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
-import FunctionPath from "./FunctionPath";
-import SummaryBlock from "./SummaryBlock";
-import styles from "./style.module.scss";
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator.jsx";
 import RelationDefault from "./RelationDefault.jsx";
+import styles from "./style.module.scss";
 
 const relationViewTypes = [
   {
@@ -58,7 +45,6 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const [drawerType, setDrawerType] = useState("SCHEMA");
-  const form = useForm();
   const { i18n } = useTranslation();
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] = useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] = useState(true);
@@ -311,7 +297,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>
-        {fieldButtons.map((item) => (
+        {relationFieldButtons.map((item) => (
           <Button className={item.value === drawerType ? styles.active : styles.inactive} onClick={() => setDrawerType(item.value)}>
             {item.label}
           </Button>

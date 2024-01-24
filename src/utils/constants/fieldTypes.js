@@ -1,24 +1,3 @@
-// export const fieldTypes = [
-//   "SINGLE_LINE",
-//   "MULTI_LINE",
-//   "EMAIL",
-//   "PHONE",
-//   "PICK_LIST",
-//   "MULTISELECT",
-//   "MAP"
-//   "DATE",
-//   "DATE_TIME",
-//   "NUMBER",
-//   "CURRENCY",
-//   "DECIMAL",
-//   "PERCENT",
-//   "CHECKBOX",
-//   "URL",
-//   "FORMULA",
-//   "LOOKUP",
-// "PHOTO"
-// ]
-
 export const fieldTypes = [
   "SINGLE_LINE",
   "MULTI_LINE",
@@ -127,11 +106,11 @@ export const fieldTypesOptions = [
         label: "Multi select",
         value: "MULTISELECT",
       },
-      {
-        icon: "list-check.svg",
-        label: "Multi select V2",
-        value: "MULTISELECT_V2",
-      },
+      // {
+      //   icon: "list-check.svg",
+      //   label: "Multi select V2",
+      //   value: "MULTISELECT_V2",
+      // },
     ],
   },
   {
@@ -153,11 +132,11 @@ export const fieldTypesOptions = [
         label: "Photo",
         value: "PHOTO",
       },
-      {
-        icon: "image.svg",
-        label: "Custom Image",
-        value: "CUSTOM_IMAGE",
-      },
+      // {
+      //   icon: "image.svg",
+      //   label: "Custom Image",
+      //   value: "CUSTOM_IMAGE",
+      // },
       {
         icon: "video.svg",
         label: "Video",
@@ -188,11 +167,11 @@ export const fieldTypesOptions = [
   {
     label: "Other",
     options: [
-      {
-        icon: "arrow-up-9-1.svg",
-        label: "FLOAT_NOLIMIT",
-        value: "FLOAT_NOLIMIT",
-      },
+      // {
+      //   icon: "arrow-up-9-1.svg",
+      //   label: "FLOAT_NOLIMIT",
+      //   value: "FLOAT_NOLIMIT",
+      // },
       {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
@@ -203,11 +182,11 @@ export const fieldTypesOptions = [
         label: "Increment number",
         value: "INCREMENT_NUMBER",
       },
-      {
-        icon: "phone.svg",
-        label: "Phone",
-        value: "PHONE",
-      },
+      // {
+      //   icon: "phone.svg",
+      //   label: "Phone",
+      //   value: "PHONE",
+      // },
       {
         icon: "phone.svg",
         label: "Internation Phone",
@@ -233,26 +212,26 @@ export const fieldTypesOptions = [
         label: "Barcode",
         value: "BARCODE",
       },
-      {
-        icon: "barcode.svg",
-        label: "Codabar",
-        value: "CODABAR",
-      },
-      {
-        icon: "fill.svg",
-        label: "Autofill",
-        value: "AUTOFILL",
-      },
-      {
-        icon: "barcode.svg",
-        label: "Scan-barcode",
-        value: "SCAN_BARCODE",
-      },
-      {
-        icon: "teeth.svg",
-        label: "Dentist",
-        value: "DENTIST",
-      },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Codabar",
+      //   value: "CODABAR",
+      // },
+      // {
+      //   icon: "fill.svg",
+      //   label: "Autofill",
+      //   value: "AUTOFILL",
+      // },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Scan-barcode",
+      //   value: "SCAN_BARCODE",
+      // },
+      // {
+      //   icon: "teeth.svg",
+      //   label: "Dentist",
+      //   value: "DENTIST",
+      // },
       {
         icon: "colon-sign.svg",
         label: "Color",
@@ -550,7 +529,7 @@ export const math = [
   },
 ];
 
-export const fieldButtons = [
+export const relationFieldButtons = [
   {
     label: "Schema",
     value: "SCHEMA",
@@ -558,6 +537,25 @@ export const fieldButtons = [
 
   {
     label: "Additional",
+    value: "AUTOFILL",
+  },
+  {
+    label: "Auto filter",
+    value: "AUTO_FILTER",
+  }
+];
+
+export const fieldButtons = [
+  {
+    label: "Schema",
+    value: "SCHEMA",
+  },
+  {
+    label: "Validation",
+    value: "VALIDATION",
+  },
+  {
+    label: "Autofill",
     value: "AUTOFILL",
   },
   {

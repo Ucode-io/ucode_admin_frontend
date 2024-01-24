@@ -11,7 +11,7 @@ import { showAlert } from "../../store/alert/alert.thunk";
 import constructorViewService from "../../services/constructorViewService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
-import { useRelationFieldUpdateMutation, useRelationUpdateMutation, useRelationsCreateMutation } from "../../services/relationService";
+import { useRelationFieldUpdateMutation,  useRelationsCreateMutation } from "../../services/relationService";
 import { transliterate } from "../../utils/textTranslater";
 import menuService from "../../services/menuService";
 
@@ -152,7 +152,6 @@ export default function FieldButton({
     }
   };
 
-  const generatorLabel = () => {};
 
   useEffect(() => {
     if (fieldData) {
@@ -173,22 +172,21 @@ export default function FieldButton({
   }, [fieldData]);
 
   return (
-    <div>
-      <CTableHeadCell
-        width={10}
-        style={{
-          position: "fixed",
-          right: "0",
-          width: "100%",
-          background: "#fff",
-          maxWidth: "90px",
-        }}
-        onClick={(e) => {
-          setFieldOptionAnchor(e.currentTarget);
-          setTarget(e.currentTarget);
-          setFieldData(null);
-        }}
-      >
+   <>
+     <CTableHeadCell  
+     style={{
+      padding: "0 4px",
+      position: "sticky",
+      right: "0",
+      backgroundColor: "#fff",
+      zIndex: "1",
+    }}
+    onClick={(e) => {
+      setFieldOptionAnchor(e.currentTarget);
+      setTarget(e.currentTarget);
+      setFieldData(null);
+    }}
+    >
         <span
           style={{
             whiteSpace: "nowrap",
@@ -202,7 +200,7 @@ export default function FieldButton({
         >
           <AddRoundedIcon />
         </span>
-      </CTableHeadCell>
+        </CTableHeadCell>
       <FieldOptionModal anchorEl={fieldOptionAnchor} setAnchorEl={setFieldOptionAnchor} setFieldCreateAnchor={setFieldCreateAnchor} setValue={setValue} target={target} />
       {fieldCreateAnchor && (
         <FieldCreateModal
@@ -221,6 +219,6 @@ export default function FieldButton({
           handleOpenFieldDrawer={handleOpenFieldDrawer}
         />
       )}
-    </div>
+   </>
   );
 }

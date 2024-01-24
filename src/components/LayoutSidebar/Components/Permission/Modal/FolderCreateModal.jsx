@@ -78,9 +78,10 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const tableOptions = useMemo(() => {
     return projectTables?.map((item) => ({
       value: item.id,
-      label: item.name,
+      label: item.label,
     }));
   }, [projectTables]);
+
 
   return (
     <div>

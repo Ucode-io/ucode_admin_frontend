@@ -3,7 +3,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Box, Button, Card, Divider, Menu, MenuItem } from "@mui/material";
+import { Backdrop, Box, Button, Card, Divider, Menu, MenuItem } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,7 @@ import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
 import menuService from "../../../services/menuService";
+import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const RelationSectionForModal = ({
   selectedTabIndex,
@@ -68,6 +69,8 @@ const RelationSectionForModal = ({
 
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
+
+  console.log("watch", watch())
 
   
 
@@ -170,7 +173,7 @@ const RelationSectionForModal = ({
     if (data?.tabs?.length > 0) {
       setSelectTab(data?.tabs?.[0]);
     }
-  }, []);
+  }, [data?.tabs, data]);
 
   useEffect(() => {
     queryTab
@@ -576,8 +579,8 @@ const RelationSectionForModal = ({
             }}
           >
             {loader ? (
-              <PageFallback />
-            ) : (
+              <RingLoaderWithWrapper />
+              ) : (
               data?.tabs?.map((el) => (
                 <TabPanel
                   key={el.id}

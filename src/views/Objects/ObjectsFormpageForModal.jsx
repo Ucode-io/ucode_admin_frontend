@@ -129,7 +129,8 @@ const ObjectsFormPageForModal = ({
               : relation.table_from?.slug,
         }))
       );
-      if (selectedTab?.type === "section") reset(data?.response ?? {});
+      console.log("selectedTab?.type", selectedTab?.type)
+      if (selectedTab?.type === "section") reset(data?.response || {});
     } catch (error) {
       console.error(error);
     } finally {

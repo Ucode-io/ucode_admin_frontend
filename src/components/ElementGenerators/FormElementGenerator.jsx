@@ -765,6 +765,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={isDisabled}
             InputProps={{
               readOnly: true,
               style: {
@@ -786,6 +787,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={isDisabled}
             InputProps={{
               readOnly: true,
               style: {
@@ -810,6 +812,7 @@ const FormElementGenerator = ({
             fieldsList={fieldsList}
             field={field}
             defaultValue={defaultValue}
+            disabled={isDisabled}
           />
         </FRow>
       );

@@ -61,7 +61,7 @@ const CDateTimePickerWithout = ({
                     "& input": {
                       padding: "5px !important",
                     },
-                    width: "150px",
+                    maxWidth: "150px",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -124,7 +124,7 @@ const CDateTimePickerWithout = ({
                     "& input": {
                       padding: "5px !important",
                     },
-                    width: "150px",
+                    maxWidth: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,

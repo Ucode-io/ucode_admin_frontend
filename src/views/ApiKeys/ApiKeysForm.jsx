@@ -202,6 +202,22 @@ const ApiKeysForm = () => {
                 required
               />
             </FRow>
+           {apiKeyId && (
+             <FRow
+             label={"App ID"}
+             componentClassName="flex gap-2 align-center"
+             required
+           >
+             <HFTextField
+               disabledHelperText
+               name="app_id"
+               control={mainForm.control}
+               fullWidth
+               required
+               disabled
+             />
+           </FRow>
+           )}
             {/* <FRow
               label={"Client type"}
               componentClassName="flex gap-2 align-center"

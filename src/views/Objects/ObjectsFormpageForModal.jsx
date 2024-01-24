@@ -101,7 +101,6 @@ const ObjectsFormPageForModal = ({
   const getAllData = async () => {
     setLoader(true);
     const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
-
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
@@ -129,12 +128,10 @@ const ObjectsFormPageForModal = ({
               : relation.table_from?.slug,
         }))
       );
-      console.log("selectedTab?.type", selectedTab?.type)
-      if (selectedTab?.type === "section") reset(data?.response || {});
+      if (selectedTab?.type === "section") reset(data?.response);
+      setLoader(false);
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoader(false);
     }
   };
 
@@ -162,10 +159,11 @@ const ObjectsFormPageForModal = ({
               : relation.table_from?.slug,
         }))
       );
+     if(!id) {
+      setLoader(false);
+     }
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoader(false);
     }
   };
 

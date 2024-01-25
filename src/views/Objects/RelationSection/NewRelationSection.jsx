@@ -45,25 +45,13 @@ const NewRelationSection = ({
   selectedTab,
   errors,
 }) => {
-  const [data, setData] = useState([]);
+
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
@@ -80,6 +68,31 @@ const NewRelationSection = ({
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
+
+
+  const {data: data, refetch} = useQuery(
+    ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
+    () => {
+      return layoutService
+      .getLayout(tableSlug, appId, {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      })
+    },
+    {
+      enabled: Boolean(menuItem?.table_id),
+      select: (res) => {
+        return {
+          ...res,
+          tabs: res?.tabs?.filter(
+            (tab) =>
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+          ),
+        };
+      },
+    }
+  );
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -202,29 +215,6 @@ const NewRelationSection = ({
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
-  const getLayoutList = () => {
-    layoutService
-      .getLayout(tableSlug, appId, {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      })
-      .then((res) => {
-        const layout = {
-          ...res,
-          tabs: res?.tabs?.filter(
-            (tab) =>
-              tab?.relation?.permission?.view_permission === true ||
-              tab?.type === "section"
-          ),
-        };
-        setData(layout);
-      });
-  }
-
-  useEffect(() => {
-    getLayoutList()
-  }, [tableSlug, menuItem?.table_id, i18n?.language]);
-
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
       return item?.table_slug;
@@ -242,6 +232,18 @@ const NewRelationSection = ({
       })
     );
   }, [jwtObjects, tables]);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -385,7 +387,7 @@ const NewRelationSection = ({
                         fieldsMap={fieldsMap}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
-                        getLayoutList={getLayoutList}
+                        refetch={refetch}
                         data={data}
                       />
                     </>

@@ -19,7 +19,7 @@ export default function VisibleColumnsButtonRelationSection({
   fieldsMap,
   getAllData,
   selectedTabIndex,
-  getLayoutList,
+  refetch = () => {},
   data
 }) {
   const {tableSlug} = useParams();
@@ -71,7 +71,7 @@ export default function VisibleColumnsButtonRelationSection({
       })
       .finally(() => {
         setIsLoading(false);
-        getLayoutList();
+        refetch();
       });
 
 

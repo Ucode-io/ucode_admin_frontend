@@ -21,7 +21,6 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
-import menuService from "../../services/menuService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -30,16 +29,6 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const {state = {}} = useLocation();
   const navigate = useNavigate();
@@ -57,18 +46,18 @@ const ObjectsFormPage = ({
   
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
-    }
-  }, []);
+  const id = useMemo(() => {
+    return idFromParam || selectedRow?.guid;
+  }, [idFromParam, selectedRow]);
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || tableSlugFromParam;
+  }, [tableSlugFromParam, tableSlugFromProps]);
+
+
+
 
 
   const isInvite = menu.invite;
@@ -88,7 +77,6 @@ const ObjectsFormPage = ({
   } = useForm({
     defaultValues: {...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false},
   });
-
 
   const getAllData = async () => {
     setLoader(true);
@@ -251,9 +239,9 @@ const ObjectsFormPage = ({
   };
 
   useEffect(() => {
-    if (id) getAllData();
+    if (idFromParam) getAllData();
     else getFields();
-  }, [id, menuItem, selectedTabIndex]);
+  }, [tableSlugFromParam,id, menuItem, selectedTabIndex]);
 
   const clickHandler = () => {
     deleteTab(pathname);

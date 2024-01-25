@@ -35,16 +35,6 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
@@ -64,17 +54,18 @@ const ObjectsFormPage = ({
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+
+  const id = useMemo(() => {
+    return idFromParam || selectedRow?.guid;
+  }, [idFromParam, selectedRow]);
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || tableSlugFromParam;
+  }, [tableSlugFromParam, tableSlugFromProps]);
+
+
+
 
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
@@ -257,10 +248,23 @@ const ObjectsFormPage = ({
     }
   };
 
+
   useEffect(() => {
-    if (id) getAllData();
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (idFromParam) getAllData();
     else getFields();
-  }, [id, menuItem, selectedTabIndex]);
+  }, [tableSlugFromParam,id, menuItem, selectedTabIndex]);
 
   const clickHandler = () => {
     deleteTab(pathname);

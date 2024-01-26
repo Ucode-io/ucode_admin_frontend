@@ -522,8 +522,23 @@ const TableView = ({
         )
         .join("&&");
 
-      const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
-      navigate(result);
+      const urlTemplate = view?.navigate?.url; 
+      let query = urlTemplate;
+
+  const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+  const matches = urlTemplate.match(variablePattern);
+
+  if (matches) {
+    matches.forEach(match => {
+      const variableName = match.slice(4, -2); 
+      const variableValue = row[variableName]; 
+      if (variableValue !== undefined) {
+        query = query.replace(match, variableValue);
+      }
+    });
+  }
+    navigate(`${query}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }

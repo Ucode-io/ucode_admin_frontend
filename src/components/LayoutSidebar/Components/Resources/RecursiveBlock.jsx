@@ -2,31 +2,47 @@ import { Box, Button, Tooltip } from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { updateLevel } from "../../../../utils/level";
 import { BsThreeDots } from "react-icons/bs";
+import activeStyles from "../MenuUtils/activeStyles";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const RecursiveBlock = ({
   element,
   level,
-  clickHandler,
+  pinIsEnabled,
   childBlockVisible,
   deleteResource,
   setSubMenuIsOpen,
   deleteResourceV2,
   handleOpenNotify,
+  menuStyle,
+
 }) => {
+  const dispatch = useDispatch();
   const { tableSlug } = useParams();
   const navigate = useNavigate();
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
+  console.log(" menuItem?.id === element?.id", menuItem)
 
-  const activeStyle = {
-    paddingLeft: updateLevel(level),
-    display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  const clickHandler = (e) => {
+    e.stopPropagation();
+    navigate(`/main/resources/${element?.id}/${element.type}`, {
+      state: {
+        type: element?.type,
+      },
+    });
+    console.log("element", element)
+    dispatch(menuActions.setMenuItem(element));
+    if (!pinIsEnabled ) {
+      setSubMenuIsOpen(false);
+    }
   };
 
+ 
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -38,15 +54,7 @@ const RecursiveBlock = ({
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setSubMenuIsOpen(false);
-              navigate(`/main/resources/${element?.id}/${element.type}`, {
-                state: {
-                  type: element?.type,
-                },
-              });
-            }}
+            onClick={clickHandler}
           >
             <div className="label">
               <IconGenerator icon={element?.icon} size={18} />

@@ -58,7 +58,7 @@ const PermissionSidebarRecursiveBlock = ({
   };
 
   const navigateMenu = () => {
-    return navigate(`/main/${appId}/permission/${element?.guid}`);
+    return navigate(`/main/${adminId}/permission/${element?.guid}`);
   };
 
   const clickHandler = (e) => {

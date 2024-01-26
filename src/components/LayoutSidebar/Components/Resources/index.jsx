@@ -44,6 +44,7 @@ const Resources = ({
   setSubMenuIsOpen,
   menuItem,
   handleOpenNotify,
+  pinIsEnabled
 }) => {
   const navigate = useNavigate();
   const { projectId, resourceId } = useParams();
@@ -134,6 +135,9 @@ const Resources = ({
     dispatch(menuActions.setMenuItem(dataBases));
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
+    if (!pinIsEnabled ) {
+      setSubMenuIsOpen(false);
+    }
   };
 
   const navigateToCreateForm = () => {
@@ -234,14 +238,14 @@ const Resources = ({
             key={childElement.id}
             level={level + 1}
             element={childElement}
-            clickHandler={clickHandler}
-            onSelect={onSelect}
-            resourceId={resourceId}
+            pinIsEnabled={pinIsEnabled}
             deleteResource={deleteResource}
             deleteResourceV2={deleteResourceV2}
             childBlockVisible={childBlockVisible}
             setSubMenuIsOpen={setSubMenuIsOpen}
             handleOpenNotify={handleOpenNotify}
+            menuStyle={menuStyle}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

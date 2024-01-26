@@ -1,8 +1,9 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const typeHandlers = {
-  FOLDER: ({appId, navigate}) => navigate(`/main/${appId}`),
+  FOLDER: ({appId, navigate}) => navigate(`/main/${adminId}`),
   MINIO_FOLDER: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/backet/${element?.id}`),
   TABLE: ({appId, element, navigate}) =>
@@ -30,12 +31,9 @@ const typeHandlers = {
     navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`),
   USER: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/user-page/${element?.guid}`),
-  // REPORT_SETTING: ({appId, element, navigate}) =>
-  //   navigate(`/main/${appId}/report-setting/${element?.report_setting_id}`),
   PERMISSION: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/permission/${element?.guid}`),
-  // PIVOT: ({element, navigateAndSaveHistory}) => navigateAndSaveHistory(element),
-  default: ({appId, navigate}) => navigate(`/main/${appId}`),
+  default: ({appId, navigate}) => navigate(`/main/${adminId}`),
 };
 
 export const NavigateByType = ({

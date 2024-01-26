@@ -228,6 +228,7 @@ const SubMenu = ({
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     level={2}
                     menuItem={menuItem}
+                    pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (

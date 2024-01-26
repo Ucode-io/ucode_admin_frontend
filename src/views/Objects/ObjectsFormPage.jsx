@@ -262,9 +262,9 @@ const ObjectsFormPage = ({
   }, []);
 
   useEffect(() => {
-    if (idFromParam) getAllData();
+    if (id) getAllData();
     else getFields();
-  }, [tableSlugFromParam,id, menuItem, selectedTabIndex]);
+  }, [id, menuItem, selectedTabIndex]);
 
   const clickHandler = () => {
     deleteTab(pathname);

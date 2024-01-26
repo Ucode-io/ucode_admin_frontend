@@ -406,9 +406,9 @@ const Router = () => {
         <Route
           path=":appId/object/:tableSlug/:id"
           element={
-            // <KeepAliveWrapper>
+            <KeepAliveWrapper>
               <ObjectsFormPage />
-            // </KeepAliveWrapper>
+             </KeepAliveWrapper>
           }
         />
 

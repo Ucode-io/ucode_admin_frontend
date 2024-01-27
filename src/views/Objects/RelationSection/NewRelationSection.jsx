@@ -75,7 +75,7 @@ const NewRelationSection = ({
     ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
     () => {
       return layoutService
-      .getLayout(tableSlug, appId, {
+      .getLayout(tableSlug, menuId ?? appId, {
         "table-slug": tableSlug,
         language_setting: i18n?.language,
       })

@@ -88,7 +88,7 @@ const ObjectsFormPage = ({
       invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
   });
-
+  console.log('menuId', menuId);
   const getAllData = async () => {
     setLoader(true);
     const getLayoutData = layoutService.getLayout(tableSlug, menuId, {

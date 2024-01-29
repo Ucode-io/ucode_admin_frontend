@@ -1,6 +1,6 @@
 import { FormControl, FormHelperText, InputLabel } from "@mui/material";
 import { useMemo } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import CAutoCompleteSelect from "../CAutoCompleteSelect";
 
 const HFAutocomplete = ({

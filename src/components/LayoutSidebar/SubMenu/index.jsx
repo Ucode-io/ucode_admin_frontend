@@ -215,10 +215,7 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <Permissions
                     menuStyle={menuStyle}
-                    menuItem={menuItem}
                     setElement={setElement}
-                    level={2}
-                    handleOpenNotify={handleOpenNotify}
                   />
                 )}
                 {selectedApp?.id === adminId && (
@@ -226,8 +223,6 @@ const SubMenu = ({
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
-                    level={2}
-                    menuItem={menuItem}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
@@ -235,8 +230,6 @@ const SubMenu = ({
                   <Users
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
-                    menuItem={menuItem}
-                    level={2}
                     child={child}
                     selectedApp={selectedApp}
                   />
@@ -261,7 +254,6 @@ const SubMenu = ({
                           setElement={setElement}
                           setSubMenuIsOpen={setSubMenuIsOpen}
                           menuStyle={menuStyle}
-                          menuItem={menuItem}
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}

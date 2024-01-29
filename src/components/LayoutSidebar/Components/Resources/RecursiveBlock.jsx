@@ -22,7 +22,7 @@ const RecursiveBlock = ({
 
 }) => {
   const dispatch = useDispatch();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const navigate = useNavigate();
   const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
@@ -30,7 +30,7 @@ const RecursiveBlock = ({
 
   const clickHandler = (e) => {
     e.stopPropagation();
-    navigate(`/main/resources/${element?.id}/${element.type}`, {
+    navigate(`/main/${appId}/resources/${element?.id}/${element.type}`, {
       state: {
         type: element?.type,
       },
@@ -58,7 +58,9 @@ const RecursiveBlock = ({
           >
             <div className="label">
               <IconGenerator icon={element?.icon} size={18} />
-              {element?.title ?? element?.name}
+              <Tooltip title={element?.title ?? element?.name} placement="top">
+              <p>{element?.title ?? element?.name}</p>
+              </Tooltip>
             </div>
             <Box
               onClick={(e) => {
@@ -85,11 +87,14 @@ const RecursiveBlock = ({
             <div
               className="label"
               onClick={() =>
-                navigate(`/main/resources/${element?.id}/${element.type}`)
+                navigate(`/main/${appId}/resources/${element?.id}/${element.type}`)
               }
             >
               <IconGenerator icon={element?.icon} size={18} />
-              {element?.title ?? element?.name}
+
+              <Tooltip title={element?.title ?? element?.name} placement="top">
+              <p>{element?.title ?? element?.name}</p>
+              </Tooltip>
             </div>
             <Box
               onClick={(e) => {

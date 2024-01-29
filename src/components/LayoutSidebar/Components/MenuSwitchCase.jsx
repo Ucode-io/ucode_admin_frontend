@@ -3,7 +3,9 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const typeHandlers = {
-  FOLDER: ({appId, navigate}) => navigate(`/main/${adminId}`),
+  FOLDER: ({appId, navigate}) => {
+    return navigate(`/main/${appId}`)
+  },
   MINIO_FOLDER: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/backet/${element?.id}`),
   TABLE: ({appId, element, navigate}) =>
@@ -33,7 +35,9 @@ const typeHandlers = {
     navigate(`/main/${appId}/user-page/${element?.guid}`),
   PERMISSION: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/permission/${element?.guid}`),
-  default: ({appId, navigate}) => navigate(`/main/${adminId}`),
+  default: ({appId, navigate}) => {
+    return navigate(`/main/${appId}`)
+  },
 };
 
 export const NavigateByType = ({

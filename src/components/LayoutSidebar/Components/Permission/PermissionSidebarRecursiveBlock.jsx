@@ -1,15 +1,14 @@
 import PersonIcon from "@mui/icons-material/Person";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./style.scss";
-import { updateLevel } from "../../../../utils/level";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import { store } from "../../../../store";
 import { RiPencilFill } from "react-icons/ri";
+import activeStyles from "../MenuUtils/activeStyles";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -17,14 +16,11 @@ const PermissionSidebarRecursiveBlock = ({
   customFunc = () => {},
   element,
   level = 1,
-  handleOpenNotify,
   setElement,
   menuStyle,
-  menuItem,
   selectedApp,
   openUserFolderModal,
 }) => {
-  const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const auth = store.getState().auth;
@@ -39,23 +35,8 @@ const PermissionSidebarRecursiveBlock = ({
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
-  const activeStyle = {
-    height: "40px",
-    backgroundColor:
-      menuItem?.id === element?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      menuItem?.id === element?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "10px",
-    margin: "0 0px",
-    display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
+    const menuItem = useSelector((state) => state.menu.menuItem);
+    const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
 
   const navigateMenu = () => {
     return navigate(`/main/${adminId}/permission/${element?.guid}`);
@@ -82,10 +63,7 @@ const PermissionSidebarRecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className={`nav-element ${
-              element.isChild &&
-              (tableSlug !== element.slug ? "active-with-child" : "active")
-            }`}
+            className="nav-element"
             onClick={(e) => {
               customFunc(e);
               clickHandler(e);

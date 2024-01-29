@@ -310,7 +310,7 @@ const Router = () => {
           {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
         </Route>
 
-        <Route path="resources">
+        <Route path=":appId/resources">
           <Route path="create" element={<ResourceDetail />} />
           <Route path=":resourceId/:resourceType" element={<ResourceDetail />} />
 

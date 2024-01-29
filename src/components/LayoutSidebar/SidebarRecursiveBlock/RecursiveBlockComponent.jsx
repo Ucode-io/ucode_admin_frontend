@@ -6,10 +6,9 @@ import { useTranslation } from "react-i18next";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
-import pivotService from "../../../services/pivotService";
 import { store } from "../../../store";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
@@ -21,9 +20,7 @@ import { MenuFolderArrows, NavigateByType } from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
-import QuerySidebar from "../Components/Query/QuerySidebar";
 import RedirectButton from "../Components/Redirect/RedirectButton";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
@@ -44,12 +41,12 @@ const RecursiveBlock = ({
   setElement,
   setSubMenuIsOpen,
   menuStyle,
-  menuItem,
   index,
   menuItemId,
   selectedApp,
   userType = false,
 }) => {
+  const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
@@ -85,7 +82,7 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({ element, navigate });
+    NavigateByType({ element, appId, navigate });
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
@@ -244,7 +241,7 @@ const RecursiveBlock = ({
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
+              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} />
               <MicroServiceSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
               <TableSettingSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
               <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />

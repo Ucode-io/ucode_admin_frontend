@@ -20,6 +20,7 @@ import {
   RelationPermissionIcon,
 } from "../../../../../assets/icons/icon";
 import {useTranslation} from "react-i18next";
+import styles from "../../../style.module.scss";
 
 const TableRow = ({table, tableIndex, control, setValue, watch}) => {
   const [type, setType] = useState("");
@@ -56,8 +57,8 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
 
   return (
     <>
-      <CTableHeadRow>
-        <CTableCell>
+      <CTableHeadRow className={styles.head_row}>
+        <CTableCell className={styles.sticky_header}>
           {table?.attributes?.[`label_${i18n?.language}`] ??
             table?.attributes?.[`title${i18n?.language}`] ??
             table.label}

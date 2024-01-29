@@ -371,7 +371,7 @@ const NewProfilePanel = ({
               onClick={openEnvironmentList}
             />
           )}
-          {permissions?.version_button && (
+          {/* {permissions?.version_button && (
             <ProfileItem
               children={
                 <LocalOfferIcon
@@ -390,7 +390,7 @@ const NewProfilePanel = ({
                 closeMenu(e);
               }}
             />
-          )}
+          )} */}
 
             <ProfileItem
               children={

@@ -56,15 +56,11 @@ const ConnectionPage = () => {
     <div style={{height: "calc(100vh - 100px)"}}>
       <TableCard
         cardStyles={{height: "calc(100vh - 200px)"}}
-        type={"withoutPadding"}
-      >
+        >
+        <h2 style={{
+          marginBottom: "15px"
+        }}>Связь</h2>
         <CTable
-          tableStyle={{
-            borderRadius: "0px",
-            borderLeft: "0px",
-            borderRight: "0px",
-            borderBottom: "0px",
-          }}
           disablePagination
           removableHeight={false}
         >
@@ -73,7 +69,9 @@ const ConnectionPage = () => {
             <CTableCell>Название</CTableCell>
             <CTableCell>Table slug</CTableCell>
             <CTableCell>View slug</CTableCell>
-            <CTableCell width={60}></CTableCell>
+           {connections?.data?.response.length ? (
+             <CTableCell width={60}></CTableCell>
+           ) : null}
           </CTableHead>
           <CTableBody
             loader={isLoading}

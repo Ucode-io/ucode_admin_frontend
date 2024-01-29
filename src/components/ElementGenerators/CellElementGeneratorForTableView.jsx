@@ -49,7 +49,7 @@ const CellElementGeneratorForTableView = ({
   index,
   data,
   isTableView,
-  isNewRow,
+  isNewRow = false,
   newColumn = false,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
@@ -132,7 +132,7 @@ const CellElementGeneratorForTableView = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
-  console.log('fielddddddddd', field)
+
   switch (field.type) {
     case "LOOKUP":
       return !newColumn ? (

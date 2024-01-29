@@ -184,7 +184,6 @@ const AutoCompleteElement = ({
   //     onFormChange(value);
   //   }
   // }, []);
-  console.log('appppppppppppp', appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6')
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>

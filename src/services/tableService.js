@@ -3,7 +3,7 @@ import request from "../utils/request";
 import requestV2 from "../utils/requestV2";
 
 const tableService = {
-  getList: (params) => requestV2.get("/collections", params),
+  getList: (params) => requestV2.get("/collections", {params : {...params}}),
   getByID: ({ tableSlug }) => requestV2.get(`/collections/${tableSlug}`),
   update: (data) => requestV2.put(`/collections`, data),
   create: (data) => requestV2.post("/collections", data),

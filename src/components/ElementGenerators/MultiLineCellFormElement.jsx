@@ -52,7 +52,7 @@ export default function MultiLineCellFormElement({
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  console.log("valuevaluevalue", value);
+
   return (
     <>
       <Box

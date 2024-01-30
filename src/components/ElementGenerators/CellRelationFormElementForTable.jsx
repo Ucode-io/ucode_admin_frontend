@@ -525,7 +525,7 @@ const AutoCompleteElement = ({
         }}
         noOptionsMessage={() => (
           <span
-            onClick={() => navigateToForm(tableSlug)}
+            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
             Создать новый

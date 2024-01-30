@@ -79,7 +79,13 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
 
   const { data: folders, isLoading: foldersLoading } =
-    useQueryFoldersListQuery();
+    useQueryFoldersListQuery({
+      queryParams: {
+        enabled: childBlockVisible
+      }
+    });
+
+
   const computedFolders = useMemo(() => {
     const list = [];
     folders?.folders?.forEach((folder) => {

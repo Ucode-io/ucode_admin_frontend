@@ -291,6 +291,7 @@ const TableView = ({
         data: {},
       });
     },
+    enabled: Boolean(!tableSlug),
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields ?? [],

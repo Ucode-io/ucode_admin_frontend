@@ -120,7 +120,7 @@ const CPagination = ({
           </RectangleIconButton>
         ) : null}
 
-        <PermissionWrapperV2 tableSlug={tableSlug} type="create">
+        <PermissionWrapperV2 tableSlug={tableSlug} type="write">
         {isTableView && (
           <Button
             variant="outlined"

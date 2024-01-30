@@ -27,7 +27,6 @@ import HFTextField from "../../../FormElements/HFTextField";
 import QueryForClickHouse from "./Detail/QueryForClickHouse";
 import QuerySettings from "./Detail/QuerySettings";
 import DrawerCard from "../../../DrawerCard";
-import CommitButton from "../../../CommitButton";
 import QueryCommitsView from "./Commits";
 
 const flex = {
@@ -39,7 +38,7 @@ const flex = {
 const Queries = () => {
   const [queryParams] = useSearchParams();
   const [commitViewIsOpen, setCommitViewIsOpen] = useState(false);
-  const { queryId, appId } = useParams();
+  const { queryId } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [responseQuery, setResponseQuery] = useState();
@@ -48,6 +47,7 @@ const Queries = () => {
   const form = useForm({
     defaultValues: {
       body: {
+        query_type: "REST",
         params: [
           {
             key: "",
@@ -83,6 +83,7 @@ const Queries = () => {
         })),
     },
   });
+  console.log("watch", form.watch())
 
   const types = useMemo(() => {
     const resourcesCustom = [
@@ -99,7 +100,7 @@ const Queries = () => {
       },
     ];
 
-    return resourcesCustom.concat(resourcesList);
+    return resourcesCustom
   }, [resourcesList]);
 
   const { isLoading } = useQueryByIdQuery({
@@ -121,6 +122,7 @@ const Queries = () => {
         title: "NEW QUERY",
         project_id: company.projectId,
         folder_id: queryParams.get("folder_id"),
+        query_type: "REST",
         body: {
           base_url: "",
           body: "",
@@ -170,13 +172,13 @@ const Queries = () => {
     },
   });
 
-  const changeTypeOfString = (string) => {
-    if (isNaN(Number(string))) {
-      return string;
-    } else {
-      return Number(string);
-    }
-  };
+  // const changeTypeOfString = (string) => {
+  //   if (isNaN(Number(string))) {
+  //     return string;
+  //   } else {
+  //     return Number(string);
+  //   }
+  // };
 
   const { mutate: createQuery } = useQueryCreateMutation({
     onSuccess: (res) => {
@@ -219,16 +221,16 @@ const Queries = () => {
     },
   });
 
-  const { mutate: deleteTemplate } = useQueryDeleteMutation({
-    onSuccess: (res) => {
-      dispatch(showAlert("Удалено", "success"));
-      queryClient.refetchQueries(["QUERIES"]);
-    },
-  });
+  // const { mutate: deleteTemplate } = useQueryDeleteMutation({
+  //   onSuccess: (res) => {
+  //     dispatch(showAlert("Удалено", "success"));
+  //     queryClient.refetchQueries(["QUERIES"]);
+  //   },
+  // });
 
-  const openCommitView = () => {
-    setCommitViewIsOpen(true);
-  };
+  // const openCommitView = () => {
+  //   setCommitViewIsOpen(true);
+  // };
 
   const closeCommitView = () => {
     setCommitViewIsOpen(false);
@@ -294,6 +296,7 @@ const Queries = () => {
       };
     });
   }, [form.watch("variables"), variables]);
+
   return (
     <FormProvider {...form}>
       <Box className={styles.query}>

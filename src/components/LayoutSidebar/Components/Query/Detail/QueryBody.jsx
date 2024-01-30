@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { FormProvider } from "react-hook-form";
 import HFSelect from "../../../../FormElements/HFSelect";
-import { useResourceListQueryV2 } from "../../../../../services/resourceService";
 import { useMemo } from "react";
 
 const QueryBody = ({
@@ -45,6 +44,7 @@ const QueryBody = ({
               name="query_type"
               placeholder={"Select..."}
               customOnChange={(e) => form.setValue("body.body", "")}
+              disabled
             />
           </Box>
 

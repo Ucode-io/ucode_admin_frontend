@@ -35,7 +35,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const filteredDataIds = useMemo(() => {
     return filteredData.filter((item) => !item?.render).map((el) => el?.slug)
   }, [filteredData])
-
+  
   const {
     isLoading: loader,
     data: { tableData, pageCount, fields } = {
@@ -67,8 +67,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     },
     {
       select: ({ data }) => {
-        const pageCount = Math.ceil(data?.count / 10);
-
+        const pageCount = Math.ceil(data?.count / limit);
         return {
           fields: data?.fields ?? [],
           tableData: objectToArray(data?.response ?? {}),
@@ -147,6 +146,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     getFilteredData()
   }, [filteredColumns])
   
+
   return (
     <LargeModalCard
       title={relation.label}

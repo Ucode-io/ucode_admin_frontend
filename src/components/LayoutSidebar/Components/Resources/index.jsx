@@ -19,7 +19,8 @@ import StorageIcon from "@mui/icons-material/Storage";
 import { resourceTypes } from "../../../../utils/resourceConstants";
 import { useQueryClient } from "react-query";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import activeStyles from "../MenuUtils/activeStyles";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBases = {
@@ -42,11 +43,11 @@ const Resources = ({
   level = 1,
   menuStyle,
   setSubMenuIsOpen,
-  menuItem,
   handleOpenNotify,
+  pinIsEnabled
 }) => {
   const navigate = useNavigate();
-  const { projectId, resourceId } = useParams();
+  const { appId } = useParams();
 
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const company = store.getState().company;
@@ -55,21 +56,10 @@ const Resources = ({
   const authStore = store.getState().auth;
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const activeStyle = activeStyles({ menuItem, element: dataBases, menuStyle, level });
 
-  const activeStyle = {
-    borderRadius: "10px",
-    backgroundColor:
-      dataBases?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      dataBases?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
+  
 
   const { data: { resources } = {} } = useResourceListQuery({
     params: {
@@ -136,18 +126,6 @@ const Resources = ({
     setChildBlockVisible((prev) => !prev);
   };
 
-  const navigateToCreateForm = () => {
-    navigate(`/project/${projectId}/resources/create`);
-  };
-
-  const navigateToEditPage = (id, type) => {
-    navigate(`/project/${projectId}/resources/${id}/${type}`);
-  };
-
-  const onSelect = (id, element) => {
-    if (element.link) navigate(element.link);
-    else if (element.type) navigateToEditPage(id, element.type);
-  };
 
   return (
     <Box sx={{ margin: "0 5px" }}>
@@ -193,8 +171,7 @@ const Resources = ({
                   <AddIcon
                     size={13}
                     onClick={(e) => {
-                      navigateToCreateForm();
-                      navigate("/main/resources/create");
+                      navigate(`/main/${appId}/resources/create`);
                       e.stopPropagation();
                       handleOpenNotify(e, "CREATE_FOLDER");
                     }}
@@ -234,14 +211,14 @@ const Resources = ({
             key={childElement.id}
             level={level + 1}
             element={childElement}
-            clickHandler={clickHandler}
-            onSelect={onSelect}
-            resourceId={resourceId}
+            pinIsEnabled={pinIsEnabled}
             deleteResource={deleteResource}
             deleteResourceV2={deleteResourceV2}
             childBlockVisible={childBlockVisible}
             setSubMenuIsOpen={setSubMenuIsOpen}
             handleOpenNotify={handleOpenNotify}
+            menuStyle={menuStyle}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

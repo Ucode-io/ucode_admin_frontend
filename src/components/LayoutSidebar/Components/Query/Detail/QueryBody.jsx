@@ -1,8 +1,8 @@
-import {Box, Typography} from "@mui/material";
-import {FormProvider} from "react-hook-form";
+import { Box, Typography } from "@mui/material";
+import { FormProvider } from "react-hook-form";
 import HFSelect from "../../../../FormElements/HFSelect";
-import {useResourceListQueryV2} from "../../../../../services/resourceService";
-import {useMemo} from "react";
+import { useResourceListQueryV2 } from "../../../../../services/resourceService";
+import { useMemo } from "react";
 
 const QueryBody = ({
   form,
@@ -21,14 +21,12 @@ const QueryBody = ({
     }));
   }, [resources]);
 
-  // useEffect(() => {
-  //   setValue('query_variables', form.get)
-  // }, [])
+
 
   return (
     <FormProvider {...form}>
       <Box display="flex" flexDirection="column" gap="12px">
-        <Box display="flex" alignItems="flex-start" px="16px">
+        <Box display="flex" alignItems="flex-start" p="16px" columnGap="8px">
           <Typography
             minWidth="110px"
             pr="10px"
@@ -57,7 +55,7 @@ const QueryBody = ({
               clearable
               name="project_resource_id"
               placeholder={"Select..."}
-              // customOnChange={(e) => form.setValue("body.body", "")}
+            // customOnChange={(e) => form.setValue("body.body", "")}
             />
           </Box>
         </Box>

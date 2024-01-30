@@ -199,24 +199,24 @@ const CellElementGeneratorForTableView = ({
           defaultValue={defaultValue}
         />
       );
-      
-      // case "INCREMENT_NUMBER":
-      //   return (
-      //     <HFIncrementId 
-      //       disabled={isDisabled}
-      //       isFormEdit
-      //       updateObject={updateObject}
-      //       isNewTableView={true}
-      //       isBlackBg={isBlackBg}
-      //       control={control}
-      //       name={computedSlug}
-      //       fullWidth
-      //       field={field}
-      //       required={field.required}
-      //       placeholder={field.attributes?.placeholder}
-      //       defaultValue={defaultValue} 
-      //     />
-      //   ) 
+
+    // case "INCREMENT_NUMBER":
+    //   return (
+    //     <HFIncrementId 
+    //       disabled={isDisabled}
+    //       isFormEdit
+    //       updateObject={updateObject}
+    //       isNewTableView={true}
+    //       isBlackBg={isBlackBg}
+    //       control={control}
+    //       name={computedSlug}
+    //       fullWidth
+    //       field={field}
+    //       required={field.required}
+    //       placeholder={field.attributes?.placeholder}
+    //       defaultValue={defaultValue} 
+    //     />
+    //   ) 
 
 
     case "SINGLE_LINE":

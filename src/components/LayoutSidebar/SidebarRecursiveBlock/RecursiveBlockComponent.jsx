@@ -12,7 +12,6 @@ import { useMenuListQuery } from "../../../services/menuService";
 import { store } from "../../../store";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import ApiSidebar from "../Components/Api/ApiSidebar";
 import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
@@ -29,7 +28,7 @@ export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
-  customFunc = () => {},
+  customFunc = () => { },
   element,
   openFolderCreateModal,
   environment,
@@ -41,12 +40,12 @@ const RecursiveBlock = ({
   setElement,
   setSubMenuIsOpen,
   menuStyle,
-  menuItem,
   index,
   menuItemId,
   selectedApp,
   userType = false,
 }) => {
+  const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
@@ -241,7 +240,7 @@ const RecursiveBlock = ({
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} />
+              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} />
               <MicroServiceSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
               <TableSettingSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
               <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
@@ -259,22 +258,23 @@ const RecursiveBlock = ({
                 level={2}
               /> */}
 
-              <FunctionSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} level={2} integrated={false} />
+              <FunctionSidebar
+                menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem} level={2} integrated={false} />
               <MicrofrontendSettingSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} element={element} level={2} />
             </>
           )}
-
-          {element.id === folderIds.api_folder_id && (
+          {/* {element.id === folderIds.api_folder_id && (
             <>
-              {/* <QuerySidebar
+              <QuerySidebar
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 level={2}
                 menuItem={menuItem}
-              /> */}
+              />
               <ApiSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />
             </>
-          )}
+          )} */}
         </Collapse>
       </Box>
     </Draggable>

@@ -389,11 +389,11 @@ const Queries = () => {
                   variables: updatedVariables
                     ? updatedVariables
                     : form.getValues("variables")?.map((variable) => {
-                        return {
-                          key: `$$${variable.key}`,
-                          value: variable.value,
-                        };
-                      }),
+                      return {
+                        key: `$$${variable.key}`,
+                        value: variable.value,
+                      };
+                    }),
                   version_id: "",
                 })
               }

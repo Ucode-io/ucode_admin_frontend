@@ -141,7 +141,6 @@ const AutoCompleteElement = ({
   isNewRow,
   setFormValue = () => {},
 }) => {
-  console.log("fieldddddddddd", field);
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");

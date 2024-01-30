@@ -198,7 +198,7 @@ export default function FieldButton({
             backgroundColor: "#fff",
           }}
         >
-          <AddRoundedIcon />
+          <AddRoundedIcon style={{marginTop: '3px'}} />
         </span>
         </CTableHeadCell>
       <FieldOptionModal anchorEl={fieldOptionAnchor} setAnchorEl={setFieldOptionAnchor} setFieldCreateAnchor={setFieldCreateAnchor} setValue={setValue} target={target} />

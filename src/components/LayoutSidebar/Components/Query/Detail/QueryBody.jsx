@@ -28,7 +28,7 @@ const QueryBody = ({
   return (
     <FormProvider {...form}>
       <Box display="flex" flexDirection="column" gap="12px">
-        <Box display="flex" alignItems="flex-start" px="16px">
+        <Box display="flex" alignItems="flex-start" p="16px" columnGap="8px">
           <Typography
             minWidth="110px"
             pr="10px"

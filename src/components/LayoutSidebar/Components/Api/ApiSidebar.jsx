@@ -101,13 +101,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   // --DELETE ENDPOINT--
 
-  const deleteEndpointClickHandler = (id) => {
-    deleteEndpoint({
-      id,
-      envId: companyironmentId,
-      projectId: company.projectId,
-    });
-  };
+
   const { mutate: deleteFolder, isLoading: deleteLoading } =
     useApiCategoryDeleteMutation({
       onSuccess: () => {

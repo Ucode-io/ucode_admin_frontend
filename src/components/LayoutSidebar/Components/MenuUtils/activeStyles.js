@@ -15,7 +15,7 @@ export default function activeStyles({ menuItem, element, menuStyle, level }) {
     borderRadius: "10px",
     margin: "0 0px",
     display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+      element?.id === "0" ||
+      (element?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 }

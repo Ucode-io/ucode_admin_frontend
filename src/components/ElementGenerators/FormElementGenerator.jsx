@@ -164,6 +164,7 @@ const FormElementGenerator = ({
   //   field.required = false
   // }
 
+
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (
@@ -763,6 +764,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={isDisabled}
             InputProps={{
               readOnly: true,
               style: {
@@ -784,6 +786,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={isDisabled}
             InputProps={{
               readOnly: true,
               style: {
@@ -808,6 +811,7 @@ const FormElementGenerator = ({
             fieldsList={fieldsList}
             field={field}
             defaultValue={defaultValue}
+            disabled={isDisabled}
           />
         </FRow>
       );

@@ -40,7 +40,7 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
+  isChecked = () => { },
   formVisible,
   remove,
   limit = 10,
@@ -172,35 +172,31 @@ const TableRow = ({
                       fontWeight: 400,
                       lineHeight: "normal",
                       padding: "0 5px",
-                      position: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      position: `${tableSettings?.[pageName]?.find(
+                        (item) => item?.id === virtualColumn?.id
+                      )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "sticky"
                           : "relative"
-                      }`,
+                        }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                        ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) + 80
-                          }px`
+                        ? `${calculateWidthFixedColumn(virtualColumn.id) + 80
+                        }px`
                         : "0",
-                      backgroundColor: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      backgroundColor: `${tableSettings?.[pageName]?.find(
+                        (item) => item?.id === virtualColumn?.id
+                      )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
                           : "#fff"
-                      }`,
-                      zIndex: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        }`,
+                      zIndex: `${tableSettings?.[pageName]?.find(
+                        (item) => item?.id === virtualColumn?.id
+                      )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "1"
                           : "0"
-                      }`,
+                        }`,
                     }}
                   >
                     {isTableView ? (
@@ -229,7 +225,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td 
+            <td
               style={{
                 minWidth: "85px",
                 color: "#262626",
@@ -240,7 +236,7 @@ const TableRow = ({
                 padding: "0 5px",
                 position: `${"sticky"}`,
                 right: "0",
-                backgroundColor: `${ "#fff" }`,
+                backgroundColor: `${"#fff"}`,
                 zIndex: `${"0"}`,
                 borderLeft: '1px solid #eee'
               }}
@@ -280,11 +276,11 @@ const TableRow = ({
               </div>
             </td>
 
-            <td>
+            {/* <td>
               <div
                 style={{ display: "flex", gap: "5px", padding: "3px" }}
               ></div>
-            </td>
+            </td> */}
           </CTableRow>
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
@@ -387,33 +383,30 @@ const TableRow = ({
                     fontWeight: 400,
                     lineHeight: "normal",
                     padding: "0 5px",
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                    position: `${tableSettings?.[pageName]?.find(
+                      (item) => item?.id === virtualColumn?.id
+                    )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
                         : "relative"
-                    }`,
+                      }`,
                     left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
                       ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
                       : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                    backgroundColor: `${tableSettings?.[pageName]?.find(
+                      (item) => item?.id === virtualColumn?.id
+                    )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
                         : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      }`,
+                    zIndex: `${tableSettings?.[pageName]?.find(
+                      (item) => item?.id === virtualColumn?.id
+                    )?.isStiky ||
+                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
                         : "0"
-                    }`,
+                      }`,
                   }}
                 >
                   {isTableView ? (
@@ -442,7 +435,21 @@ const TableRow = ({
                 </CTableCell>
               )
           )}
-          <td style={{ height: "30px" }}>
+          <td style={{
+            height: "30px",
+            minWidth: "85px",
+            color: "#262626",
+            fontSize: "13px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "normal",
+            padding: "0 5px",
+            position: `${"sticky"}`,
+            right: "0",
+            backgroundColor: `${"#fff"}`,
+            zIndex: `${"0"}`,
+            borderLeft: '1px solid #eee'
+          }}>
             <div
               style={{
                 display: "flex",
@@ -474,9 +481,9 @@ const TableRow = ({
             </div>
           </td>
 
-          <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
-          </td>
+          {/* <td>
+            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
+          </td> */}
         </CTableRow>
       ) : (
         <CTableRow
@@ -570,30 +577,27 @@ const TableRow = ({
                 fontWeight: 400,
                 lineHeight: "normal",
                 padding: "0 5px",
-                position: `${
-                  tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                position: `${tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "sticky"
                     : "relative"
-                }`,
+                  }`,
                 left: view?.attributes?.fixedColumns?.[column?.id]
                   ? `${calculateWidthFixedColumn(column.id) + 80}px`
                   : "0",
-                backgroundColor: `${
-                  tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                backgroundColor: `${tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "#F6F6F6"
                     : "#fff"
-                }`,
-                zIndex: `${
-                  tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                  }`,
+                zIndex: `${tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "1"
                     : "0"
-                }`,
+                  }`,
               }}
             >
               <TableDataForm

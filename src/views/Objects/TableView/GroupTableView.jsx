@@ -319,7 +319,7 @@ const GroupTableView = ({
             : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug]);
+  }, [menuItem?.id, tableSlug]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {

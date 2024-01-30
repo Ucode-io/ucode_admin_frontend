@@ -1,15 +1,15 @@
 import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
+import requestWithoutProjectId from "../utils/requestWithoutProjectId";
 
 const queryService = {
   getListFolder: (params, envId) =>
-    request.get("/query-folder", {
+    requestWithoutProjectId.get("/v1/query-folder", {
       params,
     }),
   createFolder: (data) => request.post("/query-folder", data, {}),
   updateFolder: (data) => request.put("/query-folder", data, {}),
   deleteFolder: (id) => request.delete(`/query-folder/${id}`, {}),
-
   getListQuery: (params) =>
     request.get("/query-request", {
       params,

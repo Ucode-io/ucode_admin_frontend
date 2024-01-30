@@ -5,7 +5,7 @@ import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
-const TableDataForm = React.memo(
+const TableDataForm =
   ({
     relOptions,
     isTableView,
@@ -78,6 +78,5 @@ const TableDataForm = React.memo(
       </Box>
     );
   }
-);
 
 export default TableDataForm;

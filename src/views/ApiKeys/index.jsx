@@ -1,4 +1,4 @@
-import {Delete} from "@mui/icons-material";
+import {Delete, Edit} from "@mui/icons-material";
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
@@ -126,7 +126,6 @@ const ApiKeyPage = () => {
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
             <CTableCell>AppId</CTableCell>
-            <CTableCell>App secret </CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
@@ -134,21 +133,22 @@ const ApiKeyPage = () => {
             {apiKeys?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
+                
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
-                <CTableCell>{element?.app_secret}</CTableCell>
-                {/* <PermissionWrapperV2 tableSlug="app" type="delete">
-                  <PermissionWrapperApp permission={element.permission.delete}> */}
                 <CTableCell>
+                <div className="flex">
+
+                <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => navigateToEditForm(element.id)}>
+                  <Edit color="success" />
+                </RectangleIconButton>
                   <RectangleIconButton color="error" onClick={deleteTable}>
                     <Delete color="error" />
                   </RectangleIconButton>
+                </div>
                 </CTableCell>
-                {/* </PermissionWrapperApp>
-                </PermissionWrapperV2> */}
               </CTableRow>
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">

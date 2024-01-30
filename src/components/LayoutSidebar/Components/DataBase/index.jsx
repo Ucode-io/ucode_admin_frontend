@@ -23,6 +23,7 @@ import DatabaseButtonMenu from "./DatabaseButtonMenu";
 import { useTableFolderDeleteMutation } from "../../../../services/tableFolderService";
 import DataBaseTableForm from "./Drawer/DataBaseTableForm";
 import { updateLevel } from "../../../../utils/level";
+import activeStyles from "../MenuUtils/activeStyles";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBase = {
@@ -41,7 +42,7 @@ const dataBase = {
   },
 };
 
-const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
+const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
@@ -59,6 +60,8 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const activeStyle = activeStyles({ menuItem, element: dataBase, menuStyle, level });
 
   const openCreateDrawer = (resourceId) => {
     setSelectedResource(resourceId);
@@ -90,32 +93,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setMenu(null);
   };
 
-  const activeStyle = {
-    backgroundColor:
-      dataBase?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      dataBase?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-  };
 
-  const labelStyle = {
-    color:
-      dataBase?.id === menuItem?.id ? menuStyle?.active_text : menuStyle?.text,
-  };
-
-  const clickHandler = (e) => {
-    e.stopPropagation();
-    dispatch(menuActions.setMenuItem(dataBase));
-    setSelected(dataBase);
-    if (!pinIsEnabled && dataBase.type !== "USER_FOLDER") {
-      setSubMenuIsOpen(false);
-    }
-    setChildBlockVisible((prev) => !prev);
-  };
 
   const { data: { resources } = {}, refetch: refetchCategory } =
     useResourceListQuery({
@@ -243,26 +221,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   return (
     <Box>
-      {/* <div className="parent-block column-drag-handle">
-        <Button
-          style={activeStyle}
-          className="nav-element"
-          onClick={(e) => {
-            clickHandler(e);
-          }}
-        >
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={dataBase.icon} size={18} />
-            {dataBase.label}
-          </div>
-        </Button>
-      </div> */}
-
+    
       <Collapse in={childBlockVisible} unmountOnExit>
         {computedResourceFromUtils?.map((childElement) => (
           <DataBaseRecursive

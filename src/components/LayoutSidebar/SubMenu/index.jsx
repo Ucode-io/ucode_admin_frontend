@@ -25,6 +25,7 @@ import { store } from "../../../store";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import { useSearchParams } from "react-router-dom";
 import EnvironmentMenu from "../Components/EnvironmentMenu";
+import QuerySidebar from "../Components/Query/QuerySidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -122,7 +123,7 @@ const SubMenu = ({
       }}
     >
       <div className="body">
-        <div className="header" onClick={() => {}}>
+        <div className="header" onClick={() => { }}>
           {subMenuIsOpen && (
             <h2
               style={{
@@ -212,14 +213,11 @@ const SubMenu = ({
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (
-              <div className="nav-block">
+              <Box className="nav-block">
                 {selectedApp?.id === adminId && (
                   <Permissions
                     menuStyle={menuStyle}
-                    menuItem={menuItem}
                     setElement={setElement}
-                    level={2}
-                    handleOpenNotify={handleOpenNotify}
                   />
                 )}
                 {selectedApp?.id === adminId && (
@@ -227,23 +225,20 @@ const SubMenu = ({
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
-                    level={2}
-                    menuItem={menuItem}
+                    pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
-                    menuItem={menuItem}
-                    level={2}
                     child={child}
                     selectedApp={selectedApp}
                   />
                 )}
                 <div className="menu-element">
                   {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-                  child?.length ? (
+                    child?.length ? (
                     <Container
                       dragHandleSelector=".column-drag-handle"
                       onDrop={onDrop}
@@ -261,7 +256,6 @@ const SubMenu = ({
                           setElement={setElement}
                           setSubMenuIsOpen={setSubMenuIsOpen}
                           menuStyle={menuStyle}
-                          menuItem={menuItem}
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
@@ -271,23 +265,21 @@ const SubMenu = ({
                   ) : null}
                   {selectedApp?.id ===
                     "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                    <DocumentsSidebar
+                      <DocumentsSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                        level={2}
+                      />
+                    )}
+                  {selectedApp?.id === adminId && (
+                    <QuerySidebar
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
-                      menuItem={menuItem}
-                      level={2}
                     />
                   )}
                 </div>
-                {selectedApp?.id === adminId && (
-                  <EnvironmentMenu
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    level={2}
-                    menuItem={menuItem}
-                  />
-                )}
-              </div>
+              </Box>
             )}
 
             {selectedApp?.data?.permission?.write && exception ? (

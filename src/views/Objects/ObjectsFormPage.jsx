@@ -1,4 +1,4 @@
-import { Add, Save } from "@mui/icons-material";
+import { Save } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
@@ -26,7 +26,7 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
-import menuService from "../../services/menuService";
+import { useMenuGetByIdQuery } from "../../services/menuService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -47,6 +47,7 @@ const ObjectsFormPage = ({
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
+  const [data, setData] = useState([])
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
 
@@ -54,17 +55,16 @@ const ObjectsFormPage = ({
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
 
   const id = useMemo(() => {
     return idFromParam || selectedRow?.guid;
   }, [idFromParam, selectedRow]);
 
+
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
   }, [tableSlugFromParam, tableSlugFromProps]);
-
-
 
 
   const isInvite = menu.invite;
@@ -88,8 +88,8 @@ const ObjectsFormPage = ({
       invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
   });
-  console.log('menuId', menuId);
   const getAllData = async () => {
+    console.log("ketvotti3")
     setLoader(true);
     const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
@@ -104,9 +104,16 @@ const ObjectsFormPage = ({
         getLayoutData,
       ]);
 
-      // Access dynamic keys of layoutData
-      const layoutKeys = Object.keys(layoutData);
-
+      // // Access dynamic keys of layoutData
+      // const layoutKeys = Object.keys(layoutData);
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setSections(sortSections(sections));
       setSummary(layoutData.summary_fields ?? []);
 
@@ -148,8 +155,15 @@ const ObjectsFormPage = ({
       const [layoutData] = await Promise.all([getLayout]);
       const defaultLayout = layoutData;
 
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setSections(sortSections(sections));
-
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
@@ -248,23 +262,21 @@ const ObjectsFormPage = ({
     }
   };
 
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
+  const { loader: menuLoader } = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
     }
-  }, []);
+  });
+
 
   useEffect(() => {
     if (id) getAllData();
     else getFields();
-  }, [id, menuItem, selectedTabIndex]);
+  }, [id]);
 
   const clickHandler = () => {
     deleteTab(pathname);
@@ -313,6 +325,8 @@ const ObjectsFormPage = ({
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
+          menuItem={menuItem}
+          data={data}
         />
       </div>
       <Footer

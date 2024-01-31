@@ -47,7 +47,7 @@ export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
   );
 };
 
-export const usePlatformGetByIdQuery = ({menuId, params = {}, queryParams}) => {
+export const useMenuGetByIdQuery = ({menuId, params = {}, queryParams}) => {
   return useQuery(
     ["MENU_GET_BY_ID", {menuId, ...params}],
     () => {

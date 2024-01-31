@@ -10,7 +10,6 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
 import { listToMap } from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
@@ -23,7 +22,6 @@ import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
 import constructorObjectService from "../../../services/constructorObjectService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import menuService from "../../../services/menuService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -44,13 +42,15 @@ const NewRelationSection = ({
   setSelectTab,
   selectedTab,
   errors,
+  menuItem,
+  data
 }) => {
 
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
+
+  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
-  const [menuItem, setMenuItem] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
@@ -71,29 +71,31 @@ const NewRelationSection = ({
   const menuId = searchParams.get("menuId");
 
 
-  const {data: data, refetch} = useQuery(
-    ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
-    () => {
-      return layoutService
-      .getLayout(tableSlug, menuId ?? appId, {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      })
-    },
-    {
-      enabled: Boolean(menuItem?.table_id),
-      select: (res) => {
-        return {
-          ...res,
-          tabs: res?.tabs?.filter(
-            (tab) =>
-              tab?.relation?.permission?.view_permission === true ||
-              tab?.type === "section"
-          ),
-        };
-      },
-    }
-  );
+  // const { data, refetch } = useQuery(
+  //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
+  //   () => {
+  //     return layoutService
+  //       .getLayout(tableSlug, menuId ?? appId, {
+  //         "table-slug": tableSlug,
+  //         language_setting: i18n?.language,
+  //       })
+  //   },
+  //   {
+  //     enabled: !!Boolean(menuItem?.table_id),
+  //     select: (res) => {
+  //       console.log("ketvotti2")
+  //       return {
+  //         ...res,
+  //         tabs: res?.tabs?.filter(
+  //           (tab) =>
+  //             tab?.relation?.permission?.view_permission === true ||
+  //             tab?.type === "section"
+  //         ),
+  //       };
+  //     },
+  //     cacheTime: 10,
+  //   }
+  // );
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -110,10 +112,10 @@ const NewRelationSection = ({
   }, [relations]);
 
   useEffect(() => {
-  if(!selectedTab) {
-    if (data?.tabs?.length > 0) {
-      setSelectTab(data?.tabs?.[0]);
-    }
+    if (!selectedTab) {
+      if (data?.tabs?.length > 0) {
+        setSelectTab(data?.tabs?.[0]);
+      }
     }
   }, [data, setSelectTab]);
 
@@ -234,17 +236,7 @@ const NewRelationSection = ({
     );
   }, [jwtObjects, tables]);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -315,11 +307,10 @@ const NewRelationSection = ({
                   {data?.tabs?.map((el, index) => (
                     <Tab
                       key={el.id}
-                      className={`${styles.tabs_item} ${
-                        selectedTabIndex === index
-                          ? "custom-selected-tab"
-                          : "custom-tab"
-                      }`}
+                      className={`${styles.tabs_item} ${selectedTabIndex === index
+                        ? "custom-selected-tab"
+                        : "custom-tab"
+                        }`}
                       onClick={() => {
                         setSelectedIndex(index);
                         onSelect(el);
@@ -333,18 +324,18 @@ const NewRelationSection = ({
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
-                              `label_to_${i18n?.language}`
-                            ] ||
-                            el?.attributes?.[`label_to_${i18n?.language}`] ||
-                            el?.label
+                          `label_to_${i18n?.language}`
+                          ] ||
+                          el?.attributes?.[`label_to_${i18n?.language}`] ||
+                          el?.label
                           : el?.attributes?.[`label_${i18n.language}`]
                             ? el?.attributes?.[`label_${i18n.language}`]
                             : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
+                              `label_${i18n.language}`
+                            ]
                               ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
+                              `label_${i18n.language}`
+                              ]
                               : el?.label ?? el?.title}
                       </div>
                     </Tab>
@@ -392,7 +383,7 @@ const NewRelationSection = ({
                         fieldsMap={fieldsMap}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
-                        refetch={refetch}
+                        // refetch={refetch}
                         data={data}
                       />
                     </>

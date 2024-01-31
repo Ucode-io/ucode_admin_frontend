@@ -15,7 +15,7 @@ import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkMo
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, { useMenuListQuery, usePlatformGetByIdQuery } from "../../services/menuService";
+import menuService, { useMenuGetByIdQuery, useMenuListQuery } from "../../services/menuService";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import { useProjectGetByIdQuery } from "../../services/projectService";
@@ -91,7 +91,7 @@ const LayoutSidebar = ({ appId }) => {
     },
   });
 
-  const { data: menuById } = usePlatformGetByIdQuery({
+  const { data: menuById } = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 

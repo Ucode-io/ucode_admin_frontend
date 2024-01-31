@@ -515,6 +515,7 @@ const CellElementGeneratorForTableView = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
+          newColumn={newColumn}
         />
       );
     case "FLOAT":

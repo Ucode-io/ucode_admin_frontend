@@ -498,8 +498,16 @@ const FormElementGenerator = ({
                 : field?.attributes?.[`label_${i18n.language}`] ?? field.label
             }
             required={checkRequiredField}
+            field={field}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message: field?.attributes?.validation_message,
+              },
+            }
+            }
             {...props}
           />
         </FRow>

@@ -55,6 +55,11 @@ const CustomPermissionModal = ({
       name: "Add field",
       controlName: "add_field",
     },
+    {
+      guid: "8",
+      name: "Delete All",
+      controlName: "delete_all",
+    },
   ];
 
   const updateView = (val) => {

@@ -25,7 +25,7 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import menuService from "../../../services/menuService";
+import menuService, { useMenuGetByIdQuery } from "../../../services/menuService";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const RelationSectionForModal = ({
@@ -49,13 +49,15 @@ const RelationSectionForModal = ({
   fieldsMap: fieldsMapFromProps,
   editAcces,
   setEditAccess,
+  data,
+  setData
 }) => {
   const { i18n } = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [type, setType] = useState(null);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   let [searchParams] = useSearchParams();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
@@ -67,24 +69,6 @@ const RelationSectionForModal = ({
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
-  const [menuItem, setMenuItem] = useState(null);
-  const menuId = searchParams.get("menuId");
-
-  console.log("watch", watch())
-
-
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
@@ -122,42 +106,42 @@ const RelationSectionForModal = ({
     setSelectTab(el ?? relations[selectedTabIndex]);
   };
 
-  useEffect(() => {
-    layoutService.getLayout(tableSlug, appId).then((res) => {
-      const layout = {
-        ...res,
-        tabs: res?.tabs?.filter(
-          (tab) =>
-            tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
-        ),
-      };
-      const layout2 = {
-        ...layout,
-        tabs: layout?.tabs?.map((tab) => {
-          return {
-            ...tab,
-            sections: tab?.sections?.map((section) => {
-              return {
-                ...section,
-                fields: section?.fields?.map((field) => {
-                  if (field?.is_visible_layout === undefined) {
-                    return {
-                      ...field,
-                      is_visible_layout: true,
-                    };
-                  } else {
-                    return field;
-                  }
-                }),
-              };
-            }),
-          };
-        }),
-      };
-      setData(layout2);
-    });
-  }, [tableSlug, menuItem?.table_id, i18n?.language, menuItem?.id]);
+  // useEffect(() => {
+  //   layoutService.getLayout(tableSlug, appId).then((res) => {
+  //     const layout = {
+  //       ...res,
+  //       tabs: res?.tabs?.filter(
+  //         (tab) =>
+  //           tab?.relation?.permission?.view_permission === true ||
+  //           tab?.type === "section"
+  //       ),
+  //     };
+  //     const layout2 = {
+  //       ...layout,
+  //       tabs: layout?.tabs?.map((tab) => {
+  //         return {
+  //           ...tab,
+  //           sections: tab?.sections?.map((section) => {
+  //             return {
+  //               ...section,
+  //               fields: section?.fields?.map((field) => {
+  //                 if (field?.is_visible_layout === undefined) {
+  //                   return {
+  //                     ...field,
+  //                     is_visible_layout: true,
+  //                   };
+  //                 } else {
+  //                   return field;
+  //                 }
+  //               }),
+  //             };
+  //           }),
+  //         };
+  //       }),
+  //     };
+  //     setData(layout2);
+  //   });
+  // }, [tableSlug, menuItem?.table_id, i18n?.language, menuItem?.id]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -169,11 +153,11 @@ const RelationSectionForModal = ({
     return !!allFields.find((field) => field?.enable_multilanguage === true);
   }, [selectedTab]);
 
-  useEffect(() => {
-    if (data?.tabs?.length > 0) {
-      setSelectTab(data?.tabs?.[0]);
-    }
-  }, [data?.tabs, data]);
+  // useEffect(() => {
+  //   if (data?.tabs?.length > 0) {
+  //     setSelectTab(data?.tabs?.[0]);
+  //   }
+  // }, [data?.tabs, data]);
 
   useEffect(() => {
     queryTab
@@ -247,7 +231,7 @@ const RelationSectionForModal = ({
         }
       }),
     };
-    setData(newTabs);
+    // setData(newTabs);
     updateLayout(newTabs);
   };
 
@@ -299,31 +283,31 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
-  const getLayoutList = () => {
-    layoutService
-      .getLayout(tableSlug, menuId, {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      })
-      .then((res) => {
-        const layout = {
-          ...res,
-          tabs: res?.tabs?.filter(
-            (tab) =>
-              tab?.relation?.permission?.view_permission === true ||
-              tab?.type === "section"
-          ),
-        };
-        setData(layout);
-      })
-      .finally(() => {
-        setSelectTab(relations[selectedTabIndex]);
-      })
-  };
+  // const getLayoutList = () => {
+  //   layoutService
+  //     .getLayout(tableSlug, menuId, {
+  //       "table-slug": tableSlug,
+  //       language_setting: i18n?.language,
+  //     })
+  //     .then((res) => {
+  //       const layout = {
+  //         ...res,
+  //         tabs: res?.tabs?.filter(
+  //           (tab) =>
+  //             tab?.relation?.permission?.view_permission === true ||
+  //             tab?.type === "section"
+  //         ),
+  //       };
+  //       setData(layout);
+  //     })
+  //     .finally(() => {
+  //       setSelectTab(relations[selectedTabIndex]);
+  //     })
+  // };
 
-  useEffect(() => {
-    getLayoutList();
-  }, [tableSlug, menuItem?.table_id, i18n?.language]);
+  // useEffect(() => {
+  //   getLayoutList();
+  // }, [tableSlug, menuItem?.table_id, i18n?.language]);
 
   return (
     <>
@@ -372,8 +356,8 @@ const RelationSectionForModal = ({
                           <Tab
                             key={el.id}
                             className={`${styles.tabs_item} ${selectedTabIndex === index
-                                ? "custom-selected-tab"
-                                : "custom-tab"
+                              ? "custom-selected-tab"
+                              : "custom-tab"
                               }`}
                             onClick={() => {
                               setSelectedIndex(index);
@@ -431,8 +415,8 @@ const RelationSectionForModal = ({
                         <Tab
                           key={el.id}
                           className={`${styles.tabs_item} ${selectedTabIndex === index
-                              ? "custom-selected-tab"
-                              : "custom-tab"
+                            ? "custom-selected-tab"
+                            : "custom-tab"
                             }`}
                           onClick={() => {
                             setSelectedIndex(index);
@@ -562,7 +546,7 @@ const RelationSectionForModal = ({
                     currentView={getRelatedTabeSlug}
                     fieldsMap={fieldsMap}
                     getAllData={getAllData}
-                    getLayoutList={getLayoutList}
+                    // getLayoutList={getLayoutList}
                     selectedTabIndex={selectedTabIndex}
                     data={data}
                   />

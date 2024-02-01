@@ -26,7 +26,7 @@ import styles from "./style.module.scss";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
-import menuService from "../../services/menuService";
+import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
 
 const ObjectsFormPageForModal = ({
   tableSlugFromProps,
@@ -37,6 +37,7 @@ const ObjectsFormPageForModal = ({
   selectedRow,
   dateInfo,
   fullScreen,
+  menuItem,
   setFullScreen = () => { },
 }) => {
   const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
@@ -67,21 +68,25 @@ const ObjectsFormPageForModal = ({
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
   const [layout, setLayout] = useState({});
+  const [data, setData] = useState({});
+
+  console.log("selectedTabIndex", selectedTabIndex)
+
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
+  // const [menuItem, setMenuItem] = useState(null);
+  const menuId = searchParams.get("menuId");
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  // const { loader: menuLoader } = useMenuGetByIdQuery({
+  //   menuId: searchParams.get("menuId"),
+  //   queryParams: {
+  //     enabled: Boolean(searchParams.get("menuId")),
+  //     onSuccess: (res) => {
+  //       setMenuItem(res);
+  //     },
+  //   }
+  // });
+
 
   const {
     handleSubmit,
@@ -94,20 +99,55 @@ const ObjectsFormPageForModal = ({
     defaultValues: {
       ...state,
       ...dateInfo,
-      invite: isInvite ? menuService?.data?.table?.is_login_table : false,
+      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
   });
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getLayout(tableSlug, menuItem?.id);
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    }); const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
       const [{ data = {} }, layout] = await Promise.all([
         getFormData,
         getLayout,
       ]);
+
+      const layout1 = {
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      };
+      const layout2 = {
+        ...layout1,
+        tabs: layout1?.tabs?.map((tab) => {
+          return {
+            ...tab,
+            sections: tab?.sections?.map((section) => {
+              return {
+                ...section,
+                fields: section?.fields?.map((field) => {
+                  if (field?.is_visible_layout === undefined) {
+                    return {
+                      ...field,
+                      is_visible_layout: true,
+                    };
+                  } else {
+                    return field;
+                  }
+                }),
+              };
+            }),
+          };
+        }),
+      };
+      setData(layout2);
       setSections(sortSections(sections));
       setSummary(layout?.summary_fields ?? []);
 
@@ -128,7 +168,11 @@ const ObjectsFormPageForModal = ({
               : relation.table_from?.slug,
         }))
       );
-      if (selectedTab?.type === "section") reset(data?.response);
+      if (!selectedTab?.relation_id) {
+        reset(data?.response ?? {});
+      }
+      setSelectTab(relations[selectedTabIndex]);
+
       setLoader(false);
     } catch (error) {
       console.error(error);
@@ -136,11 +180,47 @@ const ObjectsFormPageForModal = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, appId);
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    });
+
 
     try {
       const [layout] = await Promise.all([getLayout]);
 
+      const layout1 = {
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      };
+      const layout2 = {
+        ...layout1,
+        tabs: layout1?.tabs?.map((tab) => {
+          return {
+            ...tab,
+            sections: tab?.sections?.map((section) => {
+              return {
+                ...section,
+                fields: section?.fields?.map((field) => {
+                  if (field?.is_visible_layout === undefined) {
+                    return {
+                      ...field,
+                      is_visible_layout: true,
+                    };
+                  } else {
+                    return field;
+                  }
+                }),
+              };
+            }),
+          };
+        }),
+      };
+      setData(layout2);
       setLayout(layout);
       setSections(sortSections(sections));
 
@@ -162,6 +242,7 @@ const ObjectsFormPageForModal = ({
       if (!id) {
         setLoader(false);
       }
+      setSelectTab(relations[selectedTabIndex]);
     } catch (error) {
       console.error(error);
     }
@@ -247,16 +328,13 @@ const ObjectsFormPageForModal = ({
     }
   };
 
-  useEffect(() => {
-    if (!menuItem) return;
-    if (id) getAllData();
-    else getFields();
-  }, [id, menuItem, selectedTabIndex, i18n?.language, selectedTab]);
 
   useEffect(() => {
-    getFields();
-  }, [id, menuItem, selectedTabIndex, i18n?.language, selectedTab]);
-  console.log("summary", summary);
+    if (id) getAllData();
+    else getFields();
+  }, [id]);
+  console.log("selectedTab", selectedTab)
+
   return (
     <div className={styles.formPage}>
       {summary?.length ? (
@@ -292,6 +370,8 @@ const ObjectsFormPageForModal = ({
           fieldsMap={fieldsMap}
           editAcces={editAcces}
           setEditAccess={setEditAccess}
+          data={data}
+          setData={setData}
         />
       </div>
       <Footer

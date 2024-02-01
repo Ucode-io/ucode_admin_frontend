@@ -81,7 +81,7 @@ const NewRelationSection = ({
       })
     },
     {
-      enabled: Boolean(menuItem?.table_id),
+      enabled: Boolean(!menuItem?.table_id),
       select: (res) => {
         return {
           ...res,
@@ -289,7 +289,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-
+    console.log('datadata', data);
   return (
     <>
       {selectedManyToManyRelation && (

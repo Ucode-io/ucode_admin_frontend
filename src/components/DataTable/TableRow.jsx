@@ -50,6 +50,7 @@ const TableRow = ({
   data,
   style,
 }) => {
+  console.log('datadata', data);
   const navigate = useNavigate();
 
   const changeSetDelete = (row) => {

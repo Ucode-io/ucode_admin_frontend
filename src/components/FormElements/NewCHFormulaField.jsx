@@ -27,7 +27,7 @@ const NewCHFFormulaField = ({
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const formula = field?.attributes?.formula ?? "";
-
+  
   const currentValue = useWatch({
     control,
     name,
@@ -49,15 +49,16 @@ const NewCHFFormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
     const {error, result} = parser?.parse(computedFormula);
+
     let newValue = error ?? result;
     if (newValue !== currentValue) setFormValue(name, newValue);
   };
 
   // useDebouncedWatch(updateValue, [values], 300);
 
-  useEffect(() => {
-    updateValue();
-  }, []);
+  // useEffect(() => {
+  //   updateValue();
+  // }, []);
 
   return (
     <Controller

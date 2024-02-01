@@ -210,8 +210,8 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        navigate(-1);
         createType(res);
+        navigate(-1);
       })
       .catch(() => setBtnLoader(false));
   };

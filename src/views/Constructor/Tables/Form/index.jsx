@@ -193,10 +193,11 @@ const ConstructorTablesFormPage = () => {
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], menuItem?.id);
+        navigate(-1);
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
   };
 
   const createConstructorTable = (data) => {

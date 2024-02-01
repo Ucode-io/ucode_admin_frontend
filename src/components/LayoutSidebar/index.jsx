@@ -414,6 +414,7 @@ const LayoutSidebar = ({ appId }) => {
         menuStyle={menuStyle}
         setChild={setChild}
         setSelectedApp={setSelectedApp}
+        menuItem={menuItem}
       />
       {menu?.type?.length ? (
         <ButtonsMenu

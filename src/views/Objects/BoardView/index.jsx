@@ -38,6 +38,7 @@ const BoardView = ({
   views,
   fieldsMap,
   selectedTable,
+  menuItem
 }) => {
   const visibleForm = useForm();
   const navigate = useNavigate();
@@ -57,19 +58,6 @@ const BoardView = ({
   const { filters } = useFilters(tableSlug, view.id);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
-    }
-  }, []);
 
 
   const navigateToSettingsPage = () => {
@@ -256,17 +244,17 @@ const BoardView = ({
           {(view?.quick_filters?.length > 0 ||
             (new_list[tableSlug] &&
               new_list[tableSlug].some((i) => i.checked))) && (
-            <div
-              className={
-                filterVisible ? styles.filters : styles.filtersVisiblitiy
-              }
-            >
-              <Box className={styles.block}>
-                <p>{t("filters")}</p>
-                <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
-              </Box>
-            </div>
-          )}
+              <div
+                className={
+                  filterVisible ? styles.filters : styles.filtersVisiblitiy
+                }
+              >
+                <Box className={styles.block}>
+                  <p>{t("filters")}</p>
+                  <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+                </Box>
+              </div>
+            )}
 
           <div className={styles.board}>
             <Container
@@ -306,7 +294,7 @@ const BoardView = ({
 const queryGenerator = (groupField, filters = {}, updateView) => {
   if (!groupField)
     return {
-      queryFn: () => {},
+      queryFn: () => { },
     };
 
   const filterValue = filters[groupField.slug];

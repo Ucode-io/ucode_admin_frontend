@@ -156,6 +156,7 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      menuItem={menuItem}
                     />
                   </>
                 ) : view.type === "CALENDAR" ? (
@@ -238,6 +239,7 @@ const ObjectsPage = () => {
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
             views={views}
+            menuItem={menuItem}
           />
         </FiltersBlock>
       )}

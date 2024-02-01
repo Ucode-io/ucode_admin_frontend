@@ -21,6 +21,7 @@ import { pageToOffset } from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { Filter } from "../components/FilterGenerator";
 import styles from "./style.module.scss";
+import { useMenuGetByIdQuery } from "../../../services/menuService";
 
 const RelationTable = forwardRef(
   (
@@ -47,13 +48,13 @@ const RelationTable = forwardRef(
       selectedTab,
       type,
       relatedTable = {},
-      getAllData = () => {},
+      getAllData = () => { },
       layoutData
     },
     ref
   ) => {
 
-    const {appId, tableSlug} = useParams();
+    const { appId, tableSlug } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { navigateToForm } = useTabRouter();
@@ -66,6 +67,7 @@ const RelationTable = forwardRef(
     const [relOptions, setRelOptions] = useState([]);
     const [searchParams] = useSearchParams();
     const menuId = searchParams.get("menuId");
+    const [menuItem, setMenuItem] = useState(null);
 
     const paginationInfo = useSelector(
       (state) => state?.pagination?.paginationInfo
@@ -118,6 +120,17 @@ const RelationTable = forwardRef(
         return pageToOffset(currentPage, limit);
       }
     }, [paginiation, limit, currentPage]);
+
+
+    const { loader: menuLoader } = useMenuGetByIdQuery({
+      menuId: searchParams.get("menuId"),
+      queryParams: {
+        enabled: Boolean(searchParams.get("menuId")),
+        onSuccess: (res) => {
+          setMenuItem(res);
+        },
+      }
+    });
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
@@ -345,10 +358,10 @@ const RelationTable = forwardRef(
           item?.type === "LOOKUP"
             ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
             : Array.from(
-                new Set(
-                  [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
-                )
-              ),
+              new Set(
+                [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
+              )
+            ),
       }));
       tableData?.length &&
         computedRelationFields?.forEach((item, index) => {
@@ -440,9 +453,8 @@ const RelationTable = forwardRef(
     const navigateToTablePage = () => {
       navigate(`/main/${appId}/object/${relatedTableSlug}`, {
         state: {
-          [`${tableSlug}_${
-            getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
-          }`]: id,
+          [`${tableSlug}_${getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
+            }`]: id,
         },
       });
     };
@@ -551,6 +563,7 @@ const RelationTable = forwardRef(
               setSelectedObjectsForDelete={setSelectedObjectsForDelete}
               multipleDelete={multipleDelete}
               navigateToForm={navigateToForm}
+              menuItem={menuItem}
             />
           )}
         </div>

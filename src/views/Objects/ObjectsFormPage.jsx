@@ -13,7 +13,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
-import menuService from "../../services/menuService";
+import { useMenuGetByIdQuery } from "../../services/menuService";
 import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
 import { sortSections } from "../../utils/sectionsOrderNumber";
@@ -30,16 +30,6 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
@@ -52,6 +42,7 @@ const ObjectsFormPage = ({
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
+  const [data, setData] = useState([])
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
 
@@ -59,17 +50,17 @@ const ObjectsFormPage = ({
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
+
+  const id = useMemo(() => {
+    return idFromParam || selectedRow?.guid;
+  }, [idFromParam, selectedRow]);
+
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || tableSlugFromParam;
+  }, [tableSlugFromParam, tableSlugFromProps]);
+
 
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
@@ -92,8 +83,8 @@ const ObjectsFormPage = ({
       invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
   });
-
   const getAllData = async () => {
+    console.log("ketvotti3")
     setLoader(true);
     const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
@@ -108,9 +99,16 @@ const ObjectsFormPage = ({
         getLayoutData,
       ]);
 
-      // Access dynamic keys of layoutData
-      const layoutKeys = Object.keys(layoutData);
-
+      // // Access dynamic keys of layoutData
+      // const layoutKeys = Object.keys(layoutData);
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setSections(sortSections(sections));
       setSummary(layoutData.summary_fields ?? []);
 
@@ -152,8 +150,15 @@ const ObjectsFormPage = ({
       const [layoutData] = await Promise.all([getLayout]);
       const defaultLayout = layoutData;
 
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setSections(sortSections(sections));
-
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
@@ -252,10 +257,21 @@ const ObjectsFormPage = ({
     }
   };
 
+  const { loader: menuLoader } = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    }
+  });
+
+
   useEffect(() => {
     if (id) getAllData();
     else getFields();
-  }, [id, menuItem, selectedTabIndex]);
+  }, [id]);
 
   const clickHandler = () => {
     deleteTab(pathname);
@@ -304,6 +320,8 @@ const ObjectsFormPage = ({
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
+          menuItem={menuItem}
+          data={data}
         />
       </div>
       <Footer

@@ -49,7 +49,7 @@ const CellElementGeneratorForTableView = ({
   index,
   data,
   isTableView,
-  isNewRow,
+  isNewRow = false,
   newColumn = false,
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
@@ -132,6 +132,7 @@ const CellElementGeneratorForTableView = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
+
   switch (field.type) {
     case "LOOKUP":
       return !newColumn ? (
@@ -198,24 +199,24 @@ const CellElementGeneratorForTableView = ({
           defaultValue={defaultValue}
         />
       );
-      
-      // case "INCREMENT_NUMBER":
-      //   return (
-      //     <HFIncrementId 
-      //       disabled={isDisabled}
-      //       isFormEdit
-      //       updateObject={updateObject}
-      //       isNewTableView={true}
-      //       isBlackBg={isBlackBg}
-      //       control={control}
-      //       name={computedSlug}
-      //       fullWidth
-      //       field={field}
-      //       required={field.required}
-      //       placeholder={field.attributes?.placeholder}
-      //       defaultValue={defaultValue} 
-      //     />
-      //   ) 
+
+    // case "INCREMENT_NUMBER":
+    //   return (
+    //     <HFIncrementId 
+    //       disabled={isDisabled}
+    //       isFormEdit
+    //       updateObject={updateObject}
+    //       isNewTableView={true}
+    //       isBlackBg={isBlackBg}
+    //       control={control}
+    //       name={computedSlug}
+    //       fullWidth
+    //       field={field}
+    //       required={field.required}
+    //       placeholder={field.attributes?.placeholder}
+    //       defaultValue={defaultValue} 
+    //     />
+    //   ) 
 
 
     case "SINGLE_LINE":

@@ -12,8 +12,6 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
-import layoutService from "../../../services/layoutService";
-import menuService from "../../../services/menuService";
 import { listToMap } from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
@@ -43,30 +41,16 @@ const NewRelationSection = ({
   setSelectTab,
   selectedTab,
   errors,
+  menuItem,
+  data
 }) => {
-  const [data, setData] = useState([]);
-  const {
-    tableSlug: tableSlugFromParams,
-    id: idFromParams,
-    appId,
-  } = useParams();
+
+
+  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
-  const [menuItem, setMenuItem] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
@@ -85,6 +69,33 @@ const NewRelationSection = ({
   const tables = useSelector((state) => state?.auth?.tables);
   const menuId = searchParams.get("menuId");
 
+
+  // const { data, refetch } = useQuery(
+  //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
+  //   () => {
+  //     return layoutService
+  //       .getLayout(tableSlug, menuId ?? appId, {
+  //         "table-slug": tableSlug,
+  //         language_setting: i18n?.language,
+  //       })
+  //   },
+  //   {
+  //     enabled: !!Boolean(menuItem?.table_id),
+  //     select: (res) => {
+  //       console.log("ketvotti2")
+  //       return {
+  //         ...res,
+  //         tabs: res?.tabs?.filter(
+  //           (tab) =>
+  //             tab?.relation?.permission?.view_permission === true ||
+  //             tab?.type === "section"
+  //         ),
+  //       };
+  //     },
+  //     cacheTime: 10,
+  //   }
+  // );
+
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
       return data?.type;
@@ -100,10 +111,10 @@ const NewRelationSection = ({
   }, [relations]);
 
   useEffect(() => {
-  if(!selectedTab) {
-    if (data?.tabs?.length > 0) {
-      setSelectTab(data?.tabs?.[0]);
-    }
+    if (!selectedTab) {
+      if (data?.tabs?.length > 0) {
+        setSelectTab(data?.tabs?.[0]);
+      }
     }
   }, [data, setSelectTab]);
 
@@ -206,29 +217,6 @@ const NewRelationSection = ({
         .catch((a) => console.log("error", a));
   }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
-  const getLayoutList = () => {
-    layoutService
-      .getLayout(tableSlug, menuId, {
-        "table-slug": tableSlug,
-        language_setting: i18n?.language,
-      })
-      .then((res) => {
-        const layout = {
-          ...res,
-          tabs: res?.tabs?.filter(
-            (tab) =>
-              tab?.relation?.permission?.view_permission === true ||
-              tab?.type === "section"
-          ),
-        };
-        setData(layout);
-      });
-  };
-
-  useEffect(() => {
-    getLayoutList();
-  }, [tableSlug, menuItem?.table_id, i18n?.language]);
-
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
       return item?.table_slug;
@@ -246,6 +234,8 @@ const NewRelationSection = ({
       })
     );
   }, [jwtObjects, tables]);
+
+
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -316,11 +306,10 @@ const NewRelationSection = ({
                   {data?.tabs?.map((el, index) => (
                     <Tab
                       key={el.id}
-                      className={`${styles.tabs_item} ${
-                        selectedTabIndex === index
-                          ? "custom-selected-tab"
-                          : "custom-tab"
-                      }`}
+                      className={`${styles.tabs_item} ${selectedTabIndex === index
+                        ? "custom-selected-tab"
+                        : "custom-tab"
+                        }`}
                       onClick={() => {
                         setSelectedIndex(index);
                         onSelect(el);
@@ -334,18 +323,18 @@ const NewRelationSection = ({
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
-                              `label_to_${i18n?.language}`
-                            ] ||
-                            el?.attributes?.[`label_to_${i18n?.language}`] ||
-                            el?.label
+                          `label_to_${i18n?.language}`
+                          ] ||
+                          el?.attributes?.[`label_to_${i18n?.language}`] ||
+                          el?.label
                           : el?.attributes?.[`label_${i18n.language}`]
                             ? el?.attributes?.[`label_${i18n.language}`]
                             : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
+                              `label_${i18n.language}`
+                            ]
                               ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
+                              `label_${i18n.language}`
+                              ]
                               : el?.label ?? el?.title}
                       </div>
                     </Tab>
@@ -393,7 +382,7 @@ const NewRelationSection = ({
                         fieldsMap={fieldsMap}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
-                        getLayoutList={getLayoutList}
+                        // refetch={refetch}
                         data={data}
                       />
                     </>

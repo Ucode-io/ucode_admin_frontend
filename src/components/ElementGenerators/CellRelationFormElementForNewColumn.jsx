@@ -19,6 +19,7 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
+import { useSearchParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -155,6 +156,10 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
+
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -515,7 +520,7 @@ const AutoCompleteElement = ({
         }}
         noOptionsMessage={() => (
           <span
-            onClick={() => navigateToForm(tableSlug)}
+            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
             Создать новый

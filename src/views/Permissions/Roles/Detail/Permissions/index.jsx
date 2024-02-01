@@ -100,7 +100,7 @@ const Permissions = ({
                         {permissions.map((item) => (
                           <CTableCell rowSpan={2}>
                           <Box display={"flex"} alignItems={"center"} columnGap={"4px"}>
-                            {item.title} <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => setModalData(item)}/>
+                            {item.title} <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => item?.content && setModalData(item)}/>
                           </Box>
                           </CTableCell>
                         ))}

@@ -9,25 +9,25 @@ export const permissions = [
       title: "Action permissions",
       type: "action",
       image: "/img/field.jpeg",
-      content: "This is content"
+      content: null
     },
     {
       title: "Relation permission",
       type: "relation",
       image: "/img/field.jpeg",
-      content: "This is content"
+      content: null
     },
     {
       title: "View permission",
       type: "view",
       image: "/img/field.jpeg",
-      content: "This is content"
+      content: null
     },
     {
       title: "Custom permission",
       type: "custom",
       image: "/img/field.jpeg",
-      content: "This is content"
+      content: null
     },
   ];
 

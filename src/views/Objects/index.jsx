@@ -1,10 +1,10 @@
-import { Fragment, useEffect, useState } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import PageFallback from "../../components/PageFallback";
 import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -16,15 +16,53 @@ import { store } from "../../store";
 import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
-import menuService from "../../services/menuService";
+import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
+import { useSelector } from "react-redux";
+import { useMenuPermissionGetByIdQuery } from "../../services/rolePermissionService";
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams();
   const { state } = useLocation();
+  const navigate = useNavigate()
+  const { appId } = useParams()
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
+  const menuId = searchParams.get("menuId");
   const { i18n } = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
+  const [menuItem, setMenuItem] = useState(null);
+  const roleId = useSelector((state) => state.auth.roleInfo.id);
+  const projectId = store.getState().company.projectId;
+  const auth = useSelector((state) => state.auth);
+  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+
+  const parts = auth?.clientType?.default_page
+    ? auth?.clientType?.default_page?.split("/")
+    : companyDefaultLink.split("/");
+
+  const resultDefaultLink =
+    parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
+
+
+
+
+  const { isLoading: permissionGetByIdLoading } =
+    useMenuPermissionGetByIdQuery({
+      projectId: projectId,
+      roleId: roleId,
+      parentId: appId,
+      queryParams: {
+        enabled: Boolean(menuId),
+        onSuccess: (res) => {
+          console.log("res?.menus?.filter((item) => item?.permission?.read)?.some((el) => el?.id === menuId)", res?.menus?.filter((item) => item?.permission?.read))
+          if (!res?.menus?.filter((item) => item?.permission?.read)?.some((el) => el?.id === menuId)) {
+            console.log("object")
+            navigate(resultDefaultLink)
+          }
+        },
+        cacheTime: false
+      }
+    });
 
   const params = {
     language_setting: i18n?.language,
@@ -77,21 +115,30 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(0);
   }, [queryTab]);
 
-  const [menuItem, setMenuItem] = useState(null);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
+  // useEffect(() => {
+  //   if (searchParams.get("menuId")) {
+  //     menuService
+  //       .getByID({
+  //         menuId: searchParams.get("menuId"),
+  //       })
+  //       .then((res) => {
+  //         setMenuItem(res);
+  //       });
+  //   }
+  // }, []);
+
+  const { loader: menuLoader } = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
     }
-  }, []);
+  });
 
-  const setViews = () => {};
+  const setViews = () => { };
   if (isLoading) return <PageFallback />;
   return (
     <>
@@ -109,6 +156,7 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      menuItem={menuItem}
                     />
                   </>
                 ) : view.type === "CALENDAR" ? (
@@ -191,6 +239,7 @@ const ObjectsPage = () => {
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
             views={views}
+            menuItem={menuItem}
           />
         </FiltersBlock>
       )}

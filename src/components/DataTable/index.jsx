@@ -263,7 +263,7 @@ const DataTable = ({
                 <Checkbox checked={checkboxValue === row.guid} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </CTableCell>
             )}
-            <CTableCell align="center">{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
+            <CTableCell align="center">{(currentPage - 1) * limit + rowIndex + 1}</CTableCell>
             {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
               <CTableCell
                 key={column.id}

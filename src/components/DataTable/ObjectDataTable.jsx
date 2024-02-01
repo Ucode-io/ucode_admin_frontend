@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { Button } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -22,6 +22,7 @@ import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
+import { useMenuGetByIdQuery } from "../../services/menuService";
 
 const ObjectDataTable = ({
   selectedTab,
@@ -47,7 +48,7 @@ const ObjectDataTable = ({
   isRelationTable,
   disablePagination,
   currentPage = 1,
-  onPaginationChange = () => {},
+  onPaginationChange = () => { },
   pagesCount = 1,
   setSortedDatas,
   columns = [],
@@ -60,8 +61,8 @@ const ObjectDataTable = ({
   dataLength,
   onDeleteClick,
   onEditClick,
-  onRowClick = () => {},
-  filterChangeHandler = () => {},
+  onRowClick = () => { },
+  filterChangeHandler = () => { },
   filters,
   disableFilters,
   tableStyle,
@@ -84,7 +85,8 @@ const ObjectDataTable = ({
   view,
   navigateToForm,
   refetch,
-  getAllData = () => {},
+  menuItem,
+  getAllData = () => { },
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -96,7 +98,20 @@ const ObjectDataTable = ({
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
+  // const [menuItem, setMenuItem] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // console.log("objectMenuItem", !Boolean(objectMenuItem))
+  // const { loader: menuLoader } = useMenuGetByIdQuery({
+  //   menuId: searchParams.get("menuId"),
+  //   queryParams: {
+  //     enabled: !Boolean(objectMenuItem),
+  //     onSuccess: (res) => {
+  //       setMenuItem(res);
+  //     },
+  //   }
+  // });
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -319,13 +334,13 @@ const ObjectDataTable = ({
               )
           )}
 
-          
-           {!isRelationTable && (
+
+          {!isRelationTable && (
             <PermissionWrapperV2
               tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
               type={"add_field"}
             >
-                <FieldButton
+              <FieldButton
                 openFieldSettings={openFieldSettings}
                 view={view}
                 mainForm={mainForm}
@@ -336,9 +351,10 @@ const ObjectDataTable = ({
                 setFieldData={setFieldData}
                 setDrawerState={setDrawerState}
                 setDrawerStateField={setDrawerStateField}
+                menuItem={menuItem}
               />
-              </PermissionWrapperV2>
-            )} 
+            </PermissionWrapperV2>
+          )}
         </CTableRow>
       </CTableHead>
 

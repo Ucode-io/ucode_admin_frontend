@@ -72,7 +72,7 @@ const RelationSectionForModal = ({
 
   console.log("watch", watch())
 
-  
+
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
@@ -324,7 +324,7 @@ const RelationSectionForModal = ({
   useEffect(() => {
     getLayoutList();
   }, [tableSlug, menuItem?.table_id, i18n?.language]);
-  
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -371,11 +371,10 @@ const RelationSectionForModal = ({
                         <>
                           <Tab
                             key={el.id}
-                            className={`${styles.tabs_item} ${
-                              selectedTabIndex === index
+                            className={`${styles.tabs_item} ${selectedTabIndex === index
                                 ? "custom-selected-tab"
                                 : "custom-tab"
-                            }`}
+                              }`}
                             onClick={() => {
                               setSelectedIndex(index);
                               onSelect(el);
@@ -392,16 +391,16 @@ const RelationSectionForModal = ({
                             <div className="flex align-center gap-2 text-nowrap">
                               {el?.relation ? (
                                 el?.relation?.attributes?.[`label_to_${i18n?.language}`]
-                              ): (
+                              ) : (
                                 el?.attributes?.[`label_${i18n.language}`]
-                                ? el?.attributes?.[`label_${i18n.language}`]
-                                : el?.relation?.attributes?.[
+                                  ? el?.attributes?.[`label_${i18n.language}`]
+                                  : el?.relation?.attributes?.[
                                     `label_${i18n.language}`
                                   ]
-                                ? el?.relation?.attributes?.[
+                                    ? el?.relation?.attributes?.[
                                     `label_${i18n.language}`
-                                  ]
-                                : el?.label ?? el?.title
+                                    ]
+                                    : el?.label ?? el?.title
                               )}
                             </div>
                           </Tab>
@@ -431,11 +430,10 @@ const RelationSectionForModal = ({
                         el?.attributes?.is_visible_layout === undefined) && (
                         <Tab
                           key={el.id}
-                          className={`${styles.tabs_item} ${
-                            selectedTabIndex === index
+                          className={`${styles.tabs_item} ${selectedTabIndex === index
                               ? "custom-selected-tab"
                               : "custom-tab"
-                          }`}
+                            }`}
                           onClick={() => {
                             setSelectedIndex(index);
                             onSelect(el);
@@ -447,19 +445,19 @@ const RelationSectionForModal = ({
                             </>
                           )}
                           <div className="flex align-center gap-2 text-nowrap">
-                          {el?.relation ? (
-                                el?.relation?.attributes?.[`label_to_${i18n?.language}`]
-                              ): (
-                                el?.attributes?.[`label_${i18n.language}`]
+                            {el?.relation ? (
+                              el?.relation?.attributes?.[`label_to_${i18n?.language}`]
+                            ) : (
+                              el?.attributes?.[`label_${i18n.language}`]
                                 ? el?.attributes?.[`label_${i18n.language}`]
                                 : el?.relation?.attributes?.[
-                                    `label_${i18n.language}`
+                                  `label_${i18n.language}`
+                                ]
+                                  ? el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
                                   ]
-                                ? el?.relation?.attributes?.[
-                                    `label_${i18n.language}`
-                                  ]
-                                : el?.label ?? el?.title
-                              )}
+                                  : el?.label ?? el?.title
+                            )}
                           </div>
                         </Tab>
                       )
@@ -505,7 +503,7 @@ const RelationSectionForModal = ({
                         >
                           {
                             relation?.attributes?.[
-                              `label_from_${i18n.language}`
+                            `label_from_${i18n.language}`
                             ]
                           }
                         </MenuItem>
@@ -580,7 +578,7 @@ const RelationSectionForModal = ({
           >
             {loader ? (
               <RingLoaderWithWrapper />
-              ) : (
+            ) : (
               data?.tabs?.map((el) => (
                 <TabPanel
                   key={el.id}

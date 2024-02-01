@@ -17,7 +17,7 @@ export const useMenuPermissionGetByIdQuery = ({
   projectId,
   roleId,
   parentId,
-  quryParams,
+  queryParams,
 }) => {
   return useQuery(
     ["GET_MENU_PERMISION_BY_ID", { projectId, roleId, parentId }],
@@ -28,21 +28,21 @@ export const useMenuPermissionGetByIdQuery = ({
         parentId
       );
     },
-    quryParams
+    queryParams
   );
 };
 
 export const useRolePermissionGetByIdQuery = ({
   projectId,
   roleId,
-  quryParams,
+  queryParams,
 }) => {
   return useQuery(
     ["GET_ROLE_PERMISION_BY_ID", { projectId, roleId }],
     () => {
       return rolePermissionService.getById(projectId, roleId);
     },
-    quryParams
+    queryParams
   );
 };
 

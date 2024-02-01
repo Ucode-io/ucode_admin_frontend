@@ -42,6 +42,7 @@ const SubMenu = ({
   menuStyle,
   setSelectedApp,
   setLinkedTableModal,
+  menuItem
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -49,19 +50,20 @@ const SubMenu = ({
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
+  // const [menuItem, setMenuItem] = useState(null);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, [searchParams]);
+  // useEffect(() => {
+  //   if (searchParams.get("menuId")) {
+  //     menuService
+  //       .getByID({
+  //         menuId: searchParams.get("menuId"),
+  //       })
+  //       .then((res) => {
+  //         setMenuItem(res);
+  //         console.log("thisssssssssss")
+  //       });
+  //   }
+  // }, [searchParams]);
 
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;

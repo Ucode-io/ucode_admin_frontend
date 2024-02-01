@@ -7,7 +7,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
@@ -119,6 +119,8 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const {i18n} = useTranslation();
   const [allOptions, setAllOptions] = useState([]);
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
@@ -292,7 +294,7 @@ const AutoCompleteElement = ({
         }}
         noOptionsText={
           <span
-            onClick={() => navigateToForm(tableSlug)}
+            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
             Создать новый

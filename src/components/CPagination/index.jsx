@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {paginationActions} from "../../store/pagination/pagination.slice";
 import {useMemo, useState} from "react";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 
 const CPagination = ({
   setCurrentPage = () => {},
@@ -119,6 +120,7 @@ const CPagination = ({
           </RectangleIconButton>
         ) : null}
 
+        <PermissionWrapperV2 tableSlug={tableSlug} type="write">
         {isTableView && (
           <Button
             variant="outlined"
@@ -144,6 +146,7 @@ const CPagination = ({
             Add object
           </Button>
         )}
+        </PermissionWrapperV2>
 
         {!disablePagination && !isGroupByTable && (
           <>

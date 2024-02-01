@@ -13,6 +13,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { generateID } from "../../../utils/generateID";
 import { objectToArray } from "../../../utils/objectToArray";
 import { pageToOffset } from "../../../utils/pageToOffset";
+import { useSelector } from "react-redux";
 
 const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { tableSlug, id } = useParams();
@@ -27,7 +28,18 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState({});
   const [filteredData, setFilteredData] = useState([])
-  
+  const paginationInfo = useSelector(
+    (state) => state?.pagination?.paginationInfo
+  );
+
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
+
+    return getObject?.pageLimit ?? limit;
+  }, [paginationInfo]);
+
+
+
   const getSearchViewFields = useMemo(() => {
     return relation?.view_fields?.map((item) => item?.slug);
   }, [relation]);
@@ -35,7 +47,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const filteredDataIds = useMemo(() => {
     return filteredData.filter((item) => !item?.render).map((el) => el?.slug)
   }, [filteredData])
-
+  
   const {
     isLoading: loader,
     data: { tableData, pageCount, fields } = {
@@ -48,8 +60,8 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
       "GET_OBJECT_LIST",
       {
         tableSlug: relatedTableSlug,
-        limit: limit,
-        offset: pageToOffset(currentPage, limit),
+        limit: paginiation,
+        offset: pageToOffset(currentPage, paginiation),
         filters,
         searchText,
       },
@@ -57,8 +69,8 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     () => {
       return constructorObjectService.getList(relatedTableSlug, {
         data: {
-          offset: pageToOffset(currentPage, limit),
-          limit: limit,
+          offset: pageToOffset(currentPage, paginiation),
+          limit: paginiation,
           view_fields: filteredDataIds ?? getSearchViewFields,
           search: searchText,
           ...filters,
@@ -67,8 +79,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     },
     {
       select: ({ data }) => {
-        const pageCount = Math.ceil(data?.count / 10);
-
+        const pageCount = Math.ceil(data?.count / paginiation);
         return {
           fields: data?.fields ?? [],
           tableData: objectToArray(data?.response ?? {}),
@@ -147,6 +158,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     getFilteredData()
   }, [filteredColumns])
   
+
   return (
     <LargeModalCard
       title={relation.label}
@@ -182,7 +194,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         tableSlug={relation.relatedTable}
         filterChangeHandler={filterChangeHandler}
         filters={filters}
-        limit={limit}
+        limit={paginiation}
         setLimit={setLimit}
         filteredColumns={filteredColumns}
         defaultLimit={relation?.default_limit}

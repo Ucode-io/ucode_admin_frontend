@@ -421,13 +421,14 @@ const FormElementGenerator = ({
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
+            required={checkRequiredField}
             fullWidth
             width={"100%"}
             mask={"99.99.9999"}
-            required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            errors={errors}
             {...props}
           />
         </FRow>

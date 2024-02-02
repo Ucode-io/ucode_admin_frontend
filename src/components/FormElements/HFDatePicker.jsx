@@ -28,20 +28,26 @@ const HFDatePicker = ({
   defaultValue = "",
   isTransparent = false,
   disabled,
+  required,
   ...props
 }) => {
+
   const classes = useStyles();
   return (
     <Controller
       control={control}
       name={name}
       disabled
+      rules={{
+        required: required ? 'This field is required' : false
+      }}
       defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <div className={className}>
           <CDatePicker
             isFormEdit={isFormEdit}
             name={name}
+            required={required}
             classes={classes}
             placeholder={placeholder}
             isBlackBg={isBlackBg}
@@ -53,6 +59,7 @@ const HFDatePicker = ({
               isNewTableView && updateObject();
             }}
             disabled={disabled}
+            error={error}
             isTransparent={isTransparent}
           />
         </div>

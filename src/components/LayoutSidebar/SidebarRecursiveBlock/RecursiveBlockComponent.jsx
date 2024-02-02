@@ -65,6 +65,8 @@ const RecursiveBlock = ({
   const permission = defaultAdmin ? readPermission || withoutPermission : readPermission;
   const addButtonPermission = element?.type === "FOLDER" || (element?.type === "MINIO_FOLDER" && sidebarIsOpen) || element?.type === "WIKI_FOLDER";
   const settingsButtonPermission = (element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" && selectedApp?.id !== adminId) || !selectedApp?.is_static;
+  console.log("menuItem", menuItem)
+  console.log("element", element)
 
   const { isLoading } = useMenuListQuery({
     params: {

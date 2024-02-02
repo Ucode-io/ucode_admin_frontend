@@ -1,7 +1,7 @@
 import ReloadRelations from "@/components/ReloadRelations";
-import {lazy, Suspense, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
@@ -77,7 +77,7 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import TablesPage from "../views/Constructor/AllTables";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
+import { useLoginMicrofrontendQuery } from "../services/loginMicrofrontendService";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
@@ -147,7 +147,7 @@ const Router = () => {
       ? "ett.u-code.io"
       : window.location.hostname;
 
-  const {data, isLoading} = useLoginMicrofrontendQuery({
+  const { data, isLoading } = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -199,128 +199,129 @@ const Router = () => {
     <Routes>
       {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
 
-      <Route
-        path="/main"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
-      >
+      <Route path="/" element={<MainLayout favicon={favicon} setFavicon={setFavicon} />} >
         <Route
-          path=":appId/users-list"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <UsersList />
-            </Suspense>
-          }
-        />
+          path="main"
 
-        <Route index element={<Navigate to={redirectLink} />} />
+        >
+          <Route
+            path=":appId/users-list"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <UsersList />
+              </Suspense>
+            }
+          />
 
-        <Route path=":appId" element={<div></div>} />
+          <Route index element={<Navigate to={redirectLink} />} />
 
-        <Route path=":appId/chat" element={<Chat />}>
-          <Route path=":chat_id" element={<Chat />} />
-        </Route>
-        <Route path=":appId/backet/:minioId">
-          <Route index element={<MinioPage />} />
-          <Route path=":fileId" element={<MinioSinglePage />} />
-        </Route>
-        <Route path=":appId/projects">
-          <Route index element={<ProjectPage />} />
-          <Route path="create" element={<ProjectForm />} />
-          <Route path=":projectId" element={<ProjectForm />} />
-        </Route>
-        <Route path=":appId/redirects">
-          <Route index element={<RedirectPage />} />
-          <Route path="create" element={<RedirectFormPage />} />
-          <Route path=":redirectId" element={<RedirectFormPage />} />
-        </Route>
-        <Route path=":appId/sms-otp">
-          <Route index element={<SmsPage />} />
-          <Route path="create" element={<SmsFormPage />} />
-          <Route path=":redirectId" element={<SmsFormPage />} />
-        </Route>
-        <Route path=":appId/api-key">
-          <Route index element={<ApiKeyPage />} />
-          <Route path="create" element={<ApiKeysForm />} />
-          <Route path=":apiKeyId" element={<ApiKeysForm />} />
-        </Route>
-        <Route path=":appId/environments">
-          <Route index element={<EnvironmentPage />} />
-          <Route path="create" element={<EnvironmentForm />} />
-          <Route path=":envId" element={<EnvironmentForm />} />
-        </Route>
-        <Route path=":appId/company">
-          <Route index element={<CompanyPage />} />
-          <Route path=":companyId" element={<CompanyForm />} />
-        </Route>
+          <Route path=":appId" element={<div></div>} />
 
-        <Route
-          path=":appId/microfrontend-playground"
-          element={<MicrofrontendPlayground />}
-        />
+          <Route path=":appId/chat" element={<Chat />}>
+            <Route path=":chat_id" element={<Chat />} />
+          </Route>
+          <Route path=":appId/backet/:minioId">
+            <Route index element={<MinioPage />} />
+            <Route path=":fileId" element={<MinioSinglePage />} />
+          </Route>
+          <Route path=":appId/projects">
+            <Route index element={<ProjectPage />} />
+            <Route path="create" element={<ProjectForm />} />
+            <Route path=":projectId" element={<ProjectForm />} />
+          </Route>
+          <Route path=":appId/redirects">
+            <Route index element={<RedirectPage />} />
+            <Route path="create" element={<RedirectFormPage />} />
+            <Route path=":redirectId" element={<RedirectFormPage />} />
+          </Route>
+          <Route path=":appId/sms-otp">
+            <Route index element={<SmsPage />} />
+            <Route path="create" element={<SmsFormPage />} />
+            <Route path=":redirectId" element={<SmsFormPage />} />
+          </Route>
+          <Route path=":appId/api-key">
+            <Route index element={<ApiKeyPage />} />
+            <Route path="create" element={<ApiKeysForm />} />
+            <Route path=":apiKeyId" element={<ApiKeysForm />} />
+          </Route>
+          <Route path=":appId/environments">
+            <Route index element={<EnvironmentPage />} />
+            <Route path="create" element={<EnvironmentForm />} />
+            <Route path=":envId" element={<EnvironmentForm />} />
+          </Route>
+          <Route path=":appId/company">
+            <Route index element={<CompanyPage />} />
+            <Route path=":companyId" element={<CompanyForm />} />
+          </Route>
 
-        <Route
-          path=":appId/page/:microfrontendId"
-          element={<Microfrontend />}
-        />
+          <Route
+            path=":appId/microfrontend-playground"
+            element={<MicrofrontendPlayground />}
+          />
 
-        <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-        <Route
-          path=":appId/report-setting/:reportSettingsId"
-          element={<ReportSettings />}
-        />
-        <Route
-          path=":appId/pivot-template/:pivotTemplateId"
-          element={<PivotTableView />}
-        />
+          <Route
+            path=":appId/page/:microfrontendId"
+            element={<Microfrontend />}
+          />
 
-        <Route path=":appId/user-page/:userMenuId">
-          <Route index element={<ClientUserPage />} />
-          <Route path="create" element={<ClientUserForm />} />
-          <Route path=":userId" element={<ClientUserForm />} />
-        </Route>
+          <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+          <Route
+            path=":appId/report-setting/:reportSettingsId"
+            element={<ReportSettings />}
+          />
+          <Route
+            path=":appId/pivot-template/:pivotTemplateId"
+            element={<PivotTableView />}
+          />
 
-        <Route path=":appId/permission/:clientId">
-          <Route index element={<PermissionDetail />} />
-          <Route path="role/:roleId" element={<RoleDetail />} />
-        </Route>
+          <Route path=":appId/user-page/:userMenuId">
+            <Route index element={<ClientUserPage />} />
+            <Route path="create" element={<ClientUserForm />} />
+            <Route path=":userId" element={<ClientUserForm />} />
+          </Route>
 
-        {/* <Route path="constructor/microfrontend">
+          <Route path=":appId/permission/:clientId">
+            <Route index element={<PermissionDetail />} />
+            <Route path="role/:roleId" element={<RoleDetail />} />
+          </Route>
+
+          {/* <Route path="constructor/microfrontend">
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
         </Route> */}
 
-        <Route path=":appId/microfrontend">
-          <Route index element={<MicrofrontendPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-          <Route path="github/create" element={<GithubMicrofrontendForm />} />
-        </Route>
+          <Route path=":appId/microfrontend">
+            <Route index element={<MicrofrontendPage />} />
+            <Route path="create" element={<MicrofrontendForm />} />
+            <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+            <Route path="github/create" element={<GithubMicrofrontendForm />} />
+          </Route>
 
-        <Route path=":appId/openfaas-functions">
-          <Route index element={<OpenFaasFunctionPage />} />
-          <Route path="create" element={<OpenFaasFunctionForm />} />
-          <Route path=":functionId" element={<OpenFaasFunctionForm />} />
-          <Route path="github/create" element={<GithubMicrofrontendForm />} />
-        </Route>
+          <Route path=":appId/openfaas-functions">
+            <Route index element={<OpenFaasFunctionPage />} />
+            <Route path="create" element={<OpenFaasFunctionForm />} />
+            <Route path=":functionId" element={<OpenFaasFunctionForm />} />
+            <Route path="github/create" element={<GithubMicrofrontendForm />} />
+          </Route>
 
-        <Route path=":appId/tables">
-          <Route index element={<TablesPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
-        </Route>
+          <Route path=":appId/tables">
+            <Route index element={<TablesPage />} />
+            <Route path="create" element={<MicrofrontendForm />} />
+            {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+          </Route>
 
-        <Route path=":appId/resources">
-          <Route path="create" element={<ResourceDetail />} />
-          <Route path=":resourceId/:resourceType" element={<ResourceDetail />} />
+          <Route path=":appId/resources">
+            <Route path="create" element={<ResourceDetail />} />
+            <Route path=":resourceId/:resourceType" element={<ResourceDetail />} />
 
-          <Route path="elt">
-            <Route path="connections">
-              <Route index element={<Connections />} />
-              {/* <Route path="create" element={<ConnectionCreate />} /> */}
-              {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
-            </Route>
-            {/* <Route path="sources">
+            <Route path="elt">
+              <Route path="connections">
+                <Route index element={<Connections />} />
+                {/* <Route path="create" element={<ConnectionCreate />} /> */}
+                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
+              </Route>
+              {/* <Route path="sources">
                 <Route index element={<Sources />} />
                 <Route path="create" element={<SourceDetail />} />
                 <Route path=":sourceId" element={<SourceDetail />} />
@@ -330,284 +331,281 @@ const Router = () => {
                 <Route path="create" element={<DestinationDetail />} />
                 <Route path=":destinationId" element={<DestinationDetail />} />
               </Route> */}
-          </Route>
-        </Route>
-
-        <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
-          <Route index element={<DatabasePage />} />
-          <Route path="configuration" element={<DatabaseConfiguration />} />
-        </Route>
-        <Route path=":appId/scenario/:categoryId">
-          <Route index element={<Scenarios />} />
-          <Route path=":scenarioId" element={<Scenarios />} />
-        </Route>
-        <Route path=":appId/micro-service">
-          <Route index element={<MicroservicePage />} />
-        </Route>
-        <Route path=":appId/email-setting">
-          <Route index element={<EmailPage />} />
-          <Route path="create" element={<EmailDetailPage />} />
-          <Route path=":emailId" element={<EmailDetailPage />} />
-        </Route>
-        <Route path=":appId/project-setting">
-          <Route index element={<ProjectSettingPage />} />
-        </Route>
-        <Route path=":appId/function">
-          <Route path=":functionId" element={<FunctionsDetail />} />
-        </Route>
-        <Route path=":appId/notification/:categoryId">
-          <Route index element={<NotificationPage />} />
-          <Route path="create" element={<NotificationForm />} />
-          <Route path=":notificationId" element={<NotificationForm />} />
-        </Route>
-        <Route path=":appId/queries">
-          <Route path=":queryId" element={<Queries />} />
-          <Route path="create" element={<Queries />} />
-        </Route>
-        <Route path=":appId/api-endpoints">
-          <Route path=":categoryId">
-            <Route path="create" element={<ApiEndpoint />} />
-            <Route path=":endpointId">
-              <Route index element={<ApiEndpoint />} />
-              <Route path="preview" element={<ApiEndpointDetail />} />
             </Route>
           </Route>
-        </Route>
-        <Route path=":appId/variable-resources">
-          <Route index element={<VariableResources />} />
-          <Route path="create" element={<VariableResourceForm />} />
-          <Route path=":apiKeyId" element={<VariableResourceForm />} />
-        </Route>
 
-        <Route path=":appId/docs">
-          <Route path="note/:folderId">
-            <Route path="create" element={<Note />} />
-            <Route path=":noteId" element={<Note />} />
+          <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
+            <Route index element={<DatabasePage />} />
+            <Route path="configuration" element={<DatabaseConfiguration />} />
           </Route>
-          <Route path="template/:folderId">
-            <Route path="create" element={<Template />} />
-            <Route path=":templateId" element={<Template />} />
+          <Route path=":appId/scenario/:categoryId">
+            <Route index element={<Scenarios />} />
+            <Route path=":scenarioId" element={<Scenarios />} />
           </Route>
+          <Route path=":appId/micro-service">
+            <Route index element={<MicroservicePage />} />
+          </Route>
+          <Route path=":appId/email-setting">
+            <Route index element={<EmailPage />} />
+            <Route path="create" element={<EmailDetailPage />} />
+            <Route path=":emailId" element={<EmailDetailPage />} />
+          </Route>
+          <Route path=":appId/project-setting">
+            <Route index element={<ProjectSettingPage />} />
+          </Route>
+          <Route path=":appId/function">
+            <Route path=":functionId" element={<FunctionsDetail />} />
+          </Route>
+          <Route path=":appId/notification/:categoryId">
+            <Route index element={<NotificationPage />} />
+            <Route path="create" element={<NotificationForm />} />
+            <Route path=":notificationId" element={<NotificationForm />} />
+          </Route>
+          <Route path=":appId/queries">
+            <Route path=":queryId" element={<Queries />} />
+            <Route path="create" element={<Queries />} />
+          </Route>
+          <Route path=":appId/api-endpoints">
+            <Route path=":categoryId">
+              <Route path="create" element={<ApiEndpoint />} />
+              <Route path=":endpointId">
+                <Route index element={<ApiEndpoint />} />
+                <Route path="preview" element={<ApiEndpointDetail />} />
+              </Route>
+            </Route>
+          </Route>
+          <Route path=":appId/variable-resources">
+            <Route index element={<VariableResources />} />
+            <Route path="create" element={<VariableResourceForm />} />
+            <Route path=":apiKeyId" element={<VariableResourceForm />} />
+          </Route>
+
+          <Route path=":appId/docs">
+            <Route path="note/:folderId">
+              <Route path="create" element={<Note />} />
+              <Route path=":noteId" element={<Note />} />
+            </Route>
+            <Route path="template/:folderId">
+              <Route path="create" element={<Template />} />
+              <Route path=":templateId" element={<Template />} />
+            </Route>
+          </Route>
+
+          <Route
+            path=":appId/object/:tableSlug"
+            element={<ReloadWrapper component={ObjectsPage} />}
+          />
+
+          <Route
+            path=":appId/object/:tableSlug/create/:formId"
+            element={
+              <KeepAliveWrapper>
+                <ObjectsFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+          <Route
+            path=":appId/object/:tableSlug/:id"
+            element={
+              <KeepAliveWrapper>
+                <ObjectsFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+
+          <Route path="*" element={<Navigate to={redirectLink} />} />
         </Route>
 
-        <Route
-          path=":appId/object/:tableSlug"
-          element={<ReloadWrapper component={ObjectsPage} />}
-        />
-
-        <Route
-          path=":appId/object/:tableSlug/create/:formId"
-          element={
-            <KeepAliveWrapper>
-              <ObjectsFormPage />
-            </KeepAliveWrapper>
-          }
-        />
-        <Route
-          path=":appId/object/:tableSlug/:id"
-          element={
-            <KeepAliveWrapper>
-              <ObjectsFormPage />
-             </KeepAliveWrapper>
-          }
-        />
-
-        <Route path="*" element={<Navigate to={redirectLink} />} />
-      </Route>
-
-      {/* ---------SETTINGS APP---------------- */}
-
-      <Route path="settings" element={<SettingsLayout favicon={favicon} />}>
-        <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
-        <Route path="constructor/apps" element={<AppsPage />} />
-        <Route path="constructor/apps/create" element={<AppsForm />} />
-        <Route path="constructor/apps/:appId" element={<AppsForm />} />
-        {/* 
+        <Route path="settings">
+          <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
+          <Route path="constructor/apps" element={<AppsPage />} />
+          <Route path="constructor/apps/create" element={<AppsForm />} />
+          <Route path="constructor/apps/:appId" element={<AppsForm />} />
+          {/* 
         <Route path="constructor/microfrontend">
           <Route index element={<MicrofrontendPage />} />
           <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} />
         </Route> */}
 
-        <Route path="constructor/tables">
-          <Route index element={<TablesPage />} />
-          {/* <Route path="create" element={<MicrofrontendForm />} />
+          <Route path="constructor/tables">
+            <Route index element={<TablesPage />} />
+            {/* <Route path="create" element={<MicrofrontendForm />} />
           <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
+          </Route>
+
+          {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
+          <Route
+            path="constructor/apps/:appId/objects/create"
+            element={<ConstructorTablesFormPage />}
+          />
+          <Route
+            path="constructor/tables/create"
+            element={<ConstructorTablesFormPage />}
+          />
+          <Route
+            path="constructor/apps/:appId/objects/:id/:tableSlug"
+            element={<ConstructorTablesFormPage />}
+          />
+          <Route
+            path="constructor/tables/:id/:tableSlug"
+            element={<ConstructorTablesFormPage />}
+          />
+          <Route
+            path="auth/users"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <UsersPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/users/create"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                {/* <UsersForm /> */}
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/users/:userId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <UsersForm />
+              </Suspense>
+            }
+          />
+
+          {/* -------------AUTH MATRIX------------ */}
+
+          <Route
+            path="auth/matrix/profile/crossed"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <Profile />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="auth/matrix/:projectId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <AuthMatrix />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/platform/:platformId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ClientPlatform />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/client-type/:typeId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <ClientType />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <CrossedPage />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/user/create"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <UsersForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/user/:userId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <UsersForm />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/role/create"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <RolesForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/role/:roleId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <RolesForm />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/create"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <IntegrationsForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <IntegrationsForm />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId/sessions"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <SessionsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix_v2"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <MatrixPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix_v2/:typeId/:platformId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <MatrixDetail />
+              </Suspense>
+            }
+          />
+          <Route
+            path="auth/matrix_v2/role/:roleId/:typeId"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <MatrixRolePage />
+              </Suspense>
+            }
+          />
         </Route>
-
-        {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
-        <Route
-          path="constructor/apps/:appId/objects/create"
-          element={<ConstructorTablesFormPage />}
-        />
-        <Route
-          path="constructor/tables/create"
-          element={<ConstructorTablesFormPage />}
-        />
-        <Route
-          path="constructor/apps/:appId/objects/:id/:tableSlug"
-          element={<ConstructorTablesFormPage />}
-        />
-        <Route
-          path="constructor/tables/:id/:tableSlug"
-          element={<ConstructorTablesFormPage />}
-        />
-        <Route
-          path="auth/users"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <UsersPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/users/create"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              {/* <UsersForm /> */}
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/users/:userId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <UsersForm />
-            </Suspense>
-          }
-        />
-
-        {/* -------------AUTH MATRIX------------ */}
-
-        <Route
-          path="auth/matrix/profile/crossed"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <Profile />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="auth/matrix/:projectId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <AuthMatrix />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/platform/:platformId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <ClientPlatform />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/client-type/:typeId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <ClientType />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <CrossedPage />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/user/create"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <UsersForm />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/user/:userId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <UsersForm />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/role/create"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <RolesForm />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/role/:roleId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <RolesForm />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/create"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <IntegrationsForm />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <IntegrationsForm />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId/sessions"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <SessionsPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix_v2"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <MatrixPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix_v2/:typeId/:platformId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <MatrixDetail />
-            </Suspense>
-          }
-        />
-        <Route
-          path="auth/matrix_v2/role/:roleId/:typeId"
-          element={
-            <Suspense fallback={<PageFallback />}>
-              <MatrixRolePage />
-            </Suspense>
-          }
-        />
       </Route>
 
-      {/* ---------ANALYTICS APP---------------- */}
-
-      <Route path="analytics" element={<AnalyticsLayout />}>
+      {/* <Route path="analytics" element={<AnalyticsLayout />}>
         <Route index element={<Navigate to={"/analytics/dashboard"} />} />
 
         <Route path="dashboard" element={<DashboardList />} />
@@ -676,7 +674,8 @@ const Router = () => {
             />
           }
         />
-      </Route>
+      </Route> */}
+
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />

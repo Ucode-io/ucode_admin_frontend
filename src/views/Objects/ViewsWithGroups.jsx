@@ -149,10 +149,9 @@ const ViewsWithGroups = ({
   const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
     navigate(url);
   };
-  console.log("Object.values(fieldsMap)", Object.values(fieldsMap));
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -229,6 +228,7 @@ const ViewsWithGroups = ({
           setIsChanged={setIsChanged}
           selectedView={selectedView}
           setSelectedView={setSelectedView}
+          menuItem={menuItem}
         />
         {view?.type === "FINANCE CALENDAR" && (
           <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
@@ -607,7 +607,7 @@ const ViewsWithGroups = ({
 const queryGenerator = (groupField, filters = {}) => {
   if (!groupField)
     return {
-      queryFn: () => {},
+      queryFn: () => { },
     };
 
   const filterValue = filters[groupField.slug];

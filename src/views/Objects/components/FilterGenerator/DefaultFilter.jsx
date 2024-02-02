@@ -28,6 +28,7 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
       additional_ids: value,
     },
     queryParams: {
+      enabled: !!debouncedValue,
       onSuccess: (res) => {
         setData(res?.data?.response ?? [])
       },

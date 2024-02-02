@@ -289,7 +289,7 @@ const NewRelationSection = ({
       enabled: !!relatedTableSlug,
     }
   );
-    console.log('datadata', data);
+
   return (
     <>
       {selectedManyToManyRelation && (

@@ -152,7 +152,7 @@ const ViewsWithGroups = ({
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}`;
     navigate(url);
   };
-  console.log("Object.values(fieldsMap)", Object.values(fieldsMap));
+
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -166,7 +166,7 @@ const ViewsWithGroups = ({
         el?.type === "FORMULA_FRONTEND"
     );
   }, [view, fieldsMap]);
-  console.log("columnsForSearch", columnsForSearch);
+
 
   const selectAll = () => {
     setCheckedColumns(

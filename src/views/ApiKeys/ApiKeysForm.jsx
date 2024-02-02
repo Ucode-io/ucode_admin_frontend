@@ -98,6 +98,8 @@ const ApiKeysForm = () => {
       });
   };
 
+  console.log("watch", mainForm.watch())
+
   // Export to Json
   // const exportToJson = async () => {
   //   await exportToJsonService
@@ -202,22 +204,66 @@ const ApiKeysForm = () => {
                 required
               />
             </FRow>
-           {apiKeyId && (
-             <FRow
-             label={"App ID"}
-             componentClassName="flex gap-2 align-center"
-             required
-           >
-             <HFTextField
-               disabledHelperText
-               name="app_id"
-               control={mainForm.control}
-               fullWidth
-               required
-               disabled
-             />
-           </FRow>
-           )}
+            {apiKeyId && (
+              <>
+                <FRow
+                  label={"App ID"}
+                  componentClassName="flex gap-2 align-center"
+                  required
+                >
+                  <HFTextField
+                    disabledHelperText
+                    name="app_id"
+                    control={mainForm.control}
+                    fullWidth
+                    required
+                    disabled
+                  />
+                </FRow>
+                <FRow
+                  label="Monthly limit"
+                  componentClassName="flex gap-2 align-center"
+                  required
+                >
+                  <HFTextField
+                    disabledHelperText
+                    name="monthly_request_limit"
+                    control={mainForm.control}
+                    fullWidth
+                    required
+                    disabled
+                  />
+                </FRow>
+                <FRow
+                  label="RPS limit"
+                  componentClassName="flex gap-2 align-center"
+                  required
+                >
+                  <HFTextField
+                    disabledHelperText
+                    name="rps_limit"
+                    control={mainForm.control}
+                    fullWidth
+                    required
+                    disabled
+                  />
+                </FRow>
+                <FRow
+                  label="Used count"
+                  componentClassName="flex gap-2 align-center"
+                  required
+                >
+                  <HFTextField
+                    disabledHelperText
+                    name="used_count"
+                    control={mainForm.control}
+                    fullWidth
+                    required
+                    disabled
+                  />
+                </FRow>
+              </>
+            )}
             {/* <FRow
               label={"Client type"}
               componentClassName="flex gap-2 align-center"

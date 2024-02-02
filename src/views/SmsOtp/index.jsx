@@ -1,6 +1,6 @@
-import {Delete} from "@mui/icons-material";
-import {useSelector} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import { Delete } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -14,8 +14,9 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import smsOtpService from "../../services/auth/smsOtpService";
+import HeaderSettings from "../../components/HeaderSettings";
 
 const SmsPage = () => {
   const navigate = useNavigate();
@@ -62,19 +63,10 @@ const SmsPage = () => {
 
   return (
     <div>
-      <FiltersBlock>
-        <div
-          className="p-1"
-          style={{
-            display: "flex",
-            columnGap: "16px",
-            alignItems: "center",
-          }}
-        >
-          <h2>Sms otp setting</h2>
-          <SearchInput />
-        </div>
-      </FiltersBlock>
+      <HeaderSettings
+        title={"Sms OTP"}
+        line={false}
+      />
 
       <TableCard>
         <CTable disablePagination removableHeight={140}>

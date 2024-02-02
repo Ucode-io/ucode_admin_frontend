@@ -1,7 +1,7 @@
-import {Delete} from "@mui/icons-material";
-import {useState} from "react";
-import {useSelector} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import { Delete } from "@mui/icons-material";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -12,12 +12,12 @@ import {
 } from "../../../components/CTable";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import {useTablesListQuery} from "../../../services/constructorTableService";
+import { useTablesListQuery } from "../../../services/constructorTableService";
 import HeaderSettings from "../../../components/HeaderSettings";
 import SearchInput from "../../../components/SearchInput";
 import FiltersBlock from "../../../components/FiltersBlock";
 
-const TablesPage = ({}) => {
+const TablesPage = ({ }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchText, setSearchText] = useState("");
@@ -26,7 +26,7 @@ const TablesPage = ({}) => {
   const [modalLoader, setModalLoader] = useState();
   const projectId = useSelector((state) => state.auth.projectId);
 
-  const {data: tables, isLoading} = useTablesListQuery({
+  const { data: tables, isLoading } = useTablesListQuery({
     params: {
       search: searchText,
     },
@@ -54,7 +54,7 @@ const TablesPage = ({}) => {
   return (
     <>
       <div>
-        <HeaderSettings title={"Таблицы"} backButtonLink={-1} />
+        <HeaderSettings title={"Таблицы"} line={false} />
 
         <FiltersBlock>
           <div className="p-1">

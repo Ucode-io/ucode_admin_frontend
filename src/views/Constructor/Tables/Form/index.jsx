@@ -1,6 +1,6 @@
 import { Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -11,7 +11,7 @@ import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService from "../../../../services/constructorTableService";
+import constructorTableService, { useTableByIdQuery } from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
 import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
@@ -60,6 +60,10 @@ const ConstructorTablesFormPage = () => {
     },
     mode: "all",
   });
+  const values = useWatch({
+    control: mainForm?.control
+  })
+  console.log("values", values)
 
   // const list = useSelector((state) => state.constructorTable.list);
 
@@ -78,11 +82,20 @@ const ConstructorTablesFormPage = () => {
     }
   }, []);
 
+  const { isLoading } = useTableByIdQuery({
+    id: id,
+    queryParams: {
+      enabled: !!id,
+      onSuccess: (res) => {
+        mainForm.reset(res)
+        setLoader(false)
+      }
+    },
+  });
+
   const getData = async () => {
     setLoader(true);
-    const params = {};
 
-    const getTableData = constructorTableService.getById(id);
 
     const getViewRelations = await constructorViewRelationService.getList({
       table_slug: tableSlug,
@@ -108,7 +121,7 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([getActions, getViewRelations, getLayouts]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -116,7 +129,7 @@ const ConstructorTablesFormPage = () => {
         actions,
       };
 
-      mainForm.reset(data);
+      mainForm.reset({ ...values, ...data });
 
       await getRelationFields();
     } finally {

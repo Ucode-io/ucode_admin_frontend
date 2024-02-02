@@ -208,10 +208,11 @@ const ConstructorTablesFormPage = () => {
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], menuItem?.id);
+        navigate(-1);
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
   };
 
   const createConstructorTable = (data) => {
@@ -225,8 +226,8 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        navigate(-1);
         createType(res);
+        navigate(-1);
       })
       .catch(() => setBtnLoader(false));
   };

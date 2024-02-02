@@ -139,6 +139,7 @@ const TableRow = ({
                   {/* {rowIndex + 1} */}
                 </span>
 
+                <PermissionWrapperV2 tableSlug={tableSlug} type={'delete_all'}>
                 <Checkbox
                   className="table_multi_checkbox"
                   style={{
@@ -154,6 +155,7 @@ const TableRow = ({
                     changeSetDelete(row);
                   }}
                 />
+                </PermissionWrapperV2>
               </div>
             </CTableCell>
 

@@ -1,7 +1,7 @@
 import {Controller, useWatch} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
-import {Box} from "@mui/material";
+import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 
 const HFNumberField = ({
@@ -20,18 +20,19 @@ const HFNumberField = ({
   defaultValue = "",
   tabIndex,
   disabled,
+  newColumn,
+  field,
   type = "text",
   ...props
 }) => {
   const handleChange = (value, onChange) => {
     if (value.floatValue) {
       onChange(value?.floatValue ||0);
-      // isNewTableView && updateObject();
     } else {
       onChange("");
-      // isNewTableView && updateObject();
     }
   };
+  const regexValidation = field?.attributes?.validation;
 
   return (
     <Controller
@@ -40,7 +41,12 @@ const HFNumberField = ({
       defaultValue={defaultValue}
       rules={{
         required: required ? "This is a required field" : false,
-        ...rules,
+        validate: (value) => {
+          if (regexValidation && !new RegExp(regexValidation).test(value)) {
+            return field?.attributes?.validation_message; 
+          }
+          return true;
+        },
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
@@ -52,6 +58,7 @@ const HFNumberField = ({
                     border: "none",
                     display: "flex",
                     alignItems: "center",
+                    position: 'relative',
                   }
                 : disabled
                 ? {
@@ -59,12 +66,14 @@ const HFNumberField = ({
                     display: "flex",
                     alignItems: "center",
                     borderRadius: "4px",
+                    position: 'relative',
                   }
                 : {
                     background: isBlackBg ? "#2A2D34" : "",
                     color: isBlackBg ? "#fff" : "",
                     display: "flex",
                     alignItems: "center",
+                    position: 'relative',
                   }
             }
           >
@@ -86,6 +95,7 @@ const HFNumberField = ({
               }`}
               name={name}
               readOnly={disabled}
+              
               style={
                 isTransparent
                   ? {
@@ -100,10 +110,14 @@ const HFNumberField = ({
                       background: isBlackBg ? "#2A2D34" : "",
                       color: isBlackBg ? "#fff" : "",
                       outline: "none",
+                      border: error?.type === 'required' ? '1px solid red' : ''
                     }
               }
               {...props}
             />
+              {!disabledHelperText && error?.message && (
+              <FormHelperText sx={{position:'absolute', bottom: newColumn ? '-10px' : '-20px', left: '10px'}} error>{error?.message}</FormHelperText>
+              )}
 
             {disabled && (
               <Box

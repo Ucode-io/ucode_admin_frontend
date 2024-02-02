@@ -39,7 +39,7 @@ const HFCheckbox = ({
               margin: "8px 8px 8px 0",
               padding: 0,
             }}
-            checked={value ?? false}
+            checked={typeof value === 'string' ? (value === 'true' ? true : false) : value ?? false }
             autoFocus={tabIndex === 1}
             onChange={(_, val) => {
               onChange(val);

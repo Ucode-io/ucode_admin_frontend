@@ -193,6 +193,7 @@ const ImageUpload = ({
               style={{
                 display: "none",
               }}
+              accept=".jpg, .jpeg, .png, .gif"
               className="hidden"
               ref={inputRef}
               tabIndex={tabIndex}
@@ -258,6 +259,7 @@ const ImageUpload = ({
             autoFocus={tabIndex === 1}
             onChange={inputChangeHandler}
             disabled={disabled}
+            accept=".jpg, .jpeg, .png, .gif"
           />
           <UploadFileIcon
             style={{

@@ -11,7 +11,7 @@ import { showAlert } from "../../store/alert/alert.thunk";
 import constructorViewService from "../../services/constructorViewService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { generateGUID } from "../../utils/generateID";
-import { useRelationFieldUpdateMutation,  useRelationsCreateMutation } from "../../services/relationService";
+import { useRelationFieldUpdateMutation, useRelationsCreateMutation } from "../../services/relationService";
 import { transliterate } from "../../utils/textTranslater";
 import menuService from "../../services/menuService";
 
@@ -26,13 +26,13 @@ export default function FieldButton({
   setFieldData,
   setDrawerState,
   setDrawerStateField,
+  menuItem
 }) {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [searchParams, setSearchParams] = useSearchParams();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const [menuItem, setMenuItem] = useState(null);
   const { control, watch, setValue, reset, handleSubmit } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
@@ -45,17 +45,18 @@ export default function FieldButton({
     }
   };
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  // const [menuItem, setMenuItem] = useState(null);
+  // useEffect(() => {
+  //   if (searchParams.get("menuId")) {
+  //     menuService
+  //       .getByID({
+  //         menuId: searchParams.get("menuId"),
+  //       })
+  //       .then((res) => {
+  //         setMenuItem(res);
+  //       });
+  //   }
+  // }, []);
 
   const updateView = (column) => {
     constructorViewService
@@ -172,21 +173,21 @@ export default function FieldButton({
   }, [fieldData]);
 
   return (
-   <>
-     <CTableHeadCell  
-     style={{
-      padding: "0 4px",
-      position: "sticky",
-      right: "0",
-      backgroundColor: "#fff",
-      zIndex: "1",
-    }}
-    onClick={(e) => {
-      setFieldOptionAnchor(e.currentTarget);
-      setTarget(e.currentTarget);
-      setFieldData(null);
-    }}
-    >
+    <>
+      <CTableHeadCell
+        style={{
+          padding: "0 4px",
+          position: "sticky",
+          right: "0",
+          backgroundColor: "#fff",
+          zIndex: "1",
+        }}
+        onClick={(e) => {
+          setFieldOptionAnchor(e.currentTarget);
+          setTarget(e.currentTarget);
+          setFieldData(null);
+        }}
+      >
         <span
           style={{
             whiteSpace: "nowrap",
@@ -198,9 +199,9 @@ export default function FieldButton({
             backgroundColor: "#fff",
           }}
         >
-          <AddRoundedIcon style={{marginTop: '3px'}} />
+          <AddRoundedIcon style={{ marginTop: '3px' }} />
         </span>
-        </CTableHeadCell>
+      </CTableHeadCell>
       <FieldOptionModal anchorEl={fieldOptionAnchor} setAnchorEl={setFieldOptionAnchor} setFieldCreateAnchor={setFieldCreateAnchor} setValue={setValue} target={target} />
       {fieldCreateAnchor && (
         <FieldCreateModal
@@ -219,6 +220,6 @@ export default function FieldButton({
           handleOpenFieldDrawer={handleOpenFieldDrawer}
         />
       )}
-   </>
+    </>
   );
 }

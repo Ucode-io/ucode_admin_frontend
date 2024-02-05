@@ -41,7 +41,7 @@ const TableView = ({
   shouldGet,
   isTableView = false,
   selectedView,
-  reset = () => {},
+  reset = () => { },
   fieldsMap,
   isDocView,
   sortedDatas = [],
@@ -339,7 +339,7 @@ const TableView = ({
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
+              ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
             : "",
@@ -402,8 +402,8 @@ const TableView = ({
         item?.type === "LOOKUP"
           ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
           : Array.from(
-              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
-            ),
+            new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
+          ),
     }));
 
     tableData?.length &&
@@ -523,23 +523,23 @@ const TableView = ({
         )
         .join("&&");
 
-      const urlTemplate = view?.navigate?.url; 
+      const urlTemplate = view?.navigate?.url;
       let query = urlTemplate;
 
-  const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-  const matches = urlTemplate.match(variablePattern);
+      const matches = urlTemplate.match(variablePattern);
 
-  if (matches) {
-    matches.forEach(match => {
-      const variableName = match.slice(4, -2); 
-      const variableValue = row[variableName]; 
-      if (variableValue !== undefined) {
-        query = query.replace(match, variableValue);
+      if (matches) {
+        matches.forEach(match => {
+          const variableName = match.slice(4, -2);
+          const variableValue = row[variableName];
+          if (variableValue !== undefined) {
+            query = query.replace(match, variableValue);
+          }
+        });
       }
-    });
-  }
-    navigate(`${query}${params ? "?" + params : ""}`);
+      navigate(`${query}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
@@ -667,6 +667,7 @@ const TableView = ({
           }}
           isResizeble={true}
           navigateToForm={navigateToForm}
+          menuItem={menuItem}
           {...props}
         />
       </div>
@@ -699,6 +700,7 @@ const TableView = ({
           selectedTabIndex={selectedTabIndex}
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
+          menuItem={menuItem}
         />
       </Drawer>
 

@@ -34,6 +34,7 @@ const ViewTabSelector = ({
   setSelectedView,
   views = [],
   setTab,
+  menuItem
 }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
@@ -48,19 +49,7 @@ const ViewTabSelector = ({
   const { i18n } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
-    }
-  }, []);
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -139,7 +128,7 @@ const ViewTabSelector = ({
                   {view.type === "TREE" && <AccountTree className={style.icon} />}
                   {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
                   {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-                  {view.type === "TIMELINE" && <ClearAllIcon className={style.icon}/>}
+                  {view.type === "TIMELINE" && <ClearAllIcon className={style.icon} />}
                   <span>{(view?.attributes?.[`name_${i18n.language}`] ? view?.attributes?.[`name_${i18n.language}`] : view.type) ?? view?.name}</span>
 
                   {view?.attributes?.view_permission?.edit && (

@@ -54,6 +54,7 @@ const BoardObjectsFormPage = ({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
+  const [data, setData] = useState([])
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
@@ -64,12 +65,12 @@ const BoardObjectsFormPage = ({
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
 
@@ -98,6 +99,16 @@ const BoardObjectsFormPage = ({
         getFormData,
         getLayout,
       ]);
+
+
+      setData({
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setSections(sortSections(sections));
       setSummary(
         layout?.find((el) => el.is_default === true)?.summary_fields ?? []
@@ -146,6 +157,14 @@ const BoardObjectsFormPage = ({
           ...el.relation,
         })) ?? [];
 
+      setData({
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
@@ -245,6 +264,8 @@ const BoardObjectsFormPage = ({
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
+          menuItem={menuItem}
+          data={data}
         />
       </div>
       <Footer

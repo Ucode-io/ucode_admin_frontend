@@ -1,15 +1,15 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-import {applyDrag} from "../../../utils/applyDrag";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
-import {Container, Draggable} from "react-smooth-dnd";
-import {columnIcons} from "../../../utils/constants/columnIcons";
+import { applyDrag } from "../../../utils/applyDrag";
+import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
+import { Container, Draggable } from "react-smooth-dnd";
+import { columnIcons } from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
-import {useParams, useSearchParams} from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
 import { current } from "@reduxjs/toolkit";
@@ -19,15 +19,15 @@ export default function VisibleColumnsButtonRelationSection({
   fieldsMap,
   getAllData,
   selectedTabIndex,
-  refetch = () => {},
+  // refetch = () => { },
   data
 }) {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
-  const {id} = useParams();
+  const { i18n } = useTranslation();
+  const { id } = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -53,35 +53,36 @@ export default function VisibleColumnsButtonRelationSection({
     const computeTabs = result?.map((item, index) => ({
       ...item,
       attributes: {
-    
-        columns: index === selectedTabIndex ? datas : item?.relation?.columns ?? []}
+
+        columns: index === selectedTabIndex ? datas : item?.relation?.columns ?? []
+      }
     }))
 
     layoutService
       .update(
         {
-         ...data,
-        tabs: computeTabs
+          ...data,
+          tabs: computeTabs
         },
         tableSlug
       )
       .then(() => {
-        getAllData(); 
+        getAllData();
 
       })
       .finally(() => {
         setIsLoading(false);
-        refetch();
+        // refetch();
       });
 
 
-  };  
+  };
 
   const visibleFields = useMemo(() => {
-      return (
-        (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns )?.map((id) => fieldsMap[id])
-          ?.filter((el) => el?.type) ?? []
-      );
+    return (
+      (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.map((id) => fieldsMap[id])
+        ?.filter((el) => el?.type) ?? []
+    );
   }, [data?.tabs?.[selectedTabIndex]?.attributes?.columns, data?.tabs?.[selectedTabIndex]?.relation?.columns, fieldsMap]);
 
 
@@ -126,7 +127,7 @@ export default function VisibleColumnsButtonRelationSection({
         onClick={handleClick}
       >
         {isLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -237,7 +238,7 @@ export default function VisibleColumnsButtonRelationSection({
             </div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
             >
               {visibleFields?.map((column, index) => (
                 <Draggable key={column?.id}>
@@ -307,8 +308,8 @@ export default function VisibleColumnsButtonRelationSection({
                                 ? [...data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns, column?.id]
                                 : [column?.id]
                               : (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.filter(
-                                  (el) => el !== column?.id
-                                )
+                                (el) => el !== column?.id
+                              )
                           );
                         }}
                       />
@@ -380,8 +381,8 @@ export default function VisibleColumnsButtonRelationSection({
                               ? [...data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns, column?.id]
                               : [column?.id]
                             : (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.filter(
-                                (el) => el !== column?.id
-                              )
+                              (el) => el !== column?.id
+                            )
                         );
                       }}
                     />

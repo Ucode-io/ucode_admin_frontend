@@ -1,28 +1,28 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import {useQueryClient} from "react-query";
-import {useFieldArray, useForm} from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   useDefaultResourceMutation,
   useDefaultResourcesListQuery,
 } from "../../../../services/resourceDefaultService";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import Resource from "./Resource";
-import {CTable, CTableBody, CTableCell, CTableHead} from "../../../CTable";
+import { CTable, CTableBody, CTableCell, CTableHead } from "../../../CTable";
 import FiltersBlock from "../../../FiltersBlock";
 import HeaderSettings from "../../../HeaderSettings";
 import TableCard from "../../../TableCard";
-import {store} from "../../../../store";
-import {Button, Typography} from "@mui/material";
-import {showAlert} from "../../../../store/alert/alert.thunk";
-import {useDispatch} from "react-redux";
+import { store } from "../../../../store";
+import { Button, Typography } from "@mui/material";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { useDispatch } from "react-redux";
 
 const getResourceTypes = (resources) => {
   const resourceTypes = [];
   for (const [key, value] of Object.entries(resources?.resource_types || {})) {
     const resource_type_title = value;
     const resource_type = parseInt(key);
-    resourceTypes.push({resource_type, resource_type_title});
+    resourceTypes.push({ resource_type, resource_type_title });
   }
   return resourceTypes;
 };
@@ -51,25 +51,25 @@ const MicroservicePage = () => {
   const location = useLocation();
   const company = store.getState().company;
 
-  const {data: resources, isLoading} = useDefaultResourcesListQuery({
+  const { data: resources, isLoading } = useDefaultResourcesListQuery({
     params: {
       "project-id": company.projectId,
     },
   });
   const serviceResources = getServiceResources(resources);
   const resourceTypes = getResourceTypes(resources);
-  const {control, setValue, handleSubmit, watch} = useForm({
+  const { control, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       service_resources: serviceResources,
     },
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "service_resources",
   });
 
-  const {mutate: updateResource, isLoading: updateLoading} =
+  const { mutate: updateResource, isLoading: updateLoading } =
     useDefaultResourceMutation({
       onSuccess: () => {
         dispatch(showAlert("Success", "success"));
@@ -99,13 +99,11 @@ const MicroservicePage = () => {
     >
       <HeaderSettings
         title={"Microservice"}
-        disabledMenu={false}
         extraButtons={
           <Button variant="contained" type="submit">
             Save
           </Button>
         }
-        backButtonLink={-1}
         line={false}
       />
 

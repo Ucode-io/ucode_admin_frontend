@@ -1,6 +1,6 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {Box, FormHelperText, InputAdornment, TextField, Tooltip} from "@mui/material";
 import {Lock, Today} from "@mui/icons-material";
 import InputMask from "react-input-mask";
 import {useRef} from "react";
@@ -22,11 +22,40 @@ const CDatePicker = ({
   tabIndex,
   classes,
   placeholder,
+  required,
+  error,
+  newColumn = false
 }) => {
   const datePickerRef = useRef();
   return (
-    <DatePicker
+    <Box style={
+      isTransparent
+        ? {
+            background: "transparent",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            position: 'relative',
+          }
+        : disabled
+        ? {
+            background: "#DEDEDE",
+            display: "flex",
+            alignItems: "center",
+            borderRadius: "4px",
+            position: 'relative',
+          }
+        : {
+            background: isBlackBg ? "#2A2D34" : "",
+            color: isBlackBg ? "#fff" : "",
+            display: "flex",
+            alignItems: "center",
+            position: 'relative',
+          }
+    }>
+      <DatePicker
       disabled={disabled}
+      required={required}
       ref={datePickerRef}
       portal={document.body}
       render={(value, openCalendar, handleChange) => {
@@ -42,6 +71,7 @@ const CDatePicker = ({
             value={value ?? undefined}
             onChange={handleChange}
             disabled={disabled}
+            required={required}
           >
             {(InputProps) => (
               <TextField
@@ -61,14 +91,18 @@ const CDatePicker = ({
                     input: isBlackBg ? classes.input : "",
                   },
                   style: isTransparent
-                    ? {background: "transparent"}
-                    : disabled
+                    ? {
+                      background: "transparent",
+                      border: error?.message ? 'solid 1px red' : ''
+                    } : disabled
                     ? {
                         background: "#c0c0c039",
+                        border: error?.message ? 'solid 1px red' : ''
                       }
                     : {
                         background: isBlackBg ? "#2A2D34" : "",
                         color: isBlackBg ? "#fff" : "",
+                        border: error?.message ? 'solid 1px red' : ''
                       },
                   endAdornment: (
                     <InputAdornment position="end">
@@ -90,6 +124,7 @@ const CDatePicker = ({
                 }}
                 className={isFormEdit ? "custom_textfield" : ""}
               />
+
             )}
           </InputMask>
         );
@@ -104,7 +139,14 @@ const CDatePicker = ({
       value={new Date(value) || ""}
       onChange={(val) => onChange(val ? new Date(val) : "")}
     />
+    {error?.message && (
+      <FormHelperText sx={{position:'absolute', bottom: newColumn ? '-10px' : '-20px', left: '10px'}} error>{error?.message}</FormHelperText>
+    )}
+
+    </Box>
+
   );
 };
 
 export default CDatePicker;
+

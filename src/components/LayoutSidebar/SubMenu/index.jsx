@@ -26,6 +26,8 @@ import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import { useSearchParams } from "react-router-dom";
 import EnvironmentMenu from "../Components/EnvironmentMenu";
 import QuerySidebar from "../Components/Query/QuerySidebar";
+import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
+import ActivityFeedButton from "../Components/ActivityFeedButton";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -64,7 +66,6 @@ const SubMenu = ({
   //       });
   //   }
   // }, [searchParams]);
-
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
   const addPermission =
@@ -281,12 +282,15 @@ const SubMenu = ({
                     />
                   )}
                   {selectedApp?.id === adminId && (
-                    <EnvironmentMenu
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      level={2}
-                      menuItem={menuItem}
-                    />
+                    <>
+                      <EnvironmentMenu
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        level={2}
+                        menuItem={menuItem}
+                      />
+                      <ActivityFeedButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+                    </>
                   )}
                 </div>
               </Box>

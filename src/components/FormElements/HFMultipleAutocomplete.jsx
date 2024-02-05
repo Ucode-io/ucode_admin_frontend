@@ -237,6 +237,7 @@ const AutoCompleteElement = ({
                 : {
                     background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
+                    border: error?.message ? '1px solid red' : ''
                   },
 
               endAdornment: Boolean(appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6' || disabled) && (

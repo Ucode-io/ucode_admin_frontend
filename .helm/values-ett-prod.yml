@@ -78,7 +78,7 @@ service:
       name: https
 
 ingress:
-  enabled: true
+  enabled: false
   rules:
     - annotations:
         nginx.ingress.kubernetes.io/enable-cors: "true"

@@ -88,13 +88,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "v2.agents.easyto.travel"
+        - host: "v2.agent.easyto.travel"
           path: /
           servicePort: 80
       tls:
         - secretName: admin-frontend-tls
           hosts:
-            - "v2.agents.easyto.travel"
+            - "v2.agent.easyto.travel"
 
 resources:
   {}

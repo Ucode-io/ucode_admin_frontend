@@ -54,8 +54,8 @@ const ActionForm = ({
                   Automations
                 </p>
                 <TabList>
-                  <Tab>Настройки</Tab>
-                  <Tab>Событие</Tab>
+                  <Tab>Main</Tab>
+                  <Tab>Events</Tab>
                 </TabList>
               </div>
               <span onClick={handleClose}>

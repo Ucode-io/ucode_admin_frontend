@@ -418,11 +418,6 @@ const AutoCompleteElement = ({
               navigateToForm(tableSlug, "EDIT", localValue?.[0], {}, menuId);
             }}
           >
-            {/* <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{marginLeft: "10px", cursor: "pointer"}}
-              size={15}
-            /> */}
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -528,7 +523,7 @@ const AutoCompleteElement = ({
             onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
-            Создать новый
+           Create new
           </span>
         )}
         menuShouldScrollIntoView

@@ -90,7 +90,7 @@ const Permissions = ({
                     <CTableHead>
                       <CTableHeadRow>
                         <CTableCell rowSpan={2} w={200} className={styles.sticky_header}>
-                          Объекты
+                          Objects
                         </CTableCell>
                         <CTableCell colSpan={5}>
                           <Box display={"flex"} alignItems={"center"} justifyContent="center" columnGap={"4px"}>
@@ -107,7 +107,7 @@ const Permissions = ({
                       </CTableHeadRow>
                       <CTableHeadRow>
                         <CTableCell>
-                          Чтение
+                          Reading
                           <Checkbox
                             checked={allReadTrue ? true : false}
                             onChange={(e) => {
@@ -125,7 +125,7 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Добавление
+                          Adding
                           <Checkbox
                             checked={allWriteTrue ? true : false}
                             onChange={(e) => {
@@ -143,7 +143,7 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Изменение
+                          Editing
                           <Checkbox
                             checked={allUpdateTrue ? true : false}
                             onChange={(e) => {
@@ -161,7 +161,7 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Удаление
+                          Deleting
                           <Checkbox
                             checked={allDeleteTrue ? true : false}
                             onChange={(e) => {
@@ -179,7 +179,7 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Публичный
+                          Public
                           <Checkbox
                             checked={allPublicTrue ? true : false}
                             onChange={(e) => {
@@ -225,7 +225,7 @@ const Permissions = ({
                     <CTableHead>
                       <CTableHeadRow>
                         <CTableCell rowSpan={2} w={200}>
-                          Объекты
+                          Objects
                         </CTableCell>
                         <CTableCell colSpan={5} tex>
                           <Box sx={{justifyContent: "center", display: "flex"}}>
@@ -234,11 +234,11 @@ const Permissions = ({
                         </CTableCell>
                       </CTableHeadRow>
                       <CTableHeadRow>
-                        <CTableCell>Чтение</CTableCell>
-                        <CTableCell>Добавление</CTableCell>
-                        <CTableCell>Изменение</CTableCell>
-                        <CTableCell>Удаление</CTableCell>
-                        <CTableCell>Настройки</CTableCell>
+                        <CTableCell>Read</CTableCell>
+                        <CTableCell>Add</CTableCell>
+                        <CTableCell>Edit</CTableCell>
+                        <CTableCell>Delete</CTableCell>
+                        <CTableCell>Settings</CTableCell>
                       </CTableHeadRow>
                     </CTableHead>
                     <CTableBody columnsCount={6} dataLength={allMenu?.length}>

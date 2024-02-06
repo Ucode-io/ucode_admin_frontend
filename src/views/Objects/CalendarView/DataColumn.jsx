@@ -119,7 +119,7 @@ const DataColumn = ({ date, data, categoriesTab, parentTab, fieldsMap, view, wor
 
           <div className={`${styles.addButton}`} onClick={() => navigateToCreatePage(time)}>
             <Add color="" />
-            {queryGuid ? "Выбрать" : "Создать"}
+            {queryGuid ? "Choose" : "Create"}
           </div>
         </div>
       ))}

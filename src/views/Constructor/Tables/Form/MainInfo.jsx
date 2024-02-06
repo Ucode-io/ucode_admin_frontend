@@ -179,7 +179,7 @@ const MainInfo = ({control, watch}) => {
                 margin: "10px 0",
               }}
             >
-              <FRow label="Тип пользователья" />
+              <FRow label="User type" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.client_type_id"
@@ -197,7 +197,7 @@ const MainInfo = ({control, watch}) => {
                 margin: "10px 0",
               }}
             >
-              <FRow label="Роли" />
+              <FRow label="Roles" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.role_id"
@@ -215,7 +215,7 @@ const MainInfo = ({control, watch}) => {
                 margin: "10px 0",
               }}
             >
-              <FRow label="Логин" />
+              <FRow label="Login" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.login"
@@ -232,7 +232,7 @@ const MainInfo = ({control, watch}) => {
                 margin: "10px 0",
               }}
             >
-              <FRow label="Пароль" />
+              <FRow label="Password" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.password"

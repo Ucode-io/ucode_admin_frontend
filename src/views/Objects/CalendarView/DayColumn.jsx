@@ -98,7 +98,7 @@ const DayColumn = ({
             onClick={() => navigateToCreatePage(time)}
           >
             <Add color="" />
-            {queryGuid ? "Выбрать" : "Создать"}
+            {queryGuid ? "Choose" : "Create"}
           </div>
         </div>
       ))}

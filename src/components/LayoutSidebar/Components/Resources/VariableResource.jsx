@@ -47,7 +47,7 @@ const VariableResources = ({control}) => {
         </div>
 
         <div className={styles.summaryButton} onClick={appendVariable}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ Create new</button>
         </div>
       </Box>
     </>

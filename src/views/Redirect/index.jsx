@@ -125,7 +125,7 @@ const RedirectPage = () => {
               onClick={navigateToCreateForm}
             >
               <Add />
-              Добавить
+              Add
             </SecondaryButton>
           </Container>
         </div>

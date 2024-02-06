@@ -739,7 +739,7 @@ const MatrixRolePage = () => {
                                           })
                                     }
                                   >
-                                    Добавить новое условия
+                                    Add new condition
                                   </SecondaryButton>
                                   <PrimaryButton
                                     disabled={!autoFilterFields.length}

@@ -710,7 +710,7 @@ export default function PivotTableView() {
           onClick={() => showModal("add")}
         >
           <AddIcon />
-          Добавить
+          Add
         </SecondaryButton>
         <SecondaryButton
           disabled={!activeClickActionTabId}
@@ -718,7 +718,7 @@ export default function PivotTableView() {
           onClick={() => showModal("edit")}
         >
           <Edit />
-          Изменить
+          Edit
         </SecondaryButton>
         <SecondaryButton
           disabled={!activeClickActionTabId}
@@ -726,7 +726,7 @@ export default function PivotTableView() {
           onClick={() => linkRefetch()}
         >
           <ArrowCircleDownIcon />
-          Скачать
+          Download
         </SecondaryButton>
       </div>
       <PivotTable

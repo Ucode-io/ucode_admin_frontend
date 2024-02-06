@@ -491,7 +491,7 @@ const NewProfilePanel = ({
 
             {permissions?.project_settings_button && (
               <ProfileItem
-                text={"Настройки"}
+                text={"Settings"}
                 onClick={(e) => {
                   closeMenu(e);
                   navigate(`/main/${appId}/project-setting`);

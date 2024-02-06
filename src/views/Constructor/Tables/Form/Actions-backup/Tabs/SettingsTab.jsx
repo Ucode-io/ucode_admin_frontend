@@ -168,9 +168,9 @@ const SettingsTab = ({
               <HFSelect
                 control={control}
                 options={[
-                  { label: "Создать", value: "create" },
-                  { label: "Изменить", value: "update" },
-                  { label: "Удалить", value: "delete" },
+                  { label: "Create", value: "create" },
+                  { label: "Edit", value: "update" },
+                  { label: "Delete", value: "delete" },
                 ]}
                 name="action"
                 style={{ width: "50%" }}
@@ -217,7 +217,7 @@ const SettingsTab = ({
                   }
                 >
                   <Add />
-                  Добавить условия
+                  Add conditions
                 </SecondaryButton>
               </div>
             </div>
@@ -232,9 +232,9 @@ const SettingsTab = ({
                     <HFSelect
                       control={control}
                       options={[
-                        { label: "Создать объект", value: "create" },
-                        { label: "Изменить объект", value: "update" },
-                        { label: "Удалить объект", value: "delete" },
+                        { label: "Create object", value: "create" },
+                        { label: "Edit object", value: "update" },
+                        { label: "Delete object", value: "delete" },
                       ]}
                       name={`after.${index}.action`}
                       placeholder="Действие"
@@ -243,7 +243,7 @@ const SettingsTab = ({
                       control={control}
                       options={tables}
                       name={`after.${index}.table`}
-                      placeholder="Действие"
+                      placeholder="Action"
                     />
                   </div>
                   <SettingsFormRow
@@ -265,13 +265,13 @@ const SettingsTab = ({
                 }
               >
                 <Add />
-                Добавить
+                Add
               </SecondaryButton>
             </div>
           </div>
         </div>
         <div className={cls.save_btn}>
-          <PrimaryButton type="submit">Сохранить</PrimaryButton>
+          <PrimaryButton type="submit">Save</PrimaryButton>
         </div>
       </form>
     </div>

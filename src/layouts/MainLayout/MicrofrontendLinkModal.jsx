@@ -177,7 +177,7 @@ const MicrofrontendLinkModal = ({
               Add params
             </Button>
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" loading={loading} />
+              <SaveButton title="Add" type="submit" loading={loading} />
             </div>
           </form>
         </Card>

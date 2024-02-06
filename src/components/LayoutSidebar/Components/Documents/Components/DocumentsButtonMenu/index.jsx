@@ -50,7 +50,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Note"
+              title="Add Note"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/${element.id}/note/create`);
@@ -63,7 +63,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Template"
+              title="Add Template"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/template/${element.id}/create`);
@@ -76,7 +76,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Wiki"
+              title="Add Wiki"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/note/${element.id}/create`);
@@ -85,7 +85,7 @@ const DocumentButtonMenu = ({
             />
             <MenuItemComponent
               icon={<CreateNewFolderIcon size={13} />}
-              title="Добавить папку"
+              title="Add folder"
               onClick={(e) => {
                 e.stopPropagation();
                 openNoteFolderModal(element, "CREATE");
@@ -94,7 +94,7 @@ const DocumentButtonMenu = ({
             />
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
+              title="Delete folder"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteNoteFolder(element?.id);
@@ -103,7 +103,7 @@ const DocumentButtonMenu = ({
             />
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить папку"
+              title="Edit folder"
               onClick={(e) => {
                 e.stopPropagation();
                 openNoteFolderModal(element, "EDIT");
@@ -117,7 +117,7 @@ const DocumentButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить Note"
+                title="Delete Note"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteNoteFolder({ id: element.id });
@@ -131,7 +131,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<Delete size={13} />}
-              title="Удалить Template"
+              title="Delete Template"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteTemplateFolder({ id: element.id });

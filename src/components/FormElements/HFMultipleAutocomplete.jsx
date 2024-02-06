@@ -378,7 +378,7 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
       </form>
       <div className={styles.submit_btn}>
         <PrimaryButton onClick={handleSubmit(onSubmit)}>
-          Добавить
+          Add
           {loader ? (
             <span className={styles.btn_loader}>
               <RippleLoader size="btn_size" height="20px" />

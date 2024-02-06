@@ -175,7 +175,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
           onChange={(e) => inputChangeHandler(e)}
         />
         <CreateButton
-          title="Создать новый"
+          title="Create new"
           onClick={() => {
             navigateToForm(relation.relatedTable, "CREATE", null, {});
             closeModal();

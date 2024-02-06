@@ -1,9 +1,9 @@
-import {numberWithSpaces} from "@/utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {IconButton, InputAdornment, TextField, Tooltip} from "@mui/material";
-import {Parser} from "hot-formula-parser";
-import {useEffect, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Parser } from "hot-formula-parser";
+import { useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 
 const parser = new Parser();
@@ -39,26 +39,21 @@ const NewCHFFormulaField = ({
   });
 
   const updateValue = () => {
-    let computedFormula = formula;
     const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
     fieldsListSorted?.forEach((field) => {
       let value = values?.[field?.slug] ?? 0;
       if (typeof value === "string") value = `${value}`;
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+      formula = formula.replaceAll(`${field.slug}`, value);
     });
-    const {error, result} = parser?.parse(computedFormula);
+    const {error, result} = parser?.parse(formula);
 
-    let newValue = error ?? result;
+    let newValue = result ?? error;
     if (newValue !== currentValue) setFormValue(name, newValue);
   };
 
-  // useDebouncedWatch(updateValue, [values], 300);
+  useDebouncedWatch(updateValue, [values], 300);
 
-  // useEffect(() => {
-  //   updateValue();
-  // }, []);
 
   return (
     <Controller
@@ -122,7 +117,6 @@ const NewCHFFormulaField = ({
                     color={formulaIsVisible ? "primary" : "default"}
                     onClick={() => setFormulaIsVisible((prev) => !prev)}
                   >
-                    {/* <IconGenerator icon="square-root-variable.svg" size={15} /> */}
                     <FunctionsIcon />
                   </IconButton>
                 </Tooltip>

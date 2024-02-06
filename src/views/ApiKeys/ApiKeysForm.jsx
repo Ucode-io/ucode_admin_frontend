@@ -1,28 +1,26 @@
 import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tabs } from "react-tabs";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
+import ActivityFeedTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/ActivityFeedTable";
+import PageFallback from "../../components/PageFallback";
+import apiKeyService from "../../services/apiKey.service";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
-import listToOptions from "../../utils/listToOptions";
-import apiKeyService from "../../services/apiKey.service";
-import PageFallback from "../../components/PageFallback";
 import { store } from "../../store";
 
 const ApiKeysForm = () => {
   const { appId, apiKeyId } = useParams();
   const navigate = useNavigate();
-  const [search, setSearch] = useSearchParams();
+  const [selectedTab, setSelectedTab] = useState(0);
   const [btnLoader, setBtnLoader] = useState();
   const [role, setRole] = useState([]);
   const [loader, setLoader] = useState(false);
@@ -37,6 +35,8 @@ const ApiKeysForm = () => {
       role_id: authStore.roleInfo.id,
     },
   });
+
+  const apiKey = mainForm.getValues("app_id")
 
   const createApp = (data) => {
     setBtnLoader(true);
@@ -98,52 +98,11 @@ const ApiKeysForm = () => {
       });
   };
 
-  console.log("watch", mainForm.watch())
-
-  // Export to Json
-  // const exportToJson = async () => {
-  //   await exportToJsonService
-  //     .postToJson({
-  //       table_ids: ids,
-  //     })
-  //     .then((res) => {
-  //       download({
-  //         link: "https://" + res?.link,
-  //         fileName: res?.link.split("/").pop(),
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.log("exportToJson error", err);
-  //     });
-  // };
-
-  // const inputChangeHandler = (e) => {
-  //   const file = e.target.files[0];
-
-  //   const data = new FormData();
-  //   data.append("file", file);
-
-  //   fileService.upload(data).then((res) => {
-  //     fileSend(res?.filename);
-  //   });
-  // };
-
-  // const fileSend = (value) => {
-  //   exportToJsonService.uploadToJson({
-  //     file_name: value,
-  //     app_id: appId,
-  //   });
-  // };
 
   useEffect(() => {
     getClientTypeList();
-    // if (appId) {
-    //   // getData();
-    //   // getApp();
-    // } else {
-    //   setLoader(false);
-    // }
   }, []);
+
   useEffect(() => {
     if (mainForm.watch("client_type_id")) {
       getRoleList();
@@ -156,13 +115,6 @@ const ApiKeysForm = () => {
     }
   }, [apiKeyId]);
 
-  const computedClientTypes = useMemo(() => {
-    return listToOptions(clientType?.response, "name", "guid");
-  }, [clientType?.response]);
-
-  const computedRoles = useMemo(() => {
-    return listToOptions(role?.response, "name", "guid");
-  }, [role?.response]);
 
   const onSubmit = (data) => {
     if (apiKeyId) updateApp(data);
@@ -174,141 +126,121 @@ const ApiKeysForm = () => {
   return (
     <div>
       <Tabs
-        selectedIndex={Number(search.get("tab") ?? 0)}
-        onSelect={(index) => setSearch({ tab: index })}
-        direction={"ltr"}
-        style={{ height: "100vh", position: "relative" }}
+        selectedIndex={selectedTab} direction={"ltr"}
       >
         <HeaderSettings
           title="Приложение"
           backButtonLink={-1}
           subtitle={appId ? mainForm.watch("name") : "Новый"}
-        ></HeaderSettings>
-
-        <form
-          onSubmit={mainForm.handleSubmit(onSubmit)}
-          className="p-2"
-          style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
         >
-          <FormCard title="Детали" maxWidth={500}>
-            <FRow
-              label={"Названия"}
-              componentClassName="flex gap-2 align-center"
-              required
-            >
-              <HFTextField
-                disabledHelperText
-                name="name"
-                control={mainForm.control}
-                fullWidth
+          <TabList>
+            <Tab onClick={() => setSelectedTab(0)}>Api Key</Tab>
+            <Tab onClick={() => setSelectedTab(1)}>Log</Tab>
+          </TabList>
+        </HeaderSettings>
+        <TabPanel>
+          <form
+            onSubmit={mainForm.handleSubmit(onSubmit)}
+            className="p-2"
+            style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
+          >
+            <FormCard title="Детали" maxWidth={500}>
+              <FRow
+                label={"Названия"}
+                componentClassName="flex gap-2 align-center"
                 required
-              />
-            </FRow>
-            {apiKeyId && (
-              <>
-                <FRow
-                  label={"App ID"}
-                  componentClassName="flex gap-2 align-center"
-                  required
-                >
-                  <HFTextField
-                    disabledHelperText
-                    name="app_id"
-                    control={mainForm.control}
-                    fullWidth
-                    required
-                    disabled
-                  />
-                </FRow>
-                <FRow
-                  label="Monthly limit"
-                  componentClassName="flex gap-2 align-center"
-                  required
-                >
-                  <HFTextField
-                    disabledHelperText
-                    name="monthly_request_limit"
-                    control={mainForm.control}
-                    fullWidth
-                    required
-                    disabled
-                  />
-                </FRow>
-                <FRow
-                  label="RPS limit"
-                  componentClassName="flex gap-2 align-center"
-                  required
-                >
-                  <HFTextField
-                    disabledHelperText
-                    name="rps_limit"
-                    control={mainForm.control}
-                    fullWidth
-                    required
-                    disabled
-                  />
-                </FRow>
-                <FRow
-                  label="Used count"
-                  componentClassName="flex gap-2 align-center"
-                  required
-                >
-                  <HFTextField
-                    disabledHelperText
-                    name="used_count"
-                    control={mainForm.control}
-                    fullWidth
-                    required
-                    disabled
-                  />
-                </FRow>
-              </>
-            )}
-            {/* <FRow
-              label={"Client type"}
-              componentClassName="flex gap-2 align-center"
-              required
-            >
-              <HFSelect
-                name="client_type_id"
-                control={mainForm.control}
-                fullWidth
-                required
-                options={computedClientTypes}
-              />
-            </FRow>
-            <FRow
-              label={"Role type"}
-              componentClassName="flex gap-2 align-center"
-              required
-            >
-              <HFSelect
-                name="role_id"
-                control={mainForm.control}
-                fullWidth
-                required
-                options={computedRoles}
-              />
-            </FRow> */}
-          </FormCard>
-        </form>
-
-        <Footer
-          extra={
-            <>
-              <SecondaryButton onClick={() => navigate(-1)} color="error">
-                Close
-              </SecondaryButton>
-
-              <PrimaryButton
-                loader={btnLoader}
-                onClick={mainForm.handleSubmit(onSubmit)}
               >
-                <Save /> Save
-              </PrimaryButton>
-            </>
-          }
-        />
+                <HFTextField
+                  disabledHelperText
+                  name="name"
+                  control={mainForm.control}
+                  fullWidth
+                  required
+                />
+              </FRow>
+              {apiKeyId && (
+                <>
+                  <FRow
+                    label={"App ID"}
+                    componentClassName="flex gap-2 align-center"
+                    required
+                  >
+                    <HFTextField
+                      disabledHelperText
+                      name="app_id"
+                      control={mainForm.control}
+                      fullWidth
+                      required
+                      disabled
+                    />
+                  </FRow>
+                  <FRow
+                    label="Monthly limit"
+                    componentClassName="flex gap-2 align-center"
+                    required
+                  >
+                    <HFTextField
+                      disabledHelperText
+                      name="monthly_request_limit"
+                      control={mainForm.control}
+                      fullWidth
+                      required
+                      disabled
+                    />
+                  </FRow>
+                  <FRow
+                    label="RPS limit"
+                    componentClassName="flex gap-2 align-center"
+                    required
+                  >
+                    <HFTextField
+                      disabledHelperText
+                      name="rps_limit"
+                      control={mainForm.control}
+                      fullWidth
+                      required
+                      disabled
+                    />
+                  </FRow>
+                  <FRow
+                    label="Used count"
+                    componentClassName="flex gap-2 align-center"
+                    required
+                  >
+                    <HFTextField
+                      disabledHelperText
+                      name="used_count"
+                      control={mainForm.control}
+                      fullWidth
+                      required
+                      disabled
+                    />
+                  </FRow>
+                </>
+              )}
+
+            </FormCard>
+          </form>
+          <Footer
+            extra={
+              <>
+                <SecondaryButton onClick={() => navigate(-1)} color="error">
+                  Close
+                </SecondaryButton>
+
+                <PrimaryButton
+                  loader={btnLoader}
+                  onClick={mainForm.handleSubmit(onSubmit)}
+                >
+                  <Save /> Save
+                </PrimaryButton>
+              </>
+            }
+          />
+        </TabPanel>
+        <TabPanel >
+          <ActivityFeedTable type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} />
+        </TabPanel>
       </Tabs>
     </div>
   );

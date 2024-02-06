@@ -65,7 +65,7 @@
     "@pbe/react-yandex-maps": "^1.2.4",
     "@reduxjs/toolkit": "^1.7.1",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
-    "@uiw/react-codemirror": "^4.11.4",
+    "@uiw/react-codemirror": "^4.21.21",
     "@uiw/react-textarea-code-editor": "^2.0.3",
     "arch-editor": "^1.0.1-beta.19",
     "axios": "^0.26.1",

@@ -1,3 +1,28 @@
+.row {
+    &:hover td {
+        background: none !important;
+    }
+
+
+}
+
+.tag {
+    padding: 4px 0;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 24px;
+    position: relative;
+    color: #fff;
+
+    span {
+        position: absolute;
+        right: 5%;
+        bottom: 0;
+    }
+}
+
 .activity {
     background: #fff;
     height: auto;
@@ -694,6 +719,61 @@
             .itemtitle {
                 color: #a2b5cd;
             }
+        }
+    }
+
+    .content {
+        padding: 0 32px 32px 32px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+
+        h6 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 19px;
+            margin-bottom: 6px;
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 19px;
+        }
+
+        .promise {
+            display: flex;
+            align-items: start;
+            column-gap: 24px;
+
+            .promise_card {
+                position: relative;
+
+                .copy {
+                    position: absolute;
+                    z-index: 9999999;
+                    right: 10px;
+                    top: 40px;
+
+                    &:hover {
+                        border-color: #fff !important;
+                    }
+
+
+                    svg {
+                        fill: #fff;
+                    }
+                }
+            }
+
+
+            h6 {
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 19px;
+                margin-bottom: 12px;
+            }
+
         }
     }
 }

@@ -297,7 +297,7 @@ const AutoCompleteElement = ({
             onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
-            Создать новый
+            Create new
           </span>
         }
         blurOnSelect

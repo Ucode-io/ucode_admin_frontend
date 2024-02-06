@@ -505,7 +505,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
         <div>
           <button className={styles.add_login_btn} onClick={handleCreate}>
             <PlusIcon />
-            Добавить
+            Add
           </button>
         </div>
       </div>

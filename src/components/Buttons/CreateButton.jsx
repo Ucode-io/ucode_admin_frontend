@@ -2,7 +2,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import AddIcon from "@mui/icons-material/Add"
 import SecondaryButton from './SecondaryButton';
 
-const CreateButton = ({ children, title = "Добавить", type, ...props }) => {
+const CreateButton = ({ children, title = "Add", type, ...props }) => {
 
   if(type === 'secondary') return <SecondaryButton {...props} >
     <AddIcon />

@@ -129,7 +129,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
                 onClick={() => setDrawerState("CREATE")}
               >
                 <Add color="primary" />
-                <p>Добавить</p>
+                <p>Add</p>
               </div>
             </CTableCell>
           </CTableRow>

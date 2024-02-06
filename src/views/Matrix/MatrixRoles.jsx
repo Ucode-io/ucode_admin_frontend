@@ -148,7 +148,7 @@ const MatrixRoles = ({ infoForm }) => {
                 }`}
                 onClick={() => (showAddBlock ? null : setShowAddBlock(true))}
               >
-                Добавить
+                Add
               </button>
             </div>
           </CTable>

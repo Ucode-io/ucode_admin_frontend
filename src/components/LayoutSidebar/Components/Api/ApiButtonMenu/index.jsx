@@ -46,7 +46,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<FaPlus size={13} />}
-                title="Добавить Api"
+                title="Add Api"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNavigate(element);
@@ -57,7 +57,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "EDIT");
@@ -68,7 +68,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element?.guid);

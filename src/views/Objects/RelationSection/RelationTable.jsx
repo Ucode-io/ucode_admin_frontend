@@ -547,7 +547,7 @@ const RelationTable = forwardRef(
               isChecked={(row) => selectedObjects?.includes(row?.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
-              title={"Сначала нужно создать объект"}
+              title={"First, you need to create an object"}
               tableStyle={{
                 borderRadius: 0,
                 border: "none",

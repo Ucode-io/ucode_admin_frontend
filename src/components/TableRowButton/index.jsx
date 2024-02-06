@@ -4,7 +4,7 @@ import { CTableCell, CTableRow } from "../CTable";
 import styles from './style.module.scss'
 
 
-const TableRowButton = ({ colSpan=2, onClick=()=>{}, title="Добавить", loader }) => {
+const TableRowButton = ({ colSpan=2, onClick=()=>{}, title="Add", loader }) => {
   return ( <CTableRow>
     <CTableCell colSpan={colSpan}>
       <div

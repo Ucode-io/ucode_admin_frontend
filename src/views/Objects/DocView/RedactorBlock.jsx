@@ -176,7 +176,7 @@ const RedactorBlock = forwardRef(
               >
                 <Card className={styles.card}>
                   <div className={styles.body}>
-                    Вы действительно хотите Сохранить?
+                    Are you really want to save?
                   </div>
 
                   <div className={styles.footer}>
@@ -184,14 +184,14 @@ const RedactorBlock = forwardRef(
                       className={styles.button}
                       onClick={handleClose}
                     >
-                      Отменить
+                      Cancel
                     </SecondaryButton>
                     <PrimaryButton
                       className={styles.button}
                       color="error"
                       onClick={handleSubmit(onSubmit)}
                     >
-                      Да
+                      Yes
                     </PrimaryButton>
                   </div>
                 </Card>

@@ -49,7 +49,7 @@ const FunctionButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<AddIcon size={13} />}
-                title="Добавить function"
+                title="Add function"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFunctionModal(element);
@@ -60,7 +60,7 @@ const FunctionButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element);
@@ -71,7 +71,7 @@ const FunctionButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element?.id);
@@ -84,7 +84,7 @@ const FunctionButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Добавить папку"
+              title="Add folder"
               onClick={(e) => {
                 e.stopPropagation();
                 openFolderModal();
@@ -96,7 +96,7 @@ const FunctionButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить function"
+              title="Edit function"
               onClick={(e) => {
                 e.stopPropagation();
                 openFunctionModal(null, element);
@@ -105,7 +105,7 @@ const FunctionButtonMenu = ({
             />
             <MenuItemComponent
               icon={<Delete size={13} />}
-              title="Удалить function"
+              title="Delete function"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFunction(element?.id);

@@ -47,7 +47,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Добавить папку"
+                title="Add folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "CREATE");
@@ -58,7 +58,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<FaPlus size={13} />}
-                title="Добавить Query"
+                title="Add Query"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNavigate(element);
@@ -69,7 +69,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "EDIT");
@@ -80,7 +80,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element?.id);

@@ -283,7 +283,6 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        console.log("datatatatatata", data);
         if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
@@ -349,7 +348,7 @@ const AutoCompleteElement = ({
     if (data?.prepayment_balance) {
       setFormValue("prepayment_balance", data?.prepayment_balance || 0);
     }
-    console.log("datadatadata", data);
+
     setLocalValue(data ? [data] : null);
   };
 
@@ -419,11 +418,6 @@ const AutoCompleteElement = ({
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
             }}
           >
-            {/* <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{marginLeft: "10px", cursor: "pointer"}}
-              size={15}
-            /> */}
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -523,15 +517,10 @@ const AutoCompleteElement = ({
             onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
-            Создать новый
+            Create new
           </span>
         )}
-        // menuShouldScrollIntoView
         styles={customStyles}
-        // onPaste={(e) => {
-        //   console.log("eeeeeee -", e.clipboardData.getData("Text"));
-        // }}
-        // blurInputOnSelect
       />
     </div>
   );

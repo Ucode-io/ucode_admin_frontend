@@ -71,7 +71,7 @@ const Actions = ({ eventLabel }) => {
                 }}
               >
                 <Add color="primary" />
-                <p>Добавить</p>
+                <p>Add</p>
               </div>
             </CTableCell>
           </CTableRow>

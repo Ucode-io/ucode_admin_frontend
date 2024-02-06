@@ -47,7 +47,7 @@ const DatabaseButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Добавить table"
+                title="Add table"
                 onClick={(e) => {
                   e.stopPropagation();
                   openCreateDrawer();
@@ -58,7 +58,7 @@ const DatabaseButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(selected, "EDIT");
@@ -69,7 +69,7 @@ const DatabaseButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDeleteTableFolder(selected.id);

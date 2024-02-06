@@ -49,7 +49,7 @@ const ScenarioButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Добавить scenario"
+                title="Add scenario"
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/main/${adminId}/scenario/${selected.id}`);
@@ -60,7 +60,7 @@ const ScenarioButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDeleteCategory(selected.id);
@@ -73,7 +73,7 @@ const ScenarioButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Добавить папку"
+              title="Add folder"
               onClick={(e) => {
                 e.stopPropagation();
                 openScenarioFolderModal({}, "CREATE");
@@ -85,7 +85,7 @@ const ScenarioButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Удалить scenario"
+              title="Delete scenario"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteEndpointClickHandler(selected.id);

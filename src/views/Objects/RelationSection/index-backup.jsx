@@ -108,7 +108,7 @@ const RelationSection = ({ relation }) => {
         title={relation.relatedTable?.label}
         maxWidth="100%"
         extra={
-          <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Добавить</SecondaryButton>
+          <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Add</SecondaryButton>
         }
       >
 

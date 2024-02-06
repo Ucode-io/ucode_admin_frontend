@@ -98,6 +98,8 @@ ingress:
         - secretName: admin-frontend-tls
           hosts:
             - "app.u-code.io"
+        - secretName: admin-frontend-tls
+          hosts:
             - "v2.agent.easyto.travel"
 
 resources:

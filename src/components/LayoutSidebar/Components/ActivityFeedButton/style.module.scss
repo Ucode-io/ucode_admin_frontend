@@ -696,4 +696,23 @@
             }
         }
     }
+
+    .content {
+        padding: 0 32px 32px 32px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+
+        h6 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 19px;
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 19px;
+        }
+    }
 }

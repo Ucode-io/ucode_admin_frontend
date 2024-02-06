@@ -27,7 +27,9 @@ const ActivityFeedTable = ({ openDrawer, histories }) => {
                                 <CTableCell>{element?.user}</CTableCell>
                                 <CTableCell>
                                     <div className="flex">
-                                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={openDrawer}>
+                                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => {
+                                            openDrawer(element?.id)
+                                        }}>
                                             <Edit color="success" />
                                         </RectangleIconButton>
                                         <RectangleIconButton color="error" >

@@ -226,9 +226,7 @@ const Router = () => {
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
           </Route>
-          <Route path=":appId/activity" element={<ActivityFeedPage />}>
-            <Route path=":logId" element={<ActivityFeedPage />} />
-          </Route>
+          <Route path=":appId/activity" element={<ActivityFeedPage />} />
           <Route path=":appId/projects">
             <Route index element={<ProjectPage />} />
             <Route path="create" element={<ProjectForm />} />

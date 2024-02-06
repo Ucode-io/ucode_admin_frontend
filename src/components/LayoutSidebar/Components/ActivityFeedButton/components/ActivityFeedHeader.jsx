@@ -1,14 +1,8 @@
-import { Box, Tooltip, Typography } from "@mui/material";
-import style from "../style.module.scss";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import AddIcon from "@mui/icons-material/Add";
-import { useQueryClient } from "react-query";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { Box, Typography } from "@mui/material";
+import style from "../style.module.scss";
 
-const ActivityFeedHeader = ({ menuItem, histories }) => {
-    const queryClient = useQueryClient();
-
-
+const ActivityFeedHeader = ({ histories }) => {
     return (
         <>
             <Box className={style.header}>

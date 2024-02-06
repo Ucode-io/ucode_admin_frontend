@@ -9,20 +9,20 @@ import {
   CTableHead,
   CTableRow,
 } from "../../components/CTable";
-import DeleteWrapperModal from "../../components/DeleteWrapperModal";
-import FiltersBlock from "../../components/FiltersBlock";
 import HeaderSettings from "../../components/HeaderSettings";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
-import UploadIcon from "@mui/icons-material/Upload";
 import exportToJsonService from "../../services/exportToJson";
 import useDownloader from "../../hooks/useDownloader";
 import { useEffect, useRef, useState } from "react";
 import fileService from "../../services/fileService";
 import apiKeyService from "../../services/apiKey.service";
 import { numberWithSpaces } from "../../utils/formatNumbers";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import ActivityFeedPage from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity";
+import ActivityFeedTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/ActivityFeedTable";
+import EmptyDataComponent from "../../components/EmptyDataComponent";
 
 const ApiKeyPage = () => {
   const navigate = useNavigate();
@@ -107,14 +107,15 @@ const ApiKeyPage = () => {
   };
 
   return (
+
     <div>
       <HeaderSettings
         title={"Api keys"}
+        sticky
         line={false}
       />
-
       <TableCard>
-        <CTable loader={false} disablePagination removableHeight={140}>
+        <CTable loader={false} disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>

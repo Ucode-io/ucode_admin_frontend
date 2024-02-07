@@ -57,6 +57,9 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
             }
         });
 
+    console.log("versionHistoryLoader", versionHistoryLoader)
+    console.log("histories", histories)
+
     if (versionHistoryLoader)
         return (
             <Backdrop

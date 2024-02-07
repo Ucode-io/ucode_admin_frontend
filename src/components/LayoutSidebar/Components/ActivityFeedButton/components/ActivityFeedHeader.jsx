@@ -1,8 +1,17 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Box, Typography } from "@mui/material";
 import style from "../style.module.scss";
+import FiltersBlock from '../../../../FiltersBlock';
+import CRangePickerNew from '../../../../DatePickers/CRangePickerNew';
+import { useState } from 'react';
+import { endOfMonth, startOfMonth } from "date-fns";
+
 
 const ActivityFeedHeader = ({ histories }) => {
+    const [dateFilters, setDateFilters] = useState({
+        $gte: startOfMonth(new Date()),
+        $lt: endOfMonth(new Date()),
+    });
     return (
         <>
             <Box className={style.header}>
@@ -18,6 +27,9 @@ const ActivityFeedHeader = ({ histories }) => {
                     </Typography>
                 </Box>
             </Box>
+            {/* <FiltersBlock >
+                <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+            </FiltersBlock> */}
         </>
     );
 };

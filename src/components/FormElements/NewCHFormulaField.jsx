@@ -26,7 +26,7 @@ const NewCHFFormulaField = ({
   ...props
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
-  const formula = field?.attributes?.formula ?? "";
+  let formula = field?.attributes?.formula ?? "";
   
   const currentValue = useWatch({
     control,

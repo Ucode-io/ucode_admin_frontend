@@ -117,7 +117,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать table</Typography>
+            <Typography variant="h4">Attach to table</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}

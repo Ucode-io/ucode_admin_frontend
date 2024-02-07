@@ -34,3 +34,37 @@ export const ActivityFeedBackground = (name) => {
       return "-";
   }
 };
+
+export const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    background: "transparent",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    // border: "0px solid #fff",
+    minWidth: "200px",
+    outline: "none",
+    maxHeight: "35px",
+    minHeight: "35px"
+  }),
+  input: (provided) => ({
+    ...provided,
+    width: "100%",
+    // border: "none",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    display: "flex",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    background: state.isSelected ? "#007AFF" : provided.background,
+    color: state.isSelected ? "#fff" : provided.color,
+    cursor: "pointer",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+};

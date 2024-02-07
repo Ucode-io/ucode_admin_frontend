@@ -16,6 +16,11 @@ import apiKeyService from "../../services/apiKey.service";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
 import { store } from "../../store";
+import FiltersBlock from "../../components/FiltersBlock";
+import DateForm from "../../components/DateForm";
+import { endOfMonth, startOfMonth } from "date-fns";
+import Select from "react-select";
+import { customStyles } from "../../components/Status";
 
 const ApiKeysForm = () => {
   const { appId, apiKeyId } = useParams();
@@ -26,7 +31,13 @@ const ApiKeysForm = () => {
   const [loader, setLoader] = useState(false);
   const [clientType, setClientType] = useState([]);
   const [histories, setHistories] = useState([]);
+  const [date, setDate] = useState({
+    $gte: startOfMonth(new Date()),
+    $lt: endOfMonth(new Date()),
+  });
   const authStore = store.getState().auth;
+  const [inputValue, setInputValue] = useState("");
+
 
   const mainForm = useForm({
     defaultValues: {
@@ -139,6 +150,54 @@ const ApiKeysForm = () => {
             <Tab onClick={() => setSelectedTab(1)}>Log</Tab>
           </TabList>
         </HeaderSettings>
+        {selectedTab === 1 && (
+          <FiltersBlock style={{
+            justifyContent: "end"
+          }}>
+            <Select
+              inputValue={inputValue}
+              onInputChange={(newInputValue, { action }) => {
+                setInputValue(newInputValue);
+              }}
+              options={[{ label: "text", value: "re" }, { label: "jo", value: "re" }]}
+              menuPortalTarget={document.body}
+              isClearable
+              isSearchable
+              isDisabled
+              components={{
+                // ClearIndicator: () =>
+                //     inputValue?.length && (
+                //         <div
+                //             style={{
+                //                 marginRight: "10px",
+                //                 cursor: "pointer",
+                //             }}
+                //             onClick={(e) => {
+                //                 e.stopPropagation();
+                //             }}
+                //         >
+                //             <ClearIcon />
+                //         </div>
+                //     ),
+                DropdownIndicator: null,
+              }}
+              onChange={(newValue, { action }) => {
+                console.log("newValue", newValue)
+                //   changeHandler(newValue);
+              }}
+              menuShouldScrollIntoView
+              styles={customStyles}
+              onPaste={(e) => {
+                console.log("eeeeeee -", e.clipboardData.getData("Text"));
+              }}
+              isOptionSelected={(option, value) =>
+                value.some((val) => val.guid === value)
+              }
+              blurInputOnSelect
+            />
+            <DateForm onChange={setDate} date={date} views={["month", "year"]} />
+          </FiltersBlock>
+        )}
         <TabPanel>
           <form
             onSubmit={mainForm.handleSubmit(onSubmit)}
@@ -240,7 +299,7 @@ const ApiKeysForm = () => {
           />
         </TabPanel>
         <TabPanel >
-          <ActivityFeedTable setHistories={setHistories} type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} />
+          <ActivityFeedTable setHistories={setHistories} type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} dateFilters={date} />
         </TabPanel>
       </Tabs>
     </div>

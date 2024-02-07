@@ -11,14 +11,14 @@ import EmptyDataComponent from "../../../../EmptyDataComponent";
 import { pageToOffset } from "../../../../../utils/pageToOffset";
 import { Backdrop } from "@mui/material";
 import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWithWrapper";
+import { format } from "date-fns";
 
-const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType = "GLOBAL", apiKey, actionByVisible = true }) => {
+const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType = "GLOBAL", apiKey, actionByVisible = true, dateFilters }) => {
     const company = store.getState().company;
     const [drawerIsOpen, setDrawerIsOpen] = useState(false);
     const [id, setId] = useState(null)
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-
 
     const openDrawer = (id) => {
         setId(id)
@@ -36,7 +36,9 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                 type: requestType,
                 limit: 10,
                 offset: pageToOffset(currentPage),
-                api_key: apiKey
+                api_key: apiKey,
+                from_date: dateFilters?.$gte ? format(dateFilters?.$gte, "yyyy-MM-dd") : undefined,
+                to_date: dateFilters?.$lt ? format(dateFilters?.$lt, "yyyy-MM-dd") : undefined,
             },
             queryParams: {
                 onSuccess: (res) => {
@@ -56,9 +58,6 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                 enabled: !!Boolean(id)
             }
         });
-
-    console.log("versionHistoryLoader", versionHistoryLoader)
-    console.log("histories", histories)
 
     if (versionHistoryLoader)
         return (

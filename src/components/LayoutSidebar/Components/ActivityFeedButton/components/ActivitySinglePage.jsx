@@ -11,9 +11,14 @@ import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
 import { MdContentCopy } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { showAlert } from "../../../../../store/alert/alert.thunk";
+import { format } from "date-fns";
+import { zonedTimeToUtc } from 'date-fns-tz'
+
 
 const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoader }) => {
     const dispatch = useDispatch()
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const utcDate = zonedTimeToUtc(history?.date, timezone)
 
     const copyJson = (text) => {
         dispatch(showAlert("Copied to clipboard", "success"));
@@ -46,7 +51,7 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
                     <Box className={style.content}>
                         <Box className={style.card}>
                             <Typography variant="h6">User:</Typography>
-                            <Typography variant="p">Shohrux</Typography>
+                            <Typography variant="p">{history?.user_info}</Typography>
                         </Box>
                         <Box className={style.card}>
                             <Typography variant="h6">Action:</Typography>
@@ -56,7 +61,7 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
                                 size="large"
                                 style={{
                                     background: `${ActivityFeedColors(history?.action_type)}`,
-                                    width: '80px'
+                                    width: '170px'
                                 }}
                                 className={style.tag}
                             >
@@ -65,7 +70,7 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
                         </Box>
                         <Box className={style.card}>
                             <Typography variant="h6">Date:</Typography>
-                            <Typography variant="p">{history?.date}</Typography>
+                            {history && <Typography variant="p">{format(utcDate, 'yyyy-MM-dd HH:mm:ss')}</Typography>}
                         </Box>
                         <Box className={style.card}>
                             <Typography variant="h6">Collection:</Typography>

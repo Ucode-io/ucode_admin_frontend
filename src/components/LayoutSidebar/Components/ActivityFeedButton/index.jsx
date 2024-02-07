@@ -3,12 +3,11 @@ import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import "../../style.scss";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
-import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
+import InventoryIcon from '@mui/icons-material/Inventory';
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const activityFeedData = {
-    label: "Activity feed",
+    label: "Activity logs",
     type: "USER_FOLDER",
     icon: "key.svg",
     parent_id: adminId,
@@ -23,7 +22,7 @@ const activityFeedData = {
     },
 };
 
-const ActivityFeedButton = ({ level = 1, menuStyle, menuItem }) => {
+const ActivityFeedButton = ({ level = 1, menuStyle, menuItem, setSubMenuIsOpen }) => {
     const { appId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -37,7 +36,7 @@ const ActivityFeedButton = ({ level = 1, menuStyle, menuItem }) => {
             activityFeedData?.id === menuItem?.id
                 ? menuStyle?.active_text || "#fff"
                 : menuStyle?.text,
-        paddingLeft: updateLevel(level),
+        // paddingLeft: updateLevel(level),
         borderRadius: "8px",
         display:
             menuItem?.id === "0" ||
@@ -55,6 +54,7 @@ const ActivityFeedButton = ({ level = 1, menuStyle, menuItem }) => {
     const clickHandler = () => {
         navigate(`/main/${appId}/activity`);
         dispatch(menuActions.setMenuItem(activityFeedData));
+        setSubMenuIsOpen(false)
     };
 
     return (
@@ -68,7 +68,7 @@ const ActivityFeedButton = ({ level = 1, menuStyle, menuItem }) => {
                     }}
                 >
                     <div className="label" style={labelStyle}>
-                        <DynamicFeedIcon size={18} />
+                        <InventoryIcon size={18} />
                         {activityFeedData?.label}
                     </div>
                 </Button>

@@ -25,6 +25,7 @@ const ApiKeysForm = () => {
   const [role, setRole] = useState([]);
   const [loader, setLoader] = useState(false);
   const [clientType, setClientType] = useState([]);
+  const [histories, setHistories] = useState([]);
   const authStore = store.getState().auth;
 
   const mainForm = useForm({
@@ -239,7 +240,7 @@ const ApiKeysForm = () => {
           />
         </TabPanel>
         <TabPanel >
-          <ActivityFeedTable type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} />
+          <ActivityFeedTable setHistories={setHistories} type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} />
         </TabPanel>
       </Tabs>
     </div>

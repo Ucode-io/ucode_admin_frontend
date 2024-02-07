@@ -11,7 +11,8 @@ import EmptyDataComponent from "../../../../EmptyDataComponent";
 import { pageToOffset } from "../../../../../utils/pageToOffset";
 import { Backdrop } from "@mui/material";
 import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWithWrapper";
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType = "GLOBAL", apiKey, actionByVisible = true, dateFilters }) => {
     const company = store.getState().company;
@@ -19,6 +20,7 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
     const [id, setId] = useState(null)
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
     const openDrawer = (id) => {
         setId(id)
@@ -59,6 +61,7 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
             }
         });
 
+
     if (versionHistoryLoader)
         return (
             <Backdrop
@@ -77,39 +80,53 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                     setCurrentPage={setCurrentPage}>
                     <CTableHead>
                         <CTableCell width={10}>№</CTableCell>
-                        <CTableCell width={110}>Action</CTableCell>
+                        <CTableCell width={170}>Action</CTableCell>
                         <CTableCell>Collection</CTableCell>
                         <CTableCell>Action On</CTableCell>
                         {actionByVisible && <CTableCell>Action By</CTableCell>}
                     </CTableHead>
                     <CTableBody loader={false} columnsCount={5} dataLength={histories?.histories?.length}
                     >
-                        {histories?.histories?.map((element, index) => (
-                            <CTableRow height="50px" className={style.row} key={element.id} onClick={() => {
-                                openDrawer(element?.id)
-                            }} style={{
-                                background: `${ActivityFeedBackground(element?.action_type)}`,
-                                width: '80px',
-                            }}>
-                                <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
-                                <CTableCell>
-                                    <Tag
-                                        shape="subtle"
-                                        color={ActivityFeedColors(element?.action_type)}
-                                        size="large"
-                                        style={{
-                                            background: `${ActivityFeedColors(element?.action_type)}`,
-                                        }}
-                                        className={style.tag}
-                                    >
-                                        {element?.action_type}
-                                    </Tag>
-                                </CTableCell>
-                                <CTableCell>{element?.table_slug}</CTableCell>
-                                <CTableCell>{element?.date}</CTableCell>
-                                {actionByVisible && <CTableCell>{element?.user_info}</CTableCell>}
-                            </CTableRow>
-                        ))}
+                        {histories?.histories?.map((element, index) => {
+                            // console.log("element?.date", element?.date?.slice(0, 19))
+                            // console.log("timezone", timezone)
+
+                            // const utcDate = zonedTimeToUtc(element?.date?.slice(0, 19), timezone)
+                            // const correctedDate = addMinutes(utcDate, utcDate.getTimezoneOffset());
+                            // const formattedDate = format(correctedDate, 'yyyy-MM-dd HH:mm:ss');
+                            // console.log("formattedDatev", utcDate)
+
+                            // console.log("utcDateutcDate", utcDate.toISOString())
+
+                            return (
+
+
+                                <CTableRow height="50px" className={style.row} key={element.id} onClick={() => {
+                                    openDrawer(element?.id)
+                                }} style={{
+                                    background: `${ActivityFeedBackground(element?.action_type)}`,
+                                    width: '80px',
+                                }}>
+                                    <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
+                                    <CTableCell>
+                                        <Tag
+                                            shape="subtle"
+                                            color={ActivityFeedColors(element?.action_type)}
+                                            size="large"
+                                            style={{
+                                                background: `${ActivityFeedColors(element?.action_type)}`,
+                                            }}
+                                            className={style.tag}
+                                        >
+                                            {element?.action_type}
+                                        </Tag>
+                                    </CTableCell>
+                                    <CTableCell>{element?.table_slug}</CTableCell>
+                                    <CTableCell>{format(new Date(element?.date), 'yyyy-MM-dd HH:mm:ss')}</CTableCell>
+                                    {actionByVisible && <CTableCell>{element?.user_info}</CTableCell>}
+                                </CTableRow>
+                            )
+                        })}
                         <EmptyDataComponent
                             columnsCount={5}
                             isVisible={!histories?.histories}

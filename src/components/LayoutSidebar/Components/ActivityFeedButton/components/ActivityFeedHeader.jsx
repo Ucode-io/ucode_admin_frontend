@@ -18,7 +18,7 @@ const ActivityFeedHeader = ({ histories, setDateFilters, dateFilters }) => {
                     <div className={style.foldericon}>
                         <AccessTimeIcon />
                     </div>
-                    <Typography variant="h3">Activity Feed</Typography>
+                    <Typography variant="h3">Activity Logs</Typography>
                 </Box>
                 <Box className={style.rightside}>
                     <Typography variant="h5" className={style.itemtitle}>

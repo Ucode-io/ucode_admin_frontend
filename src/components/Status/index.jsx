@@ -12,6 +12,41 @@ export const ActivityFeedColors = (name) => {
       return "#fca130";
     case "DELETE":
       return "#f93e3e";
+    case "CREATE ITEM":
+      return "#49cc90";
+    case "UPDATE ITEM":
+      return "#fca130";
+    case "DELETE ITEM":
+      return "#f93e3e";
+    case "CREATE TABLE":
+      return "#49cc90";
+    case "UPDATE TABLE":
+      return "#fca130";
+    case "DELETE TABLE":
+    case "CREATE MENU":
+      return "#49cc90";
+    case "UPDATE MENU":
+      return "#fca130";
+    case "DELETE MENU":
+      return "#f93e3e";
+    case "CREATE FIELD":
+      return "#49cc90";
+    case "UPDATE FIELD":
+      return "#fca130";
+    case "DELETE FIELD":
+      return "#f93e3e";
+    case "CREATE VIEW":
+      return "#49cc90";
+    case "UPDATE VIEW":
+      return "#fca130";
+    case "DELETE VIEW":
+      return "#f93e3e";
+    case "CREATE RELATION":
+      return "#49cc90";
+    case "UPDATE RELATION":
+      return "#fca130";
+    case "DELETE RELATION":
+      return "#f93e3e";
     default:
       return "-";
   }
@@ -29,6 +64,42 @@ export const ActivityFeedBackground = (name) => {
     case "UPDATE":
       return "rgba(252,161,48,.1)";
     case "DELETE":
+      return "rgba(249,62,62,.1)";
+    case "CREATE ITEM":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE ITEM":
+      return "rgba(252,161,48,.1)";
+    case "DELETE ITEM":
+      return "rgba(249,62,62,.1)";
+    case "CREATE TEBLE":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE TEBLE":
+      return "rgba(252,161,48,.1)";
+    case "DELETE TEBLE":
+      return "rgba(249,62,62,.1)";
+    case "CREATE MENU":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE MENU":
+      return "rgba(252,161,48,.1)";
+    case "DELETE MENU":
+      return "rgba(249,62,62,.1)";
+    case "CREATE FIELD":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE FIELD":
+      return "rgba(252,161,48,.1)";
+    case "DELETE FIELD":
+      return "rgba(249,62,62,.1)";
+    case "CREATE VIEW":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE VIEW":
+      return "rgba(252,161,48,.1)";
+    case "DELETE VIEW":
+      return "rgba(249,62,62,.1)";
+    case "CREATE RELATION":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE RELATION":
+      return "rgba(252,161,48,.1)";
+    case "DELETE RELATION":
       return "rgba(249,62,62,.1)";
     default:
       return "-";

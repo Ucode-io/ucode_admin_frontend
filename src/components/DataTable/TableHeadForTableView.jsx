@@ -9,16 +9,16 @@ import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
-import {Button, Menu} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch} from "react-redux";
+import { Button, Menu } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { useDispatch } from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
 import relationService from "../../services/relationService";
-import {paginationActions} from "../../store/pagination/pagination.slice";
-import {CTableHeadCell} from "../CTable";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import { CTableHeadCell } from "../CTable";
 import "./style.scss";
 
 export default function TableHeadForTableView({
@@ -53,7 +53,7 @@ export default function TableHeadForTableView({
   refetch,
   relatedTable,
   fieldsMap,
-  getAllData = () => {},
+  getAllData = () => { },
   relationAction,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,7 +61,7 @@ export default function TableHeadForTableView({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -120,7 +120,7 @@ export default function TableHeadForTableView({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
       });
   };
 
@@ -132,7 +132,7 @@ export default function TableHeadForTableView({
   };
 
   const deleteField = (column) => {
-    constructorFieldService.delete(column).then((res) => {
+    constructorFieldService.delete(column, tableSlug).then((res) => {
       constructorViewService
         .update(tableSlug, {
           ...currentView,
@@ -140,7 +140,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -169,7 +169,7 @@ export default function TableHeadForTableView({
             if (column?.attributes?.relation_data?.id) {
               queryClient.refetchQueries([
                 "RELATION_GET_BY_ID",
-                {tableSlug, id: column?.attributes?.relation_data?.id},
+                { tableSlug, id: column?.attributes?.relation_data?.id },
               ]);
             }
           },
@@ -181,22 +181,21 @@ export default function TableHeadForTableView({
       children: [
         {
           id: 8,
-          title: `Sort ${
-            sortedDatas?.find((item) => item.field === column.id)?.order ===
+          title: `Sort ${sortedDatas?.find((item) => item.field === column.id)?.order ===
             "ASC"
-              ? "Z -> A"
-              : "A -> Z"
-          }`,
+            ? "Z -> A"
+            : "A -> Z"
+            }`,
           icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             const field = column.id;
             const order =
               sortedDatas?.find((item) => item.field === column.id)?.order ===
-              "ASC"
+                "ASC"
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({tableSlug, field, order})
+              paginationActions.setSortValues({ tableSlug, field, order })
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -231,9 +230,8 @@ export default function TableHeadForTableView({
         },
         {
           id: 19,
-          title: `${
-            view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
-          } text`,
+          title: `${view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
+            } text`,
           icon: view?.attributes?.textWrap?.[column?.id] ? (
             <WrapTextOutlinedIcon />
           ) : (
@@ -248,9 +246,8 @@ export default function TableHeadForTableView({
         },
         {
           id: 10,
-          title: `${
-            view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
-          } column`,
+          title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
+            } column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
             fixColumnChangeHandler(
@@ -355,7 +352,7 @@ export default function TableHeadForTableView({
       updateRelationView(computedValuesForRelationView);
     } else {
       constructorViewService.update(tableSlug, computedValues).then(() => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
         handleSummaryClose();
       });
     }
@@ -379,27 +376,24 @@ export default function TableHeadForTableView({
           width: tableSize?.[pageName]?.[column.id]
             ? tableSize?.[pageName]?.[column.id]
             : "auto",
-          position: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "sticky"
-              : "relative"
-          }`,
+          position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+            ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+            ? "sticky"
+            : "relative"
+            }`,
           left: view?.attributes?.fixedColumns?.[column?.id]
             ? `${calculateWidthFixedColumn(column.id) + 80}px`
             : "0",
-          backgroundColor: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "#F6F6F6"
-              : "#fff"
-          }`,
-          zIndex: `${
-            tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-              ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-              ? "1"
-              : "0"
-          }`,
+          backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+            ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+            ? "#F6F6F6"
+            : "#fff"
+            }`,
+          zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+            ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+            ? "1"
+            : "0"
+            }`,
         }}
       >
         <div
@@ -539,7 +533,7 @@ export default function TableHeadForTableView({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{horizontal: "right"}}
+        anchorOrigin={{ horizontal: "right" }}
         PaperProps={{
           elevation: 0,
           sx: {

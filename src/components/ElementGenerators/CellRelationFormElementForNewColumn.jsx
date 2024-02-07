@@ -185,6 +185,7 @@ const AutoCompleteElement = ({
       background: state.isSelected ? "#007AFF" : provided.background,
       color: state.isSelected ? "#fff" : provided.color,
       cursor: "pointer",
+      textAlign: 'left'
     }),
     menu: (provided) => ({
       ...provided,

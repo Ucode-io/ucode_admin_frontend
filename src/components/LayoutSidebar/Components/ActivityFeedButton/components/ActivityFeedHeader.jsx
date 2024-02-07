@@ -4,14 +4,13 @@ import style from "../style.module.scss";
 import FiltersBlock from '../../../../FiltersBlock';
 import CRangePickerNew from '../../../../DatePickers/CRangePickerNew';
 import { useState } from 'react';
-import { endOfMonth, startOfMonth } from "date-fns";
+import { customStyles } from '../../../../Status';
+import Select from "react-select";
 
 
-const ActivityFeedHeader = ({ histories }) => {
-    const [dateFilters, setDateFilters] = useState({
-        $gte: startOfMonth(new Date()),
-        $lt: endOfMonth(new Date()),
-    });
+
+const ActivityFeedHeader = ({ histories, setDateFilters, dateFilters }) => {
+    const [inputValue, setInputValue] = useState("");
     return (
         <>
             <Box className={style.header}>
@@ -27,9 +26,51 @@ const ActivityFeedHeader = ({ histories }) => {
                     </Typography>
                 </Box>
             </Box>
-            {/* <FiltersBlock >
-                <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-            </FiltersBlock> */}
+            <FiltersBlock sideClassName={style.side} className={style.filter_block} >
+                <Select
+                    inputValue={inputValue}
+                    onInputChange={(newInputValue, { action }) => {
+                        setInputValue(newInputValue);
+                    }}
+                    options={[{ label: "text", value: "re" }, { label: "jo", value: "re" }]}
+                    menuPortalTarget={document.body}
+                    isClearable
+                    isSearchable
+                    isDisabled
+                    components={{
+                        // ClearIndicator: () =>
+                        //     inputValue?.length && (
+                        //         <div
+                        //             style={{
+                        //                 marginRight: "10px",
+                        //                 cursor: "pointer",
+                        //             }}
+                        //             onClick={(e) => {
+                        //                 e.stopPropagation();
+                        //             }}
+                        //         >
+                        //             <ClearIcon />
+                        //         </div>
+                        //     ),
+                        DropdownIndicator: null,
+                    }}
+                    onChange={(newValue, { action }) => {
+                        console.log("newValue", newValue)
+                        //   changeHandler(newValue);
+                    }}
+                    menuShouldScrollIntoView
+                    styles={customStyles}
+                    onPaste={(e) => {
+                        console.log("eeeeeee -", e.clipboardData.getData("Text"));
+                    }}
+                    isOptionSelected={(option, value) =>
+                        value.some((val) => val.guid === value)
+                    }
+                    blurInputOnSelect
+                />
+                <CRangePickerNew
+                    onChange={setDateFilters} value={dateFilters} isClearable={false} />
+            </FiltersBlock>
         </>
     );
 };

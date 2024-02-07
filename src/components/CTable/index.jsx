@@ -122,7 +122,7 @@ export const CTableBody = forwardRef(
   }
 );
 
-export const CTableRow = ({children, className, parentRef, ...props}) => {
+export const CTableRow = ({ children, className, parentRef, ...props }) => {
   return (
     <tr className={`CTableRow ${className}`} {...props} ref={parentRef}>
       {children}

@@ -82,6 +82,8 @@ import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
 import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
+import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
+
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -224,6 +226,7 @@ const Router = () => {
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
           </Route>
+          <Route path=":appId/activity" element={<ActivityFeedPage />} />
           <Route path=":appId/projects">
             <Route index element={<ProjectPage />} />
             <Route path="create" element={<ProjectForm />} />

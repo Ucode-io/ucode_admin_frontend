@@ -24,9 +24,13 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   };
 
   const updateView = (data) => {
+    const computedData = data?.filter((item) => item !== '' && item !== undefined && item !== null)
     setIsLoading(true);
     constructorViewService
-      .update(tableSlug, data)
+      .update(tableSlug, {
+        ...currentView,
+        columns: computedData,
+      })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       })
@@ -254,11 +258,15 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                     >
                       <Switch
                         size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(
-                          column?.id
-                        )}
+                        checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
-                          onSwitchChange(e.target.checked, column);
+                          updateView(
+                            e.target.checked
+                              ? [...currentView?.columns, column?.id]
+                              : currentView?.columns?.filter(
+                                  (el) => el !== column?.id
+                                )
+                          );
                         }}
                       />
                     </div>

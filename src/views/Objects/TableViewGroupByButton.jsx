@@ -26,7 +26,13 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   const updateView = (data) => {
     setIsLoading(true);
     constructorViewService
-      .update(tableSlug, data)
+      .update(tableSlug, {
+        ...currentView,
+        attributes: {
+          ...currentView?.attributes,
+          group_by_columns: data?.attributes?.group_by_columns
+        },
+      })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       })
@@ -51,18 +57,19 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
 
   const onSwitchChange = (value, field) => {
     const updatedView = {
-      ...currentView,
-      attributes: {
-        ...currentView?.attributes,
-        group_by_columns: value
-          ? [...currentView?.attributes?.group_by_columns, field?.id]
-          : currentView?.attributes?.group_by_columns?.filter(
-              (id) => id !== field?.id
-            ),
-      },
+        ...currentView,
+        attributes: {
+            ...currentView?.attributes,
+            group_by_columns: value
+                ? [...(currentView?.attributes?.group_by_columns || []), field?.id]
+                : (currentView?.attributes?.group_by_columns || []).filter(
+                    (id) => id !== field?.id
+                ),
+        },
     };
     updateView(updatedView);
-  };
+};
+
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -254,11 +261,11 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
                     >
                       <Switch
                         size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(
-                          column?.id
-                        )}
+                        checked={currentView?.attributes?.group_by_columns?.includes(column?.id)}
                         onChange={(e) => {
-                          onSwitchChange(e.target.checked, column);
+                          onSwitchChange(
+                            e.target.checked, column
+                          );
                         }}
                       />
                     </div>

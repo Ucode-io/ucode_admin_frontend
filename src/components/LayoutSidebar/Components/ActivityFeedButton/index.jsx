@@ -22,7 +22,7 @@ const activityFeedData = {
     },
 };
 
-const ActivityFeedButton = ({ level = 1, menuStyle, menuItem, setSubMenuIsOpen }) => {
+const ActivityFeedButton = ({ level = 1, menuStyle, menuItem, setSubMenuIsOpen, pinIsEnabled }) => {
     const { appId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -54,7 +54,9 @@ const ActivityFeedButton = ({ level = 1, menuStyle, menuItem, setSubMenuIsOpen }
     const clickHandler = () => {
         navigate(`/main/${appId}/activity`);
         dispatch(menuActions.setMenuItem(activityFeedData));
-        setSubMenuIsOpen(false)
+        if (!pinIsEnabled) {
+            setSubMenuIsOpen(false);
+        }
     };
 
     return (

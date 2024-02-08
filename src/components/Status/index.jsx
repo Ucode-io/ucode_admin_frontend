@@ -52,7 +52,26 @@ export const ActivityFeedColors = (name) => {
     case "UPDATE LAYOUT":
       return "#fca130";
     case "DELETE LAYOUT":
+    case "CREATE CLIENT TYPE":
+      return "#49cc90";
+    case "UPDATE CLIENT TYPE":
+      return "#fca130";
+    case "DELETE CLIENT TYPE":
       return "#f93e3e";
+    case "CREATE ROLE":
+      return "#49cc90";
+    case "UPDATE ROLE":
+      return "#fca130";
+    case "DELETE ROLE":
+      return "#f93e3e";
+    case "CREATE USER":
+      return "#49cc90";
+    case "UPDATE USER":
+      return "#fca130";
+    case "DELETE USER":
+      return "#f93e3e";
+    case "UPDATE PERMISSION":
+      return "#fca130";
     default:
       return "-";
   }
@@ -113,6 +132,26 @@ export const ActivityFeedBackground = (name) => {
       return "rgba(252,161,48,.1)";
     case "DELETE LAYOUT":
       return "rgba(249,62,62,.1)";
+    case "CREATE CLIENT TYPE":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE CLIENT TYPE":
+      return "rgba(252,161,48,.1)";
+    case "DELETE CLIENT TYPE":
+      return "rgba(249,62,62,.1)";
+    case "CREATE ROLE":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE ROLE":
+      return "rgba(252,161,48,.1)";
+    case "DELETE ROLE":
+      return "rgba(249,62,62,.1)";
+    case "CREATE USER":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE USER":
+      return "rgba(252,161,48,.1)";
+    case "DELETE USER":
+      return "rgba(249,62,62,.1)";
+    case "UPDATE PERMISSION":
+      return "rgba(252,161,48,.1)";
     default:
       return "-";
   }

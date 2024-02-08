@@ -61,11 +61,11 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
                                 size="large"
                                 style={{
                                     background: `${ActivityFeedColors(history?.action_type)}`,
-                                    width: '170px'
+                                    width: '97px'
                                 }}
                                 className={style.tag}
                             >
-                                {history?.action_type}
+                                {history?.action_type?.charAt(0).toUpperCase() + history?.action_type.slice(1).toLowerCase()}
                             </Tag>
                         </Box>
                         <Box className={style.card}>
@@ -99,6 +99,8 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
 
                                     }}
                                     enableClipboard={false}
+                                    displayDataTypes={false}
+                                    displayObjectSize={false}
                                 />
                             </Box>
                             <Box width={"50%"} borderRadius={"10px"} className={style.promise_card}>
@@ -121,7 +123,9 @@ const ActivitySinglePage = ({ open, closeDrawer, history, versionHistoryByIdLoad
                                         height: "300px",
 
                                     }}
+                                    displayDataTypes={false}
                                     enableClipboard={false}
+                                    displayObjectSize={false}
                                 />
                             </Box>
                         </Box>

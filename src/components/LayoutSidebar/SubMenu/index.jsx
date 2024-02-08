@@ -281,7 +281,7 @@ const SubMenu = ({
                     />
                   )}
                   {selectedApp?.id === adminId && (
-                    <ActivityFeedButton menuStyle={menuStyle} menuItem={menuItem} level={2} setSubMenuIsOpen={setSubMenuIsOpen} />
+                    <ActivityFeedButton menuStyle={menuStyle} menuItem={menuItem} level={2} setSubMenuIsOpen={setSubMenuIsOpen} pinIsEnabled={pinIsEnabled} />
                   )}
                 </div>
               </Box>

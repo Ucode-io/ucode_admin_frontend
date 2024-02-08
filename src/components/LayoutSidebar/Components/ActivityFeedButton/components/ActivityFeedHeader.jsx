@@ -1,4 +1,3 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Box, Typography } from "@mui/material";
 import style from "../style.module.scss";
 import FiltersBlock from '../../../../FiltersBlock';
@@ -6,6 +5,8 @@ import CRangePickerNew from '../../../../DatePickers/CRangePickerNew';
 import { useState } from 'react';
 import { customStyles } from '../../../../Status';
 import Select from "react-select";
+import InventoryIcon from '@mui/icons-material/Inventory';
+
 
 
 
@@ -16,7 +17,7 @@ const ActivityFeedHeader = ({ histories, setDateFilters, dateFilters }) => {
             <Box className={style.header}>
                 <Box className={style.leftside}>
                     <div className={style.foldericon}>
-                        <AccessTimeIcon />
+                        <InventoryIcon />
                     </div>
                     <Typography variant="h3">Activity Logs</Typography>
                 </Box>

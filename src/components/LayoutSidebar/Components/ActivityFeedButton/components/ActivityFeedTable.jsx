@@ -1,7 +1,7 @@
 import TableCard from "../../../../TableCard";
 import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../../CTable";
 import Tag from "../../../../Tag";
-import { ActivityFeedBackground, ActivityFeedColors } from "../../../../Status";
+import { ActivityFeedColors } from "../../../../Status";
 import style from '../style.module.scss'
 import { store } from "../../../../../store";
 import { useState } from "react";
@@ -11,8 +11,7 @@ import EmptyDataComponent from "../../../../EmptyDataComponent";
 import { pageToOffset } from "../../../../../utils/pageToOffset";
 import { Backdrop } from "@mui/material";
 import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWithWrapper";
-import { addMinutes, format } from "date-fns";
-import { zonedTimeToUtc } from 'date-fns-tz'
+import { format } from "date-fns";
 
 const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType = "GLOBAL", apiKey, actionByVisible = true, dateFilters }) => {
     const company = store.getState().company;
@@ -20,7 +19,6 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
     const [id, setId] = useState(null)
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
     const openDrawer = (id) => {
         setId(id)
@@ -80,7 +78,7 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                     setCurrentPage={setCurrentPage}>
                     <CTableHead>
                         <CTableCell width={10}>№</CTableCell>
-                        <CTableCell width={170}>Action</CTableCell>
+                        <CTableCell width={130}>Action</CTableCell>
                         <CTableCell>Collection</CTableCell>
                         <CTableCell>Action On</CTableCell>
                         {actionByVisible && <CTableCell>Action By</CTableCell>}
@@ -88,23 +86,10 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                     <CTableBody loader={false} columnsCount={5} dataLength={histories?.histories?.length}
                     >
                         {histories?.histories?.map((element, index) => {
-                            // console.log("element?.date", element?.date?.slice(0, 19))
-                            // console.log("timezone", timezone)
-
-                            // const utcDate = zonedTimeToUtc(element?.date?.slice(0, 19), timezone)
-                            // const correctedDate = addMinutes(utcDate, utcDate.getTimezoneOffset());
-                            // const formattedDate = format(correctedDate, 'yyyy-MM-dd HH:mm:ss');
-                            // console.log("formattedDatev", utcDate)
-
-                            // console.log("utcDateutcDate", utcDate.toISOString())
-
                             return (
-
-
                                 <CTableRow height="50px" className={style.row} key={element.id} onClick={() => {
                                     openDrawer(element?.id)
                                 }} style={{
-                                    background: `${ActivityFeedBackground(element?.action_type)}`,
                                     width: '80px',
                                 }}>
                                     <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
@@ -118,7 +103,7 @@ const ActivityFeedTable = ({ setHistories, type = "withoutPadding", requestType 
                                             }}
                                             className={style.tag}
                                         >
-                                            {element?.action_type}
+                                            {element?.action_type?.charAt(0).toUpperCase() + element?.action_type.slice(1).toLowerCase()}
                                         </Tag>
                                     </CTableCell>
                                     <CTableCell>{element?.table_slug}</CTableCell>

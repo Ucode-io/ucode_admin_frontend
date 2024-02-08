@@ -444,7 +444,7 @@ const AutoCompleteElement = ({
           className={styles.createButton}
           onClick={() => navigateToForm(tableSlug)}
         >
-          Создать новый
+          Create new
         </div>
       )}
       {field?.attributes?.cascadings?.length === 4 ? (

@@ -13,6 +13,7 @@ import MenuIcon from "./MenuIcon";
 import { useTranslation } from "react-i18next";
 import { store } from "../../store";
 import { useQueryClient } from "react-query";
+import FolderIcon from '@mui/icons-material/Folder';
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -129,29 +130,20 @@ const AppSidebar = ({
             margin: "0 10px",
           }}
         >
-          <IconGenerator
-            icon={
-              element?.icon ||
-              element?.data?.microfrontend?.icon ||
-              element?.data?.webpage?.icon ||
-              "folder.svg"
-            }
-            size={
-              menuTemplate?.icon_size === "SMALL"
-                ? 10
-                : menuTemplate?.icon_size === "MEDIUM"
-                  ? 15
-                  : 18 || 18
-            }
-            className="folder-icon"
+          <FolderIcon 
+          className="folder-icon"
             style={{
               marginRight: sidebarIsOpen ? "8px" : "0px",
               color:
                 activeMenu
                   ? menuStyle?.active_text
                   : menuStyle?.text || "",
-            }}
-          />
+                  width: menuTemplate?.icon_size === "SMALL" ? '18px' : menuTemplate?.icon_size === "MEDIUM" ? '20px' : '24px',
+                  height: menuTemplate?.icon_size === "SMALL" ? '18px' : menuTemplate?.icon_size === "MEDIUM" ? '20px' : '24px'
+            }} 
+            
+            
+            />
           {sidebarIsOpen && (
             <ListItemText
               primary={

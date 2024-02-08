@@ -167,43 +167,6 @@ const DataMonthColumn = ({
 
   return (
     <>
-      {/* {timeList.map((time, index) => (
-        <div
-          key={time}
-          className={`${styles.timeBlock} ${
-            isDisabled(index) ? styles.disabled : ""
-          }`}
-          style={{
-            overflow: "auto",
-          }}
-        >
-          <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
-
-          <div
-            className={`${styles.addButton}`}
-            onClick={() => navigateToCreatePage(time)}
-          >
-            <Add color="" />
-            {queryGuid ? "Выбрать" : "Создать"}
-          </div>
-        </div>
-      ))} */}
-
-      {/* <CalendarTemplate month={date} /> */}
-
-      {/* {elementsWithPosition?.map((el) => {
-        return (
-          <DataMonthCard
-            key={el.id}
-            date={date}
-            view={view}
-            fieldsMap={fieldsMap}
-            data={el}
-            viewFields={viewFields}
-            navigateToEditPage={navigateToEditPage}
-          />
-        );
-      })} */}
       <ModalDetailPage
         open={open}
         setOpen={setOpen}

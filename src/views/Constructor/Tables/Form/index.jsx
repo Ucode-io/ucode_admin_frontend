@@ -337,13 +337,7 @@ const ConstructorTablesFormPage = () => {
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
-              <HeaderSettings
-                title="Objects"
-                subtitle={id ? mainForm.getValues("label") : "Добавить"}
-                icon={mainForm.getValues("icon")}
-                backButtonLink={-1}
-                sticky
-              >
+              <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Add"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
                   <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>

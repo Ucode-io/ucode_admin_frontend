@@ -47,6 +47,12 @@ export const ActivityFeedColors = (name) => {
       return "#fca130";
     case "DELETE RELATION":
       return "#f93e3e";
+    case "CREATE LAYOUT":
+      return "#49cc90";
+    case "UPDATE LAYOUT":
+      return "#fca130";
+    case "DELETE LAYOUT":
+      return "#f93e3e";
     default:
       return "-";
   }
@@ -71,11 +77,11 @@ export const ActivityFeedBackground = (name) => {
       return "rgba(252,161,48,.1)";
     case "DELETE ITEM":
       return "rgba(249,62,62,.1)";
-    case "CREATE TEBLE":
+    case "CREATE TABLE":
       return "rgba(73,204,144,.1)";
-    case "UPDATE TEBLE":
+    case "UPDATE TABLE":
       return "rgba(252,161,48,.1)";
-    case "DELETE TEBLE":
+    case "DELETE TABLE":
       return "rgba(249,62,62,.1)";
     case "CREATE MENU":
       return "rgba(73,204,144,.1)";
@@ -100,6 +106,12 @@ export const ActivityFeedBackground = (name) => {
     case "UPDATE RELATION":
       return "rgba(252,161,48,.1)";
     case "DELETE RELATION":
+      return "rgba(249,62,62,.1)";
+    case "CREATE LAYOUT":
+      return "rgba(73,204,144,.1)";
+    case "UPDATE LAYOUT":
+      return "rgba(252,161,48,.1)";
+    case "DELETE LAYOUT":
       return "rgba(249,62,62,.1)";
     default:
       return "-";

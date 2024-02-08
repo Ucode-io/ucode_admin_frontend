@@ -78,7 +78,7 @@ service:
       name: https
 
 ingress:
-  enabled: true
+  enabled: false
   rules:
     - annotations:
         nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -88,13 +88,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "agent.easyto.travel"
+        - host: "v2.agent.easyto.travel"
           path: /
           servicePort: 80
       tls:
-        - secretName: admin-frontend-tls
+        - secretName: agent-admin-frontend-tls
           hosts:
-            - "agent.easyto.travel"
+            - "v2.agent.easyto.travel"
 
 resources:
   {}

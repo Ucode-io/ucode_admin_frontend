@@ -102,7 +102,7 @@ const ObjectDataTable = ({
   const [addNewRow, setAddNewRow] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // console.log("objectMenuItem", !Boolean(objectMenuItem))
+
   // const { loader: menuLoader } = useMenuGetByIdQuery({
   //   menuId: searchParams.get("menuId"),
   //   queryParams: {

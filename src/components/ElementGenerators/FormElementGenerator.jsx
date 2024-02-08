@@ -158,11 +158,6 @@ const FormElementGenerator = ({
     return null;
   }
 
-  // if(checkRequired){
-  //   field?.required = true
-  // } else {
-  //   field.required = false
-  // }
 
 
   if (field?.id?.includes("#")) {

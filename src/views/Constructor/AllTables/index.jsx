@@ -111,7 +111,7 @@ const TablesPage = ({ }) => {
               <TableRowButton
                 colSpan={5}
                 onClick={navigateToCreateForm}
-                title="Создать новый"
+                title="Create new"
               />
             </CTableBody>
           </CTable>

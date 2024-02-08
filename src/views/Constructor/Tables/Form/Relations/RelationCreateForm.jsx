@@ -258,7 +258,7 @@ const RelationCreateForm = ({
             {!openSumCreate ? (
               <button type="button" onClick={() => setOpenSumCreate(true)}>
                 <PlusIcon />
-                Создать новый
+                Create new
               </button>
             ) : (
               <button

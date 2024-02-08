@@ -42,8 +42,8 @@ const PermissionDetail = () => {
       >
         <Card style={{paddingBottom: "0px", borderRadius: "0"}}>
           <TabList>
-            <Tab>Роль</Tab>
-            <Tab>Связь</Tab>
+            <Tab>Role</Tab>
+            <Tab>Connection</Tab>
           </TabList>
 
           <TabPanel style={{marginTop: "8px"}}>

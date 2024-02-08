@@ -22,8 +22,8 @@ const ModalCard = ({ title, children, onClose, onSaveButtonClick }) => {
         </div>
         
         <dir className={styles.footer}>
-          <SecondaryButton size="large" className={styles.button} onClick={onClose} >Отменить</SecondaryButton>
-          <PrimaryButton size="large" className={styles.button} onClick={onSaveButtonClick} >Сохранить</PrimaryButton>
+          <SecondaryButton size="large" className={styles.button} onClick={onClose} >Cancel</SecondaryButton>
+          <PrimaryButton size="large" className={styles.button} onClick={onSaveButtonClick} >Save</PrimaryButton>
         </dir>
 
       </Card>

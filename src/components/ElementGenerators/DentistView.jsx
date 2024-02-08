@@ -28,11 +28,11 @@ function DentistView({ onClose }) {
           ))}
         </div>
         <div className={styles.switchBtn}>
-          <span>Взрослый</span> <Switch /> <span>Детский</span>
+          <span>Adults</span> <Switch /> <span>Kids</span>
         </div>
         <div className={styles.controlBtns}>
-          <button className={styles.cancelBtn}>Отменить</button>
-          <button className={styles.updateBtn}>Сохранить</button>
+          <button className={styles.cancelBtn}>Cancel</button>
+          <button className={styles.updateBtn}>Save</button>
         </div>
       </div>
     </>

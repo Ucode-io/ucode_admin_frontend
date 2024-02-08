@@ -277,40 +277,12 @@ const TableRow = ({
                 </PermissionWrapperV2>
               </div>
             </td>
-
-            {/* <td>
-              <div
-                style={{ display: "flex", gap: "5px", padding: "3px" }}
-              ></div>
-            </td> */}
           </CTableRow>
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (
         <CTableRow
-        // onClick={() => {
-        //   onRowClick(row, rowIndex);
-        // }}
         >
-          {/* <CTableCell
-              align="center"
-              className="data_table__number_cell"
-              style={{
-                padding: "0 4px",
-                minWidth: width,
-                position: "sticky",
-                left: "0",
-                backgroundColor: "#F6F6F6",
-                zIndex: "1",
-              }}
-            >
-              <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
-              {onCheckboxChange && (
-                <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                  <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
-                </div>
-              )}
-            </CTableCell> */}
 
           <CTableCell
             align="center"
@@ -352,22 +324,6 @@ const TableRow = ({
                   : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
-
-              {/* <Checkbox
-                  className="table_multi_checkbox"
-                  style={{
-                    display:
-                      selectedObjectsForDelete?.find(
-                        (item) => item?.guid === row?.guid
-                      ) && "block",
-                  }}
-                  checked={selectedObjectsForDelete?.find(
-                    (item) => item?.guid === row?.guid
-                  )}
-                  onChange={() => {
-                    changeSetDelete(row);
-                  }}
-                /> */}
             </div>
           </CTableCell>
 
@@ -479,13 +435,8 @@ const TableRow = ({
                   </RectangleIconButton>
                 </PermissionWrapperV2>
               </CTableCell>
-              {/* <GeneratePdfFromTable row={row} /> */}
             </div>
           </td>
-
-          {/* <td>
-            <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
-          </td> */}
         </CTableRow>
       ) : (
         <CTableRow
@@ -493,25 +444,6 @@ const TableRow = ({
             onChecked(row?.guid);
           }}
         >
-          {/* <CTableCell
-              align="center"
-              className="data_table__number_cell"
-              style={{
-                padding: "0 4px",
-                minWidth: width,
-                position: "sticky",
-                left: "0",
-                backgroundColor: "#F6F6F6",
-                zIndex: "1",
-              }}
-            >
-              <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
-              {onCheckboxChange && (
-                <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                  <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
-                </div>
-              )}
-            </CTableCell> */}
 
           <CTableCell
             align="center"
@@ -553,17 +485,6 @@ const TableRow = ({
                   : (currentPage - 1) * limit + rowIndex + 1}
                 {/* {rowIndex + 1} */}
               </span>
-
-              {/* <Checkbox
-                    className="table_multi_checkbox"
-                    style={{
-                      display: selectedObjectsForDelete?.find((item) => item?.guid === row?.guid) && "block",
-                    }}
-                    checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
-                    onChange={() => {
-                      changeSetDelete(row);
-                    }}
-                  /> */}
             </div>
           </CTableCell>
 

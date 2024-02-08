@@ -165,7 +165,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
             ))}
 
             <TableRowButton colSpan={5} onClick={openImportModal} title="Импортировать из других приложений" />
-            <TableRowButton colSpan={5} onClick={navigateToCreateForm} title="Создать новый" />
+            <TableRowButton colSpan={5} onClick={navigateToCreateForm} title="Create new" />
           </CTableBody>
         </CTable>
       </TableCard>

@@ -55,7 +55,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить папку"
+              title="Edit folder"
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseNotify();
@@ -80,7 +80,7 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<BsFillTrashFill size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element);
@@ -92,7 +92,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Переместить folder"
+              title="Move folder"
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -106,7 +106,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Создать table"
+            title="Create table"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -115,7 +115,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
-            title="Добавить table"
+            title="Add table"
             onClick={(e) => {
               e.stopPropagation();
               setTableModal(element);
@@ -124,7 +124,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
-            title="Добавить microfrontend"
+            title="Add microfrontend"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -139,7 +139,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Добавить папку"
+            title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -154,7 +154,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Переместить table"
+              title="Move table"
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -166,7 +166,7 @@ const ButtonsMenu = ({
             <>
               <MenuItemComponent
                 icon={<DriveFileMoveIcon size={13} />}
-                title="Переместить table"
+                title="Move table"
                 onClick={(e) => {
                   e.stopPropagation();
                   setFolderModalType("folder", element);
@@ -175,7 +175,7 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить table"
+                title="Edit table"
                 onClick={(e) => {
                   e.stopPropagation();
                   setTableModal(element);
@@ -190,7 +190,7 @@ const ButtonsMenu = ({
           permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить table"
+              title="Edit table"
               onClick={(e) => {
                 e.stopPropagation();
                 setTableModal(element);
@@ -211,7 +211,7 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<BsFillTrashFill size={13} />}
-                title="Удалить table"
+                title="Delete table"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element);
@@ -227,7 +227,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<DriveFileMoveIcon size={13} />}
-              title="Переместить table"
+              title="Move table"
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -239,7 +239,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить table"
+              title="Edit table"
               onClick={(e) => {
                 e.stopPropagation();
                 setLinkedTableModal(element);
@@ -257,7 +257,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Удалить table"
+              title="Delete table"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -272,7 +272,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings && (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Переместить microfrontend"
+              title="Move microfrontend"
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -284,7 +284,7 @@ const ButtonsMenu = ({
             <>
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить microfrontend"
+                title="Edit microfrontend"
                 onClick={(e) => {
                   e.stopPropagation();
                   setMicrofrontendModal(element);
@@ -303,7 +303,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Удалить microfrontend"
+              title="Delete microfrontend"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -318,7 +318,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Добавить папку"
+            title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", {
@@ -334,7 +334,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Создать table"
+            title="Create table"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -343,7 +343,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
-            title="Добавить table"
+            title="Add table"
             onClick={(e) => {
               e.stopPropagation();
               setTableModal(element);
@@ -352,7 +352,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
-            title="Добавить microfrontend"
+            title="Add microfrontend"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -367,7 +367,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Добавить папку"
+            title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -381,7 +381,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
+              title="Delete folder"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -395,7 +395,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Создать table"
+            title="Create table"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -404,7 +404,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
-            title="Добавить table"
+            title="Add table"
             onClick={(e) => {
               e.stopPropagation();
               setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
@@ -413,7 +413,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
-            title="Добавить microfrontend"
+            title="Add microfrontend"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal({
@@ -430,7 +430,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Добавить папку"
+            title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", {
@@ -447,7 +447,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Добавить папку"
+            title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -456,7 +456,7 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<AddIcon size={13} />}
-            title="Добавить Wiki"
+            title="Add Wiki"
             onClick={(e) => {
               e.stopPropagation();
               navigate(
@@ -471,7 +471,7 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Создать table"
+            title="Create table"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -485,7 +485,7 @@ const ButtonsMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Удалить Wiki"
+              title="Delete Wiki"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -496,7 +496,7 @@ const ButtonsMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить Wiki"
+              title="Edit Wiki"
               onClick={(e) => {
                 e.stopPropagation();
                 openFolderCreateModal("WIKI_UPDATE", element);

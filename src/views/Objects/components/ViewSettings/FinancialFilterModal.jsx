@@ -316,7 +316,7 @@ const FinancialFilterModal = ({
                 onClick={() => appendFilter({ field_id: "", id: generateID() })}
               >
                 <Add color="primary" />
-                <p>Добавить</p>
+                <p>Add</p>
               </div>
             </div>
           </div>

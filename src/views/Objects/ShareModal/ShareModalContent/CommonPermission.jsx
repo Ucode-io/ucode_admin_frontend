@@ -20,14 +20,14 @@ function CommonPermission({
           paddingBottom: "0",
         }}
       >
-        <FRow label="Тип ползователя">
+        <FRow label="User type">
           <HFSelect
             control={control}
             name={"client_type"}
             options={clientTypeList}
           />
         </FRow>
-        <FRow label="Роль">
+        <FRow label="Role">
           <HFSelect control={control} name={"guid"} options={getRoleList} />
         </FRow>
       </Box>

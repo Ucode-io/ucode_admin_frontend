@@ -42,7 +42,7 @@ const PermissionButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить"
+              title="Edit"
               onClick={(e) => {
                 e.stopPropagation();
                 openUserFolderModal(element, "UPDATE");
@@ -54,7 +54,7 @@ const PermissionButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<Delete size={13} />}
-              title="Удалить"
+              title="Delete"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteClientType(element?.guid);

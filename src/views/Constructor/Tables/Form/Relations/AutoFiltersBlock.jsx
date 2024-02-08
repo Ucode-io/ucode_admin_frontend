@@ -84,7 +84,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
         </div>
       ))}
       <div className={styles.summaryButton} >
-        <Button onClick={addNewAutoFilter} variant="contained" style={{  fontSize: "14px" }}>Добавить</Button>
+        <Button onClick={addNewAutoFilter} variant="contained" style={{  fontSize: "14px" }}>Add</Button>
       </div>
     </>
   );

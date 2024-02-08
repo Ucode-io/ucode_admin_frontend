@@ -366,7 +366,7 @@ const AutoCompleteElement = memo(
           className={styles.createButton}
           onClick={() => navigateToForm(tableSlug)}
         >
-          Создать новый
+          Create new
         </div>
 
         {relationFields?.map((element, index) => (

@@ -116,7 +116,7 @@ const LinkTableModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать table</Typography>
+            <Typography variant="h4">Attach to table</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -174,7 +174,7 @@ const LinkTableModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
             </Box>
 
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" loading={loading} />
+              <SaveButton title="Add" type="submit" loading={loading} />
             </div>
           </form>
         </Card>

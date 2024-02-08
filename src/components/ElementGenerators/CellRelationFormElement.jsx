@@ -545,7 +545,7 @@ const AutoCompleteElement = ({
             onClick={() => navigateToForm(tableSlug)}
             style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
           >
-            Создать новый
+            Create new
           </span>
         )}
         menuShouldScrollIntoView

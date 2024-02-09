@@ -38,7 +38,6 @@ const ObjectDataTable = ({
   getValues,
   additionalRow,
   mainForm,
-  elementHeight,
   selectedView,
   isTableView = false,
   remove,
@@ -60,7 +59,6 @@ const ObjectDataTable = ({
   navigateToEditPage,
   dataLength,
   onDeleteClick,
-  onEditClick,
   onRowClick = () => { },
   filterChangeHandler = () => { },
   filters,
@@ -83,7 +81,6 @@ const ObjectDataTable = ({
   defaultLimit,
   title,
   view,
-  navigateToForm,
   refetch,
   menuItem,
   getAllData = () => { },
@@ -98,7 +95,6 @@ const ObjectDataTable = ({
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
-  // const [menuItem, setMenuItem] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -123,11 +119,9 @@ const ObjectDataTable = ({
       if (!table) return;
       const cols = table.querySelectorAll("th");
       [].forEach.call(cols, function (col, idx) {
-        // Add a resizer element to the column
         const resizer = document.createElement("span");
         resizer.classList.add("resizer");
 
-        // Set the height
         resizer.style.height = `${table.offsetHeight}px`;
 
         col.appendChild(resizer);
@@ -251,12 +245,6 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
-  // useEffect(() => {
-  //   if (!formVisible) {
-  //     dispatch(selectedRowActions.clear());
-  //   }
-  // }, [formVisible]);
-
   const parentRef = useRef(null);
 
   return (

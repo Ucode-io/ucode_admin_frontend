@@ -105,7 +105,6 @@ const AutoCompleteElement = ({
   isFormEdit,
   placeholder,
   tableSlug,
-  name,
   disabled,
   defaultValue,
   classes,
@@ -304,7 +303,6 @@ const AutoCompleteElement = ({
         openOnFocus
         getOptionLabel={
           (option) => getRelationFieldTabsLabel(field, option, true)
-          // findMatchingProperty(option, i18n)
         }
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}

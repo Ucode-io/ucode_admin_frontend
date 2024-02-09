@@ -147,7 +147,6 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
-  const queryClient = useQueryClient();
   const [allOptions, setAllOptions] = useState();
   const [localValue, setLocalValue] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -489,7 +488,6 @@ const AutoCompleteElement = ({
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}
-        // menuPortalTarget={document.body}
         isClearable
         components={{
           ClearIndicator: () =>

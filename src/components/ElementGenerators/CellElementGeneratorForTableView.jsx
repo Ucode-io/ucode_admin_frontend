@@ -52,7 +52,6 @@ const CellElementGeneratorForTableView = ({
   isNewRow = false,
   newColumn = false,
 }) => {
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const { i18n } = useTranslation();

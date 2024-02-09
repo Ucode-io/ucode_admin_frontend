@@ -34,7 +34,6 @@ const CellRelationFormElement = ({
   control,
   name,
   updateObject,
-  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -212,11 +211,9 @@ const AutoCompleteElement = ({
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
-          // slugOptions,
         };
       },
       onSuccess: (data) => {
@@ -442,11 +439,6 @@ const AutoCompleteElement = ({
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
             }}
           >
-            {/* <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              size={15}
-            /> */}
             <LaunchIcon
               style={{
                 fontSize: "18px",

@@ -232,7 +232,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       });
   };
 
-  console.log("selectedEnvID", selectedEnvID);
+
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
       const tableKeys = Object.keys(getFormValue.tables);

@@ -51,8 +51,6 @@ const ViewsWithGroups = ({
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
-  // const [analyticsRes, setAnalyticsRes] = useState(null);
-  // const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();

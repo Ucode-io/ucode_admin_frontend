@@ -4,7 +4,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import {Box, Popover, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -131,7 +131,6 @@ const CellRelationFormElementForTableView = ({
 
 const AutoCompleteElement = ({
   relOptions,
-  tableView,
   field,
   value,
   tableSlug,
@@ -150,7 +149,6 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
-  const queryClient = useQueryClient();
   const [allOptions, setAllOptions] = useState();
   const [localValue, setLocalValue] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);

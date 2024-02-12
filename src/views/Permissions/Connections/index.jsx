@@ -66,7 +66,7 @@ const ConnectionPage = () => {
         >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
+            <CTableCell>Name</CTableCell>
             <CTableCell>Table slug</CTableCell>
             <CTableCell>View slug</CTableCell>
            {connections?.data?.response.length ? (

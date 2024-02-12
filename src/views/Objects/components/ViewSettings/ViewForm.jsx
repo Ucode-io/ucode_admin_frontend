@@ -256,12 +256,12 @@ const ViewForm = ({
               <div className={styles.section}>
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
-                    <FRow label="Название">
+                    <FRow label="Name">
                       <Box style={{display: "flex", gap: "6px"}}>
                         <HFTextField
                           control={form.control}
                           name={`attributes.name_${i18n?.language}`}
-                          placeholder={`Название (${i18n?.language})`}
+                          placeholder={`Name (${i18n?.language})`}
                           fullWidth
                         />
                       </Box>

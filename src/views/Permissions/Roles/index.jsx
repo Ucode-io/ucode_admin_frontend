@@ -64,7 +64,7 @@ const RolePage = () => {
         >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
+            <CTableCell>Name</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

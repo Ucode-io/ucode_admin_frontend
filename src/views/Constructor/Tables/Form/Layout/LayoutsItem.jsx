@@ -86,7 +86,7 @@ export default function LayoutsItem({
               render={({field: {onChange, value}, fieldState: {error}}) => (
                 <AutoWidthInput
                   value={value}
-                  placeholder={`Название ${lang.slug}`}
+                  placeholder={`Name ${lang.slug}`}
                   onChange={(e) => {
                     onChange(e);
                     updateCurrentLayout();

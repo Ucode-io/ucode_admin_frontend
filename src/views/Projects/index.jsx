@@ -60,7 +60,7 @@ const ProjectPage = () => {
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
+            <CTableCell>Name</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

@@ -73,7 +73,7 @@ const MatrixRoles = ({ infoForm }) => {
   return (
     <div>
       <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-        <FRow label="Название">
+        <FRow label="Name">
           <HFTextField name="userType" control={infoForm.control} fullWidth />
         </FRow>
       </FormCard>
@@ -83,7 +83,7 @@ const MatrixRoles = ({ infoForm }) => {
             <CTableHead>
               <CTableRow>
                 <CTableCell style={{ padding: "12px 20px" }}>
-                  Название
+                  Name
                 </CTableCell>
               </CTableRow>
             </CTableHead>
@@ -121,7 +121,7 @@ const MatrixRoles = ({ infoForm }) => {
                 <div className={styles.action}>
                   <HFTextField
                     required
-                    label="Название"
+                    label="Name"
                     name="name"
                     control={control}
                     fullWidth

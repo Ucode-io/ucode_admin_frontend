@@ -77,10 +77,10 @@ const MicrofrontendPage = () => {
         >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Статус</CTableCell>
-            <CTableCell>Описание</CTableCell>
-            <CTableCell>Cсылка</CTableCell>
+            <CTableCell>Name</CTableCell>
+            <CTableCell>Status</CTableCell>
+            <CTableCell>Description</CTableCell>
+            <CTableCell>Link</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

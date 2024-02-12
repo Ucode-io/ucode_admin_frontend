@@ -77,8 +77,8 @@ const TablesPage = ({ }) => {
             <CTableHead>
               {/* <CTableCell></CTableCell> */}
               <CTableCell width={10}>№</CTableCell>
-              <CTableCell>Название</CTableCell>
-              <CTableCell>Описание</CTableCell>
+              <CTableCell>Name</CTableCell>
+              <CTableCell>Description</CTableCell>
               {/* <CTableCell width={60}>Показать в меню</CTableCell> */}
               <CTableCell width={60} />
             </CTableHead>

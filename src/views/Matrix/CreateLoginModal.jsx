@@ -81,7 +81,7 @@ const CreateLoginModal = ({
             <div className={styles.card_body}>
               <div className={styles.card_body_head}>
                 <div>
-                  Название
+                  Name
                   <FilterIcon />
                 </div>
                 <div>

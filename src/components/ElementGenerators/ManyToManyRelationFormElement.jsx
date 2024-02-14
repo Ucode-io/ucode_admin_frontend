@@ -38,12 +38,12 @@ const ManyToManyRelationFormElement = ({
     return (
       <FRow
         label={
-          field?.attributes[`title_${i18n?.language}`] ??
-          field?.attributes[`name${i18n?.language}`] ??
-          field?.attributes[`label${i18n?.language}`] ??
-          field?.label ??
-          field.title ??
-          " "
+          field?.attributes[`title_${i18n?.language}`] ||
+          field?.attributes[`name_${i18n?.language}`] ||
+          field?.attributes[`label_to_${i18n?.language}`] ||
+          field?.attributes[`label_${i18n?.language}`] ||
+          field?.label ||
+          field.title
         }
         required={field.required}
       >

@@ -39,18 +39,20 @@ const NewCHFFormulaField = ({
   });
 
   const updateValue = () => {
+    let value;
     const fieldsListSorted = fieldsList
       ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
     fieldsListSorted?.forEach((field) => {
-      let value = values?.[field?.slug] ?? 0;
+       value = values?.[field?.slug] ?? 0;
       if (typeof value === "string") value = `${value}`;
-      formula = formula.replaceAll(`${field.slug}`, value);
+      const regex = new RegExp(`\\b${field.slug}\\b`, 'g');
+      formula = formula.replace(regex, value);
     });
     const {error, result} = parser?.parse(formula);
 
-    let newValue = result ?? error;
+    let newValue = result;
     if (newValue !== currentValue) setFormValue(name, newValue);
-  };
+};
 
   useDebouncedWatch(updateValue, [values], 300);
 
@@ -77,7 +79,6 @@ const NewCHFFormulaField = ({
           onChange={(e) => {
             const val = e.target.value;
             const valueWithoutSpaces = val.replaceAll(" ", "");
-
             if (!valueWithoutSpaces) onChange("");
             else
               onChange(
@@ -85,7 +86,7 @@ const NewCHFFormulaField = ({
                   ? Number(valueWithoutSpaces)
                   : ""
               );
-            isNewTableView && updateObject();
+              updateObject();
           }}
           name={name}
           error={error}

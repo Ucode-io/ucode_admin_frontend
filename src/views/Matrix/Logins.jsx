@@ -248,7 +248,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
             <div className={styles.card_body}>
               <div className={styles.card_body_head}>
                 <div>
-                  Название
+                  Name
                   <FilterIcon />
                 </div>
                 <div>
@@ -416,7 +416,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
               <div className={styles.card_body}>
                 <div className={styles.card_body_head}>
                   <div>
-                    Название
+                    Name
                     <FilterIcon />
                   </div>
                   <div>

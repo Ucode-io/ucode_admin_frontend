@@ -1,10 +1,11 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
+import {Box, Button, Modal, Typography} from "@mui/material";
 import React from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { MdContentCopy } from "react-icons/md";
-import { showAlert } from "../../../../store/alert/alert.thunk";
-import { useDispatch } from "react-redux";
+import {MdContentCopy} from "react-icons/md";
+import {showAlert} from "../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
 import RectangleIconButton from "../../../Buttons/RectangleIconButton";
+import ReactJson from "react-json-view";
 
 const style = {
   position: "absolute",
@@ -18,13 +19,13 @@ const style = {
   p: 0,
   outline: "none",
   borderRadius: "10px",
-  maxHeight: "80vh",
+  maxHeight: "70vh",
   maxWidth: "80vw",
   overflow: "scroll",
   height: "80vh",
 };
 
-export default function JsonModalVersion({ history }) {
+export default function JsonModalVersion({history}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -44,8 +45,7 @@ export default function JsonModalVersion({ history }) {
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+        aria-describedby="modal-modal-description">
         <Box sx={style}>
           <Box
             sx={{
@@ -53,13 +53,12 @@ export default function JsonModalVersion({ history }) {
               justifyContent: "flex-end",
               alignItems: "center",
               borderBottom: "1px solid #e0e0e0",
-              padding: "16px",
+              padding: "8px",
               position: "sticky",
               top: "0",
               backgroundColor: "#fff",
               zIndex: 9999,
-            }}
-          >
+            }}>
             <Button
               variant="outlined"
               sx={{
@@ -68,8 +67,7 @@ export default function JsonModalVersion({ history }) {
                 padding: "0px",
                 minWidth: "40px",
               }}
-              onClick={handleClose}
-            >
+              onClick={handleClose}>
               <CloseRoundedIcon />
             </Button>
           </Box>
@@ -77,16 +75,14 @@ export default function JsonModalVersion({ history }) {
           <Box
             sx={{
               padding: "16px",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "grid",
                 gridTemplateColumns:
                   history?.current && history?.previus ? "1fr 1fr" : "1fr",
                 gap: "16px",
-              }}
-            >
+              }}>
               <Typography variant="h5">
                 {history?.previus && "Previus"}
               </Typography>
@@ -100,8 +96,7 @@ export default function JsonModalVersion({ history }) {
                 gridTemplateColumns:
                   history?.current && history?.previus ? "1fr 1fr" : "1fr",
                 gap: "16px",
-              }}
-            >
+              }}>
               {history?.current && history?.previus && (
                 <>
                   <Box
@@ -113,21 +108,21 @@ export default function JsonModalVersion({ history }) {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "end",
-                    }}
-                  >
-                    <RectangleIconButton
+                    }}>
+                    <ReactJson
+                      src={history?.current && JSON.parse(history?.current)}
+                      theme="codeschool"
                       style={{
-                        marginLeft: "auto",
+                        padding: "10px",
+                        borderRadius: "10px",
+                        overflow: "auto",
+                        height: "300px",
+                        width: "350px",
                       }}
-                      onClick={() =>
-                        copyToClipboard(
-                          JSON.stringify(history?.current, null, 2)
-                        )
-                      }
-                    >
-                      <MdContentCopy />
-                    </RectangleIconButton>
-                    <pre>{JSON.stringify(history?.current, null, 2)}</pre>
+                      enableClipboard={false}
+                      displayDataTypes={false}
+                      displayObjectSize={false}
+                    />
                   </Box>
 
                   <Box
@@ -139,21 +134,21 @@ export default function JsonModalVersion({ history }) {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "end",
-                    }}
-                  >
-                    <RectangleIconButton
+                    }}>
+                    <ReactJson
+                      src={history?.previus && JSON.parse(history?.previus)}
+                      theme="codeschool"
                       style={{
-                        marginLeft: "auto",
+                        padding: "10px",
+                        borderRadius: "10px",
+                        overflow: "auto",
+                        height: "300px",
+                        width: "350px",
                       }}
-                      onClick={() =>
-                        copyToClipboard(
-                          JSON.stringify(history?.previus, null, 2)
-                        )
-                      }
-                    >
-                      <MdContentCopy />
-                    </RectangleIconButton>
-                    <pre>{JSON.stringify(history?.previus, null, 2)}</pre>
+                      enableClipboard={false}
+                      displayDataTypes={false}
+                      displayObjectSize={false}
+                    />
                   </Box>
                 </>
               )}
@@ -167,16 +162,21 @@ export default function JsonModalVersion({ history }) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "end",
-                  }}
-                >
-                  <RectangleIconButton
-                    onClick={() =>
-                      copyToClipboard(JSON.stringify(history?.current, null, 2))
-                    }
-                  >
-                    <MdContentCopy />
-                  </RectangleIconButton>
-                  <pre>{JSON.stringify(history?.current, null, 2)}</pre>
+                  }}>
+                  <ReactJson
+                    src={history?.current && JSON.parse(history?.current)}
+                    theme="codeschool"
+                    style={{
+                      padding: "10px",
+                      borderRadius: "10px",
+                      overflow: "auto",
+                      height: "300px",
+                      width: "350px",
+                    }}
+                    enableClipboard={false}
+                    displayDataTypes={false}
+                    displayObjectSize={false}
+                  />
                 </Box>
               )}
               {!history?.current && history?.previus && (
@@ -184,21 +184,26 @@ export default function JsonModalVersion({ history }) {
                   sx={{
                     backgroundColor: "#000",
                     borderRadius: "10px",
-                    padding: "16px",
+                    padding: "8px",
                     color: "#fff",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "end",
-                  }}
-                >
-                  <RectangleIconButton
-                    onClick={() =>
-                      copyToClipboard(JSON.stringify(history?.previus, null, 2))
-                    }
-                  >
-                    <MdContentCopy />
-                  </RectangleIconButton>
-                  <pre>{JSON.stringify(history?.previus, null, 2)}</pre>
+                  }}>
+                  <ReactJson
+                    src={history?.previus && JSON.parse(history?.previus)}
+                    theme="codeschool"
+                    style={{
+                      padding: "10px",
+                      borderRadius: "10px",
+                      overflow: "auto",
+                      height: "300px",
+                      width: "350px",
+                    }}
+                    enableClipboard={false}
+                    displayDataTypes={false}
+                    displayObjectSize={false}
+                  />
                 </Box>
               )}
             </Box>

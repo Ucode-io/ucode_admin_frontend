@@ -1,10 +1,10 @@
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import { Box, Button, TableCell, Typography } from "@mui/material";
+import {Box, Button, TableCell, Typography} from "@mui/material";
 import React from "react";
 import HistoryRow from "./HistoryRow";
 import styles from "./styles.module.scss";
 import TableCard from "../../../TableCard";
-import { CTable, CTableBody, CTableHead, CTableHeadRow } from "../../../CTable";
+import {CTable, CTableBody, CTableHead, CTableHeadRow} from "../../../CTable";
 import ClearIcon from "@mui/icons-material/Clear";
 
 export default function HistoriesTable({
@@ -26,7 +26,7 @@ export default function HistoriesTable({
   };
 
   return (
-    <div style={{ height: 400, width: "100%", overflow: "auto" }}>
+    <div style={{height: 400, width: "100%", overflow: "auto"}}>
       <div className={styles.header}>
         <Typography variant="h4">History</Typography>
         <ClearIcon
@@ -41,8 +41,7 @@ export default function HistoriesTable({
       <Box>
         <Button
           className={styles.button}
-          onClick={() => setSelectedMigrate(null)}
-        >
+          onClick={() => setSelectedMigrate(null)}>
           <ArrowBackRoundedIcon />
         </Button>
       </Box>
@@ -53,12 +52,11 @@ export default function HistoriesTable({
           tableStyle={{
             height: "auto",
           }}
-          disablePagination={true}
-        >
+          disablePagination={true}>
           <CTableHead>
             <CTableHeadRow>
               <TableCell width={40}>Action</TableCell>
-              <TableCell>Action Type</TableCell>
+              <TableCell width={160}>Action Type</TableCell>
               <TableCell>Action Source</TableCell>
               <TableCell width={200}>Label</TableCell>
               <TableCell width={130}>Action</TableCell>
@@ -68,8 +66,7 @@ export default function HistoriesTable({
             style={{
               overflow: "auto",
             }}
-            dataLength={histories?.length}
-          >
+            dataLength={histories?.length}>
             {histories?.map((history, index) => (
               <HistoryRow
                 history={history}

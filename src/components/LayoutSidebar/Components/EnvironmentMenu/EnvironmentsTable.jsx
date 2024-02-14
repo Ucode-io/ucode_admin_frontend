@@ -23,14 +23,14 @@ export default function EnvironmentsTable({
   const handleChange = (event) => {
     setSelectedEnvironment(event.target.value);
     if (event.target.value === company.environmentId) {
-      setSelectedMigrate("down");
+      setSelectedMigrate("DOWN");
     } else {
-      setSelectedMigrate("miggrate");
+      setSelectedMigrate("UP");
     }
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{width: "100%"}}>
       <div className={styles.header}>
         <Typography variant="h4">
           {selectedEnvironment ? "Select migration" : "Select environment"}
@@ -47,8 +47,7 @@ export default function EnvironmentsTable({
       {selectedEnvironment && (
         <Button
           className={styles.button}
-          onClick={() => setSelectedEnvironment(null)}
-        >
+          onClick={() => setSelectedEnvironment(null)}>
           <ArrowBackRoundedIcon />
         </Button>
       )}
@@ -59,7 +58,12 @@ export default function EnvironmentsTable({
               <FormControlLabel
                 value={item?.id}
                 control={<Radio />}
-                label={<h4>{item?.name} {item?.id === company.environmentId ? "(Down)" : "(Up)"}</h4>}
+                label={
+                  <h4>
+                    {item?.name}{" "}
+                    {item?.id === company.environmentId ? "(DOWN)" : "(UP)"}
+                  </h4>
+                }
                 className={
                   environments === item.id ? styles.active : styles.inactive
                 }

@@ -20,7 +20,6 @@ const TableRow = ({
   rowIndex,
   control,
   isTableView,
-  relatedTableSlug,
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,

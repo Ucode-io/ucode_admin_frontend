@@ -402,7 +402,7 @@ const MatrixRolePage = () => {
       />
       <div style={{ margin: "8px" }}>
         <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-          <FRow label="Название">
+          <FRow label="Name">
             <HFTextField name="name" control={roleForm.control} fullWidth />
           </FRow>
         </FormCard>

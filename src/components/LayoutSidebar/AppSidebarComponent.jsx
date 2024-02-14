@@ -130,20 +130,30 @@ const AppSidebar = ({
             margin: "0 10px",
           }}
         >
-          <FolderIcon 
-          className="folder-icon"
+           <IconGenerator
+            icon={
+              element?.icon ||
+              element?.data?.microfrontend?.icon ||
+              element?.data?.webpage?.icon ||
+              "folder.svg"
+            }
+            size={
+              menuTemplate?.icon_size === "SMALL"
+                ? 10
+                : menuTemplate?.icon_size === "MEDIUM"
+                ? 15
+                : 18 || 18
+            }
+            className="folder-icon"
             style={{
               marginRight: sidebarIsOpen ? "8px" : "0px",
               color:
-                activeMenu
+                selectedApp?.id === element.id
                   ? menuStyle?.active_text
                   : menuStyle?.text || "",
-                  width: menuTemplate?.icon_size === "SMALL" ? '18px' : menuTemplate?.icon_size === "MEDIUM" ? '20px' : '24px',
-                  height: menuTemplate?.icon_size === "SMALL" ? '18px' : menuTemplate?.icon_size === "MEDIUM" ? '20px' : '24px'
-            }} 
-            
-            
-            />
+            }}
+          />
+
           {sidebarIsOpen && (
             <ListItemText
               primary={

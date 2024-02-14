@@ -1,12 +1,12 @@
-import { Box, Button, CircularProgress, Modal } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useEnvironmentListQuery } from "../../../../services/environmentService";
-import { store } from "../../../../store";
+import {Box, Button, CircularProgress, Modal} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useEnvironmentListQuery} from "../../../../services/environmentService";
+import {store} from "../../../../store";
 import httpsRequestV2 from "../../../../utils/httpsRequestV2";
 import EnvironmentsTable from "./EnvironmentsTable";
 import HistoriesTable from "./HistoriesTable";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 
 const style = {
   position: "absolute",
@@ -21,7 +21,7 @@ const style = {
   outline: "none",
 };
 
-export default function EnvironmentModal({ open, handleClose }) {
+export default function EnvironmentModal({open, handleClose}) {
   const company = store.getState().company;
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedMigrate, setSelectedMigrate] = useState(null);
@@ -30,9 +30,8 @@ export default function EnvironmentModal({ open, handleClose }) {
   const [selectedVersions, setSelectedVersions] = useState([]);
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
+  const [selectedIds, setSelectedIds] = useState([]);
   const dispatch = useDispatch();
-  console.log("selectedVersions", selectedVersions);
-
 
   const updateVersions = () => {
     const selectedVersionsIds = selectedVersions.map((version) => version.id);
@@ -40,7 +39,7 @@ export default function EnvironmentModal({ open, handleClose }) {
     httpsRequestV2
       .put(`/version/history/${selectedEnvironment}`, {
         env_id: environmentId,
-        ids: selectedVersionsIds,
+        ids: selectedIds,
         project_id: company.projectId,
       })
       .then((res) => {
@@ -60,15 +59,20 @@ export default function EnvironmentModal({ open, handleClose }) {
   };
   const updateDown = () => {
     httpsRequestV2
-      .post("/version/down", {
-        histories: selectedVersions,
-      })
+      .post(
+        `/version/history/migrate/${selectedMigrate.toLowerCase()}/${selectedEnvironment}`,
+        {
+          data: selectedVersions,
+        }
+      )
       .then((res) => {
+        console.log("ressssss", res);
+        setSelectedIds(res?.ids);
         updateVersions();
       });
   };
 
-  const { data: { environments } = [], isLoading: environmentLoading } =
+  const {data: {environments} = [], isLoading: environmentLoading} =
     useEnvironmentListQuery({
       params: {
         project_id: company.projectId,
@@ -82,7 +86,10 @@ export default function EnvironmentModal({ open, handleClose }) {
     if (selectedMigrate) {
       setVersionLoading(true);
       httpsRequestV2
-        .get(`/version/history/${selectedEnvironment}/${selectedMigrate}`, {})
+        .get(
+          `/version/history/${selectedEnvironment}?type=${selectedMigrate}&limit=100&offset=1`,
+          {}
+        )
         .then((res) => {
           setVersions(res.histories);
         })
@@ -97,8 +104,7 @@ export default function EnvironmentModal({ open, handleClose }) {
       open={open}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+      aria-describedby="modal-modal-description">
       <Box sx={style}>
         <Box>
           {environmentLoading || versionLoading ? (
@@ -111,8 +117,7 @@ export default function EnvironmentModal({ open, handleClose }) {
                 minHeight: "200px",
                 height: "100%",
                 width: "100%",
-              }}
-            >
+              }}>
               <CircularProgress />
             </Box>
           ) : selectedMigrate ? (
@@ -145,28 +150,26 @@ export default function EnvironmentModal({ open, handleClose }) {
               gap: "8px",
               padding: "10px 15px",
               borderTop: "1px solid #e5e9eb",
-            }}
-          >
+            }}>
             <Button
               variant="outlined"
               color="error"
-              onClick={() => setSelectedVersions([])}
-            >
+              onClick={() => setSelectedVersions([])}>
               Cancel
             </Button>
 
             {selectedVersions?.length ? (
-                <Button
+              <Button
                 variant="outlined"
                 color="success"
                 onClick={() => {
-                  selectedMigrate === "miggrate"  ? updateMigrate() : updateDown()
-                }}
-              >
+                  selectedMigrate === "miggrate"
+                    ? updateMigrate()
+                    : updateDown();
+                }}>
                 Miggrate
               </Button>
-            ): null}
-            
+            ) : null}
           </Box>
         )}
       </Box>

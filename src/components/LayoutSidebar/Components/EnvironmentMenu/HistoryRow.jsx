@@ -1,10 +1,13 @@
-import { Checkbox } from "@mui/material";
-import React, { useMemo } from "react";
-import { struct } from "pb-util";
-import { useTranslation } from "react-i18next";
+import {Checkbox} from "@mui/material";
+import React, {useMemo} from "react";
+import {struct} from "pb-util";
+import {useTranslation} from "react-i18next";
 import JsonModalVersion from "./JsonModalVersion";
-import { store } from "../../../../store";
-import { CTableCell, CTableRow } from "../../../CTable";
+import {store} from "../../../../store";
+import {CTableCell, CTableRow} from "../../../CTable";
+import Tag from "../../../Tag";
+import {ActivityFeedColors} from "../../../Status";
+import style from "./styles.module.scss";
 
 export default function HistoryRow({
   history,
@@ -12,7 +15,7 @@ export default function HistoryRow({
   handleSelectVersion,
   selectedVersions,
 }) {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const decodedCurrentAttributes = struct.decode(
     history?.current?.attributes ?? {}
   );
@@ -69,8 +72,6 @@ export default function HistoryRow({
     }
   }, [history, i18n.language]);
 
-  console.log("history", history);
-
   return (
     <CTableRow key={history.id}>
       <CTableCell>
@@ -82,7 +83,19 @@ export default function HistoryRow({
         />
       </CTableCell>
 
-      <CTableCell>{history.action_type}</CTableCell>
+      <CTableCell>
+        <Tag
+          shape="subtle"
+          color={ActivityFeedColors(history?.action_type)}
+          size="large"
+          style={{
+            background: `${ActivityFeedColors(history?.action_type)}`,
+          }}
+          className={style.tag}>
+          {" "}
+          {history.action_type}
+        </Tag>
+      </CTableCell>
       <CTableCell>{history.action_source}</CTableCell>
       <CTableCell>{label}</CTableCell>
       <CTableCell>

@@ -83,8 +83,8 @@ export default function OpenFaasFunctionPage() {
         >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Статус</CTableCell>
+            <CTableCell>Name</CTableCell>
+            <CTableCell>Status</CTableCell>
             <CTableCell>Path</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>

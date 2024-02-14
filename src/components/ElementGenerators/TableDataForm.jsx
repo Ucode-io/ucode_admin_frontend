@@ -21,7 +21,6 @@ const TableDataForm =
     relationfields,
     data,
     isWrap,
-    watch,
     view,
   }) => {
     const {mutate: updateObject} = useMutation(() =>

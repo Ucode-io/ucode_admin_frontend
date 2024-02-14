@@ -131,9 +131,9 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
           <CTableHead>
             {/* <CTableCell></CTableCell> */}
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Описание</CTableCell>
-            <CTableCell width={60}>Показать в меню</CTableCell>
+            <CTableCell>Name</CTableCell>
+            <CTableCell>Description</CTableCell>
+            <CTableCell width={60}>Show in menu</CTableCell>
             <CTableCell width={60} />
           </CTableHead>
           <CTableBody columnsCount={4} dataLength={1} loader={loader}>

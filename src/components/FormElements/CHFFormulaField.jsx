@@ -52,7 +52,7 @@ const CHFFormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
     const {error, result} = parser?.parse(computedFormula);
-    let newValue = error ?? result;
+    let newValue = result ?? error ;
     // const prevValue = values[name]
     if (newValue !== currentValue) setFormValue(name, newValue);
   };

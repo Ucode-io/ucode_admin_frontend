@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material";
-import React, { useState } from "react";
+import {Box, Button} from "@mui/material";
+import React, {useState} from "react";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import EnvironmentModal from "./EnvironmentModal";
@@ -16,15 +16,14 @@ export default function EnvironmentMenu({
   const handleClose = () => setOpen(false);
 
   return (
-    <Box sx={{ margin: "0 5px" }}>
+    <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">
         <Button className={`nav-element`} onClick={handleOpen}>
           <div
             className="label"
             style={{
               color: menuStyle?.text,
-            }}
-          >
+            }}>
             <LocalOfferIcon />
             Environment changes
           </div>

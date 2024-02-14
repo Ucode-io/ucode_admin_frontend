@@ -77,7 +77,6 @@ const NewCHFFormulaField = ({
           onChange={(e) => {
             const val = e.target.value;
             const valueWithoutSpaces = val.replaceAll(" ", "");
-
             if (!valueWithoutSpaces) onChange("");
             else
               onChange(
@@ -85,7 +84,7 @@ const NewCHFFormulaField = ({
                   ? Number(valueWithoutSpaces)
                   : ""
               );
-            isNewTableView && updateObject();
+              isNewTableView && updateObject();
           }}
           name={name}
           error={error}

@@ -50,9 +50,11 @@ export default function VisibleColumnsButtonRelationSection({
     const result = data?.tabs;
 
 
-    const computeTabs = result?.map((item, index) => ({
+    const computeTabs = result?.map((item, index) => (
+      {
       ...item,
       attributes: {
+        ...item?.attributes,
         columns: index === selectedTabIndex ? datas : item?.attributes?.columns ?? item?.relation?.columns 
       }
     }))

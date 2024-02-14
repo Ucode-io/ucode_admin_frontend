@@ -27,6 +27,7 @@ import {useSearchParams} from "react-router-dom";
 import QuerySidebar from "../Components/Query/QuerySidebar";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
+import EnvironmentMenu from "../Components/EnvironmentMenu";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -279,6 +280,14 @@ const SubMenu = ({
                       level={2}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       pinIsEnabled={pinIsEnabled}
+                    />
+                  )}
+                  {selectedApp?.id === adminId && (
+                    <EnvironmentMenu
+                      menuStyle={menuStyle}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      level={2}
+                      menuItem={menuItem}
                     />
                   )}
                 </div>

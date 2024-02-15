@@ -1,7 +1,7 @@
-import { Delete } from "@mui/icons-material";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useState} from "react";
+import {useSelector} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -12,12 +12,15 @@ import {
 } from "../../../components/CTable";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import { useTablesListQuery } from "../../../services/constructorTableService";
+import constructorTableService, {
+  useTablesListQuery,
+} from "../../../services/constructorTableService";
 import HeaderSettings from "../../../components/HeaderSettings";
 import SearchInput from "../../../components/SearchInput";
 import FiltersBlock from "../../../components/FiltersBlock";
+import {useQueryClient} from "react-query";
 
-const TablesPage = ({ }) => {
+const TablesPage = ({}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchText, setSearchText] = useState("");
@@ -25,8 +28,8 @@ const TablesPage = ({ }) => {
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [modalLoader, setModalLoader] = useState();
   const projectId = useSelector((state) => state.auth.projectId);
-
-  const { data: tables, isLoading } = useTablesListQuery({
+  const queryClient = useQueryClient();
+  const {data: tables, isLoading} = useTablesListQuery({
     params: {
       search: searchText,
     },
@@ -49,6 +52,14 @@ const TablesPage = ({ }) => {
 
   const deleteTable = async (id) => {
     setLoader(true);
+    constructorTableService
+      .delete(id, projectId)
+      .then(() => {
+        queryClient.refetchQueries(["TABLES"]);
+      })
+      .finally(() => {
+        setLoader(false);
+      });
   };
 
   return (
@@ -72,8 +83,7 @@ const TablesPage = ({ }) => {
               border: "none",
             }}
             disablePagination
-            removableHeight={120}
-          >
+            removableHeight={120}>
             <CTableHead>
               {/* <CTableCell></CTableCell> */}
               <CTableCell width={10}>№</CTableCell>
@@ -86,8 +96,7 @@ const TablesPage = ({ }) => {
               {tables?.tables?.map((element, index) => (
                 <CTableRow
                   key={element.id}
-                  onClick={() => navigateToEditForm(element.id, element.slug)}
-                >
+                  onClick={() => navigateToEditForm(element.id, element.slug)}>
                   <CTableCell>{index + 1}</CTableCell>
                   <CTableCell>{element.label}</CTableCell>
                   <CTableCell>{element.description}</CTableCell>
@@ -95,8 +104,7 @@ const TablesPage = ({ }) => {
                   <CTableCell>
                     <RectangleIconButton
                       color="error"
-                      onClick={() => deleteTable(element.id)}
-                    >
+                      onClick={() => deleteTable(element.id)}>
                       <Delete color="error" />
                     </RectangleIconButton>
                   </CTableCell>

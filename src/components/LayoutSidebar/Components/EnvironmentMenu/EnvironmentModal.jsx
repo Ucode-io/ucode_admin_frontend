@@ -33,13 +33,13 @@ export default function EnvironmentModal({open, handleClose}) {
   const [selectedIds, setSelectedIds] = useState([]);
   const dispatch = useDispatch();
 
-  const updateVersions = () => {
+  const updateVersions = (ids) => {
     const selectedVersionsIds = selectedVersions.map((version) => version.id);
 
     httpsRequestV2
       .put(`/version/history/${selectedEnvironment}`, {
         env_id: environmentId,
-        ids: selectedIds,
+        ids: ids,
         project_id: company.projectId,
       })
       .then((res) => {
@@ -66,9 +66,9 @@ export default function EnvironmentModal({open, handleClose}) {
         }
       )
       .then((res) => {
-        console.log("ressssss", res);
+        console.log("ressssss", res?.ids);
         setSelectedIds(res?.ids);
-        updateVersions();
+        updateVersions(res?.ids);
       });
   };
 

@@ -30,7 +30,6 @@ export default function EnvironmentModal({open, handleClose}) {
   const [selectedVersions, setSelectedVersions] = useState([]);
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
-  const [selectedIds, setSelectedIds] = useState([]);
   const dispatch = useDispatch();
 
   const updateVersions = (ids) => {
@@ -54,6 +53,7 @@ export default function EnvironmentModal({open, handleClose}) {
         histories: selectedVersions,
       })
       .then((res) => {
+        console.log("resssssssss", res?.ids);
         updateVersions();
       });
   };
@@ -66,8 +66,6 @@ export default function EnvironmentModal({open, handleClose}) {
         }
       )
       .then((res) => {
-        console.log("ressssss", res?.ids);
-        setSelectedIds(res?.ids);
         updateVersions(res?.ids);
       });
   };

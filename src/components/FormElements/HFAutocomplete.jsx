@@ -1,6 +1,6 @@
-import { FormControl, FormHelperText, InputLabel } from "@mui/material";
-import { useMemo } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import {FormControl, FormHelperText, InputLabel} from "@mui/material";
+import {useMemo} from "react";
+import {Controller, useWatch} from "react-hook-form";
 import CAutoCompleteSelect from "../CAutoCompleteSelect";
 
 const HFAutocomplete = ({
@@ -10,7 +10,7 @@ const HFAutocomplete = ({
   label,
   tabIndex,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   disabled,
   width = "100%",
   options = [],
@@ -44,11 +44,12 @@ const HFAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: { onChange: onFormChange, value, name },
-        fieldState: { error },
+        field: {onChange: onFormChange, value, name},
+        fieldState: {error},
       }) => {
+        console.log("errorrrrrr", error);
         return (
-          <FormControl style={{ width }}>
+          <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
               value={value}
@@ -64,13 +65,12 @@ const HFAutocomplete = ({
               onFieldChange={onFieldChange}
               options={computedOptions}
             />
-            {!disabledHelperText && error?.message && (
+            {error?.message && (
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
           </FormControl>
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

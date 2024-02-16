@@ -1,10 +1,10 @@
-import { Box, Drawer } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {Box, Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -13,11 +13,11 @@ import constructorObjectService from "../../../services/constructorObjectService
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { quickFiltersActions } from "../../../store/filter/quick_filter";
-import { generateGUID } from "../../../utils/generateID";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import { listToMap } from "../../../utils/listToMap";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {quickFiltersActions} from "../../../store/filter/quick_filter";
+import {generateGUID} from "../../../utils/generateID";
+import {mergeStringAndState} from "../../../utils/jsonPath";
+import {listToMap} from "../../../utils/listToMap";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
@@ -41,7 +41,7 @@ const TableView = ({
   shouldGet,
   isTableView = false,
   selectedView,
-  reset = () => { },
+  reset = () => {},
   fieldsMap,
   isDocView,
   sortedDatas = [],
@@ -61,11 +61,11 @@ const TableView = ({
   currentView,
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
+  const {t} = useTranslation();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug, appId} = useParams();
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -84,7 +84,6 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-
 
   const mainForm = useForm({
     defaultValues: {
@@ -108,7 +107,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const { update } = useFieldArray({
+  const {update} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -133,7 +132,7 @@ const TableView = ({
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -182,7 +181,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -200,12 +199,23 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key])
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key]) {
+          result.push({id: key, value: view.attributes.fixedColumns[key]});
+        }
       }
     }
+
+    const uniqueIdsSet = new Set();
+    const uniqueColumns = view?.columns?.filter((column) => {
+      if (!uniqueIdsSet.has(column)) {
+        uniqueIdsSet.add(column);
+        return true;
+      }
+      return false;
+    });
+
     return customSortArray(
-      view?.columns,
+      uniqueColumns,
       result.map((el) => el.id)
     )
       ?.map((el) => fieldsMap[el])
@@ -235,7 +245,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const { field, order } = matchingSort;
+        const {field, order} = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -272,7 +282,7 @@ const TableView = ({
   }, [paginiation, limit, currentPage]);
 
   const {
-    data: { fiedlsarray, fieldView } = {
+    data: {fiedlsarray, fieldView} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -301,7 +311,7 @@ const TableView = ({
   });
 
   const {
-    data: { tableData, pageCount } = {
+    data: {tableData, pageCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -319,7 +329,7 @@ const TableView = ({
         currentPage,
         // checkedColumns,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
       },
@@ -339,7 +349,7 @@ const TableView = ({
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-              ?.type === "MULTISELECT"
+                ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
             : "",
@@ -402,8 +412,8 @@ const TableView = ({
         item?.type === "LOOKUP"
           ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
           : Array.from(
-            new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
-          ),
+              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
+            ),
     }));
 
     tableData?.length &&
@@ -453,7 +463,7 @@ const TableView = ({
   }, [tableData, computedRelationFields]);
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -531,7 +541,7 @@ const TableView = ({
       const matches = urlTemplate.match(variablePattern);
 
       if (matches) {
-        matches.forEach(match => {
+        matches.forEach((match) => {
           const variableName = match.slice(4, -2);
           const variableValue = row[variableName];
           if (variableValue !== undefined) {
@@ -590,8 +600,7 @@ const TableView = ({
     <div className={styles.wrapper}>
       {
         <div
-          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}
-        >
+          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
           <Box className={styles.block}>
             <p>{t("filters")}</p>
             <FastFilter
@@ -614,8 +623,7 @@ const TableView = ({
           alignItems: "flex-start",
           width: filterVisible ? "calc(100% - 200px)" : "100%",
         }}
-        id="data-table"
-      >
+        id="data-table">
         <ObjectDataTable
           refetch={refetch}
           filterVisible={filterVisible}
@@ -688,8 +696,7 @@ const TableView = ({
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -708,8 +715,7 @@ const TableView = ({
         open={drawerStateField}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

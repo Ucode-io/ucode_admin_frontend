@@ -115,6 +115,7 @@ export default function JsonModalVersion({history}) {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "end",
+                      position: "relative",
                     }}>
                     <RectangleIconButton
                       onClick={() => {
@@ -151,6 +152,7 @@ export default function JsonModalVersion({history}) {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "end",
+                      position: "relative",
                     }}>
                     <RectangleIconButton
                       onClick={() => {
@@ -189,6 +191,7 @@ export default function JsonModalVersion({history}) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "end",
+                    position: "relative",
                   }}>
                   <RectangleIconButton
                     onClick={() => {

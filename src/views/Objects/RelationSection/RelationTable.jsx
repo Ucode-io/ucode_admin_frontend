@@ -1,10 +1,10 @@
-import { Drawer } from "@mui/material";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {Drawer} from "@mui/material";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
@@ -14,14 +14,14 @@ import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
-import { generateGUID } from "../../../utils/generateID";
-import { listToMap } from "../../../utils/listToMap";
-import { objectToArray } from "../../../utils/objectToArray";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {generateGUID} from "../../../utils/generateID";
+import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { Filter } from "../components/FilterGenerator";
+import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
-import { useMenuGetByIdQuery } from "../../../services/menuService";
+import {useMenuGetByIdQuery} from "../../../services/menuService";
 
 const RelationTable = forwardRef(
   (
@@ -48,22 +48,21 @@ const RelationTable = forwardRef(
       selectedTab,
       type,
       relatedTable = {},
-      getAllData = () => { },
-      layoutData
+      getAllData = () => {},
+      layoutData,
     },
     ref
   ) => {
-
-    const { appId, tableSlug } = useParams();
+    const {appId, tableSlug} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { navigateToForm } = useTabRouter();
+    const {navigateToForm} = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
     const [searchParams] = useSearchParams();
     const menuId = searchParams.get("menuId");
@@ -121,26 +120,25 @@ const RelationTable = forwardRef(
       }
     }, [paginiation, limit, currentPage]);
 
-
-    const { loader: menuLoader } = useMenuGetByIdQuery({
+    const {loader: menuLoader} = useMenuGetByIdQuery({
       menuId: searchParams.get("menuId"),
       queryParams: {
         enabled: Boolean(searchParams.get("menuId")),
         onSuccess: (res) => {
           setMenuItem(res);
         },
-      }
+      },
     });
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({ table_id: id });
+        const getFieldsData = constructorFieldService.getList({table_id: id});
 
         const getRelations = constructorRelationService.getList({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         });
-        const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        const [{relations = []}, {fields = []}] = await Promise.all([
           getRelations,
           getFieldsData,
         ]);
@@ -293,7 +291,7 @@ const RelationTable = forwardRef(
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({ data }) => {
+        select: ({data}) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
@@ -321,14 +319,15 @@ const RelationTable = forwardRef(
           }
 
           const columns = customSortArray(
-            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ?? getRelatedTabeSlug?.columns,
+            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+              getRelatedTabeSlug?.columns,
             array.map((el) => el.id)
           )
             ?.map((el) => fieldsMap[el])
             ?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({ field_id }) => fieldsMap[field_id])
+            ?.map(({field_id}) => fieldsMap[field_id])
             ?.filter((el) => el);
 
           return {
@@ -358,10 +357,10 @@ const RelationTable = forwardRef(
           item?.type === "LOOKUP"
             ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
             : Array.from(
-              new Set(
-                [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
-              )
-            ),
+                new Set(
+                  [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
+                )
+              ),
       }));
       tableData?.length &&
         computedRelationFields?.forEach((item, index) => {
@@ -418,7 +417,7 @@ const RelationTable = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
+    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -441,7 +440,7 @@ const RelationTable = forwardRef(
       }
     );
 
-    const { data: { custom_events: customEvents = [] } = {} } =
+    const {data: {custom_events: customEvents = []} = {}} =
       useCustomActionsQuery({
         tableSlug: relatedTableSlug,
       });
@@ -453,8 +452,9 @@ const RelationTable = forwardRef(
     const navigateToTablePage = () => {
       navigate(`/main/${appId}/object/${relatedTableSlug}`, {
         state: {
-          [`${tableSlug}_${getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
-            }`]: id,
+          [`${tableSlug}_${
+            getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
+          }`]: id,
         },
       });
     };
@@ -467,7 +467,7 @@ const RelationTable = forwardRef(
         await constructorObjectService.deleteMultiple(tableSlug, {
           ids: selectedObjectsForDelete.map((i) => i.guid),
         });
-        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
       } finally {
       }
     };
@@ -572,8 +572,7 @@ const RelationTable = forwardRef(
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}

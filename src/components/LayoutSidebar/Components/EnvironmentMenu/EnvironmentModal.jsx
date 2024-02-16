@@ -164,7 +164,7 @@ export default function EnvironmentModal({open, handleClose}) {
                     ? updateMigrate()
                     : updateDown();
                 }}>
-                Miggrate
+                Migrate
               </Button>
             ) : null}
           </Box>

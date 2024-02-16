@@ -112,5 +112,8 @@
 }
 
 .copy {
-  margin-bottom: 10px;
+  position: absolute;
+  z-index: 2;
+  right: 30px;
+  top: 30px;
 }

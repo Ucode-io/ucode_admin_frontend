@@ -96,7 +96,7 @@ export default function EnvironmentModal({open, handleClose}) {
       setVersionLoading(true);
       httpsRequestV2
         .get(
-          `/version/history/${selectedEnvironment}?type=${selectedMigrate}&limit=100&offset=1`,
+          `/version/history/${selectedEnvironment}?type=${selectedMigrate}&limit=100&offset=0`,
           {}
         )
         .then((res) => {

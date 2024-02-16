@@ -7,6 +7,7 @@ import EnvironmentsTable from "./EnvironmentsTable";
 import HistoriesTable from "./HistoriesTable";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import {useNavigate} from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -30,16 +31,16 @@ export default function EnvironmentModal({open, handleClose}) {
   const [selectedVersions, setSelectedVersions] = useState([]);
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
-  const [selectedIds, setSelectedIds] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const updateVersions = () => {
+  const updateVersions = (ids) => {
     const selectedVersionsIds = selectedVersions.map((version) => version.id);
 
     httpsRequestV2
       .put(`/version/history/${selectedEnvironment}`, {
         env_id: environmentId,
-        ids: selectedIds,
+        ids: ids,
         project_id: company.projectId,
       })
       .then((res) => {
@@ -54,7 +55,12 @@ export default function EnvironmentModal({open, handleClose}) {
         histories: selectedVersions,
       })
       .then((res) => {
-        updateVersions();
+        updateVersions(res?.ids);
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname,
+          },
+        });
       });
   };
   const updateDown = () => {
@@ -66,9 +72,12 @@ export default function EnvironmentModal({open, handleClose}) {
         }
       )
       .then((res) => {
-        console.log("ressssss", res);
-        setSelectedIds(res?.ids);
-        updateVersions();
+        updateVersions(res?.ids);
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname,
+          },
+        });
       });
   };
 
@@ -167,7 +176,7 @@ export default function EnvironmentModal({open, handleClose}) {
                     ? updateMigrate()
                     : updateDown();
                 }}>
-                Miggrate
+                Migrate
               </Button>
             ) : null}
           </Box>

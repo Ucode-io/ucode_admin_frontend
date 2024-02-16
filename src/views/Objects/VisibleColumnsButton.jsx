@@ -44,7 +44,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
         setIsLoading(false);
       });
   };
-
+  console.log("currentView", currentView?.columns);
   const visibleFields = useMemo(() => {
     return (
       currentView?.columns?.map((id) => fieldsMap[id]).filter((el) => el?.id) ??
@@ -76,8 +76,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         {isLoading ? (
           <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
@@ -133,24 +132,21 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             minWidth: 200,
             maxHeight: 300,
             overflowY: "auto",
             padding: "10px 14px",
-          }}
-        >
+          }}>
           <div>
             <div
               style={{
                 borderBottom: "1px solid #eee",
                 display: "flex",
                 backgroundColor: "#fff",
-              }}
-            >
+              }}>
               <div
                 style={{
                   flex: 1,
@@ -159,8 +155,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                   alignItems: "center",
                   padding: "8px 0px",
                   margin: "-1px -1px 0 0",
-                }}
-              >
+                }}>
                 <b>All</b>
               </div>
               <div
@@ -175,8 +170,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                   paddingRight: 0,
                   display: "flex",
                   justifyContent: "flex-end",
-                }}
-              >
+                }}>
                 <Switch
                   size="small"
                   checked={visibleFields.length === allFields.length}
@@ -190,8 +184,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
             </div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}
-            >
+              dropPlaceholder={{className: "drag-row-drop-preview"}}>
               {visibleFields.map((column, index) => (
                 <Draggable key={column?.id}>
                   <div
@@ -199,8 +192,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                     style={{
                       display: "flex",
                       backgroundColor: "#fff",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         flex: 1,
@@ -210,8 +202,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         padding: "8px 0px",
                         margin: "-1px -1px 0 0",
                         minWidth: "200px",
-                      }}
-                    >
+                      }}>
                       <div
                         style={{
                           width: 20,
@@ -220,8 +211,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        }}
-                      >
+                        }}>
                         {column?.type ? (
                           columnIcons(column?.type)
                         ) : (
@@ -245,8 +235,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         display: "flex",
                         justifyContent: "flex-end",
                         width: "70px",
-                      }}
-                    >
+                      }}>
                       <Switch
                         size="small"
                         checked={currentView?.columns?.includes(column?.id)}
@@ -271,8 +260,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                   style={{
                     display: "flex",
                     backgroundColor: "#fff",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 1,
@@ -281,8 +269,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       alignItems: "center",
                       padding: "8px 0px",
                       margin: "-1px -1px 0 0",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         width: 20,
@@ -291,8 +278,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}
-                    >
+                      }}>
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
                     {column?.attributes?.[`label_${i18n.language}`] ||
@@ -311,8 +297,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       paddingRight: 0,
                       display: "flex",
                       justifyContent: "flex-end",
-                    }}
-                  >
+                    }}>
                     <Switch
                       size="small"
                       checked={currentView?.columns?.includes(column?.id)}

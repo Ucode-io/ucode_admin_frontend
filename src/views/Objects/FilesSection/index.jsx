@@ -1,7 +1,7 @@
-import { Download } from "@mui/icons-material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useMutation } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
+import {Download} from "@mui/icons-material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useMutation} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
@@ -11,12 +11,12 @@ import useDownloader from "../../../hooks/useDownloader";
 import useObjectsQuery from "../../../queries/hooks/useObjectsQuery";
 import constructorObjectService from "../../../services/constructorObjectService";
 import objectDocumentService from "../../../services/objectDocumentService";
-import { generateID } from "../../../utils/generateID";
-import { listToMap } from "../../../utils/listToMap";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import { Filter } from "../components/FilterGenerator";
+import {generateID} from "../../../utils/generateID";
+import {listToMap} from "../../../utils/listToMap";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {Filter} from "../components/FilterGenerator";
 import styles from "./style.module.scss";
-import { useMenuGetByIdQuery } from "../../../services/menuService";
+import {useMenuGetByIdQuery} from "../../../services/menuService";
 
 const FilesSection = ({
   setFormValue,
@@ -31,8 +31,8 @@ const FilesSection = ({
   setCreateFormVisible,
 }) => {
   const inputRef = useRef();
-  const { tableSlug, id: objectId } = useParams();
-  const { download } = useDownloader();
+  const {tableSlug, id: objectId} = useParams();
+  const {download} = useDownloader();
   const [limit, setLimit] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({});
@@ -68,7 +68,7 @@ const FilesSection = ({
       ...filters,
     },
     queryParams: {
-      select: ({ data }) => {
+      select: ({data}) => {
         const tableData = objectId ? data.response : [];
         const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit);
 
@@ -78,7 +78,7 @@ const FilesSection = ({
           ?.map((id) => fieldsMap[id])
           ?.filter((el) => el);
         const quickFilters = relation.quick_filters
-          ?.map(({ field_id }) => fieldsMap[field_id])
+          ?.map(({field_id}) => fieldsMap[field_id])
           ?.filter((el) => el);
         return {
           tableData,
@@ -90,18 +90,17 @@ const FilesSection = ({
     },
   });
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
       onSuccess: (res) => {
         setMenuItem(res);
       },
-    }
+    },
   });
 
-
-  const { mutate: create, isLoading: createLoader } = useMutation(
+  const {mutate: create, isLoading: createLoader} = useMutation(
     (e) => {
       const file = e.target.files[0];
 
@@ -117,9 +116,9 @@ const FilesSection = ({
     }
   );
 
-  const { mutateAsync: updateMutation } = useMutation(
+  const {mutateAsync: updateMutation} = useMutation(
     (values) => {
-      return constructorObjectService.update("file", { data: values });
+      return constructorObjectService.update("file", {data: values});
     },
     {
       onSuccess: () => {
@@ -128,7 +127,7 @@ const FilesSection = ({
     }
   );
 
-  const { mutate: deleteMutation, isLoading: deleteLoading } = useMutation(
+  const {mutate: deleteMutation, isLoading: deleteLoading} = useMutation(
     (row) => {
       return constructorObjectService.delete("file", row.guid);
     },
@@ -151,8 +150,7 @@ const FilesSection = ({
         render: (row) => (
           <RectangleIconButton
             color="primary"
-            onClick={() => download({ link: row.file_link, fileName: row.name })}
-          >
+            onClick={() => download({link: row.file_link, fileName: row.name})}>
             <Download color="primary" />
           </RectangleIconButton>
         ),
@@ -272,7 +270,7 @@ const FilesSection = ({
               />
             </>
           }
-        // onPaginationChange={setCurrentPage}
+          // onPaginationChange={setCurrentPage}
         />
         <input
           className="hidden-element"

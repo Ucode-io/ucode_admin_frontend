@@ -4,6 +4,7 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import EnvironmentModal from "./EnvironmentModal";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 export default function EnvironmentMenu({
   level = 1,
@@ -24,7 +25,7 @@ export default function EnvironmentMenu({
             style={{
               color: menuStyle?.text,
             }}>
-            <LocalOfferIcon />
+            <InventoryIcon size={18} />
             Environment changes
           </div>
         </Button>

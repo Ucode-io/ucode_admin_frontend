@@ -7,6 +7,7 @@ import EnvironmentsTable from "./EnvironmentsTable";
 import HistoriesTable from "./HistoriesTable";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import {useNavigate} from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -31,6 +32,7 @@ export default function EnvironmentModal({open, handleClose}) {
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const updateVersions = (ids) => {
     const selectedVersionsIds = selectedVersions.map((version) => version.id);
@@ -53,8 +55,12 @@ export default function EnvironmentModal({open, handleClose}) {
         histories: selectedVersions,
       })
       .then((res) => {
-        console.log("resssssssss", res?.ids);
-        updateVersions();
+        updateVersions(res?.ids);
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname,
+          },
+        });
       });
   };
   const updateDown = () => {
@@ -67,6 +73,11 @@ export default function EnvironmentModal({open, handleClose}) {
       )
       .then((res) => {
         updateVersions(res?.ids);
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname,
+          },
+        });
       });
   };
 
@@ -165,7 +176,7 @@ export default function EnvironmentModal({open, handleClose}) {
                     ? updateMigrate()
                     : updateDown();
                 }}>
-                Miggrate
+                Migrate
               </Button>
             ) : null}
           </Box>

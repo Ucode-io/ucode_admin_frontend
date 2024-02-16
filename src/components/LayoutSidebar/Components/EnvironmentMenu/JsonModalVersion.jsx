@@ -1,11 +1,12 @@
 import {Box, Button, Modal, Typography} from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import {MdContentCopy} from "react-icons/md";
+import {MdContentCopy, MdDoneAll} from "react-icons/md";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {useDispatch} from "react-redux";
 import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 import ReactJson from "react-json-view";
+import styles from "./styles.module.scss";
 
 const style = {
   position: "absolute",
@@ -29,11 +30,17 @@ export default function JsonModalVersion({history}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [copyToJson, setCopyToJson] = useState(false);
+  const [copyToJsonCurrent, setCopyToJsonCurrent] = useState(false);
   const dispatch = useDispatch();
 
   const copyToClipboard = (text) => {
     dispatch(showAlert("Copied to clipboard", "success"));
     navigator.clipboard.writeText(text);
+    setTimeout(() => {
+      setCopyToJson(false);
+      setCopyToJsonCurrent(false);
+    }, 500);
   };
 
   return (
@@ -109,6 +116,16 @@ export default function JsonModalVersion({history}) {
                       flexDirection: "column",
                       alignItems: "end",
                     }}>
+                    <RectangleIconButton
+                      onClick={() => {
+                        copyToClipboard(
+                          JSON.stringify(history?.current, null, 2)
+                        );
+                        setCopyToJsonCurrent(true);
+                      }}
+                      className={styles.copy}>
+                      {copyToJsonCurrent ? <MdDoneAll /> : <MdContentCopy />}
+                    </RectangleIconButton>
                     <ReactJson
                       src={history?.current && JSON.parse(history?.current)}
                       theme="codeschool"
@@ -135,6 +152,16 @@ export default function JsonModalVersion({history}) {
                       flexDirection: "column",
                       alignItems: "end",
                     }}>
+                    <RectangleIconButton
+                      onClick={() => {
+                        copyToClipboard(
+                          JSON.stringify(history?.previus, null, 2)
+                        );
+                        setCopyToJson(true);
+                      }}
+                      className={styles.copy}>
+                      {copyToJson ? <MdDoneAll /> : <MdContentCopy />}
+                    </RectangleIconButton>
                     <ReactJson
                       src={history?.previus && JSON.parse(history?.previus)}
                       theme="codeschool"
@@ -163,6 +190,16 @@ export default function JsonModalVersion({history}) {
                     flexDirection: "column",
                     alignItems: "end",
                   }}>
+                  <RectangleIconButton
+                    onClick={() => {
+                      copyToClipboard(
+                        JSON.stringify(history?.current, null, 2)
+                      );
+                      setCopyToJson(true);
+                    }}
+                    className={styles.copy}>
+                    {copyToJson ? <MdDoneAll /> : <MdContentCopy />}
+                  </RectangleIconButton>
                   <ReactJson
                     src={history?.current && JSON.parse(history?.current)}
                     theme="codeschool"

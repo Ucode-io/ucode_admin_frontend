@@ -50,7 +50,7 @@ const ActivityFeedButton = ({
   };
 
   const labelStyle = {
-    paddingLeft: "5px",
+    paddingLeft: "25px",
     color:
       activityFeedData?.id === menuItem?.id
         ? menuStyle?.active_text

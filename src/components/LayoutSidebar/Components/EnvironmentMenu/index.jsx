@@ -4,7 +4,6 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import EnvironmentModal from "./EnvironmentModal";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import InventoryIcon from "@mui/icons-material/Inventory";
 
 export default function EnvironmentMenu({
   level = 1,
@@ -12,6 +11,10 @@ export default function EnvironmentMenu({
   setSubMenuIsOpen,
   menuItem,
 }) {
+  const labelStyle = {
+    paddingLeft: "23px",
+    color: menuStyle?.text,
+  };
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -20,12 +23,8 @@ export default function EnvironmentMenu({
     <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">
         <Button className={`nav-element`} onClick={handleOpen}>
-          <div
-            className="label"
-            style={{
-              color: menuStyle?.text,
-            }}>
-            <InventoryIcon size={18} />
+          <div className="label" style={labelStyle}>
+            <LocalOfferIcon />
             Environment changes
           </div>
         </Button>

@@ -155,7 +155,7 @@ export default function FieldButton({
     };
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({relationData, tableSlug});
+        createField({data, tableSlug});
       }
       if (values?.type === "RELATION") {
         createRelation({data: relationData, tableSlug});

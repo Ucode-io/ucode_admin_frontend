@@ -23,7 +23,7 @@ export default function HistoryRow({
     history?.previus?.attributes ?? {}
   );
   const multiLanguageLabel = `label_${i18n.language}`;
-
+  console.log("historyhistory", history);
   const label = useMemo(() => {
     if (
       history?.action_type === "CREATE" ||
@@ -32,9 +32,9 @@ export default function HistoryRow({
       switch (history?.action_source) {
         case "RELATION":
           return (
-            history?.current?.table_from?.label +
-            " ==> " +
-            history?.current?.table_to?.label
+            history?.current?.table_from?.label ??
+            "" + " ==> " + history?.current?.table_to?.label ??
+            ""
           );
         default:
           return (
@@ -45,11 +45,11 @@ export default function HistoryRow({
     } else if (history?.action_type === "UPDATE") {
       switch (history?.action_source) {
         case "RELATION":
-          return (
-            history?.current?.table_from?.label +
-            " ==> " +
-            history?.current?.table_to?.label
-          );
+          return history?.current?.table_from?.label
+            ? history?.current?.table_from?.label
+            : "" + " ==> " + history?.current?.table_to?.label
+              ? history?.current?.table_to?.label
+              : "";
         default:
           return (
             decodedCurrentAttributes[multiLanguageLabel] ??

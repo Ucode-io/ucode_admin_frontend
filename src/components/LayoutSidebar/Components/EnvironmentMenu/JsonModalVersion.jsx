@@ -282,6 +282,45 @@ export default function JsonModalVersion({history}) {
                   />
                 </Box>
               )}
+              {!history.previus && !history?.current}{" "}
+              {
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      history?.current && history?.previus ? "1fr 1fr" : "1fr",
+                    gap: "16px",
+                    alignItems: "end",
+                    flexDirection: "row",
+                  }}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#000",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      color: "#fff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
+                      position: "relative",
+                    }}>
+                    <ReactJson
+                      src={{}}
+                      theme="codeschool"
+                      style={{
+                        padding: "10px",
+                        borderRadius: "10px",
+                        overflow: "auto",
+                        height: "300px",
+                        width: "350px",
+                      }}
+                      enableClipboard={false}
+                      displayDataTypes={false}
+                      displayObjectSize={false}
+                    />
+                  </Box>
+                </Box>
+              }
             </Box>
           </Box>
         </Box>

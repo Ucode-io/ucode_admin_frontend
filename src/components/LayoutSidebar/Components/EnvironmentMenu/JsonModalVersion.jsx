@@ -282,8 +282,7 @@ export default function JsonModalVersion({history}) {
                   />
                 </Box>
               )}
-              {!history.previus && !history?.current}{" "}
-              {
+              {!history.previus && !history?.current && (
                 <Box
                   sx={{
                     display: "grid",
@@ -320,7 +319,7 @@ export default function JsonModalVersion({history}) {
                     />
                   </Box>
                 </Box>
-              }
+              )}
             </Box>
           </Box>
         </Box>

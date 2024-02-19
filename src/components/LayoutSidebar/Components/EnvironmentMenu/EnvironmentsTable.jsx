@@ -28,7 +28,7 @@ export default function EnvironmentsTable({
       setSelectedMigrate("UP");
     }
   };
-
+  console.log("environments", environments);
   return (
     <div style={{width: "100%"}}>
       <div className={styles.header}>

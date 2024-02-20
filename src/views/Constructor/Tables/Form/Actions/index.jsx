@@ -1,14 +1,14 @@
-import { Drawer } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import {Drawer} from "@mui/material";
+import {useMemo, useState} from "react";
+import {useFieldArray} from "react-hook-form";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import constructorCustomEventService from "../../../../../services/constructorCustomEventService";
 import ActionSettings from "./ActionSettings";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
-const Actions = ({ mainForm }) => {
+const Actions = ({mainForm}) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
 
@@ -44,7 +44,7 @@ const Actions = ({ mainForm }) => {
       .finally(() => setLoader(false));
   };
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
 
   const columns = useMemo(
@@ -88,8 +88,7 @@ const Actions = ({ mainForm }) => {
         open={!!drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <ActionSettings
           action={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}

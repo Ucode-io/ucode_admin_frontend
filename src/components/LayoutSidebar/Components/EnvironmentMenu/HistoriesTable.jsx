@@ -191,6 +191,7 @@ export default function HistoriesTable({
               borderBottom: "1px solid #eee",
               cursor: "pointer",
             }}
+            className={styles.releasePublish}
             onClick={handleCloseMenu}>
             Publish Release
           </Box>
@@ -201,6 +202,7 @@ export default function HistoriesTable({
               borderBottom: "1px solid #eee",
               cursor: "pointer",
             }}
+            className={styles.releaseRevert}
             onClick={handleCloseMenu}>
             Revert to this version
           </Box>

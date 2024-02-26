@@ -13,6 +13,7 @@ import FRow from "../../../FormElements/FRow";
 import HFTextField from "../../../FormElements/HFTextField";
 import {LoadingButton} from "@mui/lab";
 import versionService from "../../../../services/versionService";
+import {useSelector} from "react-redux";
 
 export default function HistoriesTable({
   histories,
@@ -27,7 +28,8 @@ export default function HistoriesTable({
   const [isForm, setIsForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-
+  const access_type = useSelector((state) => state.auth.access_type?.payload);
+  console.log("access_type", access_type);
   const {control, handleSubmit} = useForm();
 
   const handleSelectVersion = (e, index) => {
@@ -61,11 +63,11 @@ export default function HistoriesTable({
     <div style={{height: 400, width: "100%", overflow: "auto"}}>
       <div className={styles.header}>
         <Box sx={{display: "flex", alignItems: "center"}}>
-          <Button
+          {/* <Button
             className={styles.button}
             onClick={() => setSelectedMigrate(null)}>
             <ArrowBackRoundedIcon />
-          </Button>
+          </Button> */}
           <Typography variant="h4">History</Typography>
         </Box>
         <ClearIcon
@@ -116,7 +118,7 @@ export default function HistoriesTable({
             <TabList style={{paddingLeft: "15px", top: "40px"}}>
               <Tab>Releases</Tab>
               <Tab>History</Tab>
-              {tabIndex === 0 && (
+              {tabIndex === 0 && access_type === "public" && (
                 <Box sx={{position: "absolute", right: "20px", top: "12px"}}>
                   <Button
                     onClick={() => {

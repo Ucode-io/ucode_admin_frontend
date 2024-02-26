@@ -50,7 +50,7 @@ export default function EnvironmentsTable({
         dispatch(showAlert("Successfully published!", "success"));
       });
   };
-  console.log("environments", environments, envId);
+
   return (
     <div style={{width: "100%"}}>
       <div className={styles.header}>

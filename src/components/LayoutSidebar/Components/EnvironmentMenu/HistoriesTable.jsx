@@ -29,7 +29,7 @@ export default function HistoriesTable({
   const [isLoading, setIsLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const access_type = useSelector((state) => state.auth.access_type?.payload);
-  console.log("access_type", access_type);
+
   const {control, handleSubmit} = useForm();
 
   const handleSelectVersion = (e, index) => {
@@ -88,7 +88,11 @@ export default function HistoriesTable({
               <HFTextField name="name" control={control} />
             </FRow>
             <FRow label="Description">
-              <HFTextField name="description" control={control} />
+              <HFTextField
+                name="description"
+                inputHeight={"120px"}
+                control={control}
+              />
             </FRow>
 
             <Box sx={{width: "100%", textAlign: "right"}}>

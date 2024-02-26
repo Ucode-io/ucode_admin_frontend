@@ -25,10 +25,11 @@ const style = {
 export default function EnvironmentModal({open, handleClose}) {
   const company = store.getState().company;
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-  const [selectedMigrate, setSelectedMigrate] = useState(null);
+  const [selectedMigrate, setSelectedMigrate] = useState(true);
   const [versions, setVersions] = useState([]);
   const [versionLoading, setVersionLoading] = useState(false);
   const [selectedVersions, setSelectedVersions] = useState([]);
+  const [version, setVersion] = useState();
   const companyStore = store.getState().company;
   const environmentId = companyStore.environmentId;
   const dispatch = useDispatch();
@@ -92,21 +93,26 @@ export default function EnvironmentModal({open, handleClose}) {
     });
 
   useEffect(() => {
-    if (selectedMigrate) {
-      setVersionLoading(true);
-      httpsRequestV2
-        .get(
-          `/version/history/${selectedEnvironment}?type=${selectedMigrate}&limit=100&offset=0`,
-          {}
-        )
-        .then((res) => {
-          setVersions(res.histories);
-        })
-        .finally(() => {
-          setVersionLoading(false);
-        });
+    if (environments && environments.length > 0) {
+      const id = environments.find((env) => env.name === "Production")?.id;
+      setSelectedEnvironment(id);
+      if (id) {
+        setVersionLoading(true);
+        httpsRequestV2
+          .get(`/version/history/${id}?type=UP&limit=100&offset=0`, {})
+          .then((res) => {
+            setVersions(res.histories);
+          })
+          .finally(() => {
+            setVersionLoading(false);
+          });
+      } else {
+        console.error("Production environment not found.");
+      }
+    } else {
+      console.error("Environments list is empty or undefined.");
     }
-  }, [selectedMigrate]);
+  }, [environments]);
 
   return (
     <Modal
@@ -137,6 +143,8 @@ export default function EnvironmentModal({open, handleClose}) {
               setSelectedMigrate={setSelectedMigrate}
               setSelectedVersions={setSelectedVersions}
               handleClose={handleClose}
+              selectedEnvironment={selectedEnvironment}
+              setVersion={setVersion}
             />
           ) : (
             <EnvironmentsTable
@@ -147,6 +155,7 @@ export default function EnvironmentModal({open, handleClose}) {
               setSelectedMigrate={setSelectedMigrate}
               selectedMigrate={selectedMigrate}
               company={company}
+              version={version}
             />
           )}
         </Box>

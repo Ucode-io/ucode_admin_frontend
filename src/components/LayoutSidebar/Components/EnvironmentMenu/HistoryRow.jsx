@@ -23,7 +23,7 @@ export default function HistoryRow({
     history?.previus?.attributes ?? {}
   );
   const multiLanguageLabel = `label_${i18n.language}`;
-  console.log("historyhistory", history);
+
   const label = useMemo(() => {
     if (
       history?.action_type === "CREATE" ||
@@ -97,7 +97,7 @@ export default function HistoryRow({
         </Tag>
       </CTableCell>
       <CTableCell>{history.action_source}</CTableCell>
-      <CTableCell>{label}</CTableCell>
+      <CTableCell>{history?.version?.name}</CTableCell>
       <CTableCell>
         <JsonModalVersion history={history} />
       </CTableCell>

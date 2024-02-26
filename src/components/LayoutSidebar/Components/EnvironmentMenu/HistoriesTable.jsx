@@ -157,7 +157,7 @@ export default function HistoriesTable({
                       <TableCell width={40}>Action</TableCell>
                       <TableCell width={160}>Action Type</TableCell>
                       <TableCell>Action Source</TableCell>
-                      <TableCell width={200}>Label</TableCell>
+                      <TableCell width={200}>Version</TableCell>
                       <TableCell width={130}>Action</TableCell>
                     </CTableHeadRow>
                   </CTableHead>

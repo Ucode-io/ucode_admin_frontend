@@ -169,12 +169,12 @@ export default function EnvironmentModal({open, handleClose}) {
               padding: "10px 15px",
               borderTop: "1px solid #e5e9eb",
             }}>
-            <Button
+            {/* <Button
               variant="outlined"
               color="error"
               onClick={() => setSelectedVersions([])}>
               Cancel
-            </Button>
+            </Button> */}
 
             {selectedVersions?.length ? (
               <Button

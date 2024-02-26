@@ -32,6 +32,7 @@ const HFTextField = ({
   placeholder,
   endAdornment,
   field,
+  inputHeight,
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   ...props
@@ -74,7 +75,7 @@ const HFTextField = ({
           autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
-            inputProps: {tabIndex},
+            inputProps: {tabIndex, style: {height: inputHeight}},
             classes: {
               input: isBlackBg ? classes.input : "",
             },

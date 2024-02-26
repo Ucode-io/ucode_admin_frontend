@@ -1,36 +1,37 @@
-import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, Dialog, InputAdornment } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { Box } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { connect, useDispatch } from "react-redux";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {AccountCircle, Lock} from "@mui/icons-material";
+import {Button, Dialog, InputAdornment} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {Box} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {connect, useDispatch} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import { firebaseCloudMessaging } from "../../../firebase/config";
+import {firebaseCloudMessaging} from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { loginAction } from "../../../store/auth/auth.thunk";
-import { companyActions } from "../../../store/company/company.slice";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {loginAction} from "../../../store/auth/auth.thunk";
+import {companyActions} from "../../../store/company/company.slice";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
+import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
 import HFInternationPhone from "../../../components/FormElements/HFInternationPhone";
+import {authActions} from "../../../store/auth/auth.slice";
 
-const LoginForm = ({ setIndex, index, setFormType, formType }) => {
-  const { t } = useTranslation();
+const LoginForm = ({setIndex, index, setFormType, formType}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -42,8 +43,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [type, setType] = useState("");
   console.log("type", type);
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
+  const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -74,12 +74,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [], isLoading } = useQuery(
+  const {data: computedConnections = [], isLoading} = useQuery(
     [
       "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-      { "user-id": isUserId },
+      {"project-id": selectedProjectID},
+      {"environment-id": selectedEnvID},
+      {"user-id": isUserId},
     ],
     () => {
       return connectionServiceV2.getList(
@@ -88,7 +88,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        {"environment-id": selectedEnvID}
       );
     },
     {
@@ -126,6 +126,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return companyProject?.resource_environments?.map((item) => ({
       label: item?.name,
       value: item?.environment_id,
+      access_type: item?.access_type,
     }));
   }, [selectedEnvID, companies, selectedProjectID]);
 
@@ -173,7 +174,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           type: "phone",
         });
       } else {
-        getSendCodeApp({ ...values, type: "PHONE" });
+        getSendCodeApp({...values, type: "PHONE"});
       }
     }
     if (selectedTabIndex === 2) {
@@ -184,7 +185,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           type: "email",
         });
       } else {
-        getSendCodeApp({ ...values, type: "EMAIL" });
+        getSendCodeApp({...values, type: "EMAIL"});
       }
     }
   };
@@ -231,7 +232,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         console.log("eerrrrrrr", err);
       });
   };
-
 
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
@@ -291,9 +291,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     const computedProject = companies[0]?.projects
       ?.find((item) => item?.id === selectedProjectID)
       ?.resource_environments?.map((el) => el?.environment_id);
+    const computedEnv = computedEnvironments?.find(
+      (item) => item?.value === selectedEnvID
+    );
 
     setLoading(true);
-    dispatch(loginAction({ ...values, environment_ids: computedProject }));
+    dispatch(authActions.setStatus(computedEnv?.access_type));
+    dispatch(loginAction({...values, environment_ids: computedProject}));
   };
 
   const computeCompanyElement = (company) => {
@@ -416,10 +420,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           <Tabs
             selected={selectedTabIndex}
             direction={"ltr"}
-            onSelect={(index) => setSelectedTabIndex(index)}
-          >
+            onSelect={(index) => setSelectedTabIndex(index)}>
             {formType === "LOGIN" ? (
-              <div style={{ padding: "0 20px" }}>
+              <div style={{padding: "0 20px"}}>
                 <TabList>
                   <Tab>{t("login")}</Tab>
                   <Tab>{t("phone")}</Tab>
@@ -428,8 +431,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
-                >
+                  style={{marginTop: "10px", height: `calc(100vh - 400px)`}}>
                   <TabPanel>
                     <>
                       <div className={classes.formRow}>
@@ -445,7 +447,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
-                                <AccountCircle style={{ fontSize: "30px" }} />
+                                <AccountCircle style={{fontSize: "30px"}} />
                               </InputAdornment>
                             ),
                           }}
@@ -464,7 +466,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
-                                <Lock style={{ fontSize: "30px" }} />
+                                <Lock style={{fontSize: "30px"}} />
                               </InputAdornment>
                             ),
                           }}
@@ -480,8 +482,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                           formType === "RESET_PASSWORD"
                             ? setFormType("LOGIN")
                             : setFormType("RESET_PASSWORD");
-                        }}
-                      >
+                        }}>
                         Forgot password?
                       </Button>
                     }
@@ -546,7 +547,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <AccountCircle style={{ fontSize: "30px" }} />
+                              <AccountCircle style={{fontSize: "30px"}} />
                             </InputAdornment>
                           ),
                         }}
@@ -594,8 +595,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                     formType === "register"
                       ? classes.registerBtnPage
                       : classes.registerBtn
-                  }`}
-                >
+                  }`}>
                   {t("Зарегистрироваться")}
                 </PrimaryButton>
               </div>
@@ -608,16 +608,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
+        aria-describedby="alert-dialog-description">
         <div
           style={{
             padding: "0 20px",
             width: "500px",
             maxHeight: `calc(100vh - 150px)`,
             minHeight: "200px",
-          }}
-        >
+          }}>
           <h2 className={classes.headerContent}>Multi Company</h2>
           <div className={classes.formArea}>
             {computedCompanies?.length !== 1 && (
@@ -693,19 +691,17 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           </div>
           <div className={classes.footerContent}>
             <Button
-              sx={{ marginRight: "10px" }}
+              sx={{marginRight: "10px"}}
               variant="contained"
               color="error"
-              onClick={handleClose}
-            >
+              onClick={handleClose}>
               Cancel
             </Button>
             <div className={classes.buttonsArea}>
               <PrimaryButton
                 onClick={handleSubmit(onSubmitDialog)}
                 size="small"
-                loader={loading}
-              >
+                loader={loading}>
                 {t("enter")}
               </PrimaryButton>
             </div>
@@ -716,14 +712,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{ marginTop: "20px" }}
+          style={{marginTop: "20px"}}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"
               ? setFormType("LOGIN")
               : setFormType("RESET_PASSWORD");
-          }}
-        >
+          }}>
           Back to login
         </SecondaryButton>
       )}

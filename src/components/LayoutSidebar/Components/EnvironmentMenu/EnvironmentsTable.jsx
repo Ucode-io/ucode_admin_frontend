@@ -11,8 +11,10 @@ import React from "react";
 import styles from "./styles.module.scss";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import versionService from "../../../../services/versionService";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useQueryClient} from "react-query";
+import {showAlert} from "../../../../store/alert/alert.thunk";
+import {store} from "../../../../store";
 
 export default function EnvironmentsTable({
   environments,
@@ -25,6 +27,8 @@ export default function EnvironmentsTable({
   version,
 }) {
   const dispatch = useDispatch();
+  const envId = store.getState().company.environmentId;
+  const access_type = useSelector((state) => state.auth.access_type?.payload);
   const queryClient = useQueryClient();
   const handleChange = (event) => {
     publishRelease(event.target.value);
@@ -46,7 +50,7 @@ export default function EnvironmentsTable({
         dispatch(showAlert("Successfully published!", "success"));
       });
   };
-
+  console.log("environments", environments, envId);
   return (
     <div style={{width: "100%"}}>
       <div className={styles.header}>
@@ -65,22 +69,33 @@ export default function EnvironmentsTable({
       <Box className={styles.projectradio}>
         <RadioGroup key={selectedEnvironment}>
           <Box className={styles.projectgroup}>
-            {environments?.map((item, index) => (
-              <FormControlLabel
-                value={item?.id}
-                control={<Radio />}
-                label={
-                  <h4>
-                    {item?.name}{" "}
-                    {item?.id === company.environmentId ? "(DOWN)" : "(UP)"}
-                  </h4>
-                }
-                className={
-                  environments === item.id ? styles.active : styles.inactive
-                }
-                onChange={handleChange}
-              />
-            ))}
+            {access_type === "private"
+              ? environments
+                  ?.filter((el) => el?.id === envId)
+                  ?.map((item, index) => (
+                    <FormControlLabel
+                      value={item?.id}
+                      control={<Radio />}
+                      label={<h4>{item?.name} </h4>}
+                      className={
+                        environments === item.id
+                          ? styles.active
+                          : styles.inactive
+                      }
+                      onChange={handleChange}
+                    />
+                  ))
+              : environments?.map((item, index) => (
+                  <FormControlLabel
+                    value={item?.id}
+                    control={<Radio />}
+                    label={<h4>{item?.name} </h4>}
+                    className={
+                      environments === item.id ? styles.active : styles.inactive
+                    }
+                    onChange={handleChange}
+                  />
+                ))}
           </Box>
         </RadioGroup>
       </Box>

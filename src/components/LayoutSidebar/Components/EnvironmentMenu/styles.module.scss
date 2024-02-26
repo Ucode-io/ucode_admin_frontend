@@ -6,7 +6,7 @@
 }
 
 .button {
-  margin: 15px 15px 0 15px;
+  margin: 0px 15px 0 0px;
   background: rgba(0, 122, 255, 0.08);
 }
 
@@ -72,6 +72,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: rgb(49, 161, 49);
 
     h4 {
       color: #a8a8a8;
@@ -116,4 +117,28 @@
   z-index: 2;
   right: 30px;
   top: 30px;
+}
+
+.releasePublish,
+.releaseRevert {
+  &:hover {
+    background: #eee;
+  }
+}
+.liveIcon {
+  height: 19px;
+  margin-right: 5px;
+  // animation: live 2.6s infinite;
+}
+
+@keyframes live {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

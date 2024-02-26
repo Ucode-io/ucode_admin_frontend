@@ -32,6 +32,7 @@ const HFTextField = ({
   placeholder,
   endAdornment,
   field,
+  inputHeight,
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   ...props
@@ -56,8 +57,8 @@ const HFTextField = ({
               withTrim
                 ? e.target.value?.trim()
                 : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
+                  ? numberWithSpaces(e.target.value)
+                  : e.target.value
             );
             customOnChange(e);
             isNewTableView && updateObject();
@@ -74,7 +75,7 @@ const HFTextField = ({
           autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
-            inputProps: {tabIndex},
+            inputProps: {tabIndex, style: {height: inputHeight}},
             classes: {
               input: isBlackBg ? classes.input : "",
             },
@@ -84,14 +85,14 @@ const HFTextField = ({
                   padding: "0px",
                 }
               : isNewTableView
-              ? {
-                  background: "inherit",
-                  color: "inherit",
-                  padding: "0px !important",
-                  margin: "0px !important",
-                  height: "25px",
-                }
-              : {},
+                ? {
+                    background: "inherit",
+                    color: "inherit",
+                    padding: "0px !important",
+                    margin: "0px !important",
+                    height: "25px",
+                  }
+                : {},
 
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>

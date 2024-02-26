@@ -16,6 +16,7 @@ const initialState = {
   resourceId: "",
   after_login: false,
   environment_ids: [],
+  access_type: "",
 };
 
 export const {actions: authActions, reducer: authReducer} = createSlice({
@@ -88,5 +89,8 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
         }, {}) || [];
     },
     logout: (state) => initialState,
+    setStatus(state, payload) {
+      state.access_type = payload;
+    },
   },
 });

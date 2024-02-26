@@ -145,13 +145,12 @@ export default function HistoriesTable({
             </TabPanel>
 
             <TabPanel>
-              <TableCard withBorder borderRadius="md">
+              <TableCard type={"withoutPadding"} withBorder borderRadius="md">
                 <CTable
                   removableHeight={0}
                   tableStyle={{
                     height: "auto",
-                  }}
-                  disablePagination={true}>
+                  }}>
                   <CTableHead>
                     <CTableHeadRow>
                       <TableCell width={40}>Action</TableCell>

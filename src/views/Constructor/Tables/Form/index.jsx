@@ -1,9 +1,9 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
@@ -11,17 +11,17 @@ import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService, { useTableByIdQuery } from "../../../../services/constructorTableService";
+import constructorTableService, {
+  useTableByIdQuery,
+} from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
-import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
-import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
-import { generateGUID } from "../../../../utils/generateID";
-import { listToMap } from "../../../../utils/listToMap";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
-import menuService from "../../../../services/menuService";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
+import {generateGUID} from "../../../../utils/generateID";
+import {listToMap} from "../../../../utils/listToMap";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
 import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
@@ -29,16 +29,19 @@ import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import menuService from "../../../../services/menuService";
+import {disableCache} from "@iconify/react";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id, tableSlug, appId } = useParams();
+  const {id, tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
@@ -61,9 +64,8 @@ const ConstructorTablesFormPage = () => {
     mode: "all",
   });
   const values = useWatch({
-    control: mainForm?.control
-  })
-  console.log("values", values)
+    control: mainForm?.control,
+  });
 
   // const list = useSelector((state) => state.constructorTable.list);
 
@@ -82,46 +84,37 @@ const ConstructorTablesFormPage = () => {
     }
   }, []);
 
-  const { isLoading } = useTableByIdQuery({
+  const {isLoading} = useTableByIdQuery({
     id: id,
     queryParams: {
       enabled: !!id,
       onSuccess: (res) => {
-        mainForm.reset(res)
-        setLoader(false)
-      }
+        mainForm.reset(res);
+        setLoader(false);
+      },
     },
   });
 
   const getData = async () => {
     setLoader(true);
 
-
-    const getViewRelations = await constructorViewRelationService.getList({
-      table_slug: tableSlug,
-    });
-
-    const getActions = await constructorCustomEventService.getList(
-      {
-        table_slug: tableSlug,
-      },
-      tableSlug
-    );
-
-    const getLayouts = layoutService
-      .getList(
-        {
-          "table-slug": tableSlug,
-          language_setting: i18n?.language,
-        },
-        tableSlug
-      )
-      .then((res) => {
-        mainForm.setValue("layouts", res?.layouts ?? []);
-      });
-
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getActions, getViewRelations, getLayouts]);
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        constructorViewRelationService.getList({table_slug: tableSlug}),
+        constructorCustomEventService.getList(
+          {table_slug: tableSlug},
+          tableSlug
+        ),
+        layoutService
+          .getList(
+            {"table-slug": tableSlug, language_setting: i18n?.language},
+            tableSlug
+          )
+          .then((res) => {
+            mainForm.setValue("layouts", res?.layouts ?? []);
+          }),
+      ]);
+
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -129,9 +122,11 @@ const ConstructorTablesFormPage = () => {
         actions,
       };
 
-      mainForm.reset({ ...values, ...data });
+      mainForm.reset({...values, ...data});
 
       await getRelationFields();
+    } catch (error) {
+      console.error("An error occurred:", error);
     } finally {
       setLoader(false);
     }
@@ -153,7 +148,7 @@ const ConstructorTablesFormPage = () => {
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -207,7 +202,8 @@ const ConstructorTablesFormPage = () => {
   const createType = (data) => {
     menuSettingsService
       .create({
-        parent_id: menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        parent_id:
+          menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: "TABLE",
         table_id: data?.id,
         label: data?.label,
@@ -220,7 +216,7 @@ const ConstructorTablesFormPage = () => {
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
   };
 
   const createConstructorTable = (data) => {
@@ -337,7 +333,12 @@ const ConstructorTablesFormPage = () => {
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
-              <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Add"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
+              <HeaderSettings
+                title="Objects"
+                subtitle={id ? mainForm.getValues("label") : "Add"}
+                icon={mainForm.getValues("icon")}
+                backButtonLink={-1}
+                sticky>
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
                   <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
@@ -398,8 +399,7 @@ const ConstructorTablesFormPage = () => {
               title={id ? mainForm.getValues("label") : "Create table"}
               icon={mainForm.getValues("icon")}
               backButtonLink={-1}
-              sticky
-            ></HeaderSettings>
+              sticky></HeaderSettings>
 
             <MainInfo control={mainForm.control} watch={mainForm.watch} />
           </>
@@ -418,8 +418,7 @@ const ConstructorTablesFormPage = () => {
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
-                loading={btnLoader}
-              >
+                loading={btnLoader}>
                 <Save /> Save
               </PrimaryButton>
             </>

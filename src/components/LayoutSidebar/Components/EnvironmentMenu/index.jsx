@@ -11,6 +11,10 @@ export default function EnvironmentMenu({
   setSubMenuIsOpen,
   menuItem,
 }) {
+  const labelStyle = {
+    paddingLeft: "23px",
+    color: menuStyle?.text,
+  };
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -19,11 +23,7 @@ export default function EnvironmentMenu({
     <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">
         <Button className={`nav-element`} onClick={handleOpen}>
-          <div
-            className="label"
-            style={{
-              color: menuStyle?.text,
-            }}>
+          <div className="label" style={labelStyle}>
             <LocalOfferIcon />
             Environment changes
           </div>

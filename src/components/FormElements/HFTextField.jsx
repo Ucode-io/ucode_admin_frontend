@@ -56,8 +56,8 @@ const HFTextField = ({
               withTrim
                 ? e.target.value?.trim()
                 : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
+                  ? numberWithSpaces(e.target.value)
+                  : e.target.value
             );
             customOnChange(e);
             isNewTableView && updateObject();
@@ -84,14 +84,14 @@ const HFTextField = ({
                   padding: "0px",
                 }
               : isNewTableView
-              ? {
-                  background: "inherit",
-                  color: "inherit",
-                  padding: "0px !important",
-                  margin: "0px !important",
-                  height: "25px",
-                }
-              : {},
+                ? {
+                    background: "inherit",
+                    color: "inherit",
+                    padding: "0px !important",
+                    margin: "0px !important",
+                    height: "25px",
+                  }
+                : {},
 
             endAdornment: disabled ? (
               <Tooltip title={disabled_text}>

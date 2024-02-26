@@ -43,6 +43,25 @@ export default function JsonModalVersion({history}) {
     }, 500);
   };
 
+  function parseJSONSafely(jsonString) {
+    const sanitizedString = jsonString.replace(/^[^{[]*/, "");
+    try {
+      return JSON.parse(sanitizedString);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      return null;
+    }
+  }
+
+  function isValidJSON(jsonString) {
+    try {
+      JSON.parse(jsonString);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   return (
     <div>
       <Button variant="outlined" onClick={handleOpen}>
@@ -128,7 +147,11 @@ export default function JsonModalVersion({history}) {
                       {copyToJsonCurrent ? <MdDoneAll /> : <MdContentCopy />}
                     </RectangleIconButton>
                     <ReactJson
-                      src={history?.current && JSON.parse(history?.current)}
+                      src={
+                        isValidJSON(history?.current)
+                          ? parseJSONSafely(history?.current)
+                          : {}
+                      }
                       theme="codeschool"
                       style={{
                         padding: "10px",
@@ -165,7 +188,11 @@ export default function JsonModalVersion({history}) {
                       {copyToJson ? <MdDoneAll /> : <MdContentCopy />}
                     </RectangleIconButton>
                     <ReactJson
-                      src={history?.previus && JSON.parse(history?.previus)}
+                      src={
+                        isValidJSON(history?.previus)
+                          ? parseJSONSafely(history?.previus)
+                          : {}
+                      }
                       theme="codeschool"
                       style={{
                         padding: "10px",
@@ -204,7 +231,11 @@ export default function JsonModalVersion({history}) {
                     {copyToJson ? <MdDoneAll /> : <MdContentCopy />}
                   </RectangleIconButton>
                   <ReactJson
-                    src={history?.current && JSON.parse(history?.current)}
+                    src={
+                      isValidJSON(history?.current)
+                        ? parseJSONSafely(history.current)
+                        : {}
+                    }
                     theme="codeschool"
                     style={{
                       padding: "10px",
@@ -231,7 +262,11 @@ export default function JsonModalVersion({history}) {
                     alignItems: "end",
                   }}>
                   <ReactJson
-                    src={history?.previus && JSON.parse(history?.previus)}
+                    src={
+                      isValidJSON(history?.previus)
+                        ? parseJSONSafely(history?.previus)
+                        : {}
+                    }
                     theme="codeschool"
                     style={{
                       padding: "10px",
@@ -244,6 +279,44 @@ export default function JsonModalVersion({history}) {
                     displayDataTypes={false}
                     displayObjectSize={false}
                   />
+                </Box>
+              )}
+              {!history.previus && !history?.current && (
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      history?.current && history?.previus ? "1fr 1fr" : "1fr",
+                    gap: "16px",
+                    alignItems: "end",
+                    flexDirection: "row",
+                  }}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#000",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      color: "#fff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "end",
+                      position: "relative",
+                    }}>
+                    <ReactJson
+                      src={{}}
+                      theme="codeschool"
+                      style={{
+                        padding: "10px",
+                        borderRadius: "10px",
+                        overflow: "auto",
+                        height: "300px",
+                        width: "350px",
+                      }}
+                      enableClipboard={false}
+                      displayDataTypes={false}
+                      displayObjectSize={false}
+                    />
+                  </Box>
                 </Box>
               )}
             </Box>

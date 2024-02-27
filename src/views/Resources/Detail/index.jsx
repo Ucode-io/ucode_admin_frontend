@@ -1,33 +1,34 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import {useEffect} from "react";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { Box, Button } from "@mui/material";
-import { useEnvironmentsListQuery } from "../../../services/environmentService";
+import {Box, Button} from "@mui/material";
+import {useEnvironmentsListQuery} from "../../../services/environmentService";
 import {
   useResourceConfigureMutation,
   useResourceCreateMutation,
   useResourceCreateMutationV2,
   useResourceEnvironmentGetByIdQuery,
+  useResourceGetByIdQueryV1,
   useResourceGetByIdQueryV2,
   useResourceReconnectMutation,
   useResourceUpdateMutation,
   useResourceUpdateMutationV2,
 } from "../../../services/resourceService";
-import { store } from "../../../store";
+import {store} from "../../../store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
 import AllowList from "./AllowList";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { resourceTypes } from "../../../utils/resourceConstants";
+import {resourceTypes} from "../../../utils/resourceConstants";
 import resourceVariableService from "../../../services/resourceVariableService";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import {
   useGithubLoginMutation,
   useGithubUserQuery,
@@ -47,7 +48,7 @@ const headerStyle = {
 
 const ResourceDetail = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { projectId, resourceId, resourceType } = useParams();
+  const {projectId, resourceId, resourceType} = useParams();
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [variables, setVariables] = useState();
@@ -58,7 +59,7 @@ const ResourceDetail = () => {
 
   const isEditPage = !!resourceId;
 
-  const { control, reset, handleSubmit, setValue, watch } = useForm({
+  const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
       name: "",
       variables: variables?.variables,
@@ -69,7 +70,7 @@ const ResourceDetail = () => {
 
   // const resourceType = watch("resource_type");
 
-  const { isLoading } = useResourceGetByIdQueryV2({
+  const {isLoading} = useResourceGetByIdQueryV1({
     id: resourceId,
     params: {
       type: resourceType,
@@ -86,7 +87,7 @@ const ResourceDetail = () => {
     },
   });
 
-  const { isLoadingV2 } = useResourceGetByIdQueryV2({
+  const {isLoadingV2} = useResourceGetByIdQueryV2({
     id: resourceId,
     params: {
       type: resourceType,
@@ -104,7 +105,7 @@ const ResourceDetail = () => {
     },
   });
 
-  const { data: projectEnvironments } = useEnvironmentsListQuery({
+  const {data: projectEnvironments} = useEnvironmentsListQuery({
     params: {
       project_id: projectId,
     },
@@ -117,7 +118,7 @@ const ResourceDetail = () => {
     },
   });
 
-  const { isLoading: formLoading } = useResourceEnvironmentGetByIdQuery({
+  const {isLoading: formLoading} = useResourceEnvironmentGetByIdQuery({
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
@@ -136,14 +137,14 @@ const ResourceDetail = () => {
     },
   });
 
-  const { mutate: createResource, isLoading: createLoading } =
+  const {mutate: createResource, isLoading: createLoading} =
     useResourceCreateMutation({
       onSuccess: () => {
         navigate(-1);
       },
     });
 
-  const { mutate: createResourceV2, isLoading: createLoadingV2 } =
+  const {mutate: createResourceV2, isLoading: createLoadingV2} =
     useResourceCreateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -151,21 +152,21 @@ const ResourceDetail = () => {
       },
     });
 
-  const { mutate: configureResource, isLoading: configureLoading } =
+  const {mutate: configureResource, isLoading: configureLoading} =
     useResourceConfigureMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
       },
     });
 
-  const { mutate: updateResource, isLoading: updateLoading } =
+  const {mutate: updateResource, isLoading: updateLoading} =
     useResourceUpdateMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
       },
     });
 
-  const { mutate: updateResourceV2, isLoading: updateLoadingV2 } =
+  const {mutate: updateResourceV2, isLoading: updateLoadingV2} =
     useResourceUpdateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Resources are updated!", "success"));
@@ -173,9 +174,9 @@ const ResourceDetail = () => {
       },
     });
 
-  const { mutate: reconnectResource, isLoading: reconnectLoading } =
+  const {mutate: reconnectResource, isLoading: reconnectLoading} =
     useResourceReconnectMutation(
-      { projectId: projectId },
+      {projectId: projectId},
       {
         onSuccess: () => {},
       }
@@ -191,10 +192,10 @@ const ResourceDetail = () => {
     },
   });
 
-  const { mutate: githubLogin, isLoading: githubLoginIsLoading } =
+  const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
     useGithubLoginMutation({
       onSuccess: (res) => {
-        setSearchParams({ access_token: res.access_token });
+        setSearchParams({access_token: res.access_token});
       },
       onError: () => {
         // navigate(microfrontendListPageLink);
@@ -204,7 +205,7 @@ const ResourceDetail = () => {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) {
-      githubLogin({ code });
+      githubLogin({code});
     }
   }, []);
 
@@ -296,15 +297,14 @@ const ResourceDetail = () => {
   }, [variables]);
 
   return (
-    <Box sx={{ background: "#fff" }}>
+    <Box sx={{background: "#fff"}}>
       <form flex={1} onSubmit={handleSubmit(onSubmit)}>
         <Box sx={headerStyle}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{display: "flex", alignItems: "center"}}>
             <Button
               onClick={() => navigate(-1)}
-              sx={{ cursor: "pointer", width: "16px", height: "30px" }}
-            >
-              <KeyboardBackspaceIcon style={{ fontSize: "26px" }} />
+              sx={{cursor: "pointer", width: "16px", height: "30px"}}>
+              <KeyboardBackspaceIcon style={{fontSize: "26px"}} />
             </Button>
             <h2>Resource settings</h2>
           </Box>
@@ -312,10 +312,9 @@ const ResourceDetail = () => {
             <Button
               bg="primary"
               type="submit"
-              sx={{ fontSize: "14px", margin: "0 10px" }}
+              sx={{fontSize: "14px", margin: "0 10px"}}
               hidden={isEditPage}
-              isLoading={createLoading}
-            >
+              isLoading={createLoading}>
               Save changes
             </Button>
             {isEditPage && variables?.type !== "REST" && (
@@ -328,16 +327,15 @@ const ResourceDetail = () => {
                 hidden={!isEditPage}
                 color={"success"}
                 variant="contained"
-                onClick={() => reconnectResource({ id: resourceId })}
-                isLoading={reconnectLoading}
-              >
+                onClick={() => reconnectResource({id: resourceId})}
+                isLoading={reconnectLoading}>
                 Reconnect
               </Button>
             )}
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{display: "flex"}}>
           {isEditPage && (
             <ResourceeEnvironments
               control={control}

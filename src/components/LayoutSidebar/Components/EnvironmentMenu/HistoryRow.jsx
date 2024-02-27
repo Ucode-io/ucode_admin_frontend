@@ -92,7 +92,6 @@ export default function HistoryRow({
             background: `${ActivityFeedColors(history?.action_type)}`,
           }}
           className={style.tag}>
-          {" "}
           {history.action_type}
         </Tag>
       </CTableCell>

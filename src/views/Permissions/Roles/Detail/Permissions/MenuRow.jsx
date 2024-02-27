@@ -45,7 +45,7 @@ const MenuRow = ({
       projectId: projectId,
       roleId: roleId,
       parentId: parentId,
-      quryParams: {
+      queryParams: {
         enabled: !!parentId,
         onSuccess: (res) => {
           const obj = {};
@@ -139,13 +139,11 @@ const MenuRow = ({
             onClick={() => {
               setTableBlockIsOpen((prev) => !prev);
               setParentId(app?.id);
-            }}
-          >
+            }}>
             <Box
               display="flex"
               justifyContent="space-between"
-              alignItems="center"
-            >
+              alignItems="center">
               {app?.attributes?.[`label_${i18n?.language}`] ??
                 app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}
@@ -155,8 +153,7 @@ const MenuRow = ({
                   padding: "0",
                   justifyContent: "flex-end",
                 }}
-                disabled
-              >
+                disabled>
                 <ArrowForwardIosIcon
                   style={{
                     transform: `rotate(${tableBlockIsOpen ? 90 : -90}deg)`,
@@ -213,8 +210,7 @@ const MenuRow = ({
             <Box
               display="flex"
               justifyContent="space-between"
-              alignItems="center"
-            >
+              alignItems="center">
               {app?.attributes?.[`label_${i18n?.language}`] ??
                 app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}

@@ -13,12 +13,11 @@ import TableRow from "./TableRow";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
-import InfoIcon from '@mui/icons-material/Info'
+import InfoIcon from "@mui/icons-material/Info";
 import styles from "../../../style.module.scss";
-import { permissions, recordPermission } from "./mock";
+import {permissions, recordPermission} from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
-import { GoInfo } from "react-icons/go";
-
+import {GoInfo} from "react-icons/go";
 
 const Permissions = ({
   control,
@@ -29,11 +28,11 @@ const Permissions = ({
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
-  const [modalData, setModalData] = useState(null)
+  const [modalData, setModalData] = useState(null);
 
   const closeModal = () => {
-    setModalData(null)
-  }
+    setModalData(null);
+  };
 
   const tables = useWatch({
     control,
@@ -66,15 +65,14 @@ const Permissions = ({
       obj[item.id] = item.permission;
     });
     setCheckBoxValues(obj);
-  }, []);
+  }, [allMenu]);
 
   return (
     <>
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
-        onSelect={setSelectedTab}
-      >
+        onSelect={setSelectedTab}>
         <div>
           <Card style={{boxShadow: "none"}}>
             <TabList>
@@ -89,19 +87,41 @@ const Permissions = ({
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
-                        <CTableCell rowSpan={2} w={200} className={styles.sticky_header}>
+                        <CTableCell
+                          rowSpan={2}
+                          w={200}
+                          className={styles.sticky_header}>
                           Objects
                         </CTableCell>
                         <CTableCell colSpan={5}>
-                          <Box display={"flex"} alignItems={"center"} justifyContent="center" columnGap={"4px"}>
-                          Record permissions <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => setModalData(recordPermission)}/>
+                          <Box
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent="center"
+                            columnGap={"4px"}>
+                            Record permissions{" "}
+                            <GoInfo
+                              size={18}
+                              style={{cursor: "pointer"}}
+                              onClick={() => setModalData(recordPermission)}
+                            />
                           </Box>
                         </CTableCell>
                         {permissions.map((item) => (
                           <CTableCell rowSpan={2}>
-                          <Box display={"flex"} alignItems={"center"} columnGap={"4px"}>
-                            {item.title} <GoInfo size={18} style={{cursor: "pointer"}} onClick={() => item?.content && setModalData(item)}/>
-                          </Box>
+                            <Box
+                              display={"flex"}
+                              alignItems={"center"}
+                              columnGap={"4px"}>
+                              {item.title}{" "}
+                              <GoInfo
+                                size={18}
+                                style={{cursor: "pointer"}}
+                                onClick={() =>
+                                  item?.content && setModalData(item)
+                                }
+                              />
+                            </Box>
                           </CTableCell>
                         ))}
                       </CTableHeadRow>
@@ -201,8 +221,7 @@ const Permissions = ({
                     <CTableBody
                       //   loader={isLoading}
                       columnsCount={8}
-                      dataLength={tables?.tables?.length}
-                    >
+                      dataLength={tables?.tables?.length}>
                       {tables?.tables?.map((table, tableIndex) => (
                         <TableRow
                           key={table.id}
@@ -282,7 +301,7 @@ const Permissions = ({
         </div>
       </Tabs>
       {modalData && (
-        <PermissionInfoModal modalData={modalData} closeModal={closeModal}/>
+        <PermissionInfoModal modalData={modalData} closeModal={closeModal} />
       )}
     </>
   );

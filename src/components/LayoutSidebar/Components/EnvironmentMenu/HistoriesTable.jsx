@@ -3,7 +3,13 @@ import {Box, Button, TableCell, Typography} from "@mui/material";
 import HistoryRow from "./HistoryRow";
 import styles from "./styles.module.scss";
 import TableCard from "../../../TableCard";
-import {CTable, CTableBody, CTableHead, CTableHeadRow} from "../../../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableHead,
+  CTableHeadCell,
+  CTableHeadRow,
+} from "../../../CTable";
 import ClearIcon from "@mui/icons-material/Clear";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import ReleasesHistory from "./ReleasesHistory";
@@ -145,7 +151,11 @@ export default function HistoriesTable({
             </TabPanel>
 
             <TabPanel>
-              <TableCard type={"withoutPadding"} withBorder borderRadius="md">
+              <TableCard
+                cardStyles={{height: "290px", overflow: "auto"}}
+                type={"withoutPadding"}
+                withBorder
+                borderRadius="md">
                 <CTable
                   removableHeight={0}
                   tableStyle={{
@@ -153,11 +163,11 @@ export default function HistoriesTable({
                   }}>
                   <CTableHead>
                     <CTableHeadRow>
-                      <TableCell width={40}>Action</TableCell>
-                      <TableCell width={160}>Action Type</TableCell>
-                      <TableCell>Action Source</TableCell>
-                      <TableCell width={200}>Version</TableCell>
-                      <TableCell width={130}>Action</TableCell>
+                      <CTableHeadCell width={40}>Action</CTableHeadCell>
+                      <CTableHeadCell width={160}>Action Type</CTableHeadCell>
+                      <CTableHeadCell>Action Source</CTableHeadCell>
+                      <CTableHeadCell width={200}>Version</CTableHeadCell>
+                      <CTableHeadCell width={130}>Action</CTableHeadCell>
                     </CTableHeadRow>
                   </CTableHead>
                   <CTableBody

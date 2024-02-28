@@ -8,6 +8,7 @@ import activeStyles from "../MenuUtils/activeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import ApiKeyButton from "../ApiKey/ApiKeyButton";
+import RedirectButton from "../Redirect/RedirectButton";
 // import RecursiveBlock from "./RecursiveBlock";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -80,6 +81,7 @@ function ApiMenu({level = 1, menuStyle}) {
 
       <Collapse in={childBlockVisible} unmountOnExit>
         <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+        <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
       </Collapse>
     </Box>
   );

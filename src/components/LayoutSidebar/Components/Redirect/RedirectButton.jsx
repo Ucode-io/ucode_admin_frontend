@@ -1,15 +1,15 @@
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
+import {useNavigate, useParams} from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const redirectButton = {
-  label: "Redirects",
+  label: "Custom endpoint",
   type: "USER_FOLDER",
   icon: "key.svg",
   parent_id: adminId,
@@ -24,8 +24,8 @@ const redirectButton = {
   },
 };
 
-const RedirectButton = ({ level = 1, menuStyle, menuItem }) => {
-  const { appId } = useParams();
+const RedirectButton = ({level = 1, menuStyle, menuItem}) => {
+  const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,8 +66,7 @@ const RedirectButton = ({ level = 1, menuStyle, menuItem }) => {
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <MoveUpIcon size={18} />
             {redirectButton?.label}

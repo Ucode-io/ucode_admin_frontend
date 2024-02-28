@@ -1,6 +1,6 @@
-import { Delete, Edit } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {Delete, Edit} from "@mui/icons-material";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -15,20 +15,22 @@ import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import exportToJsonService from "../../services/exportToJson";
 import useDownloader from "../../hooks/useDownloader";
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import apiKeyService from "../../services/apiKey.service";
-import { numberWithSpaces } from "../../utils/formatNumbers";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import ActivityFeedPage from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity";
 import ActivityFeedTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/ActivityFeedTable";
 import EmptyDataComponent from "../../components/EmptyDataComponent";
+import {Box} from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const ApiKeyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { download } = useDownloader();
+  const {download} = useDownloader();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -107,13 +109,27 @@ const ApiKeyPage = () => {
   };
 
   return (
-
     <div>
-      <HeaderSettings
-        title={"Api keys"}
-        sticky
-        line={false}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          background: "#fff",
+          height: "56px",
+          borderBottom: "1px solid #eee",
+        }}>
+        <HeaderSettings title={"Api keys"} sticky line={false} />
+        <Box sx={{width: "220px"}}>
+          <a
+            target="_blank"
+            style={{display: "inline-flex", alignItems: "center"}}
+            href="https://drive.google.com/file/d/18Kb1PP_keOytiYdtM954rFkcoqoMONAL/view?usp=sharing"
+            download>
+            <DownloadIcon style={{background: "#007af"}} />
+            Postman collection link
+          </a>
+        </Box>
+      </Box>
       <TableCard>
         <CTable loader={false} disablePagination removableHeight={false}>
           <CTableHead>
@@ -128,20 +144,22 @@ const ApiKeyPage = () => {
 
           <CTableBody loader={false} columnsCount={4} dataLength={list.length}>
             {apiKeys?.map((element, index) => (
-              <CTableRow
-                key={element.id}
-
-              >
+              <CTableRow key={element.id}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
-                <CTableCell>{numberWithSpaces(element?.monthly_request_limit)}</CTableCell>
+                <CTableCell>
+                  {numberWithSpaces(element?.monthly_request_limit)}
+                </CTableCell>
                 <CTableCell>{numberWithSpaces(element?.rps_limit)}</CTableCell>
                 <CTableCell>{numberWithSpaces(element?.used_count)}</CTableCell>
                 <CTableCell>
                   <div className="flex">
-
-                    <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => navigateToEditForm(element.id)}>
+                    <RectangleIconButton
+                      color="success"
+                      className="mr-1"
+                      size="small"
+                      onClick={() => navigateToEditForm(element.id)}>
                       <Edit color="success" />
                     </RectangleIconButton>
                     <RectangleIconButton color="error" onClick={deleteTable}>

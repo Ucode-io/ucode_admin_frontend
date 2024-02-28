@@ -7,15 +7,16 @@ import AddIcon from "@mui/icons-material/Add";
 import activeStyles from "../MenuUtils/activeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
-import RecursiveBlock from "./RecursiveBlock";
+import ApiKeyButton from "../ApiKey/ApiKeyButton";
+// import RecursiveBlock from "./RecursiveBlock";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 const projectSettings = {
-  label: "Project Settings",
+  label: "API",
   type: "USER_FOLDER",
   icon: "lock.svg",
   parent_id: adminId,
-  id: "122223",
+  id: "23233",
   data: {
     permission: {
       read: true,
@@ -26,7 +27,7 @@ const projectSettings = {
   },
 };
 
-function ProjectSettings({level = 1, menuStyle}) {
+function ApiMenu({level = 1, menuStyle}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
@@ -72,16 +73,16 @@ function ProjectSettings({level = 1, menuStyle}) {
               <KeyboardArrowRightIcon />
             )}
             <IconGenerator icon={"lock.svg"} size={18} />
-            Project Settings
+            API
           </div>
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem} />
+        <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
       </Collapse>
     </Box>
   );
 }
 
-export default ProjectSettings;
+export default ApiMenu;

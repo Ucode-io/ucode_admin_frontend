@@ -8,7 +8,7 @@ import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
-  label: "Data model",
+  label: "Models",
   type: "USER_FOLDER",
   icon: "table.svg",
   parent_id: adminId,
@@ -65,8 +65,7 @@ const TableSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
             {projectFolder?.label}

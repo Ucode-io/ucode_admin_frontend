@@ -29,6 +29,7 @@ import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
 import EnvironmentMenu from "../Components/EnvironmentMenu";
 import ProjectSettings from "../Components/ProjectSettings";
+import ApiMenu from "../Components/ApiMenu/Index";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -215,6 +216,14 @@ const SubMenu = ({
             ) : (
               <Box className="nav-block">
                 {selectedApp?.id === adminId && (
+                  <ProjectSettings
+                    handleOpenNotify={handleOpenNotify}
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    pinIsEnabled={pinIsEnabled}
+                  />
+                )}
+                {selectedApp?.id === adminId && (
                   <Permissions menuStyle={menuStyle} setElement={setElement} />
                 )}
                 {selectedApp?.id === adminId && (
@@ -226,7 +235,7 @@ const SubMenu = ({
                   />
                 )}
                 {selectedApp?.id === adminId && (
-                  <ProjectSettings
+                  <ApiMenu
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}

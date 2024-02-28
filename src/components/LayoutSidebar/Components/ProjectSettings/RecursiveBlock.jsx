@@ -4,11 +4,19 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {BsThreeDots} from "react-icons/bs";
 import EnvironmentModal from "../EnvironmentMenu/EnvironmentModal";
+import {useNavigate, useParams} from "react-router-dom";
 
 function RecursiveBlock({activeStyle}) {
   const [open, setOpen] = useState(false);
+  const {appId} = useParams();
+  const navigate = useNavigate();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const styles = {
+    color: "#a8a8a8",
+    borderRadius: "8px",
+    margin: "5px 0",
+  };
   return (
     <Box
       sx={{
@@ -20,7 +28,33 @@ function RecursiveBlock({activeStyle}) {
         margin: "0px",
       }}>
       <div className="parent-block column-drag-handle">
-        <Button style={activeStyle} className="nav-element">
+        <Button
+          style={styles}
+          className="nav-element"
+          onClick={(e) => {
+            e?.stopPropagation();
+            navigate(`/main/${appId}/project-setting`);
+          }}>
+          <div className="label" style={{padding: "0 10px"}}>
+            <Tooltip title="Project Settings" placement="top">
+              <p>Project Settings</p>
+            </Tooltip>
+          </div>
+          <Box className="icon_group">
+            <Tooltip title="Resource settings" placement="top">
+              <Box className="extra_icon">
+                <BsThreeDots size={13} />
+              </Box>
+            </Tooltip>
+          </Box>
+        </Button>
+        <Button
+          style={styles}
+          className="nav-element"
+          onClick={(e) => {
+            e?.stopPropagation();
+            navigate(`/main/${appId}/environments`);
+          }}>
           <div className="label" style={{padding: "0 10px"}}>
             <Tooltip title="Project Settings" placement="top">
               <p>Environments</p>
@@ -29,23 +63,18 @@ function RecursiveBlock({activeStyle}) {
           <Box className="icon_group">
             <Tooltip title="Resource settings" placement="top">
               <Box className="extra_icon">
-                <BsThreeDots
-                  size={13}
-                  // onClick={(e) => {
-                  //   e?.stopPropagation();
-                  //   handleOpenNotify(e, "FOLDER");
-                  // }}
-                />
+                <BsThreeDots size={13} />
               </Box>
             </Tooltip>
           </Box>
         </Button>
         <Button
-          style={activeStyle}
+          style={styles}
           className="nav-element"
           onClick={(e) => {
             e?.stopPropagation();
             handleOpen();
+            navigate("main/c57eedc3-a954-4262-a0af-376c65b5a280");
           }}>
           <div className="label" style={{padding: "0 10px"}}>
             <Tooltip title="Project Settings" placement="top">

@@ -5,7 +5,7 @@ import React, {useState} from "react";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import AddIcon from "@mui/icons-material/Add";
 import activeStyles from "../MenuUtils/activeStyles";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import RecursiveBlock from "./RecursiveBlock";
 
@@ -15,7 +15,7 @@ const projectSettings = {
   type: "USER_FOLDER",
   icon: "lock.svg",
   parent_id: adminId,
-  id: "14",
+  id: "122223",
   data: {
     permission: {
       read: true,
@@ -26,8 +26,9 @@ const projectSettings = {
   },
 };
 
-function ProjectSettings({menuItem, level = 1, menuStyle}) {
+function ProjectSettings({level = 1, menuStyle}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
   const activeStyle = activeStyles({
     menuItem,

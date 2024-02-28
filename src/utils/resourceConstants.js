@@ -1,27 +1,27 @@
-import { HiOutlineDatabase } from "react-icons/hi";
-import { SiMongodb, SiPostgresql } from "react-icons/si";
+import {HiOutlineDatabase} from "react-icons/hi";
+import {SiMongodb, SiPostgresql} from "react-icons/si";
 
 export const resourceTypes = [
-  {
-    label: "Not decided",
-    value: 0,
-    icon: HiOutlineDatabase,
-  },
+  // {
+  //   label: "Not decided",
+  //   value: 0,
+  //   icon: HiOutlineDatabase,
+  // },
   {
     label: "MongoDB",
     value: 1,
     icon: SiMongodb,
   },
-  {
-    label: "Clickhouse",
-    value: 2,
-    icon: HiOutlineDatabase,
-  },
-  {
-    label: "PosgreSQL",
-    value: 3,
-    icon: SiPostgresql,
-  },
+  // {
+  //   label: "Clickhouse",
+  //   value: 2,
+  //   icon: HiOutlineDatabase,
+  // },
+  // {
+  //   label: "PosgreSQL",
+  //   value: 3,
+  //   icon: SiPostgresql,
+  // },
   {
     label: "Rest",
     value: 4,
@@ -30,6 +30,16 @@ export const resourceTypes = [
   {
     label: "GitHub",
     value: 5,
+    icon: SiPostgresql,
+  },
+  {
+    label: "Sms",
+    value: 6,
+    icon: SiPostgresql,
+  },
+  {
+    label: "Smtp",
+    value: 7,
     icon: SiPostgresql,
   },
 ];

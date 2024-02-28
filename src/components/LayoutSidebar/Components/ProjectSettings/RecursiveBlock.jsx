@@ -5,11 +5,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {BsThreeDots} from "react-icons/bs";
 import EnvironmentModal from "../EnvironmentMenu/EnvironmentModal";
 import {useNavigate, useParams} from "react-router-dom";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import {useDispatch} from "react-redux";
 
-function RecursiveBlock({activeStyle}) {
+function RecursiveBlock({level = 1, menuStyle, menuItem}) {
   const [open, setOpen] = useState(false);
   const {appId} = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const styles = {
@@ -17,6 +20,7 @@ function RecursiveBlock({activeStyle}) {
     borderRadius: "8px",
     margin: "5px 0",
   };
+
   return (
     <Box
       sx={{

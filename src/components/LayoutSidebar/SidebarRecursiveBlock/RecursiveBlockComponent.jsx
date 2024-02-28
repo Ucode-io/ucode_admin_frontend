@@ -1,21 +1,21 @@
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
-import { useMenuListQuery } from "../../../services/menuService";
-import { store } from "../../../store";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
+import {useMenuListQuery} from "../../../services/menuService";
+import {store} from "../../../store";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
 import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
-import { MenuFolderArrows, NavigateByType } from "../Components/MenuSwitchCase";
+import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
@@ -23,12 +23,12 @@ import RedirectButton from "../Components/Redirect/RedirectButton";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
-import { folderIds } from "./mock/folders";
+import {folderIds} from "./mock/folders";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
-  customFunc = () => { },
+  customFunc = () => {},
   element,
   openFolderCreateModal,
   environment,
@@ -46,13 +46,13 @@ const RecursiveBlock = ({
   userType = false,
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
+  const activeStyle = activeStyles({menuItem, element, menuStyle, level});
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const { appId } = useParams();
+  const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
@@ -78,7 +78,7 @@ const RecursiveBlock = ({
       selectedApp?.id !== adminId) ||
     !selectedApp?.is_static;
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -93,7 +93,7 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({ element, appId, navigate });
+    NavigateByType({element, appId, navigate});
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
@@ -157,7 +157,7 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{ padding: "0 5px" }}>
+      <Box sx={{padding: "0 5px"}}>
         <div className="parent-block column-drag-handle" key={element.id}>
           {permission ? (
             <Button
@@ -167,8 +167,7 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
-              }}
-            >
+              }}>
               <div
                 className="label"
                 style={{
@@ -177,8 +176,7 @@ const RecursiveBlock = ({
                       ? menuStyle?.active_text
                       : menuStyle?.text,
                   opacity: element?.isChild && 0.6,
-                }}
-              >
+                }}>
                 {element?.type === "USER" && (
                   <PersonIcon
                     style={{
@@ -189,7 +187,7 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({ element, childBlockVisible })}
+                {MenuFolderArrows({element, childBlockVisible})}
                 <IconGenerator
                   icon={
                     element?.icon ||
@@ -205,8 +203,7 @@ const RecursiveBlock = ({
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
-                  }}
-                >
+                  }}>
                   <Box>
                     <p>
                       {element?.attributes?.[`label_${defaultLanguage}`] ??
@@ -220,23 +217,23 @@ const RecursiveBlock = ({
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (
-                          <Tooltip title="Settings" placement="top">
-                            <Box className="extra_icon">
-                              <BsThreeDots
-                                size={13}
-                                onClick={(e) => {
-                                  folderSettings(e);
-                                }}
-                                style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
-                                }}
-                              />
-                            </Box>
-                          </Tooltip>
-                        )}
+                        <Tooltip title="Settings" placement="top">
+                          <Box className="extra_icon">
+                            <BsThreeDots
+                              size={13}
+                              onClick={(e) => {
+                                folderSettings(e);
+                              }}
+                              style={{
+                                color:
+                                  menuItem?.id === element?.id
+                                    ? menuStyle?.active_text
+                                    : menuStyle?.text || "",
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
+                      )}
                     </Box>
                   ) : null}
                 </Box>
@@ -288,12 +285,36 @@ const RecursiveBlock = ({
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} />
-              <MicroServiceSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <TableSettingSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-              <SmsOtpButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+              {/* <DataBase
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                level={2}
+              />
+              <MicroServiceSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              /> */}
+              <TableSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              {/* <ApiKeyButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <RedirectButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              />
+              <SmsOtpButton
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                level={2}
+              /> */}
             </>
           )}
 
@@ -307,9 +328,19 @@ const RecursiveBlock = ({
               /> */}
 
               <FunctionSidebar
-                menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem} level={2} integrated={false} />
-              <MicrofrontendSettingSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} element={element} level={2} />
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                level={2}
+                integrated={false}
+              />
+              <MicrofrontendSettingSidebar
+                menuStyle={menuStyle}
+                setSubMenuIsOpen={setSubMenuIsOpen}
+                menuItem={menuItem}
+                element={element}
+                level={2}
+              />
             </>
           )}
           {/* {element.id === folderIds.api_folder_id && (

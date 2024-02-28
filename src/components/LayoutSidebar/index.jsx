@@ -2,12 +2,12 @@ import "./style.scss";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { Box, Button, Divider } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { Container } from "react-smooth-dnd";
-import { UdevsLogo } from "../../assets/icons/icon";
+import {Box, Button, Divider} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {Container} from "react-smooth-dnd";
+import {UdevsLogo} from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
@@ -15,13 +15,16 @@ import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkMo
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, { useMenuGetByIdQuery, useMenuListQuery } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import menuService, {
+  useMenuGetByIdQuery,
+  useMenuListQuery,
+} from "../../services/menuService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { store } from "../../store";
-import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import AppSidebar from "./AppSidebarComponent";
@@ -31,9 +34,9 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 
-const LayoutSidebar = ({ appId }) => {
+const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -49,7 +52,9 @@ const LayoutSidebar = ({ appId }) => {
     }
   }, []);
 
-  const sidebarIsOpen = useSelector((state) => state.main.settingsSidebarIsOpen);
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen
+  );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const projectId = store.getState().company.projectId;
 
@@ -69,16 +74,16 @@ const LayoutSidebar = ({ appId }) => {
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+    setMenu({event: event?.currentTarget, type: type});
   };
   const handleCloseNotify = () => {
     setMenu(null);
   };
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: appId || menuItem?.id,
       search: subSearchText,
@@ -91,13 +96,15 @@ const LayoutSidebar = ({ appId }) => {
     },
   });
 
-  const { data: menuById } = useMenuGetByIdQuery({
+  const {data: menuById} = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
-      template_id: menuById?.attributes?.menu_settings_id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+      template_id:
+        menuById?.attributes?.menu_settings_id ||
+        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
@@ -174,7 +181,7 @@ const LayoutSidebar = ({ appId }) => {
       });
   };
 
-  const { isLoadingUser } = useQuery(
+  const {isLoadingUser} = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -219,10 +226,14 @@ const LayoutSidebar = ({ appId }) => {
   }, [menuList]);
 
   useEffect(() => {
-    if (selectedApp?.type === "FOLDER" || (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)) setSubMenuIsOpen(true);
+    if (
+      selectedApp?.type === "FOLDER" ||
+      (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)
+    )
+      setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -243,11 +254,14 @@ const LayoutSidebar = ({ appId }) => {
         className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
         style={{
           background: menuStyle?.background || "#fff",
-        }}
-      >
+        }}>
         <div className="header">
           <div className="brand">
-            {projectInfo?.logo ? <img src={projectInfo?.logo} alt="" width={40} height={40} /> : <UdevsLogo fill={"#007AFF"} />}
+            {projectInfo?.logo ? (
+              <img src={projectInfo?.logo} alt="" width={40} height={40} />
+            ) : (
+              <UdevsLogo fill={"#007AFF"} />
+            )}
 
             {!sidebarIsOpen && (
               <Button
@@ -265,8 +279,7 @@ const LayoutSidebar = ({ appId }) => {
                   alignItems: "center",
                   justifyContent: "center",
                   background: "#fff",
-                }}
-              >
+                }}>
                 <KeyboardDoubleArrowRightIcon />
               </Button>
             )}
@@ -278,8 +291,7 @@ const LayoutSidebar = ({ appId }) => {
                   color: menuStyle?.text || "#000",
                   fontSize: "20px",
                   fontWeight: "700",
-                }}
-              >
+                }}>
                 {projectInfo?.title}
               </h2>
             )}
@@ -298,14 +310,12 @@ const LayoutSidebar = ({ appId }) => {
             flexDirection: "column",
             height: "85vh",
             overflow: "hidden",
-          }}
-        >
+          }}>
           <div
             style={{
               overflow: "auto",
             }}
-            className="p-nav-block"
-          >
+            className="p-nav-block">
             {!menuList ? (
               <RingLoaderWithWrapper />
             ) : (
@@ -315,10 +325,11 @@ const LayoutSidebar = ({ appId }) => {
                   style={{
                     background: menuStyle?.background || "#fff",
                     color: menuStyle?.text || "#000",
-                  }}
-                >
+                  }}>
                   <div className="menu-element">
-                    <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
+                    <Container
+                      dragHandleSelector=".column-drag-handle"
+                      onDrop={onDrop}>
                       {menuList &&
                         menuList?.map((element, index) => (
                           <AppSidebar
@@ -343,7 +354,12 @@ const LayoutSidebar = ({ appId }) => {
                     icon={
                       <AddIcon
                         style={{
-                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          width:
+                            menuTemplate?.icon_size === "SMALL"
+                              ? 10
+                              : menuTemplate?.icon_size === "MEDIUM"
+                                ? 15
+                                : 18 || 18,
                           color: menuStyle?.text,
                         }}
                       />
@@ -387,16 +403,56 @@ const LayoutSidebar = ({ appId }) => {
           sidebarIsOpen={sidebarIsOpen}
         />
 
-        {(modalType === "create" || modalType === "parent" || modalType === "update") && (
-          <FolderCreateModal closeModal={closeModal} selectedFolder={selectedFolder} modalType={modalType} appId={appId} getMenuList={getMenuList} />
+        {(modalType === "create" ||
+          modalType === "parent" ||
+          modalType === "update") && (
+          <FolderCreateModal
+            closeModal={closeModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            getMenuList={getMenuList}
+          />
         )}
         {modalType === "WIKI_UPDATE" || modalType === "WIKI_FOLDER_UPDATE" ? (
-          <WikiFolderCreateModal closeModal={closeModal} selectedFolder={selectedFolder} modalType={modalType} appId={appId} getMenuList={getMenuList} />
+          <WikiFolderCreateModal
+            closeModal={closeModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            getMenuList={getMenuList}
+          />
         ) : null}
-        {tableModal && <TableLinkModal closeModal={closeTableModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {linkTableModal && <LinkTableModal closeModal={closeLinkedTableModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {microfrontendModal && <MicrofrontendLinkModal closeModal={closeMicrofrontendModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {folderModalType === "folder" && <FolderModal closeModal={closeFolderModal} modalType={folderModalType} menuList={menuList} element={element} getMenuList={getMenuList} />}
+        {tableModal && (
+          <TableLinkModal
+            closeModal={closeTableModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {linkTableModal && (
+          <LinkTableModal
+            closeModal={closeLinkedTableModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {microfrontendModal && (
+          <MicrofrontendLinkModal
+            closeModal={closeMicrofrontendModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {folderModalType === "folder" && (
+          <FolderModal
+            closeModal={closeFolderModal}
+            modalType={folderModalType}
+            menuList={menuList}
+            element={element}
+            getMenuList={getMenuList}
+          />
+        )}
       </div>
       <SubMenu
         child={child}
@@ -433,7 +489,9 @@ const LayoutSidebar = ({ appId }) => {
         />
       ) : null}
       {templateModal && <TemplateModal closeModal={closeTemplateModal} />}
-      {menuSettingModal && <MenuSettingModal closeModal={closeMenuSettingModal} />}
+      {menuSettingModal && (
+        <MenuSettingModal closeModal={closeMenuSettingModal} />
+      )}
     </>
   );
 };

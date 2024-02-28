@@ -1,6 +1,6 @@
-import { updateLevel } from "../../../../utils/level";
+import {updateLevel} from "../../../../utils/level";
 
-export default function activeStyles({ menuItem, element, menuStyle, level }) {
+export default function activeStyles({menuItem, element, menuStyle, level}) {
   return {
     height: "40px",
     backgroundColor:

@@ -28,6 +28,8 @@ import QuerySidebar from "../Components/Query/QuerySidebar";
 import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
 import EnvironmentMenu from "../Components/EnvironmentMenu";
+import ProjectSettings from "../Components/ProjectSettings";
+import ApiMenu from "../Components/ApiMenu/Index";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -214,10 +216,26 @@ const SubMenu = ({
             ) : (
               <Box className="nav-block">
                 {selectedApp?.id === adminId && (
+                  <ProjectSettings
+                    handleOpenNotify={handleOpenNotify}
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    pinIsEnabled={pinIsEnabled}
+                  />
+                )}
+                {selectedApp?.id === adminId && (
                   <Permissions menuStyle={menuStyle} setElement={setElement} />
                 )}
                 {selectedApp?.id === adminId && (
                   <Resources
+                    handleOpenNotify={handleOpenNotify}
+                    menuStyle={menuStyle}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    pinIsEnabled={pinIsEnabled}
+                  />
+                )}
+                {selectedApp?.id === adminId && (
+                  <ApiMenu
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyle}
                     setSubMenuIsOpen={setSubMenuIsOpen}
@@ -282,14 +300,14 @@ const SubMenu = ({
                       pinIsEnabled={pinIsEnabled}
                     />
                   )}
-                  {selectedApp?.id === adminId && (
+                  {/* {selectedApp?.id === adminId && (
                     <EnvironmentMenu
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       level={2}
                       menuItem={menuItem}
                     />
-                  )}
+                  )} */}
                 </div>
               </Box>
             )}

@@ -230,7 +230,7 @@ const NewProfilePanel = ({
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
-      } else if (languages?.length > 1 && defaultLanguage) {
+      } else if (languages?.length > 1 && defaultLanguage && !i18n?.language) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
       }
@@ -269,9 +269,7 @@ const NewProfilePanel = ({
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,
-        }}
-      >
-        
+        }}>
         <Box className={styles.leftblock}>
           <div className={styles.block}>
             <div className={styles.companyblock}>
@@ -288,8 +286,7 @@ const NewProfilePanel = ({
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
-                        }}
-                      >
+                        }}>
                         {item?.name?.charAt(0).toUpperCase()}
                       </p>
                     </Tooltip>
@@ -305,8 +302,7 @@ const NewProfilePanel = ({
                   className={styles.createbutton}
                   onClick={() => {
                     setCompanyModal(true);
-                  }}
-                >
+                  }}>
                   <PlusIcon fill={"#007AFF"} />
                 </p>
               )}
@@ -333,45 +329,45 @@ const NewProfilePanel = ({
           </div>
           <Divider />
           <Box className={styles.block}>
-          {permissions?.project_button && (
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.projectItem?.title || "No project"}
-                  className={styles.projectavatar}
-                  colorItem={company.projectItem}
-                  icon={
-                    <LayersIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openProjectList}
-            />
-          )}
-          {permissions?.environments_button && (
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.environmentItem?.name || "No environment"}
-                  className={styles.environmentavatar}
-                  colorItem={company.environmentItem}
-                  icon={
-                    <LocalOfferIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openEnvironmentList}
-            />
-          )}
-          {/* {permissions?.version_button && (
+            {permissions?.project_button && (
+              <ProfileItem
+                children={
+                  <ResourceList
+                    item={company.projectItem?.title || "No project"}
+                    className={styles.projectavatar}
+                    colorItem={company.projectItem}
+                    icon={
+                      <LayersIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
+                  />
+                }
+                onClick={openProjectList}
+              />
+            )}
+            {permissions?.environments_button && (
+              <ProfileItem
+                children={
+                  <ResourceList
+                    item={company.environmentItem?.name || "No environment"}
+                    className={styles.environmentavatar}
+                    colorItem={company.environmentItem}
+                    icon={
+                      <LocalOfferIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
+                  />
+                }
+                onClick={openEnvironmentList}
+              />
+            )}
+            {/* {permissions?.version_button && (
             <ProfileItem
               children={
                 <LocalOfferIcon
@@ -411,8 +407,7 @@ const NewProfilePanel = ({
               onClose={handleClose}
               MenuListProps={{
                 "aria-labelledby": "basic-button",
-              }}
-            >
+              }}>
               {languages?.map((item) => (
                 <MenuItem
                   onClick={() => {
@@ -422,14 +417,13 @@ const NewProfilePanel = ({
                   style={{
                     backgroundColor:
                       item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
-                  }}
-                >
+                  }}>
                   {item?.title}
                 </MenuItem>
               ))}
             </Menu>
-              <Box>
-                {/* {defaultAdmin && (
+            <Box>
+              {/* {defaultAdmin && (
                   <ProfileItem
                     children={
                       <WidgetsIcon
@@ -445,23 +439,23 @@ const NewProfilePanel = ({
                     }}
                   />
                 )} */}
-                {permissions?.menu_setting_button && (
-                  <ProfileItem
-                    children={
-                      <SettingsIcon
-                        style={{
-                          color: "#747474",
-                        }}
-                      />
-                    }
-                    text={"Menu settings"}
-                    onClick={() => {
-                      handleMenuSettingModalOpen();
-                      closeMenu();
-                    }}
-                  />
-                )}
-              </Box>
+              {permissions?.menu_setting_button && (
+                <ProfileItem
+                  children={
+                    <SettingsIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
+                  text={"Menu settings"}
+                  onClick={() => {
+                    handleMenuSettingModalOpen();
+                    closeMenu();
+                  }}
+                />
+              )}
+            </Box>
           </Box>
         </Box>
         <Box className={styles.centerblock}>
@@ -489,7 +483,7 @@ const NewProfilePanel = ({
               />
             )}
 
-            {permissions?.project_settings_button && (
+            {/* {permissions?.project_settings_button && (
               <ProfileItem
                 text={"Settings"}
                 onClick={(e) => {
@@ -497,7 +491,7 @@ const NewProfilePanel = ({
                   navigate(`/main/${appId}/project-setting`);
                 }}
               />
-            )}
+            )} */}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
           </div>
         </Box>

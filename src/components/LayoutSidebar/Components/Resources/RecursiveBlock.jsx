@@ -1,13 +1,13 @@
-import { Box, Button, Tooltip } from "@mui/material";
+import {Box, Button, Tooltip} from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { BsThreeDots } from "react-icons/bs";
+import {BsThreeDots} from "react-icons/bs";
 import activeStyles from "../MenuUtils/activeStyles";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
-import { useDispatch, useSelector } from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import {useDispatch, useSelector} from "react-redux";
 
 const RecursiveBlock = ({
   element,
@@ -19,14 +19,12 @@ const RecursiveBlock = ({
   deleteResourceV2,
   handleOpenNotify,
   menuStyle,
-
 }) => {
   const dispatch = useDispatch();
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const activeStyle = activeStyles({ menuItem, element, menuStyle, level });
-  console.log(" menuItem?.id === element?.id", menuItem)
+  const activeStyle = activeStyles({menuItem, element, menuStyle, level});
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -35,14 +33,13 @@ const RecursiveBlock = ({
         type: element?.type,
       },
     });
-    console.log("element", element)
+
     dispatch(menuActions.setMenuItem(element));
-    if (!pinIsEnabled ) {
+    if (!pinIsEnabled) {
       setSubMenuIsOpen(false);
     }
   };
 
- 
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -54,12 +51,11 @@ const RecursiveBlock = ({
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
-            onClick={clickHandler}
-          >
+            onClick={clickHandler}>
             <div className="label">
               <IconGenerator icon={element?.icon} size={18} />
               <Tooltip title={element?.title ?? element?.name} placement="top">
-              <p>{element?.title ?? element?.name}</p>
+                <p>{element?.title ?? element?.name}</p>
               </Tooltip>
             </div>
             <Box
@@ -69,8 +65,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{ cursor: "pointer" }}
-            >
+              sx={{cursor: "pointer"}}>
               <DeleteIcon />
             </Box>
           </Button>
@@ -82,18 +77,18 @@ const RecursiveBlock = ({
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
-            onClick={clickHandler}
-          >
+            onClick={clickHandler}>
             <div
               className="label"
               onClick={() =>
-                navigate(`/main/${appId}/resources/${element?.id}/${element.type}`)
-              }
-            >
+                navigate(
+                  `/main/${appId}/resources/${element?.id}/${element.type}`
+                )
+              }>
               <IconGenerator icon={element?.icon} size={18} />
 
               <Tooltip title={element?.title ?? element?.name} placement="top">
-              <p>{element?.title ?? element?.name}</p>
+                <p>{element?.title ?? element?.name}</p>
               </Tooltip>
             </div>
             <Box
@@ -103,8 +98,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{ cursor: "pointer" }}
-            >
+              sx={{cursor: "pointer"}}>
               <DeleteIcon />
             </Box>
             {element.type === "FOLDER" && (

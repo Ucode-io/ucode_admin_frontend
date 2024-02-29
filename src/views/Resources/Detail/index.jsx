@@ -235,6 +235,7 @@ const ResourceDetail = () => {
         name: values?.name,
         type: values?.type || undefined,
         id: values?.id,
+        settings: {...values?.settings},
       });
       resourceVariableService
         .updateV2({

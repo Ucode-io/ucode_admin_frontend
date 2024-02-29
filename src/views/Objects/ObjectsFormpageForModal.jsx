@@ -377,7 +377,7 @@ const ObjectsFormPageForModal = ({
                 border: "0px solid #2d6ce5",
                 padding: "4px",
               }}>
-              {fullScreen ? (
+              {/* {fullScreen ? (
                 <FullscreenExitIcon
                   style={{color: "#2d6ce5", width: "26px", height: "26px"}}
                 />
@@ -385,7 +385,7 @@ const ObjectsFormPageForModal = ({
                 <FullscreenIcon
                   style={{color: "#2d6ce5", width: "26px", height: "26px"}}
                 />
-              )}
+              )} */}
             </SecondaryButton>
             <SecondaryButton
               onClick={() => (modal ? handleClose() : navigate(-1))}

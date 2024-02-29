@@ -1,12 +1,13 @@
 import stringifyQueryParams from "@/utils/stringifyQueryParams";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
-import React, { useMemo } from "react";
-import { useWatch } from "react-hook-form";
+import {Box, Button, Grid, Stack, Typography} from "@mui/material";
+import React, {useMemo} from "react";
+import {useWatch} from "react-hook-form";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
-import { resourceTypes, resources } from "../../../utils/resourceConstants";
+import {resourceTypes, resources} from "../../../utils/resourceConstants";
+import HFNumberField from "../../../components/FormElements/HFNumberField";
 
 const headerStyle = {
   width: "100",
@@ -56,19 +57,16 @@ const Form = ({
       scope: "read:user,repo",
     };
 
-    window.location.assign(
+    var url =
       "https://github.com/login/oauth/authorize?" +
-        stringifyQueryParams(queryParams)
-    );
+      stringifyQueryParams(queryParams);
+    window.open(url, "_blank");
   };
-
-  console.log("resurceType", resurceType);
 
   return (
     <Box
       flex={1}
-      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
-    >
+      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
       </Box>
@@ -76,17 +74,15 @@ const Form = ({
       <Box
         style={{
           overflow: "auto",
-        }}
-      >
+        }}>
         <Stack spacing={4}>
           <Box
             sx={{
               // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
-            }}
-          >
-            <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>Name</Box>
+            }}>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
             <HFTextField
               control={control}
               required
@@ -98,8 +94,7 @@ const Form = ({
             />
 
             <Box
-              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
-            >
+              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
               Type
             </Box>
             <HFSelect
@@ -109,8 +104,138 @@ const Form = ({
               required
               name="resource_type"
               resurceType={resurceType}
-              disabled={resurceType === 4}
+              disabled={isEditPage}
             />
+
+            {Boolean(resurceType === 7 || type === "SMTP") && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}>
+                  Email
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name={`settings.smtp.email`}
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Email",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Password
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="settings.smtp.password"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Password",
+                  }}
+                />
+              </>
+            )}
+
+            {Boolean(resurceType === 6 || type === "SMS") && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}>
+                  Default otp
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name={`settings.sms.default_otp`}
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Default otp",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Login
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="settings.sms.login"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Login",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Number of otp
+                </Box>
+                <HFNumberField
+                  control={control}
+                  required
+                  name="settings.sms.number_of_otp"
+                  fullWidth
+                  type="number"
+                  inputProps={{
+                    placeholder: "Number of otp",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Originator
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="settings.sms.originator"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Originator",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Password
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="settings.sms.password"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Password",
+                  }}
+                />
+              </>
+            )}
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
@@ -119,8 +244,7 @@ const Form = ({
                     fontSize: "14px",
                     marginTop: "10px",
                     marginBottom: "10px",
-                  }}
-                >
+                  }}>
                   Type
                 </Box>
                 <HFSelect
@@ -135,8 +259,7 @@ const Form = ({
                     fontSize: "14px",
                     marginTop: "10px",
                     marginBottom: "15px",
-                  }}
-                >
+                  }}>
                   Gihub username
                 </Box>
                 <HFTextField
@@ -154,8 +277,8 @@ const Form = ({
           </Box>
 
           {!isEditPage && (
-            <Box sx={{ marginTop: "0px", padding: "15px" }} px={2}>
-              <Box sx={{ fontSize: "14px", marginBottom: "10px" }}>
+            <Box sx={{marginTop: "0px", padding: "15px"}} px={2}>
+              <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
                 Environment
               </Box>
               <HFSelect
@@ -176,13 +299,13 @@ const Form = ({
 
         {selectedEnvironment?.length > 0 && (
           <>
-            <Box sx={{ padding: "15px", fontSize: "24px" }}>
+            <Box sx={{padding: "15px", fontSize: "24px"}}>
               <Typography variant="h6">Credentials</Typography>
             </Box>
 
             <Grid px={2} container spacing={2}>
-              <Grid item xs={6} sx={{ paddingLeft: "0px" }}>
-                <Box width={50} sx={{ fontSize: "14px" }}>
+              <Grid item xs={6} sx={{paddingLeft: "0px"}}>
+                <Box width={50} sx={{fontSize: "14px"}}>
                   Host
                 </Box>
                 <HFTextField
@@ -193,7 +316,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ fontSize: "14px" }}>Port</Box>
+                <Box sx={{fontSize: "14px"}}>Port</Box>
                 <HFTextField
                   fullWidth
                   control={control}
@@ -202,7 +325,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ fontSize: "14px" }}>Username</Box>
+                <Box sx={{fontSize: "14px"}}>Username</Box>
                 <HFTextField
                   control={control}
                   required
@@ -211,7 +334,7 @@ const Form = ({
                 />
               </Grid>
               <Grid item xs={6}>
-                <Box sx={{ fontSize: "14px" }}>Database</Box>
+                <Box sx={{fontSize: "14px"}}>Database</Box>
                 <HFTextField
                   control={control}
                   required
@@ -222,7 +345,7 @@ const Form = ({
               {true && (
                 <Grid item xs={6}>
                   <Box mb={4}>
-                    <Box sx={{ fontSize: "14px" }}>Password</Box>
+                    <Box sx={{fontSize: "14px"}}>Password</Box>
                     <HFTextField
                       fullWidth
                       control={control}

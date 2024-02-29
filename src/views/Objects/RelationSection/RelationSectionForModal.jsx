@@ -1,23 +1,31 @@
-import { InsertDriveFile } from "@mui/icons-material";
+import {InsertDriveFile} from "@mui/icons-material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Backdrop, Box, Button, Card, Divider, Menu, MenuItem } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {
+  Backdrop,
+  Box,
+  Button,
+  Card,
+  Divider,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
 import layoutService from "../../../services/layoutService";
-import { store } from "../../../store";
-import { applyDrag } from "../../../utils/applyDrag";
-import { listToMap } from "../../../utils/listToMap";
+import {store} from "../../../store";
+import {applyDrag} from "../../../utils/applyDrag";
+import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import MainInfoForModal from "../MainInfoForModal";
 import FixColumnsRelationSection from "./FixColumnsRelationSection";
@@ -25,7 +33,7 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import menuService, { useMenuGetByIdQuery } from "../../../services/menuService";
+import menuService, {useMenuGetByIdQuery} from "../../../services/menuService";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const RelationSectionForModal = ({
@@ -50,9 +58,9 @@ const RelationSectionForModal = ({
   editAcces,
   setEditAccess,
   data,
-  setData
+  setData,
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -61,14 +69,9 @@ const RelationSectionForModal = ({
   let [searchParams] = useSearchParams();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
-  const {
-    tableSlug: tableSlugFromParams,
-    id: idFromParams,
-    appId,
-  } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
@@ -82,7 +85,7 @@ const RelationSectionForModal = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-  const { fields, remove, update } = useFieldArray({
+  const {fields, remove, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -181,7 +184,7 @@ const RelationSectionForModal = ({
   }, [data]);
 
   const {
-    data: { fieldsMap } = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -201,7 +204,7 @@ const RelationSectionForModal = ({
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -330,8 +333,7 @@ const RelationSectionForModal = ({
           }}
           onSelect={(index) => {
             setSelectedTabIndex(index);
-          }}
-        >
+          }}>
           {!data?.is_visible_section && (
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
@@ -343,49 +345,44 @@ const RelationSectionForModal = ({
                     display: "flex",
                     alignItems: "center",
                   }}
-                  dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                  getChildPayload={(i) => data?.tabs?.[i] ?? {}}
-                >
+                  dropPlaceholder={{className: "drag-row-drop-preview"}}
+                  getChildPayload={(i) => data?.tabs?.[i] ?? {}}>
                   {data?.tabs?.map((el, index) =>
                     editAcces ? (
                       <Draggable
                         key={el.id}
-                        style={{ display: "flex", alignItems: "center" }}
-                      >
+                        style={{display: "flex", alignItems: "center"}}>
                         <>
                           <Tab
                             key={el.id}
-                            className={`${styles.tabs_item} ${selectedTabIndex === index
-                              ? "custom-selected-tab"
-                              : "custom-tab"
-                              }`}
+                            className={`${styles.tabs_item} ${
+                              selectedTabIndex === index
+                                ? "custom-selected-tab"
+                                : "custom-tab"
+                            }`}
                             onClick={() => {
                               setSelectedIndex(index);
                               onSelect(el);
                             }}
                             style={{
                               marginRight: "0",
-                            }}
-                          >
+                            }}>
                             {data?.view_relation_type === "FILE" && (
                               <>
                                 <InsertDriveFile /> Файлы
                               </>
                             )}
                             <div className="flex align-center gap-2 text-nowrap">
-                              {el?.relation ? (
-                                el?.relation?.attributes?.[`label_to_${i18n?.language}`]
-                              ) : (
-                                el?.attributes?.[`label_${i18n.language}`]
-                                  ? el?.attributes?.[`label_${i18n.language}`]
-                                  : el?.relation?.attributes?.[
-                                    `label_${i18n.language}`
-                                  ]
-                                    ? el?.relation?.attributes?.[
-                                    `label_${i18n.language}`
-                                    ]
-                                    : el?.label ?? el?.title
-                              )}
+                              {(el?.relation &&
+                                el?.relation?.attributes?.[
+                                  `label_to_${i18n?.language}`
+                                ]) ||
+                                el?.attributes?.[`label_${i18n.language}`] ||
+                                el?.relation?.attributes?.[
+                                  `label_${i18n.language}`
+                                ] ||
+                                el?.label ||
+                                el?.title}
                             </div>
                           </Tab>
 
@@ -396,8 +393,7 @@ const RelationSectionForModal = ({
                               minWidth: "38px",
                               width: "38px",
                               borderRadius: "50%",
-                            }}
-                          >
+                            }}>
                             {/* {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />} */}
                             <DeleteIcon
                               style={{
@@ -414,34 +410,31 @@ const RelationSectionForModal = ({
                         el?.attributes?.is_visible_layout === undefined) && (
                         <Tab
                           key={el.id}
-                          className={`${styles.tabs_item} ${selectedTabIndex === index
-                            ? "custom-selected-tab"
-                            : "custom-tab"
-                            }`}
+                          className={`${styles.tabs_item} ${
+                            selectedTabIndex === index
+                              ? "custom-selected-tab"
+                              : "custom-tab"
+                          }`}
                           onClick={() => {
                             setSelectedIndex(index);
                             onSelect(el);
-                          }}
-                        >
+                          }}>
                           {data?.view_relation_type === "FILE" && (
                             <>
                               <InsertDriveFile /> Файлы
                             </>
                           )}
                           <div className="flex align-center gap-2 text-nowrap">
-                            {el?.relation ? (
-                              el?.relation?.attributes?.[`label_to_${i18n?.language}`]
-                            ) : (
-                              el?.attributes?.[`label_${i18n.language}`]
-                                ? el?.attributes?.[`label_${i18n.language}`]
-                                : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                                  ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                  ]
-                                  : el?.label ?? el?.title
-                            )}
+                            {(el?.relation &&
+                              el?.relation?.attributes?.[
+                                `label_to_${i18n?.language}`
+                              ]) ||
+                              el?.attributes?.[`label_${i18n.language}`] ||
+                              el?.relation?.attributes?.[
+                                `label_${i18n.language}`
+                              ] ||
+                              el?.label ||
+                              el?.title}
                           </div>
                         </Tab>
                       )
@@ -464,8 +457,7 @@ const RelationSectionForModal = ({
                         minWidth: "32px",
                         width: "32px",
                         maxWidth: "32px",
-                      }}
-                    >
+                      }}>
                       <AddRoundedIcon />
                     </Button>
 
@@ -476,18 +468,16 @@ const RelationSectionForModal = ({
                       onClose={handleClose}
                       MenuListProps={{
                         "aria-labelledby": "basic-button",
-                      }}
-                    >
+                      }}>
                       {relations?.map((relation) => (
                         <MenuItem
                           onClick={() => {
                             addRelationTab(relation);
                             handleClose();
-                          }}
-                        >
+                          }}>
                           {
                             relation?.attributes?.[
-                            `label_from_${i18n.language}`
+                              `label_from_${i18n.language}`
                             ]
                           }
                         </MenuItem>
@@ -504,8 +494,7 @@ const RelationSectionForModal = ({
                     right: "16px",
                     border: "0px solid #2d6ce5",
                     padding: "4px",
-                  }}
-                >
+                  }}>
                   <CloseIcon
                     style={{
                       color: "red",
@@ -522,8 +511,7 @@ const RelationSectionForModal = ({
                     right: "16px",
                     border: "0px solid #2d6ce5",
                     padding: "4px",
-                  }}
-                >
+                  }}>
                   <EditIcon
                     style={{
                       color: "#2d6ce5",
@@ -558,8 +546,7 @@ const RelationSectionForModal = ({
           <Box
             sx={{
               height: "100%",
-            }}
-          >
+            }}>
             {loader ? (
               <RingLoaderWithWrapper />
             ) : (
@@ -568,8 +555,7 @@ const RelationSectionForModal = ({
                   key={el.id}
                   style={{
                     height: "100%",
-                  }}
-                >
+                  }}>
                   {!selectedTab?.relation_id ? (
                     <MainInfoForModal
                       control={control}

@@ -230,7 +230,7 @@ const NewProfilePanel = ({
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
-      } else if (languages?.length > 1 && defaultLanguage) {
+      } else if (languages?.length > 1 && defaultLanguage && !i18n?.language) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
       }

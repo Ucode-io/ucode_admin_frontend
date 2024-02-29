@@ -301,7 +301,9 @@ const ResourceDetail = () => {
         <Box sx={headerStyle}>
           <Box sx={{display: "flex", alignItems: "center"}}>
             <Button
-              onClick={() => navigate(-1)}
+              onClick={() =>
+                navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a280")
+              }
               sx={{cursor: "pointer", width: "16px", height: "30px"}}>
               <KeyboardBackspaceIcon style={{fontSize: "26px"}} />
             </Button>

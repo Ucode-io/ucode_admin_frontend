@@ -26,7 +26,7 @@ const resourceService = {
     request.get(`v1/company/project/resource-environment/${id}`),
   configureResource: (data) =>
     request.post("/v1/company/project/configure-resource", data),
-  delete: (data) => request.delete(`v1/company/project/resource`, {data}),
+  delete: (data) => request.delete(`/company/project/resource`, {data}),
   deleteV2: ({id}) => requestV2.delete(`/company/project/resource/${id}`),
   reconnect: ({data, projectId}) => {
     return request.post(`v1/company/project/resource/reconnect`, data, {

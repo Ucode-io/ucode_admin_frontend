@@ -88,7 +88,7 @@ const Resources = ({
   };
 
   const {mutate: deleteResource, isLoading: deleteLoading} =
-    useResourceDeleteMutation({
+    useResourceDeleteMutationV2({
       onSuccess: () => {
         refetch();
         handleClose();

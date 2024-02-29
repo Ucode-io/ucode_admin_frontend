@@ -237,7 +237,7 @@ const ResourceDetail = () => {
         id: values?.id,
       });
       resourceVariableService
-        .update({
+        .updateV2({
           project_resource_id: variables?.id,
           variables: computedValues2?.variables,
         })
@@ -257,7 +257,7 @@ const ResourceDetail = () => {
         if (!selectedEnvironment?.[0].is_configured) {
           configureResource(computedValues2);
         } else {
-          updateResource(computedValues2);
+          updateResourceV2(computedValues2);
         }
       }
     }

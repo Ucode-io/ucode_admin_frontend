@@ -554,7 +554,7 @@ const RelationSectionForModal = ({
                 <TabPanel
                   key={el.id}
                   style={{
-                    height: "100%",
+                    minHeight: "100%",
                   }}>
                   {!selectedTab?.relation_id ? (
                     <MainInfoForModal

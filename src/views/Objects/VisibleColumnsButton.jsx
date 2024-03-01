@@ -44,7 +44,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
         setIsLoading(false);
       });
   };
-  console.log("currentView", currentView?.columns);
+
   const visibleFields = useMemo(() => {
     return (
       currentView?.columns?.map((id) => fieldsMap[id]).filter((el) => el?.id) ??

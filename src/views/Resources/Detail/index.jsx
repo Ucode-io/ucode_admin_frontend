@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useState} from "react";
-import {useForm} from "react-hook-form";
+import {useForm, useWatch} from "react-hook-form";
 import {
   useLocation,
   useNavigate,
@@ -70,7 +70,24 @@ const ResourceDetail = () => {
 
   // const resourceType = watch("resource_type");
 
-  const {isLoading} = useResourceGetByIdQueryV1({
+  // const {isLoading} = useResourceGetByIdQueryV1({
+  //   id: resourceId,
+  //   params: {
+  //     type: resourceType,
+  //   },
+  //   queryParams: {
+  //     cacheTime: false,
+  //     enabled: isEditPage && location?.state?.type !== "REST",
+  //     onSuccess: (res) => {
+  //       reset(res);
+  //       setSelectedEnvironment(
+  //         res.environments?.filter((env) => env.is_configured)
+  //       );
+  //     },
+  //   },
+  // });
+
+  const {isLoading} = useResourceGetByIdQueryV2({
     id: resourceId,
     params: {
       type: resourceType,
@@ -83,24 +100,6 @@ const ResourceDetail = () => {
         setSelectedEnvironment(
           res.environments?.filter((env) => env.is_configured)
         );
-      },
-    },
-  });
-
-  const {isLoadingV2} = useResourceGetByIdQueryV2({
-    id: resourceId,
-    params: {
-      type: resourceType,
-    },
-    queryParams: {
-      cacheTime: false,
-      enabled: isEditPage && location?.state?.type === "REST",
-      onSuccess: (res) => {
-        reset(res?.data);
-        setVariables(res);
-        // setSelectedEnvironment(
-        //   res.environments?.filter((env) => env.is_configured)
-        // );
       },
     },
   });
@@ -217,7 +216,7 @@ const ResourceDetail = () => {
       project_id: projectId,
       resource_id: resourceId,
       user_id: authStore.userId,
-      environment_id: selectedEnvironment?.[0].id,
+      // environment_id: selectedEnvironment?.[0].id,
       is_configured: true,
       id:
         selectedEnvironment?.[0].resource_environment_id ??
@@ -236,9 +235,10 @@ const ResourceDetail = () => {
         name: values?.name,
         type: values?.type || undefined,
         id: values?.id,
+        settings: {...values?.settings},
       });
       resourceVariableService
-        .update({
+        .updateV2({
           project_resource_id: variables?.id,
           variables: computedValues2?.variables,
         })
@@ -250,15 +250,15 @@ const ResourceDetail = () => {
         });
     } else {
       if (values?.resource_type === 4 || values?.resource_type === 5) {
-        delete computedValues2.resource_type;
+        // delete computedValues2.resource_type;
 
         createResourceV2(computedValues2);
-      } else if (!isEditPage) createResource(computedValues2);
+      } else if (!isEditPage) createResourceV2(computedValues2);
       else {
         if (!selectedEnvironment?.[0].is_configured) {
           configureResource(computedValues2);
         } else {
-          updateResource(computedValues2);
+          updateResourceV2(computedValues2);
         }
       }
     }
@@ -302,7 +302,9 @@ const ResourceDetail = () => {
         <Box sx={headerStyle}>
           <Box sx={{display: "flex", alignItems: "center"}}>
             <Button
-              onClick={() => navigate(-1)}
+              onClick={() =>
+                navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a280")
+              }
               sx={{cursor: "pointer", width: "16px", height: "30px"}}>
               <KeyboardBackspaceIcon style={{fontSize: "26px"}} />
             </Button>

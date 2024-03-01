@@ -19,7 +19,7 @@ import {
   fieldFormats,
   formatIncludes,
   math,
-  newFieldTypes
+  newFieldTypes,
 } from "../../utils/constants/fieldTypes";
 import {colorList} from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
@@ -231,7 +231,6 @@ export default function FieldCreateModal({
     name: "label",
   });
 
-  console.log("val", values);
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -247,8 +246,7 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "bottom",
         horizontal: "left",
-      }}
-    >
+      }}>
       <div className={style.field}>
         <Typography variant="h6" className={style.title}>
           ADD COLUMN
@@ -260,13 +258,11 @@ export default function FieldCreateModal({
             style={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 width: "100%",
-              }}
-            >
+              }}>
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                 <FRow label="Label" classname={style.custom_label} required>
                   <Box style={{display: "flex", gap: "6px"}}>
@@ -286,8 +282,7 @@ export default function FieldCreateModal({
                   <FRow
                     label="Field label"
                     classname={style.custom_label}
-                    required
-                  >
+                    required>
                     <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
@@ -303,8 +298,7 @@ export default function FieldCreateModal({
                   <FRow
                     label="Tab label"
                     classname={style.custom_label}
-                    required
-                  >
+                    required>
                     <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
@@ -323,8 +317,7 @@ export default function FieldCreateModal({
               label={"Type"}
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}
-            >
+              classname={style.custom_label}>
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -339,6 +332,8 @@ export default function FieldCreateModal({
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
                     setValue("type", "DATE");
+                  } else if (e === "INCREMENT") {
+                    setValue("type", "INCREMENT_ID");
                   } else if (e === "SINGLE_LINE") {
                     setValue("type", "SINGLE_LINE");
                   } else if (e === "FILE") {
@@ -356,8 +351,7 @@ export default function FieldCreateModal({
               label={"Format"}
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}
-            >
+              classname={style.custom_label}>
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -378,8 +372,7 @@ export default function FieldCreateModal({
               onClick={() => {
                 handleOpenFieldDrawer(fieldData);
                 closeAllDrawer();
-              }}
-            >
+              }}>
               <SettingsIcon />
               Advanced settings
             </Button>
@@ -391,23 +384,20 @@ export default function FieldCreateModal({
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle"
-                >
+                  dragHandleSelector=".column-drag-handle">
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <FRow
                           label={`Option ${index + 1}`}
-                          className={style.option}
-                        >
+                          className={style.option}>
                           <span
                             className={style.startAdornment}
                             style={{
                               background: watch(
                                 `attributes.options.${index}.color`
                               ),
-                            }}
-                          ></span>
+                            }}></span>
 
                           <HFTextField
                             disabledHelperText
@@ -447,8 +437,7 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}
-                      >
+                        }}>
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
@@ -476,8 +465,7 @@ export default function FieldCreateModal({
                       label: "",
                       value: "",
                     });
-                  }}
-                >
+                  }}>
                   +Add option
                 </Button>
               </Box>
@@ -520,8 +508,7 @@ export default function FieldCreateModal({
 
                   <span
                     className={`math_${mathType?.label}`}
-                    onClick={(e) => setMathEl(e.currentTarget)}
-                  >
+                    onClick={(e) => setMathEl(e.currentTarget)}>
                     {mathType?.value}
                   </span>
                   <HFSelect
@@ -546,8 +533,7 @@ export default function FieldCreateModal({
                     transformOrigin={{
                       vertical: "top",
                       horizontal: "right",
-                    }}
-                  >
+                    }}>
                     <Box className="math">
                       {math.map((item) => {
                         return (
@@ -556,8 +542,7 @@ export default function FieldCreateModal({
                             onClick={() => {
                               setValue("attributes.math", item);
                               setMathEl(null);
-                            }}
-                          >
+                            }}>
                             {item?.value}
                           </span>
                         );
@@ -573,8 +558,7 @@ export default function FieldCreateModal({
                   display: "flex",
                   alignItems: "baseline",
                   columnGap: "5px",
-                }}
-              >
+                }}>
                 <HFSwitch control={control} name="attributes.advanced_type" />
                 Advanced Editor
               </Box>

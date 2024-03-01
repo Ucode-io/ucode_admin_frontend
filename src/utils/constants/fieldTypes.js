@@ -264,6 +264,19 @@ export const textFieldFormats = [
     icon: "minus.svg",
   },
 ];
+
+export const incrementFieldFormats = [
+  {
+    label: "Increment ID",
+    value: "INCREMENT_ID",
+    icon: "minus.svg",
+  },
+  {
+    label: "Increment Number",
+    value: "INCREMENT_NUMBER",
+    icon: "minus.svg",
+  },
+];
 export const dateFieldFormats = [
   {
     label: "Date",
@@ -363,6 +376,11 @@ export const newFieldTypes = [
   {
     label: "Email",
     value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Increment",
+    value: "INCREMENT",
     icon: "envelope.svg",
   },
   {
@@ -542,7 +560,7 @@ export const relationFieldButtons = [
   {
     label: "Auto filter",
     value: "AUTO_FILTER",
-  }
+  },
 ];
 
 export const fieldButtons = [
@@ -561,7 +579,7 @@ export const fieldButtons = [
   {
     label: "Auto filter",
     value: "AUTO_FILTER",
-  }
+  },
 ];
 
 export const formatIncludes = [
@@ -577,6 +595,7 @@ export const formatIncludes = [
   "PHOTO",
   "VIDEO",
   "MULTI_LINE",
+  "INCREMENT",
 ];
 
 export const FormatOptionType = (item) => {
@@ -597,6 +616,8 @@ export const FormatOptionType = (item) => {
       return fileFieldFormats;
     case "SINGLE_LINE":
       return textFieldFormats;
+    case "INCREMENT":
+      return incrementFieldFormats;
     case "MULTI_LINE":
       return textFieldFormats;
     case "NUMBER":

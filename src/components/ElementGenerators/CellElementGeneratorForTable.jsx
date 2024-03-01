@@ -54,7 +54,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
   const timeValue = useMemo(() => {
     if (typeof value === "object") return JSON.stringify(value);
     if (field?.type === "DATE_TIME_WITHOUT_TIME_ZONE") {
-      if (value?.includes('Z')) {
+      if (value?.includes("Z")) {
         let dateObj = new Date(value);
 
         let formattedDate = dateObj.toLocaleString("en-US", {
@@ -140,8 +140,8 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
           {value !== undefined && typeof value === "number"
             ? numberWithSpaces(value?.toFixed(1))
             : value === undefined
-            ? value
-            : 0}
+              ? value
+              : 0}
         </Box>
       );
 
@@ -166,11 +166,10 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
           <div className=" text_overflow_line">
             <span
               dangerouslySetInnerHTML={{
-                __html: `${value.slice(0, 200)}${
-                  value.length > 200 ? "..." : ""
+                __html: `${value?.slice(0, 200)}${
+                  value?.length > 200 ? "..." : ""
                 }`,
-              }}
-            ></span>
+              }}></span>
           </div>
         </Box>
       );
@@ -187,8 +186,9 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
         <Box className={classes.box}>
           <div className="text-overflow">
             <span
-              dangerouslySetInnerHTML={{__html: "*".repeat(value?.length)}}
-            ></span>
+              dangerouslySetInnerHTML={{
+                __html: "*".repeat(value?.length),
+              }}></span>
           </div>
         </Box>
       );
@@ -247,8 +247,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <LogoDisplay url={value} />
             </span>
           ) : (
@@ -257,8 +256,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <PhotoIcon />
             </span>
           )}
@@ -276,8 +274,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
                 value?.split(",")?.[1]
               )}`}
               rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
+              onClick={(e) => e.stopPropagation()}>
               {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
             </a>
           ) : (
@@ -294,20 +291,17 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-              }}
-            >
+              }}>
               <span
                 style={{
                   marginRight: "10px",
-                }}
-              >
+                }}>
                 {computedFileExtension(getFileName(value)) === "pdf" ? (
                   <PictureAsPdfIcon style={{color: "red"}} />
                 ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
@@ -332,8 +326,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
                 download
                 target="_blank"
                 onClick={(e) => e.stopPropagation()}
-                rel="noreferrer"
-              >
+                rel="noreferrer">
                 <DownloadIcon
                   style={{width: "25px", height: "25px", fontSize: "30px"}}
                 />

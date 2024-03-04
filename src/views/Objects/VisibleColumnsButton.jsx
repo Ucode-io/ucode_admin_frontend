@@ -53,11 +53,16 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
   }, [currentView?.columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter(
+    const uniqueFields = allFields.filter((field, index, self) => {
+      return index === self.findIndex((f) => f.id === field.id);
+    });
+
+    return uniqueFields.filter(
       (field) => !currentView?.columns?.includes(field.id)
     );
   }, [allFields, currentView?.columns]);
 
+  console.log("allFieldsallFields", allFields);
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
     const computedResult = result?.filter((item) => item?.id);

@@ -97,6 +97,7 @@ const ObjectsPage = () => {
     },
     {
       select: ({data}) => {
+        console.log("dataaaaaaaaa", data);
         return {
           views:
             data?.views?.filter(

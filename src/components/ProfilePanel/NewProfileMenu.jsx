@@ -423,22 +423,22 @@ const NewProfilePanel = ({
               ))}
             </Menu>
             <Box>
-              {/* {defaultAdmin && (
-                  <ProfileItem
-                    children={
-                      <WidgetsIcon
-                        style={{
-                          color: "#747474",
-                        }}
-                      />
-                    }
-                    text={"Tamplate"}
-                    onClick={() => {
-                      handleTemplateModalOpen();
-                      closeMenu();
-                    }}
-                  />
-                )} */}
+              {defaultAdmin && (
+                <ProfileItem
+                  children={
+                    <WidgetsIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
+                  text={"Template"}
+                  onClick={() => {
+                    handleTemplateModalOpen();
+                    closeMenu();
+                  }}
+                />
+              )}
               {permissions?.menu_setting_button && (
                 <ProfileItem
                   children={

@@ -1,14 +1,14 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import { Button, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams, useSearchParams } from "react-router-dom";
+import {Button, Menu, MenuItem, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useParams, useSearchParams} from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
 import layoutService from "../../services/layoutService";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { store } from "../../store";
-import { applyDrag } from "../../utils/applyDrag";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {store} from "../../store";
+import {applyDrag} from "../../utils/applyDrag";
 import SectionBlockForModal from "./SectionBlockForModal";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
@@ -31,7 +31,7 @@ const MainInfoForModal = ({
   data,
   fieldsMapFromProps,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
@@ -49,14 +49,14 @@ const MainInfoForModal = ({
     return fields;
   }, [relation]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedTable, setSelectedTable] = useState(null);
@@ -201,9 +201,8 @@ const MainInfoForModal = ({
     <div
       className={styles.newcontainerModal}
       style={{
-        height: "calc(100% - 60px)",
-      }}
-    >
+        height: "calc(100% - 40px)",
+      }}>
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (
@@ -211,8 +210,7 @@ const MainInfoForModal = ({
               {projectInfo?.language?.map((lang) => (
                 <Button
                   className={activeLang === lang?.short_name && styles.active}
-                  onClick={() => setActiveLang(lang?.short_name)}
-                >
+                  onClick={() => setActiveLang(lang?.short_name)}>
                   {lang?.name}
                 </Button>
               ))}
@@ -237,8 +235,7 @@ const MainInfoForModal = ({
                           aria-controls={open ? "basic-menu" : undefined}
                           aria-haspopup="true"
                           aria-expanded={open ? "true" : undefined}
-                          onClick={handleClick}
-                        >
+                          onClick={handleClick}>
                           <AddRoundedIcon />
                         </Button>
 
@@ -249,15 +246,13 @@ const MainInfoForModal = ({
                           onClose={handleClose}
                           MenuListProps={{
                             "aria-labelledby": "basic-button",
-                          }}
-                        >
+                          }}>
                           {allFields?.map((field) => (
                             <MenuItem
                               onClick={() => {
                                 addFieldsToSection(field?.value, index);
                                 handleClose();
-                              }}
-                            >
+                              }}>
                               {field?.label}
                             </MenuItem>
                           ))}
@@ -266,8 +261,7 @@ const MainInfoForModal = ({
                     )
                   }
                   className={styles.formCard}
-                  icon={section.icon}
-                >
+                  icon={section.icon}>
                   <div className={styles.newformColumn}>
                     <SectionBlockForModal
                       index={index}
@@ -296,7 +290,7 @@ const MainInfoForModal = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{ color: "#000" }} />
+              <KeyboardTabIcon style={{color: "#000"}} />
             </button>
           </Tooltip>
         </div>

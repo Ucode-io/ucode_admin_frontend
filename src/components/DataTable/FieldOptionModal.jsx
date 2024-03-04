@@ -1,8 +1,8 @@
-import { Button, Menu, Typography } from "@mui/material";
+import {Button, Menu, Typography} from "@mui/material";
 import React from "react";
 import style from "./field.module.scss";
-import { newFieldTypes } from "../../utils/constants/fieldTypes";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import {newFieldTypes} from "../../utils/constants/fieldTypes";
+import {columnIcons} from "../../utils/constants/columnIcons";
 
 export default function FieldOptionModal({
   anchorEl,
@@ -74,8 +74,7 @@ export default function FieldOptionModal({
             zIndex: 0,
           },
         },
-      }}
-    >
+      }}>
       <div className={style.field}>
         <Typography variant="h6" className={style.title}>
           CREATE NEW FIELD
@@ -86,8 +85,7 @@ export default function FieldOptionModal({
             className={style.button}
             onClick={(e) => {
               handleChange(e, field?.value);
-            }}
-          >
+            }}>
             {field?.value && columnIcons(field?.value)}
             <p>{field?.label}</p>
           </Button>

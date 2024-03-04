@@ -1,16 +1,16 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
-import { useFieldsListQuery } from "../../services/fieldService";
-import { useRelationGetByIdQuery } from "../../services/relationService";
-import { applyDrag } from "../../utils/applyDrag";
+import {useFieldsListQuery} from "../../services/fieldService";
+import {useRelationGetByIdQuery} from "../../services/relationService";
+import {applyDrag} from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -20,7 +20,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import { colorList } from "../ColorPicker/colorList";
+import {colorList} from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -30,7 +30,7 @@ import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLa
 import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
-import { useMemo, useState } from "react";
+import {useMemo, useState} from "react";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -62,10 +62,10 @@ export default function FieldCreateModal({
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const { tableSlug } = useParams();
-  const { i18n } = useTranslation();
+  const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -112,7 +112,7 @@ export default function FieldCreateModal({
     }
   };
 
-  const { isLoading: fieldLoading } = useFieldsListQuery({
+  const {isLoading: fieldLoading} = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
@@ -122,7 +122,7 @@ export default function FieldCreateModal({
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
-            return { value: item.slug, label: item.label };
+            return {value: item.slug, label: item.label};
           })
         );
       },
@@ -133,21 +133,21 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({ data }) => {
+      onSuccess: ({data}) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -231,11 +231,10 @@ export default function FieldCreateModal({
     name: "label",
   });
 
-  console.log("val", values);
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 350, left: 850 }}
+      anchorPosition={{top: 350, left: 850}}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -247,8 +246,7 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "bottom",
         horizontal: "left",
-      }}
-    >
+      }}>
       <div className={style.field}>
         <Typography variant="h6" className={style.title}>
           ADD COLUMN
@@ -260,16 +258,14 @@ export default function FieldCreateModal({
             style={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 width: "100%",
-              }}
-            >
+              }}>
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                 <FRow label="Label" classname={style.custom_label} required>
-                  <Box style={{ display: "flex", gap: "6px" }}>
+                  <Box style={{display: "flex", gap: "6px"}}>
                     <HFTextFieldWithMultiLanguage
                       control={control}
                       name="attributes.label"
@@ -286,9 +282,8 @@ export default function FieldCreateModal({
                   <FRow
                     label="Field label"
                     classname={style.custom_label}
-                    required
-                  >
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    required>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label"
@@ -303,9 +298,8 @@ export default function FieldCreateModal({
                   <FRow
                     label="Tab label"
                     classname={style.custom_label}
-                    required
-                  >
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    required>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label_to"
@@ -323,8 +317,7 @@ export default function FieldCreateModal({
               label={"Type"}
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}
-            >
+              classname={style.custom_label}>
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -339,6 +332,8 @@ export default function FieldCreateModal({
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
                     setValue("type", "DATE");
+                  } else if (e === "INCREMENT") {
+                    setValue("type", "INCREMENT_ID");
                   } else if (e === "SINGLE_LINE") {
                     setValue("type", "SINGLE_LINE");
                   } else if (e === "FILE") {
@@ -356,8 +351,7 @@ export default function FieldCreateModal({
               label={"Format"}
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}
-            >
+              classname={style.custom_label}>
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -378,8 +372,7 @@ export default function FieldCreateModal({
               onClick={() => {
                 handleOpenFieldDrawer(fieldData);
                 closeAllDrawer();
-              }}
-            >
+              }}>
               <SettingsIcon />
               Advanced settings
             </Button>
@@ -391,23 +384,20 @@ export default function FieldCreateModal({
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle"
-                >
+                  dragHandleSelector=".column-drag-handle">
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <FRow
                           label={`Option ${index + 1}`}
-                          className={style.option}
-                        >
+                          className={style.option}>
                           <span
                             className={style.startAdornment}
                             style={{
                               background: watch(
                                 `attributes.options.${index}.color`
                               ),
-                            }}
-                          ></span>
+                            }}></span>
 
                           <HFTextField
                             disabledHelperText
@@ -447,14 +437,13 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}
-                      >
+                        }}>
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{ backgroundColor: color }}
+                              style={{backgroundColor: color}}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,
@@ -476,8 +465,7 @@ export default function FieldCreateModal({
                       label: "",
                       value: "",
                     });
-                  }}
-                >
+                  }}>
                   +Add option
                 </Button>
               </Box>
@@ -520,8 +508,7 @@ export default function FieldCreateModal({
 
                   <span
                     className={`math_${mathType?.label}`}
-                    onClick={(e) => setMathEl(e.currentTarget)}
-                  >
+                    onClick={(e) => setMathEl(e.currentTarget)}>
                     {mathType?.value}
                   </span>
                   <HFSelect
@@ -546,8 +533,7 @@ export default function FieldCreateModal({
                     transformOrigin={{
                       vertical: "top",
                       horizontal: "right",
-                    }}
-                  >
+                    }}>
                     <Box className="math">
                       {math.map((item) => {
                         return (
@@ -556,8 +542,7 @@ export default function FieldCreateModal({
                             onClick={() => {
                               setValue("attributes.math", item);
                               setMathEl(null);
-                            }}
-                          >
+                            }}>
                             {item?.value}
                           </span>
                         );
@@ -573,8 +558,7 @@ export default function FieldCreateModal({
                   display: "flex",
                   alignItems: "baseline",
                   columnGap: "5px",
-                }}
-              >
+                }}>
                 <HFSwitch control={control} name="attributes.advanced_type" />
                 Advanced Editor
               </Box>

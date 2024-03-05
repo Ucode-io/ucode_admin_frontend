@@ -89,14 +89,14 @@ const CDateTimePicker = ({
         plugins={[weekends()]}
         weekStartDayIndex={1}
         locale={locale}
-        portalTarget={document}
+        portalTarget={sectionModal ? false : document.body}
         format="DD.MM.YYYY"
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
       <DatePicker
         disableDayPicker
-        portal={document.body}
+        portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           return (
             <InputMask

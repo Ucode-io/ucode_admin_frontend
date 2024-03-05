@@ -116,7 +116,7 @@ const ObjectsPage = () => {
       },
     }
   );
-
+  console.log("fieldsMapfieldsMap", fieldsMap);
   useEffect(() => {
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab - 1))

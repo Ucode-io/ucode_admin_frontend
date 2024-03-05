@@ -47,15 +47,26 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
 
   const visibleFields = useMemo(() => {
     return (
-      currentView?.columns?.map((id) => fieldsMap[id]).filter((el) => el?.id) ??
-      []
+      currentView?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        }) ?? []
     );
   }, [currentView?.columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter(
-      (field) => !currentView?.columns?.includes(field.id)
-    );
+    return allFields.filter((field) => {
+      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+        return !currentView?.columns?.includes(field.relation_id);
+      } else {
+        return !currentView?.columns?.includes(field.id);
+      }
+    });
   }, [allFields, currentView?.columns]);
 
   const onDrop = (dropResult) => {
@@ -176,7 +187,18 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                   checked={visibleFields.length === allFields.length}
                   onChange={(e) => {
                     updateView(
-                      e.target.checked ? allFields.map((el) => el.id) : []
+                      e.target.checked
+                        ? allFields.map((el) => {
+                            if (
+                              el?.type === "LOOKUP" ||
+                              el?.type === "LOOKUPS"
+                            ) {
+                              return el.relation_id;
+                            } else {
+                              return el.id;
+                            }
+                          })
+                        : []
                     );
                   }}
                 />
@@ -236,19 +258,38 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         justifyContent: "flex-end",
                         width: "70px",
                       }}>
-                      <Switch
-                        size="small"
-                        checked={currentView?.columns?.includes(column?.id)}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? [...currentView?.columns, column?.id]
-                              : currentView?.columns?.filter(
-                                  (el) => el !== column?.id
-                                )
-                          );
-                        }}
-                      />
+                      {column?.type === "LOOKUP" ||
+                      column?.type === "LOOKUPS" ? (
+                        <Switch
+                          size="small"
+                          checked={currentView?.columns?.includes(
+                            column?.relation_id
+                          )}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? [...currentView?.columns, column?.relation_id]
+                                : currentView?.columns?.filter(
+                                    (el) => el !== column?.relation_id
+                                  )
+                            );
+                          }}
+                        />
+                      ) : (
+                        <Switch
+                          size="small"
+                          checked={currentView?.columns?.includes(column?.id)}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? [...currentView?.columns, column?.id]
+                                : currentView?.columns?.filter(
+                                    (el) => el !== column?.id
+                                  )
+                            );
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 </Draggable>
@@ -298,19 +339,37 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       display: "flex",
                       justifyContent: "flex-end",
                     }}>
-                    <Switch
-                      size="small"
-                      checked={currentView?.columns?.includes(column?.id)}
-                      onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? [...currentView?.columns, column?.id]
-                            : currentView?.columns?.filter(
-                                (el) => el !== column?.id
-                              )
-                        );
-                      }}
-                    />
+                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                      <Switch
+                        size="small"
+                        checked={currentView?.columns?.includes(
+                          column?.relation_id
+                        )}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? [...currentView?.columns, column?.relation_id]
+                              : currentView?.columns?.filter(
+                                  (el) => el !== column?.relation_id
+                                )
+                          );
+                        }}
+                      />
+                    ) : (
+                      <Switch
+                        size="small"
+                        checked={currentView?.columns?.includes(column?.id)}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? [...currentView?.columns, column?.id]
+                              : currentView?.columns?.filter(
+                                  (el) => el !== column?.id
+                                )
+                          );
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               ))}

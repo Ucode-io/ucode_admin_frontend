@@ -23,6 +23,7 @@ const HFDateTimePicker = ({
   showCopyBtn,
   placeholder = "",
   disabled,
+  sectionModal,
   defaultValue,
 }) => {
   const classes = useStyles();
@@ -36,6 +37,7 @@ const HFDateTimePicker = ({
           <CDateTimePicker
             isFormEdit={isFormEdit}
             classes={classes}
+            sectionModal={sectionModal}
             placeholder={placeholder}
             isBlackBg={isBlackBg}
             mask={mask}
@@ -51,8 +53,7 @@ const HFDateTimePicker = ({
             isTransparent={isTransparent}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

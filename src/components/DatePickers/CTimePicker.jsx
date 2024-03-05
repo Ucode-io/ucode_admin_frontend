@@ -15,6 +15,7 @@ const CTimePicker = ({
   isFormEdit,
   tabIndex,
   disabled,
+  sectionModal,
 }) => {
   const getValue = () => {
     if (!value) return "";
@@ -28,7 +29,7 @@ const CTimePicker = ({
   };
   return (
     <DatePicker
-      portal={document.body}
+      portal={sectionModal ? false : document.body}
       render={(value, openCalendar, handleChange) => {
         return (
           <TextField
@@ -49,13 +50,13 @@ const CTimePicker = ({
                     background: "transparent",
                   }
                 : disabled
-                ? {
-                    background: "#c0c0c039",
-                  }
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                  },
+                  ? {
+                      background: "#c0c0c039",
+                    }
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
               endAdornment: (
                 <InputAdornment position="end">
                   <Box sx={{display: "flex", alignItems: "center"}}>

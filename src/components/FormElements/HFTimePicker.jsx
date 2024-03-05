@@ -1,5 +1,5 @@
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 import CTimePicker from "../DatePickers/CTimePicker";
 
 const useStyles = makeStyles((theme) => ({
@@ -27,6 +27,7 @@ const HFTimePicker = ({
   disabledHelperText,
   placeholder,
   defaultValue = "",
+  sectionModal,
   ...props
 }) => {
   const classes = useStyles();
@@ -35,9 +36,10 @@ const HFTimePicker = ({
       control={control}
       name={name}
       defaultValue=""
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <div className={className}>
           <CTimePicker
+            sectionModal={sectionModal}
             isFormEdit={isFormEdit}
             classes={classes}
             tabIndex={tabIndex}
@@ -51,8 +53,7 @@ const HFTimePicker = ({
             isTransparent={isTransparent}
           />
         </div>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

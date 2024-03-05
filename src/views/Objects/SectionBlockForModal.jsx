@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button } from "@mui/material";
+import {Box, Button} from "@mui/material";
 import React from "react";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import layoutService from "../../services/layoutService";
 
@@ -23,7 +23,7 @@ export default function SectionBlockForModal({
   setData,
   selectedTabIndex,
 }) {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
 
   const updateLayout = (newData) => {
     layoutService.update(newData, tableSlug);
@@ -56,20 +56,19 @@ export default function SectionBlockForModal({
         gap: "10px",
         gridTemplateColumns: "1fr 1fr 1fr",
         alignItems: "baseline",
-      }}
-    >
+      }}>
       {section.fields?.map((field, fieldIndex) => (
         <Box
           style={{
             display: "flex",
             alignItems: "flex-end",
             minWidth: "200px",
-          }}
-        >
+          }}>
           <FormElementGenerator
             key={field.id}
             isMultiLanguage={isMultiLanguage}
             field={field}
+            sectionModal={true}
             control={control}
             setFormValue={setFormValue}
             fieldsList={fieldsList}
@@ -87,8 +86,7 @@ export default function SectionBlockForModal({
                 minWidth: "38px",
                 width: "38px",
                 borderRadius: "50%",
-              }}
-            >
+              }}>
               <DeleteIcon
                 style={{
                   color: "red",

@@ -29,6 +29,8 @@ import TimeLineBlock from "./TimeLineBlock";
 import TimeLineGroupBy from "./TimeLineGroupBy";
 import style from "./styles.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
+import {useTranslation} from "react-i18next";
+import listToLanOptions from "../../../utils/listToLanOptions";
 
 export default function TimeLineView({
   view,
@@ -39,8 +41,8 @@ export default function TimeLineView({
   setViews,
   isViewLoading,
 }) {
-  const { tableSlug } = useParams();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {tableSlug} = useParams();
+  const {filters} = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -48,6 +50,8 @@ export default function TimeLineView({
     startOfMonth(new Date()),
     endOfMonth(new Date()),
   ]);
+  const {i18n} = useTranslation();
+
   const [fieldsMap, setFieldsMap] = useState({});
   const [dataFromQuery, setDataFromQuery] = useState([]);
 
@@ -90,10 +94,10 @@ export default function TimeLineView({
   };
 
   // FOR DATA
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
+  const {data: {data} = {data: []}, isLoading} = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, filters, dateFilters, view },
+      {tableSlug, filters, dateFilters, view},
     ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
@@ -123,13 +127,13 @@ export default function TimeLineView({
   useEffect(() => {
     setDataFromQuery(recursionFunctionForAddIsOpen(data));
   }, [data]);
-
+  console.log("tableSlug", tableSlug);
   // FOR TABLE INFO
   const {
-    data: { fields, visibleColumns, visibleRelationColumns } = { data: [] },
+    data: {fields, visibleColumns, visibleRelationColumns} = {data: []},
     isLoading: tableInfoLoading,
   } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
+    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -291,6 +295,13 @@ export default function TimeLineView({
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
 
+  const computedFelds = useMemo(() => {
+    return fields?.map((el) => ({
+      label: el?.attributes[`label_${i18n?.language}`],
+      value: el["id"],
+    }));
+  }, [fields]);
+  console.log("computedFelds", computedFelds);
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const updateView = () => {
@@ -349,14 +360,12 @@ export default function TimeLineView({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}
-      >
+        }}>
         <div
           style={{
             display: "flex",
             alignItems: "center",
-          }}
-        >
+          }}>
           <CRangePicker
             interval={"months"}
             value={dateFilters}
@@ -368,8 +377,7 @@ export default function TimeLineView({
               margin: "0 5px",
               color: "#888",
             }}
-            onClick={handleScrollClick}
-          >
+            onClick={handleScrollClick}>
             Today
           </Button>
         </div>
@@ -378,8 +386,7 @@ export default function TimeLineView({
           style={{
             display: "flex",
             alignItems: "center",
-          }}
-        >
+          }}>
           <Divider orientation="vertical" flexItem />
 
           <Button
@@ -390,8 +397,7 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}
-          >
+            }}>
             <span>
               {types.find((item) => item.value === selectedType).title}
             </span>
@@ -429,16 +435,14 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "5px",
                 padding: "5px 0",
-              }}
-            >
+              }}>
               {types.map((el) => (
                 <Button
                   onClick={() => setSelectedType(el.value)}
@@ -450,8 +454,7 @@ export default function TimeLineView({
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   {el.title}
                   {el.value === selectedType && <CheckIcon />}
                 </Button>
@@ -467,15 +470,13 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "3px",
-              }}
-            >
+              }}>
               <SettingsIcon />
               <span>Settings</span>
             </div>
@@ -513,8 +514,7 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
@@ -522,8 +522,7 @@ export default function TimeLineView({
                 gap: "5px",
                 minWidth: "200px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <div>
                 <FRow label="Time from">
                   <HFSelect
@@ -541,7 +540,12 @@ export default function TimeLineView({
                 </FRow>
                 <FRow label="Visible field">
                   <HFSelect
-                    options={listToOptions(fields, "label", "slug")}
+                    options={listToLanOptions(
+                      fields,
+                      "label",
+                      "slug",
+                      i18n?.language
+                    )}
                     control={form.control}
                     name="visible_field"
                   />
@@ -561,15 +565,13 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "3px",
-              }}
-            >
+              }}>
               <WorkspacesIcon />
               <span>Group</span>
             </div>
@@ -607,15 +609,13 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 minWidth: "200px",
-              }}
-            >
+              }}>
               <TimeLineGroupBy
                 columns={computedColumnsFor}
                 isLoading={isLoading}
@@ -640,8 +640,7 @@ export default function TimeLineView({
               height: "32px",
               padding: "0",
               minWidth: "32px",
-            }}
-          >
+            }}>
             <ZoomInIcon
               style={{
                 color: "#888",
@@ -662,8 +661,7 @@ export default function TimeLineView({
               height: "32px",
               padding: "0",
               minWidth: "32px",
-            }}
-          >
+            }}>
             <ZoomOutIcon
               style={{
                 color: "#888",
@@ -678,8 +676,7 @@ export default function TimeLineView({
         className={styles.wrapper}
         style={{
           height: "calc(100vh - 92px)",
-        }}
-      >
+        }}>
         {isLoading || tableInfoLoading || isViewLoading ? (
           <PageFallback />
         ) : (
@@ -758,9 +755,14 @@ const promiseGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getListV2(groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4), {
-        data: computedFilters ?? {},
-      });
+      constructorObjectService.getListV2(
+        groupField?.type === "LOOKUP"
+          ? groupField.slug?.slice(0, -3)
+          : groupField.slug?.slice(0, -4),
+        {
+          data: computedFilters ?? {},
+        }
+      );
 
     return {
       queryKey: [

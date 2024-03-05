@@ -49,6 +49,7 @@ const FormElementGenerator = ({
   relatedTable,
   valueGenerator,
   errors,
+  sectionModal,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -415,6 +416,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             fullWidth
+            sectionModa={sectionModal}
             width={"100%"}
             mask={"99.99.9999"}
             placeholder={field.attributes?.placeholder}
@@ -432,6 +434,7 @@ const FormElementGenerator = ({
           <HFDateTimePicker
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             mask={"99.99.9999"}
             required={checkRequiredField}
@@ -449,6 +452,7 @@ const FormElementGenerator = ({
           <HFDateTimePickerWithout
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             mask={"99.99.9999"}
             required={checkRequiredField}
@@ -466,6 +470,7 @@ const FormElementGenerator = ({
           <HFTimePicker
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}

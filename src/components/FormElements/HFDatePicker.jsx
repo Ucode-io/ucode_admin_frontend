@@ -29,9 +29,9 @@ const HFDatePicker = ({
   isTransparent = false,
   disabled,
   required,
+  sectionModal,
   ...props
 }) => {
-
   const classes = useStyles();
   return (
     <Controller
@@ -39,13 +39,14 @@ const HFDatePicker = ({
       name={name}
       disabled
       rules={{
-        required: required ? 'This field is required' : false
+        required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <div className={className}>
           <CDatePicker
             isFormEdit={isFormEdit}
+            sectionModal={sectionModal}
             name={name}
             required={required}
             classes={classes}

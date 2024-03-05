@@ -97,7 +97,6 @@ const ObjectsPage = () => {
     },
     {
       select: ({data}) => {
-        console.log("dataaaaaaaaa", data);
         return {
           views:
             data?.views?.filter(
@@ -117,7 +116,7 @@ const ObjectsPage = () => {
       },
     }
   );
-
+  console.log("fieldsMapfieldsMap", fieldsMap);
   useEffect(() => {
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab - 1))

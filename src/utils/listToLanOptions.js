@@ -1,4 +1,4 @@
-const listToOptions = (
+const listToLanOptions = (
   list,
   labelFieldName = "title",
   valueFieldName = "id",
@@ -7,9 +7,9 @@ const listToOptions = (
   return (
     list?.map((el) => ({
       value: valueFieldName !== "all" ? el[valueFieldName] : el,
-      label: el[labelFieldName] + labelPrefix,
+      label: el?.attributes[`label_${labelPrefix}`],
     })) ?? []
   );
 };
 
-export default listToOptions;
+export default listToLanOptions;

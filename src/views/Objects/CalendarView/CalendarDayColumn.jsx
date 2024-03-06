@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import {format} from "date-fns";
 import styles from "./day.module.scss";
 import RecursiveDayBlock from "./RecursiveDayBlock";
 

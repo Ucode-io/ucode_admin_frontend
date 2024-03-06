@@ -136,6 +136,7 @@ const FolderCreateModal = ({
                   placeholder="Name"
                   defaultValue={tableName}
                   languages={languages}
+                  id={"folder_create"}
                 />
               </Box>
             </Box>

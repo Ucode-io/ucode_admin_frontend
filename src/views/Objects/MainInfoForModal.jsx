@@ -155,7 +155,7 @@ const MainInfoForModal = ({
   };
 
   const allFields = useMemo(() => {
-    return Object.values(fieldsMapFromProps).map((field) => {
+    return Object.values?.(fieldsMapFromProps ?? {}).map((field) => {
       return {
         label: field?.attributes?.[`label_to_${i18n.language}`] ?? field?.label,
         value: field?.id,

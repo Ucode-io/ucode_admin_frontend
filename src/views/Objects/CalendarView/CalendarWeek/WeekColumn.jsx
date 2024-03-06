@@ -91,14 +91,12 @@ const WeekColumn = ({
           className={styles.timeBlock}
           style={{
             overflow: "auto",
-          }}
-        >
+          }}>
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
           <div
             className={`${styles.addButton}`}
-            onClick={() => navigateToCreatePage(time)}
-          >
+            onClick={() => navigateToCreatePage(time)}>
             <Add color="" />
             {queryGuid ? "Choose" : "Create"}
           </div>

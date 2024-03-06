@@ -1,8 +1,8 @@
-import { Lock } from "@mui/icons-material";
-import { InputAdornment, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import {Lock} from "@mui/icons-material";
+import {InputAdornment, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useMemo} from "react";
+import {useSelector} from "react-redux";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -30,7 +30,7 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 
@@ -49,11 +49,12 @@ const FormElementGenerator = ({
   relatedTable,
   valueGenerator,
   errors,
+  sectionModal,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -125,7 +126,7 @@ const FormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (field?.type === "SINGLE_LINE") return defaultValue;
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [
     field.attributes,
@@ -136,7 +137,7 @@ const FormElementGenerator = ({
     isUserId,
   ]);
   const isDisabled = useMemo(() => {
-    const { attributes } = field;
+    const {attributes} = field;
 
     if (window.location.pathname.includes("create")) {
       if (attributes?.disabled) return true;
@@ -415,6 +416,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             fullWidth
+            sectionModa={sectionModal}
             width={"100%"}
             mask={"99.99.9999"}
             placeholder={field.attributes?.placeholder}
@@ -432,6 +434,7 @@ const FormElementGenerator = ({
           <HFDateTimePicker
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             mask={"99.99.9999"}
             required={checkRequiredField}
@@ -449,6 +452,7 @@ const FormElementGenerator = ({
           <HFDateTimePickerWithout
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             mask={"99.99.9999"}
             required={checkRequiredField}
@@ -466,6 +470,7 @@ const FormElementGenerator = ({
           <HFTimePicker
             control={control}
             name={computedSlug}
+            sectionModal={sectionModal}
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
@@ -499,8 +504,7 @@ const FormElementGenerator = ({
                 value: new RegExp(field?.attributes?.validation),
                 message: field?.attributes?.validation_message,
               },
-            }
-            }
+            }}
             {...props}
           />
         </FRow>
@@ -879,18 +883,18 @@ const FormElementGenerator = ({
             InputProps={{
               style: isDisabled
                 ? {
-                  background: "#c0c0c039",
-                  paddingRight: "0px",
-                }
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
                 : {
-                  background: "inherit",
-                  color: "inherit",
-                },
+                    background: "inherit",
+                    color: "inherit",
+                  },
 
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),

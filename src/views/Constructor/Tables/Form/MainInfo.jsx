@@ -130,6 +130,7 @@ const MainInfo = ({control, watch}) => {
               placeholder="Name"
               defaultValue={tableName}
               languages={languages}
+              id={"create_table_name"}
             />
           </Box>
         </FRow>
@@ -141,13 +142,13 @@ const MainInfo = ({control, watch}) => {
             placeholder="KEY"
             required
             withTrim
+            id={"create_table_key"}
           />
         </FRow>
 
         <Box
           sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
-          className={style.checkbox}
-        >
+          className={style.checkbox}>
           <HFCheckbox
             control={control}
             name="is_login_table"
@@ -177,8 +178,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="User type" />
               <HFSelect
                 control={control}
@@ -195,8 +195,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Roles" />
               <HFSelect
                 control={control}
@@ -213,8 +212,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Login" />
               <HFSelect
                 control={control}
@@ -230,8 +228,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Password" />
               <HFSelect
                 control={control}
@@ -248,8 +245,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Почта" />
               <HFSelect
                 control={control}
@@ -265,8 +261,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Телефон" />
               <HFSelect
                 control={control}
@@ -282,8 +277,7 @@ const MainInfo = ({control, watch}) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Login strategy" />
               <HFMultipleSelect
                 control={control}

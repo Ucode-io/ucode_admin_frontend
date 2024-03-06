@@ -71,10 +71,24 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
-    const computedResult = result?.filter((item) => item?.id);
+    const computedResult = result?.filter((item) => {
+      if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+        return item?.relation_id;
+      } else {
+        return item?.id;
+      }
+    });
 
     if (computedResult) {
-      updateView(computedResult?.map((el) => el?.id));
+      updateView(
+        computedResult?.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        })
+      );
     }
   };
 

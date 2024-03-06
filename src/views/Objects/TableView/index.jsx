@@ -401,7 +401,11 @@ const TableView = ({
     });
 
     return computedFields?.filter((item) => {
-      return view?.columns?.includes(item?.id);
+      if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+        return view?.columns?.includes(item?.relation_id);
+      } else {
+        return view?.columns?.includes(item?.id);
+      }
     });
   }, [fieldsMap, view]);
 
@@ -409,7 +413,7 @@ const TableView = ({
     const computedIds = computedRelationFields?.map((item) => ({
       table_slug: item?.slug,
       ids:
-        item?.type === "LOOKUP"
+        item?.type === "LOOKUP" || item?.type === "LOOKUPS"
           ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
           : Array.from(
               new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
@@ -432,6 +436,7 @@ const TableView = ({
             },
           })
           .then((res) => {
+            console.log("resssssssssss", res);
             if (relOptions?.length > 0) {
               setRelOptions((prev) => {
                 const updatedOptions = prev.map((option) => {

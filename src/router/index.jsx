@@ -1,7 +1,7 @@
 import ReloadRelations from "@/components/ReloadRelations";
-import { lazy, Suspense, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {lazy, Suspense, useMemo, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
@@ -77,13 +77,12 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import TablesPage from "../views/Constructor/AllTables";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
 import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
-import { useLoginMicrofrontendQuery } from "../services/loginMicrofrontendService";
+import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
 import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
 import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
-
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -93,11 +92,11 @@ const CrossedPage = lazy(() => import("../views/AuthMatrix/Crossed"));
 const RolesForm = lazy(() => import("../views/AuthMatrix/Crossed/Roles/Form"));
 const Profile = lazy(() => import("../views/AuthMatrix/Crossed/Profile/index"));
 
-const IntegrationsForm = lazy(() =>
-  import("../views/AuthMatrix/Crossed/Integrations/Form")
+const IntegrationsForm = lazy(
+  () => import("../views/AuthMatrix/Crossed/Integrations/Form")
 );
-const SessionsPage = lazy(() =>
-  import("../views/AuthMatrix/Crossed/Integrations/Sessions")
+const SessionsPage = lazy(
+  () => import("../views/AuthMatrix/Crossed/Integrations/Sessions")
 );
 const UsersForm = lazy(() => import("../views/Users/Form"));
 const UsersPage = lazy(() => import("../views/Users/index"));
@@ -149,7 +148,7 @@ const Router = () => {
       ? "ett.u-code.io"
       : window.location.hostname;
 
-  const { data, isLoading } = useLoginMicrofrontendQuery({
+  const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -201,11 +200,10 @@ const Router = () => {
     <Routes>
       {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
 
-      <Route path="/" element={<MainLayout favicon={favicon} setFavicon={setFavicon} />} >
-        <Route
-          path="main"
-
-        >
+      <Route
+        path="/"
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        <Route path="main">
           <Route
             path=":appId/users-list"
             element={
@@ -316,7 +314,10 @@ const Router = () => {
 
           <Route path=":appId/resources">
             <Route path="create" element={<ResourceDetail />} />
-            <Route path=":resourceId/:resourceType" element={<ResourceDetail />} />
+            <Route
+              path=":resourceId/:resourceType"
+              element={<ResourceDetail />}
+            />
 
             <Route path="elt">
               <Route path="connections">
@@ -420,7 +421,10 @@ const Router = () => {
         </Route>
 
         <Route path="settings">
-          <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
+          <Route
+            index
+            element={<Navigate to={"/settings/constructor/apps"} />}
+          />
           <Route path="constructor/apps" element={<AppsPage />} />
           <Route path="constructor/apps/create" element={<AppsForm />} />
           <Route path="constructor/apps/:appId" element={<AppsForm />} />
@@ -678,7 +682,6 @@ const Router = () => {
           }
         />
       </Route> */}
-
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />

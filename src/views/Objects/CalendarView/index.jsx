@@ -305,8 +305,7 @@ const CalendarView = ({
                   height: "35px",
                   padding: "0px",
                   minWidth: "35px",
-                }}
-              >
+                }}>
                 <SettingsIcon
                   style={{
                     color: "#A8A8A8",
@@ -315,8 +314,7 @@ const CalendarView = ({
               </Button>
             </PermissionWrapperV2>
           </>
-        }
-      >
+        }>
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}

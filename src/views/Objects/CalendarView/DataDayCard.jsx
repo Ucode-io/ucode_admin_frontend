@@ -130,7 +130,7 @@ const DataDayCard = ({
   const infoBlockBg = useMemo(() => {
     return (
       fieldsMap[view.status_field_slug]?.attributes?.options?.find(
-        (opt) => opt.value === info.status[0]
+        (opt) => opt.value === info?.status?.[0]
       )?.color ?? "silver"
     );
     //
@@ -157,12 +157,10 @@ const DataDayCard = ({
           height: info.calendar?.height,
         }}
         onClick={openMenu}
-        w
-      >
+        w>
         <div
           className={styles.resizing}
-          style={{background: infoBlockBg, height: "100%"}}
-        >
+          style={{background: infoBlockBg, height: "100%"}}>
           <div
             className={styles.infoCard}
             style={{
@@ -172,8 +170,7 @@ const DataDayCard = ({
               filter: isHover
                 ? "saturate(100%)"
                 : "saturate(50%) brightness(125%)",
-            }}
-          >
+            }}>
             <InfoBlock
               viewFields={viewFields}
               data={info}
@@ -189,8 +186,7 @@ const DataDayCard = ({
         onClose={closeMenu}
         classes={{list: styles.menu, paper: styles.paper}}
         transformOrigin={{horizontal: "center", vertical: "top"}}
-        anchorOrigin={{horizontal: "center", vertical: "bottom"}}
-      >
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
         <div className={styles.popupHeader}>
           <p className={styles.time}>
             {dateValidFormat(info.calendar?.elementFromTime, "HH:mm")} -

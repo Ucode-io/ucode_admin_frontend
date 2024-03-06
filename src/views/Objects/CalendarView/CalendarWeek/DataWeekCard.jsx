@@ -234,7 +234,7 @@ const DataWeekCard = ({
           setInfo={setInfo}
         />
       </Menu>
-      <Moveable
+      {/* <Moveable
         target={target}
         className="moveable2"
         draggable
@@ -251,7 +251,7 @@ const DataWeekCard = ({
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeEnd={onResizeEnd}
-      />
+      /> */}
     </>
   );
 };

@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import {useMemo} from "react";
 import styles from "./week.module.scss";
 import DataWeekColumn from "./DataWeekColumn";
 import WeekColumn from "./WeekColumn";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 
 const RecursiveWeekBlock = ({
   date,
@@ -40,8 +40,7 @@ const RecursiveWeekBlock = ({
               borderRight: "1px solid #D4DAE2",
             }
           : {}
-      }
-    >
+      }>
       <div
         className={styles.row}
         style={
@@ -50,15 +49,13 @@ const RecursiveWeekBlock = ({
                 width: "max-content",
               }
             : {}
-        }
-      >
+        }>
         {elements?.length ? (
           elements?.map((tab) => (
             <div
               className={`${styles.block} ${
                 elements?.length === 1 && level === 1 ? styles.oneElement : ""
-              }`}
-            >
+              }`}>
               <div
                 className={`${styles.blockElement}  ${
                   !tabs?.[level + 1] || tab.childrenNumber === 1
@@ -71,8 +68,7 @@ const RecursiveWeekBlock = ({
                         top: "0",
                       }
                     : {}
-                }
-              >
+                }>
                 {tab.label}
               </div>
 

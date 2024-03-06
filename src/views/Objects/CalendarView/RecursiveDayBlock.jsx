@@ -29,7 +29,7 @@ const RecursiveDayBlock = ({
 
     return computedElements;
   }, [parentTab, tabs, level]);
-  console.log("datedatedate", date, elements);
+
   return (
     <div className={styles.row}>
       {elements?.length ? (

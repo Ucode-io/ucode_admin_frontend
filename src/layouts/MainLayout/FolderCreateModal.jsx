@@ -22,7 +22,6 @@ const FolderCreateModal = ({
 }) => {
   const {projectId} = useParams();
   const queryClient = useQueryClient();
-  console.log("selectedFolder", selectedFolder);
 
   const onSubmit = (data) => {
     if (modalType === "create") {
@@ -137,6 +136,7 @@ const FolderCreateModal = ({
                   placeholder="Name"
                   defaultValue={tableName}
                   languages={languages}
+                  id={"folder_create"}
                 />
               </Box>
             </Box>

@@ -1,9 +1,9 @@
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import styles from "./style.module.scss";
 import "react-phone-number-input/style.css";
-import { isString } from "lodash-es";
+import {isString} from "lodash-es";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -27,6 +27,8 @@ const HFInternationPhone = ({
   placeholder,
   defaultValue,
   isTableView,
+  updateObject,
+  isNewTableView,
   ...props
 }) => {
   const classes = useStyles();
@@ -39,11 +41,25 @@ const HFInternationPhone = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <PhoneInput
           placeholder="Enter phone number"
-          value={isString(value) ? (value?.includes("+") ?? '' ? value : `+${value}`) : ''}
-          onChange={onChange}
+          value={
+            isString(value) ? (value?.includes("+") ? value : `+${value}`) : ""
+          }
+          onChange={(newValue) => {
+            if (
+              newValue === undefined ||
+              newValue === null ||
+              newValue === ""
+            ) {
+              isNewTableView && updateObject();
+              onChange("");
+            } else {
+              isNewTableView && updateObject();
+              onChange(newValue);
+            }
+          }}
           defaultCountry="UZ"
           international
           className={isTableView ? styles.inputTable : styles.phoneNumber}
@@ -59,8 +75,7 @@ const HFInternationPhone = ({
             />
           )}
         />
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

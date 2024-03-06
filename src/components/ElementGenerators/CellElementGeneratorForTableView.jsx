@@ -1,7 +1,7 @@
-import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
@@ -54,7 +54,7 @@ const CellElementGeneratorForTableView = ({
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -113,7 +113,7 @@ const CellElementGeneratorForTableView = ({
 
     if (!defaultValue) return undefined;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field]);
@@ -201,7 +201,7 @@ const CellElementGeneratorForTableView = ({
 
     // case "INCREMENT_NUMBER":
     //   return (
-    //     <HFIncrementId 
+    //     <HFIncrementId
     //       disabled={isDisabled}
     //       isFormEdit
     //       updateObject={updateObject}
@@ -213,10 +213,9 @@ const CellElementGeneratorForTableView = ({
     //       field={field}
     //       required={field.required}
     //       placeholder={field.attributes?.placeholder}
-    //       defaultValue={defaultValue} 
+    //       defaultValue={defaultValue}
     //     />
-    //   ) 
-
+    //   )
 
     case "SINGLE_LINE":
       return (
@@ -380,6 +379,8 @@ const CellElementGeneratorForTableView = ({
           isTableView={isTableView}
           name={computedSlug}
           tabIndex={field?.tabIndex}
+          updateObject={updateObject}
+          isNewTableView={true}
           fullWidth
           required={field?.required}
           placeholder={field.attributes?.placeholder}
@@ -693,7 +694,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{ padding: "0 4px" }}>
+        <div style={{padding: "0 4px"}}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

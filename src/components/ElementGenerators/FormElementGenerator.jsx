@@ -336,7 +336,6 @@ const FormElementGenerator = ({
             fullWidth
             required={checkRequiredField}
             placeholder={field.attributes?.placeholder}
-            mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}

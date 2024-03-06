@@ -54,7 +54,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
       (field) => !currentView?.columns?.includes(field.id)
     );
   }, [allFields, currentView?.columns]);
-  console.log("unVisibleFields", unVisibleFields);
+
   const onSwitchChange = (value, field) => {
     const updatedView = {
       ...currentView,

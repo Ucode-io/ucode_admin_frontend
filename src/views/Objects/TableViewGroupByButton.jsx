@@ -1,18 +1,18 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LinkIcon from "@mui/icons-material/Link";
 import WebIcon from "@mui/icons-material/Web";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
-import { applyDrag } from "../../utils/applyDrag";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import {applyDrag} from "../../utils/applyDrag";
+import {columnIcons} from "../../utils/constants/columnIcons";
 
-export default function TableViewGroupByButton({ currentView, fieldsMap }) {
+export default function TableViewGroupByButton({currentView, fieldsMap}) {
   const queryClient = useQueryClient();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -30,7 +30,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
         ...currentView,
         attributes: {
           ...currentView?.attributes,
-          group_by_columns: data?.attributes?.group_by_columns
+          group_by_columns: data?.attributes?.group_by_columns,
         },
       })
       .then(() => {
@@ -54,22 +54,21 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
       (field) => !currentView?.columns?.includes(field.id)
     );
   }, [allFields, currentView?.columns]);
-
+  console.log("unVisibleFields", unVisibleFields);
   const onSwitchChange = (value, field) => {
     const updatedView = {
-        ...currentView,
-        attributes: {
-            ...currentView?.attributes,
-            group_by_columns: value
-                ? [...(currentView?.attributes?.group_by_columns || []), field?.id]
-                : (currentView?.attributes?.group_by_columns || []).filter(
-                    (id) => id !== field?.id
-                ),
-        },
+      ...currentView,
+      attributes: {
+        ...currentView?.attributes,
+        group_by_columns: value
+          ? [...(currentView?.attributes?.group_by_columns || []), field?.id]
+          : (currentView?.attributes?.group_by_columns || []).filter(
+              (id) => id !== field?.id
+            ),
+      },
     };
     updateView(updatedView);
-};
-
+  };
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -98,7 +97,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
   const isGroupBy = useMemo(() => {
     return currentView?.attributes?.group_by_columns?.length > 0;
   }, [currentView?.attributes?.group_by_columns]);
-
+  console.log("visibleFields", visibleFields);
   return (
     <div>
       <Button
@@ -108,10 +107,9 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
           color: isGroupBy ? "rgb(0, 122, 255)" : "#A8A8A8",
           borderColor: isGroupBy ? "rgb(0, 122, 255)" : "#A8A8A8",
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         {isLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -149,8 +147,7 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
             onClick={(e) => {
               e.stopPropagation();
               disableAll();
-            }}
-          >
+            }}>
             <CloseRoundedIcon
               style={{
                 color: isGroupBy ? "rgb(0, 122, 255)" : "#A8A8A8",
@@ -194,84 +191,79 @@ export default function TableViewGroupByButton({ currentView, fieldsMap }) {
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             minWidth: 200,
             maxHeight: 300,
             overflowY: "auto",
             padding: "10px 14px",
-          }}
-        >
+          }}>
           <div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            >
-              {visibleFields?.map((column, index) => (
-                <Draggable key={column?.id}>
-                  <div
-                    key={column?.id}
-                    style={{
-                      display: "flex",
-                      backgroundColor: "#fff",
-                    }}
-                  >
+              dropPlaceholder={{className: "drag-row-drop-preview"}}>
+              {visibleFields
+                ?.filter((el) => el?.id)
+                ?.map((column, index) => (
+                  <Draggable key={column?.id}>
                     <div
+                      key={column?.id}
                       style={{
-                        flex: 1,
                         display: "flex",
-                        alignItems: "center",
-                        border: 0,
-                        // borderBottom: "1px solid #eee",
-                        paddingLeft: 0,
-                        paddingRight: 0,
-                        padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
-                      }}
-                    >
+                        backgroundColor: "#fff",
+                      }}>
                       <div
                         style={{
-                          width: 20,
-                          height: 20,
-                          marginRight: 5,
+                          flex: 1,
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {columnIcons(column?.type) ?? <LinkIcon />}
+                          border: 0,
+                          // borderBottom: "1px solid #eee",
+                          paddingLeft: 0,
+                          paddingRight: 0,
+                          padding: "8px 0px",
+                          margin: "-1px -1px 0 0",
+                        }}>
+                        <div
+                          style={{
+                            width: 20,
+                            height: 20,
+                            marginRight: 5,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                          {columnIcons(column?.type) ?? <LinkIcon />}
+                        </div>
+                        {column?.label}
                       </div>
-                      {column?.label}
+                      <div
+                        style={{
+                          width: 70,
+                          border: 0,
+                          // borderBottom: "1px solid #eee",
+                          paddingLeft: 0,
+                          paddingRight: 0,
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          padding: "8px 0px",
+                          margin: "-1px -1px 0 0",
+                        }}>
+                        <Switch
+                          size="small"
+                          checked={currentView?.attributes?.group_by_columns?.includes(
+                            column?.id
+                          )}
+                          onChange={(e) => {
+                            onSwitchChange(e.target.checked, column);
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        width: 70,
-                        border: 0,
-                        // borderBottom: "1px solid #eee",
-                        paddingLeft: 0,
-                        paddingRight: 0,
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                        padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
-                      }}
-                    >
-                      <Switch
-                        size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(column?.id)}
-                        onChange={(e) => {
-                          onSwitchChange(
-                            e.target.checked, column
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Draggable>
-              ))}
+                  </Draggable>
+                ))}
 
               {/* {unVisibleFields?.map((column, index) => (
                 <div

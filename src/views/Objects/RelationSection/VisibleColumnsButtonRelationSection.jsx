@@ -112,7 +112,15 @@ export default function VisibleColumnsButtonRelationSection({
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
     if (result) {
-      updateView(result.map((el) => el.id));
+      updateView(
+        result.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el.relation_id;
+          } else {
+            return el.id;
+          }
+        })
+      );
     }
   };
 

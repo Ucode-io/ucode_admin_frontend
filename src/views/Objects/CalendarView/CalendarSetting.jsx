@@ -1,19 +1,21 @@
-import { useMemo } from "react";
+import {useMemo} from "react";
 import styles from "./style.module.scss";
-import listToOptions from "../../../utils/listToOptions";
+import listToLanOptions from "../../../utils/listToLanOptions";
 import FRow from "../../../components/FormElements/FRow";
 import HFSelect from "../../../components/FormElements/HFSelect";
+import {useTranslation} from "react-i18next";
 
-const CalendarSetting = ({ columns, form, children }) => {
+const CalendarSetting = ({columns, form, children}) => {
+  const {i18n} = useTranslation();
   const computedColumns = useMemo(() => {
-    return listToOptions(columns, "label", "slug");
+    return listToLanOptions(columns, "label", "slug", i18n?.language);
   }, [columns]);
 
   const computedPickListColumns = useMemo(() => {
     const filteredColumns = columns.filter(
-      ({ type }) => type === "PICK_LIST" || type === "MULTISELECT"
+      ({type}) => type === "PICK_LIST" || type === "MULTISELECT"
     );
-    return listToOptions(filteredColumns, "label", "id");
+    return listToLanOptions(filteredColumns, "label", "id", i18n?.language);
   }, [columns]);
 
   return (

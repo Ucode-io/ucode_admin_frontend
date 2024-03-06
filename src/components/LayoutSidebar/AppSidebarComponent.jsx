@@ -1,19 +1,19 @@
 import "./style.scss";
-import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { BsThreeDots } from "react-icons/bs";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
+import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {BsThreeDots} from "react-icons/bs";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import IconGenerator from "../IconPicker/IconGenerator";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
-import { useTranslation } from "react-i18next";
-import { store } from "../../store";
-import { useQueryClient } from "react-query";
-import FolderIcon from '@mui/icons-material/Folder';
+import {useTranslation} from "react-i18next";
+import {store} from "../../store";
+import {useQueryClient} from "react-query";
+import FolderIcon from "@mui/icons-material/Folder";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -30,10 +30,10 @@ const AppSidebar = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const auth = store.getState().auth;
-  const { appId } = useParams();
+  const {appId} = useParams();
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -59,7 +59,9 @@ const AppSidebar = ({
       }
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
-      navigate(`/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`);
+      navigate(
+        `/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`
+      );
     } else if (element.type === "LINK") {
       if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
         navigate(
@@ -85,7 +87,9 @@ const AppSidebar = ({
         search: `?menuId=${element?.id}&${searchParams.toString()}`,
       });
     } else if (element.type === "WEBPAGE") {
-      navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`);
+      navigate(
+        `/main/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
+      );
       setSubMenuIsOpen(false);
     }
   };
@@ -94,7 +98,6 @@ const AppSidebar = ({
   const [searchParams] = useSearchParams();
 
   const menuItem = searchParams.get("menuId");
-
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -108,8 +111,10 @@ const AppSidebar = ({
 
   const defaultLanguage = i18n.language;
 
-
-  const activeMenu = Boolean(appId !== 'c57eedc3-a954-4262-a0af-376c65b5a284' && appId === element?.id) || menuItem === element?.id
+  const activeMenu =
+    Boolean(
+      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
+    ) || menuItem === element?.id;
   return (
     <Draggable key={index}>
       {permission ? (
@@ -121,16 +126,20 @@ const AppSidebar = ({
           }}
           className="parent-folder column-drag-handle awdaw"
           style={{
-            background:
-              activeMenu
-                ? menuStyle?.active_background ?? "#007AFF"
-                : menuStyle?.background,
-            color: Boolean(appId !== 'c57eedc3-a954-4262-a0af-376c65b5a284' && appId === element?.id) || menuItem === element?.id ? "#fff" : "#A8A8A8",
+            background: activeMenu
+              ? menuStyle?.active_background ?? "#007AFF"
+              : menuStyle?.background,
+            color:
+              Boolean(
+                appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                  appId === element?.id
+              ) || menuItem === element?.id
+                ? "#fff"
+                : "#A8A8A8",
             borderRadius: "10px",
             margin: "0 10px",
-          }}
-        >
-           <IconGenerator
+          }}>
+          <IconGenerator
             icon={
               element?.icon ||
               element?.data?.microfrontend?.icon ||
@@ -141,8 +150,8 @@ const AppSidebar = ({
               menuTemplate?.icon_size === "SMALL"
                 ? 10
                 : menuTemplate?.icon_size === "MEDIUM"
-                ? 15
-                : 18 || 18
+                  ? 15
+                  : 18 || 18
             }
             className="folder-icon"
             style={{
@@ -163,37 +172,35 @@ const AppSidebar = ({
                 element?.data?.webpage?.title
               }
               style={{
-                color:
-                  activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "#A8A8A8",
+                color: activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "#A8A8A8",
               }}
             />
           )}
           {element?.type === "FOLDER" &&
-            sidebarIsOpen &&
-            !element?.is_static ? (
+          sidebarIsOpen &&
+          !element?.is_static ? (
             <>
               {(element?.data?.permission?.delete ||
                 element?.data?.permission?.update ||
                 element?.data?.permission?.write) && (
-                  <Tooltip title="Folder settings" placement="top">
-                    <Box className="extra_icon">
-                      <BsThreeDots
-                        size={13}
-                        onClick={(e) => {
-                          handleOpenNotify(e, "FOLDER");
-                        }}
-                        style={{
-                          color:
-                            activeMenu
-                              ? menuStyle?.active_text
-                              : menuStyle?.text ?? "#fff",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                )}
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        handleOpenNotify(e, "FOLDER");
+                      }}
+                      style={{
+                        color: activeMenu
+                          ? menuStyle?.active_text
+                          : menuStyle?.text ?? "#fff",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              )}
 
               {element?.data?.permission?.create && (
                 <Tooltip title="Create folder" placement="top">
@@ -201,15 +208,13 @@ const AppSidebar = ({
                     className="extra_icon"
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
-                    }}
-                  >
+                    }}>
                     <AddIcon
                       size={13}
                       style={{
-                        color:
-                          activeMenu
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
+                        color: activeMenu
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
                       }}
                     />
                   </Box>
@@ -228,10 +233,9 @@ const AppSidebar = ({
                 setElement(element);
               }}
               style={{
-                color:
-                  activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                color: activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
               }}
               element={element}
             />
@@ -245,10 +249,9 @@ const AppSidebar = ({
                 setElement(element);
               }}
               style={{
-                color:
-                  activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                color: activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
               }}
               element={element}
             />
@@ -279,20 +282,18 @@ const AppSidebar = ({
                 setElement(element);
               }}
               style={{
-                color:
-                  activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                color: activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
               }}
             />
           )}
           {sidebarIsOpen && element?.type === "FOLDER" ? (
             <KeyboardArrowRightIcon
               style={{
-                color:
-                  activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                color: activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
                 transform: selectedApp?.id === element.id && "rotate(90deg)",
                 transition: "0.3s",
               }}

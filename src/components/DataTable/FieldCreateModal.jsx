@@ -291,6 +291,7 @@ export default function FieldCreateModal({
                         placeholder="Field label"
                         defaultValue={tableName}
                         languages={languages}
+                        id={"create_field_label"}
                       />
                     </Box>
                   </FRow>
@@ -307,6 +308,7 @@ export default function FieldCreateModal({
                         placeholder="Tab label"
                         defaultValue={tableName}
                         languages={languages}
+                        id={"create_tab_label"}
                       />
                     </Box>
                   </FRow>

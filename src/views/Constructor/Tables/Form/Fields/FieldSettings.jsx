@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material";
+import {Close} from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
@@ -9,12 +9,12 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { TreeView } from "@mui/x-tree-view";
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
+import {TreeView} from "@mui/x-tree-view";
+import {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -30,12 +30,12 @@ import constructorViewService from "../../../../../services/constructorViewServi
 import menuService, {
   useMenuListQuery,
 } from "../../../../../services/menuService";
-import { store } from "../../../../../store";
+import {store} from "../../../../../store";
 import {
   fieldButtons,
   fieldTypesOptions,
 } from "../../../../../utils/constants/fieldTypes";
-import { generateGUID } from "../../../../../utils/generateID";
+import {generateGUID} from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
@@ -51,13 +51,13 @@ const FieldSettings = ({
   formType,
   height,
   isTableView = false,
-  onSubmit = () => { },
+  onSubmit = () => {},
   getRelationFields,
   slug,
-  menuItem
+  menuItem,
 }) => {
-  const { id, appId, tableSlug } = useParams();
-  const { handleSubmit, control, reset, watch, setValue } = useForm();
+  const {id, appId, tableSlug} = useParams();
+  const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -106,7 +106,7 @@ const FieldSettings = ({
   });
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -114,16 +114,16 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", { slug }],
+    ["GET_VIEWS_AND_FIELDS", {slug}],
     () => {
       if (!slug) return false;
       return constructorTableService.getTableInfo(slug, {
-        data: { limit: 10, offset: 0, app_id: appId },
+        data: {limit: 10, offset: 0, app_id: appId},
       });
     },
     {
       enabled: Boolean(!!slug),
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -137,7 +137,7 @@ const FieldSettings = ({
     }
   );
 
-  const { mutate: createNewField, isLoading: createLoading } =
+  const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
       onSuccess: (res) => {
         prepandFieldInForm(res);
@@ -146,7 +146,7 @@ const FieldSettings = ({
         addColumnToView(res);
       },
     });
-  const { mutate: updateOldField, isLoading: updateLoading } =
+  const {mutate: updateOldField, isLoading: updateLoading} =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         updateFieldInform(field);
@@ -163,7 +163,7 @@ const FieldSettings = ({
       show_label: true,
     };
     if (id || menuItem?.table_id) {
-      createNewField({ data, tableSlug: slug || tableSlug });
+      createNewField({data, tableSlug: slug || tableSlug});
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -183,14 +183,14 @@ const FieldSettings = ({
     }
   };
 
-  const { data: backetOptions } = useMenuListQuery({
+  const {data: backetOptions} = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
   });
   const updateField = (field) => {
     if (id || menuItem?.table_id) {
-      updateOldField({ data: field, tableSlug: tableSlug });
+      updateOldField({data: field, tableSlug: tableSlug});
     } else {
       updateFieldInform(field);
       closeSettingsBlock();
@@ -240,7 +240,7 @@ const FieldSettings = ({
     }));
   }, [layoutRelations]);
 
-  const { data: computedRelationFields } = useQuery(
+  const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -296,8 +296,7 @@ const FieldSettings = ({
             className={
               item.value === drawerType ? styles.active : styles.inactive
             }
-            onClick={() => setDrawerType(item.value)}
-          >
+            onClick={() => setDrawerType(item.value)}>
             {item.label}
           </Button>
         ))}
@@ -310,8 +309,7 @@ const FieldSettings = ({
               className={
                 drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
               }
-              onClick={() => setDrawerType("ATTRIBUTES")}
-            >
+              onClick={() => setDrawerType("ATTRIBUTES")}>
               Field
             </Button>
           }
@@ -328,11 +326,10 @@ const FieldSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{ height }}>
+        <div className={styles.settingsBlockBody} style={{height}}>
           <form
             onSubmit={handleSubmit(submitHandler)}
-            className={styles.fieldSettingsForm}
-          >
+            className={styles.fieldSettingsForm}>
             <Card>
               {drawerType === "SCHEMA" && (
                 <Box className="p-2">
@@ -350,7 +347,7 @@ const FieldSettings = ({
                     />
                   </FRow>
                   <FRow label="Name" classname={styles.custom_label} required>
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label"
@@ -358,6 +355,7 @@ const FieldSettings = ({
                         placeholder="Name"
                         defaultValue={tableName}
                         languages={languages}
+                        id={"field_label"}
                       />
                     </Box>
                   </FRow>
@@ -371,6 +369,7 @@ const FieldSettings = ({
                       placeholder="Field SLUG"
                       required
                       withTrim
+                      id={"field_key"}
                     />
                   </FRow>
 
@@ -380,47 +379,45 @@ const FieldSettings = ({
                     fieldType === "VIDEO" ||
                     fieldType === "PHOTO" ||
                     fieldType === "CUSTOM_IMAGE") && (
-                      <FRow
-                        label="Backet"
-                        required
-                        classname={styles.custom_label}
-                        extra={
-                          <>
-                            <Typography variant="h6">
-                              Selected folder: {folder}
-                            </Typography>
-                          </>
-                        }
-                      >
-                        <TreeView
-                          defaultCollapseIcon={<ExpandMoreIcon />}
-                          defaultExpandIcon={<ChevronRightIcon />}
-                          defaultSelected={folder}
-                          onNodeSelect={handleSelect}
-                          style={{
-                            border: "1px solid #D4DAE2",
-                          }}
-                        >
-                          {backetOptions?.menus?.map((item) => (
-                            <FieldTreeView
-                              element={item}
-                              setCheck={setCheck}
-                              check={check}
-                              folder={folder}
-                            />
-                          ))}
-                        </TreeView>
-                      </FRow>
-                    )}
+                    <FRow
+                      label="Backet"
+                      required
+                      classname={styles.custom_label}
+                      extra={
+                        <>
+                          <Typography variant="h6">
+                            Selected folder: {folder}
+                          </Typography>
+                        </>
+                      }>
+                      <TreeView
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                        defaultSelected={folder}
+                        onNodeSelect={handleSelect}
+                        style={{
+                          border: "1px solid #D4DAE2",
+                        }}>
+                        {backetOptions?.menus?.map((item) => (
+                          <FieldTreeView
+                            element={item}
+                            setCheck={setCheck}
+                            check={check}
+                            folder={folder}
+                          />
+                        ))}
+                      </TreeView>
+                    </FRow>
+                  )}
                   {(fieldType === "SINGLE_LINE" ||
                     fieldType === "MULTI_LINE") && (
-                      <HFCheckbox
-                        control={control}
-                        name="enable_multilanguage"
-                        label="Multi language"
-                        className="mb-1"
-                      />
-                    )}
+                    <HFCheckbox
+                      control={control}
+                      name="enable_multilanguage"
+                      label="Multi language"
+                      className="mb-1"
+                    />
+                  )}
                 </Box>
               )}
 
@@ -446,8 +443,7 @@ const FieldSettings = ({
                       </FRow>
                       <FRow
                         label="Error message"
-                        classname={styles.custom_label}
-                      >
+                        classname={styles.custom_label}>
                         <HFTextField
                           className={styles.input}
                           fullWidth
@@ -484,8 +480,7 @@ const FieldSettings = ({
                   <Box mt={1}>
                     <FRow
                       label="Autofill table"
-                      classname={styles.custom_label}
-                    >
+                      classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
                         name="autofill_table"
@@ -498,8 +493,7 @@ const FieldSettings = ({
 
                     <FRow
                       label="Autofill field"
-                      classname={styles.custom_label}
-                    >
+                      classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
                         name="autofill_field"
@@ -525,10 +519,9 @@ const FieldSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
-              loader={formLoader || createLoading || updateLoading}
-            >
+              loader={formLoader || createLoading || updateLoading}>
               Save
             </PrimaryButton>
           </div>

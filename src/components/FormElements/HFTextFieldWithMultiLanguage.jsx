@@ -25,6 +25,7 @@ export default function HFTextFieldWithMultiLanguage({
   field,
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
+  id,
   ...props
 }) {
   const [selectedLanguage, setSelectedLanguage] = useState(
@@ -71,6 +72,7 @@ export default function HFTextFieldWithMultiLanguage({
         fullWidth
         placeholder={fieldPlaceholder}
         defaultValue={defaultValue}
+        id={id}
       />
 
       {languages?.length > 1 && (
@@ -82,8 +84,7 @@ export default function HFTextFieldWithMultiLanguage({
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
+            onClick={handleClick}>
             <TranslateIcon />
           </Button>
         </Badge>
@@ -98,8 +99,7 @@ export default function HFTextFieldWithMultiLanguage({
         }}
         MenuListProps={{
           "aria-labelledby": "basic-button",
-        }}
-      >
+        }}>
         {languages?.map((language) => (
           <MenuItem
             onClick={() => {
@@ -107,8 +107,7 @@ export default function HFTextFieldWithMultiLanguage({
             }}
             style={{
               background: selectedLanguage === language?.slug ? "#f0f0f0" : "",
-            }}
-          >
+            }}>
             {language?.title}
           </MenuItem>
         ))}

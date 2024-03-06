@@ -42,6 +42,7 @@ const ConstructorTablesFormPage = () => {
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
+
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
@@ -312,6 +313,7 @@ const ConstructorTablesFormPage = () => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
+      id: id ? id : data?.id,
       show_in_menu: true,
     };
     // return;

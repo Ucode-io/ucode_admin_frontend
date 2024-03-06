@@ -5,11 +5,12 @@ import {useLoginMicrofrontendQuery} from "../../services/loginMicrofrontendServi
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Microfrontend from "../../views/Microfrontend";
 import MicrofrontendComponent from "../../components/MicrofrontendComponent";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {store} from "../../store";
 import {loginAction} from "../../store/auth/auth.thunk";
 
 const AuthLayout = () => {
+  const isAuth = useSelector((state) => state.auth.isAuth);
   const subdomain =
     window.location.hostname === "localhost"
       ? "ett.u-code.io"
@@ -18,6 +19,7 @@ const AuthLayout = () => {
   const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
+      enabled: !isAuth,
     },
   });
 

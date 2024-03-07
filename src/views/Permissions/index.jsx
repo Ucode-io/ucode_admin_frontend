@@ -33,7 +33,7 @@ const PermissionDetail = () => {
       },
     }
   );
-  console.log("connections", connections);
+
   return (
     <Box className={styles.permission}>
       <Header title="Matrix details" backButtonLink={-1} />

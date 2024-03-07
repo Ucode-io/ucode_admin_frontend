@@ -29,7 +29,7 @@ const ConnectionPage = () => {
   const {data: connections, isLoading} = useQuery(
     ["GET_CONNECTION_LIST", clientId],
     () => {
-      return connectionServiceV2.getList({"client-type-id": clientId});
+      return connectionServiceV2.getList({client_type_id: clientId});
     },
     {
       cacheTime: 10,

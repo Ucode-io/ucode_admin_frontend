@@ -100,8 +100,7 @@ const RelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -134,8 +133,7 @@ const RelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -194,7 +192,6 @@ const AutoCompleteElement = ({
       return ids;
     }
   }, [field]);
-
 
   const autoFiltersFieldFroms = useMemo(() => {
     setPage(1);
@@ -414,7 +411,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field, value]);
-
+  console.log("allOptionsallOptions", allOptions, field);
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
@@ -442,8 +439,7 @@ const AutoCompleteElement = ({
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}
-        >
+          onClick={() => navigateToForm(tableSlug)}>
           Create new
         </div>
       )}
@@ -533,8 +529,7 @@ const AutoCompleteElement = ({
                 fontSize: "10px",
                 textAlign: "center",
                 marginTop: "5px",
-              }}
-            >
+              }}>
               {"This field is required!"}
             </div>
           )}

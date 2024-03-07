@@ -108,6 +108,18 @@ const ApiKeyPage = () => {
     });
   };
 
+  const URLFILE = window.location.origin + "/apikeys.zip";
+  const downloadUrl = (url) => {
+    const filename = url.split("/").pop();
+    const aTag = document.createElement("a");
+
+    aTag.href = url;
+    aTag.setAttribute("download", filename);
+    document.body.appendChild(aTag);
+    aTag.click();
+    aTag.remove();
+  };
+
   return (
     <div>
       <Box
@@ -119,14 +131,14 @@ const ApiKeyPage = () => {
           borderBottom: "1px solid #eee",
         }}>
         <HeaderSettings title={"Api keys"} sticky line={false} />
-        <Box sx={{width: "220px"}}>
+        <Box onClick={() => downloadUrl(URLFILE)} sx={{width: "300px"}}>
           <a
             target="_blank"
             style={{display: "inline-flex", alignItems: "center"}}
-            href="https://drive.google.com/file/d/18Kb1PP_keOytiYdtM954rFkcoqoMONAL/view?usp=sharing"
+            href="apikeys.zip"
             download>
             <DownloadIcon style={{background: "#007af"}} />
-            Postman collection link
+            Download api documentation
           </a>
         </Box>
       </Box>

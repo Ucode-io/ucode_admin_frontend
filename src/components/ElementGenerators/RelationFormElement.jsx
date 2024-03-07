@@ -411,7 +411,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field, value]);
-
+  console.log("allOptionsallOptions", allOptions, field);
   useEffect(() => {
     if (value) getValueData();
   }, [value]);

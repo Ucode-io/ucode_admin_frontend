@@ -40,7 +40,7 @@ const FastFilter = ({
   const {filters} = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
-    const filter = view?.attributes?.quick_filters ?? view?.quick_filters ?? [];
+    const filter = view?.attributes?.quick_filters ?? [];
     return (
       [
         ...(filter ?? []),
@@ -73,8 +73,7 @@ const FastFilter = ({
   return (
     <div
       className={styles.filtersBlock}
-      style={{flexDirection: isVertical ? "column" : "row"}}
-    >
+      style={{flexDirection: isVertical ? "column" : "row"}}>
       {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter

@@ -58,7 +58,7 @@ const Form = ({
     };
 
     window.location.assign(
-      "https://github.com/login/auth/authorize?" +
+      "https://github.com/login/oauth/authorize?" +
         stringifyQueryParams(queryParams)
     );
   };

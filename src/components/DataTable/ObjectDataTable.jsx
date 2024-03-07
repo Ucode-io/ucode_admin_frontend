@@ -1,18 +1,12 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { Button } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useSearchParams } from "react-router-dom";
+import {Button} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useSearchParams} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../CTable";
+import {CTable, CTableBody, CTableCell, CTableHead, CTableRow} from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import FieldButton from "./FieldButton";
@@ -22,7 +16,7 @@ import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
-import { useMenuGetByIdQuery } from "../../services/menuService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectDataTable = ({
   selectedTab,
@@ -48,7 +42,7 @@ const ObjectDataTable = ({
   isRelationTable,
   disablePagination,
   currentPage = 1,
-  onPaginationChange = () => { },
+  onPaginationChange = () => {},
   pagesCount = 1,
   setSortedDatas,
   columns = [],
@@ -59,8 +53,8 @@ const ObjectDataTable = ({
   navigateToEditPage,
   dataLength,
   onDeleteClick,
-  onRowClick = () => { },
-  filterChangeHandler = () => { },
+  onRowClick = () => {},
+  filterChangeHandler = () => {},
   filters,
   disableFilters,
   tableStyle,
@@ -83,7 +77,7 @@ const ObjectDataTable = ({
   view,
   refetch,
   menuItem,
-  getAllData = () => { },
+  getAllData = () => {},
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -97,7 +91,6 @@ const ObjectDataTable = ({
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
 
   // const { loader: menuLoader } = useMenuGetByIdQuery({
   //   menuId: searchParams.get("menuId"),
@@ -150,7 +143,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -176,9 +169,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -269,8 +260,7 @@ const ObjectDataTable = ({
       view={view}
       filterVisible={filterVisible}
       navigateToEditPage={navigateToEditPage}
-      parentRef={parentRef}
-    >
+      parentRef={parentRef}>
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -322,12 +312,10 @@ const ObjectDataTable = ({
               )
           )}
 
-
           {!isRelationTable && (
             <PermissionWrapperV2
               tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-              type={"add_field"}
-            >
+              type={"add_field"}>
               <FieldButton
                 openFieldSettings={openFieldSettings}
                 view={view}
@@ -349,8 +337,7 @@ const ObjectDataTable = ({
       <CTableBody
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
-        title={title}
-      >
+        title={title}>
         {(isRelationTable ? fields : data).map((virtualRowObject, index) => {
           return (
             columns && (
@@ -430,8 +417,7 @@ const ObjectDataTable = ({
               left: "0",
               backgroundColor: "#FFF",
               zIndex: "1",
-            }}
-          >
+            }}>
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
               <Button
                 variant="text"
@@ -442,8 +428,7 @@ const ObjectDataTable = ({
                 }}
                 onClick={() => {
                   setAddNewRow(true);
-                }}
-              >
+                }}>
                 <AddRoundedIcon />
               </Button>
             </PermissionWrapperV2>

@@ -1,9 +1,10 @@
-import { Box, Button, Stack } from "@mui/material";
+import {Box, Button, Stack} from "@mui/material";
 import React from "react";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import { resources } from "../../../utils/resourceConstants";
+import {resources} from "../../../utils/resourceConstants";
+import {useWatch} from "react-hook-form";
 
 const headerStyle = {
   width: "100",
@@ -24,8 +25,7 @@ const GitForm = ({
   return (
     <Box
       flex={1}
-      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
-    >
+      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
         <h2 variant="h6">Resource info</h2>
       </Box>
@@ -33,16 +33,14 @@ const GitForm = ({
       <Box
         style={{
           overflow: "auto",
-        }}
-      >
+        }}>
         <Stack spacing={4}>
           <Box
             sx={{
               padding: "15px",
               fontWeight: "bold",
-            }}
-          >
-            <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>Name</Box>
+            }}>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
             <HFTextField
               control={control}
               required
@@ -58,8 +56,7 @@ const GitForm = ({
                 fontSize: "14px",
                 marginTop: "10px",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Type
             </Box>
             <HFSelect
@@ -74,8 +71,7 @@ const GitForm = ({
                 fontSize: "14px",
                 marginTop: "10px",
                 marginBottom: "15px",
-              }}
-            >
+              }}>
               Gihub username
             </Box>
             <HFTextField

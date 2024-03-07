@@ -239,7 +239,7 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                <Box
+                {/* <Box
                   sx={{
                     fontSize: "14px",
                     marginTop: "10px",
@@ -252,8 +252,7 @@ const Form = ({
                   control={control}
                   required
                   name="type"
-                  disabled={true}
-                />
+                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",

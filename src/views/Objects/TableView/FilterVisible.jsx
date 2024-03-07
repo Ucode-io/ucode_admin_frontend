@@ -66,7 +66,7 @@ export default function FilterVisible({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug]);
         setTimeout(() => {
           setUpdateLoading(false);
         }, 400);
@@ -82,8 +82,7 @@ export default function FilterVisible({
         variant={"text"}
         className={styles.add_filter}
         sx={customStyles}
-        onClick={handleClickFilter}
-      >
+        onClick={handleClickFilter}>
         <FilterAltOutlinedIcon color={"#A8A8A8"} />
         Add Filters
       </Box>

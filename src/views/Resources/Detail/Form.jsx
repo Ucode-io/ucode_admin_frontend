@@ -57,10 +57,10 @@ const Form = ({
       scope: "read:user,repo",
     };
 
-    var url =
-      "https://github.com/login/oauth/authorize?" +
-      stringifyQueryParams(queryParams);
-    window.open(url, "_blank");
+    window.location.assign(
+      "https://github.com/login/auth/authorize?" +
+        stringifyQueryParams(queryParams)
+    );
   };
 
   return (

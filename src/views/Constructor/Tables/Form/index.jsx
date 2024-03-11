@@ -200,8 +200,8 @@ const ConstructorTablesFormPage = () => {
     });
   };
 
-  const createType = (data) => {
-    menuSettingsService
+  const createType = async (data) => {
+    await menuSettingsService
       .create({
         parent_id:
           menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
@@ -311,9 +311,10 @@ const ConstructorTablesFormPage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("datadatadatadata", data, id);
     const computedData = {
       ...data,
-      id: id ? id : data?.id,
+      id: data?.id,
       show_in_menu: true,
     };
     // return;

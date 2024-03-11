@@ -29,7 +29,7 @@ const RolePage = () => {
   const navigate = useNavigate();
   const {pathname} = useLocation();
 
-  const {data: roles, isLoading} = useQuery(["GET_ROLE_LIST"], () => {
+  const {data: roles, isLoading} = useQuery(["GET_ROLE_LIST", clientId], () => {
     return roleServiceV2.getList({"client-type-id": clientId});
   });
 
@@ -60,8 +60,7 @@ const RolePage = () => {
             marginTop: "10px",
           }}
           disablePagination
-          removableHeight={false}
-        >
+          removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
@@ -70,15 +69,13 @@ const RolePage = () => {
           <CTableBody
             loader={isLoading}
             columnsCount={2}
-            dataLength={roles?.data?.response?.length}
-          >
+            dataLength={roles?.data?.response?.length}>
             {roles?.data?.response?.map((element, index) => (
               <CTableRow
                 key={element.guid}
                 onClick={() => {
                   navigateToDetailPage(element.guid);
-                }}
-              >
+                }}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>
@@ -86,8 +83,7 @@ const RolePage = () => {
                     color="error"
                     onClick={() => {
                       deleteRoleElement(element?.guid);
-                    }}
-                  >
+                    }}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

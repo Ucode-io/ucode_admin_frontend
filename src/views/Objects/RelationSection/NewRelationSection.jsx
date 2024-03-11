@@ -1,18 +1,18 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import { Add, InsertDriveFile } from "@mui/icons-material";
-import { Card, Divider } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Add, InsertDriveFile} from "@mui/icons-material";
+import {Card, Divider} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
-import { listToMap } from "../../../utils/listToMap";
+import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -42,11 +42,9 @@ const NewRelationSection = ({
   selectedTab,
   errors,
   menuItem,
-  data
+  data,
 }) => {
-
-
-  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
+  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
@@ -59,7 +57,7 @@ const NewRelationSection = ({
   );
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [jwtObjects, setJwtObjects] = useState([]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -68,7 +66,6 @@ const NewRelationSection = ({
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
   const menuId = searchParams.get("menuId");
-
 
   // const { data, refetch } = useQuery(
   //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
@@ -119,13 +116,12 @@ const NewRelationSection = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
       : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "multi",
   });
@@ -235,8 +231,6 @@ const NewRelationSection = ({
     );
   }, [jwtObjects, tables]);
 
-
-
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
     selectedTab?.sections?.map((section) => {
@@ -254,7 +248,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: { fieldsMap } = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -272,7 +266,7 @@ const NewRelationSection = ({
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -298,23 +292,22 @@ const NewRelationSection = ({
             selectedIndex={selectedTabIndex}
             onSelect={(index) => {
               setSelectedTabIndex(index);
-            }}
-          >
+            }}>
             {!data?.is_visible_section && (
               <div className={styles.cardHeader}>
                 <TabList className={styles.tabList}>
                   {data?.tabs?.map((el, index) => (
                     <Tab
                       key={el.id}
-                      className={`${styles.tabs_item} ${selectedTabIndex === index
-                        ? "custom-selected-tab"
-                        : "custom-tab"
-                        }`}
+                      className={`${styles.tabs_item} ${
+                        selectedTabIndex === index
+                          ? "custom-selected-tab"
+                          : "custom-tab"
+                      }`}
                       onClick={() => {
                         setSelectedIndex(index);
                         onSelect(el);
-                      }}
-                    >
+                      }}>
                       {data?.view_relation_type === "FILE" && (
                         <>
                           <InsertDriveFile /> Файлы
@@ -323,18 +316,18 @@ const NewRelationSection = ({
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
-                          `label_to_${i18n?.language}`
-                          ] ||
-                          el?.attributes?.[`label_to_${i18n?.language}`] ||
-                          el?.label
+                              `label_to_${i18n?.language}`
+                            ] ||
+                            el?.attributes?.[`label_to_${i18n?.language}`] ||
+                            el?.label
                           : el?.attributes?.[`label_${i18n.language}`]
                             ? el?.attributes?.[`label_${i18n.language}`]
                             : el?.relation?.attributes?.[
-                              `label_${i18n.language}`
-                            ]
+                                  `label_${i18n.language}`
+                                ]
                               ? el?.relation?.attributes?.[
-                              `label_${i18n.language}`
-                              ]
+                                  `label_${i18n.language}`
+                                ]
                               : el?.label ?? el?.title}
                       </div>
                     </Tab>
@@ -354,9 +347,8 @@ const NewRelationSection = ({
                         color="success"
                         size="small"
                         onClick={navigateToCreatePage}
-                        disabled={!id}
-                      >
-                        <Add style={{ color: "#007AFF" }} />
+                        disabled={!id}>
+                        <Add style={{color: "#007AFF"}} />
                       </RectangleIconButton>
                     )}
 
@@ -396,7 +388,7 @@ const NewRelationSection = ({
             ) : (
               data?.tabs?.map((el, index) => (
                 <TabPanel key={el.id}>
-                  {selectedTab?.type === 'section' ? (
+                  {selectedTab?.type === "section" ? (
                     <NewMainInfo
                       control={control}
                       loader={loader}

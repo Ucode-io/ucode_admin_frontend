@@ -40,21 +40,28 @@ const FastFilter = ({
   const {filters} = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
-    const filter = view?.attributes?.quick_filters ?? view?.quick_filters ?? [];
+    const filter = view?.attributes?.quick_filters ?? [];
+
     return (
       [
         ...(filter ?? []),
         ...(new_list[tableSlug] ?? [])
           ?.filter(
             (fast) =>
-              fast.checked &&
+              fast.is_checked &&
               !view?.attributes?.quick_filters?.find(
                 (quick) => quick?.id === fast.id
               )
           )
           ?.map((fast) => fast),
       ]
-        ?.map((el) => fieldsMap[el?.id])
+        ?.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOKKUPS") {
+            return fieldsMap[el?.relation_id];
+          } else {
+            return fieldsMap[el?.id];
+          }
+        })
         ?.filter((el) => el) ?? []
     );
   }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
@@ -73,8 +80,7 @@ const FastFilter = ({
   return (
     <div
       className={styles.filtersBlock}
-      style={{flexDirection: isVertical ? "column" : "row"}}
-    >
+      style={{flexDirection: isVertical ? "column" : "row"}}>
       {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter

@@ -1,18 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import React, {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-import { applyDrag } from "../../../utils/applyDrag";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
-import { Container, Draggable } from "react-smooth-dnd";
-import { columnIcons } from "../../../utils/constants/columnIcons";
+import {applyDrag} from "../../../utils/applyDrag";
+import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import {Container, Draggable} from "react-smooth-dnd";
+import {columnIcons} from "../../../utils/constants/columnIcons";
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import relationService from "../../../services/relationService";
-import { useParams, useSearchParams } from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
-import { current } from "@reduxjs/toolkit";
+import {current} from "@reduxjs/toolkit";
 
 export default function VisibleColumnsButtonRelationSection({
   currentView,
@@ -20,14 +20,14 @@ export default function VisibleColumnsButtonRelationSection({
   getAllData,
   selectedTabIndex,
   // refetch = () => { },
-  data
+  data,
 }) {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const { i18n } = useTranslation();
-  const { id } = useParams();
+  const {i18n} = useTranslation();
+  const {id} = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -44,63 +44,85 @@ export default function VisibleColumnsButtonRelationSection({
   };
 
   const updateView = (datas) => {
-
     setIsLoading(true);
 
     const result = data?.tabs;
 
-
-    const computeTabs = result?.map((item, index) => (
-      {
+    const computeTabs = result?.map((item, index) => ({
       ...item,
       attributes: {
         ...item?.attributes,
-        columns: index === selectedTabIndex ? datas : item?.attributes?.columns ?? item?.relation?.columns 
-      }
-    }))
+        columns:
+          index === selectedTabIndex
+            ? datas
+            : item?.attributes?.columns ?? item?.relation?.columns,
+      },
+    }));
 
     layoutService
       .update(
         {
           ...data,
-          tabs: computeTabs
+          tabs: computeTabs,
         },
         tableSlug
       )
       .then(() => {
         getAllData();
-
       })
       .finally(() => {
         setIsLoading(false);
         // refetch();
       });
-
-
   };
 
   const visibleFields = useMemo(() => {
     return (
-      (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.map((id) => fieldsMap[id])
+      (
+        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+        data?.tabs?.[selectedTabIndex]?.relation?.columns
+      )
+        ?.map((id) => fieldsMap[id])
         ?.filter((el) => el?.type) ?? []
     );
-  }, [data?.tabs?.[selectedTabIndex]?.attributes?.columns, data?.tabs?.[selectedTabIndex]?.relation?.columns, fieldsMap]);
-
+  }, [
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
+    data?.tabs?.[selectedTabIndex]?.relation?.columns,
+    fieldsMap,
+  ]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter(
-      (field) => !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(field.id)
-    );
-  }, [allFields, data?.tabs?.[selectedTabIndex]?.attributes?.columns, data?.tabs?.[selectedTabIndex]?.relation?.columns]);
-
+    return allFields.filter((field) => {
+      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
+          field.relation_id
+        );
+      } else {
+        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
+          field.id
+        );
+      }
+    });
+  }, [
+    allFields,
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
+    data?.tabs?.[selectedTabIndex]?.relation?.columns,
+  ]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
     if (result) {
-      updateView(result.map((el) => el.id));
+      updateView(
+        result.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el.relation_id;
+          } else {
+            return el.id;
+          }
+        })
+      );
     }
   };
-
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
@@ -114,7 +136,6 @@ export default function VisibleColumnsButtonRelationSection({
     }
   }, []);
 
-
   return (
     <div>
       <Button
@@ -125,10 +146,9 @@ export default function VisibleColumnsButtonRelationSection({
           borderColor: "#A8A8A8",
           padding: "2px 8px",
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         {isLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -182,24 +202,21 @@ export default function VisibleColumnsButtonRelationSection({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             minWidth: 200,
             maxHeight: 300,
             overflowY: "auto",
             padding: "10px 14px",
-          }}
-        >
+          }}>
           <div>
             <div
               style={{
                 borderBottom: "1px solid #eee",
                 display: "flex",
                 backgroundColor: "#fff",
-              }}
-            >
+              }}>
               <div
                 style={{
                   flex: 1,
@@ -208,8 +225,7 @@ export default function VisibleColumnsButtonRelationSection({
                   alignItems: "center",
                   padding: "8px 0px",
                   margin: "-1px -1px 0 0",
-                }}
-              >
+                }}>
                 <b>All</b>
               </div>
               <div
@@ -224,14 +240,24 @@ export default function VisibleColumnsButtonRelationSection({
                   paddingRight: 0,
                   display: "flex",
                   justifyContent: "flex-end",
-                }}
-              >
+                }}>
                 <Switch
                   size="small"
                   checked={visibleFields?.length === allFields?.length}
                   onChange={(e) => {
                     updateView(
-                      e.target.checked ? allFields.map((el) => el.id) : []
+                      e.target.checked
+                        ? allFields.map((el) => {
+                            if (
+                              el?.type === "LOOKUP" ||
+                              el?.type === "LOOKUPS"
+                            ) {
+                              return el.relation_id;
+                            } else {
+                              return el.id;
+                            }
+                          })
+                        : []
                     );
                   }}
                 />
@@ -239,8 +265,7 @@ export default function VisibleColumnsButtonRelationSection({
             </div>
             <Container
               onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            >
+              dropPlaceholder={{className: "drag-row-drop-preview"}}>
               {visibleFields?.map((column, index) => (
                 <Draggable key={column?.id}>
                   <div
@@ -248,8 +273,7 @@ export default function VisibleColumnsButtonRelationSection({
                     style={{
                       display: "flex",
                       backgroundColor: "#fff",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         flex: 1,
@@ -258,8 +282,7 @@ export default function VisibleColumnsButtonRelationSection({
                         alignItems: "center",
                         padding: "8px 0px",
                         margin: "-1px -1px 0 0",
-                      }}
-                    >
+                      }}>
                       <div
                         style={{
                           width: 20,
@@ -268,8 +291,7 @@ export default function VisibleColumnsButtonRelationSection({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        }}
-                      >
+                        }}>
                         {column?.type ? (
                           columnIcons(column?.type)
                         ) : (
@@ -279,8 +301,7 @@ export default function VisibleColumnsButtonRelationSection({
                       <p
                         style={{
                           textWrap: "nowrap",
-                        }}
-                      >
+                        }}>
                         {column?.attributes?.[`label_${i18n.language}`] ??
                           column?.label}
                       </p>
@@ -297,23 +318,71 @@ export default function VisibleColumnsButtonRelationSection({
                         paddingRight: 0,
                         display: "flex",
                         justifyContent: "flex-end",
-                      }}
-                    >
-                      <Switch
-                        size="small"
-                        checked={(data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.includes(column?.id)}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns
-                                ? [...data?.tabs[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns, column?.id]
-                                : [column?.id]
-                              : (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.filter(
-                                (el) => el !== column?.id
-                              )
-                          );
-                        }}
-                      />
+                      }}>
+                      {column.type === "LOOKUP" ||
+                      column?.type === "LOOKUPS" ? (
+                        <Switch
+                          size="small"
+                          checked={(
+                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
+                            data?.tabs?.[selectedTabIndex]?.relation?.columns
+                          )?.includes(column?.relation_id)}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                  ? [
+                                      ...(data?.tabs[selectedTabIndex]
+                                        ?.attributes?.columns ??
+                                        data?.tabs?.[selectedTabIndex]?.relation
+                                          ?.columns),
+                                      column?.relation_id,
+                                    ]
+                                  : [column?.relation_id]
+                                : (
+                                    data?.tabs?.[selectedTabIndex]?.attributes
+                                      ?.columns ??
+                                    data?.tabs?.[selectedTabIndex]?.relation
+                                      ?.columns
+                                  )?.filter((el) => el !== column?.relation_id)
+                            );
+                          }}
+                        />
+                      ) : (
+                        <Switch
+                          size="small"
+                          checked={(
+                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
+                            data?.tabs?.[selectedTabIndex]?.relation?.columns
+                          )?.includes(column?.id)}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                  ? [
+                                      ...(data?.tabs[selectedTabIndex]
+                                        ?.attributes?.columns ??
+                                        data?.tabs?.[selectedTabIndex]?.relation
+                                          ?.columns),
+                                      column?.id,
+                                    ]
+                                  : [column?.id]
+                                : (
+                                    data?.tabs?.[selectedTabIndex]?.attributes
+                                      ?.columns ??
+                                    data?.tabs?.[selectedTabIndex]?.relation
+                                      ?.columns
+                                  )?.filter((el) => el !== column?.id)
+                            );
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 </Draggable>
@@ -325,8 +394,7 @@ export default function VisibleColumnsButtonRelationSection({
                   style={{
                     display: "flex",
                     backgroundColor: "#fff",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 1,
@@ -335,8 +403,7 @@ export default function VisibleColumnsButtonRelationSection({
                       alignItems: "center",
                       padding: "8px 0px",
                       margin: "-1px -1px 0 0",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         width: 20,
@@ -345,15 +412,13 @@ export default function VisibleColumnsButtonRelationSection({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}
-                    >
+                      }}>
                       {column.type ? columnIcons(column.type) : <LinkIcon />}
                     </div>
                     <p
                       style={{
                         textWrap: "nowrap",
-                      }}
-                    >
+                      }}>
                       {column?.attributes?.[`label_${i18n.language}`] ??
                         column?.label}
                     </p>
@@ -370,23 +435,70 @@ export default function VisibleColumnsButtonRelationSection({
                       paddingRight: 0,
                       display: "flex",
                       justifyContent: "flex-end",
-                    }}
-                  >
-                    <Switch
-                      size="small"
-                      checked={(data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.includes(column?.id)}
-                      onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns
-                              ? [...data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns, column?.id]
-                              : [column?.id]
-                            : (data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? data?.tabs?.[selectedTabIndex]?.relation?.columns)?.filter(
-                              (el) => el !== column?.id
-                            )
-                        );
-                      }}
-                    />
+                    }}>
+                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                      <Switch
+                        size="small"
+                        checked={(
+                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+                          data?.tabs?.[selectedTabIndex]?.relation?.columns
+                        )?.includes(column?.relation_id)}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                                  ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns
+                                ? [
+                                    ...(data?.tabs?.[selectedTabIndex]
+                                      ?.attributes?.columns ??
+                                      data?.tabs?.[selectedTabIndex]?.relation
+                                        ?.columns),
+                                    column?.relation_id,
+                                  ]
+                                : [column?.relation_id]
+                              : (
+                                  data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                )?.filter((el) => el !== column?.relation_id)
+                          );
+                        }}
+                      />
+                    ) : (
+                      <Switch
+                        size="small"
+                        checked={(
+                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+                          data?.tabs?.[selectedTabIndex]?.relation?.columns
+                        )?.includes(column?.id)}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                                  ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns
+                                ? [
+                                    ...(data?.tabs?.[selectedTabIndex]
+                                      ?.attributes?.columns ??
+                                      data?.tabs?.[selectedTabIndex]?.relation
+                                        ?.columns),
+                                    column?.id,
+                                  ]
+                                : [column?.id]
+                              : (
+                                  data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                )?.filter((el) => el !== column?.id)
+                          );
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               ))}

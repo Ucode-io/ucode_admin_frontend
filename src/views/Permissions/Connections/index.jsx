@@ -29,7 +29,7 @@ const ConnectionPage = () => {
   const {data: connections, isLoading} = useQuery(
     ["GET_CONNECTION_LIST", clientId],
     () => {
-      return connectionServiceV2.getList({"client-type-id": clientId});
+      return connectionServiceV2.getList({client_type_id: clientId});
     },
     {
       cacheTime: 10,
@@ -54,38 +54,34 @@ const ConnectionPage = () => {
 
   return (
     <div style={{height: "calc(100vh - 100px)"}}>
-      <TableCard
-        cardStyles={{height: "calc(100vh - 200px)"}}
-        >
-        <h2 style={{
-          marginBottom: "15px"
-        }}>Связь</h2>
-        <CTable
-          disablePagination
-          removableHeight={false}
-        >
+      <TableCard cardStyles={{height: "calc(100vh - 200px)"}}>
+        <h2
+          style={{
+            marginBottom: "15px",
+          }}>
+          Связь
+        </h2>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
             <CTableCell>Table slug</CTableCell>
             <CTableCell>View slug</CTableCell>
-           {connections?.data?.response.length ? (
-             <CTableCell width={60}></CTableCell>
-           ) : null}
+            {connections?.data?.response.length ? (
+              <CTableCell width={60}></CTableCell>
+            ) : null}
           </CTableHead>
           <CTableBody
             loader={isLoading}
             columnsCount={5}
-            dataLength={connections?.data?.response?.length}
-          >
+            dataLength={connections?.data?.response?.length}>
             {connections?.data?.response?.map((element, index) => (
               <CTableRow
                 key={element.guid}
                 onClick={() => {
                   setModalType("UPDATE");
                   setConnectionId(element.guid);
-                }}
-              >
+                }}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.table_slug}</CTableCell>
@@ -95,8 +91,7 @@ const ConnectionPage = () => {
                     color="error"
                     onClick={() => {
                       deleteRoleElement(element.guid);
-                    }}
-                  >
+                    }}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

@@ -57,10 +57,10 @@ const Form = ({
       scope: "read:user,repo",
     };
 
-    var url =
+    window.location.assign(
       "https://github.com/login/oauth/authorize?" +
-      stringifyQueryParams(queryParams);
-    window.open(url, "_blank");
+        stringifyQueryParams(queryParams)
+    );
   };
 
   return (
@@ -239,7 +239,7 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                <Box
+                {/* <Box
                   sx={{
                     fontSize: "14px",
                     marginTop: "10px",
@@ -252,8 +252,7 @@ const Form = ({
                   control={control}
                   required
                   name="type"
-                  disabled={true}
-                />
+                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",

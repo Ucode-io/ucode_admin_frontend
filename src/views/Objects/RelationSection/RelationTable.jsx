@@ -435,7 +435,8 @@ const RelationTable = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
-          queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          // queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          refetch();
         },
       }
     );

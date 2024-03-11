@@ -9,12 +9,14 @@ import {Container, Draggable} from "react-smooth-dnd";
 import constructorViewService from "../../services/constructorViewService";
 import {applyDrag} from "../../utils/applyDrag";
 import {columnIcons} from "../../utils/constants/columnIcons";
+import {useTranslation} from "react-i18next";
 
 export default function TableViewGroupByButton({currentView, fieldsMap}) {
   const queryClient = useQueryClient();
   const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const {i18n} = useTranslation();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,25 +48,43 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
   }, [fieldsMap]);
 
   const visibleFields = useMemo(() => {
-    return currentView?.columns?.map((id) => fieldsMap[id]) ?? [];
-  }, [currentView?.columns, fieldsMap]);
+    return (
+      currentView?.attributes?.group_by_columns?.map((id) => fieldsMap[id]) ??
+      []
+    );
+  }, [currentView?.attributes?.group_by_columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter(
-      (field) => !currentView?.columns?.includes(field.id)
-    );
-  }, [allFields, currentView?.columns]);
-  console.log("unVisibleFields", unVisibleFields);
+    return allFields.filter((field) => {
+      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+        return !currentView?.attributes?.group_by_columns?.includes(
+          field.relation_id
+        );
+      } else {
+        return !currentView?.attributes?.group_by_columns?.includes(field.id);
+      }
+    });
+  }, [allFields, currentView?.attributes?.group_by_columns]);
+
   const onSwitchChange = (value, field) => {
     const updatedView = {
       ...currentView,
       attributes: {
         ...currentView?.attributes,
         group_by_columns: value
-          ? [...(currentView?.attributes?.group_by_columns || []), field?.id]
-          : (currentView?.attributes?.group_by_columns || []).filter(
-              (id) => id !== field?.id
-            ),
+          ? [
+              ...(currentView?.attributes?.group_by_columns || []),
+              field?.type === "LOOKUP" || field?.type === "LOOKUPS"
+                ? field?.relation_id
+                : field?.id,
+            ]
+          : (currentView?.attributes?.group_by_columns || []).filter((id) => {
+              if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+                return id !== field?.relation_id;
+              } else {
+                return id !== field?.id;
+              }
+            }),
       },
     };
     updateView(updatedView);
@@ -97,7 +117,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
   const isGroupBy = useMemo(() => {
     return currentView?.attributes?.group_by_columns?.length > 0;
   }, [currentView?.attributes?.group_by_columns]);
-  console.log("visibleFields", visibleFields);
+
   return (
     <div>
       <Button
@@ -236,7 +256,9 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                           }}>
                           {columnIcons(column?.type) ?? <LinkIcon />}
                         </div>
-                        {column?.label}
+                        {column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.label}
                       </div>
                       <div
                         style={{
@@ -251,28 +273,40 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                           padding: "8px 0px",
                           margin: "-1px -1px 0 0",
                         }}>
-                        <Switch
-                          size="small"
-                          checked={currentView?.attributes?.group_by_columns?.includes(
-                            column?.id
-                          )}
-                          onChange={(e) => {
-                            onSwitchChange(e.target.checked, column);
-                          }}
-                        />
+                        {column?.type === "LOOKUP" ||
+                        column?.type === "LOOKUPS" ? (
+                          <Switch
+                            size="small"
+                            checked={currentView?.attributes?.group_by_columns?.includes(
+                              column?.relation_id
+                            )}
+                            onChange={(e) => {
+                              onSwitchChange(e.target.checked, column);
+                            }}
+                          />
+                        ) : (
+                          <Switch
+                            size="small"
+                            checked={currentView?.attributes?.group_by_columns?.includes(
+                              column?.id
+                            )}
+                            onChange={(e) => {
+                              onSwitchChange(e.target.checked, column);
+                            }}
+                          />
+                        )}
                       </div>
                     </div>
                   </Draggable>
                 ))}
 
-              {/* {unVisibleFields?.map((column, index) => (
+              {unVisibleFields?.map((column, index) => (
                 <div
                   key={column.id}
                   style={{
                     display: "flex",
                     backgroundColor: "#fff",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 1,
@@ -284,8 +318,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                       paddingRight: 0,
                       padding: "8px 0px",
                       margin: "-1px -1px 0 0",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         width: 20,
@@ -294,11 +327,12 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}
-                    >
+                      }}>
                       {columnIcons(column.type) ?? <LinkIcon />}
                     </div>
-                    {column.label}
+                    {column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.label}
                   </div>
                   <div
                     style={{
@@ -312,18 +346,38 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                       alignItems: "center",
                       padding: "8px 0px",
                       margin: "-1px -1px 0 0",
-                    }}
-                  >
-                    <Switch
+                    }}>
+                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                      <Switch
+                        size="small"
+                        checked={currentView?.attributes?.group_by_columns?.includes(
+                          column?.relation_id
+                        )}
+                        onChange={(e) => {
+                          onSwitchChange(e.target.checked, column);
+                        }}
+                      />
+                    ) : (
+                      <Switch
+                        size="small"
+                        checked={currentView?.attributes?.group_by_columns?.includes(
+                          column?.id
+                        )}
+                        onChange={(e) => {
+                          onSwitchChange(e.target.checked, column);
+                        }}
+                      />
+                    )}
+                    {/* <Switch
                       size="small"
                       checked={false}
                       onChange={(e) => {
                         onSwitchChange(e.target.checked, column);
                       }}
-                    />
+                    /> */}
                   </div>
                 </div>
-              ))} */}
+              ))}
             </Container>
           </div>
         </div>

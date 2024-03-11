@@ -12,11 +12,13 @@ import RolePage from "./Roles";
 import FormCard from "../../components/FormCard";
 import ConnectionPage from "./Connections";
 import styles from "./style.module.scss";
+import connectionServiceV2 from "../../services/auth/connectionService";
 
 const PermissionDetail = () => {
   const {clientId} = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
   const {control, reset} = useForm();
+  const [connections, setConnections] = useState([]);
 
   const {isLoading} = useQuery(
     ["GET_CLIENT_TYPE_BY_ID", clientId],
@@ -26,6 +28,7 @@ const PermissionDetail = () => {
     {
       enabled: !!clientId,
       onSuccess: (res) => {
+        setConnections([res?.data?.response]);
         reset(res.data.response);
       },
     }
@@ -38,8 +41,7 @@ const PermissionDetail = () => {
         direction={"ltr"}
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
-        className={styles.tabs}
-      >
+        className={styles.tabs}>
         <Card style={{paddingBottom: "0px", borderRadius: "0"}}>
           <TabList>
             <Tab>Role</Tab>
@@ -55,7 +57,7 @@ const PermissionDetail = () => {
             <RolePage />
           </TabPanel>
           <TabPanel>
-            <ConnectionPage />
+            <ConnectionPage connections={connections} />
           </TabPanel>
         </Card>
       </Tabs>

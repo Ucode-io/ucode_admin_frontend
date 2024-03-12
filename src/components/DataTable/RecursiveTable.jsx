@@ -117,6 +117,7 @@ const RecursiveTable = ({
                     setFormValue={setFormValue}
                     relationfields={relationFields}
                     data={data}
+                    view={view}
                   />
                 </Box>
               </CTableCell>

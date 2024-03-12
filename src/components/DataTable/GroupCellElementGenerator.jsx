@@ -14,7 +14,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 
 const GroupCellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
-    if (field.type !== "LOOKUP") return get(row, field.slug, "");
+    if (field.type !== "LOOKUPS") return get(row, field.slug, "");
 
     const result = getRelationFieldTableCellLabel(
       field,
@@ -80,8 +80,8 @@ const GroupCellElementGenerator = ({field = {}, row}) => {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
-    // case "LOOKUP":
-    //   return value;
+    case "LOOKUP":
+      return row?.group_by_slug && get(row, `${field.slug}`);
 
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;

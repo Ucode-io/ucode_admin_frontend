@@ -40,17 +40,15 @@ export const getRelationFieldTabsLabel = (field, option) => {
 
   return label;
 };
-// field.view_fields?.forEach((el) => {
-//   let result = "";
-//   const optionValue = get(option, tableSlug);
-//   const value = optionValue?.[0]?.[el.slug];
 
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
   let label = "";
+
   field.view_fields?.forEach((el) => {
     let result = "";
-    const optionValue = get(option, tableSlug);
-    const value = optionValue?.[0]?.[el.slug];
+
+    let value = get(option, `${tableSlug}.${el?.slug}`);
+
     if (el?.type === "DATE")
       result = value ? format(new Date(value), "dd.MM.yyyy") : "";
     else if (el?.type === "DATE_TIME")

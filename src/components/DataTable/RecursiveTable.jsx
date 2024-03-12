@@ -66,7 +66,7 @@ const RecursiveTable = ({
     );
     return result;
   };
-
+  console.log("elementtttttttttt", element);
   return (
     <>
       {element && (

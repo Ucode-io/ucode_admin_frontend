@@ -301,7 +301,7 @@ export default function TimeLineView({
       value: el["id"],
     }));
   }, [fields]);
-  console.log("computedFelds", computedFelds);
+
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const updateView = () => {
@@ -313,7 +313,7 @@ export default function TimeLineView({
           ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: form.watch("group_fields"),
         },
-        group_fields: form.watch("group_fields"),
+        group_fields: form.watch("group_fields")?.map((item) => item?.id),
       })
       .then(() => {})
       .finally(() => {

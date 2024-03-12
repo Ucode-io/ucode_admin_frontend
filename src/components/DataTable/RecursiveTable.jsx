@@ -56,17 +56,6 @@ const RecursiveTable = ({
     }
   });
 
-  const getValue = (field, row) => {
-    if (field.type !== "LOOKUP") return get(row, field.slug, "");
-
-    const result = getRelationFieldTableCellLabel(
-      field,
-      row,
-      field.slug + "_data"
-    );
-    return result;
-  };
-  console.log("elementtttttttttt", element);
   return (
     <>
       {element && (

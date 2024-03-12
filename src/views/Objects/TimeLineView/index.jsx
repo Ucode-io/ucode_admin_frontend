@@ -301,7 +301,7 @@ export default function TimeLineView({
       value: el["id"],
     }));
   }, [fields]);
-  console.log("computedFelds", computedFelds);
+
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const updateView = () => {

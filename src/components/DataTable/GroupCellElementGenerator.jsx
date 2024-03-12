@@ -12,7 +12,7 @@ import LogoDisplay from "../LogoDisplay";
 import {generateLink} from "../../utils/generateYandexLink";
 import IconGenerator from "../IconPicker/IconGenerator";
 
-const GroupCellElementGenerator = ({field = {}, row}) => {
+const GroupCellElementGenerator = ({field = {}, row, view}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUPS") return get(row, field.slug, "");
 
@@ -81,7 +81,13 @@ const GroupCellElementGenerator = ({field = {}, row}) => {
       return <Many2ManyValue field={field} value={value} />;
 
     case "LOOKUP":
-      return row?.group_by_slug && get(row, `${field.slug}`);
+      return (
+        (row?.group_by_slug ||
+          !view?.attributes?.group_by_columns?.find(
+            (item) => item === field?.relation_id
+          )) &&
+        get(row, `${field.slug}`)
+      );
 
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;

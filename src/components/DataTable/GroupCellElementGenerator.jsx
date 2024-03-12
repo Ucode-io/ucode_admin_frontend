@@ -1,18 +1,18 @@
-import { get } from "@ngard/tiny-get";
-import { useMemo } from "react";
+import {get} from "@ngard/tiny-get";
+import {useMemo} from "react";
 import DownloadIcon from "@mui/icons-material/Download";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
 import Many2ManyValue from "../ElementGenerators/Many2ManyValue";
-import { formatDate } from "../../utils/dateFormatter";
-import { numberWithSpaces } from "../../utils/formatNumbers";
+import {formatDate} from "../../utils/dateFormatter";
+import {numberWithSpaces} from "../../utils/formatNumbers";
 import MultiselectCellColoredElement from "../ElementGenerators/MultiselectCellColoredElement";
 import TableTag from "../TableTag";
-import { parseBoolean } from "../../utils/parseBoolean";
+import {parseBoolean} from "../../utils/parseBoolean";
 import LogoDisplay from "../LogoDisplay";
-import { generateLink } from "../../utils/generateYandexLink";
+import {generateLink} from "../../utils/generateYandexLink";
 import IconGenerator from "../IconPicker/IconGenerator";
 
-const GroupCellElementGenerator = ({ field = {}, row }) => {
+const GroupCellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -47,7 +47,7 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el;
+        return el.table ? {...el.table, ...el} : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -90,8 +90,8 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
       return value !== undefined && typeof value === "number"
         ? numberWithSpaces(value?.toFixed(1))
         : value === undefined
-        ? value
-        : "";
+          ? value
+          : "";
 
     case "DATE_TIME":
       return (
@@ -109,8 +109,7 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
               __html: `${value.slice(0, 200)}${
                 value.length > 200 ? "..." : ""
               }`,
-            }}
-          ></span>
+            }}></span>
         </div>
       );
 
@@ -121,8 +120,9 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
       return (
         <div className="text-overflow">
           <span
-            dangerouslySetInnerHTML={{ __html: "*".repeat(value?.length) }}
-          ></span>
+            dangerouslySetInnerHTML={{
+              __html: "*".repeat(value?.length),
+            }}></span>
         </div>
       );
 
@@ -148,8 +148,8 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
       return value !== undefined && typeof value === "number"
         ? numberWithSpaces(value?.toFixed(1))
         : value === undefined
-        ? value
-        : "";
+          ? value
+          : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />
@@ -164,8 +164,7 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <LogoDisplay url={value} />
         </span>
       );
@@ -179,8 +178,7 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
             value?.split(",")?.[1]
           )}`}
           rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
+          onClick={(e) => e.stopPropagation()}>
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
         </a>
       ) : (
@@ -195,10 +193,9 @@ const GroupCellElementGenerator = ({ field = {}, row }) => {
           download
           target="_blank"
           onClick={(e) => e.stopPropagation()}
-          rel="noreferrer"
-        >
+          rel="noreferrer">
           <DownloadIcon
-            style={{ width: "25px", height: "25px", fontSize: "30px" }}
+            style={{width: "25px", height: "25px", fontSize: "30px"}}
           />
         </a>
       ) : (

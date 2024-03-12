@@ -1,16 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import {
-  CTable,
-  CTableBody,
-  CTableHead,
-  CTableRow
-} from "../CTable";
+import {CTable, CTableBody, CTableHead, CTableRow} from "../CTable";
 import GroupTableHeadForTableView from "./GroupTableHeadForTableView";
 import RecursiveTable from "./RecursiveTable";
 import "./style.scss";
@@ -119,7 +114,7 @@ const GroupObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -145,9 +140,7 @@ const GroupObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -221,7 +214,6 @@ const GroupObjectDataTable = ({
     }
   }, [formVisible]);
 
-
   return (
     <>
       <CTable
@@ -240,8 +232,7 @@ const GroupObjectDataTable = ({
         paginationExtraButton={paginationExtraButton}
         limit={limit}
         setLimit={setLimit}
-        defaultLimit={defaultLimit}
-      >
+        defaultLimit={defaultLimit}>
         <CTableHead>
           <CTableRow>
             {columns.map(
@@ -279,8 +270,7 @@ const GroupObjectDataTable = ({
         <CTableBody
           columnsCount={columns.length}
           dataLength={dataLength || data?.length}
-          title={title}
-        >
+          title={title}>
           {data?.map((element, index) => (
             <RecursiveTable
               element={element}

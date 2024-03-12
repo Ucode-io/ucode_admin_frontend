@@ -4,13 +4,13 @@ import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import { Button, Menu } from "@mui/material";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import {Button, Menu} from "@mui/material";
+import React, {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
-import { CTableHeadCell } from "../CTable";
+import {CTableHeadCell} from "../CTable";
 
 export default function GroupTableHeadForTableView({
   column,
@@ -31,7 +31,7 @@ export default function GroupTableHeadForTableView({
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -61,7 +61,9 @@ export default function GroupTableHeadForTableView({
     constructorViewService
       .update(tableSlug, {
         ...selectedView,
-        columns: selectedView?.columns?.filter((item) => item !== column),
+        columns: selectedView?.attributes?.group_by_columns.filter(
+          (item) => item !== column
+        ),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -73,11 +75,13 @@ export default function GroupTableHeadForTableView({
       constructorViewService
         .update(tableSlug, {
           ...selectedView,
-          columns: selectedView?.columns?.filter((item) => item !== column),
+          columns: selectedView?.attributes?.group_by_columns?.filter(
+            (item) => item !== column
+          ),
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
@@ -136,9 +140,12 @@ export default function GroupTableHeadForTableView({
           onClickAction: () => {
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
-              const index = newSortedDatas.findIndex((item) => item.field === column.id);
+              const index = newSortedDatas.findIndex(
+                (item) => item.field === column.id
+              );
               if (index !== -1) {
-                newSortedDatas[index].order = newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+                newSortedDatas[index].order =
+                  newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
               } else {
                 newSortedDatas.push({
                   field: column.id,
@@ -154,7 +161,10 @@ export default function GroupTableHeadForTableView({
           title: `${view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"} column`,
           icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
-            fixColumnChangeHandler(column, !view?.attributes?.fixedColumns?.[column?.id] ? true : false);
+            fixColumnChangeHandler(
+              column,
+              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
+            );
           },
         },
         // {
@@ -202,21 +212,25 @@ export default function GroupTableHeadForTableView({
           fontStyle: "normal",
           fontWeight: 500,
           lineHeight: "normal",
-          minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-          width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
+          minWidth: tableSize?.[pageName]?.[column.id]
+            ? tableSize?.[pageName]?.[column.id]
+            : "auto",
+          width: tableSize?.[pageName]?.[column.id]
+            ? tableSize?.[pageName]?.[column.id]
+            : "auto",
           position: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"}`,
-          left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
+          left: view?.attributes?.fixedColumns?.[column?.id]
+            ? `${calculateWidthFixedColumn(column.id)}px`
+            : "0",
           backgroundColor: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"}`,
           zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
           // color: formVisible && column?.required === true ? "red" : "",
-        }}
-      >
+        }}>
         <div
           className="table-filter-cell cell-data"
           onMouseEnter={(e) => {
             setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-          }}
-        >
+          }}>
           <span
             style={{
               whiteSpace: "nowrap",
@@ -225,9 +239,10 @@ export default function GroupTableHeadForTableView({
             onClick={(e) => {
               e.stopPropagation();
               setColumnId((prev) => (prev === column.id ? "" : column.id));
-            }}
-          >
-            {column?.attributes?.[`title_${i18n?.language}`] ?? column.label}
+            }}>
+            {column?.attributes?.[`label_${i18n?.language}`] ||
+              column?.attributes?.[`title_${i18n?.language}`] ||
+              column.label}
           </span>
 
           <Button
@@ -236,8 +251,7 @@ export default function GroupTableHeadForTableView({
             style={{
               minWidth: "auto",
               padding: "0 5px",
-            }}
-          >
+            }}>
             <ExpandCircleDownIcon />
           </Button>
           {/* {(disableFilters && isTableView) && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
@@ -285,16 +299,14 @@ export default function GroupTableHeadForTableView({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
             padding: "10px",
-          }}
-        >
+          }}>
           {menu.map((item) => (
             <div
               style={{
@@ -302,8 +314,7 @@ export default function GroupTableHeadForTableView({
                 flexDirection: "column",
                 gap: "10px",
                 borderBottom: "1px solid #E0E0E0",
-              }}
-            >
+              }}>
               {item.children.map((child) => (
                 <div
                   onClick={() => {
@@ -316,8 +327,7 @@ export default function GroupTableHeadForTableView({
                     alignItems: "center",
                     cursor: "pointer",
                     color: child.id === 14 ? "red" : "",
-                  }}
-                >
+                  }}>
                   <div>{child.icon}</div>
 
                   <span>{child.title}</span>

@@ -1,15 +1,16 @@
-import { Add, Delete } from "@mui/icons-material";
-import { Card } from "@mui/material";
-import { useFieldArray } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Add, Delete} from "@mui/icons-material";
+import {Card} from "@mui/material";
+import {useFieldArray} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import { applyDrag } from "../../../../../utils/applyDrag";
+import {applyDrag} from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
+import {useSelector} from "react-redux";
+import {useMemo} from "react";
+import {useTranslation} from "react-i18next";
 
 const NewSection = ({
   mainForm,
@@ -24,6 +25,7 @@ const NewSection = ({
   removeSection,
   allTabs,
 }) => {
+  const {i18n} = useTranslation();
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`,
@@ -49,13 +51,13 @@ const NewSection = ({
   };
 
   const onDrop = (dropResult) => {
-    const { fields, insert, move, remove } = sectionFields;
+    const {fields, insert, move, remove} = sectionFields;
 
     const result = applyDrag(fields, dropResult);
 
     if (!result) return;
     if (result.length > fields.length) {
-      insert(dropResult.addedIndex, { ...dropResult.payload });
+      insert(dropResult.addedIndex, {...dropResult.payload});
     } else if (result.length < fields.length) {
       remove(dropResult.removedIndex);
     } else {
@@ -64,7 +66,7 @@ const NewSection = ({
   };
 
   const removeField = (indexField, colNumber) => {
-    const { remove } = sectionFields;
+    const {remove} = sectionFields;
     remove(indexField);
   };
 
@@ -90,8 +92,7 @@ const NewSection = ({
       <div className={styles.newsectionCardHeader}>
         <div
           className={styles.newsectionCardHeaderLeftSide}
-          style={{ display: "flex", flexDirection: "column" }}
-        >
+          style={{display: "flex", flexDirection: "column"}}>
           {/* <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
@@ -128,12 +129,13 @@ const NewSection = ({
               // name={nameGenerator(language.slug)}
               name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
               size="small"
-              style={{ width: 170 }}
+              style={{width: 170}}
+              id={`section_lan_${i18n?.language}`}
             />
           ))}
         </div>
 
-        <div className="flex gap-1" style={{ marginLeft: "5px" }}>
+        <div className="flex gap-1" style={{marginLeft: "5px"}}>
           <RectangleIconButton onClick={() => openFieldsBlock("FIELD")}>
             <Add />
           </RectangleIconButton>
@@ -160,12 +162,11 @@ const NewSection = ({
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{className: "drag-row-drop-preview"}}
           onDrop={(dragResults) => onDrop(dragResults, 1)}
-          getChildPayload={(index) => sectionFields.fields[index]}
-        >
+          getChildPayload={(index) => sectionFields.fields[index]}>
           {sectionFieldsWatch?.map((field, fieldIndex) => (
-            <Draggable key={fieldIndex} style={{ minWidth: "300px" }}>
+            <Draggable key={fieldIndex} style={{minWidth: "300px"}}>
               <div className={styles.newsectionCardRow}>
                 <FormElementGenerator
                   control={mainForm.control}

@@ -1,14 +1,12 @@
 import listToOptions from "@/utils/listToOptions";
-import {
-  Close
-} from "@mui/icons-material";
-import { Box, Button, Card, Divider, IconButton } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import {Close} from "@mui/icons-material";
+import {Box, Button, Card, Divider, IconButton} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -19,10 +17,10 @@ import constructorFunctionService from "../../../../../services/constructorFunct
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import constructorTableService from "../../../../../services/constructorTableService";
-import { useRelationGetByIdQuery } from "../../../../../services/relationService";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import { relationFieldButtons } from "../../../../../utils/constants/fieldTypes";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import {useRelationGetByIdQuery} from "../../../../../services/relationService";
+import {applyDrag} from "../../../../../utils/applyDrag";
+import {relationFieldButtons} from "../../../../../utils/constants/fieldTypes";
+import {relationTyes} from "../../../../../utils/constants/relationTypes";
 import AutoFiltersBlock from "./AutoFiltersBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
@@ -40,27 +38,37 @@ const relationViewTypes = [
   },
 ];
 
-const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelationFields, formType, height }) => {
-  const { tableSlug } = useParams();
+const RelationSettings = ({
+  closeSettingsBlock = () => {},
+  relation,
+  getRelationFields,
+  formType,
+  height,
+}) => {
+  const {tableSlug} = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const [drawerType, setDrawerType] = useState("SCHEMA");
-  const { i18n } = useTranslation();
-  const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] = useState(true);
-  const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] = useState(true);
+  const {i18n} = useTranslation();
+  const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
+    useState(true);
+  const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] =
+    useState(true);
   const languages = useSelector((state) => state.languages.list);
   const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
       table_from: tableSlug,
-      auto_filters: [{
-        field_from: "",
-        field_to: ""
-      }],
+      auto_filters: [
+        {
+          field_from: "",
+          field_to: "",
+        },
+      ],
       action_relations: [],
     },
   });
   const values = watch();
-  console.log("values",values)
+  console.log("values", values);
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
@@ -124,15 +132,19 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
               return null;
             })
             .filter((field) => field) ?? [];
-        const unCheckedColumns = fields.filter((field) => !values.columns?.includes(field.id));
+        const unCheckedColumns = fields.filter(
+          (field) => !values.columns?.includes(field.id)
+        );
 
-        console.log("checkedColumns", checkedColumns)
-        console.log("checkedColumns", unCheckedColumns)
+        console.log("checkedColumns", checkedColumns);
+        console.log("checkedColumns", unCheckedColumns);
 
         const checkedFilters =
           values.quick_filters
             ?.map((filter) => {
-              const field = fields.find((field) => field.id === filter.field_id);
+              const field = fields.find(
+                (field) => field.id === filter.field_id
+              );
               if (field)
                 return {
                   ...field,
@@ -142,7 +154,12 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
             })
             .filter((field) => field) ?? [];
 
-        const unCheckedFilters = fields.filter((field) => !values.quick_filters?.some((filter) => filter.field_id === field.id));
+        const unCheckedFilters = fields.filter(
+          (field) =>
+            !values.quick_filters?.some(
+              (filter) => filter.field_id === field.id
+            )
+        );
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },
@@ -167,8 +184,6 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       value: field.id,
     }));
   }, [values.columnsList, values]);
-
-  console.log("computedFieldsListOptions",computedFieldsListOptions)
 
   const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
@@ -227,7 +242,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
         })),
 
       // compute default value
-      default_values: values?.default_values ? (Array.isArray(values.default_values) ? values.default_values : [values.default_values]) : [],
+      default_values: values?.default_values
+        ? Array.isArray(values.default_values)
+          ? values.default_values
+          : [values.default_values]
+        : [],
     };
 
     // delete data?.field_name;
@@ -268,7 +287,6 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
-
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
@@ -279,10 +297,12 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
           summaries: res?.summaries ?? [],
           view_fields: res?.view_fields?.map((field) => field.id) ?? [],
           field_name: res?.label,
-          auto_filters: [{
-            field_from: "",
-            field_to: ""
-          }],
+          auto_filters: [
+            {
+              field_from: "",
+              field_to: "",
+            },
+          ],
         });
       },
     },
@@ -292,13 +312,15 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
     return listToOptions(computedColumnsList, "label", "slug");
   }, [computedColumnsList]);
 
-  
-
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>
         {relationFieldButtons.map((item) => (
-          <Button className={item.value === drawerType ? styles.active : styles.inactive} onClick={() => setDrawerType(item.value)}>
+          <Button
+            className={
+              item.value === drawerType ? styles.active : styles.inactive
+            }
+            onClick={() => setDrawerType(item.value)}>
             {item.label}
           </Button>
         ))}
@@ -310,8 +332,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
           style={{
             borderBottom: "1px solid #e0e0e0",
             paddingBottom: "16px",
-          }}
-        >
+          }}>
           <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
 
           <IconButton onClick={closeSettingsBlock}>
@@ -319,8 +340,10 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{ height }}>
-          <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
+        <div className={styles.settingsBlockBody} style={{height}}>
+          <form
+            onSubmit={handleSubmit(submitHandler)}
+            className={styles.fieldSettingsForm}>
             <div>
               <Card className={styles.noShadow}>
                 {drawerType === "SCHEMA" && (
@@ -330,18 +353,22 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
                         gap: "10px",
-                      }}
-                    >
+                      }}>
                       <FRow label="Label From" required>
                         <Box
                           style={{
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}
-                        >
+                          }}>
                           {languages?.map((lang) => (
-                            <HFTextField name={`attributes.label_${lang?.slug}`} control={control} placeholder={`Relation Label From (${lang?.slug})`} fullWidth />
+                            <HFTextField
+                              name={`attributes.label_${lang?.slug}`}
+                              control={control}
+                              placeholder={`Relation Label From (${lang?.slug})`}
+                              fullWidth
+                              id={`relation_label_from_${i18n?.language}`}
+                            />
                           ))}
                         </Box>
                       </FRow>
@@ -352,42 +379,80 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}
-                        >
+                          }}>
                           {languages?.map((lang) => (
-                            <HFTextField name={`attributes.label_to_${lang?.slug}`} control={control} placeholder={`Relation Label To (${lang?.slug})`} fullWidth />
+                            <HFTextField
+                              name={`attributes.label_to_${lang?.slug}`}
+                              control={control}
+                              placeholder={`Relation Label To (${lang?.slug})`}
+                              fullWidth
+                              id={`relation_label_to_${i18n?.language}`}
+                            />
                           ))}
                         </Box>
                       </FRow>
                     </div>
 
                     <FRow label="Table from" required>
-                      <HFSelect name="table_from" control={control} placeholder="Table from" options={computedTablesList} autoFocus required />
+                      <HFSelect
+                        name="table_from"
+                        control={control}
+                        placeholder="Table from"
+                        options={computedTablesList}
+                        autoFocus
+                        required
+                      />
                     </FRow>
 
                     {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
                       <FRow label="Table to" required>
-                        <HFSelect name="table_to" control={control} placeholder="Table to" options={computedTablesList} required />
+                        <HFSelect
+                          name="table_to"
+                          control={control}
+                          placeholder="Table to"
+                          options={computedTablesList}
+                          required
+                        />
                       </FRow>
                     )}
 
                     <FRow label="Relation type" required>
-                      <HFSelect name="type" control={control} placeholder="Relation type" options={computedRelationsTypesList} required />
+                      <HFSelect
+                        name="type"
+                        control={control}
+                        placeholder="Relation type"
+                        options={computedRelationsTypesList}
+                        required
+                      />
                     </FRow>
 
                     {values.type === "Many2Many" && (
                       <FRow label="Relate field type" required>
-                        <HFSelect name="view_type" control={control} placeholder="Relation field type" options={relationViewTypes} />
+                        <HFSelect
+                          name="view_type"
+                          control={control}
+                          placeholder="Relation field type"
+                          options={relationViewTypes}
+                        />
                       </FRow>
                     )}
                     {/* {isViewFieldsVisible && ( */}
-                      <FRow label="View fields">
-                        <HFMultipleSelect name="view_fields" control={control} options={computedFieldsListOptions} placeholder="View fields"  />
-                      </FRow>
+                    <FRow label="View fields">
+                      <HFMultipleSelect
+                        name="view_fields"
+                        control={control}
+                        options={computedFieldsListOptions}
+                        placeholder="View fields"
+                      />
+                    </FRow>
                     {/* )} */}
 
-                    {values.type === "Many2Dynamic" && <DynamicRelationsBlock control={control} computedTablesList={computedTablesList} />}
-                   
+                    {values.type === "Many2Dynamic" && (
+                      <DynamicRelationsBlock
+                        control={control}
+                        computedTablesList={computedTablesList}
+                      />
+                    )}
 
                     <div>
                       <div className={styles.sectionHeader}>
@@ -402,11 +467,19 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                         <div className={styles.sectionBody}>
                           <div className={styles.formRow}>
                             <FRow label="Multiple insert field">
-                              <HFSelect options={computedColumns} control={control} name="multiple_insert_field" />
+                              <HFSelect
+                                options={computedColumns}
+                                control={control}
+                                name="multiple_insert_field"
+                              />
                             </FRow>
 
                             <FRow label="Fixed fields">
-                              <HFMultipleSelect options={computedColumns} control={control} name="updated_fields" />
+                              <HFMultipleSelect
+                                options={computedColumns}
+                                control={control}
+                                name="updated_fields"
+                              />
                             </FRow>
                           </div>
                         </div>
@@ -489,23 +562,46 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     </Box>
 
                     <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} /> */}
-                    <RelationDefault control={control} watch={watch} columnsList={values.columnsList}/>
+                    <RelationDefault
+                      control={control}
+                      watch={watch}
+                      columnsList={values.columnsList}
+                    />
                     <div
                       style={{
                         marginTop: "10px",
-                      }}
-                    >
-                      <HFCheckbox control={control} name="attributes.disabled" label={"Disabled"} />
-                      <HFCheckbox control={control} name="default_editable" label={"Default editable"} />
-                      <HFCheckbox control={control} name="creatable" label={"Creatable"} />
-                      <HFCheckbox control={control} name="relation_buttons" label={"Relation Buttons"} />
+                      }}>
+                      <HFCheckbox
+                        control={control}
+                        name="attributes.disabled"
+                        label={"Disabled"}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="default_editable"
+                        label={"Default editable"}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="creatable"
+                        label={"Creatable"}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="relation_buttons"
+                        label={"Relation Buttons"}
+                      />
                     </div>
                   </div>
                 )}
 
                 {drawerType === "AUTO_FILTER" && (
                   <div className="p-2">
-                    <DefaultValueBlock control={control} watch={watch} columnsList={values.columnsList} />
+                    <DefaultValueBlock
+                      control={control}
+                      watch={watch}
+                      columnsList={values.columnsList}
+                    />
                     <AutoFiltersBlock control={control} watch={watch} />
                   </div>
                 )}
@@ -513,7 +609,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
             </div>
 
             <div className={styles.settingsFooter}>
-              <PrimaryButton className={styles.button} style={{ width: "100%", fontSize: "14px" }} onClick={handleSubmit(submitHandler)} loader={formLoader || loader}>
+              <PrimaryButton
+                className={styles.button}
+                style={{width: "100%", fontSize: "14px"}}
+                onClick={handleSubmit(submitHandler)}
+                loader={formLoader || loader}>
                 Save
               </PrimaryButton>
             </div>

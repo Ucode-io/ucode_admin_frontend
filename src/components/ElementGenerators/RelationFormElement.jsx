@@ -325,6 +325,7 @@ const AutoCompleteElement = ({
       const id = value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
+
       if (data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
@@ -411,7 +412,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field, value]);
-  console.log("allOptionsallOptions", allOptions, field);
+
   useEffect(() => {
     if (value) getValueData();
   }, [value]);

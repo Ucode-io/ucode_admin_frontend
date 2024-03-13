@@ -100,14 +100,13 @@ const DynamicRelationFormElement = ({
         label={
           field?.attributes[`title_${i18n?.language}`] ??
           field?.attributes[`name${i18n?.language}`] ??
-          field?.attributes[`label${i18n?.language}`] ??
+          field?.attributes[`label_${i18n?.language}`] ??
           field?.label ??
           field.title ??
           " "
         }
         onLabelChange={onChange}
-        required={checkRequiredField}
-      >
+        required={checkRequiredField}>
         {/* <FRow label={field.label ?? field.title} required={field.required}> */}
         <TextField
           disabled={disabled}
@@ -130,8 +129,7 @@ const DynamicRelationFormElement = ({
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={closeMenu}
-        classes={{list: styles.menu, paper: styles.paper}}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}>
         <Dropdown
           field={field}
           closeMenu={closeMenu}

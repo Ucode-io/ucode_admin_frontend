@@ -1,4 +1,4 @@
-import {MoreVertOutlined} from "@mui/icons-material";
+import {Description, MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -436,6 +436,20 @@ const ViewsWithGroups = ({
               }}>
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}>
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}>
+                    <Description
+                      className={style.icon}
+                      style={{color: "#6E8BB7"}}
+                    />
+                  </div>
+                  <span>Template</span>
+                </div>
               </div>
             </Menu>
           </div>

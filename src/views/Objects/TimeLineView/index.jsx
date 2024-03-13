@@ -123,11 +123,12 @@ export default function TimeLineView({
       },
     }
   );
-
   useEffect(() => {
-    setDataFromQuery(recursionFunctionForAddIsOpen(data));
-  }, [data]);
-  console.log("tableSlug", tableSlug);
+    if (data && JSON.stringify(data) !== JSON.stringify(dataFromQuery)) {
+      setDataFromQuery(recursionFunctionForAddIsOpen(data));
+    }
+  }, [data, dataFromQuery]);
+
   // FOR TABLE INFO
   const {
     data: {fields, visibleColumns, visibleRelationColumns} = {data: []},

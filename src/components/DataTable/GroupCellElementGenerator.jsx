@@ -91,7 +91,6 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
     return foundSlugs.join(",");
   }, [field, row, index]);
 
-  console.log("resultString", resultString);
   if (field.render) {
     return field.render(row);
   }

@@ -51,6 +51,7 @@ const CellElementGeneratorForTableView = ({
   isTableView,
   isNewRow = false,
   newColumn = false,
+  mainForm,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -158,6 +159,7 @@ const CellElementGeneratorForTableView = ({
         />
       ) : (
         <CellRelationFormElementForNewColumn
+          mainForm={mainForm}
           relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}

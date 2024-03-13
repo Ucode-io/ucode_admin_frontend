@@ -47,6 +47,7 @@ const HFInternationPhone = ({
           value={
             isString(value) ? (value?.includes("+") ? value : `+${value}`) : ""
           }
+          id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
           onChange={(newValue) => {
             if (
               newValue === undefined ||

@@ -81,8 +81,8 @@ export default function TimeLineRecursiveRow({
 
   const computedValue = useMemo(() => {
     const slugs = viewFields?.map((item) => item) ?? [];
-    return slugs.map((slug) => get(label, slug, "")).join(" ");
-  }, [label, viewFields]);
+    return slugs.map((slug) => get(item?.label, slug, "")).join(" ");
+  }, [viewFields]);
   return (
     <div>
       <div className={styles.group_by_column}>
@@ -101,16 +101,14 @@ export default function TimeLineRecursiveRow({
             justifyContent: "flex-start",
             padding: "0 10px",
             borderRadius: "4px",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               paddingLeft: sub ? `${level * 6}px` : "",
-            }}
-          >
+            }}>
             {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
             {item?.data?.[0]?.data && (
               <>{open ? <ExpandLess /> : <ExpandMore />}</>

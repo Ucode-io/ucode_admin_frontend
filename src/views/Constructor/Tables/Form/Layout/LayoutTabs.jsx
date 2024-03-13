@@ -159,8 +159,7 @@ function LayoutTabs({
             dropPlaceholder={{className: "drag-row-drop-preview"}}
             orientation="horizontal"
             onDrop={onDrop}
-            getChildPayload={(i) => allTabs[i]}
-          >
+            getChildPayload={(i) => allTabs[i]}>
             {allTabs?.map((tab, index) => (
               <Draggable
                 key={tab.id}
@@ -175,18 +174,15 @@ function LayoutTabs({
                     setSelectedTabIndex(index);
                     setSelectedTab(tab);
                   }}
-                  style={{padding: 0}}
-                >
+                  style={{padding: 0}}>
                   <div
                     // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
                     className={`${styles.tabsItem} ${
                       selectedTab?.id === tab?.id ? styles.active : ""
-                    }`}
-                  >
+                    }`}>
                     <div
                       className={styles.tab}
-                      style={{display: "flex", alignItems: "center"}}
-                    >
+                      style={{display: "flex", alignItems: "center"}}>
                       {mainForm.watch(
                         `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
                       ) ||

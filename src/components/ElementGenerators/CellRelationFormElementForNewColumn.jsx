@@ -19,7 +19,7 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -48,6 +48,7 @@ const CellRelationFormElementForNewColumn = ({
   relationfields,
   data,
   isNewRow,
+  mainForm,
 }) => {
   const classes = useStyles();
 
@@ -115,6 +116,7 @@ const CellRelationFormElementForNewColumn = ({
               disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
               control={control}
+              mainForm={mainForm}
               index={index}
               relationfields={relationfields}
               data={data}
@@ -140,8 +142,10 @@ const AutoCompleteElement = ({
   index,
   control,
   isNewRow,
+  originControl,
   setFormValue = () => {},
 }) => {
+  console.log("tessssssst", useWatch(originControl, name));
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -184,7 +188,7 @@ const AutoCompleteElement = ({
       background: state.isSelected ? "#007AFF" : provided.background,
       color: state.isSelected ? "#fff" : provided.color,
       cursor: "pointer",
-      textAlign: 'left'
+      textAlign: "left",
     }),
     menu: (provided) => ({
       ...provided,
@@ -407,8 +411,7 @@ const AutoCompleteElement = ({
           e.preventDefault();
         }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
-      >
+        style={{display: "flex", alignItems: "center"}}>
         {props.children}
         {!disabled && (
           <Box
@@ -416,8 +419,7 @@ const AutoCompleteElement = ({
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
-            }}
-          >
+            }}>
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -437,8 +439,7 @@ const AutoCompleteElement = ({
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-        >
+          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
             aria-haspopup="true"
@@ -461,8 +462,7 @@ const AutoCompleteElement = ({
               horizontal: "left",
             }}
             onClose={handlePopoverClose}
-            disableRestoreFocus
-          >
+            disableRestoreFocus>
             <Typography sx={{p: 1}}>Create new object</Typography>
           </Popover>
         </span>
@@ -500,8 +500,7 @@ const AutoCompleteElement = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   setLocalValue([]);
-                }}
-              >
+                }}>
                 <ClearIcon />
               </div>
             ),
@@ -513,9 +512,8 @@ const AutoCompleteElement = ({
         }}
         noOptionsMessage={() => (
           <span
-            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-          >
+            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
             Create new
           </span>
         )}

@@ -52,7 +52,7 @@ const CHFFormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
     const {error, result} = parser?.parse(computedFormula);
-    let newValue = result ?? error ;
+    let newValue = result ?? error;
     // const prevValue = values[name]
     if (newValue !== currentValue) setFormValue(name, newValue);
   };
@@ -79,8 +79,8 @@ const CHFFormulaField = ({
             formulaIsVisible
               ? formula
               : typeof value === "number"
-              ? numberWithSpaces(value)
-              : ""
+                ? numberWithSpaces(value)
+                : ""
           }
           onChange={(e) => {
             const val = e.target.value;
@@ -96,6 +96,7 @@ const CHFFormulaField = ({
             isNewTableView && updateObject();
           }}
           name={name}
+          id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
           error={error}
           fullWidth
           sx={
@@ -118,13 +119,11 @@ const CHFFormulaField = ({
             endAdornment: (
               <InputAdornment position="end">
                 <Tooltip
-                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                >
+                  title={formulaIsVisible ? "Hide formula" : "Show formula"}>
                   <IconButton
                     edge="end"
                     color={formulaIsVisible ? "primary" : "default"}
-                    onClick={() => setFormulaIsVisible((prev) => !prev)}
-                  >
+                    onClick={() => setFormulaIsVisible((prev) => !prev)}>
                     {/* <IconGenerator icon="square-root-variable.svg" size={15} /> */}
                     <FunctionsIcon />
                   </IconButton>
@@ -134,8 +133,7 @@ const CHFFormulaField = ({
           }}
           {...props}
         />
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

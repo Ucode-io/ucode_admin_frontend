@@ -33,10 +33,9 @@ const HFSwitch = ({
             style={{
               background: isBlackBg ? "#2A2D34" : "",
               color: isBlackBg ? "#fff" : "",
-            }}
-          >
+            }}>
             <Switch
-              id={`switch-${id}`}
+              id={`switch-${id} switch_${name}`}
               {...props}
               autoFocus={tabIndex === 1}
               inputProps={{tabIndex}}
@@ -52,8 +51,7 @@ const HFSwitch = ({
             </label>
           </div>
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

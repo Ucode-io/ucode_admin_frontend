@@ -27,7 +27,7 @@ const HFNumberField = ({
 }) => {
   const handleChange = (value, onChange) => {
     if (value.floatValue) {
-      onChange(value?.floatValue ||0);
+      onChange(value?.floatValue || 0);
     } else {
       onChange("");
     }
@@ -43,7 +43,7 @@ const HFNumberField = ({
         required: required ? "This is a required field" : false,
         validate: (value) => {
           if (regexValidation && !new RegExp(regexValidation).test(value)) {
-            return field?.attributes?.validation_message; 
+            return field?.attributes?.validation_message;
           }
           return true;
         },
@@ -58,25 +58,24 @@ const HFNumberField = ({
                     border: "none",
                     display: "flex",
                     alignItems: "center",
-                    position: 'relative',
+                    position: "relative",
                   }
                 : disabled
-                ? {
-                    background: "#DEDEDE",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "4px",
-                    position: 'relative',
-                  }
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                    display: "flex",
-                    alignItems: "center",
-                    position: 'relative',
-                  }
-            }
-          >
+                  ? {
+                      background: "#DEDEDE",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "4px",
+                      position: "relative",
+                    }
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                      display: "flex",
+                      alignItems: "center",
+                      position: "relative",
+                    }
+            }>
             <NumericFormat
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
@@ -84,9 +83,10 @@ const HFNumberField = ({
               displayType="input"
               isNumericString={true}
               autoComplete="off"
+              id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
               allowNegative
               fullWidth={fullWidth}
-              value={typeof value === 'number' ? value : 0}
+              value={typeof value === "number" ? value : 0}
               onValueChange={(value) => {
                 handleChange(value, onChange);
               }}
@@ -95,7 +95,6 @@ const HFNumberField = ({
               }`}
               name={name}
               readOnly={disabled}
-              
               style={
                 isTransparent
                   ? {
@@ -105,19 +104,28 @@ const HFNumberField = ({
                       outline: "none",
                     }
                   : disabled
-                  ? {background: "#c0c0c039", borderRight: 0, outline: "none"}
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "",
-                      color: isBlackBg ? "#fff" : "",
-                      outline: "none",
-                      border: error?.type === 'required' ? '1px solid red' : ''
-                    }
+                    ? {background: "#c0c0c039", borderRight: 0, outline: "none"}
+                    : {
+                        background: isBlackBg ? "#2A2D34" : "",
+                        color: isBlackBg ? "#fff" : "",
+                        outline: "none",
+                        border:
+                          error?.type === "required" ? "1px solid red" : "",
+                      }
               }
               {...props}
             />
-              {!disabledHelperText && error?.message && (
-              <FormHelperText sx={{position:'absolute', bottom: newColumn ? '-10px' : '-20px', left: '10px'}} error>{error?.message}</FormHelperText>
-              )}
+            {!disabledHelperText && error?.message && (
+              <FormHelperText
+                sx={{
+                  position: "absolute",
+                  bottom: newColumn ? "-10px" : "-20px",
+                  left: "10px",
+                }}
+                error>
+                {error?.message}
+              </FormHelperText>
+            )}
 
             {disabled && (
               <Box
@@ -126,15 +134,13 @@ const HFNumberField = ({
                   alignItems: "center",
                   justifyContent: "center",
                   padding: "5px",
-                }}
-              >
+                }}>
                 <Lock style={{fontSize: "20px"}} />
               </Box>
             )}
           </Box>
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

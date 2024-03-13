@@ -53,7 +53,7 @@ export default function TimeLineGroupBy({
 
   useEffect(() => {
     setAllColumns({
-      checkedColumns,
+      checkedColumns: checkedColumns?.filter((item) => item),
       unCheckedColumns: unCheckedColumns.filter(
         (item) =>
           item?.type === "LOOKUP" ||
@@ -67,13 +67,13 @@ export default function TimeLineGroupBy({
 
   const changeHandler = (e, val, id) => {
     const oldVals = form.getValues("group_fields");
+
     if (!val) {
-      form.setValue(
-        "group_fields",
-        oldVals?.filter((el) => el !== id)
-      );
+      const updatedVals = oldVals.filter((item) => item !== id);
+      form.setValue("group_fields", updatedVals);
     } else {
-      form.setValue("group_fields", [...oldVals, id]);
+      const updatedVals = [...oldVals, id];
+      form.setValue("group_fields", updatedVals);
     }
 
     updateView();
@@ -128,13 +128,11 @@ export default function TimeLineGroupBy({
         maxHeight: 300,
         overflowY: "auto",
         padding: "10px 14px",
-      }}
-    >
+      }}>
       <CTable
         removableHeight={false}
         disablePagination
-        tableStyle={{border: "none"}}
-      >
+        tableStyle={{border: "none"}}>
         <CTableBody dataLength={1}>
           {checkedColumns?.length || unCheckedColumns?.length ? (
             <Container
@@ -146,9 +144,8 @@ export default function TimeLineGroupBy({
                 field_name:
                   allColumns?.checkedColumns[i]?.label ??
                   allColumns?.checkedColumns[i]?.title,
-              })}
-            >
-              {checkedColumns?.map((column) => (
+              })}>
+              {allColumns?.checkedColumns?.map((column) => (
                 <Draggable
                   key={column?.id}
                   style={{
@@ -159,15 +156,13 @@ export default function TimeLineGroupBy({
                     cursor: "move",
                     borderBottom: "1px solid #e5e5e5",
                     padding: "5px 0",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                    }}
-                  >
+                    }}>
                     <div>{columnIcons[column?.type] ?? <LinkIcon />}</div>
                     <div>
                       {column?.attributes?.[`label_${i18n.language}`] ??
@@ -197,15 +192,13 @@ export default function TimeLineGroupBy({
                     justifyContent: "space-between",
                     borderBottom: "1px solid #e5e5e5",
                     padding: "5px 0",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                    }}
-                  >
+                    }}>
                     <div>{columnIcons[item?.type] ?? <LinkIcon />}</div>
                     <div>
                       {item?.attributes?.[`label_${i18n.language}`] ??
@@ -240,7 +233,7 @@ export default function TimeLineGroupBy({
                     size="small"
                     disabled={isLoading || updateLoading}
                     checked={false}
-                    onChange={(e, val) => changeHandler(e, val, item)}
+                    onChange={(e, val) => changeHandler(e, val, item?.id)}
                   />
                 </div>
               ))}

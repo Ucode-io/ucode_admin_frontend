@@ -125,7 +125,13 @@ export default function TimeLineView({
   );
   useEffect(() => {
     if (data && JSON.stringify(data) !== JSON.stringify(dataFromQuery)) {
-      setDataFromQuery(recursionFunctionForAddIsOpen(data));
+      setDataFromQuery((prevDataFromQuery) => {
+        const newData = recursionFunctionForAddIsOpen(data);
+        if (JSON.stringify(newData) !== JSON.stringify(prevDataFromQuery)) {
+          return newData;
+        }
+        return prevDataFromQuery;
+      });
     }
   }, [data, dataFromQuery]);
 

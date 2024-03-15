@@ -1,21 +1,21 @@
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import {CKEditor} from "@ckeditor/ckeditor5-react";
 import "./redactorOverriders.scss";
 import Editor from "ckeditor5-custom-build";
-import { forwardRef, useEffect } from "react";
-import { useWatch } from "react-hook-form";
-import { useMemo } from "react";
+import {forwardRef, useEffect} from "react";
+import {useWatch} from "react-hook-form";
+import {useMemo} from "react";
 import uploadPlugin from "./UploadAdapter";
 import usePaperSize from "../../../hooks/usePaperSize";
 
 const Redactor = forwardRef(
-  ({ control, fields, selectedPaperSizeIndex }, ref) => {
-    const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
+  ({control, fields, selectedPaperSizeIndex}, ref) => {
+    const {selectedPaperSize} = usePaperSize(selectedPaperSizeIndex);
 
     const value = useWatch({
       control,
       name: "html",
     });
-
+    console.log("valuevaluevaluevalue", value);
     const computedFields = useMemo(() => {
       return (
         fields?.map((field) => ({
@@ -24,7 +24,7 @@ const Redactor = forwardRef(
         })) ?? []
       );
     }, [fields]);
-    
+
     useEffect(() => {
       const editor = ref.current;
       if (!editor) return;
@@ -75,15 +75,14 @@ const Redactor = forwardRef(
               wrapper.appendChild(editor.ui.getEditableElement());
               ref.current = editor;
             }}
-            onError={(error, { willEditorRestart }) => {
+            onError={(error, {willEditorRestart}) => {
               // If the editor is restarted, the toolbar element will be created once again.
               // The `onReady` callback will be called again and the new toolbar will be added.
               // This is why you need to remove the older toolbar.
               if (willEditorRestart) {
                 ref.current.ui.view.toolbar.element.remove();
               }
-            }}
-          ></CKEditor>
+            }}></CKEditor>
         </div>
       </>
     );

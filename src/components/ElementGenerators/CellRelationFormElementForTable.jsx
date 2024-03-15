@@ -19,7 +19,7 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -405,8 +405,7 @@ const AutoCompleteElement = ({
           e.preventDefault();
         }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
-      >
+        style={{display: "flex", alignItems: "center"}}>
         {props.children}
         {!disabled && (
           <Box
@@ -414,8 +413,7 @@ const AutoCompleteElement = ({
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue?.[0], {}, menuId);
-            }}
-          >
+            }}>
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -435,14 +433,13 @@ const AutoCompleteElement = ({
       return true;
     } else return false;
   }, [autoFiltersValue]);
-
+  console.log("localValue", computedOptions, field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-        >
+          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
             aria-haspopup="true"
@@ -465,8 +462,7 @@ const AutoCompleteElement = ({
               horizontal: "left",
             }}
             onClose={handlePopoverClose}
-            disableRestoreFocus
-          >
+            disableRestoreFocus>
             <Typography sx={{p: 1}}>Create new object</Typography>
           </Popover>
         </span>
@@ -505,8 +501,7 @@ const AutoCompleteElement = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   setLocalValue([]);
-                }}
-              >
+                }}>
                 <ClearIcon />
               </div>
             ),
@@ -518,10 +513,9 @@ const AutoCompleteElement = ({
         }}
         noOptionsMessage={() => (
           <span
-            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-          >
-           Create new
+            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+            Create new
           </span>
         )}
         menuShouldScrollIntoView

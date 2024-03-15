@@ -312,9 +312,13 @@ export default function TimeLineView({
         ...views?.[selectedTabIndex],
         attributes: {
           ...views?.[selectedTabIndex]?.attributes,
-          group_by_columns: form.watch("group_fields"),
+          group_by_columns: form
+            .watch("group_fields")
+            ?.filter((el) => el !== "" && el !== null && el !== undefined),
         },
-        group_fields: form.watch("group_fields"),
+        group_fields: form
+          .watch("group_fields")
+          ?.filter((el) => el !== "" && el !== null && el !== undefined),
       })
       .then(() => {})
       .finally(() => {

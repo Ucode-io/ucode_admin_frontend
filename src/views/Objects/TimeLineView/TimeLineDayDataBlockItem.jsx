@@ -225,15 +225,13 @@ export default function TimeLineDayDataBlockItem({
         }}
         onClick={handleOpen}
         ref={ref}
-        key={data?.id_order}
-      >
+        key={data?.id_order}>
         <div
           className={styles.dataBlockInner}
           style={{
             width: "100%",
             height: "100%",
-          }}
-        >
+          }}>
           <CellElementGenerator
             row={data}
             field={computedColumnsFor?.find(

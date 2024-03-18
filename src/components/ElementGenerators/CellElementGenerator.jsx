@@ -18,7 +18,6 @@ import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 
 const CellElementGenerator = ({field = {}, row}) => {
-  console.log("fielddddddddd", field, row);
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -100,9 +99,6 @@ const CellElementGenerator = ({field = {}, row}) => {
 
     // case "LOOKUP":
     //   return value;
-
-    // case "SINGLE_LINE":
-    //   return console.log("fielddddddddd", field, value);
 
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;

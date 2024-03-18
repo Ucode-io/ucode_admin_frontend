@@ -20,6 +20,7 @@ import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
 import {useSearchParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -142,10 +143,10 @@ const AutoCompleteElement = ({
   index,
   control,
   isNewRow,
-  originControl,
+  mainForm,
+
   setFormValue = () => {},
 }) => {
-  console.log("tessssssst", useWatch(originControl, name));
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -159,6 +160,7 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
+  const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -345,15 +347,30 @@ const AutoCompleteElement = ({
     });
   };
 
-  const getValueData = async () => {
-    const id = value;
-    const data = computedOptions?.find((item) => item?.value === id);
+  const setClientTypeValue = () => {
+    const value = computedOptions?.find((item) => item?.value === clientTypeID);
 
-    if (data?.prepayment_balance) {
-      setFormValue("prepayment_balance", data?.prepayment_balance || 0);
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
+      setValue(value?.guid ?? value?.guid);
+      setLocalValue(value);
     }
+  };
 
-    setLocalValue(data ? [data] : null);
+  const getValueData = async () => {
+    try {
+      const id = value;
+      const res = await constructorObjectService.getById(tableSlug, id);
+      const data = res?.data?.response;
+
+      if (data.prepayment_balance) {
+        setFormValue("prepayment_balance", data.prepayment_balance || 0);
+      }
+
+      setLocalValue(data ? [data] : null);
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -381,7 +398,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-
+  console.log("valueeeeeeeeeeeeeee", value);
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
@@ -401,8 +418,12 @@ const AutoCompleteElement = ({
   }, [relOptions, field]);
 
   useEffect(() => {
+    setClientTypeValue();
+  }, []);
+
+  useEffect(() => {
     if (value) getValueData();
-  }, [value, computedOptions]);
+  }, [value]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>

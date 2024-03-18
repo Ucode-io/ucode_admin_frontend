@@ -61,6 +61,8 @@ const CellElementGeneratorForTableView = ({
 
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
+  } else if (field?.type === "LOOKUP") {
+    relationTableSlug = field?.table_slug;
   }
 
   const computedSlug = useMemo(() => {
@@ -125,8 +127,8 @@ const CellElementGeneratorForTableView = ({
         objectIdFromJWT = table.object_id;
       }
     });
-  }, [tables, relationTableSlug]);
-
+  }, [tables, relationTableSlug, field]);
+  console.log("objectIdFromJWT", objectIdFromJWT);
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);

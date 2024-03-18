@@ -81,8 +81,14 @@ export default function TimeLineRecursiveRow({
 
   const computedValue = useMemo(() => {
     const slugs = viewFields?.map((item) => item) ?? [];
-    return slugs.map((slug) => get(item?.label, slug, "")).join(" ");
+
+    return slugs
+      .map((slug) =>
+        get(item?.[`${item?.group_by_slug}_id_data`]?.[0], slug, "")
+      )
+      .join(" ");
   }, [viewFields]);
+
   return (
     <div>
       <div className={styles.group_by_column}>

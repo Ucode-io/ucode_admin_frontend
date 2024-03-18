@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
-import { Collapse } from "@mui/material";
+import {Collapse} from "@mui/material";
 
 export default function TimeLineDataRecursiveRow({
   item,
@@ -23,7 +23,11 @@ export default function TimeLineDataRecursiveRow({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (openedRows.includes(lastLabels?.length ? lastLabels + "." + item?.label : item?.label)) {
+    if (
+      openedRows.includes(
+        lastLabels?.length ? lastLabels + "." + item?.label : item?.label
+      )
+    ) {
       setOpen(true);
     } else {
       setOpen(false);
@@ -39,8 +43,7 @@ export default function TimeLineDataRecursiveRow({
           minHeight: "32px",
           position: "relative",
           zIndex: 1,
-        }}
-      >
+        }}>
         {item?.data?.map(
           (data, dataIndex) =>
             !data?.data && (
@@ -69,7 +72,11 @@ export default function TimeLineDataRecursiveRow({
           option?.data && (
             <Collapse in={open} timeout="auto" unmountOnExit>
               <TimeLineDataRecursiveRow
-                lastLabels={lastLabels?.length ? lastLabels + "." + item?.label : item?.label}
+                lastLabels={
+                  lastLabels?.length
+                    ? lastLabels + "." + item?.label
+                    : item?.label
+                }
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
                 key={option?.label}

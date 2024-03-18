@@ -158,6 +158,7 @@ const SubMenu = ({
                 ))}
               {!selectedApp?.is_static && (
                 <BsThreeDots
+                  id={"three_dots"}
                   size={13}
                   onClick={(e) => {
                     handleOpenNotify(e, "FOLDER");
@@ -170,6 +171,7 @@ const SubMenu = ({
               )}
               {selectedApp?.data?.permission?.write && !addPermission ? (
                 <AddIcon
+                  id="add_icon"
                   size={13}
                   onClick={(e) => {
                     clickHandler(e);
@@ -314,6 +316,7 @@ const SubMenu = ({
 
             {selectedApp?.data?.permission?.write && exception ? (
               <Button
+                id="create_btn"
                 className="menu-button active-with-child"
                 onClick={clickHandler}
                 openFolderCreateModal={openFolderCreateModal}

@@ -55,15 +55,13 @@ export default function TimeLineBlock({
       className={styles.main_container}
       style={{
         height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
-      }}
-    >
+      }}>
       {view?.attributes?.group_by_columns?.length !== 0 && (
         <div className={styles.group_by}>
           <div
             className={`${styles.fakeDiv} ${
               selectedType === "month" ? styles.month : ""
-            }`}
-          >
+            }`}>
             Columns
           </div>
 

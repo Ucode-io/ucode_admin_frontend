@@ -28,11 +28,14 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
-        }}
-      >
+        }}>
         <div className={styles.days}>
           {datesList.map((date) => (
-            <TimeLineDays date={date} zoomPosition={zoomPosition} selectedType={selectedType} />
+            <TimeLineDays
+              date={date}
+              zoomPosition={zoomPosition}
+              selectedType={selectedType}
+            />
           ))}
         </div>
 
@@ -46,8 +49,7 @@ export default function TimeLineDayDataBlock({
               display: "flex",
               flexDirection: "column",
               top: 0,
-            }}
-          >
+            }}>
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
                 openedRows={openedRows}
@@ -71,27 +73,29 @@ export default function TimeLineDayDataBlock({
           </div>
         )}
 
-        {view?.attributes?.group_by_columns?.length === 0 && calendar_from_slug && calendar_to_slug && (
-          <div className={styles.datas}>
-            {data.map((item, index) => (
-              <TimeLineDayDataBlockItem
-                selectedType={selectedType}
-                computedColumnsFor={computedColumnsFor}
-                groupbyFields={groupbyFields}
-                data={item}
-                levelIndex={index}
-                groupByList={groupByList}
-                setFocusedDays={setFocusedDays}
-                datesList={datesList}
-                view={view}
-                zoomPosition={zoomPosition}
-                calendar_from_slug={calendar_from_slug}
-                calendar_to_slug={calendar_to_slug}
-                visible_field={visible_field}
-              />
-            ))}
-          </div>
-        )}
+        {view?.attributes?.group_by_columns?.length === 0 &&
+          calendar_from_slug &&
+          calendar_to_slug && (
+            <div className={styles.datas}>
+              {data.map((item, index) => (
+                <TimeLineDayDataBlockItem
+                  selectedType={selectedType}
+                  computedColumnsFor={computedColumnsFor}
+                  groupbyFields={groupbyFields}
+                  data={item}
+                  levelIndex={index}
+                  groupByList={groupByList}
+                  setFocusedDays={setFocusedDays}
+                  datesList={datesList}
+                  view={view}
+                  zoomPosition={zoomPosition}
+                  calendar_from_slug={calendar_from_slug}
+                  calendar_to_slug={calendar_to_slug}
+                  visible_field={visible_field}
+                />
+              ))}
+            </div>
+          )}
       </div>
     </>
   );

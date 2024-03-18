@@ -125,7 +125,13 @@ export default function TimeLineView({
   );
   useEffect(() => {
     if (data && JSON.stringify(data) !== JSON.stringify(dataFromQuery)) {
-      setDataFromQuery(recursionFunctionForAddIsOpen(data));
+      setDataFromQuery((prevDataFromQuery) => {
+        const newData = recursionFunctionForAddIsOpen(data);
+        if (JSON.stringify(newData) !== JSON.stringify(prevDataFromQuery)) {
+          return newData;
+        }
+        return prevDataFromQuery;
+      });
     }
   }, [data, dataFromQuery]);
 
@@ -312,9 +318,13 @@ export default function TimeLineView({
         ...views?.[selectedTabIndex],
         attributes: {
           ...views?.[selectedTabIndex]?.attributes,
-          group_by_columns: form.watch("group_fields"),
+          group_by_columns: form
+            .watch("group_fields")
+            ?.filter((el) => el !== "" && el !== null && el !== undefined),
         },
-        group_fields: form.watch("group_fields")?.map((item) => item?.id),
+        group_fields: form
+          .watch("group_fields")
+          ?.filter((el) => el !== "" && el !== null && el !== undefined),
       })
       .then(() => {})
       .finally(() => {

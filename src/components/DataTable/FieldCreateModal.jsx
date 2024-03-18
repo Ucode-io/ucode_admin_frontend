@@ -273,6 +273,7 @@ export default function FieldCreateModal({
                       placeholder="Name"
                       defaultValue={tableName}
                       languages={languages}
+                      id={"text_field_label"}
                     />
                   </Box>
                 </FRow>

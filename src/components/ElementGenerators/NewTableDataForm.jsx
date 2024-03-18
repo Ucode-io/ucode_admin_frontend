@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
-import React, { useMemo } from "react";
-import { useMutation } from "react-query";
+import {Box} from "@mui/material";
+import React, {useMemo} from "react";
+import {useMutation} from "react-query";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 
 export default function NewTableDataForm({
@@ -17,6 +17,7 @@ export default function NewTableDataForm({
   data,
   isWrap,
   watch,
+  mainForm,
 }) {
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
@@ -40,8 +41,7 @@ export default function NewTableDataForm({
       style={{
         position: "relative",
         minWidth: "150px",
-      }}
-    >
+      }}>
       <CellElementGeneratorForTableView
         relOptions={relOptions}
         tableView={tableView}
@@ -55,6 +55,7 @@ export default function NewTableDataForm({
         field={field}
         row={row}
         index={index}
+        mainForm={mainForm}
         control={control}
         setFormValue={setFormValue}
         relationfields={relationfields}

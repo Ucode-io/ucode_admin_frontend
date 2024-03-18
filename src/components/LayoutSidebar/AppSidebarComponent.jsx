@@ -188,6 +188,7 @@ const AppSidebar = ({
                 <Tooltip title="Folder settings" placement="top">
                   <Box className="extra_icon">
                     <BsThreeDots
+                      id={"three_dots"}
                       size={13}
                       onClick={(e) => {
                         handleOpenNotify(e, "FOLDER");
@@ -205,6 +206,7 @@ const AppSidebar = ({
               {element?.data?.permission?.create && (
                 <Tooltip title="Create folder" placement="top">
                   <Box
+                    id={"create_folder"}
                     className="extra_icon"
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
@@ -226,6 +228,7 @@ const AppSidebar = ({
           )}
           {element?.type === "TABLE" && (
             <MenuIcon
+              id={"menu_icon"}
               title="Table settings"
               onClick={(e) => {
                 e.stopPropagation();
@@ -242,6 +245,7 @@ const AppSidebar = ({
           )}
           {element?.type === "LINK" && (
             <MenuIcon
+              id={"menu_icon"}
               title="Table settings"
               onClick={(e) => {
                 e.stopPropagation();
@@ -258,6 +262,7 @@ const AppSidebar = ({
           )}
           {element?.type === "MICROFRONTEND" && (
             <MenuIcon
+              id={"menu_icon"}
               title="Microfrontend settings"
               onClick={(e) => {
                 e.stopPropagation();
@@ -275,6 +280,7 @@ const AppSidebar = ({
           )}
           {element?.type === "WEBPAGE" && (
             <MenuIcon
+              id={"menu_icon"}
               title="Webpage settings"
               onClick={(e) => {
                 e.stopPropagation();

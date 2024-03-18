@@ -69,6 +69,7 @@ const HFTextField = ({
             margin: "0px",
           }}
           name={name}
+          id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
           error={error}
           fullWidth={fullWidth}
           placeholder={placeholder}

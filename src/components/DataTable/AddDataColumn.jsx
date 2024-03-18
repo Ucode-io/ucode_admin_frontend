@@ -1,22 +1,41 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {showAlert} from "../../store/alert/alert.thunk";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import NewTableDataForm from "../ElementGenerators/NewTableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 
 const AddDataColumn = React.memo(
-  ({ columns, isTableView, relOptions, getValues, mainForm, relationfields, data, onRowClick, width, rows, setAddNewRow, refetch, view, isRelationTable }) => {
+  ({
+    columns,
+    isTableView,
+    relOptions,
+    getValues,
+    mainForm,
+    relationfields,
+    data,
+    onRowClick,
+    width,
+    rows,
+    setAddNewRow,
+    refetch,
+    view,
+    isRelationTable,
+  }) => {
     const dispatch = useDispatch();
-    const { tableSlug, id } = useParams();
+    const {tableSlug, id} = useParams();
 
-    const computedSlug = isRelationTable ? (view?.type === "Many2One" ? `${tableSlug}_id` : `${tableSlug}_ids`) : tableSlug;
+    const computedSlug = isRelationTable
+      ? view?.type === "Many2One"
+        ? `${tableSlug}_id`
+        : `${tableSlug}_ids`
+      : tableSlug;
 
     const computedTableSlug = isRelationTable ? view?.relatedTable : tableSlug;
 
@@ -25,7 +44,7 @@ const AddDataColumn = React.memo(
       control,
       setValue: setFormValue,
       watch,
-      formState: { errors },
+      formState: {errors},
     } = useForm({});
 
     const onSubmit = (values) => {
@@ -60,8 +79,7 @@ const AddDataColumn = React.memo(
             left: "0",
             backgroundColor: "#F6F6F6",
             zIndex: "2",
-          }}
-        >
+          }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column) => (
@@ -75,8 +93,7 @@ const AddDataColumn = React.memo(
               left: "0",
               backgroundColor: "#fff",
               zIndex: "1",
-            }}
-          >
+            }}>
             <NewTableDataForm
               relOptions={relOptions}
               tableSlug={tableSlug}
@@ -108,13 +125,12 @@ const AddDataColumn = React.memo(
             lineHeight: "normal",
             padding: "0 5px",
             right: "0",
-            borderLeft: '1px solid #eee'
-          }}
-        >
-          <td 
+            borderLeft: "1px solid #eee",
+          }}>
+          <td
             style={{
-                border: 'none'
-              }}>
+              border: "none",
+            }}>
             <div
               style={{
                 display: "flex",
@@ -122,14 +138,17 @@ const AddDataColumn = React.memo(
                 padding: "3px",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                <RectangleIconButton color="error" onClick={() => setAddNewRow(false)}>
+                <RectangleIconButton
+                  color="error"
+                  onClick={() => setAddNewRow(false)}>
                   <ClearIcon color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
-              <RectangleIconButton color="success" onClick={handleSubmit(onSubmit)}>
+              <RectangleIconButton
+                color="success"
+                onClick={handleSubmit(onSubmit)}>
                 <DoneIcon color="success" />
               </RectangleIconButton>
             </div>

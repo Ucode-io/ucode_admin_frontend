@@ -31,7 +31,7 @@ const HFCheckbox = ({
             color: isBlackBg ? "#fff" : "",
           }}>
           <Checkbox
-            id={`checkbox-${id}`}
+            id={`checkbox-${id} checkbox_${name}`}
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",

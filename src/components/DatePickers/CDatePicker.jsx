@@ -62,6 +62,7 @@ const CDatePicker = ({
               }
       }>
       <DatePicker
+        id={`date_${name}`}
         disabled={disabled}
         required={required}
         ref={datePickerRef}
@@ -83,6 +84,7 @@ const CDatePicker = ({
               {(InputProps) => (
                 <TextField
                   size="small"
+                  id={`date_${name}`}
                   name={name}
                   placeholder={placeholder}
                   inputFormat="dd.MM.yyyy"

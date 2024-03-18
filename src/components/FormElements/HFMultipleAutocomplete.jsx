@@ -26,7 +26,7 @@ import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 const filter = createFilterOptions();
 
@@ -104,8 +104,7 @@ const HFMultipleAutocomplete = ({
             className="hf-select"
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 
@@ -131,7 +130,7 @@ const AutoCompleteElement = ({
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
-  
+
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
     setDialogState(inputValue);
@@ -189,6 +188,7 @@ const AutoCompleteElement = ({
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
+        id={`multiselect_${name}`}
         value={computedValue}
         options={localOptions}
         popupIcon={
@@ -237,17 +237,18 @@ const AutoCompleteElement = ({
                 : {
                     background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
-                    border: error?.message ? '1px solid red' : ''
+                    border: error?.message ? "1px solid red" : "",
                   },
 
-              endAdornment: Boolean(appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6' || disabled) && (
+              endAdornment: Boolean(
+                appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+              ) && (
                 <Tooltip
                   title="This field is disabled for this role!"
                   style={{
                     position: "absolute",
                     right: 0,
-                  }}
-                >
+                  }}>
                   <InputAdornment position="start">
                     <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
@@ -261,7 +262,9 @@ const AutoCompleteElement = ({
           />
         )}
         noOptionsText={"No options"}
-        disabled={appId === 'fadc103a-b411-4a1a-b47c-e794c33f85f6' ? true : disabled}
+        disabled={
+          appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
+        }
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
@@ -272,8 +275,7 @@ const AutoCompleteElement = ({
                   hasColor
                     ? {color: el?.color, background: `${el?.color}30`}
                     : {}
-                }
-              >
+                }>
                 {hasIcon && <IconGenerator icon={el?.icon} />}
                 <p className={styles.value}>{el?.label ?? el?.value}</p>
                 {field?.attributes?.disabled === false && editPermission && (

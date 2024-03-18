@@ -23,7 +23,7 @@ const CPagination = ({
   setLimit = () => {},
   disablePagination,
   filterVisible,
-  navigateToEditPage,
+  navigateToEditPage = () => {},
   selectedTab,
   isRelationTable,
   ...props
@@ -83,8 +83,7 @@ const CPagination = ({
         alignItems: "center",
         marginTop: "15px",
         paddingRight: "15px",
-      }}
-    >
+      }}>
       {!disablePagination && !isGroupByTable && (
         <div>
           {limit && (
@@ -110,8 +109,7 @@ const CPagination = ({
           alignItems: "center",
           gap: 10,
           marginLeft: "10px",
-        }}
-      >
+        }}>
         {selectedObjectsForDelete?.length > 0 && !disablePagination ? (
           <RectangleIconButton color="error" onClick={multipleDelete}>
             <Button variant="outlined" color="error">
@@ -121,31 +119,30 @@ const CPagination = ({
         ) : null}
 
         <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-        {isTableView && (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              if (view?.attributes?.url_object) {
-                objectNavigate();
-              } else {
-                isRelationTable
-                  ? navigateToForm(
-                      isRelationTable
-                        ? selectedTab?.relation?.relation_table_slug
-                        : tableSlug,
-                      "CREATE",
-                      {},
-                      {},
-                      menuId
-                    )
-                  : navigateToEditPage(tableSlug);
-              }
-            }}
-          >
-            <AddIcon style={{color: "#007AFF"}} />
-            Add object
-          </Button>
-        )}
+          {isTableView && (
+            <Button
+              variant="outlined"
+              onClick={() => {
+                if (view?.attributes?.url_object) {
+                  objectNavigate();
+                } else {
+                  isRelationTable
+                    ? navigateToForm(
+                        isRelationTable
+                          ? selectedTab?.relation?.relation_table_slug
+                          : tableSlug,
+                        "CREATE",
+                        {},
+                        {},
+                        menuId
+                      )
+                    : navigateToEditPage(tableSlug);
+                }
+              }}>
+              <AddIcon style={{color: "#007AFF"}} />
+              Add object
+            </Button>
+          )}
         </PermissionWrapperV2>
 
         {!disablePagination && !isGroupByTable && (

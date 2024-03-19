@@ -224,15 +224,17 @@ const NewProfilePanel = ({
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
-
+  console.log("languageslanguages", languages, defaultLanguage);
   useEffect(() => {
     if (languages?.length) {
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
         i18n.changeLanguage(languages?.[0]?.slug);
-      } else if (languages?.length > 1 && defaultLanguage && !i18n?.language) {
-        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
-        i18n.changeLanguage(languages?.[0]?.slug);
+      } else if (languages?.length > 1) {
+        if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        }
       }
     }
   }, [languages, defaultLanguage, i18n]);

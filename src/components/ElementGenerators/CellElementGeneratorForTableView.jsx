@@ -1,5 +1,5 @@
 import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
@@ -55,9 +55,10 @@ const CellElementGeneratorForTableView = ({
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
+  const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
   let relationTableSlug = "";
-  let objectIdFromJWT = "";
+  // let objectIdFromJWT = "";
 
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
@@ -93,8 +94,8 @@ const CellElementGeneratorForTableView = ({
     const defaultValue =
       field.attributes?.defaultValue ?? field.attributes?.default_values;
 
-    if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
+    if (field?.attributes?.is_user_id_default === true) return userId;
 
     if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
       if (Array.isArray(defaultValue)) {
@@ -119,16 +120,16 @@ const CellElementGeneratorForTableView = ({
     const {error, result} = parser.parse(defaultValue);
 
     return error ? undefined : result;
-  }, [field]);
+  }, [field, objectIdFromJWT]);
 
   useEffect(() => {
     tables?.forEach((table) => {
       if (table.table_slug === relationTableSlug) {
-        objectIdFromJWT = table.object_id;
+        setObjectIdFromJWT(table?.object_id);
       }
     });
   }, [tables, relationTableSlug, field]);
-  console.log("objectIdFromJWT", objectIdFromJWT);
+
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
@@ -137,13 +138,13 @@ const CellElementGeneratorForTableView = ({
 
   switch (field.type) {
     case "LOOKUP":
-      return !newColumn ? (
-        <CellRelationFormElementForTableView
+      return newColumn ? (
+        <CellRelationFormElementForNewColumn
+          mainForm={mainForm}
           relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
-          isTableView={true}
           isFormEdit
           isBlackBg={isBlackBg}
           updateObject={updateObject}
@@ -160,12 +161,12 @@ const CellElementGeneratorForTableView = ({
           data={data}
         />
       ) : (
-        <CellRelationFormElementForNewColumn
-          mainForm={mainForm}
+        <CellRelationFormElementForTableView
           relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
+          isTableView={true}
           isFormEdit
           isBlackBg={isBlackBg}
           updateObject={updateObject}

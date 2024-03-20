@@ -21,6 +21,10 @@ export const fieldTypes = [
   "COLOR",
   "FLOAT_NOLIMIT",
   "DATE_TIME_WITHOUT_TIME_ZONE",
+  "PRIMARY_KEY",
+  "CODE",
+  "QR",
+  "POLYGON",
 ];
 
 export const fieldTypesOptions = [
@@ -182,6 +186,27 @@ export const fieldTypesOptions = [
         label: "Increment number",
         value: "INCREMENT_NUMBER",
       },
+      {
+        icon: "key.svg",
+        label: "Primary key",
+        value: "PRIMARY_KEY",
+      },
+      {
+        icon: "code.svg",
+        label: "Code",
+        value: "CODE",
+      },
+      {
+        icon: "draw-polygon.svg",
+        label: "Polygon",
+        value: "POLYGON",
+      },
+      {
+        icon: "qrcode.svg",
+        label: "Qr",
+        value: "QR",
+      },
+
       // {
       //   icon: "phone.svg",
       //   label: "Phone",

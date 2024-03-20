@@ -1,6 +1,6 @@
 import SingleLineAttributes from "./SingleLineAttributes";
 
-const AttributesButton = ({ control, watch, mainForm, button }) => {
+const AttributesButton = ({control, watch, mainForm, button}) => {
   const fieldType = watch("type");
 
   if (!fieldType) return null;
@@ -29,6 +29,9 @@ const AttributesButton = ({ control, watch, mainForm, button }) => {
       return button;
 
     case "MAP":
+      return button;
+
+    case "POLYGON":
       return button;
 
     default:

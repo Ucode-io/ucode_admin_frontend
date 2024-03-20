@@ -58,6 +58,9 @@ const NewProfilePanel = ({
   const settings = location.pathname.includes("settings");
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
   const params = {
     refresh_token: auth?.refreshToken,
     env_id: company.environmentId,
@@ -207,6 +210,10 @@ const NewProfilePanel = ({
     }));
   }, [projectInfo]);
 
+  const isLanguageExist = languages?.some(
+    (item) => defaultLanguage === item?.slug
+  );
+
   useEffect(() => {
     if (projectId) {
       dispatch(languagesActions.setLanguagesItems(languages));
@@ -221,10 +228,6 @@ const NewProfilePanel = ({
     dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
   };
 
-  const defaultLanguage = useSelector(
-    (state) => state.languages.defaultLanguage
-  );
-
   useEffect(() => {
     if (languages?.length) {
       if (languages?.length === 1) {
@@ -232,6 +235,9 @@ const NewProfilePanel = ({
         i18n.changeLanguage(languages?.[0]?.slug);
       } else if (languages?.length > 1) {
         if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        } else if (defaultLanguage && isLanguageExist) {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
           i18n.changeLanguage(languages?.[0]?.slug);
         }

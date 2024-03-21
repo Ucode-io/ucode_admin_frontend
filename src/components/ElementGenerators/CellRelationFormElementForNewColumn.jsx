@@ -144,7 +144,6 @@ const AutoCompleteElement = ({
   control,
   isNewRow,
   mainForm,
-
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
@@ -335,7 +334,8 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-    setValue(val?.value ?? null);
+    setValue(val?.value || null);
+    setLocalValue(val);
 
     if (!field?.attributes?.autofill) return;
 
@@ -347,30 +347,15 @@ const AutoCompleteElement = ({
     });
   };
 
-  const setClientTypeValue = () => {
-    const value = computedOptions?.find((item) => item?.value === clientTypeID);
-
-    if (
-      field?.attributes?.object_id_from_jwt &&
-      field?.id?.split("#")?.[0] === "client_type"
-    ) {
-      setValue(value?.guid ?? value?.guid);
-      setLocalValue(value);
-    }
-  };
-
   const getValueData = async () => {
-    try {
-      const id = value;
-      const res = await constructorObjectService.getById(tableSlug, id);
-      const data = res?.data?.response;
+    const id = value;
+    const data = computedOptions?.find((item) => item?.value === id);
 
-      if (data.prepayment_balance) {
-        setFormValue("prepayment_balance", data.prepayment_balance || 0);
-      }
+    if (data?.prepayment_balance) {
+      setFormValue("prepayment_balance", data?.prepayment_balance || 0);
+    }
 
-      setLocalValue(data ? [data] : null);
-    } catch (error) {}
+    setLocalValue(data ? [data] : null);
   };
 
   useEffect(() => {
@@ -398,7 +383,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-  console.log("valueeeeeeeeeeeeeee", value);
+
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
@@ -416,10 +401,6 @@ const AutoCompleteElement = ({
       setAllOptions(matchingOption.response);
     }
   }, [relOptions, field]);
-
-  useEffect(() => {
-    setClientTypeValue();
-  }, []);
 
   useEffect(() => {
     if (value) getValueData();
@@ -512,7 +493,7 @@ const AutoCompleteElement = ({
         isClearable
         components={{
           ClearIndicator: () =>
-            localValue?.length && (
+            (localValue?.length || Boolean(localValue)) && (
               <div
                 style={{
                   marginRight: "10px",

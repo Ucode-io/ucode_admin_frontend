@@ -37,6 +37,7 @@ const Redactor = forwardRef(
         );
       });
     }, [selectedPaperSize, ref]);
+
     return (
       <>
         <div className="ck-editor">

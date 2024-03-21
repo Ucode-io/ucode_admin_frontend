@@ -33,6 +33,7 @@ function HFModalMap({
   return (
     <Box>
       <TextField
+        id={`map_field`}
         value={
           value
             ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
@@ -79,8 +80,7 @@ function HFModalMap({
             <Button
               onClick={handleClose}
               sx={{marginLeft: "10px"}}
-              variant="outlined"
-            >
+              variant="outlined">
               Confirm
             </Button>
           </Box>

@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Box} from "@mui/material";
-import {Map, Placemark, YMaps, Polygon} from "@pbe/react-yandex-maps";
 import {toNumber} from "lodash-es";
 import {Controller} from "react-hook-form";
 import {generateLink} from "../../utils/generateYandexLink";
+import {Map, Polygon, YMaps, FullscreenControl} from "react-yandex-maps";
 
 const HFPolygonField = ({
   control,
@@ -16,18 +16,20 @@ const HFPolygonField = ({
   disabledHelperText = false,
   disabled,
   field,
-  width = "265px",
-  height = "200px",
-  defaultPolygon = [], // Default polygon coordinates
-  polygons = [], // Array of polygons to switch between
+  width = "100%",
+  height = "500px",
+  defaultPolygon = [],
+  polygons = [],
   ...props
 }) => {
+  console.log("fielddddddddd", field);
   const mapRef = useRef();
   const [selectedCoordinates, setSelectedCoordinates] = useState({
-    lat: "",
-    long: "",
+    lat: field?.attributes?.lat || "",
+    long: field?.attributes?.long || "",
   });
   const [selectedPolygonIndex, setSelectedPolygonIndex] = useState(0);
+  const [editingPolygon, setEditingPolygon] = useState(false);
 
   useEffect(() => {
     const handleGeolocationError = (error) => {
@@ -54,19 +56,54 @@ const HFPolygonField = ({
   }, []);
 
   const handleClick = (clickedLat, clickedLng) => {
-    setSelectedCoordinates({lat: clickedLat, long: clickedLng});
-    const selectedPolygon = polygons[selectedPolygonIndex];
-    const updatedPolygon = selectedPolygon
-      .map(([lat, lng]) => `${lat},${lng}`)
-      .join(" ");
-    onChange(updatedPolygon);
-    isNewTableView && updateObject();
+    if (!editingPolygon) {
+      setSelectedCoordinates({lat: clickedLat, long: clickedLng});
+    } else {
+      const updatedPolygon = polygons[selectedPolygonIndex].map(
+        ([lat, lng], index) => {
+          if (index === selectedVertexIndex) {
+            return [clickedLat, clickedLng];
+          }
+          return [lat, lng];
+        }
+      );
+      onChange(updatedPolygon);
+      isNewTableView && updateObject();
+      setEditingPolygon(false);
+    }
   };
 
   const handlePolygonSwitch = (index) => {
     setSelectedPolygonIndex(index);
   };
 
+  const [selectedVertexIndex, setSelectedVertexIndex] = useState(null);
+
+  const handleVertexClick = (index) => {
+    setSelectedVertexIndex(index);
+    setEditingPolygon(true);
+  };
+
+  const handleDeleteVertex = () => {
+    const updatedPolygon = polygons[selectedPolygonIndex].filter(
+      (_, index) => index !== selectedVertexIndex
+    );
+    onChange(updatedPolygon);
+    isNewTableView && updateObject();
+    setSelectedVertexIndex(null);
+  };
+  const draw = (ref) => {
+    ref.editor.startDrawing();
+    console.log("refrefrefrefrefref", ref);
+    ref.editor.events.add("vertexadd", (event) => {
+      console.log(event);
+    });
+  };
+
+  const mapState = {
+    center: [selectedCoordinates?.lat, selectedCoordinates?.long],
+    zoom: 10,
+  };
   return (
     <Controller
       control={control}
@@ -82,55 +119,32 @@ const HFPolygonField = ({
         let long = selectedCoordinates.long;
 
         return (
-          <Box sx={{width: width, overflow: "hidden", position: "relative"}}>
-            <YMaps
-              query={{
-                load: "package.full",
-                apikey: "5e5a73bd-6e0a-40f1-ba8e-f0b98d95e75f",
-              }}>
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              position: "relative",
+            }}>
+            <YMaps>
               <Map
-                id={`map_${name}`}
-                style={{
-                  width: width,
-                  height: height,
-                  boxSizing: "border-box",
-                }}
-                defaultState={{
-                  center: [lat, long],
-                  zoom: 7,
-                }}
-                instanceRef={mapRef}
-                onClick={(e) => {
-                  const [clickedLat, clickedLng] = e.get("coords");
-                  handleClick(clickedLat, clickedLng);
-                }}
-                options={{
-                  suppressMapOpenBlock: true,
-                }}>
-                <Placemark geometry={[lat, long]} />
+                width={"300px"}
+                defaultState={mapState}
+                modules={["geoObject.addon.editor"]}>
+                <FullscreenControl />
                 <Polygon
-                  geometry={selectedPolygon}
+                  instanceRef={(ref) => ref && draw(ref)}
+                  geometry={[]}
                   options={{
+                    editorDrawingCursor: "crosshair",
+                    editorMaxPoints: 1000,
                     fillColor: "#00FF00",
                     strokeColor: "#0000FF",
-                    strokeWidth: 4,
+                    strokeWidth: 5,
                   }}
                 />
               </Map>
             </YMaps>
-            <div>
-              {polygons.map((polygon, index) => (
-                <button key={index} onClick={() => handlePolygonSwitch(index)}>
-                  Polygon {index + 1}
-                </button>
-              ))}
-            </div>
-            <a
-              href={generateLink(lat, long)}
-              target="_blank"
-              rel="noopener noreferrer">
-              Open in Yandex Maps
-            </a>
           </Box>
         );
       }}

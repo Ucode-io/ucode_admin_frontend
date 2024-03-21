@@ -142,6 +142,8 @@ const CellElementGenerator = ({field = {}, row}) => {
             }}></span>
         </div>
       );
+    case "POLYGON":
+      return <div>{value.slice(0, 39)}...</div>;
 
     case "CHECKBOX":
     case "SWITCH":

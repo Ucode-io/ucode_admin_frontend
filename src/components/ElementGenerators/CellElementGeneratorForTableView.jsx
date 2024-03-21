@@ -641,6 +641,22 @@ const CellElementGeneratorForTableView = ({
         />
       );
 
+    // case "POLYGON":
+    //   return (
+    //     <HFQrFieldComponent
+    //       isTransparent={true}
+    //       control={control}
+    //       updateObject={updateObject}
+    //       isTableView={isTableView}
+    //       field={field}
+    //       defaultValue={defaultValue}
+    //       isFormEdit
+    //       name={computedSlug}
+    //       required={field?.required}
+    //       newColumn={newColumn}
+    //     />
+    //   );
+
     case "MULTI_LINE":
       return (
         <MultiLineCellFormElement

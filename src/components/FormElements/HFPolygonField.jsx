@@ -1,9 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Box} from "@mui/material";
-import {toNumber} from "lodash-es";
 import {Controller} from "react-hook-form";
-import {generateLink} from "../../utils/generateYandexLink";
-import {Map, Polygon, YMaps, FullscreenControl} from "react-yandex-maps";
+import {FullscreenControl, Map, Polygon, YMaps} from "@pbe/react-yandex-maps";
 
 const HFPolygonField = ({
   control,
@@ -16,13 +14,10 @@ const HFPolygonField = ({
   disabledHelperText = false,
   disabled,
   field,
-  width = "100%",
-  height = "500px",
   defaultPolygon = [],
   polygons = [],
   ...props
 }) => {
-  console.log("fielddddddddd", field);
   const mapRef = useRef();
   const [selectedCoordinates, setSelectedCoordinates] = useState({
     lat: field?.attributes?.lat || "",
@@ -55,24 +50,6 @@ const HFPolygonField = ({
     getCurrentLocation();
   }, []);
 
-  const handleClick = (clickedLat, clickedLng) => {
-    if (!editingPolygon) {
-      setSelectedCoordinates({lat: clickedLat, long: clickedLng});
-    } else {
-      const updatedPolygon = polygons[selectedPolygonIndex].map(
-        ([lat, lng], index) => {
-          if (index === selectedVertexIndex) {
-            return [clickedLat, clickedLng];
-          }
-          return [lat, lng];
-        }
-      );
-      onChange(updatedPolygon);
-      isNewTableView && updateObject();
-      setEditingPolygon(false);
-    }
-  };
-
   const handlePolygonSwitch = (index) => {
     setSelectedPolygonIndex(index);
   };
@@ -84,17 +61,8 @@ const HFPolygonField = ({
     setEditingPolygon(true);
   };
 
-  const handleDeleteVertex = () => {
-    const updatedPolygon = polygons[selectedPolygonIndex].filter(
-      (_, index) => index !== selectedVertexIndex
-    );
-    onChange(updatedPolygon);
-    isNewTableView && updateObject();
-    setSelectedVertexIndex(null);
-  };
   const draw = (ref) => {
     ref.editor.startDrawing();
-    console.log("refrefrefrefrefref", ref);
     ref.editor.events.add("vertexadd", (event) => {
       console.log(event);
     });
@@ -104,20 +72,17 @@ const HFPolygonField = ({
     center: [selectedCoordinates?.lat, selectedCoordinates?.long],
     zoom: 10,
   };
+
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultPolygon.join(" ")} // Set the default value
+      defaultValue={defaultPolygon}
       rules={{
         required: required ? "This is a required field" : false,
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const selectedPolygon = polygons[selectedPolygonIndex];
-        let lat = selectedCoordinates.lat;
-        let long = selectedCoordinates.long;
-
         return (
           <Box
             sx={{
@@ -133,11 +98,21 @@ const HFPolygonField = ({
                 modules={["geoObject.addon.editor"]}>
                 <FullscreenControl />
                 <Polygon
+                  onGeometryChange={(event) => {
+                    const coordinates =
+                      event?.originalEvent?.target?.geometry?._coordPath
+                        ?._coordinates;
+                    if (coordinates) {
+                      const coordinatesJson = JSON.stringify(coordinates);
+
+                      onChange(coordinatesJson);
+                    }
+                  }}
                   instanceRef={(ref) => ref && draw(ref)}
-                  geometry={[]}
+                  geometry={JSON.parse(value || "[]")}
                   options={{
                     editorDrawingCursor: "crosshair",
-                    editorMaxPoints: 1000,
+                    editorMaxPoints: 25,
                     fillColor: "#00FF00",
                     strokeColor: "#0000FF",
                     strokeWidth: 5,

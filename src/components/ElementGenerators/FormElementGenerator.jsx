@@ -249,6 +249,7 @@ const FormElementGenerator = ({
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            setFormValue={setFormValue}
             field={field}
             {...props}
           />

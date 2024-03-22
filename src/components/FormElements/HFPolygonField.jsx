@@ -73,6 +73,15 @@ const HFPolygonField = ({
     zoom: 10,
   };
 
+  const isJSONParsable = (value) => {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   return (
     <Controller
       control={control}
@@ -83,6 +92,7 @@ const HFPolygonField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
+        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
         return (
           <Box
             sx={{
@@ -91,13 +101,17 @@ const HFPolygonField = ({
               overflow: "hidden",
               position: "relative",
             }}>
-            <YMaps>
+            <YMaps
+              query={{
+                load: "package.full",
+              }}>
               <Map
-                width={"300px"}
+                width={"265px"}
+                height={"200px"}
                 defaultState={mapState}
                 modules={["geoObject.addon.editor"]}>
-                <FullscreenControl />
                 <Polygon
+                  editingPolygon={true}
                   onGeometryChange={(event) => {
                     const coordinates =
                       event?.originalEvent?.target?.geometry?._coordPath
@@ -108,14 +122,19 @@ const HFPolygonField = ({
                       onChange(coordinatesJson);
                     }
                   }}
-                  instanceRef={(ref) => ref && draw(ref)}
-                  geometry={JSON.parse(value || "[]")}
+                  instanceRef={(ref) =>
+                    !window?.location.pathname?.includes("constructor/apps")
+                      ? ref && draw(ref)
+                      : draw({})
+                  }
+                  geometry={parsedPolygon}
                   options={{
                     editorDrawingCursor: "crosshair",
                     editorMaxPoints: 25,
-                    fillColor: "#00FF00",
-                    strokeColor: "#0000FF",
-                    strokeWidth: 5,
+                    fillColor: "rgba(222,109,110, 0.5)",
+                    strokeColor: "rgb(69,130,250)",
+                    strokeWidth: 3,
+                    editable: true,
                   }}
                 />
               </Map>

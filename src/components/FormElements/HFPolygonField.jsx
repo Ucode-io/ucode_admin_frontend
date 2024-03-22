@@ -69,7 +69,7 @@ const HFPolygonField = ({
   };
 
   const mapState = {
-    center: [selectedCoordinates?.lat, selectedCoordinates?.long],
+    center: [selectedCoordinates?.lat ?? "", selectedCoordinates?.long ?? ""],
     zoom: 10,
   };
 
@@ -83,6 +83,15 @@ const HFPolygonField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
+        let parsedValue = [];
+        try {
+          if (value) {
+            parsedValue = JSON.parse(value);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+
         return (
           <Box
             sx={{
@@ -91,7 +100,7 @@ const HFPolygonField = ({
               overflow: "hidden",
               position: "relative",
             }}>
-            <YMaps>
+            <YMaps key={""}>
               <Map
                 width={"300px"}
                 defaultState={mapState}
@@ -102,14 +111,19 @@ const HFPolygonField = ({
                     const coordinates =
                       event?.originalEvent?.target?.geometry?._coordPath
                         ?._coordinates;
+
                     if (coordinates) {
                       const coordinatesJson = JSON.stringify(coordinates);
 
                       onChange(coordinatesJson);
                     }
                   }}
-                  instanceRef={(ref) => ref && draw(ref)}
-                  geometry={JSON.parse(value || "[]")}
+                  instanceRef={(ref) =>
+                    !window.location.pathname?.includes("constructor/apps") &&
+                    ref &&
+                    draw(ref)
+                  }
+                  geometry={parsedValue}
                   options={{
                     editorDrawingCursor: "crosshair",
                     editorMaxPoints: 25,

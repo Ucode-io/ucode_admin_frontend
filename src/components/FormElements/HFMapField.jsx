@@ -96,7 +96,10 @@ const HFMapField = ({
                   center: [lat, long],
                   zoom: 7,
                 }}
-                instanceRef={mapRef}
+                instanceRef={
+                  !window.location?.pathname?.includes("constructor/apps") &&
+                  mapRef
+                }
                 onClick={(e) => {
                   const [clickedLat, clickedLng] = e.get("coords");
                   handleClick(clickedLat, clickedLng);

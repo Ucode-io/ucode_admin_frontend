@@ -19,7 +19,7 @@ const AuthLayout = () => {
   const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
-      enabled: !isAuth,
+      enabled: Boolean(!isAuth),
     },
   });
 

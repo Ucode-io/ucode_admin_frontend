@@ -1,8 +1,8 @@
-import { Card, Modal, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Card, Modal, Typography} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
-import { store } from "../../../../../store";
+import {store} from "../../../../../store";
 import CreateButton from "../../../../Buttons/CreateButton";
 import SaveButton from "../../../../Buttons/SaveButton";
 import HFTextField from "../../../../FormElements/HFTextField";
@@ -10,18 +10,18 @@ import {
   useClientTypeCreateMutation,
   useClientTypeUpdateMutation,
 } from "../../../../../services/clientTypeService";
-import { useTablesListQuery } from "../../../../../services/tableService";
+import {useTablesListQuery} from "../../../../../services/tableService";
 import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
-import { useMemo } from "react";
+import {useMemo} from "react";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
 
-const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
+const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
   const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
 
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
       project_id: company.projectId,
       id: clientType.id,
@@ -34,7 +34,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
     },
   });
 
-  const { mutate: createClientType, isLoading: createLoading } =
+  const {mutate: createClientType, isLoading: createLoading} =
     useClientTypeCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
@@ -42,7 +42,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
       },
     });
 
-  const { mutate: updateClientType, isLoading: updateLoading } =
+  const {mutate: updateClientType, isLoading: updateLoading} =
     useClientTypeUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
@@ -50,7 +50,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
       },
     });
 
-  const { data: projectTables } = useTablesListQuery({
+  const {data: projectTables} = useTablesListQuery({
     params: {
       is_login_table: true,
     },
@@ -71,8 +71,8 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
     const params = {
       "project-id": company.projectId,
     };
-    if (clientType.id) updateClientType({ data, params });
-    else createClientType({ params, data });
+    if (clientType.id) updateClientType({data, params});
+    else createClientType({params, data});
   };
 
   const tableOptions = useMemo(() => {
@@ -81,8 +81,6 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
       label: item.label,
     }));
   }, [projectTables]);
-
-
 
   return (
     <div>
@@ -145,10 +143,12 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
               {createType ? (
                 <CreateButton
                   type="submit"
+                  onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
+                  onClick={handleSubmit(onSubmit)}
                   type="submit"
                   loading={createLoading || updateLoading}
                 />

@@ -221,6 +221,7 @@ const MainInfoForModal = ({
             (section, index) =>
               isVisibleSection(section) && (
                 <NewFormCard
+                  modalTitle={true}
                   key={section.id}
                   title={
                     section?.attributes?.[`label_${i18n.language}`] ??

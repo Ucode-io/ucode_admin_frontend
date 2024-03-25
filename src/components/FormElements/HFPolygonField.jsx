@@ -22,8 +22,8 @@ const HFPolygonField = ({
 }) => {
   const mapRef = useRef();
   const [selectedCoordinates, setSelectedCoordinates] = useState({
-    lat: field?.attributes?.lat || "",
-    long: field?.attributes?.long || "",
+    lat: field?.attributes?.lat || "41.2995",
+    long: field?.attributes?.long || "69.2401",
   });
 
   const [selectedPolygonIndex, setSelectedPolygonIndex] = useState(0);

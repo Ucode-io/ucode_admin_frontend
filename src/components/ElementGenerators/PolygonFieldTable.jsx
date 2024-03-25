@@ -46,8 +46,8 @@ function PolygonFieldTable({
           padding: "0 20px",
         }}
         onClick={handleOpen}>
-        <span>{newColumn ? "New coordinates!" : value?.slice(0, 40)}</span>
-        <Button sx={{marginLeft: "auto"}}>
+        <span>Polygon</span>
+        <Button>
           <LocationSearchingIcon />
         </Button>
       </Box>

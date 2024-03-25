@@ -1,8 +1,8 @@
 import axios from "axios";
-import { store } from "../store/index";
-import { showAlert } from "../store/alert/alert.thunk";
+import {store} from "../store/index";
+import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import { authActions } from "../store/auth/auth.slice";
+import {authActions} from "../store/auth/auth.slice";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`;
 
 const requestV2 = axios.create({
@@ -24,9 +24,13 @@ const errorHandler = (error, hooks) => {
   //   access_token: token,
   // };
 
-if (error?.response?.status === 401 && error?.response?.data?.data === "rpc error: code = Unavailable desc = User not access environment") {
-  store.dispatch(authActions.logout());
-} else if (error?.response?.status === 401) {
+  if (
+    error?.response?.status === 401 &&
+    error?.response?.data?.data ===
+      "rpc error: code = Unavailable desc = User not access environment"
+  ) {
+    store.dispatch(authActions.logout());
+  } else if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
 
     const params = {
@@ -40,6 +44,7 @@ if (error?.response?.status === 401 && error?.response?.data?.data === "rpc erro
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         store.dispatch(authActions.setPermission(res));
+        window.location.reload();
         return requestV2(originalRequest);
       })
       .catch((err) => {
@@ -61,7 +66,7 @@ if (error?.response?.status === 401 && error?.response?.data?.data === "rpc erro
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
     } else {
-      console.log("ERRRRR =>", error)
+      console.log("ERRRRR =>", error);
       store.dispatch(showAlert("___ERROR___"));
     }
 

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import requestAuthV2 from "../utils/requestAuthV2";
 
 const clientTypeService = {
@@ -10,17 +10,17 @@ const clientTypeService = {
     requestAuthV2.get(`/client-type/${id}`, {
       params,
     }),
-  create: ({ data, params }) =>
+  create: ({data, params}) =>
     requestAuthV2.post("/client-type", data, {
       params,
     }),
-  update: ({ data, params }) =>
+  update: ({data, params}) =>
     requestAuthV2.put("/client-type", data, {
       params,
     }),
-  delete: ({ id, projectId }) =>
+  delete: ({id, projectId}) =>
     requestAuthV2.delete(`/client-type/${id}`, {
-      params: { "project-id": projectId },
+      params: {"project-id": projectId},
     }),
 };
 
@@ -30,7 +30,7 @@ export const useClientTypesListQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["CLIENT_TYPES", { ...params, envId }],
+    ["CLIENT_TYPES", {...params, envId}],
     () => {
       return clientTypeService.getList(params, envId);
     },
@@ -38,9 +38,9 @@ export const useClientTypesListQuery = ({
   );
 };
 
-export const useClientTypeByIdQuery = ({ id, params = {}, quryParams }) => {
+export const useClientTypeByIdQuery = ({id, params = {}, quryParams}) => {
   return useQuery(
-    ["CLIENT_TYPE_BY_ID", { id, ...params }],
+    ["CLIENT_TYPE_BY_ID", {id, ...params}],
     () => {
       return clientTypeService.getById(id, params);
     },
@@ -50,14 +50,14 @@ export const useClientTypeByIdQuery = ({ id, params = {}, quryParams }) => {
 
 export const useClientTypeCreateMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, params }) => clientTypeService.create({ data, params }),
+    ({data, params}) => clientTypeService.create({data, params}),
     mutationSettings
   );
 };
 
 export const useClientTypeUpdateMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, params }) => clientTypeService.update({ data, params }),
+    ({data, params}) => clientTypeService.update({data, params}),
     mutationSettings
   );
 };

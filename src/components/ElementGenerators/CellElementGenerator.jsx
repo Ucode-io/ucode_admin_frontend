@@ -16,6 +16,7 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
+import PolygonFieldTable from "./PolygonFieldTable";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -142,6 +143,8 @@ const CellElementGenerator = ({field = {}, row}) => {
             }}></span>
         </div>
       );
+    // case "POLYGON":
+    //   return <PolygonFieldTable field={field} value={value} />;
 
     case "CHECKBOX":
     case "SWITCH":

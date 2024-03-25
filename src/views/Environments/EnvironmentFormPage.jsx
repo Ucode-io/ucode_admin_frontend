@@ -69,7 +69,6 @@ const EnvironmentForm = () => {
       ...data,
       company_id: company_id,
     };
-
     if (envId) updateEnv(datas);
     else createEnv(datas);
   };

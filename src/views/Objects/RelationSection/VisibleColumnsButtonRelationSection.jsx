@@ -53,9 +53,7 @@ export default function VisibleColumnsButtonRelationSection({
       attributes: {
         ...item?.attributes,
         columns:
-          index === selectedTabIndex
-            ? datas
-            : item?.attributes?.columns ?? item?.relation?.columns,
+          index === selectedTabIndex ? datas : {...item?.attributes?.columns},
       },
     }));
 

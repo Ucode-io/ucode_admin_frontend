@@ -33,6 +33,8 @@ import RelationFormElement from "./RelationFormElement";
 import {useTranslation} from "react-i18next";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
+import HFPolygonField from "../FormElements/HFPolygonField";
+import HFQrFieldComponent from "../FormElements/HFQrField";
 
 const parser = new Parser();
 
@@ -234,6 +236,34 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             field={field}
             {...props}
+          />
+        </FRow>
+      );
+    case "POLYGON":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFPolygonField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            setFormValue={setFormValue}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
+    case "QR":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFQrFieldComponent
+            control={control}
+            name={computedSlug}
+            defaultValue={defaultValue}
+            field={field}
+            required={checkRequiredField}
           />
         </FRow>
       );

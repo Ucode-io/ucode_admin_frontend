@@ -16,6 +16,8 @@ const HFPolygonField = ({
   field,
   defaultPolygon = [],
   polygons = [],
+  width = 0,
+  height = 0,
   ...props
 }) => {
   const mapRef = useRef();
@@ -23,6 +25,7 @@ const HFPolygonField = ({
     lat: field?.attributes?.lat || "",
     long: field?.attributes?.long || "",
   });
+
   const [selectedPolygonIndex, setSelectedPolygonIndex] = useState(0);
   const [editingPolygon, setEditingPolygon] = useState(false);
 
@@ -104,10 +107,11 @@ const HFPolygonField = ({
             <YMaps
               query={{
                 load: "package.full",
+                apikey: "5e5a73bd-6e0a-40f1-ba8e-f0b98d95e75f",
               }}>
               <Map
-                width={"265px"}
-                height={"200px"}
+                width={width !== 0 ? width : "265px"}
+                height={height !== 0 ? height : "200px"}
                 defaultState={mapState}
                 modules={["geoObject.addon.editor"]}>
                 <Polygon

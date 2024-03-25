@@ -34,6 +34,7 @@ import HFIncrementId from "../FormElements/HFIncrementId";
 import HFQrField from "../FormElements/HFQrField/HFQrField";
 import HFQrForTableView from "../FormElements/HFQrField/HFQrForTableView";
 import HFQrFieldComponent from "../FormElements/HFQrField";
+import PolygonFieldTable from "./PolygonFieldTable";
 
 const parser = new Parser();
 
@@ -641,21 +642,19 @@ const CellElementGeneratorForTableView = ({
         />
       );
 
-    // case "POLYGON":
-    //   return (
-    //     <HFQrFieldComponent
-    //       isTransparent={true}
-    //       control={control}
-    //       updateObject={updateObject}
-    //       isTableView={isTableView}
-    //       field={field}
-    //       defaultValue={defaultValue}
-    //       isFormEdit
-    //       name={computedSlug}
-    //       required={field?.required}
-    //       newColumn={newColumn}
-    //     />
-    //   );
+    case "POLYGON":
+      return (
+        <PolygonFieldTable
+          field={field}
+          control={control}
+          updateObject={updateObject}
+          computedSlug={computedSlug}
+          isDisabled={isDisabled}
+          isNewTableView={true}
+          row={row}
+          newColumn={newColumn}
+        />
+      );
 
     case "MULTI_LINE":
       return (

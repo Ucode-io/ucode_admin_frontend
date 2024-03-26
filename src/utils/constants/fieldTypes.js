@@ -10,6 +10,8 @@ export const fieldTypes = [
   "EMAIL",
   "MULTISELECT",
   "MAP",
+  "JSON",
+  "PROGRAMMING_LANGUAGE",
   "SWITCH",
   "PHOTO",
   "PHONE",
@@ -22,7 +24,6 @@ export const fieldTypes = [
   "FLOAT_NOLIMIT",
   "DATE_TIME_WITHOUT_TIME_ZONE",
   "PRIMARY_KEY",
-  "CODE",
   "QR",
   "POLYGON",
 ];
@@ -127,6 +128,16 @@ export const fieldTypesOptions = [
       },
     ],
   },
+  {
+    label: "Code",
+    options: [
+      {
+        icon: "map-pin.svg",
+        label: "Code",
+        value: "CODE",
+      },
+    ],
+  },
 
   {
     label: "File",
@@ -193,8 +204,13 @@ export const fieldTypesOptions = [
       },
       {
         icon: "code.svg",
-        label: "Code",
-        value: "CODE",
+        label: "Programming language",
+        value: "PROGRAMMING_LANGUAGE",
+      },
+      {
+        icon: "file-lines.svg",
+        label: "JSON",
+        value: "JSON",
       },
       {
         icon: "draw-polygon.svg",
@@ -302,6 +318,31 @@ export const incrementFieldFormats = [
     icon: "minus.svg",
   },
 ];
+
+export const codeFieldFormats = [
+  {
+    label: "JSON",
+    value: "JSON",
+    icon: "minus.svg",
+  },
+  {
+    label: "Programming Language",
+    value: "PROGRAMMING_LANGUAGE",
+    icon: "computer.svg",
+  },
+];
+export const mapFieldFormats = [
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Polygon",
+    value: "POLYGON",
+    icon: "draw-polygon.svg",
+  },
+];
 export const dateFieldFormats = [
   {
     label: "Date",
@@ -391,6 +432,11 @@ export const newFieldTypes = [
   {
     label: "Map",
     value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Code",
+    value: "CODE",
     icon: "map-pin.svg",
   },
   {
@@ -621,6 +667,8 @@ export const formatIncludes = [
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",
+  "CODE",
+  "MAP",
 ];
 
 export const FormatOptionType = (item) => {
@@ -643,6 +691,10 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
     case "INCREMENT":
       return incrementFieldFormats;
+    case "CODE":
+      return codeFieldFormats;
+    case "MAP":
+      return mapFieldFormats;
     case "MULTI_LINE":
       return textFieldFormats;
     case "NUMBER":

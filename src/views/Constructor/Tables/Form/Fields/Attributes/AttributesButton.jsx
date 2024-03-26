@@ -34,6 +34,9 @@ const AttributesButton = ({control, watch, mainForm, button}) => {
     case "POLYGON":
       return button;
 
+    case "CODE":
+      return button;
+
     default:
       return <SingleLineAttributes control={control} />;
   }

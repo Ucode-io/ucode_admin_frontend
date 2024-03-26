@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {Box} from "@mui/material";
 import {Controller} from "react-hook-form";
 import {FullscreenControl, Map, Polygon, YMaps} from "@pbe/react-yandex-maps";
+import {isJSONParsable} from "../../utils/isJsonValid";
 
 const HFPolygonField = ({
   control,
@@ -74,15 +75,6 @@ const HFPolygonField = ({
   const mapState = {
     center: [selectedCoordinates?.lat, selectedCoordinates?.long],
     zoom: 9,
-  };
-
-  const isJSONParsable = (value) => {
-    try {
-      JSON.parse(value);
-      return true;
-    } catch (error) {
-      return false;
-    }
   };
 
   return (

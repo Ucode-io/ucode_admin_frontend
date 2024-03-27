@@ -28,6 +28,11 @@ import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import CodeIcon from "@mui/icons-material/Code";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import QrCodeIcon from "@mui/icons-material/QrCode";
+import Grid3x3Icon from "@mui/icons-material/Grid3x3";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ContactPageIcon from "@mui/icons-material/ContactPage";
+import CreateIcon from "@mui/icons-material/Create";
+import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -97,6 +102,16 @@ export const columnIcons = (type) => {
       return <CodeIcon />;
     case "QR":
       return <QrCodeIcon />;
+    case "PRIMARY_KEY":
+      return <Grid3x3Icon />;
+    case "RANDOM_TEXT":
+      return <MoreHorizIcon />;
+    case "RANDOM_UUID":
+      return <ContactPageIcon />;
+    case "MANUAL_STRING":
+      return <CreateIcon />;
+    case "INCREMENT_NUMBER":
+      return <TextIncreaseIcon />;
     default:
       return <LinkIcon />;
   }

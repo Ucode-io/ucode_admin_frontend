@@ -35,7 +35,7 @@ const HFSelect = ({
     setSelectedValue("");
     onChange("");
   };
-
+  console.log("defaultValue", selectedValue, defaultValue);
   return (
     <Controller
       control={control}
@@ -49,6 +49,7 @@ const HFSelect = ({
         field: {onChange: onFormChange, value},
         fieldState: {error},
       }) => {
+        console.log("valuevaluevalue", value);
         return (
           <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>

@@ -85,16 +85,6 @@ function JsonCellElement({
             isNewTableView={isNewTableView}
             newColumn={newColumn}
           />
-          {/* <HFProgrammingField
-              control={control}
-              updateObject={updateObject}
-              field={field}
-              name={computedSlug}
-              isDisabled={isDisabled}
-              row={row}
-              isNewTableView={isNewTableView}
-              newColumn={newColumn}
-            /> */}
         </Popover>
       </Box>
     </>

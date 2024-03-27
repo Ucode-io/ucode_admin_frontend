@@ -180,6 +180,31 @@ export const fieldTypesOptions = [
     ],
   },
   {
+    label: "Primary Key",
+    options: [
+      {
+        icon: "ellipsis.svg",
+        label: "Generated string",
+        value: "RANDOM_TEXT",
+      },
+      {
+        icon: "regular_id-badge.svg",
+        label: "UUID",
+        value: "RANDOM_UUID",
+      },
+      {
+        icon: "pen.svg",
+        label: "Manual string",
+        value: "MANUAL_STRING",
+      },
+      {
+        icon: "arrow-up-a-z.svg",
+        label: "Increment number",
+        value: "INCREMENT_NUMBER",
+      },
+    ],
+  },
+  {
     label: "Other",
     options: [
       // {
@@ -191,16 +216,6 @@ export const fieldTypesOptions = [
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
         value: "INCREMENT_ID",
-      },
-      {
-        icon: "arrow-up-a-z.svg",
-        label: "Increment number",
-        value: "INCREMENT_NUMBER",
-      },
-      {
-        icon: "key.svg",
-        label: "Primary key",
-        value: "PRIMARY_KEY",
       },
       {
         icon: "code.svg",
@@ -685,6 +700,7 @@ export const formatIncludes = [
   "POLYGON",
   "CODE",
   "JSON",
+  "RANDOM_TEXT",
 ];
 
 export const FormatOptionType = (item) => {

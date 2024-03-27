@@ -66,8 +66,8 @@ const HFPolygonField = ({
   };
 
   const draw = (ref) => {
-    ref.editor.startDrawing();
-    ref.editor.events.add("vertexadd", (event) => {
+    ref?.editor?.startDrawing();
+    ref?.editor?.events?.add("vertexadd", (event) => {
       console.log(event);
     });
   };

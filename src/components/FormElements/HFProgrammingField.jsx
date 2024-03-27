@@ -154,15 +154,24 @@ function HFProgrammingField({
             <Button
               onClick={handleClick}
               variant="contained"
-              sx={{position: "absolute", top: "10px", left: "5px"}}>
-              Programming langauge
+              sx={{
+                position: "absolute",
+                top: "10px",
+                left: "5px",
+                textTransform: "capitalize",
+                fontSize: "12px",
+              }}>
+              {progLanguage && progLanguage === "c_cpp"
+                ? "C/C++"
+                : progLanguage
+                  ? progLanguage
+                  : "Programming langauge"}
             </Button>
             <Button
               onClick={() => {
                 handleClose();
                 updateObject();
               }}
-              //   variant="outlined"
               sx={{
                 position: "absolute",
                 top: "10px",
@@ -179,6 +188,7 @@ function HFProgrammingField({
                   <Box
                     onClick={() => {
                       setProgLanguage(item?.value);
+                      Boolean(isNewTableView && !newColumn) && updateObject();
                       handleClose();
                     }}
                     className={`${item?.value === progLanguage ? styles.programmingLanguageActive : styles.programmingLanguage}`}

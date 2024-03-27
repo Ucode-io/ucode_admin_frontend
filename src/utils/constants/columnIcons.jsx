@@ -24,6 +24,9 @@ import CalculateIcon from "@mui/icons-material/Calculate";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import NotesIcon from "@mui/icons-material/Notes";
 import Filter9PlusIcon from "@mui/icons-material/Filter9Plus";
+import FmdGoodIcon from "@mui/icons-material/FmdGood";
+import CodeIcon from "@mui/icons-material/Code";
+import TerminalIcon from "@mui/icons-material/Terminal";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -83,6 +86,12 @@ export const columnIcons = (type) => {
       return <ArrowDropDownCircleIcon />;
     case "FLOAT":
       return <Filter9PlusIcon />;
+    case "POLYGON":
+      return <FmdGoodIcon />;
+    case "JSON":
+      return <CodeIcon />;
+    case "PROGRAMMING_LANGUAGE":
+      return <TerminalIcon />;
     default:
       return <LinkIcon />;
   }

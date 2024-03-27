@@ -28,8 +28,14 @@ export default function FieldOptionModal({
       setValue("type", "DATE");
     } else if (value === "SINGLE_LINE") {
       setValue("type", "SINGLE_LINE");
+    } else if (value === "INCREMENT") {
+      setValue("type", "INCREMENT_ID");
     } else if (value === "FILE") {
+      setValue("type", "MAP");
+    } else if (value === "MAP") {
       setValue("type", "FILE");
+    } else if (value === "CODE") {
+      setValue("type", "JSON");
     } else {
       setValue("type", value);
     }

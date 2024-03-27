@@ -36,6 +36,7 @@ import HFQrForTableView from "../FormElements/HFQrField/HFQrForTableView";
 import HFQrFieldComponent from "../FormElements/HFQrField";
 import PolygonFieldTable from "./PolygonFieldTable";
 import CodeCellFormElement from "./JsonCellElement";
+import ProgrammingLan from "./ProgrammingLan";
 
 const parser = new Parser();
 
@@ -674,7 +675,7 @@ const CellElementGeneratorForTableView = ({
 
     case "PROGRAMMING_LANGUAGE":
       return (
-        <CodeCellFormElement
+        <ProgrammingLan
           field={field}
           isWrapField={isWrapField}
           control={control}

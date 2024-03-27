@@ -669,6 +669,9 @@ export const formatIncludes = [
   "INCREMENT",
   "CODE",
   "MAP",
+  "POLYGON",
+  "CODE",
+  "JSON",
 ];
 
 export const FormatOptionType = (item) => {

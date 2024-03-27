@@ -293,6 +293,19 @@ export const numberFieldFormats = [
     icon: "minus.svg",
   },
 ];
+
+export const barcodeFieldFormats = [
+  {
+    label: "QR",
+    value: "QR",
+    icon: "minus.svg",
+  },
+  {
+    label: "Barcode",
+    value: "BARCODE",
+    icon: "minus.svg",
+  },
+];
 export const textFieldFormats = [
   {
     label: "Text",
@@ -704,6 +717,8 @@ export const FormatOptionType = (item) => {
       return numberFieldFormats;
     case "FLOAT":
       return numberFieldFormats;
+    case "BARCODE":
+      return barcodeFieldFormats;
     default:
       return textFieldFormats;
   }

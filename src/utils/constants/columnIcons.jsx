@@ -27,6 +27,7 @@ import Filter9PlusIcon from "@mui/icons-material/Filter9Plus";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import CodeIcon from "@mui/icons-material/Code";
 import TerminalIcon from "@mui/icons-material/Terminal";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -92,6 +93,10 @@ export const columnIcons = (type) => {
       return <CodeIcon />;
     case "PROGRAMMING_LANGUAGE":
       return <TerminalIcon />;
+    case "CODE":
+      return <CodeIcon />;
+    case "QR":
+      return <QrCodeIcon />;
     default:
       return <LinkIcon />;
   }

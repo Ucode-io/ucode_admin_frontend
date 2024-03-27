@@ -14,6 +14,8 @@ import SingleLineAttributes from "./SingleLineAttributes";
 import MapAttributes from "./MapAttributes";
 import PolygonAttributes from "./PolygonAttributes";
 import CodeAttributes from "./CodeAttributes";
+import RandomTextAttributes from "./RandomTextAttributes";
+import ManualStringAttributes from "./ManualStringAttributes";
 
 const Attributes = ({control, watch, mainForm}) => {
   const fieldType = watch("type");
@@ -69,6 +71,12 @@ const Attributes = ({control, watch, mainForm}) => {
 
     case "CODE":
       return <CodeAttributes control={control} />;
+
+    case "RANDOM_TEXT":
+      return <RandomTextAttributes control={control} />;
+
+    case "MANUAL_STRING":
+      return <ManualStringAttributes control={control} mainForm={mainForm} />;
 
     default:
       return <SingleLineAttributes control={control} />;

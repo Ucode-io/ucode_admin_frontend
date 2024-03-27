@@ -37,6 +37,12 @@ const AttributesButton = ({control, watch, mainForm, button}) => {
     case "CODE":
       return button;
 
+    case "RANDOM_TEXT":
+      return button;
+
+    case "MANUAL_STRING":
+      return button;
+
     default:
       return <SingleLineAttributes control={control} />;
   }

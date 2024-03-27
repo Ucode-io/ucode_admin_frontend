@@ -1,8 +1,7 @@
 import React from "react";
 import FRow from "../../../../../../components/FormElements/FRow";
-
-import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../../components/FormElements/HFTextField";
+import HFNumberField from "../../../../../../components/FormElements/HFNumberField";
 
 function RandomTextAttributes({control}) {
   const options = [
@@ -29,7 +28,12 @@ function RandomTextAttributes({control}) {
           <HFTextField name="attributes.prefix" control={control} fullWidth />
         </FRow>
         <FRow label="Limit">
-          <HFTextField name="attributes.limit" control={control} fullWidth />
+          <HFNumberField
+            type={"number"}
+            name="attributes.digit_number"
+            control={control}
+            fullWidth
+          />
         </FRow>
       </div>
     </>

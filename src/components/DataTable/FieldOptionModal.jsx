@@ -34,6 +34,8 @@ export default function FieldOptionModal({
       setValue("type", "MAP");
     } else if (value === "MAP") {
       setValue("type", "FILE");
+    } else if (value === "PRIMARY_KEY") {
+      setValue("type", "RANDOM_TEXT");
     } else if (value === "CODE") {
       setValue("type", "JSON");
     } else {

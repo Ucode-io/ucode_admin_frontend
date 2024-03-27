@@ -340,11 +340,40 @@ export const incrementFieldFormats = [
     value: "INCREMENT_ID",
     icon: "minus.svg",
   },
+  // {
+  //   label: "Increment Number",
+  //   value: "INCREMENT_NUMBER",
+  //   icon: "minus.svg",
+  // },
+];
+
+export const PrimaryKeyFieldFormats = [
   {
-    label: "Increment Number",
-    value: "INCREMENT_NUMBER",
-    icon: "minus.svg",
+    icon: "ellipsis.svg",
+    label: "Generated string",
+    value: "RANDOM_TEXT",
   },
+  {
+    icon: "regular_id-badge.svg",
+    label: "UUID",
+    value: "RANDOM_UUID",
+  },
+  {
+    icon: "pen.svg",
+    label: "Manual string",
+    value: "MANUAL_STRING",
+  },
+  {
+    icon: "arrow-up-a-z.svg",
+    label: "Increment number",
+    value: "INCREMENT_NUMBER",
+  },
+
+  // {
+  //   label: "Increment Number",
+  //   value: "INCREMENT_NUMBER",
+  //   icon: "minus.svg",
+  // },
 ];
 
 export const codeFieldFormats = [
@@ -460,6 +489,11 @@ export const newFieldTypes = [
   {
     label: "Map",
     value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Primary key",
+    value: "PRIMARY_KEY",
     icon: "map-pin.svg",
   },
   {
@@ -701,6 +735,7 @@ export const formatIncludes = [
   "CODE",
   "JSON",
   "RANDOM_TEXT",
+  "PRIMARY_KEY",
 ];
 
 export const FormatOptionType = (item) => {
@@ -735,6 +770,8 @@ export const FormatOptionType = (item) => {
       return numberFieldFormats;
     case "BARCODE":
       return barcodeFieldFormats;
+    case "PRIMARY_KEY":
+      return PrimaryKeyFieldFormats;
     default:
       return textFieldFormats;
   }

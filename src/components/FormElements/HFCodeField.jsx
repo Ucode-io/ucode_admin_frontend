@@ -1,9 +1,11 @@
 import {useState, useEffect, useMemo} from "react";
 import {Controller, useWatch} from "react-hook-form";
-import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import FRowMultiLine from "./FRowMultiLine";
 import JSONInput from "react-json-editor-ajrm";
 import {isJSONParsable} from "../../utils/isJsonValid";
+import styles from "./style.module.scss";
+import {Box, Button} from "@mui/material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const HFCodeField = ({
   control,
@@ -33,6 +35,10 @@ const HFCodeField = ({
     }
   }, [values]);
 
+  const handleCopyJSON = () => {
+    navigator.clipboard.writeText(JSON.stringify(parsedValue, null, 2));
+  };
+
   return (
     <FRowMultiLine
       label={label}
@@ -47,7 +53,17 @@ const HFCodeField = ({
           ...rules,
         }}
         render={({field: {onChange}, fieldState: {error}}) => (
-          <div>
+          <Box sx={{position: "relative"}}>
+            <Button
+              onClick={handleCopyJSON}
+              sx={{
+                position: "absolute",
+                zIndex: "99",
+                top: "6px",
+                right: "35px",
+              }}>
+              <ContentCopyIcon />
+            </Button>
             <JSONInput
               id="a_unique_id"
               placeholder={parsedValue}
@@ -61,7 +77,7 @@ const HFCodeField = ({
               }}
             />
             {error && <span>{error.message}</span>}
-          </div>
+          </Box>
         )}
       />
     </FRowMultiLine>

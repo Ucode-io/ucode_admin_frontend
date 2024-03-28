@@ -87,7 +87,7 @@ const HFPolygonField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
+        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : {};
         return (
           <Box
             sx={{

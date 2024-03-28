@@ -24,6 +24,7 @@ import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -320,12 +321,12 @@ const RecursiveBlock = ({
 
           {element.id === folderIds.code_folder_id && (
             <>
-              {/* <ScenarioSidebar
+              <ScenarioSidebar
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 level={2}
-              /> */}
+              />
 
               <FunctionSidebar
                 menuStyle={menuStyle}

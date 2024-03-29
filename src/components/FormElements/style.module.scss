@@ -154,3 +154,18 @@
   align-items: flex-end;
   justify-content: space-between;
 }
+
+.programmingLanguage {
+  padding: 5px 10px;
+  &:hover {
+    background: #eee;
+  }
+}
+
+.programmingLanguageActive {
+  background: #eee;
+  padding: 5px 10px;
+  &:hover {
+    background: #eee;
+  }
+}

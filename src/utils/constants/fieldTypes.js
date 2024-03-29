@@ -10,6 +10,8 @@ export const fieldTypes = [
   "EMAIL",
   "MULTISELECT",
   "MAP",
+  "JSON",
+  "PROGRAMMING_LANGUAGE",
   "SWITCH",
   "PHOTO",
   "PHONE",
@@ -22,7 +24,6 @@ export const fieldTypes = [
   "FLOAT_NOLIMIT",
   "DATE_TIME_WITHOUT_TIME_ZONE",
   "PRIMARY_KEY",
-  "CODE",
   "QR",
   "POLYGON",
 ];
@@ -127,6 +128,16 @@ export const fieldTypesOptions = [
       },
     ],
   },
+  {
+    label: "Code",
+    options: [
+      {
+        icon: "map-pin.svg",
+        label: "Code",
+        value: "CODE",
+      },
+    ],
+  },
 
   {
     label: "File",
@@ -169,6 +180,31 @@ export const fieldTypesOptions = [
     ],
   },
   {
+    label: "Primary Key",
+    options: [
+      {
+        icon: "ellipsis.svg",
+        label: "Generated string",
+        value: "RANDOM_TEXT",
+      },
+      {
+        icon: "regular_id-badge.svg",
+        label: "UUID",
+        value: "RANDOM_UUID",
+      },
+      {
+        icon: "pen.svg",
+        label: "Manual string",
+        value: "MANUAL_STRING",
+      },
+      {
+        icon: "arrow-up-a-z.svg",
+        label: "Increment number",
+        value: "INCREMENT_NUMBER",
+      },
+    ],
+  },
+  {
     label: "Other",
     options: [
       // {
@@ -182,19 +218,14 @@ export const fieldTypesOptions = [
         value: "INCREMENT_ID",
       },
       {
-        icon: "arrow-up-a-z.svg",
-        label: "Increment number",
-        value: "INCREMENT_NUMBER",
-      },
-      {
-        icon: "key.svg",
-        label: "Primary key",
-        value: "PRIMARY_KEY",
-      },
-      {
         icon: "code.svg",
-        label: "Code",
-        value: "CODE",
+        label: "Programming language",
+        value: "PROGRAMMING_LANGUAGE",
+      },
+      {
+        icon: "file-lines.svg",
+        label: "JSON",
+        value: "JSON",
       },
       {
         icon: "draw-polygon.svg",
@@ -277,6 +308,19 @@ export const numberFieldFormats = [
     icon: "minus.svg",
   },
 ];
+
+export const barcodeFieldFormats = [
+  {
+    label: "QR",
+    value: "QR",
+    icon: "minus.svg",
+  },
+  {
+    label: "Barcode",
+    value: "BARCODE",
+    icon: "minus.svg",
+  },
+];
 export const textFieldFormats = [
   {
     label: "Text",
@@ -296,10 +340,64 @@ export const incrementFieldFormats = [
     value: "INCREMENT_ID",
     icon: "minus.svg",
   },
+  // {
+  //   label: "Increment Number",
+  //   value: "INCREMENT_NUMBER",
+  //   icon: "minus.svg",
+  // },
+];
+
+export const PrimaryKeyFieldFormats = [
   {
-    label: "Increment Number",
+    icon: "ellipsis.svg",
+    label: "Generated string",
+    value: "RANDOM_TEXT",
+  },
+  {
+    icon: "regular_id-badge.svg",
+    label: "UUID",
+    value: "RANDOM_UUID",
+  },
+  {
+    icon: "pen.svg",
+    label: "Manual string",
+    value: "MANUAL_STRING",
+  },
+  {
+    icon: "arrow-up-a-z.svg",
+    label: "Increment number",
     value: "INCREMENT_NUMBER",
+  },
+
+  // {
+  //   label: "Increment Number",
+  //   value: "INCREMENT_NUMBER",
+  //   icon: "minus.svg",
+  // },
+];
+
+export const codeFieldFormats = [
+  {
+    label: "JSON",
+    value: "JSON",
     icon: "minus.svg",
+  },
+  {
+    label: "Programming Language",
+    value: "PROGRAMMING_LANGUAGE",
+    icon: "computer.svg",
+  },
+];
+export const mapFieldFormats = [
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Polygon",
+    value: "POLYGON",
+    icon: "draw-polygon.svg",
   },
 ];
 export const dateFieldFormats = [
@@ -391,6 +489,16 @@ export const newFieldTypes = [
   {
     label: "Map",
     value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Primary key",
+    value: "PRIMARY_KEY",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Code",
+    value: "CODE",
     icon: "map-pin.svg",
   },
   {
@@ -621,6 +729,13 @@ export const formatIncludes = [
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",
+  "CODE",
+  "MAP",
+  "POLYGON",
+  "CODE",
+  "JSON",
+  "RANDOM_TEXT",
+  "PRIMARY_KEY",
 ];
 
 export const FormatOptionType = (item) => {
@@ -643,12 +758,20 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
     case "INCREMENT":
       return incrementFieldFormats;
+    case "CODE":
+      return codeFieldFormats;
+    case "MAP":
+      return mapFieldFormats;
     case "MULTI_LINE":
       return textFieldFormats;
     case "NUMBER":
       return numberFieldFormats;
     case "FLOAT":
       return numberFieldFormats;
+    case "BARCODE":
+      return barcodeFieldFormats;
+    case "PRIMARY_KEY":
+      return PrimaryKeyFieldFormats;
     default:
       return textFieldFormats;
   }

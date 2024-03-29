@@ -35,6 +35,8 @@ import HFQrField from "../FormElements/HFQrField/HFQrField";
 import HFQrForTableView from "../FormElements/HFQrField/HFQrForTableView";
 import HFQrFieldComponent from "../FormElements/HFQrField";
 import PolygonFieldTable from "./PolygonFieldTable";
+import CodeCellFormElement from "./JsonCellElement";
+import ProgrammingLan from "./ProgrammingLan";
 
 const parser = new Parser();
 
@@ -646,6 +648,36 @@ const CellElementGeneratorForTableView = ({
       return (
         <PolygonFieldTable
           field={field}
+          control={control}
+          updateObject={updateObject}
+          computedSlug={computedSlug}
+          isDisabled={isDisabled}
+          isNewTableView={true}
+          row={row}
+          newColumn={newColumn}
+        />
+      );
+
+    case "JSON":
+      return (
+        <CodeCellFormElement
+          field={field}
+          isWrapField={isWrapField}
+          control={control}
+          updateObject={updateObject}
+          computedSlug={computedSlug}
+          isDisabled={isDisabled}
+          isNewTableView={true}
+          row={row}
+          newColumn={newColumn}
+        />
+      );
+
+    case "PROGRAMMING_LANGUAGE":
+      return (
+        <ProgrammingLan
+          field={field}
+          isWrapField={isWrapField}
           control={control}
           updateObject={updateObject}
           computedSlug={computedSlug}

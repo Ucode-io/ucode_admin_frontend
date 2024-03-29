@@ -187,13 +187,7 @@ const ScenarioSidebar = ({
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
+          }}>
           <div className="label" style={labelStyle}>
             {childBlockVisible ? (
               <KeyboardArrowDownIcon />

@@ -207,7 +207,7 @@ const AutoCompleteElement = ({
       if (key) result[key] = value;
     });
     return result;
-  }, [autoFilters, filtersHandler]);
+  }, [autoFilters, filtersHandler, value]);
 
   const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
@@ -282,7 +282,9 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (data?.options?.length) {
+        if (Object.keys(autoFiltersValue)?.length) {
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),

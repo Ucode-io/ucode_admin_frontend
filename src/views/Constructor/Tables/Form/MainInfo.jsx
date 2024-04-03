@@ -108,8 +108,8 @@ const MainInfo = ({control, watch}) => {
     return computedTableFields?.map((item) => ({
       label:
         item?.type === "LOOKUP" || item?.type === "LOOKUPS"
-          ? item?.attributes?.[`label_to_${i18n?.language}`] ||
-            item?.attributes?.[`label_${i18n?.language}`] ||
+          ? item?.attributes?.[`label_${i18n?.language}`] ||
+            item?.attributes?.[`label_to_${i18n?.language}`] ||
             item?.label
           : item?.attributes?.[`label_${i18n?.language}`] || item?.label,
       value: item?.slug ?? "",

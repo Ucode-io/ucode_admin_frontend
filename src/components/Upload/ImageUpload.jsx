@@ -1,26 +1,25 @@
-import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import {useMemo, useState} from "react";
-import {useRef} from "react";
-import ImageViewer from "react-simple-image-viewer";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  InputAdornment,
-  Popover,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
-import "./Gallery/style.scss";
-import fileService from "../../services/fileService";
-import {useNavigate} from "react-router-dom";
-import {Lock} from "@mui/icons-material";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {Box, Button, Modal, Popover, Typography} from "@mui/material";
+import {useRef, useState} from "react";
+import fileService from "../../services/fileService";
+import "./Gallery/style.scss";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "600px",
+  height: "400px",
+  bgcolor: "background.paper",
+  border: "0px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const ImageUpload = ({
   value,
@@ -34,6 +33,10 @@ const ImageUpload = ({
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [openFullImg, setOpenFullImg] = useState(false);
+  const handleOpenImg = () => setOpenFullImg(true);
+  const handleCloseImg = () => setOpenFullImg(false);
 
   const imageClickHandler = (index) => {
     setPreviewVisible(true);
@@ -104,8 +107,7 @@ const ImageUpload = ({
           <div
             className="uploadedImage"
             aria-describedby={id}
-            onClick={handleClick}
-          >
+            onClick={handleClick}>
             <div className="img">
               <img
                 src={value}
@@ -122,8 +124,7 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
+              }}>
               {value?.split?.("_")?.[1] ?? ""}
             </Typography>
           </div>
@@ -136,16 +137,14 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <Button
                 sx={{
                   display: "flex",
@@ -153,8 +152,7 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                onClick={() => imageClickHandler()}
-              >
+                onClick={() => handleOpenImg()}>
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -165,9 +163,19 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
+                onClick={() => imageClickHandler()}>
+                <DownloadIcon />
+                Dowload
+              </Button>
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  justifyContent: "flex-start",
+                }}
                 disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}
-              >
+                onClick={(e) => closeButtonHandler(e)}>
                 <DeleteIcon />
                 Remove Image
               </Button>
@@ -182,8 +190,7 @@ const ImageUpload = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -202,6 +209,40 @@ const ImageUpload = ({
               disabled={disabled}
             />
           </Popover>
+
+          <Modal open={openFullImg} onClose={handleCloseImg}>
+            <Box sx={style}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  width: "600px",
+                  height: "400px",
+                  border: "0px solid #fff",
+                }}
+                aria-describedby={id}
+                onClick={handleClick}>
+                <img
+                  src={value}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  className="img"
+                  alt=""
+                />
+                <Typography
+                  sx={{
+                    fontSize: "10px",
+                    color: "#747474",
+                  }}>
+                  {value?.split?.("_")?.[1] ?? ""}
+                </Typography>
+              </Box>
+            </Box>
+          </Modal>
         </>
       )}
 
@@ -249,8 +290,7 @@ const ImageUpload = ({
             minWidth: 0,
             width: "25px",
             height: "25px",
-          }}
-        >
+          }}>
           <input
             type="file"
             className="hidden"

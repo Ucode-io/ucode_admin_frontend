@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CellRelationFormElementForNewColumn = ({
-  relOptions,
   tableView,
   isBlackBg,
   isFormEdit,
@@ -96,7 +95,6 @@ const CellRelationFormElementForNewColumn = ({
             />
           ) : (
             <AutoCompleteElement
-              relOptions={relOptions}
               isNewRow={isNewRow}
               tableView={tableView}
               disabled={disabled}
@@ -131,7 +129,6 @@ const CellRelationFormElementForNewColumn = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
-  relOptions,
   tableView,
   field,
   value,
@@ -198,7 +195,7 @@ const AutoCompleteElement = ({
   };
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
+    return autoFilters?.map((el) => `${el.field_from}`) ?? [];
   }, [autoFilters, index]);
 
   const filtersHandler = useWatch({
@@ -213,7 +210,7 @@ const AutoCompleteElement = ({
       if (key) result[key] = value;
     });
     return result;
-  }, [autoFilters, filtersHandler]);
+  }, [autoFilters, filtersHandler, value]);
 
   const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
@@ -248,11 +245,28 @@ const AutoCompleteElement = ({
           options,
         };
       },
+      onSuccess: (data) => {
+        if (Object.values(autoFiltersValue)?.length > 0) {
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
+          setAllOptions((prevOptions) => [
+            ...(prevOptions ?? []),
+            ...(data.options ?? []),
+          ]);
+        }
+      },
     }
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    [
+      "GET_OBJECT_LIST",
+      debouncedValue,
+      autoFiltersValue,
+      field?.table_slug,
+      value,
+      page,
+    ],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -264,6 +278,7 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: [value],
             },
+
             view_fields: field?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
             limit: 10,
@@ -276,10 +291,9 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled:
-        (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
+      // enabled:
+      //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
+      //   (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -288,7 +302,10 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (data?.options?.length) {
+        if (Object.values(autoFiltersValue)?.length > 0) {
+          console.log("entered", data);
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),
@@ -313,7 +330,7 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [allOptions, value, relOptions]);
+  }, [allOptions, value]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -393,14 +410,14 @@ const AutoCompleteElement = ({
   }
 
   useEffect(() => {
-    const matchingOption = relOptions?.find(
+    const matchingOption = allOptions?.find(
       (item) => item?.table_slug === field?.table_slug
     );
 
     if (matchingOption) {
       setAllOptions(matchingOption.response);
     }
-  }, [relOptions, field]);
+  }, [allOptions, field]);
 
   useEffect(() => {
     if (value) getValueData();

@@ -82,7 +82,7 @@ const AddDataColumn = React.memo(
           }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
-        {columns?.map((column) => (
+        {columns?.map((column, index) => (
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -107,6 +107,7 @@ const AddDataColumn = React.memo(
               data={data}
               onRowClick={onRowClick}
               width={width}
+              index={index}
             />
           </CTableCell>
         ))}

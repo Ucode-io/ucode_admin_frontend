@@ -8,13 +8,13 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import constructorViewService from "../../services/constructorViewService";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import {columnIcons} from "../../utils/constants/columnIcons";
 
 export default function GroupByButton({
   selectedTabIndex,
@@ -87,7 +87,7 @@ export default function GroupByButton({
       });
   };
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [updatedColumns, setUpdatedColumns] = useState();
   useEffect(() => {
@@ -145,10 +145,9 @@ export default function GroupByButton({
               ? "rgb(0, 122, 255)"
               : "#A8A8A8",
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         {updateLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -190,8 +189,7 @@ export default function GroupByButton({
             onClick={(e) => {
               e.stopPropagation();
               disableAll();
-            }}
-          >
+            }}>
             <CloseRoundedIcon
               style={{
                 color:
@@ -239,16 +237,14 @@ export default function GroupByButton({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             maxHeight: 300,
             overflowY: "auto",
             padding: "10px 14px",
             minWidth: "200px",
-          }}
-        >
+          }}>
           {updatedColumns?.length ? (
             updatedColumns?.map((column) => (
               <div
@@ -258,22 +254,19 @@ export default function GroupByButton({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                }}
-              >
+                }}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                    }}
-                  >
+                    }}>
                     {column?.type && columnIcons(column?.type)}
                   </div>
 
@@ -283,15 +276,25 @@ export default function GroupByButton({
                   </span>
                 </div>
 
-                <Switch
-                  size="small"
-                  checked={selectedColumns?.includes(column?.id)}
-                  onChange={(e, val) => changeHandler(val, column.id, column)}
-                />
+                {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                  <Switch
+                    size="small"
+                    checked={selectedColumns?.includes(column?.relation_id)}
+                    onChange={(e, val) =>
+                      changeHandler(val, column.relation_id, column)
+                    }
+                  />
+                ) : (
+                  <Switch
+                    size="small"
+                    checked={selectedColumns?.includes(column?.id)}
+                    onChange={(e, val) => changeHandler(val, column.id, column)}
+                  />
+                )}
               </div>
             ))
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

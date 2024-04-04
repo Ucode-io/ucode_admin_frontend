@@ -321,12 +321,12 @@ const RecursiveBlock = ({
 
           {element.id === folderIds.code_folder_id && (
             <>
-              <ScenarioSidebar
+              {/* <ScenarioSidebar
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 level={2}
-              />
+              /> */}
 
               <FunctionSidebar
                 menuStyle={menuStyle}

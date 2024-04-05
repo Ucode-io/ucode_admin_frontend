@@ -11,6 +11,8 @@ const HFMultiImage = ({
   disabledHelperText = false,
   disabled,
   field,
+  isTableView,
+  updateObject = () => {},
   ...props
 }) => {
   return (
@@ -29,9 +31,10 @@ const HFMultiImage = ({
             value={value}
             tabIndex={tabIndex}
             onChange={onChange}
+            updateObject={updateObject}
             disabled={disabled}
             field={field}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
+            isTableView={isTableView}
             {...props}
           />
           {!disabledHelperText && error?.message && (

@@ -319,8 +319,11 @@ const RelationTable = forwardRef(
           }
 
           const columns = customSortArray(
-            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-              getRelatedTabeSlug?.columns,
+            (Array.isArray(
+              layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+            )
+              ? layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+              : []) ?? getRelatedTabeSlug?.columns,
             array.map((el) => el.id)
           )
             ?.map((el) => fieldsMap[el])

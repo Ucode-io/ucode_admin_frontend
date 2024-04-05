@@ -100,9 +100,9 @@ function MultiImageUpload({value = [], field, tabIndex, onChange}) {
             onClick={handleClick}
             sx={{
               position: "absolute",
-              width: "50px",
+              width: "100%",
               height: "100%",
-              background: "rgba(0, 0, 0, 0.7)",
+              background: "rgba(0, 0, 0, 0.3)",
               right: "0",
               top: "0",
               display: "flex",

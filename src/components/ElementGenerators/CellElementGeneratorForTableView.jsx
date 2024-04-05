@@ -37,6 +37,7 @@ import HFQrFieldComponent from "../FormElements/HFQrField";
 import PolygonFieldTable from "./PolygonFieldTable";
 import CodeCellFormElement from "./JsonCellElement";
 import ProgrammingLan from "./ProgrammingLan";
+import HFMultiImage from "../FormElements/HFMultiImage";
 
 const parser = new Parser();
 
@@ -312,6 +313,26 @@ const CellElementGeneratorForTableView = ({
           disabled={isDisabled}
           isFormEdit
           field={field}
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          isTransparent={true}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+        />
+      );
+
+    case "MULTI_IMAGE":
+      return (
+        <HFMultiImage
+          disabled={isDisabled}
+          isFormEdit
+          field={field}
+          isTableView={true}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}

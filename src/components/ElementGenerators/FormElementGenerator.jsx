@@ -35,6 +35,7 @@ import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 import HFPolygonField from "../FormElements/HFPolygonField";
 import HFQrFieldComponent from "../FormElements/HFQrField";
+import HFMultiImage from "../FormElements/HFMultiImage";
 
 const parser = new Parser();
 
@@ -657,6 +658,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFImageUpload
+            control={control}
+            name={computedSlug}
+            key={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "MULTI_IMAGE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMultiImage
             control={control}
             name={computedSlug}
             key={computedSlug}

@@ -20,19 +20,7 @@ const style = {
   border: "0px solid #000",
   borderRadius: "5px",
   boxShadow: 24,
-  // p: 4,
 };
-
-const mockData = [
-  {
-    id: 1,
-    title: "1",
-  },
-  {
-    id: 2,
-    title: "1",
-  },
-];
 
 function MultiImageUpload({
   value = [],
@@ -306,7 +294,12 @@ function MultiImageUpload({
               width: "100%",
             }}>
             <Box></Box>
-            <Button variant="contained" onClick={handleClose}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                isTableView && updateObject();
+                handleClose();
+              }}>
               Save
             </Button>
           </Box>

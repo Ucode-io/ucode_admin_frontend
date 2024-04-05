@@ -147,11 +147,11 @@ export const fieldTypesOptions = [
         label: "Photo",
         value: "PHOTO",
       },
-      // {
-      //   icon: "image.svg",
-      //   label: "Custom Image",
-      //   value: "CUSTOM_IMAGE",
-      // },
+      {
+        icon: "image.svg",
+        label: "Multi Image",
+        value: "MULTI_IMAGE",
+      },
       {
         icon: "video.svg",
         label: "Video",
@@ -427,6 +427,11 @@ export const fileFieldFormats = [
     icon: "image.svg",
     label: "Photo",
     value: "PHOTO",
+  },
+  {
+    icon: "image.svg",
+    label: "Multiple photo",
+    value: "MULTI_IMAGE",
   },
   {
     icon: "video.svg",
@@ -726,6 +731,7 @@ export const formatIncludes = [
   "TIME",
   "BARCODE",
   "PHOTO",
+  "MULTI_IMAGE",
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",

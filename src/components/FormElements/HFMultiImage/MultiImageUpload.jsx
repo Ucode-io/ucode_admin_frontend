@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import styles from "./styles.module.scss";
 import UploadIcon from "@mui/icons-material/Upload";
 import fileService from "../../../services/fileService";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const style = {
   position: "absolute",
@@ -37,7 +38,7 @@ function MultiImageUpload({value = [], field, tabIndex, onChange}) {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
-  console.log("valuevaluevalue", value);
+
   const handleClick = () => {
     setUploadImg(true);
   };
@@ -58,8 +59,6 @@ function MultiImageUpload({value = [], field, tabIndex, onChange}) {
       })
       .then((res) => {
         onChange([...value, import.meta.env.VITE_CDN_BASE_URL + res?.link]);
-        // handleClose();
-        console.log("resssssssssss", res);
         setImageList([
           ...imageList,
           import.meta.env.VITE_CDN_BASE_URL + res?.link,
@@ -67,74 +66,84 @@ function MultiImageUpload({value = [], field, tabIndex, onChange}) {
       })
       .finally(() => setLoading(false));
   };
-  console.log("imageList", imageList);
+
+  const removeImage = (imgLink) => {
+    console.log("imgLink", value, imgLink);
+    if (value) {
+      onChange(value?.filter((item) => item !== imgLink));
+    }
+  };
+
   return (
     <>
-      <Box
-        onClick={handleClick}
-        sx={{
-          border: "1px dashed #ddd",
-          borderRadius: "5px",
-          width: "100px",
-          height: "120px",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          justifyContent: "center",
-          cursor: "pointer",
-        }}>
+      {value && value?.length > 0 ? (
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            color: "#777",
-            fontSize: "10px",
-            gap: "5px",
-          }}>
-          <AddIcon style={{width: "24px", height: "24px"}} />
-
-          <span>Add Photo</span>
-        </Box>
-      </Box>
-
-      {/* <Box
-        sx={{
-          border: "1px dashed #ddd",
-          borderRadius: "5px",
-          width: "100px",
-          height: "120px",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          justifyContent: "center",
-          cursor: "pointer",
-          position: "relative",
-        }}>
-        <input
-          style={{width: "100%", height: "100%", border: "none"}}
-          src={value}
-          type="text"
-        />
-
-        <Box
-          sx={{
-            position: "absolute",
-            width: "50px",
-            height: "100%",
-            background: "rgba(0, 0, 0, 0.2)",
-            right: "0",
-            top: "0",
+            border: "1px dashed #ddd",
+            borderRadius: "5px",
+            width: "100px",
+            height: "120px",
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
             justifyContent: "center",
-            fontSize: "16px",
-            color: "#777",
+            cursor: "pointer",
+            position: "relative",
           }}>
-          5 +
+          <img
+            style={{width: "100%", height: "100%", border: "none"}}
+            src={value?.[0]}
+            type="text"
+          />
+
+          <Box
+            onClick={handleClick}
+            sx={{
+              position: "absolute",
+              width: "50px",
+              height: "100%",
+              background: "rgba(0, 0, 0, 0.7)",
+              right: "0",
+              top: "0",
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              justifyContent: "center",
+              fontSize: "16px",
+              color: "#fff",
+            }}>
+            {value?.length > 1 ? `${value?.length}+` : value?.length}
+          </Box>
         </Box>
-      </Box> */}
+      ) : (
+        <Box
+          onClick={handleClick}
+          sx={{
+            border: "1px dashed #ddd",
+            borderRadius: "5px",
+            width: "100px",
+            height: "120px",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              color: "#777",
+              fontSize: "10px",
+              gap: "5px",
+            }}>
+            <AddIcon style={{width: "24px", height: "24px"}} />
+
+            <span>Add Photo</span>
+          </Box>
+        </Box>
+      )}
 
       <Modal open={uploadImg} onClose={handleClose}>
         <Box sx={style}>
@@ -161,6 +170,14 @@ function MultiImageUpload({value = [], field, tabIndex, onChange}) {
               value?.map((item) => (
                 <div key={item} className={styles.ImageItem}>
                   <img src={item} alt="photo" />
+
+                  <button
+                    onClick={() => {
+                      removeImage(item);
+                    }}
+                    className={styles.clearBtn}>
+                    <DeleteIcon style={{color: "red"}} />
+                  </button>
                 </div>
               ))}
             <Box

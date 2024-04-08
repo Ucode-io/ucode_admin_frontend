@@ -106,6 +106,14 @@ export default function VisibleColumnsButtonRelationSection({
           );
         }
       });
+    } else {
+      return allFields?.filter((field) => {
+        if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+          return field?.relation_id;
+        } else {
+          return field?.id;
+        }
+      });
     }
   }, [
     allFields,

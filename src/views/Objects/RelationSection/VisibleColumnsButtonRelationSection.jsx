@@ -76,11 +76,12 @@ export default function VisibleColumnsButtonRelationSection({
 
   const visibleFields = useMemo(() => {
     return (
-      (
-        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-        data?.tabs?.[selectedTabIndex]?.relation?.columns
+      (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)
+        ? data?.tabs?.[selectedTabIndex]?.attributes?.columns
+        : [] || data?.tabs?.[selectedTabIndex]?.relation?.columns || []
       )
-        ?.map((id) => fieldsMap[id])
+        ?.filter((column) => typeof column === "string" && fieldsMap?.[column])
+        ?.map((id) => fieldsMap?.[id])
         ?.filter((el) => el?.type) ?? []
     );
   }, [
@@ -92,13 +93,17 @@ export default function VisibleColumnsButtonRelationSection({
   const unVisibleFields = useMemo(() => {
     return allFields.filter((field) => {
       if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-          field.relation_id
-        );
+        return (
+          Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)
+            ? !data?.tabs?.[selectedTabIndex]?.attributes?.columns
+            : []
+        )?.includes(field.relation_id);
       } else {
-        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-          field.id
-        );
+        return (
+          Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)
+            ? !data?.tabs?.[selectedTabIndex]?.attributes?.columns
+            : []
+        )?.includes(field.id);
       }
     });
   }, [

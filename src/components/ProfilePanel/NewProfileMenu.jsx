@@ -243,7 +243,7 @@ const NewProfilePanel = ({
         }
       }
     }
-  }, [languages, defaultLanguage, i18n]);
+  }, []);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

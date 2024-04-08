@@ -53,14 +53,14 @@ function NewLayoutSettings({
           el?.type === "Many2One"
             ? el?.id
             : el?.type === "relation"
-            ? el?.relation?.id
-            : undefined,
+              ? el?.relation?.id
+              : undefined,
         id:
           el?.type === "section"
             ? el?.id
             : el?.type === "Many2One"
-            ? ""
-            : el?.id,
+              ? ""
+              : el?.id,
       }));
 
     layoutService
@@ -114,8 +114,7 @@ function NewLayoutSettings({
               onClick={() => {
                 navigate(-1);
               }}
-              color="error"
-            >
+              color="error">
               Close
             </SecondaryButton>
             <PrimaryButton loader={loader} onClick={updateSelectedLayout}>

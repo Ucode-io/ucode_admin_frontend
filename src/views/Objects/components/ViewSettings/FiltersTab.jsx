@@ -112,7 +112,7 @@ const FiltersTab = ({
       DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
     };
   }, []);
-  console.log("allColumns", allColumns);
+  console.log("allColumns", i18n);
   return (
     <div
       style={{
@@ -123,8 +123,7 @@ const FiltersTab = ({
         padding: "0px 14px",
         position: "relative",
       }}
-      className="menu_filter"
-    >
+      className="menu_filter">
       {isLoading && (
         <Box
           sx={{
@@ -138,8 +137,7 @@ const FiltersTab = ({
             justifyContent: "center",
             background: "#fff",
             zIndex: "99",
-          }}
-        >
+          }}>
           <CircularProgress />
         </Box>
       )}
@@ -157,8 +155,7 @@ const FiltersTab = ({
                 border: 0,
                 paddingLeft: 0,
                 paddingRight: 0,
-              }}
-            >
+              }}>
               <div
                 style={{
                   width: 20,
@@ -167,11 +164,10 @@ const FiltersTab = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                }}
-              >
+                }}>
                 {columnIcons[column.type] ?? <LinkIcon />}
               </div>
-              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+              {column?.attributes?.[`label_${i18n.language}`] || column.label}
             </div>
             <div
               className={styles.cell}
@@ -182,8 +178,7 @@ const FiltersTab = ({
                 paddingRight: 0,
                 display: "flex",
                 justifyContent: "flex-end",
-              }}
-            >
+              }}>
               <Switch
                 size="small"
                 checked={views?.attributes?.quick_filters?.find(
@@ -209,8 +204,7 @@ const FiltersTab = ({
                 border: "none",
                 paddingLeft: 0,
                 paddingRight: 0,
-              }}
-            >
+              }}>
               <div
                 style={{
                   width: 20,
@@ -219,11 +213,10 @@ const FiltersTab = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                }}
-              >
+                }}>
                 {columnIcons[column.type] ?? <LinkIcon />}
               </div>
-              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+              {column?.attributes?.[`label_${i18n.language}`] || column.label}
             </div>
             <div
               className={styles.cell}
@@ -234,8 +227,7 @@ const FiltersTab = ({
                 paddingRight: 0,
                 display: "flex",
                 justifyContent: "flex-end",
-              }}
-            >
+              }}>
               <Switch
                 size="small"
                 checked={false}

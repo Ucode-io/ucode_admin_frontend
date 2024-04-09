@@ -56,6 +56,9 @@ const NewProfilePanel = ({
   const location = useLocation();
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const settings = location.pathname.includes("settings");
+  const {i18n} = useTranslation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
   const defaultLanguage = useSelector(
@@ -67,6 +70,12 @@ const NewProfilePanel = ({
     project_id: company.projectId,
     for_env: true,
   };
+
+  const permissions = useSelector((state) => state.auth.globalPermissions);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+
+  const projectId = useSelector((state) => state.company.projectId);
+  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
 
   const handleEnvNavigate = () => {
     navigate(`/main/${appId}/environments`);
@@ -197,12 +206,6 @@ const NewProfilePanel = ({
     },
   });
 
-  const permissions = useSelector((state) => state.auth.globalPermissions);
-  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-
-  const projectId = useSelector((state) => state.company.projectId);
-  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
-
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
       title: lang?.name,
@@ -210,25 +213,11 @@ const NewProfilePanel = ({
     }));
   }, [projectInfo]);
 
-  const isLanguageExist = languages?.some(
-    (item) => defaultLanguage === item?.slug
-  );
+  const getDefaultLanguage = () => {
+    const isLanguageExist = languages?.some(
+      (item) => defaultLanguage === item?.slug
+    );
 
-  useEffect(() => {
-    if (projectId) {
-      dispatch(languagesActions.setLanguagesItems(languages));
-    }
-  }, [languages, projectId, dispatch]);
-
-  const {i18n} = useTranslation();
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    dispatch(languagesActions.setDefaultLanguage(lang));
-    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
-  };
-
-  useEffect(() => {
     if (languages?.length) {
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
@@ -238,15 +227,32 @@ const NewProfilePanel = ({
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
           i18n.changeLanguage(languages?.[0]?.slug);
         } else if (defaultLanguage && isLanguageExist) {
+          dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          i18n.changeLanguage(defaultLanguage);
+        } else {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
           i18n.changeLanguage(languages?.[0]?.slug);
         }
       }
     }
+  };
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectId, dispatch]);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
+  };
+
+  useEffect(() => {
+    getDefaultLanguage();
   }, []);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const handleClickLanguages = (event) => {
     setAnchorEl(event.currentTarget);
   };

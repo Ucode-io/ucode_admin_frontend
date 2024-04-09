@@ -43,35 +43,53 @@ export default function VisibleColumnsButtonRelationSection({
     setAnchorEl(null);
   };
 
-  const updateView = (datas) => {
+  const updateView = async (datas) => {
     setIsLoading(true);
 
     const result = data?.tabs;
 
-    const computeTabs = result?.map((item, index) => ({
-      ...item,
-      attributes: {
-        ...item?.attributes,
-        columns:
-          index === selectedTabIndex ? datas : {...item?.attributes?.columns},
-      },
-    }));
+    if (!result) {
+      setIsLoading(false);
+      return;
+    }
 
-    layoutService
-      .update(
+    const computeTabs = result.map((item, index) => {
+      if (index === selectedTabIndex) {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: [...datas],
+          },
+        };
+      } else {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: Array.isArray(item?.attributes?.columns)
+              ? [...item?.attributes?.columns]
+              : [],
+          },
+        };
+      }
+    });
+
+    try {
+      await layoutService.update(
         {
           ...data,
           tabs: computeTabs,
         },
         tableSlug
-      )
-      .then(() => {
-        getAllData();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        // refetch();
-      });
+      );
+
+      await getAllData();
+    } catch (error) {
+      console.error("Error updating layout:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const visibleFields = useMemo(() => {
@@ -147,7 +165,7 @@ export default function VisibleColumnsButtonRelationSection({
         });
     }
   }, []);
-  console.log("datttttttttttaaaaaaa", data);
+  console.log("datadatadata", data);
   return (
     <div>
       <Button
@@ -451,80 +469,62 @@ export default function VisibleColumnsButtonRelationSection({
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                       <Switch
                         size="small"
-                        checked={
-                          Array.isArray(
-                            data?.tabs?.[selectedTabIndex]?.attributes
-                              ?.columns ||
-                              data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          ) &&
-                          (
-                            data?.tabs?.[selectedTabIndex]?.attributes
-                              ?.columns ??
-                            data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )?.includes(column?.relation_id)
-                        }
+                        checked={(
+                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+                          data?.tabs?.[selectedTabIndex]?.relation?.columns
+                        )?.includes(column?.relation_id)}
                         onChange={(e) => {
-                          const columns = Array.isArray(
-                            data?.tabs?.[selectedTabIndex]?.attributes
-                              ?.columns ||
-                              data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )
-                            ? data?.tabs?.[selectedTabIndex]?.attributes
-                                ?.columns ??
-                              data?.tabs?.[selectedTabIndex]?.relation?.columns
-                            : [];
-
                           updateView(
                             e.target.checked
-                              ? [...columns, column?.relation_id]
-                              : columns.filter(
-                                  (el) => el !== column?.relation_id
-                                )
+                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                                  ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns
+                                ? [
+                                    ...(data?.tabs?.[selectedTabIndex]
+                                      ?.attributes?.columns ??
+                                      data?.tabs?.[selectedTabIndex]?.relation
+                                        ?.columns),
+                                    column?.relation_id,
+                                  ]
+                                : [column?.relation_id]
+                              : (
+                                  data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                )?.filter((el) => el !== column?.relation_id)
                           );
                         }}
                       />
                     ) : (
                       <Switch
                         size="small"
-                        checked={
-                          (Array.isArray(
-                            data?.tabs?.[selectedTabIndex]?.attributes?.columns
-                          ) ||
-                            Array.isArray(
-                              data?.tabs?.[selectedTabIndex]?.relation?.columns
-                            )) &&
-                          (Array.isArray(
-                            data?.tabs?.[selectedTabIndex]?.attributes?.columns
-                          )
-                            ? data?.tabs?.[selectedTabIndex]?.attributes
-                                ?.columns
-                            : Array.isArray(
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                )
-                              ? data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
-                              : []
-                          ).includes(column?.id)
-                        }
+                        checked={(
+                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+                          data?.tabs?.[selectedTabIndex]?.relation?.columns
+                        )?.includes(column?.id)}
                         onChange={(e) => {
-                          const columns = Array.isArray(
-                            data?.tabs?.[selectedTabIndex]?.attributes?.columns
-                          )
-                            ? data?.tabs?.[selectedTabIndex]?.attributes
-                                ?.columns
-                            : Array.isArray(
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                )
-                              ? data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
-                              : [];
-
                           updateView(
                             e.target.checked
-                              ? [...columns, column?.id]
-                              : columns.filter((el) => el !== column?.id)
+                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                                  ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns
+                                ? [
+                                    ...(data?.tabs?.[selectedTabIndex]
+                                      ?.attributes?.columns ??
+                                      data?.tabs?.[selectedTabIndex]?.relation
+                                        ?.columns),
+                                    column?.id,
+                                  ]
+                                : [column?.id]
+                              : (
+                                  data?.tabs?.[selectedTabIndex]?.attributes
+                                    ?.columns ??
+                                  data?.tabs?.[selectedTabIndex]?.relation
+                                    ?.columns
+                                )?.filter((el) => el !== column?.id)
                           );
                         }}
                       />

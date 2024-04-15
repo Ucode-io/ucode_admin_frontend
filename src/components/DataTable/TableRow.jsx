@@ -1,10 +1,10 @@
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { Button, Checkbox } from "@mui/material";
-import React, { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import {Button, Checkbox} from "@mui/material";
+import React, {useRef} from "react";
+import {useNavigate} from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
@@ -106,54 +106,50 @@ const TableRow = ({
                 left: "0",
                 backgroundColor: "#F6F6F6",
                 zIndex: "1",
-              }}
-            >
+              }}>
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                }}
-              >
+                }}>
                 <Button
                   onClick={() => {
-                    console.log('worked 1')
+                    console.log("worked 1");
                     onRowClick(row, rowIndex);
                   }}
                   className="first_button"
                   style={{
                     minWidth: "max-content",
-                  }}
-                >
+                  }}>
                   <OpenInFullIcon />
                 </Button>
 
                 <span
                   className="data_table__row_number"
-                  style={{ width: "35px" }}
-                >
+                  style={{width: "35px"}}>
                   {limit === "all"
                     ? rowIndex + 1
                     : (currentPage - 1) * limit + rowIndex + 1}
                   {/* {rowIndex + 1} */}
                 </span>
 
-                <PermissionWrapperV2 tableSlug={tableSlug} type={'delete_all'}>
-                <Checkbox
-                  className="table_multi_checkbox"
-                  style={{
-                    display:
-                      selectedObjectsForDelete?.find(
-                        (item) => item?.guid === row?.guid
-                      ) && "block",
-                  }}
-                  checked={selectedObjectsForDelete?.find(
-                    (item) => item?.guid === row?.guid
-                  )}
-                  onChange={() => {
-                    changeSetDelete(row);
-                  }}
-                />
+                <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
+                  <Checkbox
+                    className="table_multi_checkbox"
+                    style={{
+                      display:
+                        selectedObjectsForDelete?.find(
+                          (item) => item?.guid === row?.guid
+                        ) && "block",
+                    }}
+                    checked={selectedObjectsForDelete?.find(
+                      (item) => item?.guid === row?.guid
+                    )}
+                    onChange={() => {
+                      changeSetDelete(row);
+                    }}
+                  />
                 </PermissionWrapperV2>
               </div>
             </CTableCell>
@@ -202,8 +198,7 @@ const TableRow = ({
                           ? "1"
                           : "0"
                       }`,
-                    }}
-                  >
+                    }}>
                     {isTableView ? (
                       <TableDataForm
                         relOptions={relOptions}
@@ -230,7 +225,7 @@ const TableRow = ({
                   </CTableCell>
                 )
             )}
-            <td 
+            <td
               style={{
                 minWidth: "85px",
                 color: "#262626",
@@ -241,11 +236,10 @@ const TableRow = ({
                 padding: "0 5px",
                 position: `${"sticky"}`,
                 right: "0",
-                backgroundColor: `${ "#fff" }`,
+                backgroundColor: `${"#fff"}`,
                 zIndex: `${"0"}`,
-                borderLeft: '1px solid #eee'
-              }}
-            >
+                borderLeft: "1px solid #eee",
+              }}>
               <div
                 style={{
                   display: "flex",
@@ -253,15 +247,13 @@ const TableRow = ({
                   padding: "3px",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <CTableCell
                   style={{
                     padding: 0,
                     borderRight: "none",
                     borderBottom: "none",
-                  }}
-                >
+                  }}>
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                     <RectangleIconButton
                       color="error"
@@ -269,8 +261,7 @@ const TableRow = ({
                         row.guid
                           ? onDeleteClick(row, rowIndex)
                           : remove(rowIndex)
-                      }
-                    >
+                      }>
                       <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -284,9 +275,7 @@ const TableRow = ({
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (
-        <CTableRow
-        >
-
+        <CTableRow>
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -297,15 +286,13 @@ const TableRow = ({
               left: "0",
               backgroundColor: "#F6F6F6",
               zIndex: "1",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => {
                   onRowClick(row, rowIndex);
@@ -313,8 +300,7 @@ const TableRow = ({
                 className="first_button"
                 style={{
                   minWidth: "max-content",
-                }}
-              >
+                }}>
                 <OpenInFullIcon />
               </Button>
 
@@ -368,8 +354,7 @@ const TableRow = ({
                         ? "1"
                         : "0"
                     }`,
-                  }}
-                >
+                  }}>
                   {isTableView ? (
                     <TableDataForm
                       relOptions={relOptions}
@@ -396,20 +381,21 @@ const TableRow = ({
                 </CTableCell>
               )
           )}
-          <td style={{
-            height: "30px",
-            minWidth: "85px",
-            color: "#262626",
-            fontSize: "13px",
-            fontStyle: "normal",
-            fontWeight: 400,
-            lineHeight: "normal",
-            padding: "0 5px",
-            position: `${"sticky"}`,
-            right: "0",
-            backgroundColor: `${ "#fff" }`,
-            zIndex: `${"0"}`,
-            borderLeft: '1px solid #eee'
+          <td
+            style={{
+              height: "30px",
+              minWidth: "85px",
+              color: "#262626",
+              fontSize: "13px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "normal",
+              padding: "0 5px",
+              position: `${"sticky"}`,
+              right: "0",
+              backgroundColor: `${"#fff"}`,
+              zIndex: `${"0"}`,
+              borderLeft: "1px solid #eee",
             }}>
             <div
               style={{
@@ -418,26 +404,26 @@ const TableRow = ({
                 padding: "3px",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <CTableCell
                 style={{
                   padding: 0,
                   borderRight: "none",
                   borderBottom: "none",
-                }}
-              >
+                }}>
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                   <RectangleIconButton
                     color="error"
                     onClick={() =>
                       row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                    }
-                  >
+                    }>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
               </CTableCell>
+              <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
+                <GeneratePdfFromTable row={row} />
+              </PermissionWrapperV2>
             </div>
           </td>
         </CTableRow>
@@ -445,9 +431,7 @@ const TableRow = ({
         <CTableRow
           onClick={() => {
             onChecked(row?.guid);
-          }}
-        >
-
+          }}>
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -458,15 +442,13 @@ const TableRow = ({
               left: "0",
               backgroundColor: "#F6F6F6",
               zIndex: "1",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => {
                   onRowClick(row, rowIndex);
@@ -474,8 +456,7 @@ const TableRow = ({
                 className="first_button"
                 style={{
                   minWidth: "max-content",
-                }}
-              >
+                }}>
                 <OpenInFullIcon />
               </Button>
 
@@ -524,8 +505,7 @@ const TableRow = ({
                     ? "1"
                     : "0"
                 }`,
-              }}
-            >
+              }}>
               <TableDataForm
                 relOptions={relOptions}
                 isTableView={isTableView}
@@ -558,8 +538,7 @@ const TableRow = ({
                     redirectUrl: window.location.pathname,
                   },
                 });
-              }}
-            >
+              }}>
               <Delete color="error" />
             </RectangleIconButton>
           </PermissionWrapperV2>

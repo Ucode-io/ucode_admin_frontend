@@ -1,6 +1,6 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import {Add, InsertDriveFile} from "@mui/icons-material";
-import {Card, Divider} from "@mui/material";
+import {Card, Divider, Menu} from "@mui/material";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -22,6 +22,8 @@ import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
 import constructorObjectService from "../../../services/constructorObjectService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -67,6 +69,15 @@ const NewRelationSection = ({
   const myRef = useRef();
   const tables = useSelector((state) => state?.auth?.tables);
   const menuId = searchParams.get("menuId");
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   // const { data, refetch } = useQuery(
   //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
@@ -249,7 +260,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap} = {
+    data: {fieldsMap, views} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -270,6 +281,7 @@ const NewRelationSection = ({
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
+          views: data?.views,
         };
       },
       enabled: !!relatedTableSlug,
@@ -378,6 +390,15 @@ const NewRelationSection = ({
                         // refetch={refetch}
                         data={data}
                       />
+                      <button
+                        className={styles.moreButton}
+                        onClick={handleClick}>
+                        <MoreHorizIcon
+                          style={{
+                            color: "#888",
+                          }}
+                        />
+                      </button>
                     </>
                   )}
                 </div>
@@ -449,6 +470,41 @@ const NewRelationSection = ({
           </Tabs>
         </Card>
       ) : null}
+
+      <Menu
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              // width: 100,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}>
+        <div className={styles.menuBar}>
+          <ExcelDownloadButton view={views?.[0]} />
+        </div>
+      </Menu>
     </>
   );
 };

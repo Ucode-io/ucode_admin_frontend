@@ -7,15 +7,17 @@ import {Box, Button, Modal, Popover, Typography} from "@mui/material";
 import {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
+import ClearIcon from "@mui/icons-material/Clear";
+import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
 
 const style = {
   position: "absolute",
-  top: "50%",
+  top: "40%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "600px",
-  height: "400px",
-  bgcolor: "background.paper",
+  minWidth: "600px",
+  minHeight: "400px",
+  // bgcolor: "background.paper",
   border: "0px solid #000",
   boxShadow: 24,
   p: 4,
@@ -33,6 +35,7 @@ const ImageUpload = ({
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [degree, setDegree] = useState(90);
 
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
@@ -59,6 +62,14 @@ const ImageUpload = ({
         handleClose();
       })
       .finally(() => setLoading(false));
+  };
+
+  const rotateImg = () => {
+    if (degree === 360) {
+      setDegree(90);
+    } else {
+      setDegree(degree + 90);
+    }
   };
 
   const deleteImage = (id) => {
@@ -217,9 +228,10 @@ const ImageUpload = ({
                   position: "absolute",
                   left: 0,
                   top: 0,
-                  width: "600px",
-                  height: "400px",
+                  minWidth: "600px",
+                  minHeight: "400px",
                   border: "0px solid #fff",
+                  transform: `rotate(${degree}deg)`,
                 }}
                 aria-describedby={id}
                 onClick={handleClick}>
@@ -241,6 +253,29 @@ const ImageUpload = ({
                   {value?.split?.("_")?.[1] ?? ""}
                 </Typography>
               </Box>
+              <Button
+                onClick={handleCloseImg}
+                sx={{
+                  position: "absolute",
+                  right: "-250px",
+                  top: "-20px",
+                  color: "white",
+                }}>
+                <ClearIcon style={{width: "30px", height: "30px"}} />
+              </Button>
+
+              <Button
+                onClick={rotateImg}
+                sx={{
+                  position: "absolute",
+                  right: "-250px",
+                  bottom: "-150px",
+                  color: "#eee",
+                }}>
+                <Rotate90DegreesCcwIcon
+                  style={{width: "30px", height: "30px"}}
+                />
+              </Button>
             </Box>
           </Modal>
         </>

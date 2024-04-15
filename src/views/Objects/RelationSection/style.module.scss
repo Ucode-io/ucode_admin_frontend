@@ -1,9 +1,10 @@
+@use "/src/scss/colors";
+
 .card {
   border-radius: 0;
   // border-left: 1px solid #e5e9eb;
   height: 100%;
   width: 100%;
-
 
   .cardHeader {
     // height: 56px;
@@ -13,7 +14,7 @@
     padding: 0 12px;
     border-bottom: 1px solid #eee;
     padding: 10px 0;
-    // border-bottom: 1px solid #e5e9eb;  
+    // border-bottom: 1px solid #e5e9eb;
   }
 
   .tabList {
@@ -21,7 +22,6 @@
     overflow-x: scroll;
     display: flex;
     align-items: center;
-
   }
 
   .tabs_item {
@@ -94,5 +94,55 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border: 0px solid rgb(221, 217, 217);
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.element {
+  border: 1px solid #e5e9eb;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  &.active {
+    color: colors.$primary;
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    border-top: 2px solid #0e73f6;
+  }
+}
+
+.menuBar {
+  width: 180px;
+}
+
+.template {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 5px 10px;
+  cursor: pointer;
+
+  span {
+    margin-left: 10px;
   }
 }

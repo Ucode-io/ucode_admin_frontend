@@ -435,7 +435,7 @@ const AutoCompleteElement = ({
       return true;
     } else return false;
   }, [autoFiltersValue]);
-  console.log("localValue", computedOptions, field);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (

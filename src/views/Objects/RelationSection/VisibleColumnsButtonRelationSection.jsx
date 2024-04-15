@@ -43,35 +43,53 @@ export default function VisibleColumnsButtonRelationSection({
     setAnchorEl(null);
   };
 
-  const updateView = (datas) => {
+  const updateView = async (datas) => {
     setIsLoading(true);
 
     const result = data?.tabs;
 
-    const computeTabs = result?.map((item, index) => ({
-      ...item,
-      attributes: {
-        ...item?.attributes,
-        columns:
-          index === selectedTabIndex ? datas : {...item?.attributes?.columns},
-      },
-    }));
+    if (!result) {
+      setIsLoading(false);
+      return;
+    }
 
-    layoutService
-      .update(
+    const computeTabs = result.map((item, index) => {
+      if (index === selectedTabIndex) {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: [...datas],
+          },
+        };
+      } else {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: Array.isArray(item?.attributes?.columns)
+              ? [...item?.attributes?.columns]
+              : [],
+          },
+        };
+      }
+    });
+
+    try {
+      await layoutService.update(
         {
           ...data,
           tabs: computeTabs,
         },
         tableSlug
-      )
-      .then(() => {
-        getAllData();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        // refetch();
-      });
+      );
+
+      await getAllData();
+    } catch (error) {
+      console.error("Error updating layout:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const visibleFields = useMemo(() => {
@@ -147,7 +165,7 @@ export default function VisibleColumnsButtonRelationSection({
         });
     }
   }, []);
-
+  console.log("datadatadata", data);
   return (
     <div>
       <Button

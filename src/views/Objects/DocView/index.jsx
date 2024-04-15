@@ -191,16 +191,21 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
       let pageSize = pointToMillimeter(selectedPaperSize.height);
       let pageWidth = pointToMillimeter(selectedPaperSize.width);
       let extraWidth =
-        pointToMillimeter(selectedPaperSize.width) === 100 ? 213 : 175;
+        pointToMillimeter(selectedPaperSize.width) === 100
+          ? 213
+          : pageWidth === 105
+            ? 0
+            : 175;
+      let extraHeight = pageSize === 148 ? 70 : 0;
+
       tables.forEach((table) => {
-        table.style.width = `${pageWidth === 100 ? "50%" : "97%"}`;
+        table.style.width = `${pageWidth === 100 ? "50%" : "100%"}`;
         table.style.borderRightCollapse = "collapse";
       });
 
       if (selectedPaperSize.height === 1000) {
-        pageSize = pixelToMillimeter(
-          document.querySelector(".ck-content").offsetHeight - 37
-        );
+        pageSize = pixelToMillimeter();
+        document.querySelector(".ck-content").offsetHeight - 37;
       }
 
       const res = await documentTemplateService.exportToPDF({
@@ -208,14 +213,14 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
           linked_table_slug: selectedLinkedTableSlug,
           linked_object_id: selectedObject?.value,
           page_size: selectedPaperSize.name,
-          page_height: pageSize,
+          page_height: pageSize + extraHeight,
           page_width: pointToMillimeter(selectedPaperSize.width),
           object_id: selectedOutputObject?.value?.split("#")?.[0],
           table_slug: selectedOutputTable?.split("#")?.[1],
         },
         html: `${meta} <div class="ck-content" style="width: ${
           pointToMillimeter(selectedPaperSize.width) + extraWidth
-        }mm" >${tempElement.innerHTML}</div>`,
+        }mm  display: 'none'" >${tempElement.innerHTML}</div>`,
       });
 
       queryClient.refetchQueries([

@@ -5,7 +5,6 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
 import {useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";

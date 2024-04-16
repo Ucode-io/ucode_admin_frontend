@@ -35,7 +35,7 @@ const ImageUpload = ({
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [degree, setDegree] = useState(90);
+  const [degree, setDegree] = useState(0);
 
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);

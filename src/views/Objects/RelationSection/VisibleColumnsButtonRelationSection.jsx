@@ -92,52 +92,33 @@ export default function VisibleColumnsButtonRelationSection({
     }
   };
 
-  const visibleFields = useMemo(() => {
+  const computedColumns = useMemo(() => {
     if (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)) {
       return (
-        (
-          data?.tabs?.[selectedTabIndex]?.attributes?.columns ||
-          data?.tabs?.[selectedTabIndex]?.relation?.columns
-        )
-          ?.map((id) => fieldsMap[id])
-          ?.filter((el) => el?.type) ?? []
+        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+        data?.tabs?.[selectedTabIndex]?.relation?.columns
       );
     } else {
       return [];
     }
-  }, [
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
-    data?.tabs?.[selectedTabIndex]?.relation?.columns,
-    fieldsMap,
-  ]);
+  }, [data?.tabs, selectedTabIndex]);
+
+  const visibleFields = useMemo(() => {
+    return (
+      computedColumns?.map((id) => fieldsMap[id])?.filter((el) => el?.type) ??
+      []
+    );
+  }, [computedColumns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    if (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)) {
-      return allFields.filter((field) => {
-        if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-          return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-            field.relation_id
-          );
-        } else {
-          return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-            field.id
-          );
-        }
-      });
-    } else {
-      return allFields?.filter((field) => {
-        if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-          return field?.relation_id;
-        } else {
-          return field?.id;
-        }
-      });
-    }
-  }, [
-    allFields,
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
-    data?.tabs?.[selectedTabIndex]?.relation?.columns,
-  ]);
+    return allFields.filter((field) => {
+      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+        return !computedColumns?.includes(field.relation_id);
+      } else {
+        return !computedColumns?.includes(field.id);
+      }
+    });
+  }, [allFields, computedColumns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -165,7 +146,7 @@ export default function VisibleColumnsButtonRelationSection({
         });
     }
   }, []);
-  console.log("datadatadata", data);
+
   return (
     <div>
       <Button
@@ -353,10 +334,9 @@ export default function VisibleColumnsButtonRelationSection({
                       column?.type === "LOOKUPS" ? (
                         <Switch
                           size="small"
-                          checked={(
-                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
-                            data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )?.includes(column?.relation_id)}
+                          checked={computedColumns?.includes(
+                            column?.relation_id
+                          )}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
@@ -384,10 +364,7 @@ export default function VisibleColumnsButtonRelationSection({
                       ) : (
                         <Switch
                           size="small"
-                          checked={(
-                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
-                            data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )?.includes(column?.id)}
+                          checked={computedColumns?.includes(column?.id)}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
@@ -469,10 +446,7 @@ export default function VisibleColumnsButtonRelationSection({
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                       <Switch
                         size="small"
-                        checked={(
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                          data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.includes(column?.relation_id)}
+                        checked={computedColumns?.includes(column?.relation_id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked
@@ -500,10 +474,7 @@ export default function VisibleColumnsButtonRelationSection({
                     ) : (
                       <Switch
                         size="small"
-                        checked={(
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                          data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.includes(column?.id)}
+                        checked={computedColumns?.includes(column?.id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked

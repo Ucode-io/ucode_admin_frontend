@@ -217,7 +217,7 @@ const NewProfilePanel = ({
     const isLanguageExist = languages?.some(
       (item) => defaultLanguage === item?.slug
     );
-
+    console.log("languages", languages);
     if (languages?.length) {
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
@@ -251,7 +251,7 @@ const NewProfilePanel = ({
 
   useEffect(() => {
     getDefaultLanguage();
-  }, []);
+  }, [projectInfo?.languages]);
 
   const handleClickLanguages = (event) => {
     setAnchorEl(event.currentTarget);

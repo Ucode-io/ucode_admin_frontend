@@ -49,6 +49,7 @@ const errorHandler = (error, hooks) => {
       })
       .catch((err) => {
         console.log(err);
+        store.dispatch(authActions.logout());
         return Promise.reject(error);
       });
   } else {

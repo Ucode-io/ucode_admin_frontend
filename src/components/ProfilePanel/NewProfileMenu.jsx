@@ -251,7 +251,7 @@ const NewProfilePanel = ({
 
   useEffect(() => {
     getDefaultLanguage();
-  }, []);
+  }, [languages?.length]);
 
   const handleClickLanguages = (event) => {
     setAnchorEl(event.currentTarget);

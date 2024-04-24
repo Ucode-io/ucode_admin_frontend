@@ -287,6 +287,26 @@ const NewRelationSection = ({
     }
   );
 
+  const computedVisibleFields = useMemo(() => {
+    const mappedObjects = [];
+    Object.values(fieldsMap)?.forEach((obj) => {
+      if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
+        if (selectedTab?.attributes?.columns.includes(obj.relation_id)) {
+          mappedObjects.push(obj);
+        }
+      } else {
+        if (selectedTab?.attributes?.columns.includes(obj.id)) {
+          mappedObjects.push(obj);
+        }
+      }
+    });
+
+    return mappedObjects.map((obj) => obj.id);
+  }, [
+    Object.values(fieldsMap)?.length,
+    selectedTab?.attributes?.columns?.length,
+  ]);
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -501,7 +521,11 @@ const NewRelationSection = ({
           },
         }}>
         <div className={styles.menuBar}>
-          <ExcelDownloadButton view={views?.[0]} />
+          <ExcelDownloadButton
+            computedVisibleFields={computedVisibleFields}
+            view={views?.[0]}
+            selectedTab={selectedTab}
+          />
         </div>
       </Menu>
     </>

@@ -47,7 +47,7 @@ const ExcelDownloadButton = ({
       setLoader(false);
     }
   };
-  console.log("idFromParams", idFromParams);
+
   return (
     <div className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>

@@ -35,7 +35,7 @@ const ExcelDownloadButton = ({
             ...sort,
             ...filters,
             field_ids: computedVisibleFields,
-            [`${selectedTab?.relation?.table_from?.slug}_id`]: idFromParams,
+            [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
           },
         }
       );

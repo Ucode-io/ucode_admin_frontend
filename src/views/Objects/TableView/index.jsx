@@ -436,7 +436,6 @@ const TableView = ({
             },
           })
           .then((res) => {
-            console.log("resssssssssss", res);
             if (relOptions?.length > 0) {
               setRelOptions((prev) => {
                 const updatedOptions = prev.map((option) => {

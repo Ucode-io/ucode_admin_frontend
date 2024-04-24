@@ -68,7 +68,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
-  console.log("values", values);
+  const table_from = watch("table_from");
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
@@ -135,9 +135,6 @@ const RelationSettings = ({
         const unCheckedColumns = fields.filter(
           (field) => !values.columns?.includes(field.id)
         );
-
-        console.log("checkedColumns", checkedColumns);
-        console.log("checkedColumns", unCheckedColumns);
 
         const checkedFilters =
           values.quick_filters
@@ -307,6 +304,12 @@ const RelationSettings = ({
       },
     },
   });
+
+  useEffect(() => {
+    if (isRecursiveRelation) {
+      setValue("table_to", table_from);
+    }
+  }, [isRecursiveRelation]);
 
   const computedColumns = useMemo(() => {
     return listToOptions(computedColumnsList, "label", "slug");

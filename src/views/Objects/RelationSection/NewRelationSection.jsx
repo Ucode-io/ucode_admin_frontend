@@ -525,6 +525,7 @@ const NewRelationSection = ({
             computedVisibleFields={computedVisibleFields}
             view={views?.[0]}
             selectedTab={selectedTab}
+            relatedTable={relatedTable}
           />
         </div>
       </Menu>

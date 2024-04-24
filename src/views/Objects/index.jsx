@@ -55,10 +55,6 @@ const ObjectsPage = () => {
     queryParams: {
       enabled: Boolean(menuId),
       onSuccess: (res) => {
-        console.log(
-          "res?.menus?.filter((item) => item?.permission?.read)?.some((el) => el?.id === menuId)",
-          res?.menus?.filter((item) => item?.permission?.read)
-        );
         if (
           !res?.menus
             ?.filter((item) => item?.permission?.read)

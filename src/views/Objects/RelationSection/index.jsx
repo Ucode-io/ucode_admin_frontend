@@ -275,8 +275,7 @@ const RelationSection = ({
             selectedIndex={selectedTabIndex}
             onSelect={(index) => {
               setSelectedTabIndex(index);
-            }}
-          >
+            }}>
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
                 {filteredRelations?.map((relation, index) =>
@@ -308,14 +307,12 @@ const RelationSection = ({
                 {!selectedRelation?.relation_buttons && (
                   <PermissionWrapperV2
                     tableSlug={filteredRelations?.[0]?.relatedTable}
-                    type={"write"}
-                  >
+                    type={"write"}>
                     <RectangleIconButton
                       color="success"
                       size="small"
                       onClick={navigateToCreatePage}
-                      disabled={!id}
-                    >
+                      disabled={!id}>
                       <Add style={{color: "#007AFF"}} />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -373,8 +370,7 @@ const RelationSection = ({
                               .map((i, index) => fields.length - (index + 1))
                           );
                         }
-                      }}
-                    >
+                      }}>
                       <Clear color="error" />
                     </RectangleIconButton>
                   </>
@@ -383,16 +379,14 @@ const RelationSection = ({
                   !selectedRelation?.relation_buttons && (
                     <PermissionWrapperV2
                       type="edit"
-                      tableSlug={filteredRelations?.[0]?.relatedTable}
-                    >
+                      tableSlug={filteredRelations?.[0]?.relatedTable}>
                       <RectangleIconButton
                         color="success"
                         size="small"
                         onClick={() => {
                           setFormVisible(true);
                           reset();
-                        }}
-                      >
+                        }}>
                         <Edit color="primary" />
                       </RectangleIconButton>
                     </PermissionWrapperV2>
@@ -410,16 +404,14 @@ const RelationSection = ({
 
                 <RectangleIconButton
                   color="white"
-                  onClick={() => setHeightControl(!heightControl)}
-                >
+                  onClick={() => setHeightControl(!heightControl)}>
                   <div style={{position: "relative"}}>
                     <span
                       style={{
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <FormatLineSpacingIcon color="primary" />
                     </span>
                     {heightControl && (
@@ -428,8 +420,7 @@ const RelationSection = ({
                           <div
                             key={el.value}
                             className={style.heightControl_item}
-                            onClick={() => handleHeightControl(el.value)}
-                          >
+                            onClick={() => handleHeightControl(el.value)}>
                             {el.label}
                             {tableHeight === el.value ? (
                               <CheckIcon color="primary" />
@@ -444,31 +435,27 @@ const RelationSection = ({
                 <RectangleIconButton
                   color="success"
                   size="small"
-                  onClick={() => setMoreShowButton(!moreShowButton)}
-                >
+                  onClick={() => setMoreShowButton(!moreShowButton)}>
                   <div style={{position: "relative"}}>
                     <span
                       style={{
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <MoreVertIcon color="primary" />
                     </span>
                     {moreShowButton && (
                       <div
                         className={style.heightControl}
-                        style={{minWidth: "auto"}}
-                      >
+                        style={{minWidth: "auto"}}>
                         <div
                           className={style.heightControl_item}
                           style={{
                             justifyContent: "flex-start",
                             color: "#6E8BB7",
                             padding: "5px",
-                          }}
-                        >
+                          }}>
                           <ExcelUploadButton withText={true} />
                         </div>
 
@@ -478,8 +465,7 @@ const RelationSection = ({
                             justifyContent: "flex-start",
                             color: "#6E8BB7",
                             padding: "5px",
-                          }}
-                        >
+                          }}>
                           <ExcelDownloadButton
                             relatedTable={selectedRelation?.relatedTable}
                             fieldSlug={fieldSlug}

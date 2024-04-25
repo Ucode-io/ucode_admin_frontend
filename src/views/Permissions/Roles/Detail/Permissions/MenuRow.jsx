@@ -39,7 +39,7 @@ const MenuRow = ({
         item?.id === changedData?.find((item) => table?.id === item?.id)?.id
     );
   }, [changedData]);
-  console.log("checkBoxValues", checkBoxValues);
+
   const {data: permissionData, isLoading: permissionGetByIdLoading} =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
@@ -67,11 +67,6 @@ const MenuRow = ({
     });
 
   const renderMenuRows = (items) => {
-    const obj = {};
-    items?.forEach((item, index) => {
-      obj[item.id] = item.permission;
-    });
-    console.log("changedDatachangedData", changedData);
     return items?.map((item, index) => (
       <MenuRow
         key={item.id}
@@ -83,7 +78,7 @@ const MenuRow = ({
         setChangedData={setChangedData}
         changedData={changedData}
         setValue={setValue}
-        checkBoxValues={obj}
+        checkBoxValues={checkBoxValues}
         setCheckBoxValues={setCheckBoxValues}
       />
     ));
@@ -124,7 +119,6 @@ const MenuRow = ({
   };
 
   const handleChange = (e, type) => {
-    console.log("eeeeeeeeeeeeeeee", e, type);
     detectDuplicate(e, type);
 
     setCheckBoxValues((prev) => ({

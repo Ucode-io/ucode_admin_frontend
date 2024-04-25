@@ -281,7 +281,7 @@ const AutoCompleteElement = ({
     },
     {
       enabled:
-        isValueExist() ||
+        // isValueExist() ||
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
         (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {

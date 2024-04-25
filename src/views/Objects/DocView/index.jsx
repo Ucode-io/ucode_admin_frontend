@@ -299,7 +299,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
         printable: computedHTML,
         type: "raw-html",
         style: [
-          `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`,
+          `@page { size: ${selectedPaperSize.width - 120}mm ${selectedPaperSize.height}mm; margin: 5mm;} body { margin: 0 }`,
         ],
         targetStyles: ["*"],
       });

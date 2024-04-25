@@ -114,7 +114,7 @@ const AppSidebar = ({
   const activeMenu =
     Boolean(
       appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
-    ) || menuItem === element?.id;
+    ) || selectedApp?.id === element?.id;
   return (
     <Draggable key={index}>
       {permission ? (

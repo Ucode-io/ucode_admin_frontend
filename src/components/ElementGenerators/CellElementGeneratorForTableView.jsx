@@ -170,7 +170,6 @@ const CellElementGeneratorForTableView = ({
       ) : (
         <CellRelationFormElementForTableView
           relOptions={relOptions}
-          isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
           isTableView={true}

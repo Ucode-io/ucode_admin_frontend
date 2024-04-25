@@ -95,11 +95,16 @@ const RecursiveBlock = ({
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
     NavigateByType({element, appId, navigate});
+
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
+    }
+
+    if (element?.type === "TABLE") {
+      setSubMenuIsOpen(false);
     }
     if (
       !pinIsEnabled &&

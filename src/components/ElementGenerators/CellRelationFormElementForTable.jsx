@@ -47,7 +47,6 @@ const CellRelationFormElementForTableView = ({
   defaultValue = null,
   relationfields,
   data,
-  isNewRow,
   isTableView,
 }) => {
   const classes = useStyles();
@@ -96,7 +95,6 @@ const CellRelationFormElementForTableView = ({
           ) : (
             <AutoCompleteElement
               relOptions={relOptions}
-              isNewRow={isNewRow}
               tableView={tableView}
               disabled={disabled}
               isFormEdit={isFormEdit}
@@ -107,7 +105,7 @@ const CellRelationFormElementForTableView = ({
               name={name}
               setValue={(e) => {
                 onChange(e);
-                !isNewRow && updateObject();
+                isTableView && updateObject();
               }}
               field={field}
               isTableView={isTableView}
@@ -140,7 +138,6 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
-  isNewRow,
   isTableView,
   setFormValue = () => {},
 }) => {
@@ -245,6 +242,19 @@ const AutoCompleteElement = ({
     }
   );
 
+  const isValueExist = () => {
+    if (localValue === null) {
+      const isExist = allOptions?.some((item) => item?.guid === value);
+      if (isExist) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  };
+
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
@@ -271,9 +281,9 @@ const AutoCompleteElement = ({
     },
     {
       enabled:
+        isValueExist() ||
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        Boolean(!relOptions?.length && isNewRow),
+        (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 

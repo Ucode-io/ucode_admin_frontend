@@ -181,7 +181,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+      // queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -356,6 +356,7 @@ const TableView = ({
         },
       });
     },
+    enabled: !!tableSlug,
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],

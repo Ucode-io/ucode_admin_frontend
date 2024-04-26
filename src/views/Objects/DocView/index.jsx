@@ -281,6 +281,17 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   const print = async () => {
     if (!selectedTemplate) return;
     setPdfLoader(true);
+
+    let paperWidth =
+      selectedPaperSize?.name === "A6"
+        ? `${selectedPaperSize?.width - 150}mm`
+        : `${selectedPaperSize?.width}pt`;
+
+    let paperHeight =
+      selectedPaperSize?.name === "A6"
+        ? `${selectedPaperSize?.height - 130}mm`
+        : `${selectedPaperSize?.height}pt`;
+
     try {
       let html = redactorRef.current.getData();
 
@@ -299,7 +310,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
         printable: computedHTML,
         type: "raw-html",
         style: [
-          `@page { size: ${selectedPaperSize.width - 120}mm ${selectedPaperSize.height}mm; margin: 5mm;} body { margin: 0 }`,
+          `@page { size: ${paperWidth} ${paperHeight}; margin: 5mm;} body { margin: 0 }`,
         ],
         targetStyles: ["*"],
       });

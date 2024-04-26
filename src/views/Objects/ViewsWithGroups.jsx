@@ -172,7 +172,7 @@ const ViewsWithGroups = ({
           mappedObjects.push(obj);
         }
       } else {
-        if (view?.columns.includes(obj.id)) {
+        if (view?.columns?.includes(obj.id)) {
           mappedObjects.push(obj);
         }
       }

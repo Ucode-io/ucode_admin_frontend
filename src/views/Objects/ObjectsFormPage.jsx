@@ -1,8 +1,8 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import {Save} from "@mui/icons-material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
 import {
   useLocation,
   useNavigate,
@@ -17,16 +17,16 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
-import { store } from "../../store";
-import { showAlert } from "../../store/alert/alert.thunk";
-import { sortSections } from "../../utils/sectionsOrderNumber";
+import {store} from "../../store";
+import {showAlert} from "../../store/alert/alert.thunk";
+import {sortSections} from "../../utils/sectionsOrderNumber";
 import NewRelationSection from "./RelationSection/NewRelationSection";
 import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
-import { useMenuGetByIdQuery } from "../../services/menuService";
+import {useTranslation} from "react-i18next";
+import {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -36,10 +36,10 @@ const ObjectsFormPage = ({
   dateInfo,
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(false);
@@ -47,7 +47,7 @@ const ObjectsFormPage = ({
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
 
@@ -55,23 +55,21 @@ const ObjectsFormPage = ({
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
     return idFromParam || selectedRow?.guid;
   }, [idFromParam, selectedRow]);
 
-
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
   }, [tableSlugFromParam, tableSlugFromProps]);
 
-
   const isInvite = menu.invite;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
-  const { deleteTab } = useTabRouter();
-  const { pathname } = useLocation();
+  const {deleteTab} = useTabRouter();
+  const {pathname} = useLocation();
 
   const {
     handleSubmit,
@@ -80,7 +78,7 @@ const ObjectsFormPage = ({
     setValue: setFormValue,
     watch,
     getValues,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       ...state,
@@ -89,7 +87,6 @@ const ObjectsFormPage = ({
     },
   });
   const getAllData = async () => {
-    console.log("ketvotti3")
     setLoader(true);
     const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
@@ -99,7 +96,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layoutData] = await Promise.all([
+      const [{data = {}}, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -113,7 +110,7 @@ const ObjectsFormPage = ({
             tab?.relation?.permission?.view_permission === true ||
             tab?.type === "section"
         ),
-      })
+      });
       setSections(sortSections(sections));
       setSummary(layoutData.summary_fields ?? []);
 
@@ -162,7 +159,7 @@ const ObjectsFormPage = ({
             tab?.relation?.permission?.view_permission === true ||
             tab?.type === "section"
         ),
-      })
+      });
       setSections(sortSections(sections));
       const relations =
         defaultLayout?.tabs?.map((el) => ({
@@ -190,7 +187,7 @@ const ObjectsFormPage = ({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -216,7 +213,7 @@ const ObjectsFormPage = ({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -262,16 +259,15 @@ const ObjectsFormPage = ({
     }
   };
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
       onSuccess: (res) => {
         setMenuItem(res);
       },
-    }
+    },
   });
-
 
   useEffect(() => {
     if (id) getAllData();
@@ -334,8 +330,7 @@ const ObjectsFormPage = ({
           <>
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
-              color="error"
-            >
+              color="error">
               Close
             </SecondaryButton>
             <FormCustomActionButton
@@ -346,13 +341,11 @@ const ObjectsFormPage = ({
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}
-              type={id ? "update" : "write"}
-            >
+              type={id ? "update" : "write"}>
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+                onClick={handleSubmit(onSubmit)}>
                 <Save />
                 Save
               </PrimaryButton>

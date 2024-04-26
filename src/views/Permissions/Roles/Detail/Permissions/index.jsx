@@ -64,7 +64,7 @@ const Permissions = ({
     allMenu?.forEach((item, index) => {
       obj[item.id] = item.permission;
     });
-    setCheckBoxValues(obj);
+    setCheckBoxValues((prev) => ({...prev, ...obj}));
   }, [allMenu]);
 
   return (

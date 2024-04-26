@@ -327,7 +327,6 @@ const TableView = ({
         searchText,
         sortedDatas,
         currentPage,
-        // checkedColumns,
         limit,
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,

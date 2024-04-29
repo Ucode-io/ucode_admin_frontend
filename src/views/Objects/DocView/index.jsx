@@ -284,6 +284,17 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
 
     try {
       let html = redactorRef.current.getData();
+      const selectedSizeWidth =
+        selectedPaperSize?.name === "A6"
+          ? `${250}mm`
+          : `${selectedPaperSize?.width}pt`;
+
+      const selectedSizeHeight =
+        selectedPaperSize?.name === "A6"
+          ? `${260}mm`
+          : `${selectedPaperSize?.height}pt`;
+
+      const tdHeight = selectedPaperSize?.name === "A6" ? 30 : 45;
 
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
 
@@ -295,21 +306,13 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
       });
 
       const computedHTML = `${meta} ${html} `;
-
-      // Adjust print settings and styles
+      console.log(computedHTML);
       printJS({
         printable: computedHTML,
         type: "raw-html",
-        style: `
-                @page {
-                    size: ${selectedPaperSize?.width}pt ${selectedPaperSize?.height}pt;
-                    margin: 0;
-                }
-                body {
-                    margin: 0;
-                    line-height: 12px;
-                }
-            `,
+        style: [
+          `@page { size: ${selectedSizeWidth} ${selectedSizeHeight}; margin: 5mm 10mm 0mm} body { margin: 0 auto, line-height: 12px } table {width: 100%} td ${tdHeight} `,
+        ],
         targetStyles: ["*"],
       });
     } finally {

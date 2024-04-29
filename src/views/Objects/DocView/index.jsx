@@ -296,12 +296,20 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
 
       const computedHTML = `${meta} ${html} `;
 
+      // Adjust print settings and styles
       printJS({
         printable: computedHTML,
         type: "raw-html",
-        style: [
-          `@page { size: ${selectedPaperSize?.width - 120}mm ${selectedPaperSize?.height - 120}mm; margin: 5mm;} body { margin: 0 auto }`,
-        ],
+        style: `
+                @page {
+                    size: ${selectedPaperSize?.width}pt ${selectedPaperSize?.height}pt;
+                    margin: 0;
+                }
+                body {
+                    margin: 0;
+                    line-height: 12px;
+                }
+            `,
         targetStyles: ["*"],
       });
     } finally {

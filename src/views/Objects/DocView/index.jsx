@@ -291,7 +291,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
 
       const selectedSizeHeight =
         selectedPaperSize?.name === "A6"
-          ? `${260}mm`
+          ? `${270}mm`
           : `${selectedPaperSize?.height}pt`;
 
       const tdHeight = selectedPaperSize?.name === "A6" ? 30 : 45;

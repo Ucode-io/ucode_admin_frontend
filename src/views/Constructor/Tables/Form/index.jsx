@@ -232,7 +232,7 @@ const ConstructorTablesFormPage = () => {
       .unwrap()
       .then((res) => {
         createType(res);
-        navigate(-1);
+        // navigate(-1);
       })
       .catch(() => setBtnLoader(false));
   };
@@ -311,7 +311,6 @@ const ConstructorTablesFormPage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("datadatadatadata", data, id);
     const computedData = {
       ...data,
       id: data?.id,

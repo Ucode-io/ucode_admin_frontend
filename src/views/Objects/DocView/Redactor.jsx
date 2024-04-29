@@ -15,7 +15,7 @@ const Redactor = forwardRef(
       control,
       name: "html",
     });
-    console.log("valuevaluevaluevalue", value);
+
     const computedFields = useMemo(() => {
       return (
         fields?.map((field) => ({

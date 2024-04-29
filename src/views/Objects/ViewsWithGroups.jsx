@@ -168,11 +168,11 @@ const ViewsWithGroups = ({
     const mappedObjects = [];
     Object.values(fieldsMap)?.forEach((obj) => {
       if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
-        if (view?.columns.includes(obj.relation_id)) {
+        if (view?.columns?.includes(obj.relation_id)) {
           mappedObjects.push(obj);
         }
       } else {
-        if (view?.columns.includes(obj.id)) {
+        if (view?.columns?.includes(obj.id)) {
           mappedObjects.push(obj);
         }
       }

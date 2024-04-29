@@ -1,15 +1,7 @@
-<<<<<<< HEAD
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-=======
 import {Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -18,7 +10,6 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
->>>>>>> refactor_queries
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -27,26 +18,15 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
-<<<<<<< HEAD
-import { useMenuGetByIdQuery } from "../../services/menuService";
-import { store } from "../../store";
-import { showAlert } from "../../store/alert/alert.thunk";
-import { sortSections } from "../../utils/sectionsOrderNumber";
-=======
+import {useMenuGetByIdQuery} from "../../services/menuService";
 import {store} from "../../store";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
->>>>>>> refactor_queries
 import NewRelationSection from "./RelationSection/NewRelationSection";
 import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
-<<<<<<< HEAD
-=======
-import {useTranslation} from "react-i18next";
-import {useMenuGetByIdQuery} from "../../services/menuService";
->>>>>>> refactor_queries
 
 const ObjectsFormPage = ({
   tableSlugFromProps,

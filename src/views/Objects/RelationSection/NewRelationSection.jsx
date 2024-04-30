@@ -307,7 +307,7 @@ const NewRelationSection = ({
     Object.values(fieldsMap)?.length,
     selectedTab?.attributes?.columns?.length,
   ]);
-
+  console.log("datatatatatatat", data);
   return (
     <>
       {selectedManyToManyRelation && (
@@ -349,6 +349,9 @@ const NewRelationSection = ({
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
+                              `label_${i18n?.language}`
+                            ] ||
+                            el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
                             ] ||
                             el?.attributes?.[`label_to_${i18n?.language}`] ||

@@ -30,7 +30,7 @@ const NewRelationSection = ({
   setSelectedTabIndex,
   relations,
   loader,
-  getAllData,
+  getAllData = () => {},
   tableSlug: tableSlugFromProps,
   id: idFromProps,
   limit,
@@ -307,7 +307,7 @@ const NewRelationSection = ({
     Object.values(fieldsMap)?.length,
     selectedTab?.attributes?.columns?.length,
   ]);
-  console.log("datatatatatatat", data);
+
   return (
     <>
       {selectedManyToManyRelation && (

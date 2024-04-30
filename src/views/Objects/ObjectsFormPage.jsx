@@ -58,8 +58,8 @@ const ObjectsFormPage = ({
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
-    return idFromParam || selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
+    return idFromParam || selectedRow?.guid || appId;
+  }, [idFromParam, selectedRow, appId]);
 
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
@@ -94,7 +94,7 @@ const ObjectsFormPage = ({
     });
 
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
-
+    console.log("getFormData", getFormData);
     try {
       const [{data = {}}, layoutData] = await Promise.all([
         getFormData,

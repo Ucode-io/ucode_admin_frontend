@@ -35,7 +35,7 @@
 .newMainInfoSections {
   position: absolute;
   left: 0;
-  top: 30px;
+  top: 0px;
   height: calc(100% - 80px);
   overflow: scroll;
   padding: 20px;
@@ -183,7 +183,7 @@
   background: #fff;
   // border-right: 1px solid #e5e9eb;
   position: relative;
-  padding: 16px;
+  // padding: 16px;
   padding-right: 0;
   min-height: 500px;
   overflow: scroll;

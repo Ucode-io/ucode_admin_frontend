@@ -101,10 +101,12 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
     }
   );
 
+  //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
   }, [companies]);
 
+  //=======COMPUTE PROJECTS
   const computedProjects = useMemo(() => {
     const company = companies?.find(
       (company) => company.id === selectedCompanyID
@@ -112,37 +114,21 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
-  const {data: computedEnvironments} = useQuery(
-    ["GET_ENVIRONMENT_LIST", {"project-id": selectedProjectID}],
-    () => {
-      return environmentService.getList({"project-id": selectedProjectID});
-    },
-    {
-      enabled: !!selectedProjectID,
-      select: (res) =>
-        res.data?.map((row) => ({
-          label: row.name,
-          value: row.environment_id,
-        })),
-    }
-  );
+  //=======COMPUTE ENVIRONMENTS
+  const computedEnvironments = useMemo(() => {
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
+    const companyProject = company?.projects?.find(
+      (el) => el?.id === selectedProjectID
+    );
 
-  const {data: computedRoles} = useRoleListQuery({
-    headers: {"environment-id": selectedEnvID},
-    params: {
-      "client-type-id": selectedClientTypeID,
-      "project-id": selectedProjectID,
-    },
-    queryParams: {
-      enabled: !!selectedClientTypeID,
-      select: (res) => {
-        return res?.data?.response?.map((row) => ({
-          label: row.name,
-          value: row.guid,
-        }));
-      },
-    },
-  });
+    return companyProject?.resource_environments?.map((item) => ({
+      label: item?.name,
+      value: item?.environment_id,
+      access_type: item?.access_type,
+    }));
+  }, [selectedEnvID, companies, selectedProjectID]);
 
   //======COMPUTE CLIENTTYPES
   const computedClientTypes = useMemo(() => {
@@ -169,11 +155,11 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
     authService
       .register(data)
       .then((res) => {
-        setLoading(false);
         setIndex(0);
-        store.dispatch(showAlert("Успешно", "success"));
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+      });
   };
 
   const onSubmit = (values) => {
@@ -583,87 +569,10 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                       </div>
                     )}
                   </TabPanel>
-                  {/* <TabPanel>
-        <div className={classes.formRow}>
-          <p className={classes.label}>{t("login")}</p>
-          <Box className={classes.phone}>
-            <HFTextFieldWithMask
-              isFormEdit
-              control={control}
-              name={"phoneNumber"}
-              fullWidth
-              // mask={"(99) 999-99-99"}
-            />
-          </Box>
-        </div>
-      </TabPanel> */}
                 </div>
               </div>
             ) : (
-              <div style={{padding: "0 20px"}}>
-                <div
-                  className={classes.formArea}
-                  style={{marginTop: "10px", height: `calc(100vh - 350px)`}}>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("company")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="company_id"
-                      size="large"
-                      placeholder={t("enter.company")}
-                      options={computedCompanies}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("project")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="project_id"
-                      size="large"
-                      placeholder={t("enter.project")}
-                      options={computedProjects}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("environment")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="environment_id"
-                      size="large"
-                      placeholder={t("select.environment")}
-                      options={computedEnvironments}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("client_type")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="client_type"
-                      size="large"
-                      placeholder={t("enter.client_type")}
-                      options={computedClientTypes}
-                    />
-                  </div>
-                  {computedConnections.length
-                    ? computedConnections?.map((connection, idx) => (
-                        <DynamicFields
-                          key={connection?.guid}
-                          table={computedConnections}
-                          connection={connection}
-                          index={idx}
-                          control={control}
-                          setValue={setValue}
-                          watch={watch}
-                          companies={companies}
-                        />
-                      ))
-                    : null}
-                </div>
-              </div>
+              <RegisterFormPage setFormType={setFormType} formType={formType} />
             )}
           </Tabs>
           {formType !== "register" && (

@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { TreeItem, TreeView } from "@mui/lab";
+import { TreeItem, TreeView } from "@mui/x-tree-view";
 import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
@@ -82,7 +82,7 @@ const FolderModal = ({
                 nodeId={"c57eedc3-a954-4262-a0af-376c65b5a284"}
                 label={"Root"}
               >
-                {menuList?.menus?.map((item) => (
+                {menuList?.map((item) => (
                   <FolderTreeView
                     element={item}
                     setCheck={setCheck}

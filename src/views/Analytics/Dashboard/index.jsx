@@ -9,7 +9,7 @@ import dashboardService from "../../../services/analytics/dashboardService";
 const columns = [
   {
     id: 1,
-    label: "Название",
+    label: "Name",
     slug: "name",
     type: "SINGLE_LINE",
   },

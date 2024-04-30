@@ -143,7 +143,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-  console.log("allTabs", allTabs);
+
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -159,8 +159,7 @@ function LayoutTabs({
             dropPlaceholder={{className: "drag-row-drop-preview"}}
             orientation="horizontal"
             onDrop={onDrop}
-            getChildPayload={(i) => allTabs[i]}
-          >
+            getChildPayload={(i) => allTabs[i]}>
             {allTabs?.map((tab, index) => (
               <Draggable
                 key={tab.id}
@@ -175,33 +174,32 @@ function LayoutTabs({
                     setSelectedTabIndex(index);
                     setSelectedTab(tab);
                   }}
-                  style={{padding: 0}}
-                >
+                  style={{padding: 0}}>
                   <div
                     // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
                     className={`${styles.tabsItem} ${
                       selectedTab?.id === tab?.id ? styles.active : ""
-                    }`}
-                  >
+                    }`}>
                     <div
                       className={styles.tab}
-                      style={{display: "flex", alignItems: "center"}}
-                    >
+                      style={{display: "flex", alignItems: "center"}}>
                       {mainForm.watch(
                         `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
-                      ) ?? mainForm.watch(
-                        `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
-                      ) ??
+                      ) ||
+                        mainForm.watch(
+                          `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                        ) ||
                         mainForm.watch(
                           `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        ) ??
+                        ) ||
                         // mainForm.watch(
                         //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
                         // ) ??
-                        tab?.attributes?.[`label_${i18n?.language}`] ??
-                        tab?.title ??
-                        tab?.table_from?.label ??
-                        tab?.relation?.table_from?.label}
+                        tab?.relation?.attributes?.[
+                          `label_to_${i18n?.language}`
+                        ] ||
+                        tab?.attributes?.[`label_to_${i18n?.language}`] ||
+                        tab?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover
                           onEditClick={() => openFieldsBlock("RELATION")}
@@ -230,6 +228,7 @@ function LayoutTabs({
           if (tab.id === selectedTab?.id) {
             return tab?.type === "section" ? (
               <NewSectionsBlock
+                index={index}
                 mainForm={mainForm}
                 layoutForm={layoutForm}
                 openFieldsBlock={openFieldsBlock}
@@ -239,6 +238,7 @@ function LayoutTabs({
                 setSelectedLayout={setSelectedLayout}
                 selectedTab={selectedTab}
                 sectionTabs={sectionTabs}
+                allTabs={allTabs}
               />
             ) : (
               <RelationTable

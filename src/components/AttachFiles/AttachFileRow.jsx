@@ -23,7 +23,6 @@ const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {
   };
 
   const downloadHandler = () => {
-    console.log("FILE ==>", file);
 
     download({ fileId: file.id, fileName: file.name });
 

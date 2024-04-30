@@ -23,6 +23,7 @@ const CDateTimePickerWithout = ({
   mask,
   showCopyBtn = true,
   disabled = false,
+  sectionModal,
 }) => {
   const onChangeHandler = (val) => {
     onChange(val ? format(new Date(val), "dd.MM.yyyy HH:mm") : "");
@@ -39,14 +40,14 @@ const CDateTimePickerWithout = ({
   return (
     <div className="main_wrapper">
       <DatePicker
+        portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           return (
             <InputMask
               mask={mask}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -58,7 +59,10 @@ const CDateTimePickerWithout = ({
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
                     },
-                    width: "150px",
+                    "& input": {
+                      padding: "5px !important",
+                    },
+                    maxWidth: "150px",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -87,7 +91,6 @@ const CDateTimePickerWithout = ({
         }}
         plugins={[weekends()]}
         weekStartDayIndex={1}
-        portal
         locale={locale}
         format="DD.MM.YYYY"
         value={computedValue || ""}
@@ -96,14 +99,12 @@ const CDateTimePickerWithout = ({
       <DatePicker
         disableDayPicker
         render={(value, openCalendar, handleChange) => {
-          console.log("valiueeeeee", value);
           return (
             <InputMask
               mask={"99:99"}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -119,7 +120,10 @@ const CDateTimePickerWithout = ({
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
                     },
-                    width: "150px",
+                    "& input": {
+                      padding: "5px !important",
+                    },
+                    maxWidth: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,

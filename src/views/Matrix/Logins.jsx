@@ -248,7 +248,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
             <div className={styles.card_body}>
               <div className={styles.card_body_head}>
                 <div>
-                  Название
+                  Name
                   <FilterIcon />
                 </div>
                 <div>
@@ -416,7 +416,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
               <div className={styles.card_body}>
                 <div className={styles.card_body_head}>
                   <div>
-                    Название
+                    Name
                     <FilterIcon />
                   </div>
                   <div>
@@ -505,7 +505,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
         <div>
           <button className={styles.add_login_btn} onClick={handleCreate}>
             <PlusIcon />
-            Добавить
+            Add
           </button>
         </div>
       </div>

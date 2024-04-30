@@ -26,6 +26,7 @@ import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import {useParams} from "react-router-dom";
 
 const filter = createFilterOptions();
 
@@ -42,7 +43,7 @@ const HFMultipleAutocomplete = ({
   name,
   label,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isFormEdit = false,
   isBlackBg = false,
   width = "100%",
@@ -62,7 +63,6 @@ const HFMultipleAutocomplete = ({
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
-  
 
   return (
     <Controller
@@ -87,6 +87,7 @@ const HFMultipleAutocomplete = ({
             width={width}
             label={label}
             // tabIndex={tabIndex}
+            required={required}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
             hasIcon={hasIcon}
@@ -100,10 +101,10 @@ const HFMultipleAutocomplete = ({
             isMultiSelect={isMultiSelect}
             disabled={disabled}
             field={field}
+            className="hf-select"
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 
@@ -115,6 +116,7 @@ const AutoCompleteElement = ({
   hasColor,
   // tabIndex,
   hasIcon,
+  required,
   classes,
   placeholder,
   onFormChange,
@@ -127,6 +129,8 @@ const AutoCompleteElement = ({
   isBlackBg,
 }) => {
   const [dialogState, setDialogState] = useState(null);
+  const {appId} = useParams();
+
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
     setDialogState(inputValue);
@@ -141,11 +145,17 @@ const AutoCompleteElement = ({
     if (!value?.length) return [];
 
     if (isMultiSelect)
-      return (
-        value?.map((el) =>
-          localOptions?.find((option) => option.value === el)
-        ) ?? []
-      );
+      if (Array.isArray(value)) {
+        return (
+          value?.map((el) =>
+            localOptions?.find((option) => option.value === el)
+          ) ?? []
+        );
+      } else {
+        return localOptions?.find((item) => {
+          item?.value === value;
+        });
+      }
     else return [localOptions?.find((option) => option.value === value[0])];
   }, [value, localOptions, isMultiSelect]);
 
@@ -168,18 +178,17 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-
-  useEffect(() => {
-    if(value) {
-      onFormChange(value)
-    }
-  }, [])
-
+  // useEffect(() => {
+  //   if (value) {
+  //     onFormChange(value);
+  //   }
+  // }, []);
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
+        id={`multiselect_${name}`}
         value={computedValue}
         options={localOptions}
         popupIcon={
@@ -207,7 +216,7 @@ const AutoCompleteElement = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={computedValue.length ? "" : placeholder}
+            placeholder={computedValue?.length ? "" : placeholder}
             // autoFocus={tabIndex === 1}
             sx={{
               "&.MuiInputAdornment-root": {
@@ -226,18 +235,20 @@ const AutoCompleteElement = ({
                     background: "inherit",
                   }
                 : {
-                    background:  "inherit",
+                    background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
+                    border: error?.message ? "1px solid red" : "",
                   },
 
-              endAdornment: disabled && (
+              endAdornment: Boolean(
+                appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+              ) && (
                 <Tooltip
                   title="This field is disabled for this role!"
                   style={{
                     position: "absolute",
                     right: 0,
-                  }}
-                >
+                  }}>
                   <InputAdornment position="start">
                     <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
@@ -251,7 +262,9 @@ const AutoCompleteElement = ({
           />
         )}
         noOptionsText={"No options"}
-        disabled={disabled}
+        disabled={
+          appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
+        }
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
@@ -262,14 +275,16 @@ const AutoCompleteElement = ({
                   hasColor
                     ? {color: el?.color, background: `${el?.color}30`}
                     : {}
-                }
-              >
+                }>
                 {hasIcon && <IconGenerator icon={el?.icon} />}
                 <p className={styles.value}>{el?.label ?? el?.value}</p>
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"
-                    onClick={getTagProps({index})?.onDelete}
+                    style={{cursor: "pointer"}}
+                    onClick={() => {
+                      getTagProps({index})?.onDelete();
+                    }}
                   />
                 )}
               </div>
@@ -280,6 +295,10 @@ const AutoCompleteElement = ({
       {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
       )}
+
+      {/* {Boolean(!value?.length && required) && (
+        <FormHelperText error>{"This field is required"}</FormHelperText>
+      )} */}
       <Dialog open={!!dialogState} onClose={handleClose}>
         <AddOptionBlock
           dialogState={dialogState}
@@ -361,7 +380,7 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
       </form>
       <div className={styles.submit_btn}>
         <PrimaryButton onClick={handleSubmit(onSubmit)}>
-          Добавить
+          Add
           {loader ? (
             <span className={styles.btn_loader}>
               <RippleLoader size="btn_size" height="20px" />

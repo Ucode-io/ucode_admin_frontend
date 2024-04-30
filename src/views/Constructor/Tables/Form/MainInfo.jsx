@@ -1,24 +1,25 @@
-import { Box } from "@mui/material";
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Box} from "@mui/material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
-import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
+import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
-import { LoginStrategy } from "../../../../mock/FolderSettings";
+import style from "./main.module.scss";
 
-const MainInfo = ({ control }) => {
-  const { slug } = useParams();
-  const { i18n } = useTranslation();
+const MainInfo = ({control, watch}) => {
+  const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
 
   const params = {
     language_setting: i18n?.language,
@@ -29,18 +30,13 @@ const MainInfo = ({ control }) => {
     name: "label",
   });
 
-  const description = useWatch({
-    control,
-    name: "description",
-  });
-
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -61,21 +57,20 @@ const MainInfo = ({ control }) => {
     name: "attributes.auth_info",
   });
 
-  const { data: computedTableFields } = useQuery(
-    ["GET_OBJECT_LIST", slug, i18n?.language],
+  const {data: computedTableFields} = useQuery(
+    ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
+      if (!tableSlug) return false;
       return constructorObjectService.getList(
-        slug,
+        tableSlug,
         {
-          data: {
-            limit: 0,
-            offset: 0,
-          },
+          data: {},
         },
         params
       );
     },
     {
+      enabled: Boolean(tableSlug),
       select: (res) => {
         return res?.data?.fields ?? [];
       },
@@ -111,7 +106,12 @@ const MainInfo = ({ control }) => {
 
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
-      label: item?.label ?? "",
+      label:
+        item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+          ? item?.attributes?.[`label_to_${i18n?.language}`] ||
+            item?.attributes?.[`label_${i18n?.language}`] ||
+            item?.label
+          : item?.attributes?.[`label_${i18n?.language}`] || item?.label,
       value: item?.slug ?? "",
     }));
   }, [computedTableFields]);
@@ -120,91 +120,54 @@ const MainInfo = ({ control }) => {
 
   return (
     <div className="p-2">
-      <FormCard title="Общие сведение">
-        <div className="flex">
-          <FRow label="Иконка">
-            <HFIconPicker control={control} name="icon" required />
-          </FRow>
-        </div>
-
-        <FRow label="Название">
-          <Box style={{ display: "flex", gap: "6px" }}>
-            {languages?.map((language) => {
-              const languageFieldName = `attributes.label_${language?.slug}`;
-              const fieldValue = useWatch({
-                control,
-                name: languageFieldName,
-              });
-
-              return (
-                <HFTextField
-                  control={control}
-                  name={languageFieldName}
-                  fullWidth
-                  placeholder={`Название (${language?.slug})`}
-                  defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
-                />
-              );
-            })}
+      <FormCard title="General">
+        <FRow label="Name">
+          <Box style={{display: "flex", gap: "6px"}}>
+            <HFTextFieldWithMultiLanguage
+              control={control}
+              name="attributes.label"
+              fullWidth
+              placeholder="Name"
+              defaultValue={tableName}
+              languages={languages}
+              id={"create_table_name"}
+            />
           </Box>
         </FRow>
-        <FRow label="Описание">
-          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {languages?.map((desc) => {
-              const languageFieldDesc = `attributes.description_${desc?.slug}`;
-              const fieldValue = useWatch({
-                control,
-                name: languageFieldDesc,
-              });
-
-              return (
-                <HFTextField
-                  control={control}
-                  name={languageFieldDesc}
-                  fullWidth
-                  placeholder={`Название (${desc?.slug})`}
-                  defaultValue={fieldValue || description} // Set default value if fieldValue is empty
-                />
-              );
-            })}
-          </Box>
-        </FRow>
-        <FRow label="SLUG">
+        <FRow label="Key">
           <HFTextField
             control={control}
             name="slug"
             fullWidth
-            placeholder="SLUG"
+            placeholder="KEY"
             required
             withTrim
-          />
-        </FRow>
-        <FRow label="Subtitle field">
-          <HFSelect
-            control={control}
-            name="subtitle_field_slug"
-            fullWidth
-            placeholder="Subtitle field"
-            options={computedFields}
+            id={"create_table_key"}
           />
         </FRow>
 
-        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
-          <FRow label="Login Table">
-            <HFSwitch control={control} name="is_login_table" required />
-          </FRow>
-          <FRow label="Показать в меню">
-            <HFSwitch control={control} name="show_in_menu" required />
-          </FRow>
-          <FRow label="Кеш">
-            <HFSwitch control={control} name="is_cached" required />
-          </FRow>
-          <FRow label="Софт Удаление">
-            <HFSwitch control={control} name="soft_delete" required />
-          </FRow>
-          <FRow label="Сортировка">
-            <HFSwitch control={control} name="order_by" required />
-          </FRow>
+        <Box
+          sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
+          className={style.checkbox}>
+          <HFCheckbox
+            control={control}
+            name="is_login_table"
+            required
+            label="Login Table"
+          />
+          <HFCheckbox
+            control={control}
+            name="is_cached"
+            required
+            label="Cache"
+          />
+          <HFCheckbox
+            control={control}
+            name="soft_delete"
+            required
+            label="Soft delete"
+          />
+          <HFCheckbox control={control} name="order_by" required label="Sort" />
         </Box>
 
         {loginTable && (
@@ -215,9 +178,8 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
-              <FRow label="Тип пользователья" />
+              }}>
+              <FRow label="User type" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.client_type_id"
@@ -233,9 +195,8 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
-              <FRow label="Роли" />
+              }}>
+              <FRow label="Roles" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.role_id"
@@ -251,9 +212,8 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
-              <FRow label="Логин" />
+              }}>
+              <FRow label="Login" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.login"
@@ -268,9 +228,8 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
-              <FRow label="Пароль" />
+              }}>
+              <FRow label="Password" />
               <HFSelect
                 control={control}
                 name="attributes.auth_info.password"
@@ -286,8 +245,7 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Почта" />
               <HFSelect
                 control={control}
@@ -303,8 +261,7 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Телефон" />
               <HFSelect
                 control={control}
@@ -320,8 +277,7 @@ const MainInfo = ({ control }) => {
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}
-            >
+              }}>
               <FRow label="Login strategy" />
               <HFMultipleSelect
                 control={control}

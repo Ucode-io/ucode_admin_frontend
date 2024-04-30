@@ -107,14 +107,39 @@
 }
 
 .phoneNumber {
-
+  outline: none;
   input {
     height: 35px;
     border: 1px solid #eee;
     padding: 3px;
+    outline: none;
+    background: transparent;
 
     &:focus {
-      border: 1px solid #1a9aef;
+      // border: 1px solid #1a9aef;
+    }
+
+    &:hover {
+      outline: none;
+    }
+  }
+}
+
+.inputTable {
+  outline: none;
+  input {
+    height: 35px;
+    border: 0px solid #eee;
+    padding: 3px;
+    outline: none;
+    background: transparent;
+
+    &:focus {
+      // border: 1px solid #1a9aef;
+    }
+
+    &:hover {
+      outline: none;
     }
   }
 }

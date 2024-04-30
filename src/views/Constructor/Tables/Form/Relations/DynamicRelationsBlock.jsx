@@ -48,7 +48,7 @@ const DynamicRelationsBlock = ({ control, computedTablesList }) => {
         ))}
 
         <div className={styles.summaryButton} onClick={addNewTable}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ Create new</button>
         </div>
       </div>
     </>

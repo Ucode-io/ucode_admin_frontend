@@ -30,6 +30,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Controller } from "react-hook-form";
+import constructorTableService from "../../../../services/constructorTableService";
 
 const FinancialFilterModal = ({
   form,
@@ -120,7 +121,7 @@ const FinancialFilterModal = ({
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", selectedTableOptions],
     () => {
-      return constructorObjectService.getList(selectedTableOptions, {
+      return constructorTableService.getTableInfo(selectedTableOptions, {
         data: { limit: 10, offset: 0, with_relations: true },
       });
     },
@@ -315,7 +316,7 @@ const FinancialFilterModal = ({
                 onClick={() => appendFilter({ field_id: "", id: generateID() })}
               >
                 <Add color="primary" />
-                <p>Добавить</p>
+                <p>Add</p>
               </div>
             </div>
           </div>

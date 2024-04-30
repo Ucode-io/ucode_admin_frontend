@@ -38,7 +38,7 @@ export default function CalendarSettingsVisible({
       calendar_from_slug: values.calendar_from_slug,
       calendar_to_slug: values.calendar_to_slug,
     };
-    constructorViewService.update(computedValues).then(() => {
+    constructorViewService.update(tableSlug, computedValues).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       handleClose();
     });
@@ -51,7 +51,6 @@ export default function CalendarSettingsVisible({
   }, [initialValues, tableSlug, form]);
 
   const getInitialValues = (initialValues) => {
-    console.log("initialValues", initialValues);
     if (initialValues === "NEW")
       return {
         disable_dates: {

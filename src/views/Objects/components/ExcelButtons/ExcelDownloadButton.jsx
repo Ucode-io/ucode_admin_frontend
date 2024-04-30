@@ -1,7 +1,7 @@
-import { Download } from "@mui/icons-material";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import {Download} from "@mui/icons-material";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useParams} from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import useDownloader from "../../../../hooks/useDownloader";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -14,18 +14,18 @@ const ExcelDownloadButton = ({
   fieldSlugId,
   withText,
   sort,
-  view
+  view,
 }) => {
-  const { t } = useTranslation()
-  const { tableSlug } = useParams();
-  const { download } = useDownloader();
+  const {t} = useTranslation();
+  const {tableSlug} = useParams();
+  const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view?.id);
 
   const onClick = async () => {
     try {
       setLoader(true);
-      const { data } = await constructorObjectService.downloadExcel(
+      const {data} = await constructorObjectService.downloadExcel(
         relatedTable ? relatedTable : tableSlug,
         {
           data: {
@@ -38,7 +38,7 @@ const ExcelDownloadButton = ({
 
       const fileName = `${relatedTable ? relatedTable : tableSlug}.xlsx`;
       // window.open('https://' + data.link, { target: '__blank' })
-      await download({ link: "https://" + data.link, fileName });
+      await download({link: "https://" + data.link, fileName});
     } finally {
       setLoader(false);
     }
@@ -49,7 +49,7 @@ const ExcelDownloadButton = ({
         {withText ? "Экспорт" : null}
         <Download />
       </RectangleIconButton>
-      <span>{ t('excel.download') }</span>
+      <span>{t("excel.download")}</span>
     </div>
   );
 };

@@ -54,7 +54,7 @@ vault:
   secretName: vault-secrets
   variables:
     VAULT_TOKEN: vault_token
-    SECRETS_PATH: 
+    SECRETS_PATH:
 
 environment: {}
 volumes:
@@ -91,18 +91,10 @@ ingress:
         - host: "app.u-code.io"
           path: /
           servicePort: 80
-        - host: "ett.u-code.io"
-          path: /
-          servicePort: 80
-        - host: "agent.easyto.travel"
-          path: /
-          servicePort: 80
       tls:
         - secretName: admin-frontend-tls
           hosts:
             - "app.u-code.io"
-            - "ett.u-code.io"
-            - "agent.easyto.travel"
 
 resources:
   {}
@@ -129,7 +121,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.io/ucode-prod
+            - key: workload
               operator: In
               values:
-                - "true"
+                - "ucode-prod"

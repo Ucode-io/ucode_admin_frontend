@@ -1,32 +1,32 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
-
+import {Drawer} from "@mui/material";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
 import PageFallback from "../../../components/PageFallback";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
-import constructorObjectService from "../../../services/constructorObjectService";
-import { listToMap } from "../../../utils/listToMap";
-import { objectToArray } from "../../../utils/objectToArray";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import { Filter } from "../components/FilterGenerator";
-import styles from "./style.module.scss";
-import { set } from "date-fns";
-import { useForm, useWatch } from "react-hook-form";
-import { Drawer } from "@mui/material";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { generateGUID } from "../../../utils/generateID";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import constructorFieldService from "../../../services/constructorFieldService";
+import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
+import {generateGUID} from "../../../utils/generateID";
+import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import {Filter} from "../components/FilterGenerator";
+import styles from "./style.module.scss";
+import {useMenuGetByIdQuery} from "../../../services/menuService";
 
 const RelationTable = forwardRef(
   (
     {
-      setDataLength,
+      getValues,
       relation,
       shouldGet,
       createFormVisible,
@@ -36,7 +36,6 @@ const RelationTable = forwardRef(
       loader,
       selectedObjects,
       setSelectedObjects,
-      tableSlug,
       setFieldSlug,
       id,
       reset,
@@ -48,18 +47,31 @@ const RelationTable = forwardRef(
       formVisible,
       selectedTab,
       type,
+      relatedTable = {},
+      getAllData = () => {},
+      layoutData,
     },
     ref
   ) => {
-    const { appId } = useParams();
+    const {appId, tableSlug} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { navigateToForm } = useTabRouter();
+    const {navigateToForm} = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState();
+    const [limit, setLimit] = useState(10);
+    const {i18n} = useTranslation();
+    const [relOptions, setRelOptions] = useState([]);
+    const [searchParams] = useSearchParams();
+    const menuId = searchParams.get("menuId");
+    const [menuItem, setMenuItem] = useState(null);
+
+    const paginationInfo = useSelector(
+      (state) => state?.pagination?.paginationInfo
+    );
+
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -72,15 +84,6 @@ const RelationTable = forwardRef(
         show_in_menu: true,
         fields: [],
         app_id: appId,
-        // sections: [
-        //   {
-        //     column: "SINGLE",
-        //     fields: [],
-        //     label: "Детали",
-        //     id: generateGUID(),
-        //     icon: "circle-info.svg",
-        //   },
-        // ],
         summary_section: {
           id: generateGUID(),
           label: "Summary",
@@ -99,15 +102,43 @@ const RelationTable = forwardRef(
       mode: "all",
     });
 
+    const paginiation = useMemo(() => {
+      const getObject = paginationInfo.find(
+        (el) => el?.tableSlug === tableSlug
+      );
+
+      return getObject?.pageLimit ?? limit;
+    }, [paginationInfo, tableSlug]);
+
+    const limitPage = useMemo(() => {
+      if (typeof paginiation === "number") {
+        return paginiation;
+      } else if (paginiation === "all" && limit === "all") {
+        return undefined;
+      } else {
+        return pageToOffset(currentPage, limit);
+      }
+    }, [paginiation, limit, currentPage]);
+
+    const {loader: menuLoader} = useMenuGetByIdQuery({
+      menuId: searchParams.get("menuId"),
+      queryParams: {
+        enabled: Boolean(searchParams.get("menuId")),
+        onSuccess: (res) => {
+          setMenuItem(res);
+        },
+      },
+    });
+
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({ table_id: id });
+        const getFieldsData = constructorFieldService.getList({table_id: id});
 
         const getRelations = constructorRelationService.getList({
-          table_slug: slug,
-          relation_table_slug: slug,
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
         });
-        const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        const [{relations = []}, {fields = []}] = await Promise.all([
           getRelations,
           getFieldsData,
         ]);
@@ -115,7 +146,7 @@ const RelationTable = forwardRef(
         const relationsWithRelatedTableSlug = relations?.map((relation) => ({
           ...relation,
           relatedTableSlug:
-            relation.table_to?.slug === slug ? "table_from" : "table_to",
+            relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
         }));
 
         const layoutRelations = [];
@@ -124,13 +155,13 @@ const RelationTable = forwardRef(
         relationsWithRelatedTableSlug?.forEach((relation) => {
           if (
             (relation.type === "Many2One" &&
-              relation.table_from?.slug === slug) ||
+              relation.table_from?.slug === tableSlug) ||
             (relation.type === "One2Many" &&
-              relation.table_to?.slug === slug) ||
+              relation.table_to?.slug === tableSlug) ||
             relation.type === "Recursive" ||
             (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
             (relation.type === "Many2Dynamic" &&
-              relation.table_from?.slug === slug)
+              relation.table_from?.slug === tableSlug)
           ) {
             layoutRelations.push(relation);
           } else {
@@ -213,6 +244,14 @@ const RelationTable = forwardRef(
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
+    function customSortArray(a, b) {
+      const commonItems = a?.filter((item) => b.includes(item));
+      commonItems?.sort();
+      const remainingItems = a?.filter((item) => !b.includes(item));
+      const sortedArray = commonItems?.concat(remainingItems);
+      return sortedArray;
+    }
+
     const {
       data: {
         tableData = [],
@@ -221,6 +260,7 @@ const RelationTable = forwardRef(
         quickFilters = [],
         fieldsMap = {},
       } = {},
+      refetch,
       isLoading: dataFetchingLoading,
     } = useQuery(
       [
@@ -234,38 +274,60 @@ const RelationTable = forwardRef(
         },
       ],
       () => {
-        return constructorObjectService.getList(relatedTableSlug, {
-          data: {
-            offset: pageToOffset(currentPage, limit),
-            limit: id ? limit : 0,
-            from_tab: type === "relation" ? true : false,
-            ...computedFilters,
+        return constructorObjectService.getList(
+          relatedTableSlug,
+          {
+            data: {
+              offset: pageToOffset(currentPage, limit),
+              limit: limitPage !== 0 ? limitPage : limit,
+              from_tab: type === "relation" ? true : false,
+              ...computedFilters,
+            },
           },
-        });
+          {
+            language_setting: i18n?.language,
+          }
+        );
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({ data }) => {
+        select: ({data}) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
               ? 1
-              : Math.ceil(data.count / limit);
-          setDataLength(tableData.length);
+              : Math.ceil(data.count / paginiation);
 
           const fieldsMap = listToMap(data.fields);
 
-          setFieldSlug(
-            Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
-              ?.slug
-          );
+          // setFieldSlug(
+          //   Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
+          //     ?.slug
+          // );
 
-          const columns = getRelatedTabeSlug.columns
-            ?.map((id, index) => fieldsMap[id])
+          const array = [];
+          for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
+            if (
+              getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)
+            ) {
+              if (getRelatedTabeSlug?.attributes?.fixedColumns[key])
+                array.push({
+                  id: key,
+                  value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key],
+                });
+            }
+          }
+
+          const columns = customSortArray(
+            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+              getRelatedTabeSlug?.columns,
+            array.map((el) => el.id)
+          )
+            ?.map((el) => fieldsMap[el])
             ?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({ field_id }) => fieldsMap[field_id])
+            ?.map(({field_id}) => fieldsMap[field_id])
             ?.filter((el) => el);
 
           return {
@@ -282,6 +344,70 @@ const RelationTable = forwardRef(
       }
     );
 
+    const computedRelationFields = useMemo(() => {
+      return Object.values(fieldsMap)?.filter((element) => {
+        return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
+      });
+    }, [fieldsMap]);
+
+    const getOptionsList = () => {
+      const computedIds = computedRelationFields?.map((item) => ({
+        table_slug: item?.slug,
+        ids:
+          item?.type === "LOOKUP"
+            ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
+            : Array.from(
+                new Set(
+                  [].concat(...tableData?.map((obj) => obj?.[item?.slug]))
+                )
+              ),
+      }));
+      tableData?.length &&
+        computedRelationFields?.forEach((item, index) => {
+          constructorObjectService
+            .getListV2(item?.table_slug, {
+              data: {
+                limit: 10,
+                offset: 0,
+                additional_request: {
+                  additional_field: "guid",
+                  additional_values: computedIds?.find(
+                    (computedItem) => computedItem?.table_slug === item?.slug
+                  )?.ids,
+                },
+              },
+            })
+            .then((res) => {
+              if (relOptions?.length > 0) {
+                setRelOptions((prev) => {
+                  const updatedOptions = prev.map((option) => {
+                    if (option.table_slug === item?.table_slug) {
+                      return {
+                        table_slug: item?.table_slug,
+                        response: res?.data?.response,
+                      };
+                    }
+                    return option;
+                  });
+                  return updatedOptions;
+                });
+              } else {
+                setRelOptions((prev) => [
+                  ...prev,
+                  {
+                    table_slug: item?.table_slug,
+                    response: res?.data?.response,
+                  },
+                ]);
+              }
+            });
+        });
+    };
+
+    useEffect(() => {
+      getOptionsList();
+    }, [tableData, computedRelationFields]);
+
     useEffect(() => {
       if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
@@ -291,7 +417,7 @@ const RelationTable = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
+    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -309,21 +435,19 @@ const RelationTable = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
-          queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          // queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          refetch();
         },
       }
     );
 
-    const { data: { custom_events: customEvents = [] } = {} } =
+    const {data: {custom_events: customEvents = []} = {}} =
       useCustomActionsQuery({
         tableSlug: relatedTableSlug,
       });
 
     const navigateToEditPage = (row) => {
-      // if (rowClickType.value === "detail_page") {
-      navigateToForm(relatedTableSlug, "EDIT", row);
-      // } else {
-      // }
+      navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
     };
 
     const navigateToTablePage = () => {
@@ -335,24 +459,22 @@ const RelationTable = forwardRef(
         },
       });
     };
+    const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState(
+      []
+    );
 
-    // const { mutateAsync } = useMutation(
-    //   (values) => {
-    //     if (values.guid)
-    //       return constructorObjectService.update(relatedTableSlug, {
-    //         data: values,
-    //       })
-    //     else constructorObjectService.create(relatedTableSlug, { data: values })
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       setCreateFormVisible(false)
-    //       queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTableSlug])
-    //     },
-    //   }
-    // )
+    const multipleDelete = async () => {
+      try {
+        await constructorObjectService.deleteMultiple(tableSlug, {
+          ids: selectedObjectsForDelete.map((i) => i.guid),
+        });
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+      } finally {
+      }
+    };
 
     if (loader) return <PageFallback />;
+
     return (
       <div assName={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (
@@ -375,15 +497,20 @@ const RelationTable = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable
+              selectedTab={selectedTab}
+              relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
               relationAction={getRelatedTabeSlug}
               remove={remove}
+              getAllData={getAllData}
               watch={watch}
               isRelationTable={true}
+              isTableView={true}
               setFormVisible={setFormVisible}
               formVisible={formVisible}
               loader={dataFetchingLoading || deleteLoading}
               data={tableData}
+              view={getRelatedTabeSlug}
               isResizeble={true}
               fields={fields}
               setDrawerState={setDrawerState}
@@ -391,7 +518,7 @@ const RelationTable = forwardRef(
               setFormValue={setFormValue}
               control={control}
               relatedTableSlug={relatedTableSlug}
-              tableSlug={tableSlug}
+              tableSlug={relatedTableSlug ?? tableSlug}
               removableHeight={230}
               disableFilters
               pagesCount={pageCount}
@@ -414,11 +541,30 @@ const RelationTable = forwardRef(
               }
               limit={limit}
               setLimit={setLimit}
-              summaries={getRelatedTabeSlug.summaries}
-              isChecked={(row) => selectedObjects?.includes(row.guid)}
+              summaries={
+                relatedTable?.attributes?.summaries ??
+                getRelatedTabeSlug?.attributes?.summaries
+              }
+              isChecked={(row) => selectedObjects?.includes(row?.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
-              title={"Сначала нужно создать объект"}
+              title={"First, you need to create an object"}
+              tableStyle={{
+                borderRadius: 0,
+                border: "none",
+                borderBottom: "1px solid #E5E9EB",
+                width: "100%",
+                margin: 0,
+              }}
+              refetch={refetch}
+              tableView={true}
+              getValues={getValues}
+              mainForm={mainForm}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              multipleDelete={multipleDelete}
+              navigateToForm={navigateToForm}
+              menuItem={menuItem}
             />
           )}
         </div>
@@ -427,12 +573,11 @@ const RelationTable = forwardRef(
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
-            onSubmit={(index, field) => update(index, field)}
+            // onSubmit={(index, field) => update(index, field)}
             field={drawerState}
             formType={drawerState}
             mainForm={mainForm}

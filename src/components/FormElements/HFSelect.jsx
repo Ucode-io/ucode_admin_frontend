@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   FormControl,
   FormHelperText,
@@ -8,9 +8,10 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { Controller } from "react-hook-form";
+import {Controller} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import ClearIcon from "@mui/icons-material/Clear"; // Import the clear icon
+import {columnIcons} from "../../utils/constants/columnIcons";
 
 const HFSelect = ({
   control,
@@ -45,19 +46,21 @@ const HFSelect = ({
         ...rules,
       }}
       render={({
-        field: { onChange: onFormChange, value },
-        fieldState: { error },
+        field: {onChange: onFormChange, value},
+        fieldState: {error},
       }) => {
         return (
-          <FormControl style={{ width }}>
+          <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
               value={value || selectedValue}
               label={label}
               size="small"
+              className="hf-select"
               error={error}
-              inputProps={{ placeholder }}
+              inputProps={{placeholder}}
               fullWidth
+              id={`select_${name}`}
               just
               following
               attributes
@@ -67,9 +70,7 @@ const HFSelect = ({
               renderValue={
                 value !== ""
                   ? undefined
-                  : () => (
-                      <span style={{ color: "#909EAB" }}>{placeholder}</span>
-                    )
+                  : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
               }
               onChange={(e) => {
                 setSelectedValue(e.target.value);
@@ -79,26 +80,23 @@ const HFSelect = ({
               onOpen={() => {
                 onOpen();
               }}
-              {...props}
-            >
+              {...props}>
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
-                      style={{ fontWeight: 600, color: "#000", fontSize: 15 }}
-                    >
+                      style={{fontWeight: 600, color: "#000", fontSize: 15}}>
                       {group.label}
                     </MenuItem>,
                     group.options?.map((option) => (
                       <MenuItem
                         key={option.value}
                         value={option.value}
-                        style={{ paddingLeft: 30 }}
-                      >
+                        style={{paddingLeft: 30}}>
                         <div className="flex align-center gap-2">
                           <IconGenerator
                             icon={option.icon}
                             size={15}
-                            style={{ color: "#6E8BB7" }}
+                            style={{color: "#6E8BB7"}}
                           />
                           {option.label}
                         </div>
@@ -106,31 +104,32 @@ const HFSelect = ({
                     )),
                   ])
                 : options?.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option?.value} value={option?.value}>
+                      <div className="flex align-center gap-2">
+                        {option?.icon && columnIcons(option?.value)}
+                        {option?.label}
+                      </div>
                     </MenuItem>
                   ))}
             </Select>
             {!disabledHelperText && error?.message && (
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
-            {selectedValue && (
-              <Box sx={{ position: "absolute", right: "20px", top: "3px" }}>
+            {(selectedValue || value || defaultValue) && (
+              <Box sx={{position: "absolute", right: "20px", top: "3px"}}>
                 <IconButton
                   onClick={() => {
                     onFormChange("");
                     handleClear();
                   }}
-                  size="small"
-                >
+                  size="small">
                   <ClearIcon />
                 </IconButton>
               </Box>
             )}
           </FormControl>
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

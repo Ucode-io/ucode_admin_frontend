@@ -1,45 +1,34 @@
-import { Edit, Save } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers"
-import { IconButton, TextField } from "@mui/material"
-import { format } from "date-fns"
+import { TextField } from "@mui/material"
+import { endOfMonth, startOfMonth } from "date-fns"
 import { useState } from "react"
 import "./style.scss"
 
-const DateForm = ({ date, onChange = () => {} }) => {
-  const [formVisible, setFormVisible] = useState(false)
-  const [value, setValue] = useState(new Date(date))
+const DateForm = ({ date, onChange = () => { }, views }) => {
+  const [month, setMonth] = useState(new Date(date))
+  const [value, setValue] = useState(new Date())
 
-  const saveClickHandler = () => {
-    onChange(value)
-    setFormVisible(false)
-  }
-
-  if (formVisible)
-    return (
-      <div className="DateForm">
-        <DatePicker
-          inputFormat="dd.MM.yyyy"
-          mask="__.__.____"
-          toolbarFormat="dd.MM.yyyy"
-          value={value}
-          onChange={setValue}
-          renderInput={(params) => <TextField {...params} size="small" />}
-        />
-
-        <IconButton color="primary" onClick={saveClickHandler} >
-          <Save />
-        </IconButton>
-      </div>
-    )
+  const handleDateChange = (newValue) => {
+    const firstDayOfMonth = startOfMonth(newValue);
+    const lastDayOfMonth = endOfMonth(newValue);
+    setMonth({ $gte: firstDayOfMonth, $lt: lastDayOfMonth });
+    setValue(newValue)
+    onChange(month)
+  };
 
   return (
     <div className="DateForm">
-      {value ? format(new Date(value), "dd MMM") : "---"}
-      <IconButton color="primary" onClick={() => setFormVisible(true)} >
-        <Edit />
-      </IconButton>
+      <DatePicker
+        inputFormat="MMM yyyy"
+        value={value}
+        views={views}
+        onChange={handleDateChange}
+        renderInput={(params) => <TextField {...params} size="small" />}
+      />
     </div>
   )
+
+
 }
 
 export default DateForm

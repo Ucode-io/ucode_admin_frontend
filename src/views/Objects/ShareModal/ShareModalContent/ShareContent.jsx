@@ -12,7 +12,14 @@ import tablePermissionService from "../../../../services/tablePermission";
 import ClearIcon from "@mui/icons-material/Clear";
 import ShareModalItems from "./ShareModalItems";
 
-function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
+function ShareContent({
+  handleClose,
+  control,
+  watch,
+  handleSubmit,
+  setValue,
+  reset,
+}) {
   const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
 
@@ -35,8 +42,6 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     table_slug: slug ?? tableSlug,
     // project_id: projectId,
   };
-  console.log('slug',slug);
-  console.log('params',params);
   //============   TABLE GET LIST
   const { data: tables = [] } = useQuery(
     ["GET_TABLES_LIST"],
@@ -52,7 +57,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { data: clientTypeList } = useQuery(
     ["GET_OBJECT_LIST", "client_type"],
     () => {
-      return constructorObjectService.getList("client_type", {
+      return constructorObjectService.getListV2("client_type", {
         data: {},
       });
     },
@@ -72,7 +77,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { data: getRoleList } = useQuery(
     ["GET_OBJECT_LIST", client_type],
     () => {
-      return constructorObjectService.getList("role", {
+      return constructorObjectService.getListV2("role", {
         data: {
           client_type_id: client_type,
         },
@@ -137,8 +142,6 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     });
   };
 
-
-
   return (
     <div className={styles.shareContent}>
       <div className={styles.shareHeader}>
@@ -159,6 +162,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           watch={watch}
           reset={reset}
           tableId={tableId}
+          setValue={setValue}
         />
       </div>
       <div className={styles.shareFooter}>

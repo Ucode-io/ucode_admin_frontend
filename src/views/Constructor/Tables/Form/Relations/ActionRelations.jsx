@@ -69,7 +69,7 @@ const SummaryBlock = ({ control }) => {
         ))}
 
         <div className={styles.summaryButton} onClick={addNewSummary}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ Create new</button>
         </div>
       </div>
     </>

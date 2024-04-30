@@ -1,17 +1,17 @@
-import { format, setHours, setMinutes } from "date-fns";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {format, setHours, setMinutes} from "date-fns";
+import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./style.module.scss";
 import Moveable from "react-moveable";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import "./moveable.scss";
 import useTimeList from "../../../hooks/useTimeList";
 import InfoBlock from "./InfoBlock";
-import { Menu } from "@mui/material";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import {Menu} from "@mui/material";
+import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import CalendarStatusSelect from "../components/CalendarStatusSelect";
-import { dateValidFormat } from "../../../utils/dateValidFormat";
+import {dateValidFormat} from "../../../utils/dateValidFormat";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 
 const DataCard = ({
@@ -26,8 +26,8 @@ const DataCard = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [isHover, setIsHover] = useState(false);
   const ref = useRef();
-  const { tableSlug } = useParams();
-  const { timeList } = useTimeList(view.time_interval);
+  const {tableSlug} = useParams();
+  const {timeList} = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40);
 
@@ -84,12 +84,12 @@ const DataCard = ({
     e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0]);
   };
 
-  const onDrag = ({ target, beforeTranslate }) => {
+  const onDrag = ({target, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     target.style.transform = `translateY(${beforeTranslate[1]}px)`;
   };
 
-  const onDragEnd = ({ lastEvent }) => {
+  const onDragEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onPositionChange(lastEvent, lastEvent.height);
@@ -103,7 +103,7 @@ const DataCard = ({
     e.dragStart && e.dragStart.set(frame.translate);
   };
 
-  const onResize = ({ target, height, drag }) => {
+  const onResize = ({target, height, drag}) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.height = `${height}px`;
@@ -112,7 +112,7 @@ const DataCard = ({
     else setIsSingleLine(false);
   };
 
-  const onResizeEnd = ({ lastEvent }) => {
+  const onResizeEnd = ({lastEvent}) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onPositionChange(lastEvent.drag, lastEvent.height);
@@ -130,7 +130,7 @@ const DataCard = ({
   const infoBlockBg = useMemo(() => {
     return (
       fieldsMap[view.status_field_slug]?.attributes?.options?.find(
-        (opt) => opt.value === info.status[0]
+        (opt) => opt?.value === info?.status?.[0]
       )?.color ?? "silver"
     );
     //
@@ -157,12 +157,10 @@ const DataCard = ({
           height: info.calendar?.height,
         }}
         onClick={openMenu}
-        ref={ref}
-      >
+        ref={ref}>
         <div
           className={styles.resizing}
-          style={{ background: infoBlockBg, height: "100%" }}
-        >
+          style={{background: infoBlockBg, height: "100%"}}>
           <div
             className={styles.infoCard}
             style={{
@@ -171,8 +169,7 @@ const DataCard = ({
               filter: isHover
                 ? "saturate(100%)"
                 : "saturate(50%) brightness(125%)",
-            }}
-          >
+            }}>
             <InfoBlock
               viewFields={viewFields}
               data={info}
@@ -186,10 +183,9 @@ const DataCard = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}
+        transformOrigin={{horizontal: "center", vertical: "top"}}
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
         <div className={styles.popupHeader}>
           <p className={styles.time}>
             {dateValidFormat(info.calendar?.elementFromTime, "HH:mm")} -
@@ -223,7 +219,7 @@ const DataCard = ({
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
-                style={{ padding: "2px 5px", marginBottom: 4 }}
+                style={{padding: "2px 5px", marginBottom: 4}}
                 value={info[field.slug]}
                 field={field}
               />
@@ -251,7 +247,7 @@ const DataCard = ({
         keepRatio={false}
         origin={false}
         renderDirections={["s", "n"]}
-        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        padding={{left: 0, top: 0, right: 0, bottom: 0}}
         onDragStart={onDragStart}
         onDrag={onDrag}
         onDragEnd={onDragEnd}

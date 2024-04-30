@@ -1,7 +1,4 @@
 import AddIcon from "@mui/icons-material/Add";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +17,6 @@ import { store } from "../../../../store";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { listToNested } from "../../../../utils/listToNestedList";
-import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
 import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
@@ -29,7 +25,6 @@ import DocumentsRecursive from "./RecursiveBlock";
 import { TbEdit } from "react-icons/tb";
 import { FaFolder } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
-import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const docsFolder = {
@@ -53,10 +48,10 @@ const DocumentsSidebar = ({
   menuStyle,
   setSubMenuIsOpen,
   menuItem,
-  setElement, 
-  setSelectedApp, 
+  setElement,
+  setSelectedApp,
   sidebarIsOpen,
-  setSidebarIsOpen
+  setSidebarIsOpen,
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -101,7 +96,7 @@ const DocumentsSidebar = ({
   const closeNoteFolderModal = () => setNoteFolderModalType(false);
 
   const activeStyle = {
-    borderRadius: '10px',
+    borderRadius: "10px",
     backgroundColor:
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
@@ -168,15 +163,6 @@ const DocumentsSidebar = ({
             hasChild: true,
             what_is: "note",
             name: folder?.title,
-            // buttons: (
-            //   <BsThreeDots
-            //     size={13}
-            //     onClick={(e) => {
-            //       e.stopPropagation();
-            //       handleOpenNotify(e, "NOTE");
-            //     }}
-            //   />
-            // ),
           })),
       },
     });
@@ -294,7 +280,7 @@ const DocumentsSidebar = ({
       },
       {
         id: 2,
-        name: "Notes",
+        name: "Wiki",
         icon: TbEdit,
         children: computedNotesList,
         type: "FOLDER",
@@ -346,43 +332,41 @@ const DocumentsSidebar = ({
       },
     });
 
-    const rowClickHandler = (id, element) => {
-      dispatch(menuActions.setMenuItem(element));
-      if (id === 1 || id === 2) {
-        if (element.children === null) {
-          element.name === "Templates"
-            ? setTemplateFolderModalType("CREATE")
-            : setNoteFolderModalType("CREATE");
-        } else if (element.children === null) {
-          element.name === "Notes"
-            ? setNoteFolderModalType("CREATE")
-            : setTemplateFolderModalType("CREATE");
-        }
+  const rowClickHandler = (id, element) => {
+    dispatch(menuActions.setMenuItem(element));
+    if (id === 1 || id === 2) {
+      if (element.children === null) {
+        element.name === "Templates"
+          ? setTemplateFolderModalType("CREATE")
+          : setNoteFolderModalType("CREATE");
+      } else if (element.children === null) {
+        element.name === "Notes"
+          ? setNoteFolderModalType("CREATE")
+          : setTemplateFolderModalType("CREATE");
       }
-      if (
-        element.type !== "FOLDER" ||
-        openedNoteFolders.includes(id) ||
-        openedTemplateFolders.includes(id)
-      )
-        return;
-      if (element.what_is === "template") {
-        setOpenedTemplateFolders((prev) => [...prev, id]);
-      } else if (element.what_is === "note") {
-        setOpenedNoteFolders((prev) => [...prev, id]);
-      }
-      if (element.type === "FOLDER") {
-        navigate(`/main/31a91a86-7ad3-47a6-a172-d33ceaebb35f`);
-      }
-    };
-  
+    }
+    if (
+      element.type !== "FOLDER" ||
+      openedNoteFolders.includes(id) ||
+      openedTemplateFolders.includes(id)
+    )
+      return;
+    if (element.what_is === "template") {
+      setOpenedTemplateFolders((prev) => [...prev, id]);
+    } else if (element.what_is === "note") {
+      setOpenedNoteFolders((prev) => [...prev, id]);
+    }
+    if (element.type === "FOLDER") {
+      navigate(`/main/31a91a86-7ad3-47a6-a172-d33ceaebb35f`);
+    }
+  };
 
   const clickHandler = (e) => {
     e.stopPropagation();
     setSubMenuIsOpen(true);
     dispatch(menuActions.setMenuItem(docsFolder));
     setSelected(docsFolder);
-    
-   
+
     setChildBlockVisible((prev) => !prev);
     // navigate(`/main/${adminId}`);
   };
@@ -400,25 +384,26 @@ const DocumentsSidebar = ({
       navigate(`/main/${adminId}/docs/template/${element?.id}/${id}`);
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
       navigate(`/main/${adminId}/docs/note/${element?.id}/${id}`);
+      setSubMenuIsOpen(false);
     }
   };
 
   return (
     <>
-        {sidebarElements?.map((element) => (
-          <DocumentsRecursive
-            key={element.id}
-            level={level + 1}
-            element={element}
-            menuStyle={menuStyle}
-            onRowClick={rowClickHandler}
-            selected={selected}
-            handleOpenNotify={handleOpenNotify}
-            onSelect={onSelect}
-            setSelected={setSelected}
-            menuItem={menuItem}
-          />
-        ))}
+      {sidebarElements?.map((element) => (
+        <DocumentsRecursive
+          key={element.id}
+          level={level + 1}
+          element={element}
+          menuStyle={menuStyle}
+          onRowClick={rowClickHandler}
+          selected={selected}
+          handleOpenNotify={handleOpenNotify}
+          onSelect={onSelect}
+          setSelected={setSelected}
+          menuItem={menuItem}
+        />
+      ))}
 
       <DocumentButtonMenu
         selected={selected}

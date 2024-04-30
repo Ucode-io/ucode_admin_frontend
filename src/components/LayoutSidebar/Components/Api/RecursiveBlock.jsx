@@ -31,6 +31,7 @@ const ApiRecursive = ({
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -52,6 +53,11 @@ const ApiRecursive = ({
           className="nav-element"
           onClick={clickHandler}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div
             className="label"
             style={{
@@ -71,13 +77,6 @@ const ApiRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.type === "FOLDER" ? (
-            childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )
-          ) : null}
         </Button>
       </div>
 

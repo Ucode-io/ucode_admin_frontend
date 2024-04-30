@@ -1,19 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import {relationTyes} from "../../../../../utils/constants/relationTypes";
 import DrawerCard from "../../../../../components/DrawerCard";
 import FRow from "../../../../../components/FormElements/FRow";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import constructorFieldService from "../../../../../services/constructorFieldService";
 import listToOptions from "../../../../../utils/listToOptions";
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import applicationService from "../../../../../services/applicationService";
 import style from "./style.module.scss";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import constructorObjectService from "../../../../../services/constructorObjectService";
-import { PlusIcon } from "../../../../../assets/icons/icon";
+import {PlusIcon} from "../../../../../assets/icons/icon";
+import constructorTableService from "../../../../../services/constructorTableService";
 
 const options = [
   {
@@ -33,12 +34,12 @@ const RelationCreateForm = ({
   open,
   isLoading = false,
 }) => {
-  const { appId } = useParams();
-  const params = useParams()
+  const {appId} = useParams();
+  const params = useParams();
   const [fieldOptions, setFieldOptions] = useState([]);
   const [openSumCreate, setOpenSumCreate] = useState(false);
 
-  const { handleSubmit, control, reset, watch } = useForm();
+  const {handleSubmit, control, reset, watch} = useForm();
 
   const values = watch();
   const type = watch("type");
@@ -52,8 +53,7 @@ const RelationCreateForm = ({
 
   const getFieldOptions = (table_from) => {
     if (!table_from) return null;
-    constructorObjectService.getList(table_from, { data: {} }).then((res) => {
-      console.log("res", res);
+    constructorTableService.getTableInfo(table_from, {data: {}}).then((res) => {
       setFieldOptions((prev) => [
         ...prev,
         ...res?.data?.fields?.map((item) => ({
@@ -64,15 +64,14 @@ const RelationCreateForm = ({
     });
   };
 
-  const { data: relatedTableFields } = useQuery(
+  const {data: relatedTableFields} = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorFieldService.getList({ table_slug: relatedTableSlug });
+      return constructorFieldService.getList({table_slug: relatedTableSlug});
     },
     {
-      select: ({ fields }) => {
-        console.log("FIELDS ====>", fields);
+      select: ({fields}) => {
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
@@ -91,7 +90,7 @@ const RelationCreateForm = ({
     }
   }, [type]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
+  const {data: app} = useQuery(["GET_TABLE_LIST", appId], () => {
     return applicationService.getById(appId);
   });
 
@@ -127,7 +126,6 @@ const RelationCreateForm = ({
 
     delete data?.field_name;
     delete data?.formula_name;
-    // return console.log('values', data);
     onSubmit({
       // ...values,
       ...data,
@@ -161,10 +159,10 @@ const RelationCreateForm = ({
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
       loader={isLoading}
-      bodyStyle={{ padding: "0" }}
+      bodyStyle={{padding: "0"}}
     >
       <form onSubmit={handleSubmit(submitHandler)}>
-        <FRow label="Table from" style={{ padding: "16px" }}>
+        <FRow label="Table from" style={{padding: "16px"}}>
           <HFSelect
             name="table_from"
             control={control}
@@ -176,7 +174,7 @@ const RelationCreateForm = ({
         </FRow>
 
         {!isRecursiveRelation && (
-          <FRow label="Table to" style={{ padding: "16px" }}>
+          <FRow label="Table to" style={{padding: "16px"}}>
             <HFSelect
               name="table_to"
               control={control}
@@ -187,7 +185,7 @@ const RelationCreateForm = ({
           </FRow>
         )}
 
-        <FRow label="Relation type" style={{ padding: "16px" }}>
+        <FRow label="Relation type" style={{padding: "16px"}}>
           <HFSelect
             name="type"
             control={control}
@@ -197,7 +195,7 @@ const RelationCreateForm = ({
           />
         </FRow>
 
-        <FRow label="Fields" style={{ padding: "16px" }}>
+        <FRow label="Fields" style={{padding: "16px"}}>
           <HFMultipleSelect
             name="view_fields"
             control={control}
@@ -209,7 +207,7 @@ const RelationCreateForm = ({
         {/* Summary */}
 
         <div className={style.summary}>
-          <div style={{ padding: "8px 16px" }} className={style.summaryTop}>
+          <div style={{padding: "8px 16px"}} className={style.summaryTop}>
             <div>Summary</div>
             <HFCheckbox
               control={control}
@@ -220,7 +218,7 @@ const RelationCreateForm = ({
         </div>
         <div className={style.summaryBottom}>
           {values?.summaries?.map((el, index) => (
-            <div className={style.summaryItem} style={{ marginTop: "8px" }}>
+            <div className={style.summaryItem} style={{marginTop: "8px"}}>
               <HFSelect
                 options={fieldOptions}
                 control={control}
@@ -241,7 +239,7 @@ const RelationCreateForm = ({
             </div>
           ))}
           {openSumCreate ? (
-            <div className={style.summaryItem} style={{ marginTop: "8px" }}>
+            <div className={style.summaryItem} style={{marginTop: "8px"}}>
               <HFSelect
                 options={fieldOptions}
                 control={control}
@@ -260,7 +258,7 @@ const RelationCreateForm = ({
             {!openSumCreate ? (
               <button type="button" onClick={() => setOpenSumCreate(true)}>
                 <PlusIcon />
-                Создать новый
+                Create new
               </button>
             ) : (
               <button
@@ -268,7 +266,7 @@ const RelationCreateForm = ({
                 onClick={() => {
                   setOpenSumCreate(false);
                 }}
-                style={{ borderColor: "red" }}
+                style={{borderColor: "red"}}
               >
                 Отмена
               </button>

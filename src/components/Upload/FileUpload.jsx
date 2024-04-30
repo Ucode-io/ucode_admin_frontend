@@ -1,7 +1,6 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
 import { useState } from "react";
 import { useRef } from "react";
-import ImageViewer from "react-simple-image-viewer";
 import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
@@ -34,10 +33,10 @@ const FileUpload = ({
 
     fileService
       .folderUpload(data, {
-        folder_name: field?.attributes?.minio_folder,
+        folder_name: field?.attributes?.path,
       })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "docs/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       })
       .finally(() => setLoading(false));
   };

@@ -65,12 +65,16 @@ const FormulaAttributes = ({ control, mainForm }) => {
       };
     });
   }, [tableRelations]);
-
   const { data: fields } = useQuery(
     ["GET_TABLE_FIELDS", selectedTableslug],
     () => {
       if (!selectedTableslug) return [];
-      return constructorFieldService.getList({ table_slug: selectedTableslug });
+      return constructorFieldService.getList(
+        {
+          table_slug: selectedTableslug,
+        },
+        { tableSlug: selectedTableslug }
+      );
     },
     {
       select: ({ fields }) =>
@@ -84,9 +88,6 @@ const FormulaAttributes = ({ control, mainForm }) => {
 
   return (
     <>
-      <div className={styles.settingsBlockHeader}>
-        <h2>Settings</h2>
-      </div>
       <div className="p-2">
         <FRow label="Formula type">
           <HFSelect
@@ -117,7 +118,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
             <FRow label="Rounds">
               <HFTextField
                 name="attributes.number_of_rounds"
-                type='number'
+                type="number"
                 fullWidth
                 control={control}
                 options={fields}
@@ -137,7 +138,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
                 />
               ))}
               <div className={styles.summaryButton} onClick={addNewSummary}>
-                <button type="button">+ Создать новый</button>
+                <button type="button">+ Create new</button>
               </div>
             </div>
           </>

@@ -51,3 +51,40 @@
 .close-btn {
   z-index: 1;
 }
+
+.lock_icon {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.uploadedImage {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  .img {
+    min-width: 25px;
+    height: 25px;
+    width: 25px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  p {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.uploadedFile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  p {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

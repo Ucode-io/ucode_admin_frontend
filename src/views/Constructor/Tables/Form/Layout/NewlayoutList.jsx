@@ -1,22 +1,27 @@
-import {Delete, Edit} from "@mui/icons-material";
-import {Box, FormControlLabel, Switch} from "@mui/material";
-import React from "react";
+import {Box} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import {useFieldArray} from "react-hook-form";
-import {useParams} from "react-router-dom";
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import {
-  CTable,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../../../components/CTable";
-import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import {useSelector} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import {CTable, CTableCell, CTableHead} from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
-import {useSelector} from "react-redux";
+import layoutService from "../../../../../services/layoutService";
+import menuService, {useMenuListQuery} from "../../../../../services/menuService";
+import LayoutsItem from "./LayoutsItem";
+import {useTranslation} from "react-i18next";
 
-function NewlayoutList({setSelectedLayout, mainForm}) {
+function NewlayoutList({
+  setSelectedLayout,
+  mainForm,
+  getData,
+  setSelectedTabLayout,
+}) {
   const {id} = useParams();
+  const {i18n} = useTranslation();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [createLayout, setCreateLayout] = useState(false);
+
   const {
     fields: layouts,
     append,
@@ -30,6 +35,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
+  const {tableSlug, appId} = useParams();
 
   const setDefault = (index) => {
     const newLayouts = layouts.map((element, i) => {
@@ -45,6 +51,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setModal = (index, e) => {
@@ -58,6 +65,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       return element;
     });
     mainForm.setValue("layouts", newLayout);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const setSectionTab = (index, e) => {
@@ -74,9 +82,54 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
       };
     });
     mainForm.setValue("layouts", newLayouts);
+    layoutService.update(mainForm.watch(`layouts.${index}`), tableSlug);
   };
 
   const languages = useSelector((state) => state.languages.list);
+  const [menus, setMenus] = useState([]);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
+
+  const {isLoading} = useMenuListQuery({
+    params: {
+      table_id: menuItem?.table_id ?? id,
+    },
+    queryParams: {
+      enabled: Boolean(true),
+      onSuccess: (res) => {
+        console.log('resssssssss', res)
+        setMenus(
+          res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
+        );
+      },
+    },
+  });
+
+  const watchLayouts = mainForm.watch("layouts");
+
+  const nonSelectedOptionsMenu = useMemo(() => {
+    const selectedMenuIds = Array.from(
+      new Set(watchLayouts?.map((layout) => layout?.menu_id))
+    );
+    const nonSelectedOptionsMenu = menus?.filter(
+      (menu) => !selectedMenuIds?.includes(menu?.value)
+    );
+    return nonSelectedOptionsMenu;
+  }, [watchLayouts?.map((item) => item?.menu_id), menus]);
 
   return (
     <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
@@ -88,96 +141,41 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
             <CTableCell width={60} />
           </CTableHead>
 
-          {layouts?.map((element, index) => (
-            <CTableRow key={element.id}>
-              <CTableCell>{index + 1}</CTableCell>
-              <CTableCell>
-                <Box
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {languages?.map((lang) => (
-                    <HFAutoWidthInput
-                      onClick={(e) => e.stopPropagation()}
-                      control={mainForm.control}
-                      placeholder={`Название ${lang.slug}`}
-                      name={`layouts.${index}.attributes.label_${lang.slug}`}
-                      inputStyle={{
-                        border: "none",
-                        outline: "none",
-                        fontWeight: 500,
-                        background: "transparent",
-                      }}
-                    />
-                  ))}
-
-                  <Box style={{display: "flex", alignItems: "center"}}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={() => setDefault(index)}
-                          checked={element.is_default ?? false}
-                        />
-                      }
-                      label={"Default"}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(e) => setModal(index, e)}
-                          checked={
-                            element.type === "SimpleLayout" ? false : true
-                          }
-                        />
-                      }
-                      label={"Modal"}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onChange={(e) => setSectionTab(index, e)}
-                          checked={element?.is_visible_section ?? false}
-                        />
-                      }
-                      label={"Remove Tabs"}
-                    />
-                  </Box>
-                </Box>
-              </CTableCell>
-
-              <CTableCell>
-                <Box style={{display: "flex", gap: "5px"}}>
-                  <RectangleIconButton
-                    color="success"
-                    onClick={() => navigateToEditForm(element)}
-                  >
-                    <Edit color="success" />
-                  </RectangleIconButton>
-
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => remove(index)}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </Box>
-              </CTableCell>
-            </CTableRow>
-          ))}
+          {!isLoading &&
+            layouts?.map((element, index) => (
+              <LayoutsItem
+                getData={getData}
+                element={element}
+                index={index}
+                mainForm={mainForm}
+                menus={nonSelectedOptionsMenu}
+                allMenus={menus}
+                remove={remove}
+                setModal={setModal}
+                setDefault={setDefault}
+                setSectionTab={setSectionTab}
+                navigateToEditForm={navigateToEditForm}
+                languages={languages}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+                createLayout={createLayout}
+              />
+            ))}
 
           <TableRowButton
             colSpan={4}
-            onClick={() =>
+            onClick={() => {
               append({
                 table_id: id,
                 type: "SimpleLayout",
-                label: "New",
-                attributes: {},
-              })
-            }
+                label: "New Layout",
+                attributes: {
+                  [`label_${i18n?.language}`]: "New Layout",
+                },
+              });
+              setSelectedTabLayout(1);
+              setCreateLayout(true);
+            }}
           />
         </CTable>
       </TableCard>

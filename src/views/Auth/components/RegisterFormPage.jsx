@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { formatPhoneNumberForRequest } from "../../../utils/formatPhoneNumber";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useMutation } from "react-query";
 
 const RegisterFormPage = ({ setFormType, formType }) => {
   const { control, handleSubmit } = useForm();
@@ -23,9 +24,10 @@ const RegisterFormPage = ({ setFormType, formType }) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+  // const handlePasswordChange = (event) => {
+  //   setPassword(event.target.value);
+  // };
+  const { mutate: updateObject } = useMutation(() => console.log(""));
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -36,7 +38,7 @@ const RegisterFormPage = ({ setFormType, formType }) => {
   const { mutateAsync: registerCompany, isLoading } =
     useRegisterCompanyMutation({
       onSuccess: () => {
-        dispatch(showAlert("Регистрация прошла успешно", "success"));
+        dispatch(showAlert("Registration was successful", "success"));
         navigate(-1);
       },
       onError: (err) => {
@@ -45,7 +47,7 @@ const RegisterFormPage = ({ setFormType, formType }) => {
         } else
           dispatch(
             showAlert(
-              "Проблемы с соединением.  Пожалуйста попробуйте снова",
+              "Connection issues. Please try again",
               "error"
             )
           );
@@ -53,7 +55,6 @@ const RegisterFormPage = ({ setFormType, formType }) => {
     });
 
   const onSubmit = (values) => {
-    console.log("values", values);
     registerCompany({
       ...values,
       user_info: {
@@ -65,18 +66,18 @@ const RegisterFormPage = ({ setFormType, formType }) => {
 
   return (
     <div className={classes.form}>
-      <h1 className={classes.title}>Регистрация</h1>
-      <p className={classes.subtitle}>Заполните данные для регистрации</p>
+      <h1 className={classes.title}>Registration</h1>
+      <p className={classes.subtitle}>Fill in the registration details</p>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box className="" mt={5} h="calc(100vh - 300px)" overflow="auto">
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Название компании"}</p>
+            <p className={classes.label}>{"Company name"}</p>
             <HFTextField
               name="name"
               control={control}
               fullWidth
-              placeholder="Введите название компании"
+              placeholder="Enter a company name"
               required
               InputProps={{
                 startAdornment: (
@@ -88,13 +89,13 @@ const RegisterFormPage = ({ setFormType, formType }) => {
             />
           </div>
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Адрес электронной почты"}</p>
+            <p className={classes.label}>{"Email address"}</p>
             <HFTextField
               name="user_info.email"
               control={control}
               required
               fullWidth
-              placeholder="Введите адрес электронной почты"
+              placeholder="Enter email address"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -106,24 +107,27 @@ const RegisterFormPage = ({ setFormType, formType }) => {
           </div>
 
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Номер телефона"}</p>
+            <p className={classes.label}>{"Phone number"}</p>
             <HFTextFieldWithMask
               name="user_info.phone"
               control={control}
-              fullWidth
-              mask={"(99) 999-99-99"}
+              mask={"+\\9\\9\\8 (99) 999-99-99"}
+              maskChar={null}
               required
-              placeholder="Введите номер телефона"
+              placeholder="Enter phone number"
+              updateObject={updateObject}
+              className={classes.mask}
+              fullWidth
             />
           </div>
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Логин"}</p>
+            <p className={classes.label}>{"Login"}</p>
             <HFTextField
               required
               name="user_info.login"
               control={control}
               fullWidth
-              placeholder="Придумайте логин"
+              placeholder="Come up with a login"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -134,14 +138,14 @@ const RegisterFormPage = ({ setFormType, formType }) => {
             />
           </div>
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Пароль"}</p>
+            <p className={classes.label}>{"Password"}</p>
             <HFTextField
               required
               name="user_info.password"
               control={control}
               fullWidth
               type={showPassword ? "text" : "password"}
-              placeholder="Придумайте пароль"
+              placeholder="Come up with a password"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

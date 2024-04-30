@@ -1,13 +1,14 @@
-import { CircularProgress } from "@mui/material";
-import "./style.scss"
+import {CircularProgress} from "@mui/material";
+import "./style.scss";
 
-const TableLoader = ({ isVisible = false }) => {
+const TableLoader = ({isVisible = false}) => {
+  if (Boolean(!isVisible)) return null;
 
-  if(!isVisible) return null
+  return (
+    <div className="AbsoluteTableLoader">
+      <CircularProgress />
+    </div>
+  );
+};
 
-  return ( <div className="AbsoluteTableLoader" >
-    <CircularProgress />
-  </div> );
-}
- 
 export default TableLoader;

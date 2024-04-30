@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Delete, Edit } from "@mui/icons-material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {Delete, Edit} from "@mui/icons-material";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import {
@@ -12,17 +12,17 @@ import {
 } from "../CTable";
 import DeleteWrapperModal from "../DeleteWrapperModal";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import { useDispatch, useSelector } from "react-redux";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { useLocation } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {useLocation} from "react-router-dom";
 import "./style.scss";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import useOnClickOutside from "use-onclickoutside";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import { Checkbox } from "@mui/material";
-import { numberWithSpaces } from "../../utils/formatNumbers";
-import { get } from "@ngard/tiny-get";
-import { useTranslation } from "react-i18next";
+import {Checkbox} from "@mui/material";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {get} from "@ngard/tiny-get";
+import {useTranslation} from "react-i18next";
 
 const DataTable = ({
   data = [],
@@ -109,7 +109,7 @@ const DataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -135,9 +135,7 @@ const DataTable = ({
   }, []);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -188,7 +186,7 @@ const DataTable = ({
     }
   };
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
 
   return (
@@ -204,8 +202,7 @@ const DataTable = ({
       paginationExtraButton={paginationExtraButton}
       limit={limit}
       setLimit={setLimit}
-      defaultLimit={defaultLimit}
-    >
+      defaultLimit={defaultLimit}>
       <CTableHead>
         <CTableRow>
           {onCheckboxChange && <CTableCell width={10} />}
@@ -240,22 +237,19 @@ const DataTable = ({
                   )?.isStiky
                     ? "1"
                     : "",
-                }}
-              >
+                }}>
                 <div
                   className="table-filter-cell cell-data"
                   onMouseEnter={(e) => {
                     setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-                  }}
-                >
+                  }}>
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
                       setColumnId((prev) =>
                         prev === column.id ? "" : column.id
                       );
-                    }}
-                  >
+                    }}>
                     {column.label ??
                       column?.attributes?.[`label_${defaultLanguage}`]}
                   </span>
@@ -273,8 +267,7 @@ const DataTable = ({
                       {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
                       <div
                         className="cell-popup-item"
-                        onClick={() => handlePin(column?.id, index)}
-                      >
+                        onClick={() => handlePin(column?.id, index)}>
                         <PinIcon
                           pinned={
                             tableSettings?.[pageName]?.find(
@@ -286,8 +279,7 @@ const DataTable = ({
                       </div>
                       <div
                         className="cell-popup-item"
-                        onClick={() => handleAutoSize(column?.id, index)}
-                      >
+                        onClick={() => handleAutoSize(column?.id, index)}>
                         <ResizeIcon />
                         <span>Autosize</span>
                       </div>
@@ -302,8 +294,7 @@ const DataTable = ({
           {checkPermission ? (
             <PermissionWrapperV2
               tableSlug={tableSlug}
-              type={["update", "delete"]}
-            >
+              type={["update", "delete"]}>
               {(onDeleteClick || onEditClick) && (
                 <CTableHeadCell width={10}></CTableHeadCell>
               )}
@@ -320,15 +311,13 @@ const DataTable = ({
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
-        dataLength={dataLength || data?.length}
-      >
+        dataLength={dataLength || data?.length}>
         {data?.map((row, rowIndex) => (
           <CTableRow
             key={row.guid || row.id}
             onClick={() => {
               onRowClick(row, rowIndex);
-            }}
-          >
+            }}>
             {onCheckboxChange && (
               <CTableCell>
                 <Checkbox
@@ -339,7 +328,7 @@ const DataTable = ({
               </CTableCell>
             )}
             <CTableCell align="center">
-              {(currentPage - 1) * 10 + rowIndex + 1}
+              {(currentPage - 1) * limit + rowIndex + 1}
             </CTableCell>
             {(filteredColumns?.length ? filteredColumns : columns).map(
               (column, index) => (
@@ -364,8 +353,7 @@ const DataTable = ({
                     )?.isStiky
                       ? "1"
                       : "",
-                  }}
-                >
+                  }}>
                   {column.slug === "label" ? (
                     row?.attributes?.[`label_${defaultLanguage}`] ?? (
                       <CellElementGenerator field={column} row={row} />
@@ -381,31 +369,27 @@ const DataTable = ({
             {checkPermission ? (
               <PermissionWrapperV2
                 tableSlug={tableSlug}
-                type={["update", "delete"]}
-              >
+                type={["update", "delete"]}>
                 {(onDeleteClick || onEditClick) && (
                   <CTableCell
                     style={{
                       padding: "8px 12px 4px",
                       verticalAlign: "middle",
-                    }}
-                  >
+                    }}>
                     <div className="flex">
                       {onEditClick && (
                         <RectangleIconButton
                           color="success"
                           className="mr-1"
                           size="small"
-                          onClick={() => onEditClick(row, rowIndex)}
-                        >
+                          onClick={() => onEditClick(row, rowIndex)}>
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}
 
                       <RectangleIconButton
                         color="error"
-                        onClick={() => onDeleteClick(row, rowIndex)}
-                      >
+                        onClick={() => onDeleteClick(row, rowIndex)}>
                         <Delete color="error" />
                       </RectangleIconButton>
                     </div>
@@ -419,8 +403,7 @@ const DataTable = ({
                     style={{
                       padding: "8px 12px 4px",
                       verticalAlign: "middle",
-                    }}
-                  >
+                    }}>
                     <div className="flex">
                       {onEditClick && (
                         <RectangleIconButton
@@ -430,16 +413,14 @@ const DataTable = ({
                           onClick={() => {
                             onEditClick(row, rowIndex);
                             setSelectedField(row);
-                          }}
-                        >
+                          }}>
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}
 
                       <RectangleIconButton
                         color="error"
-                        onClick={() => onDeleteClick(row, rowIndex)}
-                      >
+                        onClick={() => onDeleteClick(row, rowIndex)}>
                         <Delete color="error" />
                       </RectangleIconButton>
                     </div>

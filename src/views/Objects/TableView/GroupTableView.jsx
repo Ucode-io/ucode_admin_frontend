@@ -1,27 +1,24 @@
-import { Drawer } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
+import GroupObjectDataTable from "../../../components/DataTable/GroupObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
-import constructorObjectService from "../../../services/constructorObjectService";
-import layoutService from "../../../services/layoutService";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import FastFilter from "../components/FastFilter";
-import styles from "./styles.module.scss";
-import { useFieldArray, useForm } from "react-hook-form";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { listToMap } from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
+import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
-import { generateGUID } from "../../../utils/generateID";
-import GroupObjectDataTable from "../../../components/DataTable/GroupObjectDataTable";
+import layoutService from "../../../services/layoutService";
+import {generateGUID} from "../../../utils/generateID";
+import {mergeStringAndState} from "../../../utils/jsonPath";
+import {listToMap} from "../../../utils/listToMap";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import styles from "./styles.module.scss";
 
 const GroupTableView = ({
   tab,
@@ -47,34 +44,20 @@ const GroupTableView = ({
   setFormValue,
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug, appId} = useParams();
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
-  // const selectTableSlug = selectedLinkedObject
-  //   ? selectedLinkedObject?.split("#")?.[1]
-  //   : tableSlug;
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
       app_id: appId,
       builder_service_view_id: view?.id,
-      // sections: [
-      //   {
-      //     column: "SINGLE",
-      //     fields: [],
-      //     label: "Детали",
-      //     id: generateGUID(),
-      //     icon: "circle-info.svg",
-      //   },
-      // ],
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -84,7 +67,6 @@ const GroupTableView = ({
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -93,7 +75,7 @@ const GroupTableView = ({
     mode: "all",
   });
 
-  const { fields, prepend, update, remove } = useFieldArray({
+  const {fields, prepend, update, remove} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -105,11 +87,14 @@ const GroupTableView = ({
         table_id: id ?? menuItem?.table_id,
       });
 
-      const getRelations = constructorRelationService.getList({
-        table_slug: slug,
-        relation_table_slug: slug,
-      });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: slug,
+          relation_table_slug: slug,
+        },
+        slug
+      );
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -174,12 +159,18 @@ const GroupTableView = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key])
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+          result.push({id: key, value: view.attributes.fixedColumns[key]});
       }
     }
     return customSortArray(
       view?.columns,
-      result.map((el) => el.id)
+      result.map((el) => {
+        if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+          return el?.relation_id;
+        } else {
+          return el?.id;
+        }
+      })
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -219,11 +210,9 @@ const GroupTableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
 
   const {
-    data: { tableData, pageCount, fiedlsarray, fieldView } = {
+    data: {tableData, pageCount} = {
       tableData: [],
       pageCount: 1,
-      fieldView: [],
-      fiedlsarray: [],
     },
     refetch,
     isLoading: tableLoader,
@@ -237,14 +226,15 @@ const GroupTableView = ({
         currentPage,
         checkedColumns,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         view,
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
+          view_type: "TABLE",
           offset: pageToOffset(currentPage, limit),
           app_id: appId,
           order: computedSortColumns,
@@ -267,8 +257,6 @@ const GroupTableView = ({
     },
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields ?? [],
-        fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
           ? 1
@@ -286,23 +274,6 @@ const GroupTableView = ({
     },
   });
 
-  // ==========FILTER FIELDS=========== //
-  const getFilteredFilterFields = useMemo(() => {
-    const filteredFieldsView =
-      fieldView &&
-      fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.quick_filters;
-      });
-    const quickFilters = filteredFieldsView?.quick_filters?.map((el) => {
-      return el?.field_id;
-    });
-    const filteredFields = fiedlsarray?.filter((item) => {
-      return quickFilters?.includes(item.id);
-    });
-
-    return filteredFields;
-  }, [fieldView, fiedlsarray]);
-
   useEffect(() => {
     if (isNaN(parseInt(view?.default_limit))) setLimit(20);
     else setLimit(parseInt(view?.default_limit));
@@ -316,10 +287,11 @@ const GroupTableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
+  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
+    {
       tableSlug,
-    });
+    }
+  );
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -341,9 +313,12 @@ const GroupTableView = ({
 
   useEffect(() => {
     layoutService
-      .getList({
-        "table-slug": tableSlug,
-      })
+      .getList(
+        {
+          "table-slug": tableSlug,
+        },
+        tableSlug
+      )
       .then((res) => {
         res?.layouts?.find((layout) => {
           layout.type === "PopupLayout"
@@ -351,7 +326,7 @@ const GroupTableView = ({
             : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug]);
+  }, [menuItem?.id, tableSlug]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -428,11 +403,10 @@ const GroupTableView = ({
       )} */}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
-          //   style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
-          id="data-table"
-        >
+          style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+          id="data-table">
           <GroupObjectDataTable
-            disablePagination
+            disablePagination={false}
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}
@@ -492,8 +466,7 @@ const GroupTableView = ({
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}

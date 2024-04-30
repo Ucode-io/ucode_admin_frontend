@@ -27,7 +27,7 @@ const ScenarioButtonMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -38,6 +38,9 @@ const ScenarioButtonMenu = ({
               ml: -0.5,
               mr: 1,
             },
+            "& .MuiList-root": {
+              padding: 0,
+            },
           },
         }}
       >
@@ -46,7 +49,7 @@ const ScenarioButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Добавить scenario"
+                title="Add scenario"
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/main/${adminId}/scenario/${selected.id}`);
@@ -57,7 +60,7 @@ const ScenarioButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDeleteCategory(selected.id);
@@ -70,7 +73,7 @@ const ScenarioButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Добавить папку"
+              title="Add folder"
               onClick={(e) => {
                 e.stopPropagation();
                 openScenarioFolderModal({}, "CREATE");
@@ -82,7 +85,7 @@ const ScenarioButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Удалить scenario"
+              title="Delete scenario"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteEndpointClickHandler(selected.id);

@@ -1,9 +1,9 @@
 import React from "react";
-import {useFieldArray} from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import styles from "./style.module.scss";
 import TableRow from "./TableRow";
 
-function TableActions({control, typeList, slug, setValue}) {
+function TableActions({ control, typeList, slug, setValue }) {
   const {
     fields: relation,
     append,
@@ -23,29 +23,17 @@ function TableActions({control, typeList, slug, setValue}) {
   };
   return (
     <div>
-      {/* <div className={styles.settingsBlockHeader}>
-        <h2>Table Actions</h2>
-      </div> */}
-
       <div className="">
-        <div className={styles.actionSettingBlock}>
-          {relation?.map((summary, index) => (
-            <TableRow
-              summary={summary}
-              control={control}
-              index={index}
-              update={update}
-              remove={remove}
-              slug={slug}
-              relation={relation}
-              typeList={typeList}
-              setValue={setValue}
-            />
-          ))}
-        </div>
+        {relation?.length > 0 && (
+          <div className={styles.actionSettingBlock}>
+            {relation?.map((summary, index) => (
+              <TableRow summary={summary} control={control} index={index} update={update} remove={remove} slug={slug} relation={relation} typeList={typeList} setValue={setValue} />
+            ))}
+          </div>
+        )}
 
         <div className={styles.summaryButton} onClick={addNewSummary}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ Create new</button>
         </div>
       </div>
     </div>

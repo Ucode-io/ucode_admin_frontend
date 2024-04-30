@@ -14,14 +14,14 @@ const RegisterForm = ({ control, reset }) => {
   return (
     <>
       <div className={classes.formRow}>
-        <p className={classes.label}>{"Название компании"}</p>
+        <p className={classes.label}>{"Company name"}</p>
         <HFTextField
           required
           control={control}
           name="name"
           size="large"
           fullWidth
-          placeholder={"Введите название компании"}
+          placeholder={"Enter company name"}
           autoFocus
           InputProps={{
             startAdornment: (
@@ -33,14 +33,14 @@ const RegisterForm = ({ control, reset }) => {
         />
       </div>
       <div className={classes.formRow}>
-        <p className={classes.label}>{"Адрес электронной почты"}</p>
+        <p className={classes.label}>{"Email address"}</p>
         <HFTextField
           required
           control={control}
           name="user_info.email"
           size="large"
           fullWidth
-          placeholder={"Введите почту"}
+          placeholder={"Enter email"}
           autoFocus
           InputProps={{
             startAdornment: (
@@ -52,14 +52,14 @@ const RegisterForm = ({ control, reset }) => {
         />
       </div>
       <div className={classes.formRow}>
-        <p className={classes.label}>{"Номер телефона"}</p>
+        <p className={classes.label}>{"Phone number"}</p>
         <HFTextField
           required
           control={control}
           name="user_info.phone"
           size="large"
           fullWidth
-          placeholder={"Введите номер телефона"}
+          placeholder={"Enter phone number"}
           autoFocus
           InputProps={{
             startAdornment: (
@@ -71,14 +71,14 @@ const RegisterForm = ({ control, reset }) => {
         />
       </div>
       <div className={classes.formRow}>
-        <p className={classes.label}>{"Логин"}</p>
+        <p className={classes.label}>{"Login"}</p>
         <HFTextField
           required
           control={control}
           name="user_info.login"
           size="large"
           fullWidth
-          placeholder={"Введите логин"}
+          placeholder={"Enter login"}
           autoFocus
           InputProps={{
             startAdornment: (
@@ -90,14 +90,14 @@ const RegisterForm = ({ control, reset }) => {
         />
       </div>
       <div className={classes.formRow}>
-        <p className={classes.label}>{"Пароль"}</p>
+        <p className={classes.label}>{"Password"}</p>
         <HFTextField
           required
           control={control}
           name="user_info.password"
           size="large"
           fullWidth
-          placeholder={"Введите пароль"}
+          placeholder={"Enter password"}
           autoFocus
           InputProps={{
             startAdornment: (

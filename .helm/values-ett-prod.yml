@@ -15,13 +15,13 @@ image:
   repository: ucode/ucode_admin_frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "demo"
+  tag: "latest"
 
 imagePullSecrets: "gitlab-registry"
 nameOverride: ""
 fullnameOverride: ""
 labels:
-  app: react_admin
+  app: admin-frontend
 # command: ["/bin/sh","-c"]
 # args: ["echo 'consuming a message'; sleep 5"]
 
@@ -35,7 +35,7 @@ serviceAccount:
   name: "vault-auth"
 
 podLabels:
-  app: react_admin
+  app: admin-frontend
 
 podSecurityContext:
   {}
@@ -54,7 +54,7 @@ vault:
   secretName: vault-secrets
   variables:
     VAULT_TOKEN: vault_token
-    SECRETS_PATH: vault_admin_api_gateway_path
+    SECRETS_PATH:
 
 environment: {}
 volumes:
@@ -78,20 +78,23 @@ service:
       name: https
 
 ingress:
-  enabled: true
+  enabled: false
   rules:
     - annotations:
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+        nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
         kubernetes.io/ingress.class: nginx
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "demo.app.u-code.io"
+        - host: "v2.agent.easyto.travel"
           path: /
           servicePort: 80
       tls:
-        - secretName: react-app-tls
+        - secretName: agent-admin-frontend-tls
           hosts:
-            - "demo.app.u-code.io"
+            - "v2.agent.easyto.travel"
 
 resources:
   {}
@@ -118,7 +121,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.io/env-demo
+            - key: workload
               operator: In
               values:
-                - "true"
+                - "ett-prod"

@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
 
 export default function ColumnVisible({
   selectedTabIndex,
@@ -17,6 +18,7 @@ export default function ColumnVisible({
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
+  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -30,9 +32,8 @@ export default function ColumnVisible({
     return columns;
   }, [columns, relationColumns, type]);
 
-  const watchedColumns = form.watch("columns");
-  const watchedGroupColumns = form.watch("attributes.group_by_columns");
-
+  // const watchedColumns = form.watch("columns");
+  // const watchedGroupColumns = form.watch("attributes.group_by_columns");
   useEffect(() => {
     form.reset({
       columns:
@@ -47,14 +48,17 @@ export default function ColumnVisible({
 
   const updateView = () => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedGroupColumns
+          ...views?.[selectedTabIndex]?.attributes,
+          group_by_columns: form
+            .getValues("attributes.group_by_columns")
             ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),
         },
-        columns: watchedColumns
+        columns: form
+          .getValues("columns")
           ?.filter((el) => el.is_checked)
           ?.map((el) => el.id),
       })
@@ -137,7 +141,15 @@ export default function ColumnVisible({
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
+          <ColumnsTab
+            form={form}
+            updateView={updateView}
+            isMenu={true}
+            views={views}
+            selectedTabIndex={selectedTabIndex}
+            computedColumns={computedColumns}
+            columns={columns}
+          />
         )}
       </Menu>
     </div>

@@ -1,9 +1,1 @@
-export const viewTypes = [
-  "TABLE",
-  "CALENDAR",
-  "CALENDAR HOUR",
-  "GANTT",
-  "TREE",
-  "BOARD",
-  "FINANCE CALENDAR"
-];
+export const viewTypes = ["TABLE", "CALENDAR", "TIMELINE", "BOARD", "TREE"];

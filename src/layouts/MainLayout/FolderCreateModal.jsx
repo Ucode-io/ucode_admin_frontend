@@ -1,15 +1,16 @@
-import { Box, Card, Modal, Typography } from "@mui/material";
+import {Box, Card, Modal, Typography} from "@mui/material";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
-import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {useForm, useWatch} from "react-hook-form";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
-import { useQueryClient } from "react-query";
-import { useEffect } from "react";
+import {useQueryClient} from "react-query";
+import {useEffect} from "react";
 import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
+import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
 
 const FolderCreateModal = ({
   closeModal,
@@ -19,9 +20,9 @@ const FolderCreateModal = ({
   selectedFolder,
   getMenuList,
 }) => {
-  const { projectId } = useParams();
+  const {projectId} = useParams();
   const queryClient = useQueryClient();
-  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
+
   const onSubmit = (data) => {
     if (modalType === "create") {
       createType(data, selectedFolder);
@@ -32,7 +33,7 @@ const FolderCreateModal = ({
     }
   };
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const {control, handleSubmit, reset, watch} = useForm({
     defaultValues: {
       app_id: appId,
     },
@@ -55,7 +56,13 @@ const FolderCreateModal = ({
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: selectedFolder?.type || "FOLDER",
+        type:
+          selectedFolder?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1" ||
+          selectedFolder?.type === "WIKI_FOLDER"
+            ? "WIKI_FOLDER"
+            : selectedFolder?.type === "MINIO_FOLDER"
+              ? "MINIO_FOLDER"
+              : "FOLDER",
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
@@ -76,12 +83,18 @@ const FolderCreateModal = ({
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        getMenuList();
         closeModal();
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
 
   const languages = useSelector((state) => state.languages.list);
 
@@ -108,25 +121,24 @@ const FolderCreateModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {/* {languages.map((item) => (
-                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))} */}
 
-              {languages?.map((language) => {
-                const languageFieldName = `attributes.label_${language?.slug}`;
-                const fieldValue = watch(languageFieldName);
-
-                return (
-                  <HFTextField
-                    autoFocus
-                    fullWidth
-                    label={`Title (${language?.slug})`}
-                    control={control}
-                    name={`attributes.label_${language?.slug}`}
-                    defaultValue={fieldValue || menuItemLabel}
-                  />
-                );
-              })}
+              <Box
+                style={{
+                  display: "flex",
+                  gap: "6px",
+                  height: "100%",
+                  width: "100%",
+                }}>
+                <HFTextFieldWithMultiLanguage
+                  control={control}
+                  name="attributes.label"
+                  fullWidth
+                  placeholder="Name"
+                  defaultValue={tableName}
+                  languages={languages}
+                  id={"folder_create"}
+                />
+              </Box>
             </Box>
 
             <div className="btns-row">

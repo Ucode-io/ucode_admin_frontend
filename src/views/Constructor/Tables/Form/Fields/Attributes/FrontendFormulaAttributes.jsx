@@ -1,24 +1,18 @@
-import { Divider } from "@mui/material"
-import { useMemo } from "react"
-import FRow from "../../../../../../components/FormElements/FRow"
-import HFTextField from "../../../../../../components/FormElements/HFTextField"
-import styles from "./style.module.scss"
-
+import { Divider } from "@mui/material";
+import { useMemo } from "react";
+import FRow from "../../../../../../components/FormElements/FRow";
+import HFTextField from "../../../../../../components/FormElements/HFTextField";
 
 const FrontendFormulaAttributes = ({ control, mainForm }) => {
-
   const fieldsList = useMemo(() => {
-    return mainForm.getValues('fields') ?? []
-  }, [])
+    return mainForm.getValues("fields") ?? [];
+  }, []);
 
   return (
     <>
-      <div className={styles.settingsBlockHeader}>
-        <h2>Settings</h2>
-      </div>
-      <div className="p-2" >
-        <FRow label="Formula" >
-          <HFTextField 
+      <div className="p-2">
+        <FRow label="Formula">
+          <HFTextField
             control={control}
             name="attributes.formula"
             fullWidth
@@ -32,18 +26,14 @@ const FrontendFormulaAttributes = ({ control, mainForm }) => {
 
         <h2>Fields list:</h2>
 
-        {
-          fieldsList.map(field => (
-            <div>{field.label} - <strong>{field.slug}</strong> </div>
-          ))
-        }
-
+        {fieldsList.map((field) => (
+          <div>
+            {field.label} - <strong>{field.slug}</strong>{" "}
+          </div>
+        ))}
       </div>
-
-      
-
     </>
-  )
-}
+  );
+};
 
-export default FrontendFormulaAttributes
+export default FrontendFormulaAttributes;

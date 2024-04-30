@@ -1,16 +1,9 @@
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { Box } from "@mui/material";
+import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
-import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
-import { updateLevel } from "../../../../utils/level";
-import { useNavigate, useParams } from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const userFolder = {
@@ -29,55 +22,17 @@ const userFolder = {
   },
 };
 
-const Users = ({ 
-  level = 1, 
-  menuStyle, 
-  menuItem, 
-  setElement, 
-  setSelectedApp, 
-  setChildBlockVisible, 
-  childBlockVisible, 
+const Users = ({
+  level = 1,
+  menuStyle,
+  menuItem,
+  setElement,
   handleOpenNotify,
-  sidebarIsOpen,
-  setSidebarIsOpen,
-  child
+  child,
+  selectedApp,
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const navigate = useNavigate()
-  const {appId} = useParams()
-
-  const activeStyle = {
-    borderRadius: '10px',
-    backgroundColor:
-      userFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      userFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    // paddingLeft: updateLevel(level),
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-  const labelStyle = {
-    flex: sidebarIsOpen ? 1 : 0,
-    color:
-      userFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
-
-
-
-  const clickHandler = (e) => {
-    dispatch(menuActions.setMenuItem(userFolder));
-    e.stopPropagation();
-    queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
-    setChildBlockVisible((prev) => !prev);
-  };
 
   const handleGetClientType = (e) => {
     e.stopPropagation();
@@ -86,23 +41,23 @@ const Users = ({
   };
 
   return (
-    <Box sx={{margin: '0 5px'}}>
-
-        {child?.map((childElement) => (
-          <RecursiveBlock
-            onClick={() => {
-              handleGetClientType();
-            }}
-            key={childElement.id}
-            level={1}
-            element={childElement}
-            menuStyle={menuStyle}
-            menuItem={menuItem}
-            setElement={setElement}
-            handleOpenNotify={handleOpenNotify}
-          />
-        ))}
-
+    <Box sx={{ margin: "0 5px" }}>
+      {child?.map((childElement) => (
+        <RecursiveBlock
+          onClick={() => {
+            handleGetClientType();
+          }}
+          key={childElement.id}
+          level={1}
+          element={childElement}
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          setElement={setElement}
+          handleOpenNotify={handleOpenNotify}
+          selectedApp={selectedApp}
+          userType={true}
+        />
+      ))}
     </Box>
   );
 };

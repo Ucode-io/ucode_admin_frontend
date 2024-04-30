@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import {useMemo} from "react";
 import styles from "./day.module.scss";
 import DataDayColumn from "./DataDayColumn";
 import DayColumn from "./DayColumn";
@@ -37,15 +37,13 @@ const RecursiveDayBlock = ({
           <div
             className={`${styles.block} ${
               elements?.length === 1 && level === 1 ? styles.oneElement : ""
-            }`}
-          >
+            }`}>
             <div
               className={`${styles.blockElement}  ${
                 !tabs?.[level + 1] || tab.childrenNumber === 1
                   ? styles.last
                   : styles.before
-              } `}
-            >
+              } `}>
               {tab.label}
             </div>
 

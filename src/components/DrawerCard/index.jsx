@@ -15,19 +15,23 @@ const DrawerCard = ({
   sx,
   PaperProps,
   className,
+  footer = true,
+  titleStyle,
 }) => {
   return (
     <Drawer
+      sx={sx}
       open={open}
       anchor={anchor}
       className={className}
-      sx={sx}
       classes={{ paperAnchorRight: styles.verticalDrawer }}
       onClose={onClose}
       PaperProps={PaperProps}
     >
       <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
+        <h2 className={styles.title} style={titleStyle}>
+          {title}
+        </h2>
 
         <IconButton className={styles.closeButton} onClick={onClose}>
           <Close className={styles.closeIcon} />

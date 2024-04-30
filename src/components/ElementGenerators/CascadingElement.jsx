@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import styles from "./style.module.scss";
-import { Autocomplete, InputAdornment, Menu, TextField } from "@mui/material";
+import {Autocomplete, InputAdornment, Menu, TextField} from "@mui/material";
 import CascadingItem from "./CascadingItem";
 import constructorObjectService from "../../services/constructorObjectService";
 import IconGenerator from "../IconPicker/IconGenerator";
 import useTabRouter from "../../hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
-import { useQuery } from "react-query";
-import { get } from "@ngard/tiny-get";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
+import {useQuery} from "react-query";
+import {get} from "@ngard/tiny-get";
+import {useTranslation} from "react-i18next";
 
 function CascadingElement({
   setValue,
@@ -19,18 +20,19 @@ function CascadingElement({
   row,
   index,
   name,
-  relationfields
+  relationfields,
 }) {
   const [values, setValues] = useState();
   const [inputValue, setInputValue] = useState();
   const [title, setTitle] = useState("");
   const [secondTitle, setSecondTitle] = useState("");
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [dataFilter, setDataFilter] = useState([]);
   const [tablesSlug, setTablesSlug] = useState([]);
+  const {i18n} = useTranslation();
 
   const getIds = useMemo(() => {
     let val = [];
@@ -45,23 +47,29 @@ function CascadingElement({
   }, [relationfields, field]);
 
   //==========OPTIONS REQUEST===========
-  const { data: options } = useQuery(
+  const {data: options} = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: getIds,
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            additional_request: {
+              additional_field: "guid",
+              additional_values: getIds,
+            },
+            search: "",
+            limit: 10,
+            input: true,
           },
-          search: "",
-          limit: 10,
-          input: true
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       select: (res) => {
@@ -69,7 +77,7 @@ function CascadingElement({
       },
     }
   );
-  
+
   const computedData = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -95,7 +103,7 @@ function CascadingElement({
   //==========COMPUTED VALUE FOR LOOKUP===========
   const insideValue = useMemo(() => {
     let values = "";
-    if(!value) return '';
+    if (!value) return "";
     const option = options?.find((el) => el?.guid === value);
     const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
 
@@ -113,10 +121,10 @@ function CascadingElement({
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     constructorObjectService
-      .getList(
+      .getListV2(
         field?.attributes?.cascadings[field?.attributes?.cascadings?.length - 1]
           ?.table_slug,
-        { data: {} }
+        {data: {}}
       )
       .then((res) => {
         setValues(res?.data?.response);
@@ -141,16 +149,16 @@ function CascadingElement({
     setDataFilter([]);
     setTablesSlug([]);
   };
-  
-  const clearButton = () =>{ 
-    setValue('');
+
+  const clearButton = () => {
+    setValue("");
     setInputValue({});
-  }
-  
+  };
+
   useEffect(() => {
     const val = computedData[computedData.length - 1];
     if (!field?.attributes?.autofill || !val) return;
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -188,7 +196,7 @@ function CascadingElement({
                         </p>
                         <IconGenerator
                           icon="arrow-up-right-from-square.svg"
-                          style={{ marginLeft: "10px", cursor: "pointer" }}
+                          style={{marginLeft: "10px", cursor: "pointer"}}
                           size={15}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -210,7 +218,7 @@ function CascadingElement({
             id="password"
             onClick={handleClick}
             value={insideValue ?? ""}
-            inputStyle={{ height: "35px" }}
+            inputStyle={{height: "35px"}}
             InputProps={{
               endAdornment: value && (
                 <InputAdornment position="end">

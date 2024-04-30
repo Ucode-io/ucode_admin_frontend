@@ -10,8 +10,18 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
   text-decoration: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+div {
+  font-family: "Inter", sans-serif;
 }
 
 .silver-bottom-border {
@@ -377,7 +387,7 @@ html {
 .custom-selected-tab {
   border-bottom: none;
   outline: none;
-  padding: 10px;
+  padding: 3px 10px;
   display: none;
   background-color: #0e73f626;
 
@@ -421,4 +431,27 @@ html {
   margin-bottom: 5px;
   display: flex;
   align-items: center;
+}
+
+.ce-toolbar__actions {
+  left: -55px !important;
+  top: -2px !important;
+}
+.moveable-control-box {
+  z-index: 2 !important;
+}
+
+.codex-editor__redactor {
+  padding-bottom: 0 !important;
+}
+.moveable-control-box {
+  z-index: 2 !important;
+}
+
+#react_quill {
+  .ql-editor {
+    min-width: 300px;
+    height: 200px;
+    overflow: auto;
+  }
 }

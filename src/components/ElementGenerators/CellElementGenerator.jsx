@@ -1,21 +1,22 @@
-import {get} from "@ngard/tiny-get";
-import {useMemo} from "react";
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
-import {numberWithSpaces} from "../../utils/formatNumbers";
-import {parseBoolean} from "../../utils/parseBoolean";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {formatDate} from "../../utils/dateFormatter";
-import LogoDisplay from "../LogoDisplay";
-import TableTag from "../TableTag";
-import DownloadIcon from "@mui/icons-material/Download";
-import Many2ManyValue from "./Many2ManyValue";
-import {generateLink} from "../../utils/generateYandexLink";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
-import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import DescriptionIcon from "@mui/icons-material/Description";
+import DownloadIcon from "@mui/icons-material/Download";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import {get} from "@ngard/tiny-get";
+import {useMemo} from "react";
+import {formatDate} from "../../utils/dateFormatter";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {generateLink} from "../../utils/generateYandexLink";
+import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import {parseBoolean} from "../../utils/parseBoolean";
+import IconGenerator from "../IconPicker/IconGenerator";
+import LogoDisplay from "../LogoDisplay";
+import TableTag from "../TableTag";
+import Many2ManyValue from "./Many2ManyValue";
+import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
+import PolygonFieldTable from "./PolygonFieldTable";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -107,8 +108,8 @@ const CellElementGenerator = ({field = {}, row}) => {
       return value !== undefined && typeof value === "number"
         ? numberWithSpaces(value?.toFixed(1))
         : value === undefined
-        ? value
-        : "";
+          ? value
+          : "";
 
     case "DATE_TIME":
       return (
@@ -126,8 +127,7 @@ const CellElementGenerator = ({field = {}, row}) => {
               __html: `${value.slice(0, 200)}${
                 value.length > 200 ? "..." : ""
               }`,
-            }}
-          ></span>
+            }}></span>
         </div>
       );
 
@@ -138,10 +138,13 @@ const CellElementGenerator = ({field = {}, row}) => {
       return (
         <div className="text-overflow">
           <span
-            dangerouslySetInnerHTML={{__html: "*".repeat(value?.length)}}
-          ></span>
+            dangerouslySetInnerHTML={{
+              __html: "*".repeat(value?.length),
+            }}></span>
         </div>
       );
+    // case "POLYGON":
+    //   return <PolygonFieldTable field={field} value={value} />;
 
     case "CHECKBOX":
     case "SWITCH":
@@ -165,8 +168,8 @@ const CellElementGenerator = ({field = {}, row}) => {
       return value !== undefined && typeof value === "number"
         ? numberWithSpaces(value?.toFixed(1))
         : value === undefined
-        ? value
-        : "";
+          ? value
+          : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />
@@ -181,8 +184,7 @@ const CellElementGenerator = ({field = {}, row}) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <LogoDisplay url={value} />
         </span>
       );
@@ -196,8 +198,7 @@ const CellElementGenerator = ({field = {}, row}) => {
             value?.split(",")?.[1]
           )}`}
           rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
+          onClick={(e) => e.stopPropagation()}>
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
         </a>
       ) : (
@@ -211,20 +212,17 @@ const CellElementGenerator = ({field = {}, row}) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <span
               style={{
                 marginRight: "10px",
-              }}
-            >
+              }}>
               {computedFileExtension(getFileName(value)) === "pdf" ? (
                 <PictureAsPdfIcon style={{color: "red"}} />
               ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
@@ -249,8 +247,7 @@ const CellElementGenerator = ({field = {}, row}) => {
               download
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <DownloadIcon
                 style={{width: "25px", height: "25px", fontSize: "30px"}}
               />

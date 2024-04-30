@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import {useEffect, useRef} from "react";
 import CheckboxAttributes from "./CheckboxAttributes";
 import CodabarIncrements from "./CodabarAttributes";
 import DateAttributes from "./DateAttributes";
@@ -12,8 +12,9 @@ import NumberAttributes from "./NumberAttributes";
 import PickListAttributes from "./PickListAttributes";
 import SingleLineAttributes from "./SingleLineAttributes";
 import MapAttributes from "./MapAttributes";
+import PolygonAttributes from "./PolygonAttributes";
 
-const Attributes = ({ control, watch, mainForm }) => {
+const Attributes = ({control, watch, mainForm}) => {
   const fieldType = watch("type");
 
   if (!fieldType) return null;
@@ -43,7 +44,9 @@ const Attributes = ({ control, watch, mainForm }) => {
       return <CheckboxAttributes control={control} />;
 
     case "FORMULA_FRONTEND":
-      return <FrontendFormulaAttributes control={control} mainForm={mainForm} />;
+      return (
+        <FrontendFormulaAttributes control={control} mainForm={mainForm} />
+      );
 
     case "FORMULA":
       return <FormulaAttributes control={control} mainForm={mainForm} />;
@@ -56,12 +59,12 @@ const Attributes = ({ control, watch, mainForm }) => {
 
     case "CODABAR":
       return <CodabarIncrements control={control} />;
-      
-    case "MAP":
-      return <MapAttributes control={control} />;
 
     case "MAP":
       return <MapAttributes control={control} />;
+
+    case "POLYGON":
+      return <PolygonAttributes control={control} />;
 
     default:
       return <SingleLineAttributes control={control} />;

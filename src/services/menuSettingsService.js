@@ -1,11 +1,11 @@
-import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const menuSettingsService = {
-  getList: (params) => request.get("/menu", { params }),
-  update: (data) => request.put("/menu", data),
-  create: (data) => request.post("/menu", data),
-  getById: (id) => request.get(`/menu/${id}`),
-  delete: (id) => request.delete(`/menu/${id}`),
+  getList: (params) => requestV2.get("/menus", { params }),
+  update: (data) => requestV2.put("/menus", data),
+  create: (data) => requestV2.post("/menus", data),
+  getById: (id) => requestV2.get(`/menus/${id}`),
+  delete: (id) => requestV2.delete(`/menus/${id}`),
 };
 
 export default menuSettingsService;

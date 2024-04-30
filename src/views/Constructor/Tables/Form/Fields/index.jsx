@@ -11,16 +11,14 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import { generateGUID } from "../../../../../utils/generateID";
 import FieldSettings from "./FieldSettings";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-const Fields = ({ mainForm, getRelationFields, slug }) => {
+const Fields = ({ mainForm, getRelationFields }) => {
   const { id, tableSlug } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const { i18n } = useTranslation();
   const [selectedField, setSelectedField] = useState({});
-  console.log("tableSlug=====", tableSlug);
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
     name: "fields",
@@ -73,7 +71,9 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
   const deleteField = (field, index) => {
     if (!id) remove(index);
     else {
-      constructorFieldService.delete(field.id).then((res) => remove(index));
+      constructorFieldService
+        .delete(field.id, tableSlug)
+        .then((res) => remove(index));
     }
   };
 
@@ -120,11 +120,9 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
         setSelectedField={setSelectedField}
         tableSlug={"app"}
         setSelectedField={setSelectedField}
-        // loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         additionalRow={
-          // <PermissionWrapperV2 tableSlug={slug} type="write">
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>
               <div
@@ -132,11 +130,10 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
                 onClick={() => setDrawerState("CREATE")}
               >
                 <Add color="primary" />
-                <p>Добавить</p>
+                <p>Add</p>
               </div>
             </CTableCell>
           </CTableRow>
-          // </PermissionWrapperV2>
         }
       />
 
@@ -155,19 +152,9 @@ const Fields = ({ mainForm, getRelationFields, slug }) => {
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
           selectedField={selectedField}
-          slug={slug}
+          slug={tableSlug}
         />
       </Drawer>
-
-      {/* <FieldCreateForm
-        open={drawerState}
-        initialValues={drawerState}
-        formIsVisible={drawerState}
-        closeDrawer={() => setDrawerState(null)}
-        onSubmit={onFormSubmit}
-        isLoading={formLoader}
-        mainForm={mainForm}
-      /> */}
     </TableCard>
   );
 };

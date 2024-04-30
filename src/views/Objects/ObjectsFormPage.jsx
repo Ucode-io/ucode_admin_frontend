@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -21,6 +26,7 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
+import { useMenuGetByIdQuery } from "../../services/menuService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -29,16 +35,6 @@ const ObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
@@ -46,16 +42,36 @@ const ObjectsFormPage = ({
   const { navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
+  const [data, setData] = useState([])
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem?.data?.table?.is_login_table;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+  const menuId = searchParams.get("menuId");
+
+  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
+
+  const id = useMemo(() => {
+    return idFromParam || selectedRow?.guid;
+  }, [idFromParam, selectedRow]);
+
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || tableSlugFromParam;
+  }, [tableSlugFromParam, tableSlugFromProps]);
+
+
   const isInvite = menu.invite;
   const { i18n } = useTranslation();
+
+  const { deleteTab } = useTabRouter();
+  const { pathname } = useLocation();
 
   const {
     handleSubmit,
@@ -63,39 +79,51 @@ const ObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors }
+    getValues,
+    formState: { errors },
   } = useForm({
-    defaultValues: { ...state, ...dateInfo, invite: isInvite ? invite : false },
+    defaultValues: {
+      ...state,
+      ...dateInfo,
+      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+    },
   });
-
-  const tableInfo = store.getState().menu.menuItem;
-
   const getAllData = async () => {
+    console.log("ketvotti3")
     setLoader(true);
-    const getLayout = layoutService.getList({
+    const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
 
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
+      const [{ data = {} }, layoutData] = await Promise.all([
         getFormData,
-        getLayout,
+        getLayoutData,
       ]);
-      setSections(sortSections(sections));
-      setSummary(
-        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
-      );
 
-      const defaultLayout = layout?.find((el) => el.is_default === true);
+      // // Access dynamic keys of layoutData
+      // const layoutKeys = Object.keys(layoutData);
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
+      setSections(sortSections(sections));
+      setSummary(layoutData.summary_fields ?? []);
+
+      const defaultLayout = layoutData;
 
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
           ...el.relation,
-        })) ?? [];
+        })) || [];
 
       setTableRelations(
         relations.map((relation) => ({
@@ -107,25 +135,35 @@ const ObjectsFormPage = ({
         }))
       );
 
-      if (!selectedTab?.relation_id) reset(data?.response ?? {});
+      if (!selectedTab?.relation_id) {
+        reset(data?.response ?? {});
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoader(false);
     }
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList({
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
 
     try {
-      const [{ layouts: layout = [] }] = await Promise.all([getLayout]);
-      const defaultLayout = layout?.find((el) => el.is_default === true);
-      setSections(sortSections(sections));
+      const [layoutData] = await Promise.all([getLayout]);
+      const defaultLayout = layoutData;
 
+      setData({
+        ...layoutData,
+        tabs: layoutData?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      })
+      setSections(sortSections(sections));
       const relations =
         defaultLayout?.tabs?.map((el) => ({
           ...el,
@@ -155,13 +193,25 @@ const ObjectsFormPage = ({
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+            user_id: isUserId,
+          }
+        );
         dispatch(showAlert("Successfully updated", "success"));
-        handleClose();
+        if (modal) {
+          handleClose();
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+        } else {
+          navigate(-1);
+        }
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-
   const create = (data) => {
     setBtnLoader(true);
 
@@ -169,20 +219,35 @@ const ObjectsFormPage = ({
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+          }
+        );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
           user_id: isUserId,
         });
+        dispatch(showAlert("Successfully created", "success"));
         if (modal) {
           handleClose();
+          queryClient.refetchQueries(
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            tableSlug,
+            {
+              table_slug: tableSlug,
+            }
+          );
+          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
-          handleClose();
           navigate(-1);
+          handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-
         // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
@@ -192,26 +257,40 @@ const ObjectsFormPage = ({
   const onSubmit = (data) => {
     if (id) {
       update(data);
-      navigate(-1);
     } else {
       create(data);
-      navigate(-1);
     }
   };
 
-  useEffect(() => {
-    if (!tableInfo) return;
-    if (id) getAllData();
-    else getFields();
-  }, [id, tableInfo, selectedTabIndex]);
+  const { loader: menuLoader } = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    }
+  });
+
 
   useEffect(() => {
-    getFields();
-  }, [id, tableInfo, selectedTabIndex, i18n?.language]);
+    if (id) getAllData();
+    else getFields();
+  }, [id]);
+
+  const clickHandler = () => {
+    deleteTab(pathname);
+    navigate(-1);
+  };
+
+  // useEffect(() => {
+  //   getFields();
+  // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
 
   // const getSubtitleValue = useMemo(() => {
   //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
   // }, [tableInfo]);
+
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
@@ -228,10 +307,12 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
+          getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
-          relations={tableRelations}
+          relations={tableRelations ?? []}
           control={control}
+          getValues={getValues}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           reset={reset}
@@ -244,18 +325,24 @@ const ObjectsFormPage = ({
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
+          menuItem={menuItem}
+          data={data}
         />
       </div>
       <Footer
         extra={
           <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
+            <SecondaryButton
+              onClick={() => (modal ? handleClose() : clickHandler())}
+              color="error"
+            >
               Close
             </SecondaryButton>
             <FormCustomActionButton
               control={control?._formValues}
               tableSlug={tableSlug}
               id={id}
+              getAllData={getAllData}
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}

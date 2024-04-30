@@ -49,7 +49,7 @@ const RedirectPage = () => {
       },
     });
   const { mutateAsync: updateReorder, isLoading: reorderLoading } =
-  useRedirectUpdateReorderMutation({
+    useRedirectUpdateReorderMutation({
       onSuccess: () => {
         store.dispatch(showAlert("Успешно", "success"));
         queryClient.refetchQueries(["REDIRECT"]);
@@ -70,13 +70,9 @@ const RedirectPage = () => {
   };
 
 
-  return  (
+  return (
     <div>
-      <HeaderSettings title={"Redirects"} />
-
-      <FiltersBlock>
-        <div className="p-1">{/* <SearchInput /> */}</div>
-      </FiltersBlock>
+      <HeaderSettings title={"Redirects"} line={false} />
 
       <TableCard>
         <div style={{ display: "flex", flexDirection: "column", boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.2)", borderRadius: "6px" }}>
@@ -100,17 +96,17 @@ const RedirectPage = () => {
           >
             {computedData?.map((element, index) => (
               <Draggable key={element.id}>
-                <div onClick={() => navigateToEditForm(element.id)} style={{ display: "flex", flexDirection: "row", alignItems: "center", borderBottom: "1px solid rgba(0, 0, 0, 0.12)"}}>
+                <div onClick={() => navigateToEditForm(element.id)} style={{ display: "flex", flexDirection: "row", alignItems: "center", borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}>
                   <div style={{ width: 50, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px" }}>{index + 1}</div>
                   <div style={{ flex: 2, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px" }}>{element?.from}</div>
                   <div style={{ flex: 1, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px" }}>{element?.to}</div>
                   <div style={{ flex: 1, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px" }}>
                     {format(new Date(element?.created_at), "MMMM d, yyyy 'at' kk:mm")}
                   </div>
-                  <div style={{ flex: 1, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px"}}>
+                  <div style={{ flex: 1, borderRight: "1px solid rgba(0, 0, 0, 0.12)", padding: "8px" }}>
                     {format(new Date(element?.updated_at), "MMMM d, yyyy 'at' kk:mm")}
                   </div>
-                  <div style={{ width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center'  }}>
+                  <div style={{ width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <RectangleIconButton
                       color="error"
                       onClick={() => {
@@ -124,18 +120,18 @@ const RedirectPage = () => {
               </Draggable>
             ))}
             <SecondaryButton
-            type="button"
-            style={{ width: "100%", marginTop: '10px' }}
-            onClick={navigateToCreateForm}
-          >
-            <Add />
-            Добавить
-          </SecondaryButton>
+              type="button"
+              style={{ width: "100%", marginTop: '10px' }}
+              onClick={navigateToCreateForm}
+            >
+              <Add />
+              Add
+            </SecondaryButton>
           </Container>
         </div>
       </TableCard>
     </div>
-    )
+  )
 };
 
 export default RedirectPage;

@@ -1,24 +1,3 @@
-// export const fieldTypes = [
-//   "SINGLE_LINE",
-//   "MULTI_LINE",
-//   "EMAIL",
-//   "PHONE",
-//   "PICK_LIST",
-//   "MULTISELECT",
-//   "MAP"
-//   "DATE",
-//   "DATE_TIME",
-//   "NUMBER",
-//   "CURRENCY",
-//   "DECIMAL",
-//   "PERCENT",
-//   "CHECKBOX",
-//   "URL",
-//   "FORMULA",
-//   "LOOKUP",
-// "PHOTO"
-// ]
-
 export const fieldTypes = [
   "SINGLE_LINE",
   "MULTI_LINE",
@@ -42,6 +21,10 @@ export const fieldTypes = [
   "COLOR",
   "FLOAT_NOLIMIT",
   "DATE_TIME_WITHOUT_TIME_ZONE",
+  "PRIMARY_KEY",
+  "CODE",
+  "QR",
+  "POLYGON",
 ];
 
 export const fieldTypesOptions = [
@@ -127,11 +110,11 @@ export const fieldTypesOptions = [
         label: "Multi select",
         value: "MULTISELECT",
       },
-      {
-        icon: "list-check.svg",
-        label: "Multi select V2",
-        value: "MULTISELECT_V2",
-      },
+      // {
+      //   icon: "list-check.svg",
+      //   label: "Multi select V2",
+      //   value: "MULTISELECT_V2",
+      // },
     ],
   },
   {
@@ -153,11 +136,11 @@ export const fieldTypesOptions = [
         label: "Photo",
         value: "PHOTO",
       },
-      {
-        icon: "image.svg",
-        label: "Custom Image",
-        value: "CUSTOM_IMAGE",
-      },
+      // {
+      //   icon: "image.svg",
+      //   label: "Custom Image",
+      //   value: "CUSTOM_IMAGE",
+      // },
       {
         icon: "video.svg",
         label: "Video",
@@ -188,11 +171,11 @@ export const fieldTypesOptions = [
   {
     label: "Other",
     options: [
-      {
-        icon: "arrow-up-9-1.svg",
-        label: "FLOAT_NOLIMIT",
-        value: "FLOAT_NOLIMIT",
-      },
+      // {
+      //   icon: "arrow-up-9-1.svg",
+      //   label: "FLOAT_NOLIMIT",
+      //   value: "FLOAT_NOLIMIT",
+      // },
       {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
@@ -204,10 +187,31 @@ export const fieldTypesOptions = [
         value: "INCREMENT_NUMBER",
       },
       {
-        icon: "phone.svg",
-        label: "Phone",
-        value: "PHONE",
+        icon: "key.svg",
+        label: "Primary key",
+        value: "PRIMARY_KEY",
       },
+      {
+        icon: "code.svg",
+        label: "Code",
+        value: "CODE",
+      },
+      {
+        icon: "draw-polygon.svg",
+        label: "Polygon",
+        value: "POLYGON",
+      },
+      {
+        icon: "qrcode.svg",
+        label: "Qr",
+        value: "QR",
+      },
+
+      // {
+      //   icon: "phone.svg",
+      //   label: "Phone",
+      //   value: "PHONE",
+      // },
       {
         icon: "phone.svg",
         label: "Internation Phone",
@@ -233,26 +237,26 @@ export const fieldTypesOptions = [
         label: "Barcode",
         value: "BARCODE",
       },
-      {
-        icon: "barcode.svg",
-        label: "Codabar",
-        value: "CODABAR",
-      },
-      {
-        icon: "fill.svg",
-        label: "Autofill",
-        value: "AUTOFILL",
-      },
-      {
-        icon: "barcode.svg",
-        label: "Scan-barcode",
-        value: "SCAN_BARCODE",
-      },
-      {
-        icon: "teeth.svg",
-        label: "Dentist",
-        value: "DENTIST",
-      },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Codabar",
+      //   value: "CODABAR",
+      // },
+      // {
+      //   icon: "fill.svg",
+      //   label: "Autofill",
+      //   value: "AUTOFILL",
+      // },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Scan-barcode",
+      //   value: "SCAN_BARCODE",
+      // },
+      // {
+      //   icon: "teeth.svg",
+      //   label: "Dentist",
+      //   value: "DENTIST",
+      // },
       {
         icon: "colon-sign.svg",
         label: "Color",
@@ -261,3 +265,415 @@ export const fieldTypesOptions = [
     ],
   },
 ];
+export const numberFieldFormats = [
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "minus.svg",
+  },
+  {
+    label: "Float",
+    value: "FLOAT",
+    icon: "minus.svg",
+  },
+];
+export const textFieldFormats = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Text Area",
+    value: "MULTI_LINE",
+    icon: "minus.svg",
+  },
+];
+
+export const incrementFieldFormats = [
+  {
+    label: "Increment ID",
+    value: "INCREMENT_ID",
+    icon: "minus.svg",
+  },
+  {
+    label: "Increment Number",
+    value: "INCREMENT_NUMBER",
+    icon: "minus.svg",
+  },
+];
+export const dateFieldFormats = [
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date time (without timezone)",
+    value: "DATE_TIME_WITHOUT_TIME_ZONE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Time",
+    value: "TIME",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date time",
+    value: "DATE_TIME",
+    icon: "minus.svg",
+  },
+];
+export const fileFieldFormats = [
+  {
+    icon: "image.svg",
+    label: "Photo",
+    value: "PHOTO",
+  },
+  {
+    icon: "video.svg",
+    label: "Video",
+    value: "VIDEO",
+  },
+  {
+    icon: "file.svg",
+    label: "File",
+    value: "FILE",
+  },
+];
+
+export const newFieldTypes = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "hashtag.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "calendar.svg",
+  },
+  {
+    label: "Dropdown",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
+  },
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+  {
+    label: "Formula",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "RELATION",
+    icon: "link-simple.svg",
+  },
+  {
+    label: "File",
+    value: "FILE",
+    icon: "file.svg",
+  },
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Phone",
+    value: "PHONE",
+    icon: "phone.svg",
+  },
+  {
+    label: "Email",
+    value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Increment",
+    value: "INCREMENT",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Password",
+    value: "PASSWORD",
+    icon: "lock.svg",
+  },
+  {
+    label: "Color",
+    value: "COLOR",
+    icon: "colon-sign.svg",
+  },
+  {
+    label: "Barcode",
+    value: "BARCODE",
+    icon: "barcode.svg",
+  },
+];
+
+export const fieldFormats = [
+  {
+    label: "Text",
+    value: "SINGLE_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "NUMBER",
+    icon: "hashtag.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "calendar.svg",
+  },
+  {
+    label: "Dropdown",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
+  },
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+  {
+    label: "Formula",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "RELATION",
+    icon: "link-simple.svg",
+  },
+  {
+    label: "File",
+    value: "FILE",
+    icon: "file.svg",
+  },
+  {
+    label: "Map",
+    value: "MAP",
+    icon: "map-pin.svg",
+  },
+  {
+    label: "Phone",
+    value: "PHONE",
+    icon: "phone.svg",
+  },
+  {
+    label: "Email",
+    value: "EMAIL",
+    icon: "envelope.svg",
+  },
+  {
+    label: "Password",
+    value: "PASSWORD",
+    icon: "lock.svg",
+  },
+  {
+    label: "Color",
+    value: "COLOR",
+    icon: "colon-sign.svg",
+  },
+  {
+    label: "File",
+    value: "BARCODE",
+    icon: "barcode.svg",
+  },
+  {
+    icon: "image.svg",
+    label: "File",
+    value: "PHOTO",
+  },
+  {
+    icon: "video.svg",
+    label: "File",
+    value: "VIDEO",
+  },
+  {
+    icon: "file.svg",
+    label: "File",
+    value: "FILE",
+  },
+  {
+    label: "Date",
+    value: "DATE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE_TIME_WITHOUT_TIME_ZONE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "TIME",
+    icon: "minus.svg",
+  },
+  {
+    label: "Date",
+    value: "DATE_TIME",
+    icon: "minus.svg",
+  },
+  {
+    label: "Text",
+    value: "MULTI_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Number",
+    value: "FLOAT",
+    icon: "minus.svg",
+  },
+  {
+    label: "Relation",
+    value: "LOOKUP",
+    icon: "minus.svg",
+  },
+];
+
+export const math = [
+  {
+    label: "plus",
+    value: "+",
+  },
+  {
+    label: "minus",
+    value: "-",
+  },
+  {
+    label: "multiplication",
+    value: "*",
+  },
+  {
+    label: "division",
+    value: "/",
+  },
+];
+
+export const relationFieldButtons = [
+  {
+    label: "Schema",
+    value: "SCHEMA",
+  },
+
+  {
+    label: "Additional",
+    value: "AUTOFILL",
+  },
+  {
+    label: "Auto filter",
+    value: "AUTO_FILTER",
+  },
+];
+
+export const fieldButtons = [
+  {
+    label: "Schema",
+    value: "SCHEMA",
+  },
+  {
+    label: "Validation",
+    value: "VALIDATION",
+  },
+  {
+    label: "Autofill",
+    value: "AUTOFILL",
+  },
+  {
+    label: "Auto filter",
+    value: "AUTO_FILTER",
+  },
+];
+
+export const formatIncludes = [
+  "NUMBER",
+  "DATE",
+  "SINGLE_LINE",
+  "FILE",
+  "FLOAT",
+  "DATE_TIME",
+  "DATE_TIME_WITHOUT_TIME_ZONE",
+  "TIME",
+  "BARCODE",
+  "PHOTO",
+  "VIDEO",
+  "MULTI_LINE",
+  "INCREMENT",
+];
+
+export const FormatOptionType = (item) => {
+  switch (item) {
+    case "DATE":
+      return dateFieldFormats;
+    case "DATE_TIME":
+      return dateFieldFormats;
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return dateFieldFormats;
+    case "TIME":
+      return dateFieldFormats;
+    case "FILE":
+      return fileFieldFormats;
+    case "PHOTO":
+      return fileFieldFormats;
+    case "VIDEO":
+      return fileFieldFormats;
+    case "SINGLE_LINE":
+      return textFieldFormats;
+    case "INCREMENT":
+      return incrementFieldFormats;
+    case "MULTI_LINE":
+      return textFieldFormats;
+    case "NUMBER":
+      return numberFieldFormats;
+    case "FLOAT":
+      return numberFieldFormats;
+    default:
+      return textFieldFormats;
+  }
+};
+export const FormatTypes = (format) => {
+  switch (format) {
+    case "RELATION":
+      return true;
+    case "LOOKUP":
+      return true;
+    case "LOOKUPS":
+      return true;
+    default:
+      return false;
+  }
+};
+export const ValueTypes = (value) => {
+  switch (value) {
+    case "Many2One":
+      return true;
+    case "Many2Many":
+      return true;
+    case "Recursive":
+      return true;
+    default:
+      return false;
+  }
+};

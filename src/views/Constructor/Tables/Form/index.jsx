@@ -1,46 +1,47 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService from "../../../../services/constructorTableService";
+import constructorTableService, {
+  useTableByIdQuery,
+} from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
-import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
-import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
-import { generateGUID } from "../../../../utils/generateID";
-import { listToMap } from "../../../../utils/listToMap";
-import {
-  computeSectionsOnSubmit,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
+import {generateGUID} from "../../../../utils/generateID";
+import {listToMap} from "../../../../utils/listToMap";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import { useTranslation } from "react-i18next";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import menuService from "../../../../services/menuService";
+import {disableCache} from "@iconify/react";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id, slug, appId } = useParams();
+  const {id, tableSlug, appId} = useParams();
+  const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-  const { i18n } = useTranslation();
-  console.log("slug", slug);
+  const {i18n} = useTranslation();
 
   const mainForm = useForm({
     defaultValues: {
@@ -63,38 +64,58 @@ const ConstructorTablesFormPage = () => {
     },
     mode: "all",
   });
+  const values = useWatch({
+    control: mainForm?.control,
+  });
+
+  // const list = useSelector((state) => state.constructorTable.list);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
+  }, []);
+
+  const {isLoading} = useTableByIdQuery({
+    id: id,
+    queryParams: {
+      enabled: !!id,
+      onSuccess: (res) => {
+        mainForm.reset(res);
+        setLoader(false);
+      },
+    },
+  });
 
   const getData = async () => {
     setLoader(true);
 
-    const getTableData = constructorTableService.getById(id);
-
-    const getViewRelations = constructorViewRelationService.getList({
-      table_slug: slug,
-    });
-
-    const getActions = constructorCustomEventService.getList({
-      table_slug: slug,
-    });
-
-    console.log("getActions", getActions);
-
-    const getLayouts = layoutService
-      .getList({
-        "table-slug": slug,
-        language_setting: i18n?.language,
-      })
-      .then((res) => {
-        mainForm.setValue("layouts", res?.layouts ?? []);
-      });
-
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([
-        getTableData,
-        getActions,
-        getViewRelations,
-        getLayouts,
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        constructorViewRelationService.getList({table_slug: tableSlug}),
+        constructorCustomEventService.getList(
+          {table_slug: tableSlug},
+          tableSlug
+        ),
+        layoutService
+          .getList(
+            {"table-slug": tableSlug, language_setting: i18n?.language},
+            tableSlug
+          )
+          .then((res) => {
+            mainForm.setValue("layouts", res?.layouts ?? []);
+          }),
       ]);
+
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -102,9 +123,11 @@ const ConstructorTablesFormPage = () => {
         actions,
       };
 
-      mainForm.reset(data);
+      mainForm.reset({...values, ...data});
 
       await getRelationFields();
+    } catch (error) {
+      console.error("An error occurred:", error);
     } finally {
       setLoader(false);
     }
@@ -112,13 +135,21 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList({ table_id: id });
+      const getFieldsData = constructorFieldService.getList(
+        {
+          table_id: id,
+        },
+        tableSlug
+      );
 
-      const getRelations = constructorRelationService.getList({
-        table_slug: slug,
-        relation_table_slug: slug,
-      });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        tableSlug
+      );
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -126,7 +157,7 @@ const ConstructorTablesFormPage = () => {
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -135,12 +166,13 @@ const ConstructorTablesFormPage = () => {
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
           (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
           (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+            relation.table_from?.slug === tableSlug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -168,6 +200,26 @@ const ConstructorTablesFormPage = () => {
     });
   };
 
+  const createType = async (data) => {
+    await menuSettingsService
+      .create({
+        parent_id:
+          menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        type: "TABLE",
+        table_id: data?.id,
+        label: data?.label,
+        attributes: data?.attributes,
+        icon: data?.icon,
+      })
+      .then(() => {
+        queryClient.refetchQueries(["MENU"], menuItem?.id);
+        navigate(-1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
@@ -179,6 +231,7 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
+        createType(res);
         navigate(-1);
       })
       .catch(() => setBtnLoader(false));
@@ -188,75 +241,67 @@ const ConstructorTablesFormPage = () => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    // const updateSectionData = constructorSectionService.update({
-    //   sections: addOrderNumberToSections(data.sections),
-    //   table_slug: data.slug,
-    //   table_id: id,
-    // });
+    // const computedLayouts = data.layouts.map((layout) => ({
+    //   ...layout,
+    //   summary_fields: layout?.summary_fields?.map((item) => {
+    //     return {
+    //       ...item,
+    //       field_name: item?.field_name ?? item?.title ?? item?.label,
+    //     };
+    //   }),
+    //   tabs: layout?.tabs?.map((tab) => {
+    //     if (
+    //       tab.type === "Many2Many" ||
+    //       tab.type === "Many2Dynamic" ||
+    //       tab.type === "Recursive" ||
+    //       tab.type === "Many2One" ||
+    //       tab.relation_type === "Many2Many" ||
+    //       tab.relation_type === "Many2Dynamic" ||
+    //       tab.relation_type === "Recursive" ||
+    //       tab.relation_type === "Many2One"
+    //     ) {
+    //       return {
+    //         order: tab?.order ?? 0,
+    //         label: tab.title ?? tab.label,
+    //         field_name: tab?.title ?? tab.label ?? tab?.field_name,
+    //         type: "relation",
+    //         layout_id: layout.id,
+    //         relation_id: tab.id,
+    //         relation: {
+    //           ...tab,
+    //         },
+    //       };
+    //     } else {
+    //       return {
+    //         ...tab,
+    //         sections: tab?.sections?.map((section, index) => ({
+    //           ...section,
+    //           order: index,
+    //           fields: section?.fields?.map((field, index) => ({
+    //             ...field,
+    //             order: index,
+    //             field_name: field?.title ?? field.label,
+    //           })),
+    //         })),
+    //       };
+    //     }
+    //   }),
+    // }));
 
-    // const updateViewRelationsData = constructorViewRelationService.update({
-    //   view_relations: data.view_relations,
-    //   table_slug: data.slug,
-    // });
-
-    const computedLayouts = data.layouts.map((layout) => ({
-      ...layout,
-      summary_fields: layout?.summary_fields?.map((item) => {
-        return {
-          ...item,
-          field_name: item?.field_name ?? item?.title ?? item?.label,
-        };
-      }),
-      tabs: layout?.tabs?.map((tab) => {
-        if (
-          tab.type === "Many2Many" ||
-          tab.type === "Many2Dynamic" ||
-          tab.type === "Recursive" ||
-          tab.type === "Many2One" ||
-          tab.relation_type === "Many2Many" ||
-          tab.relation_type === "Many2Dynamic" ||
-          tab.relation_type === "Recursive" ||
-          tab.relation_type === "Many2One"
-        ) {
-          return {
-            order: tab?.order ?? 0,
-            label: tab.title ?? tab.label,
-            field_name: tab?.title ?? tab.label ?? tab?.field_name,
-            type: "relation",
-            layout_id: layout.id,
-            relation_id: tab.id,
-            relation: {
-              ...tab,
-            },
-          };
-        } else {
-          return {
-            ...tab,
-            sections: tab?.sections?.map((section, index) => ({
-              ...section,
-              order: index,
-              fields: section?.fields?.map((field, index) => ({
-                ...field,
-                order: index,
-                field_name: field?.title ?? field.label,
-              })),
-            })),
-          };
-        }
-      }),
-    }));
-
-    const updateLayoutData = layoutService.update({
-      layouts: computedLayouts,
-      table_id: id,
-      project_id: projectId,
-    });
+    // const updateLayoutData = layoutService.update(
+    //   {
+    //     layouts: computedLayouts,
+    //     table_id: id,
+    //     project_id: projectId,
+    //   },
+    //   slug
+    // );
 
     Promise.all([
       updateTableData,
       // updateSectionData,
       // updateViewRelationsData,
-      updateLayoutData,
+      // updateLayoutData,
     ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
@@ -266,97 +311,123 @@ const ConstructorTablesFormPage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("datadatadatadata", data, id);
     const computedData = {
       ...data,
-      // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      id: data?.id,
+      show_in_menu: true,
     };
     // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
   };
-
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
+
+  const [selectedTab, setSelectedTab] = useState(0);
 
   if (loader) return <PageFallback />;
 
   return (
     <>
       <div className="pageWithStickyFooter">
-        <Tabs direction={"ltr"}>
-          <HeaderSettings
-            title="Objects"
-            subtitle={id ? mainForm.getValues("label") : "Добавить"}
-            icon={mainForm.getValues("icon")}
-            backButtonLink={-1}
-            sticky
-          >
-            <TabList>
-              <Tab>Details</Tab>
-              <Tab>Layouts</Tab>
-              <Tab>Fields</Tab>
-              {id && <Tab>Relations</Tab>}
-              {id && <Tab>Actions</Tab>}
-              {id && <Tab>Custom errors</Tab>}
-            </TabList>
-          </HeaderSettings>
-
-          <TabPanel>
-            <MainInfo control={mainForm.control} />
-          </TabPanel>
-
-          <TabPanel>
-            <Layout mainForm={mainForm} getRelationFields={getRelationFields} />
-          </TabPanel>
-
-          <TabPanel>
-            <Fields
-              getRelationFields={getRelationFields}
-              mainForm={mainForm}
-              slug={slug}
-            />
-          </TabPanel>
-
-          {id && (
-            <TabPanel>
-              <Relations
-                mainForm={mainForm}
-                getRelationFields={getRelationFields}
-              />
-            </TabPanel>
-          )}
-          {id && (
-            <TabPanel>
-              <Actions mainForm={mainForm} />
-            </TabPanel>
-          )}
-          {id && (
-            <TabPanel>
-              <CustomErrors mainForm={mainForm} />
-            </TabPanel>
-          )}
-          {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
-        </Tabs>
-      </div>
-      <Footer
-        extra={
+        {id ? (
           <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Close
-            </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
-              <Save /> Save
-            </PrimaryButton>
+            <Tabs selectedIndex={selectedTab} direction={"ltr"}>
+              <HeaderSettings
+                title="Objects"
+                subtitle={id ? mainForm.getValues("label") : "Add"}
+                icon={mainForm.getValues("icon")}
+                backButtonLink={-1}
+                sticky>
+                <TabList>
+                  <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
+                  <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
+                  <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
+                  {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
+                  {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>
+                  )}
+                </TabList>
+              </HeaderSettings>
+
+              <TabPanel>
+                <MainInfo control={mainForm.control} watch={mainForm.watch} />
+              </TabPanel>
+
+              <TabPanel>
+                <Layout
+                  mainForm={mainForm}
+                  getRelationFields={getRelationFields}
+                  getData={getData}
+                  setSelectedTabLayout={setSelectedTab}
+                />
+              </TabPanel>
+
+              <TabPanel>
+                <Fields
+                  getRelationFields={getRelationFields}
+                  mainForm={mainForm}
+                  slug={tableSlug}
+                />
+              </TabPanel>
+
+              {id && (
+                <TabPanel>
+                  <Relations
+                    mainForm={mainForm}
+                    getRelationFields={getRelationFields}
+                  />
+                </TabPanel>
+              )}
+              {id && (
+                <TabPanel>
+                  <Actions mainForm={mainForm} />
+                </TabPanel>
+              )}
+              {id && (
+                <TabPanel>
+                  <CustomErrors mainForm={mainForm} />
+                </TabPanel>
+              )}
+              {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
+            </Tabs>
           </>
-        }
-      />
+        ) : (
+          <>
+            <HeaderSettings
+              title={id ? mainForm.getValues("label") : "Create table"}
+              icon={mainForm.getValues("icon")}
+              backButtonLink={-1}
+              sticky></HeaderSettings>
+
+            <MainInfo control={mainForm.control} watch={mainForm.watch} />
+          </>
+        )}
+      </div>
+
+      {selectedTab === 1 ? (
+        ""
+      ) : (
+        <Footer
+          extra={
+            <>
+              <SecondaryButton onClick={() => navigate(-1)} color="error">
+                Close
+              </SecondaryButton>
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={mainForm.handleSubmit(onSubmit)}
+                loading={btnLoader}>
+                <Save /> Save
+              </PrimaryButton>
+            </>
+          }
+        />
+      )}
     </>
   );
 };

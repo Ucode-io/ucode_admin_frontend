@@ -5,7 +5,7 @@ const KeepAliveWrapper = ({ children }) => {
   const { pathname } = useLocation()
 
   return (
-    <KeepAlive name={`${pathname}`} key={`${pathname}`}>
+    <KeepAlive name={`${pathname}`} key={`${pathname}`} cacheKey={`${pathname}`} when={false}>
       {children}
     </KeepAlive>
   )

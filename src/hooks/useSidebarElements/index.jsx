@@ -24,7 +24,7 @@ const useSidebarElements = () => {
           title: el.label,
           parent_id: el.folder_id,
           isChild: true,
-          path: `/main/${appId}/object/${el.slug}`,
+          path: `/main/${el?.parent_id}/object/${el?.slug}?menuId=${el?.id}`,
         })) ?? [];
 
     return [...(computedConstructorElements ?? []), ...(elements ?? [])];

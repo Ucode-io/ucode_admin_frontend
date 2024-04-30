@@ -1,9 +1,7 @@
-import React from "react";
-import styles from "./style.module.scss";
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
-import HFSelect from "../../../../../components/FormElements/HFSelect";
-import { useWatch } from "react-hook-form";
 import { Button } from "@mui/material";
+import React from "react";
+import HFSelect from "../../../../../components/FormElements/HFSelect";
+import styles from "./style.module.scss";
 
 function FunctionPath({ control, watch, functions, setValue }) {
   const clear = () => {
@@ -12,19 +10,19 @@ function FunctionPath({ control, watch, functions, setValue }) {
 
   return (
     <>
-      {/* <div className={styles.settingsBlockHeader}>
-        <h2>Functions</h2>
-      </div> */}
-      <div className="p-2">
-        <div className={styles.input_control}>
-          <HFSelect
-            control={control}
-            name="function_path"
-            options={functions}
-          />
-
-          <Button onClick={clear}>Clear Function</Button>
-        </div>
+      <div className={styles.input_control}>
+        <HFSelect control={control} name="function_path" options={functions} />
+        <Button
+          style={{
+            marginTop: "10px",
+            width: "100%",
+          }}
+          variant="outlined"
+          color="error"
+          onClick={clear}
+        >
+          Clear Function
+        </Button>
       </div>
     </>
   );

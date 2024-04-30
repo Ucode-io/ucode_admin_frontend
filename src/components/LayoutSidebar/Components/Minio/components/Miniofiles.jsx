@@ -9,9 +9,10 @@ const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 const Card = ({ item, selected, onSelect, handleNavigate }) => {
   const url = `${cdnURL}${item?.link}`;
   const parts = item?.file_name_download?.split(".") || ".";
-  const extension = parts[parts?.length - 1];
+  const extension = parts[parts?.length - 1]?.toUpperCase();
   const size = item?.file_size / 1048576;
 
+  console.log("extension", extension);
   return (
     <Box
       className={style.card}
@@ -28,7 +29,7 @@ const Card = ({ item, selected, onSelect, handleNavigate }) => {
         {selected && <CheckIcon />}
       </span>
       <Box className={`${style.file} ${selected && style.dop}`}>
-        {extension === "png" || extension === "JPEG" || extension === "JPG" ? (
+        {extension === "PNG" || extension === "JPEG" || extension === "JPG" ? (
           <img alt="sorry" src={url} className={style.img} />
         ) : (
           <DescriptionIcon />

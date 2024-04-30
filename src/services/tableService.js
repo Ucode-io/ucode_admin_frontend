@@ -1,42 +1,18 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const tableService = {
-  getList: (params) =>
-    request.get("/table", {
-      params,
-      headers: {
-        "resource-id": params.resourceId,
-      },
-    }),
-  getByID: ({ resourceId, tableId, envId, projectId }) =>
-    request.get(`/table/${tableId}`, {
-      headers: { "resource-id": resourceId },
-    }),
-  update: (data) =>
-    request.put(`/table`, data, {
-      headers: { "resource-id": data.resourceId },
-    }),
-  create: (data) => {
-    return request.post("/table", data, {
-      headers: { "resource-id": data.resourceId },
-    });
-  },
-  delete: ({ id, resourceId, envId }) =>
-    request.delete(`/table/${id}`, {
-      headers: { "resource-id": resourceId },
-    }),
-  configure: ({ data, resourceId, envId }) =>
-    request.post(`/fields-relations`, data, {
-      headers: { "resource-id": resourceId },
-    }),
-  getHistory: ({ tableId, projectId, envId }) =>
-    request.get(`/table-history/list/${tableId}`, {}),
-  getHistoryById: ({ historyId, envId, projectId }) =>
-    request.get(`/table-history/${historyId}`, {}),
-  revertCommit: ({ data, projectId }) =>
-    request.put(`/table-history/revert`, data, {}),
-  postVersion: ({ data, projectId }) => request.put(`/table-history`, data, {}),
+  getList: (params) => requestV2.get("/collections", {params : {...params}}),
+  getByID: ({ tableSlug }) => requestV2.get(`/collections/${tableSlug}`),
+  update: (data) => requestV2.put(`/collections`, data),
+  create: (data) => requestV2.post("/collections", data),
+  delete: ({ tableSlug }) => requestV2.delete(`/collections/${tableSlug}`),
+  configure: ({ data }) => request.post(`/fields-relations`, data),
+  getHistory: ({ tableId }) => request.get(`/table-history/list/${tableId}`, {}),
+  getHistoryById: ({ historyId }) => request.get(`/table-history/${historyId}`, {}),
+  revertCommit: ({ data }) => request.put(`/table-history/revert`, data, {}),
+  postVersion: ({ data }) => request.put(`/table-history`, data, {}),
 };
 
 export const useTablesListQuery = ({ params = {}, queryParams } = {}) => {
@@ -49,13 +25,7 @@ export const useTablesListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useTableGetByIdQuery = ({
-  tableId,
-  resourceId,
-  envId,
-  projectId,
-  queryParams,
-}) => {
+export const useTableGetByIdQuery = ({ tableId, resourceId, envId, projectId, queryParams }) => {
   return useQuery(
     ["TABLE_GET_BY_ID", { tableId, resourceId, envId, projectId }],
     () => {
@@ -74,19 +44,10 @@ export const useTableCreateMutation = (mutationSettings) => {
 };
 
 export const useTableDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, resourceId, envId }) =>
-      tableService.delete({ id, resourceId, envId }),
-    mutationSettings
-  );
+  return useMutation(({ id, resourceId, envId }) => tableService.delete({ id, resourceId, envId }), mutationSettings);
 };
 
-export const useTableHistoryQuery = ({
-  tableId,
-  projectId,
-  envId,
-  queryParams,
-} = {}) => {
+export const useTableHistoryQuery = ({ tableId, projectId, envId, queryParams } = {}) => {
   return useQuery(
     ["TABLE_HISTORY", { tableId, projectId, envId }],
     () => {
@@ -95,12 +56,7 @@ export const useTableHistoryQuery = ({
     queryParams
   );
 };
-export const useHistoryGetByIdQuery = ({
-  historyId,
-  envId,
-  projectId,
-  queryParams,
-}) => {
+export const useHistoryGetByIdQuery = ({ historyId, envId, projectId, queryParams }) => {
   return useQuery(
     ["HISTORY_GET_BY_ID", { historyId, envId, projectId }],
     () => {
@@ -132,11 +88,7 @@ export const useTableCommitVersionMutation = (mutationSettings) => {
 };
 
 export const useTableConfigureMutation = (mutationSettings) => {
-  return useMutation(
-    ({ data, resourceId, envId }) =>
-      tableService.configure({ data, resourceId, envId }),
-    mutationSettings
-  );
+  return useMutation(({ data, resourceId, envId }) => tableService.configure({ data, resourceId, envId }), mutationSettings);
 };
 
 export default tableService;

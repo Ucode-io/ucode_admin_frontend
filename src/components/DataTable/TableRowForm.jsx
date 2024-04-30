@@ -32,7 +32,6 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
-  console.log("columnsbbbbbbbb", columns);
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -113,7 +112,7 @@ const TableRowForm = ({
             </CTableCell>
           )
       )}
-      <CTableCell
+      {/* <CTableCell
         style={{
           padding: 0,
           position: tableSettings?.[pageName]?.find(
@@ -154,7 +153,7 @@ const TableRowForm = ({
             <Delete color="error" />
           </RectangleIconButton>
         </PermissionWrapperV2>
-      </CTableCell>
+      </CTableCell> */}
     </CTableRow>
   );
 };

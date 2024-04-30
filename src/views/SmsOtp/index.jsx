@@ -16,6 +16,7 @@ import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import { useEffect, useState } from "react";
 import smsOtpService from "../../services/auth/smsOtpService";
+import HeaderSettings from "../../components/HeaderSettings";
 
 const SmsPage = () => {
   const navigate = useNavigate();
@@ -62,19 +63,10 @@ const SmsPage = () => {
 
   return (
     <div>
-      <FiltersBlock>
-        <div
-          className="p-1"
-          style={{
-            display: "flex",
-            columnGap: "16px",
-            alignItems: "center",
-          }}
-        >
-          <h2>Sms otp setting</h2>
-          <SearchInput />
-        </div>
-      </FiltersBlock>
+      <HeaderSettings
+        title={"Sms OTP"}
+        line={false}
+      />
 
       <TableCard>
         <CTable disablePagination removableHeight={140}>
@@ -87,7 +79,7 @@ const SmsPage = () => {
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={5} dataLength={list.length}>
+          <CTableBody loader={false} columnsCount={5} dataLength={list.length}>
             {smsOtp?.map((element, index) => (
               <CTableRow
                 key={element.id}

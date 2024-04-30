@@ -1,7 +1,7 @@
-import { Delete } from "@mui/icons-material";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useState} from "react";
+import {useSelector} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -12,10 +12,13 @@ import {
 } from "../../../components/CTable";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import { useTablesListQuery } from "../../../services/constructorTableService";
+import constructorTableService, {
+  useTablesListQuery,
+} from "../../../services/constructorTableService";
 import HeaderSettings from "../../../components/HeaderSettings";
 import SearchInput from "../../../components/SearchInput";
 import FiltersBlock from "../../../components/FiltersBlock";
+import {useQueryClient} from "react-query";
 
 const TablesPage = ({}) => {
   const navigate = useNavigate();
@@ -25,18 +28,18 @@ const TablesPage = ({}) => {
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [modalLoader, setModalLoader] = useState();
   const projectId = useSelector((state) => state.auth.projectId);
-
-  const { data: tables, isLoading } = useTablesListQuery({
+  const queryClient = useQueryClient();
+  const {data: tables, isLoading} = useTablesListQuery({
     params: {
       search: searchText,
     },
   });
   const navigateToEditForm = (id, slug) => {
-    navigate(`${location.pathname}/${id}/${slug}`);
+    navigate(`${location.pathname}/${id}/`);
   };
 
   const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/objects/create`);
+    navigate(`/main/:appId/tables`);
   };
 
   const openImportModal = () => {
@@ -49,12 +52,20 @@ const TablesPage = ({}) => {
 
   const deleteTable = async (id) => {
     setLoader(true);
+    constructorTableService
+      .delete(id, projectId)
+      .then(() => {
+        queryClient.refetchQueries(["TABLES"]);
+      })
+      .finally(() => {
+        setLoader(false);
+      });
   };
 
   return (
     <>
       <div>
-        <HeaderSettings title={"Таблицы"} backButtonLink={-1} />
+        <HeaderSettings title={"Таблицы"} line={false} />
 
         <FiltersBlock>
           <div className="p-1">
@@ -65,13 +76,19 @@ const TablesPage = ({}) => {
             />
           </div>
         </FiltersBlock>
-        <TableCard>
-          <CTable disablePagination removableHeight={120}>
+        <TableCard type={"withoutPadding"}>
+          <CTable
+            tableStyle={{
+              borderRadius: "0px",
+              border: "none",
+            }}
+            disablePagination
+            removableHeight={120}>
             <CTableHead>
               {/* <CTableCell></CTableCell> */}
               <CTableCell width={10}>№</CTableCell>
-              <CTableCell>Название</CTableCell>
-              <CTableCell>Описание</CTableCell>
+              <CTableCell>Name</CTableCell>
+              <CTableCell>Description</CTableCell>
               {/* <CTableCell width={60}>Показать в меню</CTableCell> */}
               <CTableCell width={60} />
             </CTableHead>
@@ -79,8 +96,7 @@ const TablesPage = ({}) => {
               {tables?.tables?.map((element, index) => (
                 <CTableRow
                   key={element.id}
-                  onClick={() => navigateToEditForm(element.id, element.slug)}
-                >
+                  onClick={() => navigateToEditForm(element.id, element.slug)}>
                   <CTableCell>{index + 1}</CTableCell>
                   <CTableCell>{element.label}</CTableCell>
                   <CTableCell>{element.description}</CTableCell>
@@ -88,8 +104,7 @@ const TablesPage = ({}) => {
                   <CTableCell>
                     <RectangleIconButton
                       color="error"
-                      onClick={() => deleteTable(element.id)}
-                    >
+                      onClick={() => deleteTable(element.id)}>
                       <Delete color="error" />
                     </RectangleIconButton>
                   </CTableCell>
@@ -104,7 +119,7 @@ const TablesPage = ({}) => {
               <TableRowButton
                 colSpan={5}
                 onClick={navigateToCreateForm}
-                title="Создать новый"
+                title="Create new"
               />
             </CTableBody>
           </CTable>

@@ -6,7 +6,6 @@ stages:
   - deploy
   - rollback
 
-
 build-dev:
   stage: build
   extends: .build_template

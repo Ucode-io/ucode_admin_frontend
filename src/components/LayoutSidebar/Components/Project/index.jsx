@@ -1,14 +1,14 @@
-import { Save } from "@mui/icons-material";
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
 import {
   useProjectGetByIdQuery,
   useProjectUpdateMutation,
   useProjectsAllSettingQuery,
 } from "../../../../services/projectService";
-import { store } from "../../../../store";
+import {store} from "../../../../store";
 import PrimaryButton from "../../../Buttons/PrimaryButton";
 import SecondaryButton from "../../../Buttons/SecondaryButton";
 import Footer from "../../../Footer";
@@ -20,15 +20,18 @@ import HFSelect from "../../../FormElements/HFSelect";
 import HFTextField from "../../../FormElements/HFTextField";
 import HeaderSettings from "../../../HeaderSettings";
 import HFAutocomplete from "../../../FormElements/HFAutocomplete";
-import { Autocomplete, TextField } from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 
 const ProjectSettingPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const { control, reset, handleSubmit, watch } = useForm();
+  const {control, reset, handleSubmit, watch} = useForm();
+  const dispatch = useDispatch();
 
-  const { isLoading } = useProjectGetByIdQuery({
+  const {isLoading} = useProjectGetByIdQuery({
     projectId: company.projectId,
     queryParams: {
       onSuccess: (res) => {
@@ -42,21 +45,21 @@ const ProjectSettingPage = () => {
     },
   });
 
-  const { data: language } = useProjectsAllSettingQuery({
+  const {data: language} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "LANGUAGE",
       limit: 200,
     },
   });
-  const { data: timezone } = useProjectsAllSettingQuery({
+  const {data: timezone} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "TIMEZONE",
       limit: 200,
     },
   });
-  const { data: currency } = useProjectsAllSettingQuery({
+  const {data: currency} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "CURRENCY",
@@ -97,9 +100,10 @@ const ProjectSettingPage = () => {
     return arr;
   }, [currency]);
 
-  const { mutate: updateProject, isLoading: btnLoading } =
+  const {mutate: updateProject, isLoading: btnLoading} =
     useProjectUpdateMutation({
       onSuccess: () => {
+        dispatch(showAlert("Successfully updated", "success"));
         queryClient.invalidateQueries(["PROJECTS"]);
       },
     });
@@ -135,26 +139,25 @@ const ProjectSettingPage = () => {
       })),
     });
   };
-  console.log("languageOptions", languageOptions);
   return (
     <div
       style={{
         background: "#fff",
         height: "100%",
-      }}
-    >
+      }}>
       <HeaderSettings
         title="Project settings"
         subtitle={watch("title")}
-        disabledMenu={false}
-      ></HeaderSettings>
+        disabledMenu={false}></HeaderSettings>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-2"
-        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-      >
-        <FRow label={"Name"} componentClassName="flex gap-2 align-center">
+        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
+        <FRow
+          label={"Name"}
+          componentClassName="flex gap-2 align-center"
+          required>
           <HFTextField
             disabledHelperText
             name="title"
@@ -164,7 +167,10 @@ const ProjectSettingPage = () => {
         </FRow>
         <HFAvatarUpload control={control} name="logo" />
 
-        <FRow label={"Language"} componentClassName="flex gap-2 align-center">
+        <FRow
+          label={"Language"}
+          componentClassName="flex gap-2 align-center"
+          required>
           <HFMultipleSelect
             options={languageOptions}
             name="language"
@@ -172,7 +178,10 @@ const ProjectSettingPage = () => {
             fullWidth
           />
         </FRow>
-        <FRow label={"Currency"} componentClassName="flex gap-2 align-center">
+        <FRow
+          label={"Currency"}
+          componentClassName="flex gap-2 align-center"
+          required>
           <HFAutocomplete
             disabledHelperText
             options={currencyOptions}
@@ -181,7 +190,10 @@ const ProjectSettingPage = () => {
             fullWidth
           />
         </FRow>
-        <FRow label={"Timezone"} componentClassName="flex gap-2 align-center">
+        <FRow
+          label={"Timezone"}
+          componentClassName="flex gap-2 align-center"
+          required>
           <HFAutocomplete
             disabledHelperText
             options={timezoneOptions}

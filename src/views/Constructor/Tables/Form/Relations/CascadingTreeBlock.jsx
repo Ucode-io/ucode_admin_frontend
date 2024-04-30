@@ -32,21 +32,19 @@ const CascadingTreeBlock = ({ control, slug, setValue }) => {
   }, []);
 
   return (
-    <>
-      <div className={styles.settingsBlockHeader}>
+    <div className={styles.customRow}>
+      <div className={styles.customLabel}>
         <h2>Cascading Tree</h2>
       </div>
-      <div className="p-2">
-        <div className={styles.input_control}>
-          <HFSelect
-            control={control}
-            options={computedTablesList}
-            name="cascading_tree_table_slug"
-            onChange={handleChange}
-          />
-        </div>
+      <div className={styles.input_control}>
+        <HFSelect
+          control={control}
+          options={computedTablesList}
+          name="cascading_tree_table_slug"
+          onChange={handleChange}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

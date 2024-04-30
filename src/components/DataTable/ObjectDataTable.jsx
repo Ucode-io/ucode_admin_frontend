@@ -1,41 +1,37 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useOnClickOutside from "use-onclickoutside";
-import { useLocation } from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableHeadCell,
-  CTableRow,
-} from "../CTable";
+import {Button} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useSearchParams} from "react-router-dom";
+import useOnClickOutside from "use-onclickoutside";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import {CTable, CTableBody, CTableCell, CTableHead, CTableRow} from "../CTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import TableRow from "./TableRow";
-import SummaryRow from "./SummaryRow";
-import MultipleUpdateRow from "./MultipleUpdateRow";
-import "./style.scss";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import { Box, Button, LinearProgress } from "@mui/material";
+import FieldButton from "./FieldButton";
+import MultipleUpdateRow from "./MultipleUpdateRow";
+import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
-import InfiniteScroll from "react-infinite-scroll-component";
-import constructorObjectService from "../../services/constructorObjectService";
-import { useTranslation } from "react-i18next";
+import TableRow from "./TableRow";
+import "./style.scss";
+import AddDataColumn from "./AddDataColumn";
+import {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectDataTable = ({
+  selectedTab,
+  relOptions,
+  filterVisible,
+  tableView,
   data = [],
   loader = false,
   setDrawerState,
+  currentView,
   setDrawerStateField,
   removableHeight,
+  getValues,
   additionalRow,
   mainForm,
-  elementHeight,
   selectedView,
   isTableView = false,
   remove,
@@ -54,9 +50,9 @@ const ObjectDataTable = ({
   watch,
   control,
   setFormValue,
+  navigateToEditPage,
   dataLength,
   onDeleteClick,
-  onEditClick,
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
@@ -79,34 +75,46 @@ const ObjectDataTable = ({
   defaultLimit,
   title,
   view,
-  navigateToForm,
+  refetch,
+  menuItem,
+  getAllData = () => {},
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
+  const [fieldData, setFieldData] = useState(null);
+  const [addNewRow, setAddNewRow] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // const { loader: menuLoader } = useMenuGetByIdQuery({
+  //   menuId: searchParams.get("menuId"),
+  //   queryParams: {
+  //     enabled: !Boolean(objectMenuItem),
+  //     onSuccess: (res) => {
+  //       setMenuItem(res);
+  //     },
+  //   }
+  // });
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
       if (!table) return;
       const cols = table.querySelectorAll("th");
       [].forEach.call(cols, function (col, idx) {
-        // Add a resizer element to the column
         const resizer = document.createElement("span");
         resizer.classList.add("resizer");
 
-        // Set the height
         resizer.style.height = `${table.offsetHeight}px`;
 
         col.appendChild(resizer);
@@ -135,7 +143,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -161,9 +169,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -230,12 +236,7 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
-
-  useEffect(() => {
-    if (!formVisible) {
-      dispatch(selectedRowActions.clear());
-    }
-  }, [formVisible]);
+  const parentRef = useRef(null);
 
   return (
     <CTable
@@ -253,9 +254,13 @@ const ObjectDataTable = ({
       paginationExtraButton={paginationExtraButton}
       limit={limit}
       setLimit={setLimit}
+      isRelationTable={isRelationTable}
+      selectedTab={selectedTab}
       defaultLimit={defaultLimit}
       view={view}
-    >
+      filterVisible={filterVisible}
+      navigateToEditPage={navigateToEditPage}
+      parentRef={parentRef}>
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -268,12 +273,14 @@ const ObjectDataTable = ({
         )}
         <CTableRow>
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
-
           {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <TableHeadForTableView
+                  currentView={currentView}
+                  relationAction={relationAction}
                   column={column}
+                  isRelationTable={isRelationTable}
                   index={index}
                   pageName={pageName}
                   sortedDatas={sortedDatas}
@@ -297,53 +304,56 @@ const ObjectDataTable = ({
                   filters={filters}
                   tableSlug={tableSlug}
                   disableFilters={disableFilters}
+                  setFieldCreateAnchor={setFieldCreateAnchor}
+                  setFieldData={setFieldData}
+                  refetch={refetch}
+                  getAllData={getAllData}
                 />
               )
           )}
 
-          <PermissionWrapperV2
-            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-            type={["update", "delete"]}
-          >
-            {(onDeleteClick || onEditClick) && (
-              <CTableHeadCell width={10}>
-                <span
-                  style={{
-                    whiteSpace: "nowrap",
-                    padding: "10px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  Actions
-                </span>
-              </CTableHeadCell>
-            )}
-          </PermissionWrapperV2>
+          {!isRelationTable && (
+            <PermissionWrapperV2
+              tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+              type={"add_field"}>
+              <FieldButton
+                openFieldSettings={openFieldSettings}
+                view={view}
+                mainForm={mainForm}
+                fields={fields}
+                setFieldCreateAnchor={setFieldCreateAnchor}
+                fieldCreateAnchor={fieldCreateAnchor}
+                fieldData={fieldData}
+                setFieldData={setFieldData}
+                setDrawerState={setDrawerState}
+                setDrawerStateField={setDrawerStateField}
+                menuItem={menuItem}
+              />
+            </PermissionWrapperV2>
+          )}
         </CTableRow>
       </CTableHead>
 
       <CTableBody
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
-        title={title}
-      >
-        {(isRelationTable ? fields : data).length > 0
-          ? (isRelationTable ? fields : data)?.map((row, rowIndex) => (
+        title={title}>
+        {(isRelationTable ? fields : data).map((virtualRowObject, index) => {
+          return (
+            columns && (
               <TableRow
+                key={virtualRowObject?.id}
+                relOptions={relOptions}
+                tableView={tableView}
                 width={"80px"}
                 remove={remove}
                 watch={watch}
+                getValues={getValues}
                 control={control}
-                key={row.id}
-                row={row}
+                row={virtualRowObject}
                 mainForm={mainForm}
                 formVisible={formVisible}
-                rowIndex={rowIndex}
+                rowIndex={index}
                 isTableView={isTableView}
                 selectedObjectsForDelete={selectedObjectsForDelete}
                 setSelectedObjectsForDelete={setSelectedObjectsForDelete}
@@ -369,8 +379,34 @@ const ObjectDataTable = ({
                 data={data}
                 view={view}
               />
-            ))
-          : ""}
+            )
+          );
+        })}
+
+        {addNewRow && (
+          <AddDataColumn
+            rows={isRelationTable ? fields : data}
+            columns={columns}
+            isRelationTable={isRelationTable}
+            setAddNewRow={setAddNewRow}
+            isTableView={isTableView}
+            relOptions={relOptions}
+            tableView={tableView}
+            tableSlug={relatedTableSlug ?? tableSlug}
+            fields={columns}
+            getValues={getValues}
+            mainForm={mainForm}
+            originControl={control}
+            setFormValue={setFormValue}
+            relationfields={fields}
+            data={data}
+            view={view}
+            onRowClick={onRowClick}
+            width={"80px"}
+            refetch={refetch}
+          />
+        )}
+
         <CTableRow>
           <CTableCell
             align="center"
@@ -381,21 +417,21 @@ const ObjectDataTable = ({
               left: "0",
               backgroundColor: "#FFF",
               zIndex: "1",
-            }}
-          >
-            <Button
-              variant="text"
-              style={{
-                borderColor: "#F0F0F0",
-                borderRadius: "0px",
-                width: "100%",
-              }}
-              onClick={() => {
-                navigateToForm(tableSlug);
-              }}
-            >
-              <AddRoundedIcon />
-            </Button>
+            }}>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+              <Button
+                variant="text"
+                style={{
+                  borderColor: "#F0F0F0",
+                  borderRadius: "0px",
+                  width: "100%",
+                }}
+                onClick={() => {
+                  setAddNewRow(true);
+                }}>
+                <AddRoundedIcon />
+              </Button>
+            </PermissionWrapperV2>
           </CTableCell>
         </CTableRow>
 

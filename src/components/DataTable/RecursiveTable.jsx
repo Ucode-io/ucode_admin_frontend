@@ -1,12 +1,12 @@
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import GroupCellElementGenerator from "./GroupCellElementGenerator";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
-import { useState } from "react";
+import {Box} from "@mui/material";
+import {get} from "@ngard/tiny-get";
+import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import {useState} from "react";
 
 const RecursiveTable = ({
   element,
@@ -48,22 +48,13 @@ const RecursiveTable = ({
       setChildBlockVisible((prev) => !prev);
     }
   };
-  const filteredColumns = columns.filter((column) =>
-    view?.attributes?.group_by_columns.includes(
-      column.attributes.field_permission.field_id
-    )
-  );
-
-  const getValue = (field, row) => {
-    if (field.type !== "LOOKUP") return get(row, field.slug, "");
-
-    const result = getRelationFieldTableCellLabel(
-      field,
-      row,
-      field.slug + "_data"
-    );
-    return result;
-  };
+  const filteredColumns = columns.filter((column) => {
+    if (column?.type === "LOOKUP" || column?.type === "LOOKUPS") {
+      return view?.attributes?.group_by_columns.includes(column?.relation_id);
+    } else {
+      return view?.attributes?.group_by_columns.includes(column?.id);
+    }
+  });
 
   return (
     <>
@@ -82,18 +73,33 @@ const RecursiveTable = ({
                   fontWeight: 400,
                   lineHeight: "normal",
                   padding: "0 5px",
-                  cursor: filteredColumns.find((item) => item.id === column.id)
-                    ? "pointer"
-                    : "default",
+                  position: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                      ? "sticky"
+                      : "relative"
+                  }`,
+                  left: view?.attributes?.fixedColumns?.[column?.id]
+                    ? `${calculateWidthFixedColumn(column.id)}px`
+                    : "0",
+                  backgroundColor: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                      ? "#F6F6F6"
+                      : "#fff"
+                  }`,
+                  zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                 }}
                 onClick={
                   filteredColumns.find((item) => item.id === column.id) &&
                   clickHandler
-                }
-              >
+                }>
                 <Box display={"flex"} alignItems={"center"}>
                   {filteredColumns.find((item) => item.id === column.id) &&
-                  getValue(column, element)?.length ? (
+                  // getValue(column, element)?.length ? (
+                  element?.data?.length ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
                     ) : (
@@ -111,6 +117,7 @@ const RecursiveTable = ({
                     setFormValue={setFormValue}
                     relationfields={relationFields}
                     data={data}
+                    view={view}
                   />
                 </Box>
               </CTableCell>

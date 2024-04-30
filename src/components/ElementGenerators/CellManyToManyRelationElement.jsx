@@ -1,31 +1,32 @@
+import {Close} from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import LaunchIcon from "@mui/icons-material/Launch";
 import {Autocomplete, TextField} from "@mui/material";
 import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CascadingElement from "./CascadingElement";
-import {Close} from "@mui/icons-material";
-import useDebounce from "../../hooks/useDebounce";
 import request from "../../utils/request";
-import {useParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
+import CascadingElement from "./CascadingElement";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {
     "&::placeholder": {
       color: "#fff",
     },
+    heigth: "40px",
   },
 }));
 
 const CellManyToManyRelationElement = ({
+  relOptions,
   isBlackBg,
   isFormEdit,
   control,
@@ -68,6 +69,7 @@ const CellManyToManyRelationElement = ({
             />
           ) : (
             <AutoCompleteElement
+              relOptions={relOptions}
               disabled={disabled}
               isFormEdit={isFormEdit}
               placeholder={placeholder}
@@ -97,12 +99,12 @@ const CellManyToManyRelationElement = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
+  relOptions,
   field,
   value,
   isFormEdit,
   placeholder,
   tableSlug,
-  name,
   disabled,
   defaultValue,
   classes,
@@ -115,6 +117,10 @@ const AutoCompleteElement = ({
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const {i18n} = useTranslation();
+  const [allOptions, setAllOptions] = useState([]);
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -125,16 +131,6 @@ const AutoCompleteElement = ({
       }
       return result;
     }, null);
-
-    console.log(
-      "matchingProperty",
-      Object.keys(obj).reduce((result, key) => {
-        if (!result && key.includes(`_${desiredLanguage}`)) {
-          result = obj[key];
-        }
-        return result;
-      }, null)
-    );
     return matchingProperty;
   }
   const {id} = useParams();
@@ -199,24 +195,30 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue],
     () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [defaultValue ?? id],
+      if (!field?.table_slug) return null;
+      return constructorObjectService.getListV2(
+        field?.table_slug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [defaultValue ?? id],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && Boolean(debouncedValue),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -229,63 +231,55 @@ const AutoCompleteElement = ({
     }
   );
 
-  const options = useMemo(() => {
-    if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
-    }
-    return optionsFromLocale ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
-
   const computedValue = useMemo(() => {
     if (!value) return [];
 
     if (Array.isArray(value)) {
       return value
         ?.map((id) => {
-          const option = options?.options?.find((el) => el?.guid === id);
+          const option = allOptions?.find((el) => el?.guid === id);
 
           if (!option) return null;
           return {
             ...option,
-            // label: getRelationFieldLabel(field, option)
           };
         })
         .filter((el) => el !== null);
     } else {
-      const option = options?.options?.find((el) => el?.guid === value);
+      const option = allOptions?.find((el) => el?.guid === value);
 
       if (!option) return [];
 
       return [
         {
           ...option,
-          // label: getRelationFieldLabel(field, option)
         },
       ];
     }
-  }, [options, value]);
+  }, [allOptions, value]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
     const val = value?.map((el) => el.guid);
 
     setValue(val ?? null);
-
-    // if (!field?.attributes?.autofill) return;
-
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   const setName = name.split(".");
-    //   setName.pop();
-    //   setName.push(field_to);
-    //   setFormValue(setName.join("."), get(val, field_from));
-    // });
   };
+
+  useEffect(() => {
+    const matchingOption = relOptions?.find(
+      (item) => item?.table_slug === field?.table_slug
+    );
+
+    if (matchingOption) {
+      setAllOptions(matchingOption.response);
+    }
+  }, [relOptions, field]);
 
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={options?.options ?? []}
+        options={allOptions ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (
@@ -299,17 +293,16 @@ const AutoCompleteElement = ({
         }}
         noOptionsText={
           <span
-            onClick={() => navigateToForm(tableSlug)}
+            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
             style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
-            Создать новый
+            Create new
           </span>
         }
         blurOnSelect
         openOnFocus
         getOptionLabel={
           (option) => getRelationFieldTabsLabel(field, option, true)
-          // findMatchingProperty(option, i18n)
         }
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
@@ -343,16 +336,23 @@ const AutoCompleteElement = ({
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
-                    <IconGenerator
-                      icon="arrow-up-right-from-square.svg"
-                      style={{marginLeft: "10px", cursor: "pointer"}}
-                      size={15}
+
+                    <span
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
                       }}
-                    />
+                    >
+                      <LaunchIcon
+                        style={{
+                          fontSize: "15px",
+                          marginLeft: "0px",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </span>
 
                     <Close
                       fontSize="12"

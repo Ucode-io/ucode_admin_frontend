@@ -1,21 +1,22 @@
-import { combineReducers } from "redux";
+import {combineReducers} from "redux";
 import persistReducer from "redux-persist/es/persistReducer";
-import { alertReducer } from "./alert/alert.slice";
-import { authReducer } from "./auth/auth.slice";
+import {alertReducer} from "./alert/alert.slice";
+import {authReducer} from "./auth/auth.slice";
 import storage from "redux-persist/lib/storage";
-import { constructorTableReducer } from "./constructorTable/constructorTable.slice";
-import { tableColumnReducer } from "./tableColumn/tableColumn.slice";
-import { tabRouterReducer } from "./tabRouter/tabRouter.slice";
-import { applicationReducer } from "./application/application.slice";
-import { menuReducer } from "./menuItem/menuItem.slice";
-import { companyReducer } from "./company/company.slice";
-import { cashboxReducer } from "./cashbox/cashbox.slice";
-import { filterReducer } from "./filter/filter.slice";
-import { tableSizeReducer } from "./tableSize/tableSizeSlice";
-import { mainReducer } from "./main/main.slice";
-import { selectedRowReducer } from "./selectedRow/selectedRow.slice";
-import { languagesReducer } from "./globalLanguages/globalLanguages.slice";
-import { paginationReducer } from "./pagination/pagination.slice";
+import {constructorTableReducer} from "./constructorTable/constructorTable.slice";
+import {tableColumnReducer} from "./tableColumn/tableColumn.slice";
+import {tabRouterReducer} from "./tabRouter/tabRouter.slice";
+import {applicationReducer} from "./application/application.slice";
+import {menuReducer} from "./menuItem/menuItem.slice";
+import {quickFiltersReducer} from "./filter/quick_filter";
+import {companyReducer} from "./company/company.slice";
+import {cashboxReducer} from "./cashbox/cashbox.slice";
+import {filterReducer} from "./filter/filter.slice";
+import {tableSizeReducer} from "./tableSize/tableSizeSlice";
+import {mainReducer} from "./main/main.slice";
+import {selectedRowReducer} from "./selectedRow/selectedRow.slice";
+import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
+import {paginationReducer} from "./pagination/pagination.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -82,9 +83,14 @@ const selectedRowPersistConfig = {
 };
 
 const tablePagination = {
-  key: 'selectedPagination',
-  storage
-}
+  key: "selectedPagination",
+  storage,
+};
+
+const quickFiltersCount = {
+  key: "quick_filters",
+  storage,
+};
 
 // const groupFieldPersistConfig = {
 //   key: "groupField",
@@ -94,13 +100,20 @@ const tablePagination = {
 const rootReducer = combineReducers({
   main: persistReducer(mainPersistConfig, mainReducer),
   auth: persistReducer(authPersistConfig, authReducer),
-  constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
+  constructorTable: persistReducer(
+    constructorTablePersistConfig,
+    constructorTableReducer
+  ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),
   company: persistReducer(companyPersistConfig, companyReducer),
-  tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),
+  tableColumn: persistReducer(
+    tableColumnTablePersistConfig,
+    tableColumnReducer
+  ),
   filter: persistReducer(filtersPersistConfig, filterReducer),
   // filter: filterReducer,
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),

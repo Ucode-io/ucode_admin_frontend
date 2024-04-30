@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import {useEffect, useMemo, useState} from "react";
+import {useQuery} from "react-query";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import classes from "../style.module.scss";
 

@@ -75,11 +75,6 @@ function Dropdown({
             )}
           </>
         )}
-
-        {/* <div className={styles.menuRow}>
-            <IconGenerator icon="user-doctor.svg" />
-            Patients
-          </div> */}
       </div>
     </div>
   );

@@ -1,19 +1,33 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useState } from "react";
-import { useRef } from "react";
+import {useMemo, useState} from "react";
+import {useRef} from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  InputAdornment,
+  Popover,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
-import { useNavigate } from "react-router-dom";
-import { Lock } from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import {Lock} from "@mui/icons-material";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const ImageUpload = ({
   value,
   onChange,
   className = "",
   disabled,
+  isNewTableView = false,
   tabIndex,
   field,
 }) => {
@@ -35,10 +49,11 @@ const ImageUpload = ({
 
     fileService
       .folderUpload(data, {
-        folder_name: field?.attributes?.minio_folder,
+        folder_name: field?.attributes?.path,
       })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
+        handleClose();
       })
       .finally(() => setLoading(false));
   };
@@ -52,55 +67,190 @@ const ImageUpload = ({
     deleteImage();
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   return (
     <div className={`Gallery ${className}`}>
       {value && (
-        <div className="block" onClick={() => imageClickHandler()}>
-          <button
-            className="close-btn"
-            type="button"
-            onClick={(e) => closeButtonHandler(e)}
+        // <div className={`block ${isNewTableView && 'tableViewBlock'}`} onClick={() => imageClickHandler()}>
+        //   {!disabled ? (
+        //     <button
+        //       className="close-btn"
+        //       type="button"
+        //       onClick={(e) => closeButtonHandler(e)}
+        //     >
+        //       <CancelIcon />
+        //     </button>
+        //   ) : (
+        //     <div className="lock_icon">
+        //       <Lock style={{ fontSize: "20px" }} />
+        //     </div>
+        //   )}
+        //   <img src={value} className="img" alt="" />
+        // </div>
+
+        <>
+          <div
+            className="uploadedImage"
+            aria-describedby={id}
+            onClick={handleClick}
           >
-            <CancelIcon />
-          </button>
-          <img src={value} className="img" alt="" />
-        </div>
+            <div className="img">
+              <img
+                src={value}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                className="img"
+                alt=""
+              />
+            </div>
+            <Typography
+              sx={{
+                fontSize: "10px",
+                color: "#747474",
+              }}
+            >
+              {value?.split?.("_")?.[1] ?? ""}
+            </Typography>
+          </div>
+
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                padding: "10px",
+              }}
+            >
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  justifyContent: "flex-start",
+                }}
+                onClick={() => imageClickHandler()}
+              >
+                <OpenInFullIcon />
+                Show Full Image
+              </Button>
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  justifyContent: "flex-start",
+                }}
+                disabled={disabled}
+                onClick={(e) => closeButtonHandler(e)}
+              >
+                <DeleteIcon />
+                Remove Image
+              </Button>
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  justifyContent: "flex-start",
+                }}
+                disabled={disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  inputRef.current.click();
+                }}
+              >
+                <ChangeCircleIcon />
+                Change Image
+              </Button>
+            </Box>
+            <input
+              type="file"
+              style={{
+                display: "none",
+              }}
+              accept=".jpg, .jpeg, .png, .gif"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+            />
+          </Popover>
+        </>
       )}
 
       {!value && (
-        <div
-          className="add-block block"
-          onClick={() => inputRef.current.click()}
-          style={
-            disabled
-              ? {
-                  background: "#c0c0c039",
-                }
-              : {
-                  background: "inherit",
-                  color: "inherit",
-                }
-          }
-        >
-          <div className="add-icon">
-            {!loading ? (
-              <>
-                {disabled ? (
-                  <Tooltip title="This field is disabled for this role!">
-                    <InputAdornment position="start">
-                      <Lock style={{ fontSize: "20px" }} />
-                    </InputAdornment>
-                  </Tooltip>
-                ) : (
-                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-                )}
-                {/* <p>Max size: 4 MB</p> */}
-              </>
-            ) : (
-              <CircularProgress />
-            )}
-          </div>
+        // <div
+        //   className="add-block block"
+        //   onClick={() => inputRef.current.click()}
+        //   style={
+        //     disabled
+        //       ? {
+        //           background: "#c0c0c039",
+        //         }
+        //       : {
+        //           background: "inherit",
+        //           color: "inherit",
+        //         }
+        //   }
+        // >
+        //   <div className="add-icon">
+        //     {!loading ? (
+        //       <>
+        //         {disabled ? (
+        //           <Tooltip title="This field is disabled for this role!">
+        //             <InputAdornment position="start">
+        //               <Lock style={{ fontSize: "20px" }} />
+        //             </InputAdornment>
+        //           </Tooltip>
+        //         ) : (
+        //           <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+        //         )}
+        //         {/* <p>Max size: 4 MB</p> */}
+        //       </>
+        //     ) : (
+        //       <CircularProgress />
+        //     )}
+        //   </div>
 
+        //   <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
+        // </div>
+
+        <Button
+          onClick={() => inputRef.current.click()}
+          sx={{
+            padding: 0,
+            minWidth: 0,
+            width: "25px",
+            height: "25px",
+          }}
+        >
           <input
             type="file"
             className="hidden"
@@ -109,8 +259,15 @@ const ImageUpload = ({
             autoFocus={tabIndex === 1}
             onChange={inputChangeHandler}
             disabled={disabled}
+            accept=".jpg, .jpeg, .png, .gif"
           />
-        </div>
+          <UploadFileIcon
+            style={{
+              color: "#747474",
+              fontSize: "25px",
+            }}
+          />
+        </Button>
       )}
 
       {/* {previewVisible && (

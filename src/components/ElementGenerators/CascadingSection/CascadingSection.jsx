@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState} from "react";
 import styles from "./style.module.scss";
-import { Autocomplete, InputAdornment, Menu, TextField } from "@mui/material";
+import {Autocomplete, InputAdornment, Menu, TextField} from "@mui/material";
 import CascadingSectionItem from "./CascadingSectionItem";
 import constructorObjectService from "../../../services/constructorObjectService";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import useTabRouter from "../../../hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
-import { getRelationFieldLabel } from "../../../utils/getRelationFieldLabel";
-import { useQuery } from "react-query";
+import {getRelationFieldLabel} from "../../../utils/getRelationFieldLabel";
+import {useQuery} from "react-query";
+import {useTranslation} from "react-i18next";
 
 function CascadingSection({
   setValue,
@@ -22,28 +23,35 @@ function CascadingSection({
   const [secondTitle, setSecondTitle] = useState("");
   const [dataFilter, setDataFilter] = useState([]);
   const [tablesSlug, setTablesSlug] = useState([]);
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const {i18n} = useTranslation();
 
-  const { data: options } = useQuery(
+  const {data: options} = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            additional_request: {
+              additional_field: "guid",
+              additional_values: value,
+            },
+            additional_ids: value,
+            search: "",
+            limit: 10,
           },
-          additional_ids: value,
-          search: "",
-          limit: 10,
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       select: (res) => {
@@ -83,10 +91,10 @@ function CascadingSection({
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     constructorObjectService
-      .getList(
+      .getListV2(
         field?.attributes?.cascadings[field?.attributes?.cascadings?.length - 1]
           ?.table_slug,
-        { data: {} }
+        {data: {}}
       )
       .then((res) => {
         setValues(res?.data?.response);
@@ -139,7 +147,7 @@ function CascadingSection({
                         </p>
                         <IconGenerator
                           icon="arrow-up-right-from-square.svg"
-                          style={{ marginLeft: "10px", cursor: "pointer" }}
+                          style={{marginLeft: "10px", cursor: "pointer"}}
                           size={15}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -161,7 +169,7 @@ function CascadingSection({
             id="password"
             onClick={handleClick}
             value={insideValue}
-            inputStyle={{ height: "35px" }}
+            inputStyle={{height: "35px"}}
             InputProps={{
               endAdornment: value && (
                 <InputAdornment position="end">

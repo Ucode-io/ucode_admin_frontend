@@ -1,80 +1,30 @@
-import React from 'react'
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Menu, MenuItem } from '@mui/material';
-import styles from './GeneratePdfFromTable.module.scss'
-import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import constructorObjectService from '../../services/constructorObjectService';
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import {Menu} from "@mui/material";
+import React from "react";
+import styles from "./GeneratePdfFromTable.module.scss";
+import PdfMenuList from "./PdfMenuList";
 
-export default function GeneratePdfFromTable({ row }) {
+export default function GeneratePdfFromTable({row}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const navigate = useNavigate();
-  const { appId, tableSlug, id: objectId } = useParams();
-
-  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
-  const userId = useSelector((state) => state.auth.userId);
-
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
-    event.stopPropagation()
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (event) => {
-    event.stopPropagation()
+    event.stopPropagation();
     setAnchorEl(null);
-  };
-
-  const {
-    data: { templates, templateFields } = { templates: [], templateFields: [] },
-  } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
-    () => {
-      const data = {
-        table_slug: tableSlug,
-      };
-
-      data[`${loginTableSlug}_ids`] = [userId];
-
-      return constructorObjectService.getList("template", {
-        data,
-      });
-    },
-    {
-      select: ({ data }) => {
-        const templates = data?.response ?? [];
-        const templateFields = data?.fields ?? [];
-
-        return {
-          templates,
-          templateFields,
-        };
-      },
-    }
-  );
-
-  const navigateToDocumentEditPage = (template, e) => {
-    const state = {
-      toDocsTab: true,
-      template: template,
-      objectId: row?.guid,
-    };
-
-    handleClose(e);
-    navigate(`/main/${appId}/object/${tableSlug}`, { state });
   };
 
   return (
     <div className={styles.wrapper}>
       <button
         color="info"
-        onClick={(e) =>
-          handleClick(e)
-        }
+        onClick={(e) => handleClick(e)}
         id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
+        aria-expanded={open ? "true" : undefined}
         maxWidth="32px"
       >
         <PictureAsPdfIcon color="info" />
@@ -86,20 +36,17 @@ export default function GeneratePdfFromTable({ row }) {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          "aria-labelledby": "basic-button",
         }}
       >
-        {templates?.map((template, index) => (
-          <MenuItem
-            onClick={(e) => navigateToDocumentEditPage(template, e)}
-            key={template.id}
-          >
+        {/* {templates?.map((template, index) => (
+          <MenuItem onClick={(e) => navigateToDocumentEditPage(template, e)} key={template.id}>
             {template.title}
           </MenuItem>
+        ))} */}
 
-
-        ))}
+        <PdfMenuList handleClose={handleClose} row={row} />
       </Menu>
     </div>
-  )
+  );
 }

@@ -1,18 +1,14 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
-import NewFormCard from "./components/NewFormCard";
-import styles from "./style.module.scss";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { store } from "../../store";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import projectService from "../../services/projectService";
-import { useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import NewFormCard from "./components/NewFormCard";
+import styles from "./style.module.scss";
 
 const MainInfo = ({
   computedSections,
@@ -25,7 +21,7 @@ const MainInfo = ({
   selectedTab,
   selectedIndex,
   isMultiLanguage,
-  errors
+  errors,
 }) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -82,14 +78,26 @@ const MainInfo = ({
               className={styles.formCard}
               icon={section.icon}
             >
-              <div className={styles.newformColumn}>
+              <div
+                className={styles.newformColumn}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                }}
+              >
                 {section.fields?.map((field) => (
-                  <Box style={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      minWidth: "250px",
+                    }}
+                  >
                     <FormElementGenerator
                       key={field.id}
                       isMultiLanguage={isMultiLanguage}
                       field={field}
-                      control={control}
+                      control={control} // react-hook-form
                       setFormValue={setFormValue}
                       fieldsList={fieldsList}
                       formTableSlug={tableSlug}

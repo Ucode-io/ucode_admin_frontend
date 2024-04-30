@@ -6,8 +6,18 @@ import useFilters from "../../../../hooks/useFilters";
 import {filterActions} from "../../../../store/filter/filter.slice";
 import {Filter} from "../FilterGenerator";
 import styles from "./style.module.scss";
+import FilterVisible from "../../TableView/FilterVisible";
 
-const FastFilter = ({view, fieldsMap, isVertical = false}) => {
+const FastFilter = ({
+  view,
+  fieldsMap,
+  isVertical = false,
+  selectedTabIndex,
+  visibleColumns,
+  visibleRelationColumns,
+  visibleForm,
+  isVisibleLoading,
+}) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
@@ -17,7 +27,7 @@ const FastFilter = ({view, fieldsMap, isVertical = false}) => {
       dispatch(
         filterActions.setFilter({
           tableSlug: tableSlug,
-          viewId: view.id,
+          viewId: view?.id,
           name: "specialities_id",
           value: [`${queryParameters.get("specialities")}`],
         })
@@ -27,24 +37,34 @@ const FastFilter = ({view, fieldsMap, isVertical = false}) => {
 
   const dispatch = useDispatch();
 
-  const {filters} = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
+    const filter = view?.attributes?.quick_filters ?? [];
+
     return (
       [
-        ...view?.quick_filters,
+        ...(filter ?? []),
         ...(new_list[tableSlug] ?? [])
           ?.filter(
             (fast) =>
-              fast.checked &&
-              !view.quick_filters.find((quick) => quick.field_id === fast.id)
+              fast.is_checked &&
+              !view?.attributes?.quick_filters?.find(
+                (quick) => quick?.id === fast.id
+              )
           )
-          ?.map((fast) => ({field_id: fast.id, default_value: ""})),
+          ?.map((fast) => fast),
       ]
-        ?.map((el) => fieldsMap[el?.field_id])
+        ?.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOKKUPS") {
+            return fieldsMap[el?.relation_id];
+          } else {
+            return fieldsMap[el?.id];
+          }
+        })
         ?.filter((el) => el) ?? []
     );
-  }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
+  }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
 
   const onChange = (value, name) => {
     dispatch(
@@ -60,8 +80,7 @@ const FastFilter = ({view, fieldsMap, isVertical = false}) => {
   return (
     <div
       className={styles.filtersBlock}
-      style={{flexDirection: isVertical ? "column" : "row"}}
-    >
+      style={{flexDirection: isVertical ? "column" : "row"}}>
       {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter
@@ -73,6 +92,16 @@ const FastFilter = ({view, fieldsMap, isVertical = false}) => {
           />
         </div>
       ))}
+
+      <FilterVisible
+        onChange={onChange}
+        selectedTabIndex={selectedTabIndex}
+        views={view}
+        columns={visibleColumns}
+        relationColumns={visibleRelationColumns}
+        isLoading={isVisibleLoading}
+        form={visibleForm}
+      />
     </div>
   );
 };

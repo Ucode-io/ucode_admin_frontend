@@ -101,13 +101,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   // --DELETE ENDPOINT--
 
-  const deleteEndpointClickHandler = (id) => {
-    deleteEndpoint({
-      id,
-      envId: company.environmentId,
-      projectId: company.projectId,
-    });
-  };
+
   const { mutate: deleteFolder, isLoading: deleteLoading } =
     useApiCategoryDeleteMutation({
       onSuccess: () => {
@@ -133,6 +127,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
   };
 
   const labelStyle = {
@@ -260,15 +255,15 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             clickHandler(e);
           }}
         >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"code.svg"} size={18} />
-            {apiFolder.label}
-          </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
           )}
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={"code.svg"} size={18} />
+            {apiFolder.label}
+          </div>
         </Button>
       </div>
       <Collapse in={childBlockVisible} unmountOnExit>

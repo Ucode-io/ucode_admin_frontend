@@ -1,36 +1,36 @@
 import {useMutation, useQuery} from "react-query";
-import request from "../utils/request";
+import requestV2 from "../utils/requestV2";
 
 const menuService = {
   getList: (params) => {
-    return request.get(`/menu`, {
+    return requestV2.get(`/menus`, {
       params,
     });
   },
   getByID: ({menuId, params}) =>
-    request.get(`/menu/${menuId}`, {
+    requestV2.get(`/menus/${menuId}`, {
       params,
     }),
   update: (data) =>
-    request.put(`/menu`, data, {
+    requestV2.put(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   updateOrder: (data) =>
-    request.put(`/menu/menu-order`, data, {
+    requestV2.put(`/menus/menu-order`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   create: (data) =>
-    request.post(`/menu`, data, {
+    requestV2.post(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   delete: ({id, projectId}) =>
-    request.delete(`/menu/${id}`, {
+    requestV2.delete(`/menus/${id}`, {
       params: {"project-id": projectId},
     }),
 };
@@ -41,11 +41,13 @@ export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
     () => {
       return menuService.getList(params);
     },
-    queryParams
+    {
+      ...queryParams,
+    }
   );
 };
 
-export const usePlatformGetByIdQuery = ({menuId, params = {}, queryParams}) => {
+export const useMenuGetByIdQuery = ({menuId, params = {}, queryParams}) => {
   return useQuery(
     ["MENU_GET_BY_ID", {menuId, ...params}],
     () => {

@@ -1,5 +1,5 @@
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 import CDatePicker from "../DatePickers/CDatePicker";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +16,7 @@ const HFDatePicker = ({
   className,
   name,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   label,
   width,
   mask,
@@ -26,8 +26,10 @@ const HFDatePicker = ({
   placeholder = "",
   isFormEdit = false,
   defaultValue = "",
-  isTransparent=false,
+  isTransparent = false,
   disabled,
+  required,
+  sectionModal,
   ...props
 }) => {
   const classes = useStyles();
@@ -36,12 +38,17 @@ const HFDatePicker = ({
       control={control}
       name={name}
       disabled
-      defaultValue={defaultValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      rules={{
+        required: required ? "This field is required" : false,
+      }}
+      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <div className={className}>
           <CDatePicker
             isFormEdit={isFormEdit}
+            sectionModal={sectionModal}
             name={name}
+            required={required}
             classes={classes}
             placeholder={placeholder}
             isBlackBg={isBlackBg}
@@ -49,10 +56,11 @@ const HFDatePicker = ({
             tabIndex={tabIndex}
             value={value}
             onChange={(val) => {
-              onChange(val)
-              isNewTableView && updateObject()
-          }}
+              onChange(val);
+              isNewTableView && updateObject();
+            }}
             disabled={disabled}
+            error={error}
             isTransparent={isTransparent}
           />
         </div>

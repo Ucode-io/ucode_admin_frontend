@@ -27,18 +27,23 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
-const ColumnsTab = ({ form, updateView, isMenu }) => {
+const ColumnsTab = ({
+  form,
+  updateView,
+  isMenu,
+  views,
+  selectedTabIndex,
+  computedColumns,
+}) => {
   const { i18n } = useTranslation();
+
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
     keyName: "key",
   });
-
   const {
     fields: groupColumn,
     replace: replaceGroup,
@@ -53,6 +58,31 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     control: form.control,
     name: "columns",
   });
+
+  const computeColumns = (checkedColumnsIds = [], columns) => {
+    const selectedColumns =
+      checkedColumnsIds
+        ?.filter((id) => columns.find((el) => el.id === id))
+        ?.map((id) => ({
+          ...columns.find((el) => el.id === id),
+          is_checked: true,
+        })) ?? [];
+    const unselectedColumns =
+      columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+    return [...selectedColumns, ...unselectedColumns];
+  };
+
+  useEffect(() => {
+    if (views?.[selectedTabIndex]?.columns) {
+      form.reset({
+        ...form.getValues(),
+        columns: computeColumns(
+          views?.[selectedTabIndex]?.columns,
+          computedColumns
+        ),
+      });
+    }
+  }, [views, selectedTabIndex, computedColumns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
@@ -188,7 +218,8 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                     {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
-                    column.label}
+                    column?.attributes?.[`label_from_${i18n.language}`] ??
+                    column?.label}
                 </div>
                 <div
                   className={styles.cell}

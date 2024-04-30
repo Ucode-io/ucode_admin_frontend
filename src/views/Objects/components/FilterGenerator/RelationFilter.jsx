@@ -1,40 +1,46 @@
-import { useState } from "react";
-import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery";
-
-import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
+import {useState} from "react";
+import {useQuery} from "react-query";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import FilterAutoComplete from "./FilterAutocomplete";
 
-const RelationFilter = ({ field = {}, filters, name, onChange }) => {
+const RelationFilter = ({field = {}, filters, name, onChange}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
-  // const value = filters[name];
-
   const {
-    query: { data: options = [] },
-  } = useObjectsQuery({
-    tableSlug: field.table_slug,
-    queryPayload: {
-      view_fields: field?.view_fields?.map((field) => field.slug),
-      search: debouncedValue,
-      limit: 10,
-      additional_ids: filters[name],
-      additional_request: {
-        additional_field: 'guid',
-        additional_values:filters[name]
-      }
+    data: {data: options = []} = {
+      data: [],
     },
-    queryParams: {
-      select: (res) => {
-        return (
-          res?.data?.response?.map((el) => ({
+  } = useQuery({
+    queryKey: [
+      "GET_OBJECTS_LIST",
+      {
+        field,
+        debouncedValue,
+      },
+    ],
+    queryFn: () => {
+      return constructorObjectService.getListV2(field.table_slug, {
+        data: {
+          view_fields: field?.view_fields?.map((field) => field.slug),
+          search: debouncedValue,
+          limit: 10,
+          additional_ids: filters[name],
+          additional_request: {
+            additional_field: "guid",
+            additional_values: filters[name],
+          },
+        },
+      });
+    },
+    select: (res) => {
+      return {
+        data:
+          res.data?.response?.map((el) => ({
             label: getRelationFieldTabsLabel(field, el),
             value: el.guid,
-          })) ?? []
-        );
-      },
-      // onSuccess: (res) => {
-      //   setOptions()
-      // },
+          })) ?? [],
+      };
     },
   });
 

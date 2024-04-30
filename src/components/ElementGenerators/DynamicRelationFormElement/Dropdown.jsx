@@ -1,11 +1,11 @@
-import {ArrowBack, Close} from "@mui/icons-material";
-import {CircularProgress, IconButton} from "@mui/material";
-import {useEffect} from "react";
-import {useMemo, useState} from "react";
-import {useQuery} from "react-query";
+import { ArrowBack, Close } from "@mui/icons-material";
+import { CircularProgress, IconButton } from "@mui/material";
+import { useEffect } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "react-query";
 import useDebounce from "../../../hooks/useDebounce";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {getLabelWithViewFields} from "../../../utils/getRelationFieldLabel";
+import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
@@ -13,19 +13,18 @@ import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../../services/constructorFunctionServiceV2";
 import request from "../../../utils/request";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
+const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
 
   const viewFields = useMemo(() => {
     if (!selectedTable) return [];
     return selectedTable.view_fields?.map((field) => field.slug);
   }, [selectedTable]);
-  console.log("field?.attributes?.function_path");
   const queryPayload = {
     limit: 10,
     offset: 0,
@@ -33,7 +32,7 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
     search: searchText,
   };
 
-  const {data: objectsList1, isLoading: loader} = useQuery(
+  const { data: objectsList1, isLoading: loader } = useQuery(
     ["GET_OPENFAAS_LIST", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
@@ -61,11 +60,11 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
     }
   );
 
-  const {data: objectsList2 = [], isLoading: loader2} = useQuery(
+  const { data: objectsList2 = [], isLoading: loader2 } = useQuery(
     ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
-      return constructorObjectService.getList(selectedTable?.slug, {
+      return constructorObjectService.getListV2(selectedTable?.slug, {
         data: queryPayload,
       });
     },

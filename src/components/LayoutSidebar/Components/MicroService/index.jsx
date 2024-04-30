@@ -99,18 +99,23 @@ const MicroservicePage = () => {
     >
       <HeaderSettings
         title={"Microservice"}
-        disabledMenu={false}
         extraButtons={
           <Button variant="contained" type="submit">
             Save
           </Button>
         }
-        backButtonLink={-1}
         line={false}
       />
 
-      <TableCard>
-        <CTable disablePagination removableHeight={false}>
+      <TableCard type={"withoutPadding"}>
+        <CTable
+          tableStyle={{
+            borderRadius: "0px",
+            border: "none",
+          }}
+          disablePagination
+          removableHeight={false}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Service</CTableCell>

@@ -1,6 +1,6 @@
 import styles from "../day.module.scss";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import CalendarTemplate from "./CalendarTemplate";
 
 const CalendarMonth = ({
@@ -19,7 +19,6 @@ const CalendarMonth = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
-  console.log("virtualizer", virtualizer.getVirtualItems());
   return (
     <div className={styles.calendarmonth} ref={parentRef}>
       {/* <TimesColumnMonth view={view} data={data} /> */}

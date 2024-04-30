@@ -217,7 +217,7 @@ const MainInfoForModal = ({
             </div>
           )}
 
-          <div className={styles.newMainInfoSections}>
+          <div className={styles.newMainInfoSectionsModal}>
             {computedSections?.map(
               (section, index) =>
                 isVisibleSection(section) && (

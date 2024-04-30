@@ -292,11 +292,11 @@ const NewRelationSection = ({
     const mappedObjects = [];
     Object.values(fieldsMap)?.forEach((obj) => {
       if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
-        if (selectedTab?.attributes?.columns.includes(obj.relation_id)) {
+        if (selectedTab?.attributes?.columns?.includes(obj.relation_id)) {
           mappedObjects.push(obj);
         }
       } else {
-        if (selectedTab?.attributes?.columns.includes(obj.id)) {
+        if (selectedTab?.attributes?.columns?.includes(obj.id)) {
           mappedObjects.push(obj);
         }
       }

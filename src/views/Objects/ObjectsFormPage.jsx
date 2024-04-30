@@ -94,7 +94,7 @@ const ObjectsFormPage = ({
     });
 
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
-    console.log("getFormData", getFormData);
+
     try {
       const [{data = {}}, layoutData] = await Promise.all([
         getFormData,
@@ -252,7 +252,7 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    if (id) {
+    if (id && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);

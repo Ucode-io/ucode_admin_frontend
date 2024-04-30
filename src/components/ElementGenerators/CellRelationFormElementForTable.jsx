@@ -242,19 +242,6 @@ const AutoCompleteElement = ({
     }
   );
 
-  const isValueExist = () => {
-    if (localValue === null) {
-      const isExist = allOptions?.some((item) => item?.guid === value);
-      if (isExist) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  };
-
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
@@ -281,7 +268,6 @@ const AutoCompleteElement = ({
     },
     {
       enabled:
-        // isValueExist() ||
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
         (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
@@ -303,7 +289,6 @@ const AutoCompleteElement = ({
 
         if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
           setLocalValue(null);
-          // setValue("");
         }
       },
     }
@@ -362,6 +347,14 @@ const AutoCompleteElement = ({
     setLocalValue(data ? [data] : null);
   };
 
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
   useEffect(() => {
     let val;
 
@@ -387,14 +380,6 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
 
   useEffect(() => {
     const matchingOption = relOptions?.find(
@@ -532,9 +517,6 @@ const AutoCompleteElement = ({
         )}
         menuShouldScrollIntoView
         styles={customStyles}
-        onPaste={(e) => {
-          console.log("eeeeeee -", e.clipboardData.getData("Text"));
-        }}
         getOptionLabel={(option) =>
           `${getRelationFieldTabsLabel(field, option)}`
         }

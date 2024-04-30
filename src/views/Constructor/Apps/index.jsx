@@ -1,6 +1,6 @@
-import { Delete } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -16,12 +16,12 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import SearchInput from "../../../components/SearchInput";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import { deleteApplicationAction } from "../../../store/application/application.thunk";
+import {deleteApplicationAction} from "../../../store/application/application.thunk";
 import UploadIcon from "@mui/icons-material/Upload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import exportToJsonService from "../../../services/exportToJson";
 import useDownloader from "../../../hooks/useDownloader";
-import { useRef } from "react";
+import {useRef} from "react";
 import fileService from "../../../services/fileService";
 import PermissionWrapper from "../../../components/PermissionWrapper";
 import PermissionWrapperApp from "../../../components/PermissionWrapper/PermissionWrapperApp";
@@ -30,7 +30,7 @@ const AppsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { download } = useDownloader();
+  const {download} = useDownloader();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const inputRef = useRef();
@@ -96,15 +96,13 @@ const AppsPage = () => {
             zIndex: 999,
             top: "13px",
           }}
-          title="Upload"
-        >
+          title="Upload">
           <RectangleIconButton
             color="white"
-            onClick={() => inputRef.current.click()}
-          >
+            onClick={() => inputRef.current.click()}>
             <input
               ref={inputRef}
-              style={{ display: "none" }}
+              style={{display: "none"}}
               type="file"
               accept=".json"
               onChange={inputChangeHandler}
@@ -130,8 +128,7 @@ const AppsPage = () => {
             {list?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
-              >
+                onClick={() => navigateToEditForm(element.id)}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element.name}</CTableCell>
                 <CTableCell>{element.description}</CTableCell>
@@ -139,8 +136,7 @@ const AppsPage = () => {
                   {" "}
                   <RectangleIconButton
                     color="white"
-                    onClick={() => exportToJson(element?.id)}
-                  >
+                    onClick={() => exportToJson(element?.id)}>
                     <FileDownloadIcon />
                   </RectangleIconButton>
                 </CTableCell>
@@ -149,8 +145,7 @@ const AppsPage = () => {
                     <CTableCell>
                       <DeleteWrapperModal
                         id={element.id}
-                        onDelete={deleteTable}
-                      >
+                        onDelete={deleteTable}>
                         <RectangleIconButton color="error">
                           <Delete color="error" />
                         </RectangleIconButton>

@@ -35,7 +35,7 @@ function NewLayoutSettings({
   const watchLayout = mainForm
     .watch(`layouts`)
     .find((layout) => layout.id === selectedLayout.id);
-
+  console.log("watchLayout", watchLayout);
   const computedData = useMemo(() => {
     return;
   }, [watchLayout]);

@@ -481,11 +481,12 @@ const LayoutSidebar = ({appId}) => {
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}
-          appId={appId}
+          appId={appId || "c57eedc3-a954-4262-a0af-376c65b5a284"}
           setTableModal={setTableModal}
           setLinkedTableModal={setLinkedTableModal}
           setMicrofrontendModal={setMicrofrontendModal}
           deleteFolder={deleteFolder}
+          getMenuList={getMenuList}
         />
       ) : null}
       {templateModal && <TemplateModal closeModal={closeTemplateModal} />}

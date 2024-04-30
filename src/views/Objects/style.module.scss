@@ -33,8 +33,11 @@
 }
 
 .newMainInfoSections {
-  height: calc(100vh - 80px);
-  overflow: auto;
+  position: absolute;
+  left: 0;
+  top: 30px;
+  min-height: calc(100vh - 80px);
+  overflow: scroll;
   padding: 20px;
 }
 

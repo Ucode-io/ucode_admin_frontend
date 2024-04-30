@@ -17,7 +17,7 @@ const NewSectionsBlock = ({
   selectedLayout,
   selectedTab,
   index,
-  allTabs
+  allTabs,
 }) => {
   const selectedLayoutIndex = useWatch({
     control: mainForm.control,
@@ -72,8 +72,7 @@ const NewSectionsBlock = ({
       <Container
         lockAxis="y"
         onDrop={onDrop}
-        dropPlaceholder={{className: "drag-row-drop-preview"}}
-      >
+        dropPlaceholder={{className: "drag-row-drop-preview"}}>
         {sections.map((section, index) => (
           <Draggable key={section.id}>
             <NewSection

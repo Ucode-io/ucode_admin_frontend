@@ -15,6 +15,7 @@ const HFSwitch = ({
   labelProps,
   defaultValue = false,
   field,
+  isShowLable = true,
   ...props
 }) => {
   const id = useId();
@@ -46,9 +47,11 @@ const HFSwitch = ({
                 isNewTableView && updateObject();
               }}
             />
-            {/* <label htmlFor={`switch-${id}`} {...labelProps}>
-              {label}
-            </label> */}
+            {isShowLable && (
+              <label htmlFor={`switch-${id}`} {...labelProps}>
+                {label}
+              </label>
+            )}
           </div>
         );
       }}></Controller>

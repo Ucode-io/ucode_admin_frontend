@@ -61,6 +61,7 @@ const CDateTimePickerWithout = ({
                     },
                     "& input": {
                       padding: "5px !important",
+                      height: "28px",
                     },
                     maxWidth: "150px",
                   }}
@@ -122,6 +123,7 @@ const CDateTimePickerWithout = ({
                     },
                     "& input": {
                       padding: "5px !important",
+                      height: "28px",
                     },
                     maxWidth: "150px",
                   }}
@@ -168,7 +170,10 @@ const CDateTimePickerWithout = ({
         onChange={onChangeHandler}
       />
       {showCopyBtn && (
-        <CopyToClipboard copyText={value} style={{marginLeft: 8}} />
+        <CopyToClipboard
+          copyText={value}
+          style={{marginLeft: 8, height: "38px"}}
+        />
       )}
     </div>
   );

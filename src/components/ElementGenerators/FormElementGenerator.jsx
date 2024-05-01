@@ -579,17 +579,19 @@ const FormElementGenerator = ({
 
     case "CHECKBOX":
       return (
-        <HFCheckbox
-          control={control}
-          name={computedSlug}
-          tabIndex={field?.tabIndex}
-          label={label}
-          required={checkRequiredField}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          {...props}
-        />
+        <FRow label={label}>
+          <HFCheckbox
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            label={label}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            {...props}
+          />
+        </FRow>
       );
 
     case "MULTISELECT":
@@ -613,17 +615,19 @@ const FormElementGenerator = ({
 
     case "SWITCH":
       return (
-        <HFSwitch
-          control={control}
-          name={computedSlug}
-          label={label}
-          tabIndex={field?.tabIndex}
-          required={checkRequiredField}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          {...props}
-        />
+        <FRow label={label}>
+          <HFSwitch
+            control={control}
+            name={computedSlug}
+            label={label}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            {...props}
+          />
+        </FRow>
       );
 
     case "EMAIL":

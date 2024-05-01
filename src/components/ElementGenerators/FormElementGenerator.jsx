@@ -110,7 +110,7 @@ const FormElementGenerator = ({
     }
 
     return field?.slug;
-  }, [field?.id, field?.slug, activeLang, field?.enable_multilanguage]);
+  }, [field?.slug, activeLang, field?.enable_multilanguage]);
 
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -131,14 +131,8 @@ const FormElementGenerator = ({
     if (field?.type === "SINGLE_LINE") return defaultValue;
     const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [
-    field.attributes,
-    field.type,
-    field.id,
-    field.relation_type,
-    objectIdFromJWT,
-    isUserId,
-  ]);
+  }, [field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
+
   const isDisabled = useMemo(() => {
     const {attributes} = field;
 
@@ -589,6 +583,7 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
+            isShowLable={false}
             {...props}
           />
         </FRow>
@@ -625,6 +620,7 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
+            isShowLable={false}
             {...props}
           />
         </FRow>

@@ -207,13 +207,13 @@ const MainInfoForModal = ({
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (
             <div className={styles.language}>
-              {/* {projectInfo?.language?.map((lang) => (
+              {projectInfo?.language?.map((lang) => (
                 <Button
                   className={activeLang === lang?.short_name && styles.active}
                   onClick={() => setActiveLang(lang?.short_name)}>
                   {lang?.name}
                 </Button>
-              ))} */}
+              ))}
             </div>
           )}
 

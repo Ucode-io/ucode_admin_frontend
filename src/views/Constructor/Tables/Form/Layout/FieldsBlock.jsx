@@ -137,8 +137,7 @@ const FieldsBlock = ({
       <div className={styles.settingsBlockBody}>
         <Tabs
           selectedIndex={selectedSettingsTab}
-          onSelect={setSelectedSettingsTab}
-        >
+          onSelect={setSelectedSettingsTab}>
           <TabList>
             <Tab>Form fields</Tab>
             <Tab>Relation tabs</Tab>
@@ -154,8 +153,7 @@ const FieldsBlock = ({
                 getChildPayload={(i) => ({
                   ...allFields[i],
                   field_name: allFields[i]?.label ?? allFields[i]?.title,
-                })}
-              >
+                })}>
                 {allFields?.map((field) => (
                   <Draggable key={field.id} style={{overflow: "visible"}}>
                     <div className={styles.sectionFieldRow}>
@@ -184,8 +182,7 @@ const FieldsBlock = ({
                   ...unusedRelations[i],
                   field_name: unusedRelations[i]?.label ?? "no title",
                   relation_type: unusedRelations[i].type,
-                })}
-              >
+                })}>
                 {unusedRelations?.map((relation, relationIndex) => (
                   <Draggable key={relationIndex} style={{overflow: "visible"}}>
                     <div className={styles.sectionFieldRow}>
@@ -208,16 +205,13 @@ const FieldsBlock = ({
                 groupName="table_relation"
                 onDrop={onDrop}
                 dropPlaceholder={{className: "drag-row-drop-preview"}}
-                getChildPayload={(i) => tableRelations[i]}
-              >
+                getChildPayload={(i) => tableRelations[i]}>
                 {tableRelations?.map((relation) => (
                   <Draggable
                     key={relation.id}
-                    style={{overflow: "visible", width: "fit-content"}}
-                  >
+                    style={{overflow: "visible", width: "fit-content"}}>
                     <div
-                      className={`${styles.sectionFieldRow} ${styles.relation}`}
-                    >
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}>
                       {relation?.attributes?.[`label_to_${i18n?.language}`] ||
                         relation.title ||
                         relation[relation.relatedTableSlug]?.label}
@@ -234,23 +228,20 @@ const FieldsBlock = ({
                 groupName="section_tabs"
                 onDrop={onDrop}
                 dropPlaceholder={{className: "drag-row-drop-preview"}}
-                getChildPayload={(i) => unusedTableRelations[i]}
-              >
+                getChildPayload={(i) => unusedTableRelations[i]}>
                 {sectionTabs?.map((tab, index) => {
                   if (tab.type === "section")
                     return (
                       <Draggable
                         key={index}
-                        style={{overflow: "visible", width: "fit-content"}}
-                      >
+                        style={{overflow: "visible", width: "fit-content"}}>
                         <div
                           className={`${styles.sectionFieldRow} ${styles.relation}`}
                           style={{
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}
-                        >
+                          }}>
                           {/* <OutlinedInput
                             value={tab.label}
                             onClick={(e) => e.stopPropagation()}
@@ -287,8 +278,7 @@ const FieldsBlock = ({
                 <Button
                   onClick={() =>
                     appendSectionTab({type: "section", id: generateGUID()})
-                  }
-                >
+                  }>
                   <Add />
                   Add Section tab
                 </Button>

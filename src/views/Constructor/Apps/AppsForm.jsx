@@ -1,10 +1,10 @@
-import { Save, Upload } from "@mui/icons-material";
-import { useEffect, useMemo, useRef } from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save, Upload} from "@mui/icons-material";
+import {useEffect, useMemo, useRef} from "react";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import Footer from "../../../components/Footer";
@@ -16,7 +16,7 @@ import HeaderSettings from "../../../components/HeaderSettings";
 import PageFallback from "../../../components/PageFallback";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import applicationService from "../../../services/applicationService";
-import { fetchApplicationListActions } from "../../../store/application/application.thunk";
+import {fetchApplicationListActions} from "../../../store/application/application.thunk";
 import TablesList from "../Tables/TablesList";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import exportToJsonService from "../../../services/exportToJson";
@@ -30,7 +30,7 @@ import PermissionWrapperApp from "../../../components/PermissionWrapper/Permissi
 const applicationListPageLink = "/settings/constructor/apps";
 
 const AppsForm = () => {
-  const { appId } = useParams();
+  const {appId} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [search, setSearch] = useSearchParams();
@@ -167,15 +167,13 @@ const AppsForm = () => {
     <div>
       <Tabs
         selectedIndex={Number(search.get("tab") ?? 0)}
-        onSelect={(index) => setSearch({ tab: index })}
+        onSelect={(index) => setSearch({tab: index})}
         direction={"ltr"}
-        style={{ height: "100vh", position: "relative" }}
-      >
+        style={{height: "100vh", position: "relative"}}>
         <HeaderSettings
           title="Приложение"
           backButtonLink={applicationListPageLink}
-          subtitle={appId ? mainForm.watch("name") : "Новый"}
-        >
+          subtitle={appId ? mainForm.watch("name") : "Новый"}>
           <TabList>
             <Tab>Details</Tab>
             {appId && <Tab>Objects</Tab>}
@@ -225,14 +223,12 @@ const AppsForm = () => {
           <form
             onSubmit={mainForm.handleSubmit(onSubmit)}
             className="p-2"
-            style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-          >
+            style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
             <FormCard title="Детали" maxWidth={500}>
               <FRow
                 label={"Названия"}
                 componentClassName="flex gap-2 align-center"
-                required
-              >
+                required>
                 <HFIconPicker
                   name="icon"
                   control={mainForm.control}
@@ -264,8 +260,7 @@ const AppsForm = () => {
               <>
                 <SecondaryButton
                   onClick={() => navigate(applicationListPageLink)}
-                  color="error"
-                >
+                  color="error">
                   Close
                 </SecondaryButton>
                 <PermissionWrapperV2 tableSlug="app" type="update">
@@ -274,12 +269,10 @@ const AppsForm = () => {
                       appId && appPermission
                         ? appPermission[0]?.permission?.update
                         : true
-                    }
-                  >
+                    }>
                     <PrimaryButton
                       loader={btnLoader}
-                      onClick={mainForm.handleSubmit(onSubmit)}
-                    >
+                      onClick={mainForm.handleSubmit(onSubmit)}>
                       <Save /> Save
                     </PrimaryButton>
                   </PermissionWrapperApp>

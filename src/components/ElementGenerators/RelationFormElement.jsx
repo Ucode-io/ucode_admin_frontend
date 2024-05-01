@@ -313,13 +313,6 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
-  const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(
-      new Set(allOptions.map(JSON.stringify))
-    ).map(JSON.parse);
-    return uniqueObjects ?? [];
-  }, [allOptions, options]);
-
   const getValueData = async () => {
     try {
       const id = value;
@@ -332,10 +325,6 @@ const AutoCompleteElement = ({
 
       setLocalValue(data ? [data] : null);
     } catch (error) {}
-  };
-
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
   };
 
   const changeHandler = (value, key = "") => {
@@ -371,14 +360,6 @@ const AutoCompleteElement = ({
     ) {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
-    }
-  };
-
-  const setDefaultValue = () => {
-    if (options?.slugOptions && multipleInsertField) {
-      const val = options?.slugOptions?.find((item) => item?.guid === id);
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
     }
   };
 

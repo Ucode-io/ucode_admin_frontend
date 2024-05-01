@@ -7,7 +7,9 @@ import {get} from "@ngard/tiny-get";
 import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useSearchParams} from "react-router-dom";
 import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -19,8 +21,6 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import {useSearchParams} from "react-router-dom";
-import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -156,7 +156,6 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
-  const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -291,9 +290,6 @@ const AutoCompleteElement = ({
       );
     },
     {
-      // enabled:
-      //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
-      //   (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -303,7 +299,6 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (Object.values(autoFiltersValue)?.length > 0) {
-          console.log("entered", data);
           setAllOptions(data?.options);
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
@@ -375,6 +370,24 @@ const AutoCompleteElement = ({
     setLocalValue(data ? [data] : null);
   };
 
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  useEffect(() => {
+    const matchingOption = allOptions?.find(
+      (item) => item?.table_slug === field?.table_slug
+    );
+
+    if (matchingOption) {
+      setAllOptions(matchingOption.response);
+    }
+  }, [allOptions, field]);
+
   useEffect(() => {
     let val;
 
@@ -400,24 +413,6 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
-  useEffect(() => {
-    const matchingOption = allOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
-    );
-
-    if (matchingOption) {
-      setAllOptions(matchingOption.response);
-    }
-  }, [allOptions, field]);
 
   useEffect(() => {
     if (value) getValueData();

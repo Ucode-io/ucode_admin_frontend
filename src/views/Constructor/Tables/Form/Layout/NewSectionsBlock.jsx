@@ -1,10 +1,10 @@
-import { Add } from "@mui/icons-material";
-import { Card } from "@mui/material";
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import { generateGUID } from "../../../../../utils/generateID";
+import {Add} from "@mui/icons-material";
+import {Card} from "@mui/material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../../utils/applyDrag";
+import {generateGUID} from "../../../../../utils/generateID";
 import NewSection from "./NewSection";
 import styles from "./style.module.scss";
 
@@ -56,7 +56,7 @@ const NewSectionsBlock = ({
   }, [fieldsList]);
 
   const addNewSection = () => {
-    appendSection({ id: generateGUID() });
+    appendSection({id: generateGUID()});
   };
 
   const onDrop = (dropResult) => {
@@ -72,8 +72,7 @@ const NewSectionsBlock = ({
       <Container
         lockAxis="y"
         onDrop={onDrop}
-        dropPlaceholder={{ className: "drag-row-drop-preview" }}
-      >
+        dropPlaceholder={{className: "drag-row-drop-preview"}}>
         {sections.map((section, index) => (
           <Draggable key={section.id}>
             <NewSection

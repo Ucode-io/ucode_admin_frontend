@@ -58,8 +58,8 @@ const ObjectsFormPage = ({
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
-    return idFromParam || selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
+    return idFromParam || selectedRow?.guid || appId;
+  }, [idFromParam, selectedRow, appId]);
 
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
@@ -252,7 +252,7 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    if (id) {
+    if (id && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);

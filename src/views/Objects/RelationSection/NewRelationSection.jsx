@@ -29,7 +29,7 @@ const NewRelationSection = ({
   setSelectedTabIndex,
   relations,
   loader,
-  getAllData,
+  getAllData = () => {},
   tableSlug: tableSlugFromProps,
   id: idFromProps,
   limit,
@@ -291,11 +291,11 @@ const NewRelationSection = ({
     const mappedObjects = [];
     Object.values(fieldsMap)?.forEach((obj) => {
       if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
-        if (selectedTab?.attributes?.columns.includes(obj.relation_id)) {
+        if (selectedTab?.attributes?.columns?.includes(obj.relation_id)) {
           mappedObjects.push(obj);
         }
       } else {
-        if (selectedTab?.attributes?.columns.includes(obj.id)) {
+        if (selectedTab?.attributes?.columns?.includes(obj.id)) {
           mappedObjects.push(obj);
         }
       }
@@ -349,18 +349,8 @@ const NewRelationSection = ({
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
-                            ] ||
-                            el?.attributes?.[`label_to_${i18n?.language}`] ||
-                            el?.label
-                          : el?.attributes?.[`label_${i18n.language}`]
-                            ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              : el?.label ?? el?.title}
+                            ] || el?.label
+                          : el?.label}
                       </div>
                     </Tab>
                   ))}

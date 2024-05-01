@@ -92,7 +92,7 @@ rmdp-day.rmdp-today.highlight span {
     .rmdp-calendar {
       width: 100%;
 
-      .rmdp-day-picker>div {
+      .rmdp-day-picker > div {
         width: 100%;
       }
     }
@@ -104,8 +104,7 @@ rmdp-day.rmdp-today.highlight span {
   align-items: center;
   justify-content: space-between;
   grid-template-columns: 2fr 2fr 1fr;
-  width: 100%;
-
+  max-width: 350px;
 
   // .rmdp-container:first-child {
   //   width: 33%;

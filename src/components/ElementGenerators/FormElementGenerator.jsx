@@ -589,6 +589,7 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
+            isShowLable={false}
             {...props}
           />
         </FRow>
@@ -625,6 +626,7 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
+            isShowLable={false}
             {...props}
           />
         </FRow>

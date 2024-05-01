@@ -347,16 +347,11 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        {(el?.relation && el?.relation?.table_from?.label) ||
-                          el?.relation?.attributes?.[
-                            `label_to_${i18n?.language}`
-                          ] ||
-                          el?.attributes?.[`label_${i18n.language}`] ||
-                          el?.relation?.attributes?.[
-                            `label_${i18n.language}`
-                          ] ||
-                          el?.label ||
-                          el?.title}
+                        {el?.type === "relation"
+                          ? el?.relation?.attributes?.[
+                              `label_to_${i18n?.language}`
+                            ] || el?.label
+                          : el?.label}
                       </div>
                     </Tab>
                   ))}

@@ -46,9 +46,9 @@ const HFSwitch = ({
                 isNewTableView && updateObject();
               }}
             />
-            <label htmlFor={`switch-${id}`} {...labelProps}>
+            {/* <label htmlFor={`switch-${id}`} {...labelProps}>
               {label}
-            </label>
+            </label> */}
           </div>
         );
       }}></Controller>

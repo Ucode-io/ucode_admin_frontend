@@ -53,13 +53,13 @@ const HFCheckbox = ({
             {...props}
             inputProps={tabIndex}
           />
-          {/* {isShowLable && (
+          {isShowLable && (
             <label
               htmlFor={`checkbox-${id}`}
               className={`label ${labelClassName}`}>
               {label}
             </label>
-          )} */}
+          )}
         </div>
       )}></Controller>
   );

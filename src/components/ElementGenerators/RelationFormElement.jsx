@@ -1,15 +1,14 @@
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";

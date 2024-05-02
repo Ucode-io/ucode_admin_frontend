@@ -361,7 +361,8 @@ const NewRelationSection = ({
                           ? el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
                             ]
-                          : el?.label}
+                          : el?.attributes?.[`label_${i18n?.language}`] ||
+                            el?.label}
                       </div>
                     </Tab>
                   ))}

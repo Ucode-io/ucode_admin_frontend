@@ -47,7 +47,7 @@ const RelationFormElement = ({
 
   const computedLabel =
     field?.attributes?.[`label_${i18n?.language}`] ||
-    field?.attributes?.[`label_${i18n?.language}`] ||
+    field?.attributes?.[`title_${i18n?.language}`] ||
     column?.attributes?.[`label_from_${i18n?.language}`] ||
     field?.label ||
     field?.title;

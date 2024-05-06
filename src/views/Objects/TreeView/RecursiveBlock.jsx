@@ -1,9 +1,9 @@
-import { Add, Delete } from "@mui/icons-material";
-import { Collapse } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import { useState } from "react";
-import { useMemo } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import {Add, Delete} from "@mui/icons-material";
+import {Collapse} from "@mui/material";
+import {get} from "@ngard/tiny-get";
+import {useState} from "react";
+import {useMemo} from "react";
+import {useParams, useSearchParams} from "react-router-dom";
 
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import CollapseIcon from "../../../components/CollapseIcon";
@@ -19,10 +19,10 @@ const RecursiveBlock = ({
   level = 1,
   fieldsMap,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 
@@ -36,9 +36,15 @@ const RecursiveBlock = ({
   };
 
   const navigateToCreatePage = () => {
-    navigateToForm(tableSlug, "CREATE", null, {
-      [`${tableSlug}_id`]: row.guid,
-    }, menuId);
+    navigateToForm(
+      tableSlug,
+      "CREATE",
+      null,
+      {
+        [`${tableSlug}_id`]: row.guid,
+      },
+      menuId
+    );
   };
 
   const navigateToEditPage = () => {
@@ -54,14 +60,13 @@ const RecursiveBlock = ({
       setDeleteLoader(false);
     }
   };
-
+  console.log("childrenchildren", children);
   return (
     <>
       <div
         onClick={navigateToEditPage}
         className={`${style.recursiveBlock} ${style[`level${level}`]}`}
-        style={{ paddingLeft: 15 * level }}
-      >
+        style={{paddingLeft: 15 * level}}>
         {children?.length ? (
           <CollapseIcon isOpen={childBlockVisible} onClick={switchChildBlock} />
         ) : (
@@ -82,8 +87,7 @@ const RecursiveBlock = ({
           <RectangleIconButton
             color="error"
             loader={deleteLoader}
-            onClick={deleteHandler}
-          >
+            onClick={deleteHandler}>
             <Delete color="error" />
           </RectangleIconButton>
         </div>

@@ -316,7 +316,7 @@ const AutoCompleteElement = ({
 
   const getValueData = async () => {
     try {
-      const id = value || state?.[`${tableSlug}_id`];
+      const id = state?.[`${tableSlug}_id`] || value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
@@ -326,12 +326,11 @@ const AutoCompleteElement = ({
 
       setLocalValue(data ? [data] : null);
 
-      if (window.location.pathname?.includes("create") && Boolean(!value)) {
+      if (window.location.pathname?.includes("create")) {
         setFormValue(name, data?.guid);
       }
     } catch (error) {}
   };
-
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);

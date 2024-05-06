@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import {lazy, Suspense} from "react";
+import {Controller, useWatch} from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
@@ -27,13 +27,12 @@ const HFTextEditor = ({
     control,
     name,
   });
-
+  console.log("namenamename", name, field);
   return (
     <FRowMultiLine
       label={label}
       required={field?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}
-    >
+      extraClassName={isNewTableView ? "tableView" : ""}>
       <Controller
         control={control}
         name={name}
@@ -42,7 +41,7 @@ const HFTextEditor = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({ field: { onChange, ref }, fieldState: { error } }) => (
+        render={({field: {onChange, ref}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               theme="snow"
@@ -62,8 +61,7 @@ const HFTextEditor = ({
               }}
             />
           </Suspense>
-        )}
-      ></Controller>
+        )}></Controller>
     </FRowMultiLine>
   );
 };

@@ -190,6 +190,7 @@ const ObjectsFormPage = ({
   };
 
   const update = (data) => {
+    console.log("datadatadata", data);
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService

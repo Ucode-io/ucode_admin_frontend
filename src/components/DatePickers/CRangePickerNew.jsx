@@ -1,10 +1,15 @@
-import { Today, Clear } from "@mui/icons-material";
-import { InputAdornment, TextField } from "@mui/material";
+import {Today, Clear} from "@mui/icons-material";
+import {InputAdornment, TextField} from "@mui/material";
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import { locale } from "./Plugins/locale";
+import {locale} from "./Plugins/locale";
 
-const CRangePickerNew = ({ onChange, value, placeholder, isClearable = true }) => {
+const CRangePickerNew = ({
+  onChange,
+  value,
+  placeholder,
+  isClearable = true,
+}) => {
   const changeHander = (val) => {
     const from = new Date(val[0]);
     const to = new Date(val[1]);
@@ -24,7 +29,7 @@ const CRangePickerNew = ({ onChange, value, placeholder, isClearable = true }) =
   };
 
   const clearHandler = () => {
-    onChange([]);
+    onChange(undefined);
   };
 
   return (
@@ -48,8 +53,7 @@ const CRangePickerNew = ({ onChange, value, placeholder, isClearable = true }) =
                   {value?.length > 0 && isClearable ? (
                     <span
                       onClick={clearHandler}
-                      style={{ margin: "5px 0 0 5px", cursor: "pointer" }}
-                    >
+                      style={{margin: "5px 0 0 5px", cursor: "pointer"}}>
                       <Clear />
                     </span>
                   ) : null}
@@ -71,7 +75,7 @@ const CRangePickerNew = ({ onChange, value, placeholder, isClearable = true }) =
       numberOfMonths={2}
       onChange={changeHander}
       value={Object.values(value ?? {})}
-    // onChange={(val) => onChange(val ? new Date(val) : "")}
+      // onChange={(val) => onChange(val ? new Date(val) : "")}
     />
   );
 };

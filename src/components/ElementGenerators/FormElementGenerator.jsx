@@ -101,9 +101,9 @@ const FormElementGenerator = ({
   };
 
   const computedSlug = useMemo(() => {
-    // if (field?.enable_multilanguage) {
-    //   return `${removeLangFromSlug(field.slug)}_${activeLang}`;
-    // }
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    }
 
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;

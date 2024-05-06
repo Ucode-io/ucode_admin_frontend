@@ -4,7 +4,7 @@ import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -167,6 +167,8 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
+  const {state} = useLocation();
+  console.log("statestate", state);
 
   const customStyles = {
     control: (provided) => ({
@@ -314,7 +316,7 @@ const AutoCompleteElement = ({
 
   const getValueData = async () => {
     try {
-      const id = value;
+      const id = value || state?.[`${tableSlug}_id`];
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
@@ -323,6 +325,10 @@ const AutoCompleteElement = ({
       }
 
       setLocalValue(data ? [data] : null);
+
+      if (window.location.pathname?.includes("create") && Boolean(!value)) {
+        setFormValue(name, data?.guid);
+      }
     } catch (error) {}
   };
 
@@ -394,7 +400,7 @@ const AutoCompleteElement = ({
   }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value) getValueData();
+    if (value || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {

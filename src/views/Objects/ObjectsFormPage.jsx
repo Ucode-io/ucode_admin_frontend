@@ -217,7 +217,7 @@ const ObjectsFormPage = ({
   };
   const create = (data) => {
     setBtnLoader(true);
-    if (data?.[`${tableSlug}_id`] === data.guid) {
+    if (window?.location.pathname?.includes("create")) {
       delete data.guid;
     }
     constructorObjectService

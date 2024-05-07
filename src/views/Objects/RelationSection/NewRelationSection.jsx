@@ -21,7 +21,7 @@ import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
 import {useDispatch, useSelector} from "react-redux";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+
 import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {relationTabActions} from "../../../store/relationTab/relationTab.slice";

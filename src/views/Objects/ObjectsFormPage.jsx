@@ -58,8 +58,13 @@ const ObjectsFormPage = ({
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
-    return idFromParam || selectedRow?.guid || appId;
-  }, [idFromParam, selectedRow, appId]);
+    return (
+      state?.[`${tableSlugFromParam}_id`] ||
+      idFromParam ||
+      selectedRow?.guid ||
+      appId
+    );
+  }, [idFromParam, selectedRow, appId, state]);
 
   const tableSlug = useMemo(() => {
     return tableSlugFromProps || tableSlugFromParam;
@@ -86,6 +91,7 @@ const ObjectsFormPage = ({
       invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
   });
+
   const getAllData = async () => {
     setLoader(true);
     const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
@@ -184,6 +190,7 @@ const ObjectsFormPage = ({
   };
 
   const update = (data) => {
+    console.log("datadatadata", data);
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
@@ -211,7 +218,9 @@ const ObjectsFormPage = ({
   };
   const create = (data) => {
     setBtnLoader(true);
-
+    if (window?.location.pathname?.includes("create")) {
+      delete data.guid;
+    }
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {

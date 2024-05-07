@@ -143,7 +143,12 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-
+  console.log(
+    "allTabs",
+    mainForm.watch("layouts")?.[allTabs?.length]?.tabs?.[selectedTabIndex]
+      ?.attributes?.[`label_${i18n?.language}`]
+  );
+  console.log("allTabsallTabs", allTabs);
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -183,23 +188,27 @@ function LayoutTabs({
                     <div
                       className={styles.tab}
                       style={{display: "flex", alignItems: "center"}}>
-                      {mainForm.watch(
-                        `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
-                      ) ||
-                        mainForm.watch(
-                          `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
-                        ) ||
-                        mainForm.watch(
-                          `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        ) ||
-                        // mainForm.watch(
-                        //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        // ) ??
-                        tab?.relation?.attributes?.[
-                          `label_to_${i18n?.language}`
-                        ] ||
-                        tab?.attributes?.[`label_to_${i18n?.language}`] ||
-                        tab?.label}
+                      {tab?.type === "relation"
+                        ? tab?.relation?.attributes?.[
+                            `label_to_${i18n?.language}`
+                          ]
+                        : mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
+                          ) ||
+                          mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                          ) ||
+                          mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.label`
+                          ) ||
+                          // mainForm.watch(
+                          //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
+                          // ) ??
+                          tab?.relation?.attributes?.[
+                            `label_to_${i18n?.language}`
+                          ] ||
+                          tab?.attributes?.[`label_to_${i18n?.language}`] ||
+                          tab?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover
                           onEditClick={() => openFieldsBlock("RELATION")}

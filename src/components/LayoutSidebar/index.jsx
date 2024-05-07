@@ -77,6 +77,7 @@ const LayoutSidebar = ({appId}) => {
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
+
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
   };

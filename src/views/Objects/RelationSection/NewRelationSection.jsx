@@ -20,9 +20,12 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import constructorObjectService from "../../../services/constructorObjectService";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -66,43 +69,21 @@ const NewRelationSection = ({
   const [type, setType] = useState(null);
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
+  const dispatch = useDispatch();
   const tables = useSelector((state) => state?.auth?.tables);
-  const menuId = searchParams.get("menuId");
+  const tabSelected = useSelector((state) =>
+    state?.relationTab?.tabs?.find((item) => item?.slug === tableSlug)
+  );
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  // const { data, refetch } = useQuery(
-  //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
-  //   () => {
-  //     return layoutService
-  //       .getLayout(tableSlug, menuId ?? appId, {
-  //         "table-slug": tableSlug,
-  //         language_setting: i18n?.language,
-  //       })
-  //   },
-  //   {
-  //     enabled: !!Boolean(menuItem?.table_id),
-  //     select: (res) => {
-  //       console.log("ketvotti2")
-  //       return {
-  //         ...res,
-  //         tabs: res?.tabs?.filter(
-  //           (tab) =>
-  //             tab?.relation?.permission?.view_permission === true ||
-  //             tab?.type === "section"
-  //         ),
-  //       };
-  //     },
-  //     cacheTime: 10,
-  //   }
-  // );
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -127,10 +108,15 @@ const NewRelationSection = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
-      : setSelectedTabIndex(0);
-  }, [queryTab, setSelectedTabIndex]);
+    if (tabSelected?.slug) {
+      setSelectedTabIndex(tabSelected?.tabIndex);
+      setSelectTab(data?.tabs?.[tabSelected?.tabIndex]);
+    } else {
+      queryTab
+        ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
+        : setSelectedTabIndex(0);
+    }
+  }, [queryTab, tabSelected, selectedTab, setSelectedTabIndex]);
 
   const {fields, remove, append, update} = useFieldArray({
     control,
@@ -337,6 +323,12 @@ const NewRelationSection = ({
                           : "custom-tab"
                       }`}
                       onClick={() => {
+                        dispatch(
+                          relationTabActions.addTab({
+                            slug: tableSlug,
+                            tabIndex: index,
+                          })
+                        );
                         setSelectedIndex(index);
                         onSelect(el);
                       }}>
@@ -346,16 +338,12 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        {(el?.relation && el?.relation?.table_from?.label) ||
-                          el?.relation?.attributes?.[
-                            `label_to_${i18n?.language}`
-                          ] ||
-                          el?.attributes?.[`label_${i18n.language}`] ||
-                          el?.relation?.attributes?.[
-                            `label_${i18n.language}`
-                          ] ||
-                          el?.label ||
-                          el?.title}
+                        {el?.type === "relation"
+                          ? el?.relation?.attributes?.[
+                              `label_to_${i18n?.language}`
+                            ]
+                          : el?.attributes?.[`label_${i18n?.language}`] ||
+                            el?.label}
                       </div>
                     </Tab>
                   ))}

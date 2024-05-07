@@ -4,7 +4,7 @@ import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -47,7 +47,7 @@ const RelationFormElement = ({
 
   const computedLabel =
     field?.attributes?.[`label_${i18n?.language}`] ||
-    field?.attributes?.[`label_${i18n?.language}`] ||
+    field?.attributes?.[`title_${i18n?.language}`] ||
     column?.attributes?.[`label_from_${i18n?.language}`] ||
     field?.label ||
     field?.title;
@@ -167,6 +167,7 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
+  const {state} = useLocation();
 
   const customStyles = {
     control: (provided) => ({
@@ -314,7 +315,7 @@ const AutoCompleteElement = ({
 
   const getValueData = async () => {
     try {
-      const id = value;
+      const id = state?.[`${tableSlug}_id`] || value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
@@ -323,9 +324,12 @@ const AutoCompleteElement = ({
       }
 
       setLocalValue(data ? [data] : null);
+
+      if (window.location.pathname?.includes("create")) {
+        setFormValue(name, data?.guid);
+      }
     } catch (error) {}
   };
-
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
@@ -394,7 +398,7 @@ const AutoCompleteElement = ({
   }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value) getValueData();
+    if (value || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {

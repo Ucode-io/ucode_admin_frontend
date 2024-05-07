@@ -409,7 +409,7 @@ const TableView = ({
     });
   }, [fieldsMap, view]);
 
-  const getOptionsList = () => {
+  const getOptionsList = async () => {
     const computedIds = computedRelationFields?.map((item) => ({
       table_slug: item?.slug,
       ids:
@@ -420,7 +420,7 @@ const TableView = ({
             ),
     }));
 
-    tableData?.length &&
+    (await tableData?.length) &&
       computedRelationFields?.forEach((item, index) => {
         constructorObjectService
           .getListV2(item?.table_slug, {
@@ -596,7 +596,7 @@ const TableView = ({
       )
     );
     setFilterVisible(
-      view?.attributes?.quick_filters?.length > 0 ? true : false
+      view?.attributes?.quick_filters?.length < 0 ? true : false
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 

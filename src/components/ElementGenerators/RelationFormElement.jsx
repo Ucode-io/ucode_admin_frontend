@@ -168,7 +168,6 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
   const {state} = useLocation();
-  console.log("statestate", state);
 
   const customStyles = {
     control: (provided) => ({

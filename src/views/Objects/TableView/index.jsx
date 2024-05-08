@@ -429,9 +429,11 @@ const TableView = ({
               offset: 0,
               additional_request: {
                 additional_field: "guid",
-                additional_values: computedIds?.find(
-                  (computedItem) => computedItem?.table_slug === item?.slug
-                )?.ids,
+                additional_values: computedIds
+                  ?.find(
+                    (computedItem) => computedItem?.table_slug === item?.slug
+                  )
+                  ?.ids?.filter((el) => el),
               },
             },
           })
@@ -464,7 +466,7 @@ const TableView = ({
 
   useEffect(() => {
     getOptionsList();
-  }, [tableData, computedRelationFields]);
+  }, [tableData?.length, computedRelationFields?.length]);
 
   const {
     data: {layout} = {

@@ -18,7 +18,8 @@ const ExcelDownloadButton = ({
   computedVisibleFields,
   selectedTab,
 }) => {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
+
   const {tableSlug, id: idFromParams} = useParams();
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
@@ -36,6 +37,7 @@ const ExcelDownloadButton = ({
             ...filters,
             field_ids: computedVisibleFields,
             [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
+            language: i18n?.language,
           },
         }
       );

@@ -420,51 +420,57 @@ const TableView = ({
             ),
     }));
 
-    (await tableData?.length) &&
-      computedRelationFields?.forEach((item, index) => {
-        constructorObjectService
-          .getListV2(item?.table_slug, {
-            data: {
-              limit: 10,
-              offset: 0,
-              additional_request: {
-                additional_field: "guid",
-                additional_values: computedIds?.find(
-                  (computedItem) => computedItem?.table_slug === item?.slug
-                )?.ids,
-              },
-            },
-          })
-          .then((res) => {
-            if (relOptions?.length > 0) {
-              setRelOptions((prev) => {
-                const updatedOptions = prev.map((option) => {
-                  if (option.table_slug === item?.table_slug) {
-                    return {
-                      table_slug: item?.table_slug,
-                      response: res?.data?.response,
-                    };
-                  }
-                  return option;
-                });
-                return updatedOptions;
-              });
-            } else {
-              setRelOptions((prev) => [
-                ...prev,
-                {
-                  table_slug: item?.table_slug,
-                  response: res?.data?.response,
+    try {
+      tableData?.length &&
+        (await computedRelationFields?.forEach((item, index) => {
+          constructorObjectService
+            .getListV2(item?.table_slug, {
+              data: {
+                limit: 10,
+                offset: 0,
+                additional_request: {
+                  additional_field: "guid",
+                  additional_values: computedIds
+                    ?.find(
+                      (computedItem) => computedItem?.table_slug === item?.slug
+                    )
+                    ?.ids?.filter((el) => el),
                 },
-              ]);
-            }
-          });
-      });
+              },
+            })
+            .then((res) => {
+              if (relOptions?.length > 0) {
+                setRelOptions((prev) => {
+                  const updatedOptions = prev.map((option) => {
+                    if (option.table_slug === item?.table_slug) {
+                      return {
+                        table_slug: item?.table_slug,
+                        response: res?.data?.response,
+                        relationId: item?.relation_id,
+                      };
+                    }
+                    return option;
+                  });
+                  return updatedOptions;
+                });
+              } else {
+                setRelOptions((prev) => [
+                  ...prev,
+                  {
+                    table_slug: item?.table_slug,
+                    response: res?.data?.response,
+                    relationId: item?.relation_id,
+                  },
+                ]);
+              }
+            });
+        }));
+    } catch {}
   };
 
   useEffect(() => {
     getOptionsList();
-  }, [tableData, computedRelationFields]);
+  }, [tableData?.length, computedRelationFields?.length]);
 
   const {
     data: {layout} = {

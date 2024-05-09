@@ -107,6 +107,9 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
+    if (field?.type === "SWITCH") {
+      return false;
+    }
     if (field.relation_type !== "Many2One" || field?.type !== "LOOKUP") {
       if (Array.isArray(defaultValue)) {
         return defaultValue[0];

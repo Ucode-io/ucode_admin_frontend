@@ -383,7 +383,7 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
+      (item) => item?.relationId === field?.relation_id
     );
 
     if (matchingOption) {

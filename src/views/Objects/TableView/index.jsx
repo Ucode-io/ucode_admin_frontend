@@ -446,6 +446,7 @@ const TableView = ({
                       return {
                         table_slug: item?.table_slug,
                         response: res?.data?.response,
+                        relationId: item?.relation_id,
                       };
                     }
                     return option;
@@ -458,6 +459,7 @@ const TableView = ({
                   {
                     table_slug: item?.table_slug,
                     response: res?.data?.response,
+                    relationId: item?.relation_id,
                   },
                 ]);
               }

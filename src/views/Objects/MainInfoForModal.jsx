@@ -198,11 +198,7 @@ const MainInfoForModal = ({
   if (loader) return <PageFallback />;
 
   return (
-    <div
-      className={styles.newcontainerModal}
-      style={{
-        minHeight: "calc(100% - 40px)",
-      }}>
+    <div className={styles.newcontainerModal}>
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (

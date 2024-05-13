@@ -388,6 +388,7 @@ const RelationTable = forwardRef(
                       return {
                         table_slug: item?.table_slug,
                         response: res?.data?.response,
+                        relationId: item?.relation_id,
                       };
                     }
                     return option;
@@ -400,6 +401,7 @@ const RelationTable = forwardRef(
                   {
                     table_slug: item?.table_slug,
                     response: res?.data?.response,
+                    relationId: item?.relation_id,
                   },
                 ]);
               }

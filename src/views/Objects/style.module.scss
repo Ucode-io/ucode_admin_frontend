@@ -41,7 +41,7 @@
 
 .newMainInfoSectionsModal {
   overflow: scroll;
-  height: 430px;
+  height: calc(100vh - 300px);
   padding: 0 0 0px 0;
 }
 

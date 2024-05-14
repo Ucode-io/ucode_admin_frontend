@@ -424,13 +424,17 @@ const AutoCompleteElement = ({
   }
 
   const computedViewFields = useMemo(() => {
-    const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
 
-    const splittedVersion = viewFields?.map((item) => {
-      return item?.split("_")?.[0];
-    });
-    return [...new Set(splittedVersion)] ?? [];
-  }, [field, i18n?.language]);
+      const splittedVersion = viewFields?.map((item) => {
+        return item?.split("_")?.[0];
+      });
+      return [...new Set(splittedVersion)] ?? [];
+    } else {
+      return field?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, activeLang]);
   console.log("computedViewFields", field, computedViewFields);
   return (
     <div className={styles.autocompleteWrapper}>
@@ -499,9 +503,13 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              field?.attributes?.view_fields?.map(
-                (el) => `${option[el?.slug]} `
-              )
+              computedViewFields?.map((el) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return `${option[`${el}_${activeLang}`] ?? option[`${el}`]} `;
+                } else {
+                  return `${option[el]} `;
+                }
+              })
             }
             getOptionValue={(option) => option?.guid}
             components={{

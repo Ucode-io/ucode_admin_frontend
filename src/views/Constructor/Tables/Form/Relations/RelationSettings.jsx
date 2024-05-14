@@ -465,6 +465,13 @@ const RelationSettings = ({
                           label={"Disable Edit table"}
                         />
                       </div>
+                      <div className={styles.sectionHeader}>
+                        <HFCheckbox
+                          control={control}
+                          name="attributes.enable_multi_language"
+                          label={"Enable multi language"}
+                        />
+                      </div>
 
                       {watch().multiple_insert && (
                         <div className={styles.sectionBody}>

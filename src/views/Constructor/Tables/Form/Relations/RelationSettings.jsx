@@ -284,6 +284,7 @@ const RelationSettings = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
+        console.log("resssssssssssss", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
@@ -294,12 +295,7 @@ const RelationSettings = ({
           summaries: res?.summaries ?? [],
           view_fields: res?.view_fields?.map((field) => field.id) ?? [],
           field_name: res?.label,
-          auto_filters: [
-            {
-              field_from: "",
-              field_to: "",
-            },
-          ],
+          auto_filters: res?.auto_filters,
         });
       },
     },

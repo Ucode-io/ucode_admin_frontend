@@ -36,6 +36,7 @@ const RelationFormElement = ({
   multipleInsertField,
   checkRequiredField,
   rules,
+  activeLang,
   errors,
   ...props
 }) => {
@@ -84,6 +85,7 @@ const RelationFormElement = ({
               multipleInsertField={multipleInsertField}
               errors={errors}
               required={required}
+              activeLang={activeLang}
             />
           )}
         />
@@ -127,6 +129,7 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  activeLang={activeLang}
                 />
               )
             }
@@ -152,6 +155,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   errors,
   required = false,
+  activeLang,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -419,6 +423,15 @@ const AutoCompleteElement = ({
     }
   }
 
+  const computedViewFields = useMemo(() => {
+    const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+
+    const splittedVersion = viewFields?.map((item) => {
+      return item?.split("_")?.[0];
+    });
+    return [...new Set(splittedVersion)] ?? [];
+  }, [field, i18n?.language]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -486,8 +499,8 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              field?.attributes?.view_fields?.map(
-                (el) => `${option[el?.slug]} `
+              computedViewFields?.map(
+                (el) => `${option[`${el}_${activeLang}`] ?? option[`${el}`]} `
               )
             }
             getOptionValue={(option) => option?.guid}

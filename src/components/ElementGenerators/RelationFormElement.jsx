@@ -431,7 +431,7 @@ const AutoCompleteElement = ({
     });
     return [...new Set(splittedVersion)] ?? [];
   }, [field, i18n?.language]);
-
+  console.log("computedViewFields", field, computedViewFields);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -499,8 +499,8 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              computedViewFields?.map(
-                (el) => `${option[`${el}_${activeLang}`] ?? option[`${el}`]} `
+              field?.attributes?.view_fields?.map(
+                (el) => `${option[el?.slug]} `
               )
             }
             getOptionValue={(option) => option?.guid}

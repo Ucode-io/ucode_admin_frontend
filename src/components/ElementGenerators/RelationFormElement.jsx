@@ -172,6 +172,7 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
   const {state} = useLocation();
+  const languages = useSelector((state) => state.languages.list);
 
   const customStyles = {
     control: (provided) => ({
@@ -423,18 +424,24 @@ const AutoCompleteElement = ({
     }
   }
 
-  // const computedViewFields = useMemo(() => {
-  //   if (field?.attributes?.enable_multi_language) {
-  //     const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+  const computedViewFields = useMemo(() => {
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+      const computedLanguages = languages?.map((item) => item?.slug);
 
-  //     const splittedVersion = viewFields?.map((item) => {
-  //       return item?.split("_")?.[0];
-  //     });
-  //     return [...new Set(splittedVersion)] ?? [];
-  //   } else {
-  //     return field?.attributes?.view_fields?.map((el) => el?.slug);
-  //   }
-  // }, [field, activeLang]);
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(activeLang ?? i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return field?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, activeLang, i18n?.language]);
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -503,9 +510,13 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              field?.attributes?.view_fields?.map(
-                (el) => `${option[el?.slug]} `
-              )
+              computedViewFields?.map((el) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
+                } else {
+                  return `${option[el]} `;
+                }
+              })
             }
             getOptionValue={(option) => option?.guid}
             components={{

@@ -423,19 +423,19 @@ const AutoCompleteElement = ({
     }
   }
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+  // const computedViewFields = useMemo(() => {
+  //   if (field?.attributes?.enable_multi_language) {
+  //     const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
 
-      const splittedVersion = viewFields?.map((item) => {
-        return item?.split("_")?.[0];
-      });
-      return [...new Set(splittedVersion)] ?? [];
-    } else {
-      return field?.attributes?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, activeLang]);
-  console.log("computedViewFields", field, computedViewFields);
+  //     const splittedVersion = viewFields?.map((item) => {
+  //       return item?.split("_")?.[0];
+  //     });
+  //     return [...new Set(splittedVersion)] ?? [];
+  //   } else {
+  //     return field?.attributes?.view_fields?.map((el) => el?.slug);
+  //   }
+  // }, [field, activeLang]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -503,13 +503,9 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              computedViewFields?.map((el) => {
-                if (field?.attributes?.enable_multi_language) {
-                  return `${option[`${el}_${activeLang}`] ?? option[`${el}`]} `;
-                } else {
-                  return `${option[el]} `;
-                }
-              })
+              field?.attributes?.view_fields?.map(
+                (el) => `${option[el?.slug]} `
+              )
             }
             getOptionValue={(option) => option?.guid}
             components={{

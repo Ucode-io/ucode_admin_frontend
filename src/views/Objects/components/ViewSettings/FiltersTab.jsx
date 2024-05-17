@@ -83,7 +83,6 @@ const FiltersTab = ({
     }
     setFilterVisible(true);
     updateView(computedData);
-    handleCloseFilter();
   };
 
   const columnIcons = useMemo(() => {

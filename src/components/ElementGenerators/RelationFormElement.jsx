@@ -174,7 +174,7 @@ const AutoCompleteElement = ({
   const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
-  console.log("isSettings", isSettings);
+
   const customStyles = {
     control: (provided) => ({
       ...provided,

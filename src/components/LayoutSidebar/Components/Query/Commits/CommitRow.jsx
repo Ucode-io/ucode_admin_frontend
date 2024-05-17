@@ -1,27 +1,20 @@
-import { format } from "date-fns";
+import {format} from "date-fns";
 import styles from "./index.module.scss";
-import { BsArrowCounterclockwise } from "react-icons/bs";
-import { BiSave } from "react-icons/bi";
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
-import {
-  Box,
-  Icon,
-  MenuItem,
-  Select,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import {BsArrowCounterclockwise} from "react-icons/bs";
+import {BiSave} from "react-icons/bi";
+import {useMemo, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {Box, Icon, MenuItem, Select, Tooltip, Typography} from "@mui/material";
 import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
-import { useDispatch } from "react-redux";
-import { useReleasesListQuery } from "../../../../../services/releaseService";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {useReleasesListQuery} from "../../../../../services/releaseService";
 import listToOptions from "../../../../../utils/listToOptions";
-import { useQueryVersionSelectMutation } from "../../../../../services/query.service";
+import {useQueryVersionSelectMutation} from "../../../../../services/query.service";
 import HFMultipleSelect from "../../../../FormElements/HFMultipleSelect";
-import { EditIcon } from "../../../../../assets/icons/icon";
-import { store } from "../../../../../store";
+import {EditIcon} from "../../../../../assets/icons/icon";
+import {store} from "../../../../../store";
 import CAutoCompleteSelect from "../../../../CAutoCompleteSelect";
 
 const QueryCommitRow = ({
@@ -33,11 +26,11 @@ const QueryCommitRow = ({
 }) => {
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const { projectId, queryId } = useParams();
+  const {projectId, queryId} = useParams();
   const [versionIds, setVersionIds] = useState([]);
   const [versionSelectorIsOpen, setVersionSelectorIsOpen] = useState(false);
   const dispatch = useDispatch();
-  const { data: releases } = useReleasesListQuery({
+  const {data: releases} = useReleasesListQuery({
     projectId: company.projectId,
     queryParams: {
       select: (res) => listToOptions(res.releases, "version"),
@@ -60,14 +53,13 @@ const QueryCommitRow = ({
       return selectedCommit === commit.commit_info.id;
     }
   };
-  console.log("versionIds", versionIds);
 
   const openVersionSelector = () => {
     setVersionIds(Object.keys(commit.version_infos ?? {}).filter((el) => el));
     setVersionSelectorIsOpen(true);
   };
 
-  const { mutate: saveVersions, isLoading: saveLoading } =
+  const {mutate: saveVersions, isLoading: saveLoading} =
     useQueryVersionSelectMutation({
       onSuccess: (res) => {
         dispatch(showAlert("Successfully saved versions"));
@@ -95,8 +87,7 @@ const QueryCommitRow = ({
       className={`${styles.row} ${
         isActive(commit, index) ? styles.active : ""
       }`}
-      onClick={() => onSelect(commit)}
-    >
+      onClick={() => onSelect(commit)}>
       <Box spacing={1} flex={1}>
         <Typography color="white" fontWeight="bold" fontSize="lg">
           {format(new Date(commit.commit_info.created_at), "dd MMMM, HH:mm")}
@@ -108,8 +99,7 @@ const QueryCommitRow = ({
               onClick={openVersionSelector}
               display="inline-block"
               variant="ghost"
-              colorScheme="primary"
-            >
+              colorScheme="primary">
               <EditIcon />
             </RectangleIconButton>
           </Typography>
@@ -121,10 +111,9 @@ const QueryCommitRow = ({
                 value={versionIds || []}
                 onChange={setVersionIds}
                 label={"Roles"}
-                fullWidth
-              >
+                fullWidth>
                 {releases?.map((item) => (
-                  <MenuItem style={{ width: "100%" }} key={item.id}>
+                  <MenuItem style={{width: "100%"}} key={item.id}>
                     {item.label}
                   </MenuItem>
                 ))}
@@ -138,8 +127,7 @@ const QueryCommitRow = ({
                 e.stopPropagation();
                 onSaveClick();
               }}
-              isLoading={saveLoading}
-            >
+              isLoading={saveLoading}>
               <Icon as={BiSave} w={6} h={6} />
             </RectangleIconButton>
           </Box>
@@ -159,8 +147,7 @@ const QueryCommitRow = ({
             onClick={(e) => {
               e.stopPropagation();
               onRevertClick(commit);
-            }}
-          >
+            }}>
             <Icon as={BsArrowCounterclockwise} w={6} h={6} />
           </RectangleIconButton>
         </Tooltip>

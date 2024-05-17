@@ -41,7 +41,6 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [codeAppValue, setCodeAppValue] = useState({});
   const [type, setType] = useState("");
-  console.log("type", type);
 
   const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
 

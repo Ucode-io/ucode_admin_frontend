@@ -53,7 +53,6 @@ const PermissionSidebarRecursiveBlock = ({
     });
 
   const deleteRole = async (element) => {
-    console.log("element", element?.guid);
     if (element?.guid) {
       await deleteClientType({
         id: element?.guid,

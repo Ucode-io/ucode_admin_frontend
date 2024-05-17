@@ -404,7 +404,7 @@ const AutoCompleteElement = ({
   }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value || Boolean(state?.[`${tableSlug}_id`])) getValueData();
+    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {
@@ -443,6 +443,13 @@ const AutoCompleteElement = ({
       return field?.attributes?.view_fields?.map((el) => el?.slug);
     }
   }, [field, activeLang, i18n?.language]);
+
+  useEffect(() => {
+    if (field?.attributes?.object_id_from_jwt === true) {
+      const foundOption = allOptions?.find((el) => el?.guid === isUserId);
+      setLocalValue([foundOption]);
+    }
+  }, [allOptions?.length, field]);
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -519,7 +526,9 @@ const AutoCompleteElement = ({
                 }
               })
             }
-            getOptionValue={(option) => option?.guid}
+            getOptionValue={(option) =>
+              option?.guid ?? option?.id ?? option?.client_type_id
+            }
             components={{
               DropdownIndicator: () => null,
               MultiValue: ({data}) => (

@@ -173,7 +173,8 @@ const AutoCompleteElement = ({
   const {i18n} = useTranslation();
   const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
-
+  const isSettings = window.location.pathname?.includes("settings/constructor");
+  console.log("isSettings", isSettings);
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -286,7 +287,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -499,6 +500,7 @@ const AutoCompleteElement = ({
             styles={customStyles}
             value={localValue ?? []}
             required={required}
+            menuPortalTarget={document.body}
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);

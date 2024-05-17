@@ -74,7 +74,7 @@ const FormElementGenerator = ({
     if (field?.enable_multilanguage) {
       return field?.attributes?.show_label
         ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
-        : "";
+        : field?.attributes?.[`label_${i18n?.language}`];
     } else {
       if (field?.show_label === false) return "";
       else
@@ -155,7 +155,7 @@ const FormElementGenerator = ({
   ) {
     return null;
   }
-
+  console.log("fieldddddddddd", field);
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (

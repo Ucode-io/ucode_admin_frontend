@@ -60,7 +60,7 @@ const RecursiveBlock = ({
       setDeleteLoader(false);
     }
   };
-  console.log("childrenchildren", children);
+
   return (
     <>
       <div

@@ -204,6 +204,7 @@ const FormElementGenerator = ({
           defaultValue={defaultValue}
           disabled={isDisabled}
           key={computedSlug}
+          activeLang={activeLang}
           checkRequiredField={checkRequiredField}
           errors={errors}
           rules={{

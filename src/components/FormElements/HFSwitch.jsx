@@ -40,7 +40,7 @@ const HFSwitch = ({
               {...props}
               autoFocus={tabIndex === 1}
               inputProps={{tabIndex}}
-              checked={value ?? false}
+              checked={value || false}
               onChange={(e, val) => {
                 formOnChange(val);
                 onChange(val);

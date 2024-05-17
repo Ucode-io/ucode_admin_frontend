@@ -36,6 +36,7 @@ const RelationFormElement = ({
   multipleInsertField,
   checkRequiredField,
   rules,
+  activeLang,
   errors,
   ...props
 }) => {
@@ -84,6 +85,7 @@ const RelationFormElement = ({
               multipleInsertField={multipleInsertField}
               errors={errors}
               required={required}
+              activeLang={activeLang}
             />
           )}
         />
@@ -127,6 +129,7 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  activeLang={activeLang}
                 />
               )
             }
@@ -152,6 +155,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   errors,
   required = false,
+  activeLang,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -168,7 +172,9 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
   const {state} = useLocation();
-
+  const languages = useSelector((state) => state.languages.list);
+  const isSettings = window.location.pathname?.includes("settings/constructor");
+  console.log("isSettings", isSettings);
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -281,7 +287,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -419,6 +425,25 @@ const AutoCompleteElement = ({
     }
   }
 
+  const computedViewFields = useMemo(() => {
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+      const computedLanguages = languages?.map((item) => item?.slug);
+
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(activeLang ?? i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return field?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, activeLang, i18n?.language]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -475,6 +500,7 @@ const AutoCompleteElement = ({
             styles={customStyles}
             value={localValue ?? []}
             required={required}
+            menuPortalTarget={document.body}
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);
@@ -486,9 +512,13 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              field?.attributes?.view_fields?.map(
-                (el) => `${option[el?.slug]} `
-              )
+              computedViewFields?.map((el) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
+                } else {
+                  return `${option[el]} `;
+                }
+              })
             }
             getOptionValue={(option) => option?.guid}
             components={{

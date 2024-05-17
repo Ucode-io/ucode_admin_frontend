@@ -17,6 +17,7 @@ const FastFilter = ({
   visibleRelationColumns,
   visibleForm,
   isVisibleLoading,
+  setFilterVisible,
 }) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
@@ -101,6 +102,7 @@ const FastFilter = ({
         relationColumns={visibleRelationColumns}
         isLoading={isVisibleLoading}
         form={visibleForm}
+        setFilterVisible={setFilterVisible}
       />
     </div>
   );

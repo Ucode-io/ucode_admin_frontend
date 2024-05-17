@@ -30,6 +30,7 @@ export default function FilterVisible({
   isLoading,
   form,
   text = "",
+  setFilterVisible,
 }) {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
@@ -92,11 +93,13 @@ export default function FilterVisible({
           onChange={onChange}
           updateView={updateView}
           isMenu={true}
+          handleCloseFilter={handleCloseFilter}
           views={views}
           selectedTabIndex={selectedTabIndex}
           computedColumns={computedColumns}
           columns={columns}
           isLoading={updateLoading}
+          setFilterVisible={setFilterVisible}
         />
       </Menu>
     </div>

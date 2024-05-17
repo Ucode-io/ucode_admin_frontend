@@ -601,10 +601,13 @@ const TableView = ({
         view?.attributes?.quick_filters?.length ?? 0
       )
     );
+  }, [view?.attributes?.quick_filters?.length, refetch]);
+
+  useEffect(() => {
     setFilterVisible(
       view?.attributes?.quick_filters?.length < 0 ? true : false
     );
-  }, [view?.attributes?.quick_filters?.length, refetch]);
+  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -623,6 +626,7 @@ const TableView = ({
               visibleRelationColumns={visibleRelationColumns}
               visibleForm={visibleForm}
               isVisibleLoading={isVisibleLoading}
+              setFilterVisible={setFilterVisible}
             />
           </Box>
         </div>

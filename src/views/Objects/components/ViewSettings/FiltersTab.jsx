@@ -33,6 +33,8 @@ const FiltersTab = ({
   views,
   computedColumns,
   isLoading,
+  handleCloseFilter,
+  setFilterVisible,
 }) => {
   const {i18n} = useTranslation();
 
@@ -79,8 +81,9 @@ const FiltersTab = ({
     } else {
       computedData = [...(views?.attributes?.quick_filters ?? []), field];
     }
-
+    setFilterVisible(true);
     updateView(computedData);
+    handleCloseFilter();
   };
 
   const columnIcons = useMemo(() => {
@@ -112,7 +115,7 @@ const FiltersTab = ({
       DATE_TIME_WITHOUT_TIME_ZONE: <InsertInvitationIcon />,
     };
   }, []);
-  console.log("allColumns", i18n);
+
   return (
     <div
       style={{

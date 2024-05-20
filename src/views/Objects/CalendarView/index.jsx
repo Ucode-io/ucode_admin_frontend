@@ -153,8 +153,9 @@ const CalendarView = ({
         data: {
           with_relations: true,
           [view.calendar_from_slug]: {
-            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
+            $gte:
+              FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
           ...dataFilters,
         },
@@ -209,8 +210,9 @@ const CalendarView = ({
       return constructorObjectService.getList(view?.disable_dates?.table_slug, {
         data: {
           [view.disable_dates.day_slug]: {
-            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
+            $gte:
+              FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
         },
       });

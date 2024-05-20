@@ -49,61 +49,62 @@ const CalendarTemplate = ({month = [], data, view, fieldsMap}) => {
         ))}
       </Box>
       <Box className={styles.calendarTemplate}>
-        {month?.map((date, index) => (
-          <>
-            <Box
-              key={index}
-              className={styles.calendar}
-              style={{
-                borderColor:
-                  dateValidFormat(new Date(), "dd.MM.yyyy") ===
-                  dateValidFormat(date, "dd.MM.yyyy")
-                    ? "#007AFF"
-                    : "",
-                background:
-                  date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
-              }}>
-              {!data?.includes(date) && (
-                <Box
-                  className={styles.desc}
-                  onClick={() => navigateToCreatePage()}>
-                  <Box className={`${styles.addButton}`}>
-                    <AddBoxIcon />
+        {Array.isArray(month) &&
+          month?.map((date, index) => (
+            <>
+              <Box
+                key={index}
+                className={styles.calendar}
+                style={{
+                  borderColor:
+                    dateValidFormat(new Date(), "dd.MM.yyyy") ===
+                    dateValidFormat(date, "dd.MM.yyyy")
+                      ? "#007AFF"
+                      : "",
+                  background:
+                    date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
+                }}>
+                {!data?.includes(date) && (
+                  <Box
+                    className={styles.desc}
+                    onClick={() => navigateToCreatePage()}>
+                    <Box className={`${styles.addButton}`}>
+                      <AddBoxIcon />
+                    </Box>
                   </Box>
-                </Box>
-              )}
-              {new Date(date).toLocaleDateString(
-                "en-US",
-                dateValidFormat(date, "dd") === "01"
-                  ? {
-                      day: "numeric",
-                      //   month: "short",
-                    }
-                  : {
-                      day: "numeric",
-                    }
-              )}
-
-              <Box className={styles.card}>
-                {data?.map((el, idx) =>
-                  dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ||
-                  dateValidFormat(date, "dd.MM.yyyy") ===
-                    dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
-                    <DataMonthCard
-                      key={el.id}
-                      date={date}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      data={el}
-                      viewFields={viewFields}
-                      navigateToEditPage={navigateToEditPage}
-                    />
-                  ) : null
                 )}
+                {new Date(date).toLocaleDateString(
+                  "en-US",
+                  dateValidFormat(date, "dd") === "01"
+                    ? {
+                        day: "numeric",
+                        //   month: "short",
+                      }
+                    : {
+                        day: "numeric",
+                      }
+                )}
+
+                <Box className={styles.card}>
+                  {data?.map((el, idx) =>
+                    dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ||
+                    dateValidFormat(date, "dd.MM.yyyy") ===
+                      dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
+                      <DataMonthCard
+                        key={el.id}
+                        date={date}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        data={el}
+                        viewFields={viewFields}
+                        navigateToEditPage={navigateToEditPage}
+                      />
+                    ) : null
+                  )}
+                </Box>
               </Box>
-            </Box>
-          </>
-        ))}
+            </>
+          ))}
       </Box>
 
       <ModalDetailPage

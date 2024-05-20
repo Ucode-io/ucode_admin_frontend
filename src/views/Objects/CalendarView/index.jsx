@@ -121,6 +121,7 @@ const CalendarView = ({
       day.setDate(startOfMonth(currentDay).getDate() + i);
       newMonthDates.push(day);
     }
+    console.log("newMonthDatesnewMonthDates", newMonthDates);
     setCurrentMonthDates(newMonthDates);
   }, [currentDay]);
 

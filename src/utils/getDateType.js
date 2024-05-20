@@ -1,11 +1,23 @@
+const getFirstDayOfMonth = (date) => {
+  const d = new Date(date);
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+};
+
+const getFirstDayOfNextMonth = (date) => {
+  const d = new Date(date);
+  return new Date(d.getFullYear(), d.getMonth() + 1, 1);
+};
+
 export const FromDateType = (date, currentUpdatedDate, firstUpdatedDate) => {
   switch (true) {
     case date === "DAY":
       return currentUpdatedDate;
     case date === "WEEK":
       return firstUpdatedDate;
+    case date === "MONTH":
+      return getFirstDayOfMonth(new Date());
     default:
-      return getFirstDayOfMonth(currentUpdatedDate);
+      return currentUpdatedDate;
   }
 };
 
@@ -15,17 +27,9 @@ export const ToDateType = (date, tomorrow, lastUpdatedDate) => {
       return tomorrow;
     case date === "WEEK":
       return lastUpdatedDate;
+    case date === "MONTH":
+      return getFirstDayOfNextMonth(new Date());
     default:
-      return getFirstDayOfNextMonth(tomorrow);
+      return tomorrow;
   }
-};
-
-const getFirstDayOfMonth = (date) => {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1);
-};
-
-const getFirstDayOfNextMonth = (date) => {
-  const d = new Date(date);
-  return new Date(d.getFullYear(), d.getMonth() + 1, 1);
 };

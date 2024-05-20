@@ -161,12 +161,6 @@ const CalendarView = ({
       });
     },
     {
-      enabled:
-        Boolean(date) &&
-        Boolean(currentUpdatedDate) &&
-        Boolean(firstUpdatedDate) &&
-        Boolean(tomorrow) &&
-        Boolean(lastUpdatedDate),
       cacheTime: 10,
       select: (res) => {
         const fields = res.data?.fields ?? [];
@@ -222,12 +216,6 @@ const CalendarView = ({
       });
     },
     {
-      enabled:
-        Boolean(date) &&
-        Boolean(currentUpdatedDate) &&
-        Boolean(firstUpdatedDate) &&
-        Boolean(tomorrow) &&
-        Boolean(lastUpdatedDate),
       select: (res) => {
         const result = {};
 

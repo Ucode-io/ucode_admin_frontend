@@ -13,6 +13,7 @@ import FRow from "../FormElements/FRow";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 import Select from "react-select";
+import {useSearchParams} from "react-router-dom";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -45,8 +46,7 @@ const ManyToManyRelationFormElement = ({
           field?.label ||
           field.title
         }
-        required={field.required}
-      >
+        required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
@@ -77,8 +77,7 @@ const ManyToManyRelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -110,8 +109,7 @@ const ManyToManyRelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -133,6 +131,8 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -330,8 +330,7 @@ const AutoCompleteElement = ({
     <div className={styles.autocompleteWrapper}>
       <div
         className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
+        onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
         Create new
       </div>
 

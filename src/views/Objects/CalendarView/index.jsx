@@ -121,7 +121,7 @@ const CalendarView = ({
       day.setDate(startOfMonth(currentDay).getDate() + i);
       newMonthDates.push(day);
     }
-    console.log("newMonthDatesnewMonthDates", newMonthDates);
+
     setCurrentMonthDates(newMonthDates);
   }, [currentDay]);
 
@@ -161,6 +161,12 @@ const CalendarView = ({
       });
     },
     {
+      enabled:
+        Boolean(date) &&
+        Boolean(currentUpdatedDate) &&
+        Boolean(firstUpdatedDate) &&
+        Boolean(tomorrow) &&
+        Boolean(lastUpdatedDate),
       cacheTime: 10,
       select: (res) => {
         const fields = res.data?.fields ?? [];
@@ -216,6 +222,12 @@ const CalendarView = ({
       });
     },
     {
+      enabled:
+        Boolean(date) &&
+        Boolean(currentUpdatedDate) &&
+        Boolean(firstUpdatedDate) &&
+        Boolean(tomorrow) &&
+        Boolean(lastUpdatedDate),
       select: (res) => {
         const result = {};
 

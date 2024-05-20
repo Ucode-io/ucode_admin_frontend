@@ -5,7 +5,7 @@ export const FromDateType = (date, currentUpdatedDate, firstUpdatedDate) => {
     case date === "WEEK":
       return firstUpdatedDate;
     default:
-      return currentUpdatedDate;
+      return getFirstDayOfMonth(currentUpdatedDate);
   }
 };
 
@@ -16,6 +16,16 @@ export const ToDateType = (date, tomorrow, lastUpdatedDate) => {
     case date === "WEEK":
       return lastUpdatedDate;
     default:
-      return tomorrow;
+      return getFirstDayOfNextMonth(tomorrow);
   }
+};
+
+const getFirstDayOfMonth = (date) => {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+};
+
+const getFirstDayOfNextMonth = (date) => {
+  const d = new Date(date);
+  return new Date(d.getFullYear(), d.getMonth() + 1, 1);
 };

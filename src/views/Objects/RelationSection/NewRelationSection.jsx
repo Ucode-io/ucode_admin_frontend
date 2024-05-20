@@ -177,7 +177,7 @@ const NewRelationSection = ({
 
   const onSelect = (el) => {
     setType(el?.type);
-    setSelectTab(el ?? relations[selectedTabIndex]);
+    setSelectTab(el || relations[selectedTabIndex]);
   };
 
   /*****************************JWT END*************************/
@@ -291,7 +291,7 @@ const NewRelationSection = ({
     Object.values(fieldsMap)?.length,
     selectedTab?.attributes?.columns?.length,
   ]);
-
+  console.log("selectedTab", data);
   return (
     <>
       {selectedManyToManyRelation && (

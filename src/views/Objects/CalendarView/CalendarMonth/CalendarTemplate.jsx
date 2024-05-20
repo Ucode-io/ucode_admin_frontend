@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState} from "react";
 import styles from "./month.module.scss";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 import DataMonthCard from "./DataMonthCard";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 const daysOfWeek = [
   "Sunday",
@@ -15,7 +15,7 @@ const daysOfWeek = [
   "Saturday",
 ];
 
-const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
+const CalendarTemplate = ({month = [], data, view, fieldsMap}) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
@@ -33,6 +33,7 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
   const viewFields = useMemo(() => {
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
+
   return (
     <>
       <Box className={styles.calendarTemplate}>
@@ -42,8 +43,7 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
             className={styles.days}
             style={{
               borderColor: new Date().getDay() === index ? "#007AFF" : "",
-            }}
-          >
+            }}>
             {date}
           </Box>
         ))}
@@ -62,13 +62,11 @@ const CalendarTemplate = ({ month, data, view, fieldsMap }) => {
                     : "",
                 background:
                   date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
-              }}
-            >
+              }}>
               {!data?.includes(date) && (
                 <Box
                   className={styles.desc}
-                  onClick={() => navigateToCreatePage()}
-                >
+                  onClick={() => navigateToCreatePage()}>
                   <Box className={`${styles.addButton}`}>
                     <AddBoxIcon />
                   </Box>

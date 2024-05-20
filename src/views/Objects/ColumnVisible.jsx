@@ -1,10 +1,10 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 
 export default function ColumnVisible({
   selectedTabIndex,
@@ -18,7 +18,7 @@ export default function ColumnVisible({
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -34,17 +34,17 @@ export default function ColumnVisible({
 
   // const watchedColumns = form.watch("columns");
   // const watchedGroupColumns = form.watch("attributes.group_by_columns");
-  useEffect(() => {
-    form.reset({
-      columns:
-        computedColumns?.map((el) => ({
-          ...el,
-          is_checked: views?.[selectedTabIndex]?.columns?.find(
-            (column) => column === el.id
-          ),
-        })) ?? [],
-    });
-  }, [selectedTabIndex, views, form, computedColumns]);
+  // useEffect(() => {
+  //   form.reset({
+  //     columns:
+  //       computedColumns?.map((el) => ({
+  //         ...el,
+  //         is_checked: views?.[selectedTabIndex]?.columns?.find(
+  //           (column) => column === el.id
+  //         ),
+  //       })) ?? [],
+  //   });
+  // }, [selectedTabIndex, views, form, computedColumns]);
 
   const updateView = () => {
     constructorViewService
@@ -103,8 +103,7 @@ export default function ColumnVisible({
         //   width: width,
         //   borderColor: "#A8A8A8",
         // }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <AppsIcon color={"#A8A8A8"} />
         {text}
       </Button>
@@ -136,8 +135,7 @@ export default function ColumnVisible({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         {isLoading ? (
           <CircularProgress />
         ) : (

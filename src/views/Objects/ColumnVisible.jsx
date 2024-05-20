@@ -32,19 +32,19 @@ export default function ColumnVisible({
     return columns;
   }, [columns, relationColumns, type]);
 
-  // const watchedColumns = form.watch("columns");
-  // const watchedGroupColumns = form.watch("attributes.group_by_columns");
-  // useEffect(() => {
-  //   form.reset({
-  //     columns:
-  //       computedColumns?.map((el) => ({
-  //         ...el,
-  //         is_checked: views?.[selectedTabIndex]?.columns?.find(
-  //           (column) => column === el.id
-  //         ),
-  //       })) ?? [],
-  //   });
-  // }, [selectedTabIndex, views, form, computedColumns]);
+  const watchedColumns = form.watch("columns");
+  const watchedGroupColumns = form.watch("attributes.group_by_columns");
+  useEffect(() => {
+    form.reset({
+      columns:
+        computedColumns?.map((el) => ({
+          ...el,
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
+        })) ?? [],
+    });
+  }, [selectedTabIndex, views, form, computedColumns]);
 
   const updateView = () => {
     constructorViewService

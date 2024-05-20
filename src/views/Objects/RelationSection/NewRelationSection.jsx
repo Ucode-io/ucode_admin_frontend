@@ -291,7 +291,7 @@ const NewRelationSection = ({
     Object.values(fieldsMap)?.length,
     selectedTab?.attributes?.columns?.length,
   ]);
-  console.log("selectedTab", data);
+
   return (
     <>
       {selectedManyToManyRelation && (

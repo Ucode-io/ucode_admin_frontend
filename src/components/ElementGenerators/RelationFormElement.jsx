@@ -4,7 +4,7 @@ import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -174,6 +174,8 @@ const AutoCompleteElement = ({
   const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const customStyles = {
     control: (provided) => ({
@@ -456,7 +458,7 @@ const AutoCompleteElement = ({
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}>
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
           Create new
         </div>
       )}

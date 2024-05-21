@@ -181,7 +181,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+      // queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -327,7 +327,6 @@ const TableView = ({
         searchText,
         sortedDatas,
         currentPage,
-        // checkedColumns,
         limit,
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
@@ -356,6 +355,7 @@ const TableView = ({
         },
       });
     },
+    enabled: !!tableSlug,
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -409,7 +409,7 @@ const TableView = ({
     });
   }, [fieldsMap, view]);
 
-  const getOptionsList = () => {
+  const getOptionsList = async () => {
     const computedIds = computedRelationFields?.map((item) => ({
       table_slug: item?.slug,
       ids:
@@ -420,52 +420,57 @@ const TableView = ({
             ),
     }));
 
-    tableData?.length &&
-      computedRelationFields?.forEach((item, index) => {
-        constructorObjectService
-          .getListV2(item?.table_slug, {
-            data: {
-              limit: 10,
-              offset: 0,
-              additional_request: {
-                additional_field: "guid",
-                additional_values: computedIds?.find(
-                  (computedItem) => computedItem?.table_slug === item?.slug
-                )?.ids,
-              },
-            },
-          })
-          .then((res) => {
-            console.log("resssssssssss", res);
-            if (relOptions?.length > 0) {
-              setRelOptions((prev) => {
-                const updatedOptions = prev.map((option) => {
-                  if (option.table_slug === item?.table_slug) {
-                    return {
-                      table_slug: item?.table_slug,
-                      response: res?.data?.response,
-                    };
-                  }
-                  return option;
-                });
-                return updatedOptions;
-              });
-            } else {
-              setRelOptions((prev) => [
-                ...prev,
-                {
-                  table_slug: item?.table_slug,
-                  response: res?.data?.response,
+    try {
+      tableData?.length &&
+        (await computedRelationFields?.forEach((item, index) => {
+          constructorObjectService
+            .getListV2(item?.table_slug, {
+              data: {
+                limit: 10,
+                offset: 0,
+                additional_request: {
+                  additional_field: "guid",
+                  additional_values: computedIds
+                    ?.find(
+                      (computedItem) => computedItem?.table_slug === item?.slug
+                    )
+                    ?.ids?.filter((el) => el),
                 },
-              ]);
-            }
-          });
-      });
+              },
+            })
+            .then((res) => {
+              if (relOptions?.length > 0) {
+                setRelOptions((prev) => {
+                  const updatedOptions = prev.map((option) => {
+                    if (option.table_slug === item?.table_slug) {
+                      return {
+                        table_slug: item?.table_slug,
+                        response: res?.data?.response,
+                        relationId: item?.relation_id,
+                      };
+                    }
+                    return option;
+                  });
+                  return updatedOptions;
+                });
+              } else {
+                setRelOptions((prev) => [
+                  ...prev,
+                  {
+                    table_slug: item?.table_slug,
+                    response: res?.data?.response,
+                    relationId: item?.relation_id,
+                  },
+                ]);
+              }
+            });
+        }));
+    } catch {}
   };
 
   useEffect(() => {
     getOptionsList();
-  }, [tableData, computedRelationFields]);
+  }, [tableData?.length, computedRelationFields?.length]);
 
   const {
     data: {layout} = {
@@ -596,10 +601,13 @@ const TableView = ({
         view?.attributes?.quick_filters?.length ?? 0
       )
     );
-    setFilterVisible(
-      view?.attributes?.quick_filters?.length > 0 ? true : false
-    );
   }, [view?.attributes?.quick_filters?.length, refetch]);
+
+  useEffect(() => {
+    setFilterVisible(
+      view?.attributes?.quick_filters?.length < 0 ? true : false
+    );
+  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -618,6 +626,7 @@ const TableView = ({
               visibleRelationColumns={visibleRelationColumns}
               visibleForm={visibleForm}
               isVisibleLoading={isVisibleLoading}
+              setFilterVisible={setFilterVisible}
             />
           </Box>
         </div>

@@ -16,7 +16,6 @@ import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
-import {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectDataTable = ({
   selectedTab,

@@ -129,6 +129,7 @@ const MenuRow = ({
       },
     }));
   };
+
   return (
     <>
       {app?.type === "FOLDER" ? (

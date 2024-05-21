@@ -1,5 +1,5 @@
 import {Download} from "@mui/icons-material";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
@@ -15,9 +15,12 @@ const ExcelDownloadButton = ({
   withText,
   sort,
   view,
+  computedVisibleFields,
+  selectedTab,
 }) => {
-  const {t} = useTranslation();
-  const {tableSlug} = useParams();
+  const {t, i18n} = useTranslation();
+
+  const {tableSlug, id: idFromParams} = useParams();
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
   const {filters} = useFilters(tableSlug, view?.id);
@@ -32,6 +35,9 @@ const ExcelDownloadButton = ({
             [fieldSlug]: fieldSlugId,
             ...sort,
             ...filters,
+            field_ids: computedVisibleFields,
+            [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
+            language: i18n?.language,
           },
         }
       );
@@ -43,6 +49,7 @@ const ExcelDownloadButton = ({
       setLoader(false);
     }
   };
+
   return (
     <div className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>

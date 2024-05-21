@@ -14,6 +14,7 @@ import {useTranslation} from "react-i18next";
 import {store} from "../../store";
 import {useQueryClient} from "react-query";
 import FolderIcon from "@mui/icons-material/Folder";
+import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -45,6 +46,7 @@ const AppSidebar = ({
 
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
+    dispatch(relationTabActions.clear());
     setSelectedApp(element);
     if (element.type === "FOLDER") {
       if (element?.id === "9e988322-cffd-484c-9ed6-460d8701551b") {
@@ -114,7 +116,7 @@ const AppSidebar = ({
   const activeMenu =
     Boolean(
       appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
-    ) || menuItem === element?.id;
+    ) || selectedApp?.id === element?.id;
   return (
     <Draggable key={index}>
       {permission ? (

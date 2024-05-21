@@ -1,15 +1,15 @@
-import React, {useEffect, useMemo, useState} from "react";
-import styles from "./style.module.scss";
-import NewSectionsBlock from "./NewSectionsBlock";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {Button, Card, TextField} from "@mui/material";
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import {Add} from "@mui/icons-material";
+import {Button} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {Container, Draggable} from "react-smooth-dnd";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import {applyDrag} from "../../../../../utils/applyDrag";
-import {Container, Draggable} from "react-smooth-dnd";
 import RelationTable from "../../../components/RelationTable";
-import {useTranslation} from "react-i18next";
+import NewSectionsBlock from "./NewSectionsBlock";
+import styles from "./style.module.scss";
 
 function LayoutTabs({
   mainForm,
@@ -22,23 +22,10 @@ function LayoutTabs({
   selectedTab,
   replaceSectionTab,
   sectionTabs,
-  insertSectionTab,
   setSelectedTab,
   removeSectionTab,
-  moveSectionTab,
   appendSectionTab,
 }) {
-  // const {
-  //   fields: tabs,
-  //   insert,
-  //   remove,
-  //   move,
-  // } = useFieldArray({
-  //   control: mainForm.control,
-  //   name: "tabs",
-  //   keyName: "key",
-  // });
-
   const relationsMap = useWatch({
     control: mainForm.control,
     name: "relationsMap",
@@ -101,32 +88,6 @@ function LayoutTabs({
     }
   };
 
-  // const removeViewRelation = (index, relation) => {
-  //   viewRelationsFieldArray.remove(index);
-  // };
-
-  // const addNewSummary = () => {
-  //   insert({
-  //     tab_name: "",
-  //     tab_order: "",
-  //   });
-  // };
-
-  // const deleteSummary = (index) => {
-  //   remove(index);
-  // };
-
-  // const handleTabDrag = ({ removedIndex, addedIndex }) => {
-  //   move(removedIndex, addedIndex);
-  //   if (selectedTab === removedIndex) {
-  //     handleTabSelection(addedIndex);
-  //   }
-  // };
-
-  // const handleTabsDrag = (index) => {
-  //   setSelectedTabIndex(index);
-  // };
-
   const allTabs = useMemo(() => {
     return [...sectionTabs];
   }, [sectionTabs]);
@@ -147,7 +108,10 @@ function LayoutTabs({
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
-        <div style={{display: "flex", alignItems: "center"}}>
+        <div
+          style={{
+            display: "flex",
+          }}>
           <Container
             groupName="table_relation"
             style={{
@@ -183,23 +147,27 @@ function LayoutTabs({
                     <div
                       className={styles.tab}
                       style={{display: "flex", alignItems: "center"}}>
-                      {mainForm.watch(
-                        `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
-                      ) ||
-                        mainForm.watch(
-                          `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
-                        ) ||
-                        mainForm.watch(
-                          `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        ) ||
-                        // mainForm.watch(
-                        //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                        // ) ??
-                        tab?.relation?.attributes?.[
-                          `label_to_${i18n?.language}`
-                        ] ||
-                        tab?.attributes?.[`label_to_${i18n?.language}`] ||
-                        tab?.label}
+                      {tab?.type === "relation"
+                        ? tab?.relation?.attributes?.[
+                            `label_to_${i18n?.language}`
+                          ]
+                        : mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
+                          ) ||
+                          mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                          ) ||
+                          mainForm.watch(
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.label`
+                          ) ||
+                          // mainForm.watch(
+                          //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
+                          // ) ??
+                          tab?.relation?.attributes?.[
+                            `label_to_${i18n?.language}`
+                          ] ||
+                          tab?.attributes?.[`label_to_${i18n?.language}`] ||
+                          tab?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover
                           onEditClick={() => openFieldsBlock("RELATION")}
@@ -227,19 +195,21 @@ function LayoutTabs({
         {allTabs.map((tab, index) => {
           if (tab.id === selectedTab?.id) {
             return tab?.type === "section" ? (
-              <NewSectionsBlock
-                index={index}
-                mainForm={mainForm}
-                layoutForm={layoutForm}
-                openFieldsBlock={openFieldsBlock}
-                openFieldSettingsBlock={openFieldSettingsBlock}
-                openRelationSettingsBlock={openRelationSettingsBlock}
-                selectedLayout={selectedLayout}
-                setSelectedLayout={setSelectedLayout}
-                selectedTab={selectedTab}
-                sectionTabs={sectionTabs}
-                allTabs={allTabs}
-              />
+              <div className={styles.sections_wrapper}>
+                <NewSectionsBlock
+                  index={index}
+                  mainForm={mainForm}
+                  layoutForm={layoutForm}
+                  openFieldsBlock={openFieldsBlock}
+                  openFieldSettingsBlock={openFieldSettingsBlock}
+                  openRelationSettingsBlock={openRelationSettingsBlock}
+                  selectedLayout={selectedLayout}
+                  setSelectedLayout={setSelectedLayout}
+                  selectedTab={selectedTab}
+                  sectionTabs={sectionTabs}
+                  allTabs={allTabs}
+                />
+              </div>
             ) : (
               <RelationTable
                 relation={computedViewRelations[selectedTabIndex]}
@@ -249,22 +219,6 @@ function LayoutTabs({
             return null;
           }
         })}
-
-        {/* {selectedTab?.type === "section" ? (
-          <NewSectionsBlock
-            mainForm={mainForm}
-            layoutForm={layoutForm}
-            openFieldsBlock={openFieldsBlock}
-            openFieldSettingsBlock={openFieldSettingsBlock}
-            openRelationSettingsBlock={openRelationSettingsBlock}
-            selectedLayout={selectedLayout}
-            setSelectedLayout={setSelectedLayout}
-            selectedTab={selectedTab}
-            sectionTabs={sectionTabs}
-          />
-        ) : (
-          <RelationTable relation={computedViewRelations[selectedTabIndex]} />
-        )} */}
       </div>
     </>
   );

@@ -164,6 +164,23 @@ const ViewsWithGroups = ({
     );
   }, [view, fieldsMap]);
 
+  const computedVisibleFields = useMemo(() => {
+    const mappedObjects = [];
+    Object.values(fieldsMap)?.forEach((obj) => {
+      if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
+        if (view?.columns?.includes(obj.relation_id)) {
+          mappedObjects.push(obj);
+        }
+      } else {
+        if (view?.columns?.includes(obj.id)) {
+          mappedObjects.push(obj);
+        }
+      }
+    });
+
+    return mappedObjects.map((obj) => obj.id);
+  }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
+
   const selectAll = () => {
     setCheckedColumns(
       columnsForSearch
@@ -435,7 +452,11 @@ const ViewsWithGroups = ({
                 },
               }}>
               <div className={style.menuBar}>
-                <ExcelButtons fieldsMap={fieldsMap} view={view} />
+                <ExcelButtons
+                  computedVisibleFields={computedVisibleFields}
+                  fieldsMap={fieldsMap}
+                  view={view}
+                />
                 <div
                   className={style.template}
                   onClick={() => setSelectedTabIndex(views?.length)}>

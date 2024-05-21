@@ -198,11 +198,7 @@ const MainInfoForModal = ({
   if (loader) return <PageFallback />;
 
   return (
-    <div
-      className={styles.newcontainerModal}
-      style={{
-        height: "calc(100% - 40px)",
-      }}>
+    <div className={styles.newcontainerModal}>
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {isMultiLanguage && (
@@ -217,75 +213,77 @@ const MainInfoForModal = ({
             </div>
           )}
 
-          {computedSections?.map(
-            (section, index) =>
-              isVisibleSection(section) && (
-                <NewFormCard
-                  modalTitle={true}
-                  key={section.id}
-                  title={
-                    section?.attributes?.[`label_${i18n.language}`] ??
-                    section.label
-                  }
-                  topHeader={
-                    editAcces && (
-                      <>
-                        <Button
-                          variant="outlined"
-                          id="basic-button"
-                          aria-controls={open ? "basic-menu" : undefined}
-                          aria-haspopup="true"
-                          aria-expanded={open ? "true" : undefined}
-                          onClick={handleClick}>
-                          <AddRoundedIcon />
-                        </Button>
+          <div className={styles.newMainInfoSectionsModal}>
+            {computedSections?.map(
+              (section, index) =>
+                isVisibleSection(section) && (
+                  <NewFormCard
+                    modalTitle={true}
+                    key={section.id}
+                    title={
+                      section?.attributes?.[`label_${i18n.language}`] ??
+                      section.label
+                    }
+                    topHeader={
+                      editAcces && (
+                        <>
+                          <Button
+                            variant="outlined"
+                            id="basic-button"
+                            aria-controls={open ? "basic-menu" : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? "true" : undefined}
+                            onClick={handleClick}>
+                            <AddRoundedIcon />
+                          </Button>
 
-                        <Menu
-                          id="basic-menu"
-                          anchorEl={anchorEl}
-                          open={open}
-                          onClose={handleClose}
-                          MenuListProps={{
-                            "aria-labelledby": "basic-button",
-                          }}>
-                          {allFields?.map((field) => (
-                            <MenuItem
-                              onClick={() => {
-                                addFieldsToSection(field?.value, index);
-                                handleClose();
-                              }}>
-                              {field?.label}
-                            </MenuItem>
-                          ))}
-                        </Menu>
-                      </>
-                    )
-                  }
-                  className={styles.formCard}
-                  icon={section.icon}>
-                  <div className={styles.newformColumn}>
-                    <SectionBlockForModal
-                      index={index}
-                      data={data}
-                      setData={setData}
-                      computedSections={computedSections}
-                      editAcces={editAcces}
-                      section={section}
-                      control={control}
-                      setFormValue={setFormValue}
-                      fieldsList={fieldsList}
-                      formTableSlug={tableSlug}
-                      relatedTable={relatedTable}
-                      activeLang={activeLang}
-                      errors={errors}
-                      isMultiLanguage={isMultiLanguage}
-                      toggleFields={toggleFields}
-                      selectedTabIndex={selectedTabIndex}
-                    />
-                  </div>
-                </NewFormCard>
-              )
-          )}
+                          <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                              "aria-labelledby": "basic-button",
+                            }}>
+                            {allFields?.map((field) => (
+                              <MenuItem
+                                onClick={() => {
+                                  addFieldsToSection(field?.value, index);
+                                  handleClose();
+                                }}>
+                                {field?.label}
+                              </MenuItem>
+                            ))}
+                          </Menu>
+                        </>
+                      )
+                    }
+                    className={styles.formCard}
+                    icon={section.icon}>
+                    <div className={styles.newformColumn}>
+                      <SectionBlockForModal
+                        index={index}
+                        data={data}
+                        setData={setData}
+                        computedSections={computedSections}
+                        editAcces={editAcces}
+                        section={section}
+                        control={control}
+                        setFormValue={setFormValue}
+                        fieldsList={fieldsList}
+                        formTableSlug={tableSlug}
+                        relatedTable={relatedTable}
+                        activeLang={activeLang}
+                        errors={errors}
+                        isMultiLanguage={isMultiLanguage}
+                        toggleFields={toggleFields}
+                        selectedTabIndex={selectedTabIndex}
+                      />
+                    </div>
+                  </NewFormCard>
+                )
+            )}
+          </div>
         </div>
       ) : (
         <div className={styles.hideSideCard}>

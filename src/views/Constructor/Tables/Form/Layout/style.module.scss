@@ -138,9 +138,11 @@
   background-color: #fff;
   border-left: 1px solid #e5e9eb;
   position: absolute;
+  height: calc(100vh - 20px);
   top: 0;
   right: 0;
   z-index: 4;
+  overflow: hidden;
 
   .settingsBlockHeader {
     display: flex;
@@ -164,7 +166,8 @@
 }
 
 .fieldsBlock {
-  height: calc(100vh);
+  // height: calc(100vh);
+  height: 680px;
   overflow: auto;
   padding: 8px;
 
@@ -452,10 +455,13 @@
   font-weight: 500;
   margin: 0;
 
-
-
   &.active {
     background-color: rgba(14, 115, 246, 0.1490196078);
     color: #1890ff !important;
   }
+}
+
+.sections_wrapper {
+  height: 500px;
+  overflow: auto;
 }

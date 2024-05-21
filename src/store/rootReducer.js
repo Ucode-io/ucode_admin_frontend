@@ -17,6 +17,7 @@ import {mainReducer} from "./main/main.slice";
 import {selectedRowReducer} from "./selectedRow/selectedRow.slice";
 import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
 import {paginationReducer} from "./pagination/pagination.slice";
+import {relationTabReducer} from "./relationTab/relationTab.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -92,6 +93,11 @@ const quickFiltersCount = {
   storage,
 };
 
+const relationTab = {
+  key: "relationTab",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -118,6 +124,7 @@ const rootReducer = combineReducers({
   // filter: filterReducer,
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),
   tabRouter: persistReducer(tabRouterPersistConfig, tabRouterReducer),
+  relationTab: persistReducer(relationTab, relationTabReducer),
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),
   selectedRow: persistReducer(selectedRowPersistConfig, selectedRowReducer),
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),

@@ -17,7 +17,7 @@ import {current} from "@reduxjs/toolkit";
 export default function VisibleColumnsButtonRelationSection({
   currentView,
   fieldsMap,
-  getAllData,
+  getAllData = () => {},
   selectedTabIndex,
   // refetch = () => { },
   data,
@@ -43,69 +43,82 @@ export default function VisibleColumnsButtonRelationSection({
     setAnchorEl(null);
   };
 
-  const updateView = (datas) => {
+  const updateView = async (datas) => {
     setIsLoading(true);
 
     const result = data?.tabs;
 
-    const computeTabs = result?.map((item, index) => ({
-      ...item,
-      attributes: {
-        ...item?.attributes,
-        columns:
-          index === selectedTabIndex ? datas : {...item?.attributes?.columns},
-      },
-    }));
+    if (!result) {
+      setIsLoading(false);
+      return;
+    }
 
-    layoutService
-      .update(
+    const computeTabs = result.map((item, index) => {
+      if (index === selectedTabIndex) {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: [...datas],
+          },
+        };
+      } else {
+        return {
+          ...item,
+          attributes: {
+            ...item.attributes,
+            columns: Array.isArray(item?.attributes?.columns)
+              ? [...item?.attributes?.columns]
+              : [],
+          },
+        };
+      }
+    });
+
+    try {
+      await layoutService.update(
         {
           ...data,
           tabs: computeTabs,
         },
         tableSlug
-      )
-      .then(() => {
-        getAllData();
-      })
-      .finally(() => {
-        setIsLoading(false);
-        // refetch();
-      });
+      );
+
+      await getAllData();
+    } catch (error) {
+      console.error("Error updating layout:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const computedColumns = useMemo(() => {
+    if (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)) {
+      return (
+        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+        data?.tabs?.[selectedTabIndex]?.relation?.columns
+      );
+    } else {
+      return [];
+    }
+  }, [data?.tabs, selectedTabIndex]);
 
   const visibleFields = useMemo(() => {
     return (
-      (
-        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-        data?.tabs?.[selectedTabIndex]?.relation?.columns
-      )
-        ?.map((id) => fieldsMap[id])
-        ?.filter((el) => el?.type) ?? []
+      computedColumns?.map((id) => fieldsMap[id])?.filter((el) => el?.type) ??
+      []
     );
-  }, [
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
-    data?.tabs?.[selectedTabIndex]?.relation?.columns,
-    fieldsMap,
-  ]);
+  }, [computedColumns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
     return allFields.filter((field) => {
       if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-          field.relation_id
-        );
+        return !computedColumns?.includes(field.relation_id);
       } else {
-        return !data?.tabs?.[selectedTabIndex]?.attributes?.columns?.includes(
-          field.id
-        );
+        return !computedColumns?.includes(field.id);
       }
     });
-  }, [
-    allFields,
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns,
-    data?.tabs?.[selectedTabIndex]?.relation?.columns,
-  ]);
+  }, [allFields, computedColumns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -321,10 +334,9 @@ export default function VisibleColumnsButtonRelationSection({
                       column?.type === "LOOKUPS" ? (
                         <Switch
                           size="small"
-                          checked={(
-                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
-                            data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )?.includes(column?.relation_id)}
+                          checked={computedColumns?.includes(
+                            column?.relation_id
+                          )}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
@@ -352,10 +364,7 @@ export default function VisibleColumnsButtonRelationSection({
                       ) : (
                         <Switch
                           size="small"
-                          checked={(
-                            data?.tabs[selectedTabIndex]?.attributes?.columns ??
-                            data?.tabs?.[selectedTabIndex]?.relation?.columns
-                          )?.includes(column?.id)}
+                          checked={computedColumns?.includes(column?.id)}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
@@ -437,10 +446,7 @@ export default function VisibleColumnsButtonRelationSection({
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                       <Switch
                         size="small"
-                        checked={(
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                          data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.includes(column?.relation_id)}
+                        checked={computedColumns?.includes(column?.relation_id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked
@@ -468,10 +474,7 @@ export default function VisibleColumnsButtonRelationSection({
                     ) : (
                       <Switch
                         size="small"
-                        checked={(
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                          data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.includes(column?.id)}
+                        checked={computedColumns?.includes(column?.id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked

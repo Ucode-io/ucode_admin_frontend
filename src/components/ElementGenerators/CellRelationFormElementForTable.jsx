@@ -7,7 +7,8 @@ import {get} from "@ngard/tiny-get";
 import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
+import {useSearchParams} from "react-router-dom";
 import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -19,7 +20,6 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import {useSearchParams} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -47,7 +47,6 @@ const CellRelationFormElementForTableView = ({
   defaultValue = null,
   relationfields,
   data,
-  isNewRow,
   isTableView,
 }) => {
   const classes = useStyles();
@@ -96,7 +95,6 @@ const CellRelationFormElementForTableView = ({
           ) : (
             <AutoCompleteElement
               relOptions={relOptions}
-              isNewRow={isNewRow}
               tableView={tableView}
               disabled={disabled}
               isFormEdit={isFormEdit}
@@ -107,7 +105,7 @@ const CellRelationFormElementForTableView = ({
               name={name}
               setValue={(e) => {
                 onChange(e);
-                !isNewRow && updateObject();
+                isTableView && updateObject();
               }}
               field={field}
               isTableView={isTableView}
@@ -140,7 +138,6 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
-  isNewRow,
   isTableView,
   setFormValue = () => {},
 }) => {
@@ -207,7 +204,7 @@ const AutoCompleteElement = ({
       if (key) result[key] = value;
     });
     return result;
-  }, [autoFilters, filtersHandler]);
+  }, [autoFilters, filtersHandler, value]);
 
   const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
@@ -272,8 +269,7 @@ const AutoCompleteElement = ({
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        Boolean(!relOptions?.length && isNewRow),
+        (!field?.attributes?.function_path && Boolean(debouncedValue)),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -282,7 +278,9 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (data?.options?.length) {
+        if (Object.keys(autoFiltersValue)?.length) {
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),
@@ -291,7 +289,6 @@ const AutoCompleteElement = ({
 
         if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
           setLocalValue(null);
-          setValue("");
         }
       },
     }
@@ -350,6 +347,14 @@ const AutoCompleteElement = ({
     setLocalValue(data ? [data] : null);
   };
 
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
   useEffect(() => {
     let val;
 
@@ -376,17 +381,9 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
   useEffect(() => {
     const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
+      (item) => item?.relationId === field?.relation_id
     );
 
     if (matchingOption) {
@@ -433,7 +430,7 @@ const AutoCompleteElement = ({
       return true;
     } else return false;
   }, [autoFiltersValue]);
-  console.log("localValue", computedOptions, field);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -520,9 +517,6 @@ const AutoCompleteElement = ({
         )}
         menuShouldScrollIntoView
         styles={customStyles}
-        onPaste={(e) => {
-          console.log("eeeeeee -", e.clipboardData.getData("Text"));
-        }}
         getOptionLabel={(option) =>
           `${getRelationFieldTabsLabel(field, option)}`
         }

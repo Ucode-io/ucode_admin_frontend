@@ -21,9 +21,12 @@ const CTimePicker = ({
     if (!value) return "";
 
     const result = new Date();
-
-    result.setHours(value.split(":")?.[0]);
-    result.setMinutes(value.split(":")?.[1]);
+    if (typeof value === "string") {
+      result.setHours(value?.split(":")?.[0]);
+      result.setMinutes(value?.split(":")?.[1]);
+    } else {
+      return "";
+    }
 
     return result;
   };

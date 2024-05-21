@@ -14,10 +14,12 @@ import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
 import HFModalMap from "../FormElements/HFModalMap";
+import HFMultiImage from "../FormElements/HFMultiImage";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
 import HFPassword from "../FormElements/HFPassword";
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
+import HFQrFieldComponent from "../FormElements/HFQrField";
 import HFSwitch from "../FormElements/HFSwitch";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
@@ -29,12 +31,10 @@ import CellElementGenerator from "./CellElementGenerator";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
+import CodeCellFormElement from "./JsonCellElement";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import HFIncrementId from "../FormElements/HFIncrementId";
-import HFQrField from "../FormElements/HFQrField/HFQrField";
-import HFQrForTableView from "../FormElements/HFQrField/HFQrForTableView";
-import HFQrFieldComponent from "../FormElements/HFQrField";
 import PolygonFieldTable from "./PolygonFieldTable";
+import ProgrammingLan from "./ProgrammingLan";
 
 const parser = new Parser();
 
@@ -62,7 +62,6 @@ const CellElementGeneratorForTableView = ({
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
   let relationTableSlug = "";
-  // let objectIdFromJWT = "";
 
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
@@ -107,6 +106,9 @@ const CellElementGeneratorForTableView = ({
       } else {
         return defaultValue;
       }
+    }
+    if (field?.type === "SWITCH") {
+      return false;
     }
     if (field.relation_type !== "Many2One" || field?.type !== "LOOKUP") {
       if (Array.isArray(defaultValue)) {
@@ -167,7 +169,6 @@ const CellElementGeneratorForTableView = ({
       ) : (
         <CellRelationFormElementForTableView
           relOptions={relOptions}
-          isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
           isTableView={true}
@@ -310,6 +311,26 @@ const CellElementGeneratorForTableView = ({
           disabled={isDisabled}
           isFormEdit
           field={field}
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          isTransparent={true}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+        />
+      );
+
+    case "MULTI_IMAGE":
+      return (
+        <HFMultiImage
+          disabled={isDisabled}
+          isFormEdit
+          field={field}
+          isTableView={true}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}
@@ -646,6 +667,36 @@ const CellElementGeneratorForTableView = ({
       return (
         <PolygonFieldTable
           field={field}
+          control={control}
+          updateObject={updateObject}
+          computedSlug={computedSlug}
+          isDisabled={isDisabled}
+          isNewTableView={true}
+          row={row}
+          newColumn={newColumn}
+        />
+      );
+
+    case "JSON":
+      return (
+        <CodeCellFormElement
+          field={field}
+          isWrapField={isWrapField}
+          control={control}
+          updateObject={updateObject}
+          computedSlug={computedSlug}
+          isDisabled={isDisabled}
+          isNewTableView={true}
+          row={row}
+          newColumn={newColumn}
+        />
+      );
+
+    case "PROGRAMMING_LANGUAGE":
+      return (
+        <ProgrammingLan
+          field={field}
+          isWrapField={isWrapField}
           control={control}
           updateObject={updateObject}
           computedSlug={computedSlug}

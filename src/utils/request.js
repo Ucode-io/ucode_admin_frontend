@@ -1,8 +1,8 @@
 import axios from "axios";
-import { store } from "../store/index";
-import { showAlert } from "../store/alert/alert.thunk";
+import {store} from "../store/index";
+import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import { authActions } from "../store/auth/auth.slice";
+import {authActions} from "../store/auth/auth.slice";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v1`;
 
 const request = axios.create({
@@ -24,7 +24,11 @@ const errorHandler = (error, hooks) => {
   //   access_token: token,
   // };
 
-  if (error?.response?.status === 401 && error?.response?.data?.data === "rpc error: code = Unavailable desc = User not access environment") {
+  if (
+    error?.response?.status === 401 &&
+    error?.response?.data?.data ===
+      "rpc error: code = Unavailable desc = User not access environment"
+  ) {
     store.dispatch(authActions.logout());
   } else if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
@@ -44,12 +48,16 @@ const errorHandler = (error, hooks) => {
       })
       .catch((err) => {
         console.log(err);
+        store.dispatch(authActions.logout());
         return Promise.reject(error);
       });
   } else {
     if (error?.response) {
       if (error.response?.data?.data) {
-        if (error.response.data.data !== "rpc error: code = Internal desc = member group is required to add new member") {
+        if (
+          error.response.data.data !==
+          "rpc error: code = Internal desc = member group is required to add new member"
+        ) {
           store.dispatch(showAlert(error.response.data.data));
         }
       }

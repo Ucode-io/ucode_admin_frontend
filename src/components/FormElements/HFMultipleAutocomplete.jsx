@@ -198,6 +198,7 @@ const AutoCompleteElement = ({
             <ArrowDropDownIcon />
           )
         }
+        disableCloseOnSelect
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}

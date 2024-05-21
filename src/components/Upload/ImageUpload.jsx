@@ -1,26 +1,29 @@
-import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import {useMemo, useState} from "react";
-import {useRef} from "react";
-import ImageViewer from "react-simple-image-viewer";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  InputAdornment,
-  Popover,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
-import "./Gallery/style.scss";
-import fileService from "../../services/fileService";
-import {useNavigate} from "react-router-dom";
-import {Lock} from "@mui/icons-material";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {Box, Button, Modal, Popover, Typography} from "@mui/material";
+import {useRef, useState} from "react";
+import fileService from "../../services/fileService";
+import "./Gallery/style.scss";
+import ClearIcon from "@mui/icons-material/Clear";
+import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import "./style.scss";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  minWidth: "700px",
+  minHeight: "400px",
+  border: "0px solid #000",
+  p: 4,
+};
 
 const ImageUpload = ({
   value,
@@ -34,6 +37,16 @@ const ImageUpload = ({
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [degree, setDegree] = useState(0);
+  const [imgScale, setImgScale] = useState(1);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const [openFullImg, setOpenFullImg] = useState(false);
+  const handleOpenImg = () => setOpenFullImg(true);
+  const handleCloseImg = () => setOpenFullImg(false);
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   const imageClickHandler = (index) => {
     setPreviewVisible(true);
@@ -58,16 +71,21 @@ const ImageUpload = ({
       .finally(() => setLoading(false));
   };
 
+  const rotateImg = () => {
+    if (degree === 360) {
+      setDegree(90);
+    } else {
+      setDegree(degree + 90);
+    }
+  };
+
   const deleteImage = (id) => {
     onChange(null);
   };
 
   const closeButtonHandler = (e) => {
-    e.stopPropagation();
     deleteImage();
   };
-
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -77,35 +95,30 @@ const ImageUpload = ({
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const imageZoom = (type) => {
+    if (type === "down") {
+      if (imgScale === 1) {
+        setImgScale(1);
+      } else {
+        setImgScale(imgScale - 0.5);
+      }
+    } else if (type === "up") {
+      if (imgScale === 4) {
+        setImgScale(imgScale);
+      } else {
+        setImgScale(imgScale + 0.5);
+      }
+    }
+  };
 
   return (
     <div className={`Gallery ${className}`}>
       {value && (
-        // <div className={`block ${isNewTableView && 'tableViewBlock'}`} onClick={() => imageClickHandler()}>
-        //   {!disabled ? (
-        //     <button
-        //       className="close-btn"
-        //       type="button"
-        //       onClick={(e) => closeButtonHandler(e)}
-        //     >
-        //       <CancelIcon />
-        //     </button>
-        //   ) : (
-        //     <div className="lock_icon">
-        //       <Lock style={{ fontSize: "20px" }} />
-        //     </div>
-        //   )}
-        //   <img src={value} className="img" alt="" />
-        // </div>
-
         <>
           <div
             className="uploadedImage"
             aria-describedby={id}
-            onClick={handleClick}
-          >
+            onClick={handleClick}>
             <div className="img">
               <img
                 src={value}
@@ -122,8 +135,7 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
+              }}>
               {value?.split?.("_")?.[1] ?? ""}
             </Typography>
           </div>
@@ -136,16 +148,14 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <Button
                 sx={{
                   display: "flex",
@@ -153,8 +163,7 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                onClick={() => imageClickHandler()}
-              >
+                onClick={() => handleOpenImg()}>
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -165,12 +174,20 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}
-              >
-                <DeleteIcon />
-                Remove Image
+                onClick={() => imageClickHandler()}>
+                <DownloadIcon />
+                Dowload
               </Button>
+              <RectangleIconButton
+                color="error"
+                className="removeImg"
+                onClick={closeButtonHandler}>
+                <DeleteIcon
+                  style={{width: "17px", height: "17px", marginRight: "12px"}}
+                />
+                Remove Image
+              </RectangleIconButton>
+
               <Button
                 sx={{
                   display: "flex",
@@ -182,8 +199,7 @@ const ImageUpload = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -202,46 +218,83 @@ const ImageUpload = ({
               disabled={disabled}
             />
           </Popover>
+
+          <Modal open={openFullImg} onClose={handleCloseImg}>
+            <Box sx={style}>
+              <Box
+                sx={{
+                  border: "0px solid #fff",
+                  transform: `rotate(${degree}deg)`,
+                }}
+                aria-describedby={id}
+                onClick={handleClick}>
+                <img
+                  src={value}
+                  style={{transform: `scale(${imgScale})`}}
+                  className="uploadedImage"
+                  alt=""
+                />
+                <Typography
+                  sx={{
+                    fontSize: "10px",
+                    color: "#747474",
+                  }}>
+                  {value?.split?.("_")?.[1] ?? ""}
+                </Typography>
+              </Box>
+              <Button
+                onClick={handleCloseImg}
+                sx={{
+                  position: "absolute",
+                  right: "-300px",
+                  top: "-50px",
+                  color: "white",
+                }}>
+                <ClearIcon style={{width: "30px", height: "30px"}} />
+              </Button>
+
+              <Button
+                onClick={() => {
+                  imageZoom("up");
+                }}
+                sx={{
+                  position: "absolute",
+                  right: "-150px",
+                  bottom: "-50px",
+                  color: "#eee",
+                }}>
+                <ZoomInIcon style={{width: "30px", height: "30px"}} />
+              </Button>
+              <Button
+                onClick={() => {
+                  imageZoom("down");
+                }}
+                sx={{
+                  position: "absolute",
+                  right: "-220px",
+                  bottom: "-50px",
+                  color: "#eee",
+                }}>
+                <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+              </Button>
+              <Button
+                onClick={rotateImg}
+                sx={{
+                  position: "absolute",
+                  right: "-300px",
+                  bottom: "-50px",
+                  color: "#eee",
+                }}>
+                <Rotate90DegreesCcwIcon
+                  style={{width: "30px", height: "30px"}}
+                />
+              </Button>
+            </Box>
+          </Modal>
         </>
       )}
 
       {!value && (
-        // <div
-        //   className="add-block block"
-        //   onClick={() => inputRef.current.click()}
-        //   style={
-        //     disabled
-        //       ? {
-        //           background: "#c0c0c039",
-        //         }
-        //       : {
-        //           background: "inherit",
-        //           color: "inherit",
-        //         }
-        //   }
-        // >
-        //   <div className="add-icon">
-        //     {!loading ? (
-        //       <>
-        //         {disabled ? (
-        //           <Tooltip title="This field is disabled for this role!">
-        //             <InputAdornment position="start">
-        //               <Lock style={{ fontSize: "20px" }} />
-        //             </InputAdornment>
-        //           </Tooltip>
-        //         ) : (
-        //           <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-        //         )}
-        //         {/* <p>Max size: 4 MB</p> */}
-        //       </>
-        //     ) : (
-        //       <CircularProgress />
-        //     )}
-        //   </div>
-
-        //   <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
-        // </div>
-
         <Button
           onClick={() => inputRef.current.click()}
           sx={{
@@ -249,8 +302,7 @@ const ImageUpload = ({
             minWidth: 0,
             width: "25px",
             height: "25px",
-          }}
-        >
+          }}>
           <input
             type="file"
             className="hidden"
@@ -269,16 +321,6 @@ const ImageUpload = ({
           />
         </Button>
       )}
-
-      {/* {previewVisible && (
-        <ImageViewer
-          src={[value]}
-          currentIndex={0}
-          disableScroll={true}
-          closeOnClickOutside={true}
-          onClose={() => setPreviewVisible(false)}
-        />
-      )} */}
     </div>
   );
 };

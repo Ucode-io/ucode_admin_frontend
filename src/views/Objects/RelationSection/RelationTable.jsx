@@ -319,8 +319,11 @@ const RelationTable = forwardRef(
           }
 
           const columns = customSortArray(
-            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-              getRelatedTabeSlug?.columns,
+            (Array.isArray(
+              layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+            )
+              ? layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+              : []) ?? getRelatedTabeSlug?.columns,
             array.map((el) => el.id)
           )
             ?.map((el) => fieldsMap[el])
@@ -385,6 +388,7 @@ const RelationTable = forwardRef(
                       return {
                         table_slug: item?.table_slug,
                         response: res?.data?.response,
+                        relationId: item?.relation_id,
                       };
                     }
                     return option;
@@ -397,6 +401,7 @@ const RelationTable = forwardRef(
                   {
                     table_slug: item?.table_slug,
                     response: res?.data?.response,
+                    relationId: item?.relation_id,
                   },
                 ]);
               }

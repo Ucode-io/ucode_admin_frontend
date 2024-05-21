@@ -1,8 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import styles from "./month.module.scss";
-import { format } from "date-fns";
-import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
+import {format} from "date-fns";
+import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
+import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
 
 const flex = {
@@ -12,7 +12,7 @@ const flex = {
   justifyContent: "center",
 };
 
-const InfoBlockMonth = ({ viewFields, data, isSingleLine }) => {
+const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
   //   if (isSingleLine)
   //     return (
   //       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
@@ -40,7 +40,7 @@ const InfoBlockMonth = ({ viewFields, data, isSingleLine }) => {
         {viewFields[0]?.type === "LOOKUP" ? (
           <Box style={flex}>
             <Typography variant="h6" fontSize={"18px"}>
-              {viewFields[0]?.label}:
+              {viewFields[0]?.label}
             </Typography>{" "}
             {getRelationFieldTableCellLabel(
               viewFields[0],
@@ -57,7 +57,7 @@ const InfoBlockMonth = ({ viewFields, data, isSingleLine }) => {
           </Box>
         ) : viewFields[0]?.type === "MULTISELECT" ? (
           <MultiselectCellColoredElement
-            style={{ padding: "2px 5px", marginBottom: 4 }}
+            style={{padding: "2px 5px", marginBottom: 4}}
             value={data[viewFields[0]?.slug]}
             field={viewFields[0]}
           />

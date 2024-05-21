@@ -7,7 +7,9 @@ import {get} from "@ngard/tiny-get";
 import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useSearchParams} from "react-router-dom";
 import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -19,8 +21,6 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import {useSearchParams} from "react-router-dom";
-import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CellRelationFormElementForNewColumn = ({
-  relOptions,
   tableView,
   isBlackBg,
   isFormEdit,
@@ -96,7 +95,6 @@ const CellRelationFormElementForNewColumn = ({
             />
           ) : (
             <AutoCompleteElement
-              relOptions={relOptions}
               isNewRow={isNewRow}
               tableView={tableView}
               disabled={disabled}
@@ -131,7 +129,6 @@ const CellRelationFormElementForNewColumn = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
-  relOptions,
   tableView,
   field,
   value,
@@ -159,7 +156,6 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
-  const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -198,7 +194,7 @@ const AutoCompleteElement = ({
   };
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
+    return autoFilters?.map((el) => `${el.field_from}`) ?? [];
   }, [autoFilters, index]);
 
   const filtersHandler = useWatch({
@@ -213,7 +209,7 @@ const AutoCompleteElement = ({
       if (key) result[key] = value;
     });
     return result;
-  }, [autoFilters, filtersHandler]);
+  }, [autoFilters, filtersHandler, value]);
 
   const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
@@ -248,11 +244,28 @@ const AutoCompleteElement = ({
           options,
         };
       },
+      onSuccess: (data) => {
+        if (Object.values(autoFiltersValue)?.length > 0) {
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
+          setAllOptions((prevOptions) => [
+            ...(prevOptions ?? []),
+            ...(data.options ?? []),
+          ]);
+        }
+      },
     }
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    [
+      "GET_OBJECT_LIST",
+      debouncedValue,
+      autoFiltersValue,
+      field?.table_slug,
+      value,
+      page,
+    ],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -264,6 +277,7 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: [value],
             },
+
             view_fields: field?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
             limit: 10,
@@ -276,10 +290,6 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled:
-        (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        !relOptions?.length,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -288,7 +298,9 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (data?.options?.length) {
+        if (Object.values(autoFiltersValue)?.length > 0) {
+          setAllOptions(data?.options);
+        } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),
@@ -313,7 +325,7 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [allOptions, value, relOptions]);
+  }, [allOptions, value]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -358,6 +370,24 @@ const AutoCompleteElement = ({
     setLocalValue(data ? [data] : null);
   };
 
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  useEffect(() => {
+    const matchingOption = allOptions?.find(
+      (item) => item?.table_slug === field?.table_slug
+    );
+
+    if (matchingOption) {
+      setAllOptions(matchingOption.response);
+    }
+  }, [allOptions, field]);
+
   useEffect(() => {
     let val;
 
@@ -383,24 +413,6 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
-  useEffect(() => {
-    const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
-    );
-
-    if (matchingOption) {
-      setAllOptions(matchingOption.response);
-    }
-  }, [relOptions, field]);
 
   useEffect(() => {
     if (value) getValueData();

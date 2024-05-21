@@ -24,6 +24,7 @@ import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -94,11 +95,16 @@ const RecursiveBlock = ({
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
     NavigateByType({element, appId, navigate});
+
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
     }
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
+    }
+
+    if (element?.type === "TABLE") {
+      setSubMenuIsOpen(false);
     }
     if (
       !pinIsEnabled &&

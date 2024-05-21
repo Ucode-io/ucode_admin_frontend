@@ -1,14 +1,14 @@
-import { Box, Divider, Menu } from "@mui/material";
-import { RiPencilFill } from "react-icons/ri";
+import {Box, Divider, Menu} from "@mui/material";
+import {RiPencilFill} from "react-icons/ri";
 import "./style.scss";
-import { BsFillTrashFill } from "react-icons/bs";
+import {BsFillTrashFill} from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import MenuItemComponent from "./MenuItem";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
-import { analyticItems } from "./SidebarRecursiveBlock/mock/folders";
+import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -48,8 +48,7 @@ const ButtonsMenu = ({
         },
       }}
       key={element?.id}
-      transitionDuration={"auto"}
-    >
+      transitionDuration={"auto"}>
       {menuType === "FOLDER" && (
         <Box className="menu">
           {element?.data?.permission?.update || permissionButton ? (
@@ -407,7 +406,7 @@ const ButtonsMenu = ({
             title="Add table"
             onClick={(e) => {
               e.stopPropagation();
-              setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
+              setTableModal({id: "c57eedc3-a954-4262-a0af-376c65b5a284"});
               handleCloseNotify();
             }}
           />

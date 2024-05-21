@@ -1,25 +1,25 @@
-import { AccountTree, CalendarMonth, TableChart } from "@mui/icons-material";
+import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import { Button, Modal, Popover } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Button, Modal, Popover} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 import constructorViewService from "../../../../services/constructorViewService";
-import { store } from "../../../../store";
-import { applyDrag } from "../../../../utils/applyDrag";
-import { viewTypes } from "../../../../utils/constants/viewTypes";
+import {store} from "../../../../store";
+import {applyDrag} from "../../../../utils/applyDrag";
+import {viewTypes} from "../../../../utils/constants/viewTypes";
 import ViewSettings from "../ViewSettings";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
-import ClearAllIcon from '@mui/icons-material/ClearAll';
+import ClearAllIcon from "@mui/icons-material/ClearAll";
 import menuService from "../../../../services/menuService";
 
 const ViewTabSelector = ({
@@ -34,22 +34,21 @@ const ViewTabSelector = ({
   setSelectedView,
   views = [],
   setTab,
-  menuItem
+  menuItem,
 }) => {
-  const { t } = useTranslation();
-  const { tableSlug } = useParams();
+  const {t} = useTranslation();
+  const {tableSlug, appId} = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
   const [typeNewView, setTypeNewView] = useState(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
-
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -96,16 +95,21 @@ const ViewTabSelector = ({
 
   return (
     <>
-      <div className={style.selector} style={{ minWidth: "fit-content" }}>
+      <div className={style.selector} style={{minWidth: "fit-content"}}>
         <div className={style.leftSide}>
           <div className={style.button}>
-            <Button style={{ height: "100%" }} onClick={() => navigate(-1)}>
-              <ArrowBackIcon style={{ color: "#000" }} />
+            <Button
+              style={{height: "100%"}}
+              onClick={() => navigate(`/main/${menuItem?.parent_id}`)}>
+              <ArrowBackIcon style={{color: "#000"}} />
             </Button>
           </div>
 
           <div className={style.title}>
-            <IconGenerator className={style.icon} icon={menuItem?.isChild ? menuItem?.icon : menuItem?.icon} />
+            <IconGenerator
+              className={style.icon}
+              icon={menuItem?.isChild ? menuItem?.icon : menuItem?.icon}
+            />
             <h3>{menuItem?.label ?? menuItem?.title}</h3>
           </div>
         </div>
@@ -113,28 +117,63 @@ const ViewTabSelector = ({
           <Container
             lockAxis="x"
             onDrop={onDrop}
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            style={{ display: "flex", alignItems: "center" }}
+            dropPlaceholder={{className: "drag-row-drop-preview"}}
+            style={{display: "flex", alignItems: "center"}}
             getChildPayload={(i) => views[i]}
-            orientation="horizontal"
-          >
+            orientation="horizontal">
             {views.map((view, index) => (
               <Draggable key={view.id}>
-                <div onClick={() => setSelectedTabIndex(index)} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
-                  {view.type === "TABLE" && <TableChart className={style.icon} />}
-                  {view.type === "CALENDAR" && <CalendarMonth className={style.icon} />}
-                  {view.type === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-                  {view.type === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-                  {view.type === "TREE" && <AccountTree className={style.icon} />}
-                  {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
-                  {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-                  {view.type === "TIMELINE" && <ClearAllIcon className={style.icon} />}
-                  <span>{(view?.attributes?.[`name_${i18n.language}`] ? view?.attributes?.[`name_${i18n.language}`] : view.type) ?? view?.name}</span>
+                <div
+                  onClick={() => setSelectedTabIndex(index)}
+                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
+                  {view.type === "TABLE" && (
+                    <TableChart className={style.icon} />
+                  )}
+                  {view.type === "CALENDAR" && (
+                    <CalendarMonth className={style.icon} />
+                  )}
+                  {view.type === "CALENDAR HOUR" && (
+                    <IconGenerator
+                      className={style.icon}
+                      icon="chart-gantt.svg"
+                    />
+                  )}
+                  {view.type === "GANTT" && (
+                    <IconGenerator
+                      className={style.icon}
+                      icon="chart-gantt.svg"
+                    />
+                  )}
+                  {view.type === "TREE" && (
+                    <AccountTree className={style.icon} />
+                  )}
+                  {view.type === "BOARD" && (
+                    <IconGenerator
+                      className={style.icon}
+                      icon="brand_trello.svg"
+                    />
+                  )}
+                  {view.type === "FINANCE CALENDAR" && (
+                    <MonetizationOnIcon className={style.icon} />
+                  )}
+                  {view.type === "TIMELINE" && (
+                    <ClearAllIcon className={style.icon} />
+                  )}
+                  <span>
+                    {(view?.attributes?.[`name_${i18n.language}`]
+                      ? view?.attributes?.[`name_${i18n.language}`]
+                      : view.type) ?? view?.name}
+                  </span>
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>
                       {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
-                      {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
+                      {selectedTabIndex === index && (
+                        <MoreButtonViewType
+                          onEditClick={() => openModal(view)}
+                          onDeleteClick={() => deleteView(view.id)}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -147,9 +186,13 @@ const ViewTabSelector = ({
         </div> */}
 
         <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-          <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
-            <AddIcon className={style.icon} style={{ color: "#000" }} />
-            <strong style={{ color: "#000" }}>{t("add")}</strong>
+          <div
+            className={style.element}
+            aria-describedby={id}
+            variant="contained"
+            onClick={handleClick}>
+            <AddIcon className={style.icon} style={{color: "#000"}} />
+            <strong style={{color: "#000"}}>{t("add")}</strong>
           </div>
         </PermissionWrapperV2>
 
@@ -161,13 +204,22 @@ const ViewTabSelector = ({
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
-          }}
-        >
-          <ViewTypeList views={views} computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
+          }}>
+          <ViewTypeList
+            views={views}
+            computedViewTypes={computedViewTypes}
+            handleClose={handleClose}
+            openModal={openModal}
+            setSelectedView={setSelectedView}
+            setTypeNewView={setTypeNewView}
+          />
         </Popover>
       </div>
 
-      <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
+      <Modal
+        className={style.modal}
+        open={settingsModalVisible}
+        onClose={closeModal}>
         <ViewSettings
           closeModal={closeModal}
           defaultViewTab={defaultViewTab}

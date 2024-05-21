@@ -1,13 +1,20 @@
-import {add, differenceInDays, endOfWeek, format, startOfWeek} from "date-fns";
+import {
+  add,
+  differenceInDays,
+  endOfWeek,
+  format,
+  getDate,
+  startOfWeek,
+} from "date-fns";
 import {useEffect, useMemo, useState} from "react";
-import {useQueries, useQuery} from "react-query";
+import {useQueries, useQuery, useQueryClient} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
-import {listToMap} from "../../../utils/listToMap";
+import {listToMap, listToMapForCalendar} from "../../../utils/listToMap";
 import {selectElementFromEndOfString} from "../../../utils/selectElementFromEnd";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import style from "./style.module.scss";
@@ -31,6 +38,7 @@ import {FromDateType, ToDateType} from "../../../utils/getDateType";
 import CalendarSceduleVisible from "./CalendarSceduleVisible";
 import CalendarGroupByButton from "./CalendarGroupColumns";
 import ShareModal from "../ShareModal/ShareModal";
+import constructorViewService from "../../../services/constructorViewService";
 
 const formatDate = [
   {
@@ -55,6 +63,7 @@ const CalendarView = ({
   selectedTable,
   menuItem,
 }) => {
+  const queryClient = useQueryClient();
   const visibleForm = useForm();
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -67,14 +76,16 @@ const CalendarView = ({
     endOfWeek(new Date(), {weekStartsOn: 1}),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
-  const [date, setDate] = useState(formatDate[0].value);
+  const [date, setDate] = useState(
+    views?.[selectedTabIndex]?.attributes?.period
+  );
+
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());
   const [weekDates, setWeekDates] = useState(new Date());
   const [currentMonthDates, setCurrentMonthDates] = useState([]);
   const [firstDate, setFirstDate] = useState();
   const [lastDate, setLastDate] = useState();
-
   const currentUpdatedDate = dateFormat(currentDay, 0);
   const tomorrow = dateFormat(currentDay, 1);
   const lastUpdatedDate = dateFormat(lastDate, 1);
@@ -94,7 +105,7 @@ const CalendarView = ({
   const startOfMonth = (date) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     if (start.getDay() !== 0) {
-      start.setDate(1 - start.getDay() + 7);
+      start.setDate(1 - start.getDay());
     }
     return start;
   };
@@ -116,6 +127,7 @@ const CalendarView = ({
       day.setDate(startOfMonth(currentDay).getDate() + i);
       newMonthDates.push(day);
     }
+
     setCurrentMonthDates(newMonthDates);
   }, [currentDay]);
 
@@ -140,15 +152,16 @@ const CalendarView = ({
   const {data: {data} = {data: []}, isLoading} = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate},
+      {tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date},
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
           with_relations: true,
           [view.calendar_from_slug]: {
-            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
+            $gte:
+              FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
           ...dataFilters,
         },
@@ -163,7 +176,7 @@ const CalendarView = ({
             ...el,
             label: `${el.label} (${el.table_label})`,
           })) ?? [];
-        const fieldsMap = listToMap([...fields, ...relationFields]);
+        const fieldsMap = listToMapForCalendar([...fields, ...relationFields]);
         const data = res.data?.response?.map((row) => ({
           ...row,
           calendar: {
@@ -189,6 +202,7 @@ const CalendarView = ({
       },
     }
   );
+
   const {data: workingDays} = useQuery(
     [
       "GET_OBJECTS_LIST",
@@ -202,8 +216,9 @@ const CalendarView = ({
       return constructorObjectService.getList(view?.disable_dates?.table_slug, {
         data: {
           [view.disable_dates.day_slug]: {
-            $gte: FromDateType(date, currentUpdatedDate, firstUpdatedDate),
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate),
+            $gte:
+              FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
+            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
         },
       });
@@ -272,6 +287,21 @@ const CalendarView = ({
       },
     }
   );
+
+  const updateView = (period) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...views?.[selectedTabIndex],
+        attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
+          period: period,
+        },
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      });
+  };
+
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
@@ -368,6 +398,7 @@ const CalendarView = ({
             disabledHelperText
             onChange={(e) => {
               setDate(e.target.value);
+              updateView(e.target?.value);
             }}
           />
           <CalendarGroupByButton

@@ -56,7 +56,6 @@ const ActivityFeedHeader = ({histories, setDateFilters, dateFilters}) => {
             DropdownIndicator: null,
           }}
           onChange={(newValue, {action}) => {
-            console.log("newValue", newValue);
             //   changeHandler(newValue);
           }}
           menuShouldScrollIntoView

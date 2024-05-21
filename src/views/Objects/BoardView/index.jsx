@@ -1,30 +1,30 @@
-import { useEffect, useId } from "react";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {useEffect, useId} from "react";
+import {useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { applyDrag } from "../../../utils/applyDrag";
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
+import {applyDrag} from "../../../utils/applyDrag";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import FastFilter from "../components/FastFilter";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import BoardColumn from "./BoardColumn";
 import styles from "./style.module.scss";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import constructorViewService from "../../../services/constructorViewService";
 import ColumnVisible from "../ColumnVisible";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import BoardGroupButton from "./BoardGroupBy";
 import ShareModal from "../ShareModal/ShareModal";
-import { Badge, Box, Button } from "@mui/material";
+import {Badge, Box, Button} from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { store } from "../../../store";
+import {store} from "../../../store";
 import style from "../style.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
@@ -38,15 +38,15 @@ const BoardView = ({
   views,
   fieldsMap,
   selectedTable,
-  menuItem
+  menuItem,
 }) => {
   const visibleForm = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { tableSlug, appId } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
+  const {tableSlug, appId} = useParams();
+  const {new_list} = useSelector((state) => state.filter);
   const id = useId();
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -54,11 +54,10 @@ const BoardView = ({
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
-  const { navigateToForm } = useTabRouter();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {navigateToForm} = useTabRouter();
+  const {filters} = useFilters(tableSlug, view.id);
 
   const [searchParams, setSearchParams] = useSearchParams();
-
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -69,15 +68,15 @@ const BoardView = ({
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
 
-  const { data = [], isLoading: dataLoader } = useQuery(
-    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
+  const {data = [], isLoading: dataLoader} = useQuery(
+    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters}],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: filters ?? {},
       });
     },
     {
-      select: ({ data }) => data.response ?? [],
+      select: ({data}) => data.response ?? [],
     }
   );
   const updateView = (tabs) => {
@@ -96,7 +95,7 @@ const BoardView = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs, isLoading: tabsLoader } = useQuery(
+  const {data: tabs, isLoading: tabsLoader} = useQuery(
     queryGenerator(groupField, filters)
   );
 
@@ -114,7 +113,7 @@ const BoardView = ({
   };
 
   const {
-    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
+    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
       visibleViews: [],
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -170,8 +169,7 @@ const BoardView = ({
                   height: "35px",
                   padding: "0px",
                   minWidth: "35px",
-                }}
-              >
+                }}>
                 <SettingsIcon
                   style={{
                     color: "#A8A8A8",
@@ -180,8 +178,7 @@ const BoardView = ({
               </Button>
             </PermissionWrapperV2>
           </>
-        }
-      >
+        }>
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -211,8 +208,7 @@ const BoardView = ({
                 setFilterVisible((prev) => !prev);
               }}
               badgeContent={view?.quick_filters?.length}
-              color="primary"
-            >
+              color="primary">
               <FilterAltOutlinedIcon color={"#A8A8A8"} />
             </Badge>
           </div>
@@ -244,17 +240,16 @@ const BoardView = ({
           {(view?.quick_filters?.length > 0 ||
             (new_list[tableSlug] &&
               new_list[tableSlug].some((i) => i.checked))) && (
-              <div
-                className={
-                  filterVisible ? styles.filters : styles.filtersVisiblitiy
-                }
-              >
-                <Box className={styles.block}>
-                  <p>{t("filters")}</p>
-                  <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
-                </Box>
-              </div>
-            )}
+            <div
+              className={
+                filterVisible ? styles.filters : styles.filtersVisiblitiy
+              }>
+              <Box className={styles.block}>
+                <p>{t("filters")}</p>
+                <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+              </Box>
+            </div>
+          )}
 
           <div className={styles.board}>
             <Container
@@ -269,8 +264,7 @@ const BoardView = ({
                 showOnTop: true,
                 className: "drag-cards-drop-preview",
               }}
-              style={{ display: "flex", gap: 24 }}
-            >
+              style={{display: "flex", gap: 24}}>
               {view?.attributes?.tabs?.map((tab) => (
                 <Draggable key={tab.value}>
                   <BoardColumn
@@ -294,11 +288,11 @@ const BoardView = ({
 const queryGenerator = (groupField, filters = {}, updateView) => {
   if (!groupField)
     return {
-      queryFn: () => { },
+      queryFn: () => {},
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -321,7 +315,7 @@ const queryGenerator = (groupField, filters = {}, updateView) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
+        {tableSlug: groupField.table_slug, filters: computedFilters},
       ],
       queryFn,
       select: (res) => {

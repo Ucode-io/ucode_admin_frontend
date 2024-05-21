@@ -1,6 +1,6 @@
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import {Add, InsertDriveFile} from "@mui/icons-material";
-import {Card, Divider} from "@mui/material";
+import {Card, Divider, Menu} from "@mui/material";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -19,16 +19,19 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import constructorObjectService from "../../../services/constructorObjectService";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
 
 const NewRelationSection = ({
   selectedTabIndex,
   setSelectedTabIndex,
   relations,
   loader,
-  getAllData,
+  getAllData = () => {},
   tableSlug: tableSlugFromProps,
   id: idFromProps,
   limit,
@@ -65,34 +68,21 @@ const NewRelationSection = ({
   const [type, setType] = useState(null);
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
+  const dispatch = useDispatch();
   const tables = useSelector((state) => state?.auth?.tables);
-  const menuId = searchParams.get("menuId");
+  const tabSelected = useSelector((state) =>
+    state?.relationTab?.tabs?.find((item) => item?.slug === tableSlug)
+  );
 
-  // const { data, refetch } = useQuery(
-  //   ["GET_LAYOUT_LIST", tableSlug, i18n?.language, menuItem?.tabel_id],
-  //   () => {
-  //     return layoutService
-  //       .getLayout(tableSlug, menuId ?? appId, {
-  //         "table-slug": tableSlug,
-  //         language_setting: i18n?.language,
-  //       })
-  //   },
-  //   {
-  //     enabled: !!Boolean(menuItem?.table_id),
-  //     select: (res) => {
-  //       console.log("ketvotti2")
-  //       return {
-  //         ...res,
-  //         tabs: res?.tabs?.filter(
-  //           (tab) =>
-  //             tab?.relation?.permission?.view_permission === true ||
-  //             tab?.type === "section"
-  //         ),
-  //       };
-  //     },
-  //     cacheTime: 10,
-  //   }
-  // );
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -117,10 +107,15 @@ const NewRelationSection = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
-      : setSelectedTabIndex(0);
-  }, [queryTab, setSelectedTabIndex]);
+    if (tabSelected?.slug) {
+      setSelectedTabIndex(tabSelected?.tabIndex);
+      setSelectTab(data?.tabs?.[tabSelected?.tabIndex]);
+    } else {
+      queryTab
+        ? setSelectedTabIndex(parseInt(queryTab) - 1 ?? 0)
+        : setSelectedTabIndex(0);
+    }
+  }, [queryTab, tabSelected, selectedTab, setSelectedTabIndex]);
 
   const {fields, remove, append, update} = useFieldArray({
     control,
@@ -182,7 +177,7 @@ const NewRelationSection = ({
 
   const onSelect = (el) => {
     setType(el?.type);
-    setSelectTab(el ?? relations[selectedTabIndex]);
+    setSelectTab(el || relations[selectedTabIndex]);
   };
 
   /*****************************JWT END*************************/
@@ -249,7 +244,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap} = {
+    data: {fieldsMap, views} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -270,11 +265,32 @@ const NewRelationSection = ({
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
+          views: data?.views,
         };
       },
       enabled: !!relatedTableSlug,
     }
   );
+
+  const computedVisibleFields = useMemo(() => {
+    const mappedObjects = [];
+    Object.values(fieldsMap)?.forEach((obj) => {
+      if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
+        if (selectedTab?.attributes?.columns?.includes(obj.relation_id)) {
+          mappedObjects.push(obj);
+        }
+      } else {
+        if (selectedTab?.attributes?.columns?.includes(obj.id)) {
+          mappedObjects.push(obj);
+        }
+      }
+    });
+
+    return mappedObjects.map((obj) => obj.id);
+  }, [
+    Object.values(fieldsMap)?.length,
+    selectedTab?.attributes?.columns?.length,
+  ]);
 
   return (
     <>
@@ -306,6 +322,12 @@ const NewRelationSection = ({
                           : "custom-tab"
                       }`}
                       onClick={() => {
+                        dispatch(
+                          relationTabActions.addTab({
+                            slug: tableSlug,
+                            tabIndex: index,
+                          })
+                        );
                         setSelectedIndex(index);
                         onSelect(el);
                       }}>
@@ -318,18 +340,9 @@ const NewRelationSection = ({
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
-                            ] ||
-                            el?.attributes?.[`label_to_${i18n?.language}`] ||
-                            el?.label
-                          : el?.attributes?.[`label_${i18n.language}`]
-                            ? el?.attributes?.[`label_${i18n.language}`]
-                            : el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              ? el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ]
-                              : el?.label ?? el?.title}
+                            ]
+                          : el?.attributes?.[`label_${i18n?.language}`] ||
+                            el?.label}
                       </div>
                     </Tab>
                   ))}
@@ -378,6 +391,15 @@ const NewRelationSection = ({
                         // refetch={refetch}
                         data={data}
                       />
+                      <button
+                        className={styles.moreButton}
+                        onClick={handleClick}>
+                        <MoreHorizIcon
+                          style={{
+                            color: "#888",
+                          }}
+                        />
+                      </button>
                     </>
                   )}
                 </div>
@@ -449,6 +471,46 @@ const NewRelationSection = ({
           </Tabs>
         </Card>
       ) : null}
+
+      <Menu
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              // width: 100,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}>
+        <div className={styles.menuBar}>
+          <ExcelDownloadButton
+            computedVisibleFields={computedVisibleFields}
+            view={views?.[0]}
+            selectedTab={selectedTab}
+            relatedTable={relatedTable}
+          />
+        </div>
+      </Menu>
     </>
   );
 };

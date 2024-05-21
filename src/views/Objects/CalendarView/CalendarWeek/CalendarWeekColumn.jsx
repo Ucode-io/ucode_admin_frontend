@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import {format} from "date-fns";
 import styles from "./week.module.scss";
 import RecursiveWeekBlock from "./RecursiveWeekBlock";
 
@@ -14,6 +14,8 @@ const CalendarWeekColumn = ({
   const dayOfWeekNumber = date.getDay();
   const dayOfWeekName = daysOfWeek[dayOfWeekNumber];
 
+  console.log("fieldsMap", fieldsMap);
+
   return (
     <div>
       <div
@@ -23,8 +25,7 @@ const CalendarWeekColumn = ({
             format(date, "dd MMMM yyyy") === format(new Date(), "dd MMMM yyyy")
               ? "#007AFF"
               : "",
-        }}
-      >
+        }}>
         {dayOfWeekName} {format(date, "dd")}
       </div>
 

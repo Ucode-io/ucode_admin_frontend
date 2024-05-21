@@ -15,6 +15,7 @@ const HFSwitch = ({
   labelProps,
   defaultValue = false,
   field,
+  isShowLable = true,
   ...props
 }) => {
   const id = useId();
@@ -39,16 +40,18 @@ const HFSwitch = ({
               {...props}
               autoFocus={tabIndex === 1}
               inputProps={{tabIndex}}
-              checked={value ?? false}
+              checked={value || false}
               onChange={(e, val) => {
                 formOnChange(val);
                 onChange(val);
                 isNewTableView && updateObject();
               }}
             />
-            <label htmlFor={`switch-${id}`} {...labelProps}>
-              {label}
-            </label>
+            {isShowLable && (
+              <label htmlFor={`switch-${id}`} {...labelProps}>
+                {label}
+              </label>
+            )}
           </div>
         );
       }}></Controller>

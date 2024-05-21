@@ -1,15 +1,14 @@
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
@@ -37,6 +36,7 @@ const RelationFormElement = ({
   multipleInsertField,
   checkRequiredField,
   rules,
+  activeLang,
   errors,
   ...props
 }) => {
@@ -48,7 +48,7 @@ const RelationFormElement = ({
 
   const computedLabel =
     field?.attributes?.[`label_${i18n?.language}`] ||
-    field?.attributes?.[`label_${i18n?.language}`] ||
+    field?.attributes?.[`title_${i18n?.language}`] ||
     column?.attributes?.[`label_from_${i18n?.language}`] ||
     field?.label ||
     field?.title;
@@ -85,6 +85,7 @@ const RelationFormElement = ({
               multipleInsertField={multipleInsertField}
               errors={errors}
               required={required}
+              activeLang={activeLang}
             />
           )}
         />
@@ -128,6 +129,7 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  activeLang={activeLang}
                 />
               )
             }
@@ -153,6 +155,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   errors,
   required = false,
+  activeLang,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -168,6 +171,11 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
+  const {state} = useLocation();
+  const languages = useSelector((state) => state.languages.list);
+  const isSettings = window.location.pathname?.includes("settings/constructor");
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const customStyles = {
     control: (provided) => ({
@@ -281,7 +289,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -313,16 +321,9 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
-  const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(
-      new Set(allOptions.map(JSON.stringify))
-    ).map(JSON.parse);
-    return uniqueObjects ?? [];
-  }, [allOptions, options]);
-
   const getValueData = async () => {
     try {
-      const id = value;
+      const id = state?.[`${tableSlug}_id`] || value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
@@ -331,13 +332,12 @@ const AutoCompleteElement = ({
       }
 
       setLocalValue(data ? [data] : null);
+
+      if (window.location.pathname?.includes("create")) {
+        setFormValue(name, data?.guid);
+      }
     } catch (error) {}
   };
-
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
-  };
-
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
@@ -374,14 +374,6 @@ const AutoCompleteElement = ({
     }
   };
 
-  const setDefaultValue = () => {
-    if (options?.slugOptions && multipleInsertField) {
-      const val = options?.slugOptions?.find((item) => item?.guid === id);
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
-    }
-  };
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -414,7 +406,7 @@ const AutoCompleteElement = ({
   }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value) getValueData();
+    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {
@@ -435,12 +427,38 @@ const AutoCompleteElement = ({
     }
   }
 
+  const computedViewFields = useMemo(() => {
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+      const computedLanguages = languages?.map((item) => item?.slug);
+
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(activeLang ?? i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return field?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, activeLang, i18n?.language]);
+
+  useEffect(() => {
+    if (field?.attributes?.object_id_from_jwt === true) {
+      const foundOption = allOptions?.find((el) => el?.guid === isUserId);
+      setLocalValue([foundOption]);
+    }
+  }, [allOptions?.length, field]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}>
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
           Create new
         </div>
       )}
@@ -502,11 +520,17 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              field?.attributes?.view_fields?.map(
-                (el) => `${option[el?.slug]} `
-              )
+              computedViewFields?.map((el) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
+                } else {
+                  return `${option[el]} `;
+                }
+              })
             }
-            getOptionValue={(option) => option?.guid}
+            getOptionValue={(option) =>
+              option?.guid ?? option?.id ?? option?.client_type_id
+            }
             components={{
               DropdownIndicator: () => null,
               MultiValue: ({data}) => (

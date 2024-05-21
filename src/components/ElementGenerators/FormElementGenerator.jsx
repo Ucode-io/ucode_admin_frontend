@@ -35,6 +35,7 @@ import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 import HFPolygonField from "../FormElements/HFPolygonField";
 import HFQrFieldComponent from "../FormElements/HFQrField";
+import HFMultiImage from "../FormElements/HFMultiImage";
 
 const parser = new Parser();
 
@@ -73,7 +74,7 @@ const FormElementGenerator = ({
     if (field?.enable_multilanguage) {
       return field?.attributes?.show_label
         ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
-        : "";
+        : field?.attributes?.[`label_${i18n?.language}`];
     } else {
       if (field?.show_label === false) return "";
       else
@@ -109,7 +110,7 @@ const FormElementGenerator = ({
     }
 
     return field?.slug;
-  }, [field?.id, field?.slug, activeLang, field?.enable_multilanguage]);
+  }, [field?.slug, activeLang, field?.enable_multilanguage]);
 
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
@@ -130,14 +131,8 @@ const FormElementGenerator = ({
     if (field?.type === "SINGLE_LINE") return defaultValue;
     const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [
-    field.attributes,
-    field.type,
-    field.id,
-    field.relation_type,
-    objectIdFromJWT,
-    isUserId,
-  ]);
+  }, [field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
+
   const isDisabled = useMemo(() => {
     const {attributes} = field;
 
@@ -209,6 +204,7 @@ const FormElementGenerator = ({
           defaultValue={defaultValue}
           disabled={isDisabled}
           key={computedSlug}
+          activeLang={activeLang}
           checkRequiredField={checkRequiredField}
           errors={errors}
           rules={{
@@ -578,17 +574,20 @@ const FormElementGenerator = ({
 
     case "CHECKBOX":
       return (
-        <HFCheckbox
-          control={control}
-          name={computedSlug}
-          tabIndex={field?.tabIndex}
-          label={label}
-          required={checkRequiredField}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          {...props}
-        />
+        <FRow label={label}>
+          <HFCheckbox
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            label={label}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            isShowLable={false}
+            {...props}
+          />
+        </FRow>
       );
 
     case "MULTISELECT":
@@ -612,17 +611,20 @@ const FormElementGenerator = ({
 
     case "SWITCH":
       return (
-        <HFSwitch
-          control={control}
-          name={computedSlug}
-          label={label}
-          tabIndex={field?.tabIndex}
-          required={checkRequiredField}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          {...props}
-        />
+        <FRow label={label}>
+          <HFSwitch
+            control={control}
+            name={computedSlug}
+            label={label}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            isShowLable={false}
+            {...props}
+          />
+        </FRow>
       );
 
     case "EMAIL":
@@ -657,6 +659,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFImageUpload
+            control={control}
+            name={computedSlug}
+            key={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "MULTI_IMAGE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMultiImage
             control={control}
             name={computedSlug}
             key={computedSlug}

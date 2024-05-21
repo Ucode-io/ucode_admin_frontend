@@ -68,7 +68,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
-  console.log("values", values);
+  const table_from = watch("table_from");
 
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
@@ -135,9 +135,6 @@ const RelationSettings = ({
         const unCheckedColumns = fields.filter(
           (field) => !values.columns?.includes(field.id)
         );
-
-        console.log("checkedColumns", checkedColumns);
-        console.log("checkedColumns", unCheckedColumns);
 
         const checkedFilters =
           values.quick_filters
@@ -287,6 +284,7 @@ const RelationSettings = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
+        console.log("resssssssssssss", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
@@ -297,16 +295,17 @@ const RelationSettings = ({
           summaries: res?.summaries ?? [],
           view_fields: res?.view_fields?.map((field) => field.id) ?? [],
           field_name: res?.label,
-          auto_filters: [
-            {
-              field_from: "",
-              field_to: "",
-            },
-          ],
+          auto_filters: res?.auto_filters,
         });
       },
     },
   });
+
+  useEffect(() => {
+    if (isRecursiveRelation) {
+      setValue("table_to", table_from);
+    }
+  }, [isRecursiveRelation]);
 
   const computedColumns = useMemo(() => {
     return listToOptions(computedColumnsList, "label", "slug");
@@ -460,6 +459,13 @@ const RelationSettings = ({
                           control={control}
                           name="attributes.table_editable"
                           label={"Disable Edit table"}
+                        />
+                      </div>
+                      <div className={styles.sectionHeader}>
+                        <HFCheckbox
+                          control={control}
+                          name="attributes.enable_multi_language"
+                          label={"Enable multi language"}
                         />
                       </div>
 

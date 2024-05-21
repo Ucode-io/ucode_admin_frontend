@@ -99,7 +99,7 @@ const CalendarView = ({
   const startOfMonth = (date) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     if (start.getDay() !== 0) {
-      start.setDate(1 - start.getDay() + 7);
+      start.setDate(1 - start.getDay());
     }
     return start;
   };

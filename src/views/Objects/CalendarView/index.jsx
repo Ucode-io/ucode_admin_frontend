@@ -1,4 +1,11 @@
-import {add, differenceInDays, endOfWeek, format, startOfWeek} from "date-fns";
+import {
+  add,
+  differenceInDays,
+  endOfWeek,
+  format,
+  getDate,
+  startOfWeek,
+} from "date-fns";
 import {useEffect, useMemo, useState} from "react";
 import {useQueries, useQuery, useQueryClient} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
@@ -79,7 +86,6 @@ const CalendarView = ({
   const [currentMonthDates, setCurrentMonthDates] = useState([]);
   const [firstDate, setFirstDate] = useState();
   const [lastDate, setLastDate] = useState();
-
   const currentUpdatedDate = dateFormat(currentDay, 0);
   const tomorrow = dateFormat(currentDay, 1);
   const lastUpdatedDate = dateFormat(lastDate, 1);

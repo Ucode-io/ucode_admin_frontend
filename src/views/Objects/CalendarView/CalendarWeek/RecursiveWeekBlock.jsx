@@ -30,6 +30,7 @@ const RecursiveWeekBlock = ({
 
     return computedElements;
   }, [parentTab, tabs, level]);
+
   return (
     <Box
       style={

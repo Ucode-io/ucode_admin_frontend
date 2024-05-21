@@ -1,9 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import styles from "../style.module.scss";
-import { dateValidFormat } from "../../../../utils/dateValidFormat";
-import { getRelationFieldTableCellLabel } from "../../../../utils/getRelationFieldLabel";
+import {dateValidFormat} from "../../../../utils/dateValidFormat";
+import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
-import { format } from "date-fns";
+import {format} from "date-fns";
 
 const flex = {
   display: "flex",
@@ -11,20 +11,23 @@ const flex = {
   columnGap: "6px",
 };
 
-const InfoBlockWeek = ({ viewFields, data, isSingleLine }) => {
+const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
   if (isSingleLine)
     return (
       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
-        {data.calendar?.elementFromTime
-          ? format(data.calendar?.elementFromTime, "HH:mm")
-          : ""}
-        -
-        {data.calendar?.elementToTime
-          ? format(data.calendar?.elementToTime, "HH:mm")
-          : ""}
+        {viewFields?.map((item) => {
+          return `${data[item?.slug]} `;
+        })}
       </div>
     );
 
+  // {data.calendar?.elementFromTime
+  //   ? format(data.calendar?.elementFromTime, "HH:mm")
+  //   : ""}
+  // -
+  // {data.calendar?.elementToTime
+  //   ? format(data.calendar?.elementToTime, "HH:mm")
+  //   : ""}
   return (
     <div className={`${styles.infoBlock}`}>
       <div>
@@ -60,10 +63,12 @@ const InfoBlockWeek = ({ viewFields, data, isSingleLine }) => {
             </Box>
           ) : field.type === "MULTISELECT" ? (
             <MultiselectCellColoredElement
-              style={{ padding: "2px 5px", marginBottom: 4 }}
+              style={{padding: "2px 5px", marginBottom: 4}}
               value={data[field.slug]}
               field={field}
             />
+          ) : field?.type === "SINGLE_LINE" ? (
+            <Box style={flex}>{data[field.slug]}</Box>
           ) : (
             <Box style={flex}>
               <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>

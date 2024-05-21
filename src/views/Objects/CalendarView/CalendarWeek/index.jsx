@@ -20,6 +20,7 @@ const CalendarWeek = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
+
   return (
     <div className={styles.calendarday} ref={parentRef}>
       <TimesColumn view={view} data={data} />

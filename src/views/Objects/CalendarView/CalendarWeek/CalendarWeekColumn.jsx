@@ -14,6 +14,8 @@ const CalendarWeekColumn = ({
   const dayOfWeekNumber = date.getDay();
   const dayOfWeekName = daysOfWeek[dayOfWeekNumber];
 
+  console.log("fieldsMap", fieldsMap);
+
   return (
     <div>
       <div

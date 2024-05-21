@@ -37,7 +37,6 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
-
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const computedOptions = useMemo(() => {

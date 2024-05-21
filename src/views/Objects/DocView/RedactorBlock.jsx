@@ -68,7 +68,7 @@ const RedactorBlock = forwardRef(
         .filter((i) => i.type === "LOOKUP")
         .find((i) => i.table_slug === tableSlug);
     }, [templateFields, tableSlug]);
-    console.log("getFilteredData", getFilteredData);
+
     useEffect(() => {
       reset({
         ...selectedTemplate,
@@ -85,7 +85,6 @@ const RedactorBlock = forwardRef(
     ]);
 
     const onSubmit = async (values) => {
-      console.log("valuessssssssssss", values);
       try {
         setBtnLoader(true);
 

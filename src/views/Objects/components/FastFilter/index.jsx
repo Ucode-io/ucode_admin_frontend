@@ -72,7 +72,7 @@ const FastFilter = ({
       filterActions.setFilter({
         tableSlug: tableSlug,
         viewId: view.id,
-        name,
+        name: name,
         value,
       })
     );

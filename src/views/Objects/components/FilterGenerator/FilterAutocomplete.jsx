@@ -38,6 +38,7 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
+    console.log("optionoptionoption", option);
     closeMenu();
     if (value?.includes(option.value)) {
       onChange(value.filter((item) => item !== option.value));
@@ -58,8 +59,7 @@ const FilterAutoComplete = ({
           {computedValue?.[0]?.label ?? (
             <span
               className={styles.placeholder}
-              style={{color: !value?.length ? "#909EAB" : "#000"}}
-            >
+              style={{color: !value?.length ? "#909EAB" : "#000"}}>
               {value[0] ?? label}
             </span>
           )}
@@ -78,8 +78,7 @@ const FilterAutoComplete = ({
         open={menuVisible}
         TransitionComponent={Fade}
         onClose={closeMenu}
-        classes={{list: styles.menu, paper: styles.paper}}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}>
         <SearchInput
           fullWidth
           onChange={inputChangeHandler}
@@ -104,8 +103,7 @@ const FilterAutoComplete = ({
             <div
               onClick={() => rowClickHandler(option)}
               key={option.value}
-              className={styles.option}
-            >
+              className={styles.option}>
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (

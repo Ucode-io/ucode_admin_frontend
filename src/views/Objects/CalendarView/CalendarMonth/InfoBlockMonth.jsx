@@ -13,18 +13,18 @@ const flex = {
 };
 
 const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
-  //   if (isSingleLine)
-  //     return (
-  //       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
-  //         {data.calendar?.elementFromTime
-  //           ? format(data.calendar?.elementFromTime, "HH:mm")
-  //           : ""}
-  //         -
-  //         {data.calendar?.elementToTime
-  //           ? format(data.calendar?.elementToTime, "HH:mm")
-  //           : ""}
-  //       </div>
-  //     );
+  if (isSingleLine)
+    return (
+      <div className={`${styles.infoBlock} ${styles.singleLine}`}>
+        {data.calendar?.elementFromTime
+          ? format(data.calendar?.elementFromTime, "HH:mm")
+          : ""}
+        -
+        {data.calendar?.elementToTime
+          ? format(data.calendar?.elementToTime, "HH:mm")
+          : ""}
+      </div>
+    );
 
   return (
     <div className={`${styles.infoBlock}`}>

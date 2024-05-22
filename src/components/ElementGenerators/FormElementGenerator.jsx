@@ -305,6 +305,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            setFormValue={setFormValue}
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}

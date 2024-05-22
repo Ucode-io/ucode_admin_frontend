@@ -3,6 +3,8 @@ import {makeStyles} from "@mui/styles";
 import {Controller} from "react-hook-form";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
+import {useEffect} from "react";
+import {useLocation} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -34,11 +36,20 @@ const HFTextField = ({
   field,
   inputHeight,
   disabled_text = "This field is disabled for this role!",
+  setFormValue,
   customOnChange = () => {},
   ...props
 }) => {
+  const location = useLocation();
   const classes = useStyles();
-
+  useEffect(() => {
+    if (
+      location.pathname?.includes("create") &&
+      location?.state?.isTreeView === true
+    ) {
+      setFormValue(name, "");
+    }
+  }, []);
   return (
     <Controller
       control={control}

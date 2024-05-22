@@ -38,7 +38,6 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
-    console.log("optionoptionoption", option);
     closeMenu();
     if (value?.includes(option.value)) {
       onChange(value.filter((item) => item !== option.value));

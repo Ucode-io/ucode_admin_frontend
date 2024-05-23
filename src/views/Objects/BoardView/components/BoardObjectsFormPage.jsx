@@ -1,17 +1,22 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
-import { useTranslation } from "react-i18next";
-import { store } from "../../../../store";
+import {useTranslation} from "react-i18next";
+import {store} from "../../../../store";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import layoutService from "../../../../services/layoutService";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import { sortSections } from "../../../../utils/sectionsOrderNumber";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import {sortSections} from "../../../../utils/sectionsOrderNumber";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 import FiltersBlock from "../../../../components/FiltersBlock";
 import FormPageBackButton from "../../components/FormPageBackButton";
 import SummarySectionValue from "../../SummarySection/SummarySectionValue";
@@ -31,7 +36,7 @@ const BoardObjectsFormPage = ({
   selectedRow,
   dateInfo,
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam} = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -42,10 +47,10 @@ const BoardObjectsFormPage = ({
   }, [tableSlugFromParam, tableSlugFromProps]);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
@@ -54,10 +59,10 @@ const BoardObjectsFormPage = ({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const menu = store.getState().menu;
   const isInvite = menu.invite;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -80,26 +85,32 @@ const BoardObjectsFormPage = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
-    defaultValues: { ...state, ...dateInfo, invite: isInvite ? menuItem?.data?.table?.is_login_table : false },
+    defaultValues: {
+      ...state,
+      ...dateInfo,
+      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+    },
   });
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    }, tableSlug);
+    const getLayout = await layoutService.getList(
+      {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
+      tableSlug
+    );
 
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = await constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
+      const [{data = {}}, {layouts: layout = []}] = await Promise.all([
         getFormData,
         getLayout,
       ]);
-
 
       setData({
         ...layout,
@@ -108,7 +119,7 @@ const BoardObjectsFormPage = ({
             tab?.relation?.permission?.view_permission === true ||
             tab?.type === "section"
         ),
-      })
+      });
       setSections(sortSections(sections));
       setSummary(
         layout?.find((el) => el.is_default === true)?.summary_fields ?? []
@@ -141,13 +152,16 @@ const BoardObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getList({
-      "table-slug": tableSlug,
-      language_setting: i18n?.language,
-    }, tableSlug);
+    const getLayout = await layoutService.getList(
+      {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
+      tableSlug
+    );
 
     try {
-      const [{ layouts: layout = [] }] = await Promise.all([getLayout]);
+      const [{layouts: layout = []}] = await Promise.all([getLayout]);
       const defaultLayout = layout?.find((el) => el.is_default === true);
       setSections(sortSections(sections));
 
@@ -164,7 +178,7 @@ const BoardObjectsFormPage = ({
             tab?.relation?.permission?.view_permission === true ||
             tab?.type === "section"
         ),
-      })
+      });
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
@@ -185,7 +199,7 @@ const BoardObjectsFormPage = ({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         dispatch(showAlert("Successfully updated", "success"));
@@ -199,7 +213,7 @@ const BoardObjectsFormPage = ({
   const create = (data) => {
     setBtnLoader(true);
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
@@ -265,7 +279,7 @@ const BoardObjectsFormPage = ({
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
           menuItem={menuItem}
-          data={data}
+          data={data?.[0]}
         />
       </div>
       <Footer
@@ -281,13 +295,11 @@ const BoardObjectsFormPage = ({
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}
-              type={id ? "update" : "write"}
-            >
+              type={id ? "update" : "write"}>
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+                onClick={handleSubmit(onSubmit)}>
                 <Save />
                 Save
               </PrimaryButton>

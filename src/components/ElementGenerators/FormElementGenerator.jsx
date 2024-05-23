@@ -305,6 +305,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            setFormValue={setFormValue}
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -457,6 +458,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFDateTimePicker
+            field={field}
             control={control}
             name={computedSlug}
             sectionModal={sectionModal}

@@ -1,5 +1,5 @@
-import { Close } from "@mui/icons-material";
-import { Card, IconButton, Modal } from "@mui/material";
+import {Close} from "@mui/icons-material";
+import {Card, IconButton, Modal} from "@mui/material";
 import React from "react";
 import styles from "./style.module.scss";
 import BoardObjectsFormPage from "./BoardObjectsFormPage";

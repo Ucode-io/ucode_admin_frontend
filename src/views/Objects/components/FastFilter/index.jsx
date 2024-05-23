@@ -86,7 +86,7 @@ const FastFilter = ({
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}
-            name={filter?.path_slug ?? filter.slug}
+            name={filter?.path_slug || filter.slug}
             tableSlug={tableSlug}
             filters={filters}
             onChange={onChange}

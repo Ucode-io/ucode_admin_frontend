@@ -331,7 +331,6 @@ const AutoCompleteElement = ({
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
 
-      // Ensuring that setLocalValue is not called with undefined
       setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
@@ -453,7 +452,10 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (field?.attributes?.object_id_from_jwt === true) {
       const foundOption = allOptions?.find((el) => el?.guid === isUserId);
-      setLocalValue([foundOption]);
+
+      if (foundOption) {
+        setLocalValue([foundOption]);
+      }
     }
   }, [allOptions?.length, field]);
 

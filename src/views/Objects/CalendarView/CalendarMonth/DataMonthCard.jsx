@@ -214,7 +214,7 @@ const DataMonthCard = ({
               ) : (
                 field?.label ||
                 field?.attributes?.[`label_${i18n?.language}`] ||
-                field?.attributes?.[`name${i18n?.language}`]
+                field?.attributes?.[`name_${i18n?.language}`]
               )}
               :{" "}
             </b>

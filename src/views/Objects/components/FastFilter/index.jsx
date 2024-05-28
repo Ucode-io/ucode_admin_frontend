@@ -57,7 +57,7 @@ const FastFilter = ({
           ?.map((fast) => fast),
       ]
         ?.map((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOKKUPS") {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
             return fieldsMap[el?.relation_id];
           } else {
             return fieldsMap[el?.id];

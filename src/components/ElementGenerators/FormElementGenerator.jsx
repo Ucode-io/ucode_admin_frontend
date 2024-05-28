@@ -108,6 +108,9 @@ const FormElementGenerator = ({
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
+    if (field?.id?.includes("#")) {
+      return `${field?.id.split("#")?.[0]}_id`;
+    }
 
     return field?.slug;
   }, [field?.slug, activeLang, field?.enable_multilanguage]);

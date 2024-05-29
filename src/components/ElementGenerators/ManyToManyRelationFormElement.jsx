@@ -249,22 +249,31 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    const result = value
-      ?.map((id) => {
-        const option = allOptions?.find((el) => el?.guid === id);
+    if (Array.isArray(value)) {
+      const result = value
+        ?.map((id) => {
+          const option = allOptions?.find((el) => el?.guid === id);
 
-        if (!option) return null;
-        return {
-          ...option,
-          // label: getRelationFieldLabel(field, option)
-        };
-      })
-      ?.filter((el) => el);
+          if (!option) return null;
+          return {
+            ...option,
+            // label: getRelationFieldLabel(field, option)
+          };
+        })
+        ?.filter((el) => el);
 
-    return result?.map((item) => ({
-      label: getRelationFieldLabel(field, item),
-      value: item?.guid,
-    }));
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    } else {
+      const result = allOptions?.filter((el) => el?.guid === value);
+
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    }
   }, [value, allOptions, i18n?.language, field?.attributes?.view_fields]);
 
   const computedOptions = useMemo(() => {

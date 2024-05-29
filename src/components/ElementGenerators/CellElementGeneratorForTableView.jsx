@@ -28,9 +28,6 @@ import HFVideoUpload from "../FormElements/HFVideoUpload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
-import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
-import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
-import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import CodeCellFormElement from "./JsonCellElement";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
@@ -39,8 +36,6 @@ import ProgrammingLan from "./ProgrammingLan";
 const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
-  relOptions,
-  tableView,
   field,
   fields,
   isBlackBg = false,
@@ -61,13 +56,6 @@ const CellElementGeneratorForTableView = ({
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
-  let relationTableSlug = "";
-
-  if (field?.id.includes("#")) {
-    relationTableSlug = field?.id.split("#")[0];
-  } else if (field?.type === "LOOKUP") {
-    relationTableSlug = field?.table_slug;
-  }
 
   const computedSlug = useMemo(() => {
     if (!isNewRow) {
@@ -100,13 +88,6 @@ const CellElementGeneratorForTableView = ({
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return userId;
 
-    if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
-      if (Array.isArray(defaultValue)) {
-        return defaultValue[0];
-      } else {
-        return defaultValue;
-      }
-    }
     if (field?.type === "SWITCH") {
       return false;
     }
@@ -129,104 +110,12 @@ const CellElementGeneratorForTableView = ({
   }, [field, objectIdFromJWT]);
 
   useEffect(() => {
-    tables?.forEach((table) => {
-      if (table.table_slug === relationTableSlug) {
-        setObjectIdFromJWT(table?.object_id);
-      }
-    });
-  }, [tables, relationTableSlug, field]);
-
-  useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
 
   switch (field.type) {
-    case "LOOKUP":
-      return newColumn ? (
-        <CellRelationFormElementForNewColumn
-          mainForm={mainForm}
-          relOptions={relOptions}
-          isNewRow={isNewRow}
-          tableView={tableView}
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          updateObject={updateObject}
-          isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-          relationfields={relationfields}
-          data={data}
-        />
-      ) : (
-        <CellRelationFormElementForTableView
-          relOptions={relOptions}
-          tableView={tableView}
-          disabled={isDisabled}
-          isTableView={true}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          updateObject={updateObject}
-          isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-          relationfields={relationfields}
-          data={data}
-        />
-      );
-
-    case "LOOKUPS":
-      return (
-        <CellManyToManyRelationElement
-          relOptions={relOptions}
-          disabled={isDisabled}
-          isFormEdit
-          updateObject={updateObject}
-          isNewTableView={true}
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-        />
-      );
-
-    // case "INCREMENT_NUMBER":
-    //   return (
-    //     <HFIncrementId
-    //       disabled={isDisabled}
-    //       isFormEdit
-    //       updateObject={updateObject}
-    //       isNewTableView={true}
-    //       isBlackBg={isBlackBg}
-    //       control={control}
-    //       name={computedSlug}
-    //       fullWidth
-    //       field={field}
-    //       required={field.required}
-    //       placeholder={field.attributes?.placeholder}
-    //       defaultValue={defaultValue}
-    //     />
-    //   )
-
     case "SINGLE_LINE":
       return (
         <HFTextField

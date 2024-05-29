@@ -144,11 +144,11 @@ const BoardView = ({
     },
   });
 
-  useEffect(() => {
-    if (tabs) {
-      updateView(tabs);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (tabs) {
+  //     updateView(tabs);
+  //   }
+  // }, []);
 
   return (
     <div>

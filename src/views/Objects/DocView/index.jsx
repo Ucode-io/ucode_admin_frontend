@@ -246,7 +246,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
 
       fields.forEach((field) => {
         html = html.replaceAll(
-          `{ ${field.label} }`,
+          `{ ${field.label}_${field?.path_slug || field?.slug} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });

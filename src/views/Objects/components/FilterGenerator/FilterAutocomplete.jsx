@@ -50,7 +50,7 @@ const FilterAutoComplete = ({
     e.stopPropagation();
     onChange(undefined);
   };
-  console.log("labellllll", label);
+
   return (
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>

@@ -20,7 +20,7 @@ const Redactor = forwardRef(
       return (
         fields?.map((field) => ({
           label: `${field.label}`,
-          value: `{ ${field.label}_${field?.path_slug || field?.slug} }`,
+          value: `{ ${field.label} }`,
         })) ?? []
       );
     }, [fields]);

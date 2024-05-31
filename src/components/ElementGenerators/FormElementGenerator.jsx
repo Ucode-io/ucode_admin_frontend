@@ -105,8 +105,6 @@ const FormElementGenerator = ({
       return `${removeLangFromSlug(field.slug)}_${activeLang}`;
     } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
-    } else if (field?.id?.includes("#")) {
-      return `${field?.id.split("#")?.[0]}_id`;
     }
 
     return field?.slug;

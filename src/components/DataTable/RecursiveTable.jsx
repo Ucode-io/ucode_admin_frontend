@@ -3,7 +3,7 @@ import GroupCellElementGenerator from "./GroupCellElementGenerator";
 import {useSelector} from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {get} from "@ngard/tiny-get";
 import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
 import {useState} from "react";
@@ -92,13 +92,13 @@ const RecursiveTable = ({
                   }`,
                   zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                 }}
-                onClick={
-                  filteredColumns.find((item) => item.id === column.id) &&
-                  clickHandler
-                }>
+                onClick={() => {
+                  filteredColumns.find((item) => item.id === column.id)
+                    ? clickHandler()
+                    : onRowClick(element, index);
+                }}>
                 <Box display={"flex"} alignItems={"center"}>
                   {filteredColumns.find((item) => item.id === column.id) &&
-                  // getValue(column, element)?.length ? (
                   element?.data?.length ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
@@ -106,19 +106,22 @@ const RecursiveTable = ({
                       <KeyboardArrowRightIcon />
                     )
                   ) : null}
-                  <GroupCellElementGenerator
-                    field={column}
-                    row={element}
-                    name={`multi.${index}.${column.slug}`}
-                    watch={watch}
-                    fields={columns}
-                    index={index}
-                    control={control}
-                    setFormValue={setFormValue}
-                    relationfields={relationFields}
-                    data={data}
-                    view={view}
-                  />
+
+                  <Box onClick={() => console.log("clicked")}>
+                    <GroupCellElementGenerator
+                      field={column}
+                      row={element}
+                      name={`multi.${index}.${column.slug}`}
+                      watch={watch}
+                      fields={columns}
+                      index={index}
+                      control={control}
+                      setFormValue={setFormValue}
+                      relationfields={relationFields}
+                      data={data}
+                      view={view}
+                    />
+                  </Box>
                 </Box>
               </CTableCell>
             );

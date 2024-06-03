@@ -2,7 +2,7 @@ import {Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useQuery} from "react-query";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import GroupObjectDataTable from "../../../components/DataTable/GroupObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
@@ -350,7 +350,7 @@ const GroupTableView = ({
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
-      navigateToForm(tableSlug, "EDIT", row);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 

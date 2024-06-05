@@ -414,7 +414,7 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-  console.log("fieldfieldfieldfield", field);
+
   const computedViewFields = useMemo(() => {
     if (field?.attributes?.enable_multi_language) {
       const viewFields = field?.view_fields?.map((el) => el?.slug);

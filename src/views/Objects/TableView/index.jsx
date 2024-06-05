@@ -499,7 +499,7 @@ const TableView = ({
       }
     },
     onError: (error) => {
-      console.error("ssssssswww", error);
+      console.error("Error", error);
     },
   });
 

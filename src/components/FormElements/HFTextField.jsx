@@ -62,7 +62,13 @@ const HFTextField = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
           size="small"
-          value={typeof value === "number" ? numberWithSpaces(value) : value}
+          value={
+            typeof value === "number"
+              ? numberWithSpaces(value)
+              : value?.length > 50
+                ? `${value.slice(0, 40)}...`
+                : value
+          }
           onChange={(e) => {
             onChange(
               withTrim

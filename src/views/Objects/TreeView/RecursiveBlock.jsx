@@ -34,7 +34,7 @@ const RecursiveBlock = ({
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
   };
-  console.log("tableSlugtableSlug", tableSlug);
+
   const navigateToCreatePage = () => {
     navigateToForm(
       tableSlug,

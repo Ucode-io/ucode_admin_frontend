@@ -1,19 +1,17 @@
-import {useEffect, useMemo} from "react";
-import {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useParams, useSearchParams} from "react-router-dom";
 
+import {Add} from "@mui/icons-material";
+import {Divider} from "@mui/material";
+import {useTranslation} from "react-i18next";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import PageFallback from "../../../components/PageFallback";
+import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import FastFilter from "../components/FastFilter";
 import RecursiveBlock from "./RecursiveBlock";
-import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
-import {Button, Divider} from "@mui/material";
-import useTabRouter from "../../../hooks/useTabRouter";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import {Add, Delete} from "@mui/icons-material";
-import style from "./style.module.scss";
+import {default as style, default as styles} from "./style.module.scss";
 
 const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   const {t} = useTranslation();
@@ -48,13 +46,6 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
       });
 
       setData(data.response ?? []);
-
-      // dispatch(
-      //   tableColumnActions.setList({
-      //     tableSlug: tableSlug,
-      //     columns: data.fields ?? [],
-      //   })
-      // )
     } finally {
       setTableLoader(false);
     }

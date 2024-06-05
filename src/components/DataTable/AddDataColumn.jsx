@@ -56,15 +56,14 @@ const AddDataColumn = React.memo(
           },
         })
         .then((res) => {
+          refetch();
           setAddNewRow(false);
           dispatch(showAlert("Successfully created!", "success"));
         })
         .catch((e) => {
           console.log("ERROR: ", e);
         })
-        .finally(() => {
-          refetch();
-        });
+        .finally(() => {});
     };
 
     return (

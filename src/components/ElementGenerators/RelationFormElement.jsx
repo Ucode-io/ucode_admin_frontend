@@ -189,7 +189,7 @@ const AutoCompleteElement = ({
       zIndex: 99999,
     }),
   };
-  console.log("nameeeeeeeeee", name, field);
+
   const computedIds = useMemo(() => {
     if (
       field?.attributes?.object_id_from_jwt &&

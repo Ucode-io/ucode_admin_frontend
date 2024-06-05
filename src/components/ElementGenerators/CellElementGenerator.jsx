@@ -16,7 +16,6 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import PolygonFieldTable from "./PolygonFieldTable";
 
 const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
@@ -98,9 +97,6 @@ const CellElementGenerator = ({field = {}, row}) => {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
-    // case "LOOKUP":
-    //   return value;
-
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
@@ -143,8 +139,6 @@ const CellElementGenerator = ({field = {}, row}) => {
             }}></span>
         </div>
       );
-    // case "POLYGON":
-    //   return <PolygonFieldTable field={field} value={value} />;
 
     case "CHECKBOX":
     case "SWITCH":
@@ -170,9 +164,6 @@ const CellElementGenerator = ({field = {}, row}) => {
         : value === undefined
           ? value
           : "";
-
-    // case "FORMULA_FRONTEND":
-    //   return <FormulaCell field={field} row={row} />
 
     case "ICO":
       return <IconGenerator icon={value} />;

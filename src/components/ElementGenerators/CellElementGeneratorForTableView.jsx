@@ -53,7 +53,6 @@ const CellElementGeneratorForTableView = ({
   mainForm,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
-  const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
 

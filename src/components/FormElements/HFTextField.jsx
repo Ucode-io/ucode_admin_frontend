@@ -59,74 +59,72 @@ const HFTextField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <TextField
-          size="small"
-          value={
-            typeof value === "number"
-              ? numberWithSpaces(value)
-              : value?.length > 50
-                ? `${value.slice(0, 40)}...`
-                : value
-          }
-          onChange={(e) => {
-            onChange(
-              withTrim
-                ? e.target.value?.trim()
-                : typeof e.target.value === "number"
-                  ? numberWithSpaces(e.target.value)
-                  : e.target.value
-            );
-            customOnChange(e);
-            isNewTableView && updateObject();
-          }}
-          sx={{
-            width: "100%",
-            padding: "0px",
-            margin: "0px",
-          }}
-          name={name}
-          id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
-          error={error}
-          fullWidth={fullWidth}
-          placeholder={placeholder}
-          autoFocus={tabIndex === 1}
-          InputProps={{
-            readOnly: disabled,
-            inputProps: {tabIndex, style: {height: inputHeight}},
-            classes: {
-              input: isBlackBg ? classes.input : "",
-            },
-            style: disabled
-              ? {
-                  background: "#c0c0c039",
-                  padding: "0px",
-                }
-              : isNewTableView
+      render={({field: {onChange, value}, fieldState: {error}}) => {
+        const finalValue =
+          value?.length > 50 ? `${value.slice(0, 40)}...` : value;
+        return (
+          <TextField
+            size="small"
+            value={finalValue}
+            onChange={(e) => {
+              onChange(
+                withTrim
+                  ? e.target.value?.trim()
+                  : typeof e.target.value === "number"
+                    ? numberWithSpaces(e.target.value)
+                    : e.target.value
+              );
+              customOnChange(e);
+              isNewTableView && updateObject();
+            }}
+            sx={{
+              width: "100%",
+              padding: "0px",
+              margin: "0px",
+            }}
+            name={name}
+            id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
+            error={error}
+            fullWidth={fullWidth}
+            placeholder={placeholder}
+            autoFocus={tabIndex === 1}
+            InputProps={{
+              readOnly: disabled,
+              inputProps: {tabIndex, style: {height: inputHeight}},
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
+              style: disabled
                 ? {
-                    background: "inherit",
-                    color: "inherit",
-                    padding: "0px !important",
-                    margin: "0px !important",
-                    height: "25px",
+                    background: "#c0c0c039",
+                    padding: "0px",
                   }
-                : {},
+                : isNewTableView
+                  ? {
+                      background: "inherit",
+                      color: "inherit",
+                      padding: "0px !important",
+                      margin: "0px !important",
+                      height: "25px",
+                    }
+                  : {},
 
-            endAdornment: disabled ? (
-              <Tooltip title={disabled_text}>
-                <InputAdornment position="start">
-                  <Lock style={{fontSize: "20px"}} />
-                </InputAdornment>
-              </Tooltip>
-            ) : (
-              endAdornment
-            ),
-          }}
-          helperText={!disabledHelperText && error?.message}
-          className={isFormEdit ? "custom_textfield" : ""}
-          {...props}
-        />
-      )}
+              endAdornment: disabled ? (
+                <Tooltip title={disabled_text}>
+                  <InputAdornment position="start">
+                    <Lock style={{fontSize: "20px"}} />
+                  </InputAdornment>
+                </Tooltip>
+              ) : (
+                endAdornment
+              ),
+            }}
+            helperText={!disabledHelperText && error?.message}
+            className={isFormEdit ? "custom_textfield" : ""}
+            {...props}
+          />
+        );
+      }}
     />
   );
 };

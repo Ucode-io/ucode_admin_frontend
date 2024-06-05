@@ -56,6 +56,7 @@ export default function NewTableDataForm({
           fields={fields}
           field={field}
           row={row}
+          isNewRow={true}
           newColumn={true}
           index={index}
           control={control}

@@ -101,12 +101,12 @@ const ConstructorTablesFormPage = () => {
 
     try {
       const [tableData, {custom_events: actions = []}] = await Promise.all([
-        constructorViewRelationService.getList({table_slug: tableSlug}),
-        constructorCustomEventService.getList(
+        await constructorViewRelationService.getList({table_slug: tableSlug}),
+        await constructorCustomEventService.getList(
           {table_slug: tableSlug},
           tableSlug
         ),
-        layoutService
+        await layoutService
           .getList(
             {"table-slug": tableSlug, language_setting: i18n?.language},
             tableSlug

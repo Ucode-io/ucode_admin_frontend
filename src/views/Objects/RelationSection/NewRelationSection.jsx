@@ -177,7 +177,7 @@ const NewRelationSection = ({
 
   const onSelect = (el) => {
     setType(el?.type);
-    setSelectTab(el ?? relations[selectedTabIndex]);
+    setSelectTab(el || relations[selectedTabIndex]);
   };
 
   /*****************************JWT END*************************/

@@ -6,7 +6,7 @@ import {Button, Modal, Popover} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
@@ -21,6 +21,7 @@ import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import menuService from "../../../../services/menuService";
+import {viewsActions} from "../../../../store/views/view.slice";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -47,6 +48,7 @@ const ViewTabSelector = ({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const {i18n} = useTranslation();
+  const dispatch = useDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -124,7 +126,16 @@ const ViewTabSelector = ({
             {views.map((view, index) => (
               <Draggable key={view.id}>
                 <div
-                  onClick={() => setSelectedTabIndex(index)}
+                  onClick={() => {
+                    dispatch(
+                      viewsActions.setViewTab({
+                        tableSlug: tableSlug,
+                        tabIndex: index,
+                      })
+                    );
+
+                    setSelectedTabIndex(index);
+                  }}
                   className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && (
                     <TableChart className={style.icon} />

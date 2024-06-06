@@ -7,7 +7,9 @@ import {CTable, CTableCell, CTableHead} from "../../../../../components/CTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
-import menuService, {useMenuListQuery} from "../../../../../services/menuService";
+import menuService, {
+  useMenuListQuery,
+} from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
 import {useTranslation} from "react-i18next";
 
@@ -94,15 +96,14 @@ function NewlayoutList({
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
-      .getByID({
-        menuId: searchParams.get("menuId"),
-      })
-      .then((res) => {
-        setMenuItem(res);
-      });
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
     }
   }, []);
-
 
   const {isLoading} = useMenuListQuery({
     params: {
@@ -111,7 +112,7 @@ function NewlayoutList({
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
-        console.log('resssssssss', res)
+        console.log("resssssssss", res);
         setMenus(
           res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
         );
@@ -130,7 +131,7 @@ function NewlayoutList({
     );
     return nonSelectedOptionsMenu;
   }, [watchLayouts?.map((item) => item?.menu_id), menus]);
-
+  console.log("isLoading", isLoading, layouts);
   return (
     <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
       <TableCard>

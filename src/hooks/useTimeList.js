@@ -1,5 +1,5 @@
-import { add, setHours, setMinutes } from "date-fns";
-import { useMemo } from "react";
+import {add, setHours, setMinutes} from "date-fns";
+import {useMemo} from "react";
 
 const useTimeList = (timeInterval = 60) => {
   const timeList = useMemo(() => {
@@ -11,7 +11,7 @@ const useTimeList = (timeInterval = 60) => {
     let currentTime = startTime;
     while (currentTime <= endTime) {
       timeArray.push(currentTime);
-      currentTime = add(currentTime, { minutes: timeInterval });
+      currentTime = add(currentTime, {minutes: timeInterval});
     }
 
     return timeArray;

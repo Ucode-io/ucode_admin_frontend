@@ -13,6 +13,7 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import {format, setHours, setMinutes} from "date-fns";
 import InfoBlockMonth from "./InfoBlockMonth";
 import InfoBlock from "../InfoBlock";
+import {useTranslation} from "react-i18next";
 
 const DataMonthCard = ({
   date,
@@ -29,6 +30,7 @@ const DataMonthCard = ({
   const {tableSlug} = useParams();
   const {timeList} = useTimeList(view.time_interval);
   const [target, setTarget] = useState();
+  const {i18n} = useTranslation();
 
   useEffect(() => {
     if (!ref?.current) return null;
@@ -141,7 +143,7 @@ const DataMonthCard = ({
       onPositionChange(lastEvent.drag, lastEvent.height);
     }
   };
-
+  console.log("viewFieldviewFieldss", viewFields);
   return (
     <>
       <div
@@ -210,7 +212,9 @@ const DataMonthCard = ({
                   size={16}
                 />
               ) : (
-                field?.label
+                field?.label ||
+                field?.attributes?.[`label_${i18n?.language}`] ||
+                field?.attributes?.[`name_${i18n?.language}`]
               )}
               :{" "}
             </b>

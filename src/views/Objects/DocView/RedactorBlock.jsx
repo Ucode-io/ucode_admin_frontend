@@ -4,7 +4,7 @@ import {forwardRef, useMemo, useState} from "react";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import Footer from "../../../components/Footer";
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput";
 import usePaperSize from "../../../hooks/usePaperSize";
@@ -46,6 +46,7 @@ const RedactorBlock = forwardRef(
     const {control, handleSubmit, reset} = useForm();
     const [btnLoader, setBtnLoader] = useState(false);
     const [open, setOpen] = useState(false);
+    const location = useLocation();
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -68,7 +69,7 @@ const RedactorBlock = forwardRef(
         .filter((i) => i.type === "LOOKUP")
         .find((i) => i.table_slug === tableSlug);
     }, [templateFields, tableSlug]);
-    console.log("getFilteredData", getFilteredData);
+
     useEffect(() => {
       reset({
         ...selectedTemplate,
@@ -85,7 +86,6 @@ const RedactorBlock = forwardRef(
     ]);
 
     const onSubmit = async (values) => {
-      console.log("valuessssssssssss", values);
       try {
         setBtnLoader(true);
 
@@ -158,12 +158,16 @@ const RedactorBlock = forwardRef(
         <Footer
           extra={
             <>
-              <div
-                onClick={() => handleClickOpen()}
-                className={styles.saveButton}>
-                {btnLoader && <CircularProgress color="secondary" size={15} />}
-                Save
-              </div>
+              {!location?.state?.isTableView && (
+                <div
+                  onClick={() => handleClickOpen()}
+                  className={styles.saveButton}>
+                  {btnLoader && (
+                    <CircularProgress color="secondary" size={15} />
+                  )}
+                  Save
+                </div>
+              )}
               <Dialog
                 open={open}
                 onClose={handleClose}

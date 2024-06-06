@@ -13,13 +13,13 @@ import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -156,6 +156,7 @@ const AutoCompleteElement = ({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list);
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -425,6 +426,25 @@ const AutoCompleteElement = ({
     </components.SingleValue>
   );
 
+  const computedViewFields = useMemo(() => {
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.view_fields?.map((el) => el?.slug);
+      const computedLanguages = languages?.map((item) => item?.slug);
+
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return field?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, i18n?.language]);
+
   const autofilterDisable = useMemo(() => {
     if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
       return true;
@@ -518,7 +538,13 @@ const AutoCompleteElement = ({
         menuShouldScrollIntoView
         styles={customStyles}
         getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
+          computedViewFields?.map((el) => {
+            if (field?.attributes?.enable_multi_language) {
+              return `${option[`${i18n?.language}`] ?? option[`${el}`]} `;
+            } else {
+              return `${option[el]} `;
+            }
+          })
         }
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>

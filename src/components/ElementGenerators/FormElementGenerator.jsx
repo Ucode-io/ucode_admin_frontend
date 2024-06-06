@@ -74,7 +74,7 @@ const FormElementGenerator = ({
     if (field?.enable_multilanguage) {
       return field?.attributes?.show_label
         ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
-        : "";
+        : field?.attributes?.[`label_${i18n?.language}`];
     } else {
       if (field?.show_label === false) return "";
       else
@@ -103,10 +103,10 @@ const FormElementGenerator = ({
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
       return `${removeLangFromSlug(field.slug)}_${activeLang}`;
-    }
-
-    if (field.id?.includes("@")) {
+    } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      return `${field.id?.split("#")?.[0]}_id`;
     }
 
     return field?.slug;
@@ -305,6 +305,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            setFormValue={setFormValue}
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -457,6 +458,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFDateTimePicker
+            field={field}
             control={control}
             name={computedSlug}
             sectionModal={sectionModal}

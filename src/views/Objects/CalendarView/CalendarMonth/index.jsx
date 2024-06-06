@@ -34,8 +34,7 @@ const CalendarMonth = ({
           //   width: virtualizer.getTotalSize(),
           height: "100%",
           position: "relative",
-        }}
-      >
+        }}>
         {/* {datesList?.map((item, index) => (
           <div
             key={index}

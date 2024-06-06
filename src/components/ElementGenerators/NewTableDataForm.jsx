@@ -2,6 +2,7 @@ import {Box} from "@mui/material";
 import React, {useMemo} from "react";
 import {useMutation} from "react-query";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
+import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 
 export default function NewTableDataForm({
   relOptions,
@@ -42,25 +43,48 @@ export default function NewTableDataForm({
         position: "relative",
         minWidth: "150px",
       }}>
-      <CellElementGeneratorForTableView
-        relOptions={relOptions}
-        tableView={tableView}
-        newColumn={true}
-        tableSlug={tableSlug}
-        isNewRow={true}
-        watch={watch}
-        isWrapField={isWrapField}
-        updateObject={updateObject}
-        fields={fields}
-        field={field}
-        row={row}
-        index={index}
-        mainForm={mainForm}
-        control={control}
-        setFormValue={setFormValue}
-        relationfields={relationfields}
-        data={data}
-      />
+      {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
+        <CellElementGeneratorForRelation
+          key={field?.id}
+          relOptions={relOptions}
+          isTableView={false}
+          tableView={tableView}
+          tableSlug={tableSlug}
+          name={`multi.${index}.${field.slug}`}
+          isWrapField={isWrapField}
+          updateObject={updateObject}
+          fields={fields}
+          field={field}
+          row={row}
+          isNewRow={true}
+          newColumn={true}
+          index={index}
+          control={control}
+          setFormValue={setFormValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      ) : (
+        <CellElementGeneratorForTableView
+          relOptions={relOptions}
+          tableView={tableView}
+          newColumn={true}
+          tableSlug={tableSlug}
+          isNewRow={true}
+          watch={watch}
+          isWrapField={isWrapField}
+          updateObject={updateObject}
+          fields={fields}
+          field={field}
+          row={row}
+          index={index}
+          mainForm={mainForm}
+          control={control}
+          setFormValue={setFormValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      )}
     </Box>
   );
 }

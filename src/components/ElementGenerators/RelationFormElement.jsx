@@ -4,7 +4,7 @@ import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -174,7 +174,9 @@ const AutoCompleteElement = ({
   const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
-  console.log("isSettings", isSettings);
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -325,17 +327,20 @@ const AutoCompleteElement = ({
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
-      if (data.prepayment_balance) {
+      if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
 
-      setLocalValue(data ? [data] : null);
+      setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
         setFormValue(name, data?.guid);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
@@ -404,7 +409,7 @@ const AutoCompleteElement = ({
   }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value || Boolean(state?.[`${tableSlug}_id`])) getValueData();
+    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {
@@ -444,12 +449,22 @@ const AutoCompleteElement = ({
     }
   }, [field, activeLang, i18n?.language]);
 
+  useEffect(() => {
+    if (field?.attributes?.object_id_from_jwt === true) {
+      const foundOption = allOptions?.find((el) => el?.guid === isUserId);
+
+      if (foundOption) {
+        setLocalValue([foundOption]);
+      }
+    }
+  }, [allOptions?.length, field]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}>
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
           Create new
         </div>
       )}
@@ -500,7 +515,6 @@ const AutoCompleteElement = ({
             styles={customStyles}
             value={localValue ?? []}
             required={required}
-            menuPortalTarget={document.body}
             defaultValue={value ?? ""}
             onChange={(e) => {
               changeHandler(e);
@@ -520,7 +534,9 @@ const AutoCompleteElement = ({
                 }
               })
             }
-            getOptionValue={(option) => option?.guid}
+            getOptionValue={(option) =>
+              option?.guid ?? option?.id ?? option?.client_type_id
+            }
             components={{
               DropdownIndicator: () => null,
               MultiValue: ({data}) => (

@@ -77,8 +77,9 @@ const CalendarView = ({
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [date, setDate] = useState(
-    views?.[selectedTabIndex]?.attributes?.period
+    views?.[selectedTabIndex]?.attributes?.period ?? "MONTH"
   );
+  console.log("viewsviewsviewsviews", views, date);
 
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());

@@ -152,7 +152,7 @@ function LayoutTabs({
                             `label_to_${i18n?.language}`
                           ]
                         : mainForm.watch(
-                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_to_${i18n.language}`
                           ) ||
                           mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`

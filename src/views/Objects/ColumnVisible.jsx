@@ -15,7 +15,7 @@ export default function ColumnVisible({
   form,
   text = "Columns",
   width = "",
-  refetch,
+  refetch = () => {},
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -47,8 +47,8 @@ export default function ColumnVisible({
     });
   }, [selectedTabIndex, views, form, computedColumns]);
 
-  const updateView = () => {
-    constructorViewService
+  const updateView = async () => {
+    await constructorViewService
       .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
@@ -63,9 +63,9 @@ export default function ColumnVisible({
           ?.filter((el) => el.is_checked)
           ?.map((el) => el.id),
       })
-      .then(() => {
-        refetch();
+      .then((res) => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        refetch();
       });
   };
 

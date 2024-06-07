@@ -156,7 +156,6 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
-  const languages = useSelector((state) => state.languages.list);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -415,25 +414,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.view_fields?.map((el) => el?.slug);
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return field?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, i18n?.language]);
-
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
@@ -520,7 +500,7 @@ const AutoCompleteElement = ({
         }}
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
-        options={allOptions ?? []}
+        options={computedOptions ?? []}
         value={localValue}
         isClearable
         components={{
@@ -544,15 +524,6 @@ const AutoCompleteElement = ({
         onChange={(newValue, {action}) => {
           changeHandler(newValue);
         }}
-        getOptionLabel={(option) =>
-          computedViewFields?.map((el) => {
-            if (field?.attributes?.enable_multi_language) {
-              return `${option[`${i18n?.language}`] ?? option[`${el}`]} `;
-            } else {
-              return `${option[el]} `;
-            }
-          })
-        }
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}

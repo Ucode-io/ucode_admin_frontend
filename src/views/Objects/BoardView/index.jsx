@@ -68,7 +68,11 @@ const BoardView = ({
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
 
-  const {data = [], isLoading: dataLoader} = useQuery(
+  const {
+    data = [],
+    isLoading: dataLoader,
+    refetch,
+  } = useQuery(
     ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters}],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
@@ -144,11 +148,11 @@ const BoardView = ({
     },
   });
 
-  // useEffect(() => {
-  //   if (tabs) {
-  //     updateView(tabs);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (tabs) {
+      updateView(tabs);
+    }
+  }, []);
 
   return (
     <div>
@@ -221,6 +225,7 @@ const BoardView = ({
           isLoading={isVisibleLoading}
           form={visibleForm}
           text={"Columns"}
+          refetch={refetch}
         />
         <BoardGroupButton
           selectedTabIndex={selectedTabIndex}

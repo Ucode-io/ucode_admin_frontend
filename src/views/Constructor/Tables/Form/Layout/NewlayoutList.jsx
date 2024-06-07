@@ -112,7 +112,6 @@ function NewlayoutList({
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
-        console.log("resssssssss", res);
         setMenus(
           res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
         );
@@ -131,7 +130,7 @@ function NewlayoutList({
     );
     return nonSelectedOptionsMenu;
   }, [watchLayouts?.map((item) => item?.menu_id), menus]);
-  console.log("isLoading", isLoading, layouts);
+
   return (
     <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
       <TableCard>

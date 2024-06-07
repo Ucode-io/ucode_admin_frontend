@@ -93,9 +93,7 @@ const RecursiveTable = ({
                   zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                 }}
                 onClick={() => {
-                  filteredColumns.find((item) => item.id === column.id)
-                    ? clickHandler()
-                    : onRowClick(element, index);
+                  element?.guid ? onRowClick(element, index) : clickHandler();
                 }}>
                 <Box display={"flex"} alignItems={"center"}>
                   {filteredColumns.find((item) => item.id === column.id) &&

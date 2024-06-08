@@ -532,7 +532,10 @@ const TableView = ({
   };
 
   const navigateToDetailPage = (row) => {
-    if (view?.navigate?.params?.length || view?.navigate?.url) {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
       const params = view.navigate?.params
         ?.map(
           (param) =>
@@ -548,7 +551,7 @@ const TableView = ({
 
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-      const matches = urlTemplate.match(variablePattern);
+      const matches = urlTemplate?.match(variablePattern);
 
       if (matches) {
         matches.forEach((match) => {

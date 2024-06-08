@@ -42,7 +42,7 @@ const ViewForm = ({
   const financialTypee = initialValues?.attributes?.percent?.type;
   const group_by_columns = initialValues?.attributes?.group_by_columns;
   const nameMulti = initialValues?.attributes?.[`name_${i18n?.language}`];
-  const navigate = initialValues?.navigate;
+  const navigate = initialValues?.attributes?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
     "#" +
@@ -367,6 +367,12 @@ const getInitialValues = (
         group_by_columns:
           columns?.map((el) => ({...el, is_checked: false})) ?? [],
         summaries: [],
+        navigate: {
+          params: [],
+          url: "",
+          headers: [],
+          cookies: [],
+        },
       },
     };
   return {
@@ -388,6 +394,12 @@ const getInitialValues = (
       ...initialValues?.attributes,
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
+      navigate: {
+        params: initialValues?.attributes?.navigate?.params,
+        url: initialValues?.attributes?.navigate?.url,
+        headers: [],
+        cookies: [],
+      },
     },
     group_fields: computeGroupFields(
       initialValues?.group_fields,

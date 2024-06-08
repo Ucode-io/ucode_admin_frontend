@@ -51,10 +51,10 @@ const TableDataForm = ({
         minWidth: "150px",
         boxSizing: "border-box",
       }}>
-      {view?.attributes?.table_editable ? (
+      {/* {view?.attributes?.table_editable ? (
         <CellElementGeneratorForTable field={field} row={row} />
-      ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
-        <CellElementGeneratorForRelation
+      ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? ( */}
+      {/* <CellElementGeneratorForRelation
           key={field?.id}
           relOptions={relOptions}
           isTableView={isTableView}
@@ -71,27 +71,27 @@ const TableDataForm = ({
           setFormValue={setFormValue}
           relationfields={relationfields}
           data={data}
-        />
-      ) : (
-        <CellElementGeneratorForTableView
-          key={field?.id}
-          relOptions={relOptions}
-          isTableView={isTableView}
-          tableView={tableView}
-          tableSlug={tableSlug}
-          name={`multi.${index}.${field.slug}`}
-          isWrapField={isWrapField}
-          updateObject={updateObject}
-          fields={fields}
-          field={field}
-          row={row}
-          index={index}
-          control={control}
-          setFormValue={setFormValue}
-          relationfields={relationfields}
-          data={data}
-        />
-      )}
+        /> */}
+      {/* ) : ( */}
+      <CellElementGeneratorForTableView
+        key={field?.id}
+        relOptions={relOptions}
+        isTableView={isTableView}
+        tableView={tableView}
+        tableSlug={tableSlug}
+        name={`multi.${index}.${field.slug}`}
+        isWrapField={isWrapField}
+        updateObject={updateObject}
+        fields={fields}
+        field={field}
+        row={row}
+        index={index}
+        control={control}
+        setFormValue={setFormValue}
+        relationfields={relationfields}
+        data={data}
+      />
+      {/* )} */}
     </Box>
   );
 };

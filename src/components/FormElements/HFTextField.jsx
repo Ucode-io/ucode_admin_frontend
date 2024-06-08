@@ -61,7 +61,7 @@ const HFTextField = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         const finalValue =
-          value?.length > 50 ? `${value.slice(0, 40)}...` : value;
+          value?.length > 200 ? `${value.slice(0, 40)}...` : value;
         return (
           <TextField
             size="small"

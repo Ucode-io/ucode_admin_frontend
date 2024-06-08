@@ -11,7 +11,7 @@ function NavigateSettings({form}) {
         <HFTextField
           fullWidth
           control={form.control}
-          name="navigate.url"
+          name="attributes.navigate.url"
           placeholder={"/url/{{$variable}}"}
         />
       </FEditableRow>

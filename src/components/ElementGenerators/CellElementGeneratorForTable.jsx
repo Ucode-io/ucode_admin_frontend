@@ -119,154 +119,384 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     return field.render(row);
   }
 
-  const renderComponentValues = {
-    LOOKUPS: () => <Many2ManyValue field={field} value={value} />,
-    SINGLE_LINE: () => <SingleLine field={field} value={value} row={row} />,
-    DATE: () => (
-      <Box className={classes.formula_box}>
-        <span className="text-nowrap">{formatDate(value)}</span>
-        <DateRangeIcon />
-      </Box>
-    ),
-    NUMBER: () => (
-      <Box className={classes.box}>
-        {value !== undefined && typeof value === "number"
-          ? numberWithSpaces(value?.toFixed(1))
-          : value === undefined
-            ? value
-            : 0}
-      </Box>
-    ),
-    DATE_TIME: () => (
-      <Box className={classes.formula_box}>
-        <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
-        <DateRangeIcon />
-      </Box>
-    ),
-    MULTISELECT: () => (
-      <Box className={classes.box}>
-        <MultiselectCellColoredElement field={field} value={value} />
-      </Box>
-    ),
-    MULTI_LINE: () => (
-      <Box className={classes.box}>
-        <div className=" text_overflow_line">
-          <span
-            dangerouslySetInnerHTML={{
-              __html: `${value?.slice(0, 200)}${
-                value?.length > 200 ? "..." : ""
-              }`,
-            }}></span>
-        </div>
-      </Box>
-    ),
-    DATE_TIME_WITHOUT_TIME_ZONE: () => (
-      <Box className={classes.formula_box}>
-        {timeValue} <DateRangeIcon />
-      </Box>
-    ),
-    PASSWORD: () => (
-      <Box className={classes.box}>
-        <div className="text-overflow">
-          <span
-            dangerouslySetInnerHTML={{
-              __html: "*".repeat(value?.length),
-            }}></span>
-        </div>
-      </Box>
-    ),
-    CHECKBOX: () =>
-      parseBoolean(value) ? (
-        <Box className={classes.box}>
-          <TableTag color="success">
-            {field.attributes?.text_true ?? "Да"}
-          </TableTag>
-        </Box>
-      ) : (
-        <Box className={classes.box}>
-          <TableTag color="error">
-            {field.attributes?.text_false ?? "Нет"}
-          </TableTag>
-        </Box>
-      ),
-    SWITCH: () =>
-      parseBoolean(value) ? (
-        <Box className={classes.box}>
-          <TableTag color="success">
-            {field.attributes?.text_true ?? "Да"}
-          </TableTag>
-        </Box>
-      ) : (
-        <Box className={classes.box}>
-          <TableTag color="error">
-            {field.attributes?.text_false ?? "Нет"}
-          </TableTag>
-        </Box>
-      ),
-    DYNAMIC: () => (
-      <Box className={classes.box}>{computedInputString ?? ""}</Box>
-    ),
-    FORMULA: () => (
-      <Box className={classes.formula_box}>
-        <span>{value ? numberWithSpaces(value) : 0}</span>
-        <FunctionsIcon />
-      </Box>
-    ),
-    FORMULA_FRONTEND: () => (
-      <Box className={classes.formula_box}>
-        {formula && typeof value === "number" ? numberWithSpaces(value) : value}
+  // const renderComponentValues = {
+  //   LOOKUPS: () => <Many2ManyValue field={field} value={value} />,
+  //   SINGLE_LINE: () => <SingleLine field={field} value={value} row={row} />,
+  //   DATE: () => (
+  //     <Box className={classes.formula_box}>
+  //       <span className="text-nowrap">{formatDate(value)}</span>
+  //       <DateRangeIcon />
+  //     </Box>
+  //   ),
+  //   NUMBER: () => (
+  //     <Box className={classes.box}>
+  //       {value !== undefined && typeof value === "number"
+  //         ? numberWithSpaces(value?.toFixed(1))
+  //         : value === undefined
+  //           ? value
+  //           : 0}
+  //     </Box>
+  //   ),
+  //   DATE_TIME: () => (
+  //     <Box className={classes.formula_box}>
+  //       <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
+  //       <DateRangeIcon />
+  //     </Box>
+  //   ),
+  //   MULTISELECT: () => (
+  //     <Box className={classes.box}>
+  //       <MultiselectCellColoredElement field={field} value={value} />
+  //     </Box>
+  //   ),
+  //   MULTI_LINE: () => (
+  //     <Box className={classes.box}>
+  //       <div className=" text_overflow_line">
+  //         <span
+  //           dangerouslySetInnerHTML={{
+  //             __html: `${value?.slice(0, 200)}${
+  //               value?.length > 200 ? "..." : ""
+  //             }`,
+  //           }}></span>
+  //       </div>
+  //     </Box>
+  //   ),
+  //   DATE_TIME_WITHOUT_TIME_ZONE: () => (
+  //     <Box className={classes.formula_box}>
+  //       {timeValue} <DateRangeIcon />
+  //     </Box>
+  //   ),
+  //   PASSWORD: () => (
+  //     <Box className={classes.box}>
+  //       <div className="text-overflow">
+  //         <span
+  //           dangerouslySetInnerHTML={{
+  //             __html: "*".repeat(value?.length),
+  //           }}></span>
+  //       </div>
+  //     </Box>
+  //   ),
+  //   CHECKBOX: () =>
+  //     parseBoolean(value) ? (
+  //       <Box className={classes.box}>
+  //         <TableTag color="success">
+  //           {field.attributes?.text_true ?? "Да"}
+  //         </TableTag>
+  //       </Box>
+  //     ) : (
+  //       <Box className={classes.box}>
+  //         <TableTag color="error">
+  //           {field.attributes?.text_false ?? "Нет"}
+  //         </TableTag>
+  //       </Box>
+  //     ),
+  //   SWITCH: () =>
+  //     parseBoolean(value) ? (
+  //       <Box className={classes.box}>
+  //         <TableTag color="success">
+  //           {field.attributes?.text_true ?? "Да"}
+  //         </TableTag>
+  //       </Box>
+  //     ) : (
+  //       <Box className={classes.box}>
+  //         <TableTag color="error">
+  //           {field.attributes?.text_false ?? "Нет"}
+  //         </TableTag>
+  //       </Box>
+  //     ),
+  //   DYNAMIC: () => (
+  //     <Box className={classes.box}>{computedInputString ?? ""}</Box>
+  //   ),
+  //   FORMULA: () => (
+  //     <Box className={classes.formula_box}>
+  //       <span>{value ? numberWithSpaces(value) : 0}</span>
+  //       <FunctionsIcon />
+  //     </Box>
+  //   ),
+  //   FORMULA_FRONTEND: () => (
+  //     <Box className={classes.formula_box}>
+  //       {formula && typeof value === "number" ? numberWithSpaces(value) : value}
 
-        <FunctionsIcon />
-      </Box>
-    ),
-    ICON: () => (
-      <Box className={classes.box}>
-        <IconGenerator color={"#007AFF"} icon={value} />
-      </Box>
-    ),
-    PHOTO: () => (
-      <Box className={classes.box}>
-        {value ? (
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-            <LogoDisplay url={value} />
-          </span>
-        ) : (
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-            <PhotoIcon />
-          </span>
-        )}
-      </Box>
-    ),
-    MAP: () => (
-      <Box className={classes.box}>
-        {value ? (
-          <a
-            target="_blank"
-            href={`${generateLink(
-              value?.split(",")?.[0],
-              value?.split(",")?.[1]
-            )}`}
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}>
-            {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
-          </a>
-        ) : (
-          ""
-        )}
-      </Box>
-    ),
-    FILE: () =>
-      value ? (
+  //       <FunctionsIcon />
+  //     </Box>
+  //   ),
+  //   ICON: () => (
+  //     <Box className={classes.box}>
+  //       <IconGenerator color={"#007AFF"} icon={value} />
+  //     </Box>
+  //   ),
+  //   PHOTO: () => (
+  //     <Box className={classes.box}>
+  //       {value ? (
+  //         <span
+  //           style={{
+  //             display: "flex",
+  //             alignItems: "center",
+  //             justifyContent: "center",
+  //           }}>
+  //           <LogoDisplay url={value} />
+  //         </span>
+  //       ) : (
+  //         <span
+  //           style={{
+  //             display: "flex",
+  //             alignItems: "center",
+  //             justifyContent: "center",
+  //           }}>
+  //           <PhotoIcon />
+  //         </span>
+  //       )}
+  //     </Box>
+  //   ),
+  //   MAP: () => (
+  //     <Box className={classes.box}>
+  //       {value ? (
+  //         <a
+  //           target="_blank"
+  //           href={`${generateLink(
+  //             value?.split(",")?.[0],
+  //             value?.split(",")?.[1]
+  //           )}`}
+  //           rel="noreferrer"
+  //           onClick={(e) => e.stopPropagation()}>
+  //           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
+  //         </a>
+  //       ) : (
+  //         ""
+  //       )}
+  //     </Box>
+  //   ),
+  //   FILE: () =>
+  //     value ? (
+  //       <Box className={classes.box}>
+  //         <div
+  //           style={{
+  //             display: "flex",
+  //             alignItems: "center",
+  //             justifyContent: "space-between",
+  //           }}>
+  //           <div
+  //             style={{
+  //               display: "flex",
+  //               alignItems: "center",
+  //               justifyContent: "space-between",
+  //             }}>
+  //             <span
+  //               style={{
+  //                 marginRight: "10px",
+  //               }}>
+  //               {computedFileExtension(getFileName(value)) === "pdf" ? (
+  //                 <PictureAsPdfIcon style={{color: "red"}} />
+  //               ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
+  //                 <BackupTableIcon style={{color: "green"}} />
+  //               ) : computedFileExtension(getFileName(value)) === "png" ||
+  //                 computedFileExtension(getFileName(value)) === "jpeg" ||
+  //                 computedFileExtension(getFileName(value)) === "jpg" ? (
+  //                 <PhotoLibraryIcon style={{color: "green"}} />
+  //               ) : computedFileExtension(getFileName(value)) === "txt" ||
+  //                 computedFileExtension(getFileName(value)) === "docx" ? (
+  //                 <DescriptionIcon style={{color: "#007AFF"}} />
+  //               ) : (
+  //                 <AttachFileIcon style={{color: "blue"}} />
+  //               )}
+  //             </span>
+  //             {getFileName(value)}
+  //           </div>
+  //           <div>
+  //             <a
+  //               href={value}
+  //               className=""
+  //               download
+  //               target="_blank"
+  //               onClick={(e) => e.stopPropagation()}
+  //               rel="noreferrer">
+  //               <DownloadIcon
+  //                 style={{width: "25px", height: "25px", fontSize: "30px"}}
+  //               />
+  //             </a>
+  //           </div>
+  //         </div>
+  //       </Box>
+  //     ) : (
+  //       <Box className={classes.box}>
+  //         <CloudUploadIcon />
+  //       </Box>
+  //     ),
+  // };
+
+  // return renderComponentValues[field?.type] ? (
+  //   renderComponentValues[field?.type]
+  // ) : typeof value ? (
+  //   <Box className={classes.box}>{JSON.stringify(value)}</Box>
+  // ) : (
+  //   <Box className={classes.box}>{value}</Box>
+  // );
+
+  switch (field.type) {
+    case "LOOKUPS":
+      return <Many2ManyValue field={field} value={value} />;
+
+    case "SINGLE_LINE":
+      return <SingleLine field={field} value={value} row={row} />;
+
+    case "DATE":
+      return (
+        <Box className={classes.formula_box}>
+          <span className="text-nowrap">{formatDate(value)}</span>
+          <DateRangeIcon />
+        </Box>
+      );
+
+    case "NUMBER":
+      return (
+        <Box className={classes.box}>
+          {value !== undefined && typeof value === "number"
+            ? numberWithSpaces(value?.toFixed(1))
+            : value === undefined
+              ? value
+              : 0}
+        </Box>
+      );
+
+    case "DATE_TIME":
+      return (
+        <Box className={classes.formula_box}>
+          <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
+          <DateRangeIcon />
+        </Box>
+      );
+
+    case "MULTISELECT":
+      return (
+        <Box className={classes.box}>
+          <MultiselectCellColoredElement field={field} value={value} />
+        </Box>
+      );
+
+    case "MULTI_LINE":
+      return (
+        <Box className={classes.box}>
+          <div className=" text_overflow_line">
+            <span
+              dangerouslySetInnerHTML={{
+                __html: `${value?.slice(0, 200)}${
+                  value?.length > 200 ? "..." : ""
+                }`,
+              }}></span>
+          </div>
+        </Box>
+      );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <Box className={classes.formula_box}>
+          {timeValue} <DateRangeIcon />
+        </Box>
+      );
+
+    case "PASSWORD":
+      return (
+        <Box className={classes.box}>
+          <div className="text-overflow">
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "*".repeat(value?.length),
+              }}></span>
+          </div>
+        </Box>
+      );
+
+    case "CHECKBOX":
+    case "SWITCH":
+      return parseBoolean(value) ? (
+        <Box className={classes.box}>
+          <TableTag color="success">
+            {field.attributes?.text_true ?? "Да"}
+          </TableTag>
+        </Box>
+      ) : (
+        <Box className={classes.box}>
+          <TableTag color="error">
+            {field.attributes?.text_false ?? "Нет"}
+          </TableTag>
+        </Box>
+      );
+
+    case "DYNAMIC":
+      return <Box className={classes.box}>{computedInputString ?? ""}</Box>;
+
+    case "FORMULA":
+      return (
+        <Box className={classes.formula_box}>
+          <span>{value ? numberWithSpaces(value) : 0}</span>
+          <FunctionsIcon />
+        </Box>
+      );
+
+    case "FORMULA_FRONTEND":
+      return (
+        <Box className={classes.formula_box}>
+          {formula && typeof value === "number"
+            ? numberWithSpaces(value)
+            : value}
+
+          <FunctionsIcon />
+        </Box>
+      );
+
+    case "ICON":
+      return (
+        <Box className={classes.box}>
+          <IconGenerator color={"#007AFF"} icon={value} />
+        </Box>
+      );
+
+    case "PHOTO":
+      return (
+        <Box className={classes.box}>
+          {value ? (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <LogoDisplay url={value} />
+            </span>
+          ) : (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <PhotoIcon />
+            </span>
+          )}
+        </Box>
+      );
+
+    case "MAP":
+      return (
+        <Box className={classes.box}>
+          {value ? (
+            <a
+              target="_blank"
+              href={`${generateLink(
+                value?.split(",")?.[0],
+                value?.split(",")?.[1]
+              )}`}
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}>
+              {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
+            </a>
+          ) : (
+            ""
+          )}
+        </Box>
+      );
+
+    case "FILE":
+      return value ? (
         <Box className={classes.box}>
           <div
             style={{
@@ -320,16 +550,13 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
         <Box className={classes.box}>
           <CloudUploadIcon />
         </Box>
-      ),
-  };
+      );
 
-  return renderComponentValues[field?.type] ? (
-    renderComponentValues[field?.type]
-  ) : typeof value ? (
-    <Box className={classes.box}>{JSON.stringify(value)}</Box>
-  ) : (
-    <Box className={classes.box}>{value}</Box>
-  );
+    default:
+      if (typeof value === "object")
+        return <Box className={classes.box}>{JSON.stringify(value)}</Box>;
+      return <Box className={classes.box}>{value}</Box>;
+  }
 };
 
 export default CellElementGeneratorForTable;

@@ -536,7 +536,7 @@ const TableView = ({
       view?.attributes?.navigate?.params?.length ||
       view?.attributes?.navigate?.url
     ) {
-      const params = view.navigate?.params
+      const params = view?.attributes?.navigate?.params
         ?.map(
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
@@ -546,7 +546,7 @@ const TableView = ({
         )
         .join("&&");
 
-      const urlTemplate = view?.navigate?.url;
+      const urlTemplate = view?.attributes?.navigate?.url;
       let query = urlTemplate;
 
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;

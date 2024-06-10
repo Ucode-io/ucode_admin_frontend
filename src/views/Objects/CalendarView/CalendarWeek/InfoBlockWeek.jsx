@@ -28,6 +28,7 @@ const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
   // {data.calendar?.elementToTime
   //   ? format(data.calendar?.elementToTime, "HH:mm")
   //   : ""}
+
   return (
     <div className={`${styles.infoBlock}`}>
       <div>
@@ -53,6 +54,15 @@ const InfoBlockWeek = ({viewFields, data, isSingleLine}) => {
               </Typography>
             </Box>
           ) : field.type === "DATE_TIME" ? (
+            <Box style={flex}>
+              <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
+                {field.label}:
+              </Typography>{" "}
+              <Typography fontSize={"12px"}>
+                {dateValidFormat(data[field.slug], "dd.MM.yyyy")}
+              </Typography>
+            </Box>
+          ) : field?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
             <Box style={flex}>
               <Typography variant="p" fontSize={"12px"} fontWeight={"bold"}>
                 {field.label}:

@@ -55,6 +55,13 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
             </Typography>{" "}
             {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
           </Box>
+        ) : viewFields[0]?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
+          <Box style={flex}>
+            <Typography variant="h6" fontSize={"18px"}>
+              {viewFields[0]?.label}:
+            </Typography>{" "}
+            {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
+          </Box>
         ) : viewFields[0]?.type === "MULTISELECT" ? (
           <MultiselectCellColoredElement
             style={{padding: "2px 5px", marginBottom: 4}}

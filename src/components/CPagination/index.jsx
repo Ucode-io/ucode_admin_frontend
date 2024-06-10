@@ -73,7 +73,7 @@ const CPagination = ({
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
   };
-
+  console.log("viewviewviewview", view);
   return (
     <div
       style={{

@@ -89,6 +89,7 @@ const HFNumberField = ({
               value={typeof value === "number" ? value : 0}
               onValueChange={(value) => {
                 handleChange(value, onChange);
+                isNewTableView && updateObject();
               }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${
                 styles.numberField

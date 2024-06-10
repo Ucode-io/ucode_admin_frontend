@@ -47,10 +47,6 @@ const CPagination = ({
 
   const options = [
     {value: "all", label: "All"},
-    // {
-    //   value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    //   label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    // },
     {value: 10, label: 10},
     {value: 15, label: 15},
     {value: 20, label: 20},
@@ -73,7 +69,7 @@ const CPagination = ({
   const objectNavigate = () => {
     navigate(view?.attributes?.url_object);
   };
-  console.log("viewviewviewview", view);
+
   return (
     <div
       style={{

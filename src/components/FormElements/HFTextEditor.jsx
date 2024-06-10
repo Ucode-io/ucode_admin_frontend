@@ -27,7 +27,15 @@ const HFTextEditor = ({
     control,
     name,
   });
-  console.log("namenamename", name, field);
+  const modules = {
+    toolbar: [
+      [{header: "1"}, {header: "2"}, {font: []}],
+      [{list: "ordered"}, {list: "bullet"}],
+      ["bold", "italic", "underline"],
+      [{color: []}],
+      ["link", "image", "video"],
+    ],
+  };
   return (
     <FRowMultiLine
       label={label}
@@ -46,6 +54,7 @@ const HFTextEditor = ({
             <ReactQuill
               theme="snow"
               value={value}
+              modules={modules}
               defaultValue={value}
               onChange={(val) => {
                 onChange(val);

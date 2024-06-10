@@ -33,7 +33,7 @@ const CalendarTemplate = ({month = [], data, view, fieldsMap}) => {
   const viewFields = useMemo(() => {
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
-
+  console.log("viewFields", viewFields);
   return (
     <>
       <Box className={styles.calendarTemplate}>

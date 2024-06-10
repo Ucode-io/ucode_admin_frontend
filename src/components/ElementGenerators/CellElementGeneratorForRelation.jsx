@@ -96,10 +96,9 @@ const CellElementGeneratorForRelation = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
-
-  const renderComponents = {
-    LOOKUP: () =>
-      newColumn ? (
+  switch (field.type) {
+    case "LOOKUP":
+      return newColumn ? (
         <CellRelationFormElementForNewColumn
           mainForm={mainForm}
           relOptions={relOptions}
@@ -142,34 +141,28 @@ const CellElementGeneratorForRelation = ({
           relationfields={relationfields}
           data={data}
         />
-      ),
-    LOOKUPS: () => (
-      <CellManyToManyRelationElement
-        relOptions={relOptions}
-        disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
-        name={computedSlug}
-        field={field}
-        row={row}
-        placeholder={field.attributes?.placeholder}
-        setFormValue={setFormValue}
-        index={index}
-        defaultValue={defaultValue}
-      />
-    ),
-  };
+      );
 
-  return renderComponents[field.type] ? (
-    renderComponents[field.type]()
-  ) : (
-    <div style={{padding: "0 4px"}}>
-      <CellElementGenerator field={field} row={row} />
-    </div>
-  );
+    case "LOOKUPS":
+      return (
+        <CellManyToManyRelationElement
+          relOptions={relOptions}
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+        />
+      );
+  }
 };
 
 export default CellElementGeneratorForRelation;

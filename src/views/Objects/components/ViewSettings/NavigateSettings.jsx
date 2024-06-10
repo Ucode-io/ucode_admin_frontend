@@ -26,6 +26,14 @@ function NavigateSettings({form}) {
           placeholder={"/url/{{$variable}}"}
         />
       </FEditableRow>
+      <FEditableRow label="PDF URL">
+        <HFTextField
+          fullWidth
+          control={form.control}
+          name="attributes.pdf_url"
+          placeholder={"/url/{{$variable}}"}
+        />
+      </FEditableRow>
     </Box>
   );
 }

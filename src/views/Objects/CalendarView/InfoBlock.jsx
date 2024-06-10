@@ -1,9 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
-import { dateValidFormat } from "../../../utils/dateValidFormat";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import {dateValidFormat} from "../../../utils/dateValidFormat";
+import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
 import styles from "./style.module.scss";
-import { format } from "date-fns";
+import {format} from "date-fns";
 
 const flex = {
   display: "flex",
@@ -11,7 +11,7 @@ const flex = {
   columnGap: "6px",
 };
 
-const InfoBlock = ({ viewFields, data, isSingleLine }) => {
+const InfoBlock = ({viewFields, data, isSingleLine}) => {
   if (isSingleLine)
     return (
       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
@@ -54,9 +54,16 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
               </Typography>{" "}
               {dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")}
             </Box>
+          ) : field.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
+            <Box style={flex}>
+              <Typography variant="h6" fontSize={"18px"}>
+                {field.label}:
+              </Typography>{" "}
+              {dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")}
+            </Box>
           ) : field.type === "MULTISELECT" ? (
             <MultiselectCellColoredElement
-              style={{ padding: "2px 5px", marginBottom: 4 }}
+              style={{padding: "2px 5px", marginBottom: 4}}
               value={data[field.slug]}
               field={field}
             />

@@ -60,12 +60,10 @@ const HFTextField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const finalValue =
-          value?.length > 200 ? `${value.slice(0, 40)}...` : value;
         return (
           <TextField
             size="small"
-            value={finalValue}
+            value={value}
             onChange={(e) => {
               onChange(
                 withTrim

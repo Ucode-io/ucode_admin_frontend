@@ -148,11 +148,11 @@ const BoardView = ({
     },
   });
 
-  useEffect(() => {
-    if (tabs) {
-      updateView(tabs);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (tabs) {
+  //     updateView(tabs);
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -219,7 +219,7 @@ const BoardView = ({
         </div>
         <ColumnVisible
           selectedTabIndex={selectedTabIndex}
-          views={visibleViews}
+          views={views}
           columns={visibleColumns}
           relationColumns={visibleRelationColumns}
           isLoading={isVisibleLoading}

@@ -1,7 +1,7 @@
-import { Add } from "@mui/icons-material";
-import { differenceInMinutes, format, setHours, setMinutes } from "date-fns";
-import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import {Add} from "@mui/icons-material";
+import {differenceInMinutes, format, setHours, setMinutes} from "date-fns";
+import {useMemo, useState} from "react";
+import {useSearchParams} from "react-router-dom";
 import useTimeList from "../../../hooks/useTimeList";
 import styles from "./day.module.scss";
 import DataDayCard from "./DataDayCard.jsx";
@@ -20,7 +20,7 @@ const DayColumn = ({
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
-  const { timeList, timeInterval } = useTimeList(view.time_interval);
+  const {timeList, timeInterval} = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
     return data?.filter(
@@ -89,14 +89,12 @@ const DayColumn = ({
           className={styles.timesBlock}
           style={{
             overflow: "auto",
-          }}
-        >
+          }}>
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
           <div
             className={`${styles.addButton}`}
-            onClick={() => navigateToCreatePage(time)}
-          >
+            onClick={() => navigateToCreatePage(time)}>
             <Add color="" />
             {queryGuid ? "Choose" : "Create"}
           </div>

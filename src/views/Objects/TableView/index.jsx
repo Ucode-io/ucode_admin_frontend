@@ -544,7 +544,9 @@ const TableView = ({
               row
             )}`
         )
-        .join("&&");
+        .join("&");
+
+      console.log("param", params);
 
       const urlTemplate = view?.attributes?.navigate?.url;
       let query = urlTemplate;
@@ -562,7 +564,8 @@ const TableView = ({
           }
         });
       }
-      navigate(`${query}${params ? "?" + params : ""}`);
+
+      // navigate(`${query}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }

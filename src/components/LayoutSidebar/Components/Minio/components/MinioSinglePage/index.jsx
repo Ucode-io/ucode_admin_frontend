@@ -1,16 +1,20 @@
-import { Box } from "@mui/material";
-import { useSelector } from "react-redux";
+import {Box} from "@mui/material";
+import {useSelector} from "react-redux";
 import MinioSinglePageHeader from "./MinioSInglePageHeader";
 import style from "./style.module.scss";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useFileDeleteMutation, useFileGetByIdQuery, useFileUpdateMutation } from "../../../../../../services/fileService";
-import { useForm } from "react-hook-form";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+  useFileDeleteMutation,
+  useFileGetByIdQuery,
+  useFileUpdateMutation,
+} from "../../../../../../services/fileService";
+import {useForm} from "react-hook-form";
 import MinioForm from "./MinioForm";
-import { store } from "../../../../../../store";
-import { showAlert } from "../../../../../../store/alert/alert.thunk";
-import { useQueryClient } from "react-query";
+import {store} from "../../../../../../store";
+import {showAlert} from "../../../../../../store/alert/alert.thunk";
+import {useQueryClient} from "react-query";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import menuService from "../../../../../../services/menuService";
 const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
@@ -32,10 +36,10 @@ const MinioSinglePage = () => {
     }
   }, []);
 
-  const { fileId } = useParams();
-  const { control, watch, reset, getValues } = useForm({});
+  const {fileId} = useParams();
+  const {control, watch, reset, getValues} = useForm({});
 
-  const { mutate: updateFile, isLoading: updateLoading } = useFileUpdateMutation({
+  const {mutate: updateFile, isLoading: updateLoading} = useFileUpdateMutation({
     onSuccess: () => {
       queryClient.refetchQueries(["MINIO_OBJECT"]);
       store.dispatch(showAlert("Успешно", "success"));
@@ -43,7 +47,7 @@ const MinioSinglePage = () => {
     },
   });
 
-  const { mutate: deleteFile, isLoading: deleteLoading } = useFileDeleteMutation({
+  const {mutate: deleteFile, isLoading: deleteLoading} = useFileDeleteMutation({
     onSuccess: () => {
       store.dispatch(showAlert("Успешно", "success"));
       queryClient.refetchQueries(["MINIO_OBJECT"]);
@@ -56,11 +60,11 @@ const MinioSinglePage = () => {
   };
 
   const onSubmit = (data) => {
-    updateFile({ ...getValues(), id: file?.id });
+    updateFile({...getValues(), id: file?.id});
   };
 
-  const { data: file, isLoading } = useFileGetByIdQuery({
-    fileId: fileId,
+  const {data: file, isLoading} = useFileGetByIdQuery({
+    fileId,
     queryParams: {
       enabled: Boolean(fileId),
       onSuccess: (res) => {
@@ -77,7 +81,12 @@ const MinioSinglePage = () => {
   return (
     <>
       <Box className={style.minio}>
-        <MinioSinglePageHeader menuItem={menuItem} file={file} onSubmit={onSubmit} deleteFileElements={deleteFileElements} />
+        <MinioSinglePageHeader
+          menuItem={menuItem}
+          file={file}
+          onSubmit={onSubmit}
+          deleteFileElements={deleteFileElements}
+        />
 
         {extension === "PNG" || extension === "JPEG" || extension === "JPG" ? (
           <Box className={style.image}>

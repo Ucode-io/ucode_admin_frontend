@@ -531,6 +531,12 @@ const TableView = ({
     }
   };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
   const navigateToDetailPage = (row) => {
     if (
       view?.attributes?.navigate?.params?.length ||
@@ -553,19 +559,19 @@ const TableView = ({
 
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-      const matches = urlTemplate?.match(variablePattern);
+      const matches = replaceUrlVariables(urlTemplate, row);
 
-      if (matches) {
-        matches.forEach((match) => {
-          const variableName = match.slice(4, -2);
-          const variableValue = row[variableName];
-          if (variableValue !== undefined) {
-            query = query.replace(match, variableValue);
-          }
-        });
-      }
+      // if (matches) {
+      //   matches.forEach((match) => {
+      //     const variableName = match.slice(4, -2);
+      //     const variableValue = row[variableName];
+      //     if (variableValue !== undefined) {
+      //       query = query.replace(match, variableValue);
+      //     }
+      //   });
+      // }
 
-      // navigate(`${query}${params ? "?" + params : ""}`);
+      navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }

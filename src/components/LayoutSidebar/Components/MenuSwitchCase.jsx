@@ -4,12 +4,14 @@ export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const typeHandlers = {
   FOLDER: ({appId, navigate}) => {
-    return navigate(`/main/${appId}`)
+    return navigate(`/main/${appId}`);
   },
   MINIO_FOLDER: ({appId, element, navigate}) =>
-    navigate(`/main/${appId}/backet/${element?.id}`),
+    navigate(`/main/${appId}/backet/${element?.id}?menuId=${element?.id}`),
   TABLE: ({appId, element, navigate}) =>
-    navigate(`/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`),
+    navigate(
+      `/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`
+    ),
   WIKI: ({appId, element, navigate}) =>
     navigate(
       `/main/${appId}/docs/note/${element?.parent_id}/${
@@ -36,7 +38,7 @@ const typeHandlers = {
   PERMISSION: ({appId, element, navigate}) =>
     navigate(`/main/${appId}/permission/${element?.guid}`),
   default: ({appId, navigate}) => {
-    return navigate(`/main/${appId}`)
+    return navigate(`/main/${appId}`);
   },
 };
 

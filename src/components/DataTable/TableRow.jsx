@@ -115,7 +115,6 @@ const TableRow = ({
                 }}>
                 <Button
                   onClick={() => {
-                    console.log("worked 1");
                     onRowClick(row, rowIndex);
                   }}
                   className="first_button"

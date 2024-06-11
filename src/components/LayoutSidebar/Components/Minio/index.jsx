@@ -1,14 +1,14 @@
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import style from "./style.module.scss";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import MinioHeader from "./components/MinioHeader";
 import MinioFilterBlock from "./components/MinioFilterBlock";
-import { useMinioObjectListQuery } from "../../../../services/fileService";
+import {useMinioObjectListQuery} from "../../../../services/fileService";
 import FileUploadModal from "./components/FileUploadModal";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import MinioFiles from "./components/Miniofiles";
-import { store } from "../../../../store";
-import { useSearchParams } from "react-router-dom";
+import {store} from "../../../../store";
+import {useSearchParams} from "react-router-dom";
 import menuService from "../../../../services/menuService";
 
 const MinioPage = () => {
@@ -34,7 +34,7 @@ const MinioPage = () => {
   const [sort, setSort] = useState("asc");
   const company = store.getState().company;
 
-  const { data: minios, isLoading } = useMinioObjectListQuery({
+  const {data: minios, isLoading} = useMinioObjectListQuery({
     params: {
       folder_name: menuItem?.attributes?.path,
       // sort: sort,
@@ -71,7 +71,12 @@ const MinioPage = () => {
   return (
     <>
       <Box className={style.minio}>
-        <MinioHeader menuItem={menuItem} openModal={openModal} minios={minios} selectedCards={selectedCards} />
+        <MinioHeader
+          menuItem={menuItem}
+          openModal={openModal}
+          minios={minios}
+          selectedCards={selectedCards}
+        />
 
         <MinioFilterBlock
           menuItem={menuItem}
@@ -83,10 +88,17 @@ const MinioPage = () => {
           setSize={setSize}
           size={size}
         />
-        <MinioFiles minios={minios} setSelectedCards={setSelectedCards} selectedCards={selectedCards} size={size} />
+        <MinioFiles
+          minios={minios}
+          setSelectedCards={setSelectedCards}
+          selectedCards={selectedCards}
+          size={size}
+        />
       </Box>
 
-      {fileModalIsOpen && <FileUploadModal closeModal={closeModal} menuItem={menuItem} />}
+      {fileModalIsOpen && (
+        <FileUploadModal closeModal={closeModal} menuItem={menuItem} />
+      )}
     </>
   );
 };

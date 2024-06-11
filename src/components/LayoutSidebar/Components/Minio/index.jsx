@@ -41,9 +41,7 @@ const MinioPage = () => {
       project_id: company.projectId,
     },
     queryParams: {
-      onSuccess: (res) => {
-        console.log("res", res);
-      },
+      onSuccess: (res) => {},
     },
   });
 

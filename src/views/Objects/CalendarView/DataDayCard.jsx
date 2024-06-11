@@ -156,8 +156,7 @@ const DataDayCard = ({
           transform: `translateY(${info.calendar?.startPosition}px)`,
           height: info.calendar?.height,
         }}
-        onClick={openMenu}
-        w>
+        onClick={openMenu}>
         <div
           className={styles.resizing}
           style={{background: infoBlockBg, height: "100%"}}>

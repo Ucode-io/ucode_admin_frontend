@@ -1,7 +1,5 @@
 import {Controller} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
-import {useCallback} from "react";
-import {debounce} from "lodash";
 import styles from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
@@ -13,7 +11,7 @@ const HFNumberField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
-  updateObject,
+  updateObject = () => {},
   isNewTableView = false,
   fullWidth = false,
   isTransparent = false,
@@ -27,19 +25,20 @@ const HFNumberField = ({
   type = "text",
   ...props
 }) => {
-  const handleChange = useCallback(
-    debounce((value, onChange) => {
-      if (value.floatValue !== undefined) {
-        onChange(value.floatValue || 0);
-        if (isNewTableView) {
-          updateObject();
-        }
-      } else {
-        onChange("");
-      }
-    }, 300),
-    []
-  );
+  const handleChange = (event, onChange) => {
+    const inputValue = event.target.value.replace(/\s+/g, "");
+    const parsedValue = inputValue ? parseFloat(inputValue) : "";
+
+    if (parsedValue || parsedValue === 0) {
+      onChange(parsedValue);
+    } else {
+      onChange("");
+    }
+
+    if (isNewTableView) {
+      updateObject();
+    }
+  };
 
   const regexValidation = field?.attributes?.validation;
 
@@ -95,10 +94,8 @@ const HFNumberField = ({
               id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
               allowNegative
               fullWidth={fullWidth}
-              value={typeof value === "number" ? value : 0}
-              onValueChange={(value) => {
-                handleChange(value, onChange);
-              }}
+              value={typeof value === "number" ? value : ""}
+              onChange={(e) => handleChange(e, onChange)}
               className={`${isFormEdit ? "custom_textfield" : ""} ${
                 styles.numberField
               }`}

@@ -552,8 +552,6 @@ const TableView = ({
         )
         .join("&");
 
-      console.log("param", params);
-
       const urlTemplate = view?.attributes?.navigate?.url;
       let query = urlTemplate;
 
@@ -620,7 +618,7 @@ const TableView = ({
       view?.attributes?.quick_filters?.length < 0 ? true : false
     );
   }, []);
-
+  console.log("tableDatatableData", tableData);
   return (
     <div className={styles.wrapper}>
       {

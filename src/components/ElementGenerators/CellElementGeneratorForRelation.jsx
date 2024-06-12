@@ -46,7 +46,7 @@ const CellElementGeneratorForRelation = ({
       } else if (field.id?.includes("@")) {
         return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
       }
-      return field?.slug;
+      return `multi.${index}.${field.slug}`;
     } else {
       if (field?.enable_multilanguage) {
         return `${field.slug}`;

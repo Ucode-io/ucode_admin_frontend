@@ -48,6 +48,7 @@ export default function NewTableDataForm({
           key={field?.id}
           relOptions={relOptions}
           isTableView={false}
+          isNewRow={true}
           tableView={tableView}
           tableSlug={tableSlug}
           name={`multi.${index}.${field.slug}`}

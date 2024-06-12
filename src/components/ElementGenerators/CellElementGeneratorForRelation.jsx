@@ -46,7 +46,7 @@ const CellElementGeneratorForRelation = ({
       } else if (field.id?.includes("@")) {
         return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
       }
-      return `multi.${index}.${field.slug}`;
+      return field?.slug;
     } else {
       if (field?.enable_multilanguage) {
         return `${field.slug}`;
@@ -96,6 +96,7 @@ const CellElementGeneratorForRelation = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
+
   switch (field.type) {
     case "LOOKUP":
       return newColumn ? (

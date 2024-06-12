@@ -1,5 +1,7 @@
-import {Controller, useWatch} from "react-hook-form";
+import {Controller} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
+import {useCallback} from "react";
+import {debounce} from "lodash";
 import styles from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
@@ -25,13 +27,20 @@ const HFNumberField = ({
   type = "text",
   ...props
 }) => {
-  const handleChange = (value, onChange) => {
-    if (value.floatValue) {
-      onChange(value?.floatValue || 0);
-    } else {
-      onChange("");
-    }
-  };
+  const handleChange = useCallback(
+    debounce((value, onChange) => {
+      if (value.floatValue !== undefined) {
+        onChange(value.floatValue || 0);
+        if (isNewTableView) {
+          updateObject();
+        }
+      } else {
+        onChange("");
+      }
+    }, 300),
+    []
+  );
+
   const regexValidation = field?.attributes?.validation;
 
   return (
@@ -89,7 +98,6 @@ const HFNumberField = ({
               value={typeof value === "number" ? value : 0}
               onValueChange={(value) => {
                 handleChange(value, onChange);
-                isNewTableView && updateObject();
               }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${
                 styles.numberField
@@ -141,7 +149,8 @@ const HFNumberField = ({
             )}
           </Box>
         );
-      }}></Controller>
+      }}
+    />
   );
 };
 

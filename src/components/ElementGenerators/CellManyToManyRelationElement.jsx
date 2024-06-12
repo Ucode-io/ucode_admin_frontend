@@ -293,16 +293,15 @@ const AutoCompleteElement = ({
         }}
         noOptionsText={
           <span
-            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-          >
+            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
             Create new
           </span>
         }
         blurOnSelect
         openOnFocus
-        getOptionLabel={
-          (option) => getRelationFieldTabsLabel(field, option, true)
+        getOptionLabel={(option) =>
+          getRelationFieldTabsLabel(field, option, true)
         }
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
@@ -331,8 +330,7 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div
                     key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
+                    className={styles.multipleAutocompleteTags}>
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
@@ -342,8 +340,7 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    >
+                      }}>
                       <LaunchIcon
                         style={{
                           fontSize: "15px",

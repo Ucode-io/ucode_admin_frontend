@@ -214,7 +214,7 @@ const AutoCompleteElement = ({
             // [`name_langs_${i18n?.language}`],
             additional_request: {
               additional_field: "guid",
-              additional_values: value,
+              additional_values: [value],
             },
             // additional_ids: value,
             search: debouncedValue,

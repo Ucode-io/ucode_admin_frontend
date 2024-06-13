@@ -460,6 +460,8 @@ u {
   text-decoration: underline;
 }
 
-.smooth-dnd-draggable-wrapper {
-  display: table-row !important;
+#wrapper_drag {
+  .smooth-dnd-draggable-wrapper {
+    display: table-row !important;
+  }
 }

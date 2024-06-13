@@ -5,7 +5,6 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorFieldService from "../../../services/constructorFieldService";
@@ -23,6 +22,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import DragObjectDataTable from "../../../components/DataTable/DragObjectDataTable";
 
 const TableView = ({
   filterVisible,
@@ -620,7 +620,7 @@ const TableView = ({
   }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div id="wrapper_drag" className={styles.wrapper}>
       {
         <div
           className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
@@ -648,7 +648,7 @@ const TableView = ({
           width: filterVisible ? "calc(100% - 200px)" : "100%",
         }}
         id="data-table">
-        <ObjectDataTable
+        <DragObjectDataTable
           refetch={refetch}
           filterVisible={filterVisible}
           currentView={currentView}

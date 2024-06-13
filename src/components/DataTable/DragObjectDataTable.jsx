@@ -13,11 +13,13 @@ import FieldButton from "./FieldButton";
 import MultipleUpdateRow from "./MultipleUpdateRow";
 import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
-import TableRow from "./TableRow";
 import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
+import {Container, Draggable} from "react-smooth-dnd";
+import DragTableRow from "./DragTableRow";
+import {applyDrag} from "../../utils/applyDrag";
 
-const ObjectDataTable = ({
+const DragObjectDataTable = ({
   selectedTab,
   relOptions,
   filterVisible,
@@ -90,16 +92,7 @@ const ObjectDataTable = ({
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: !Boolean(objectMenuItem),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
+  const parentRef = useRef(null);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -235,7 +228,19 @@ const ObjectDataTable = ({
 
     return totalWidth;
   };
-  const parentRef = useRef(null);
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(columns, dropResult);
+
+    if (result) {
+      console.log("resultttttttttt", result);
+    }
+  };
+
+  const getContainerOptions = () => ({
+    orientation: "vertical",
+    getContainer: () => document.createElement("tbody"),
+  });
 
   return (
     <CTable
@@ -333,114 +338,142 @@ const ObjectDataTable = ({
         </CTableRow>
       </CTableHead>
 
-      <CTableBody
-        columnsCount={columns.length}
-        dataLength={dataLength || data?.length}
-        title={title}>
-        {(isRelationTable ? fields : data).map((virtualRowObject, index) => {
-          return (
-            columns && (
-              <TableRow
-                key={virtualRowObject?.id}
+      <Container
+        lockAxis="y"
+        onDrop={onDrop}
+        orientation="vertical"
+        getOptions={getContainerOptions}
+        render={(ref) => (
+          <CTableBody
+            columnsCount={columns.length}
+            dataLength={dataLength || data?.length}
+            title={title}
+            ref={ref}>
+            {(isRelationTable ? fields : data).map(
+              (virtualRowObject, index) => {
+                return (
+                  columns && (
+                    <>
+                      <Draggable
+                        render={() => (
+                          <CTableRow
+                            ref={parentRef}
+                            style={{
+                              cursor: "grab",
+                            }}>
+                            <DragTableRow
+                              key={virtualRowObject?.id}
+                              relOptions={relOptions}
+                              tableView={tableView}
+                              width={"80px"}
+                              remove={remove}
+                              watch={watch}
+                              getValues={getValues}
+                              control={control}
+                              row={virtualRowObject}
+                              mainForm={mainForm}
+                              formVisible={formVisible}
+                              rowIndex={index}
+                              isTableView={isTableView}
+                              selectedObjectsForDelete={
+                                selectedObjectsForDelete
+                              }
+                              setSelectedObjectsForDelete={
+                                setSelectedObjectsForDelete
+                              }
+                              isRelationTable={isRelationTable}
+                              relatedTableSlug={relatedTableSlug}
+                              onRowClick={onRowClick}
+                              isChecked={isChecked}
+                              calculateWidthFixedColumn={
+                                calculateWidthFixedColumn
+                              }
+                              onCheckboxChange={onCheckboxChange}
+                              currentPage={currentPage}
+                              limit={limit}
+                              setFormValue={setFormValue}
+                              columns={columns}
+                              tableHeight={tableHeight}
+                              tableSettings={tableSettings}
+                              pageName={pageName}
+                              calculateWidth={calculateWidth}
+                              tableSlug={tableSlug}
+                              onDeleteClick={onDeleteClick}
+                              relationAction={relationAction}
+                              onChecked={onChecked}
+                              relationFields={fields}
+                              data={data}
+                              view={view}
+                            />
+                          </CTableRow>
+                        )}
+                      />
+                    </>
+                  )
+                );
+              }
+            )}
+
+            {addNewRow && (
+              <AddDataColumn
+                rows={isRelationTable ? fields : data}
+                columns={columns}
+                isRelationTable={isRelationTable}
+                setAddNewRow={setAddNewRow}
+                isTableView={isTableView}
                 relOptions={relOptions}
                 tableView={tableView}
-                width={"80px"}
-                remove={remove}
-                watch={watch}
+                tableSlug={relatedTableSlug ?? tableSlug}
+                fields={columns}
                 getValues={getValues}
-                control={control}
-                row={virtualRowObject}
                 mainForm={mainForm}
-                formVisible={formVisible}
-                rowIndex={index}
-                isTableView={isTableView}
-                selectedObjectsForDelete={selectedObjectsForDelete}
-                setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                isRelationTable={isRelationTable}
-                relatedTableSlug={relatedTableSlug}
-                onRowClick={onRowClick}
-                isChecked={isChecked}
-                calculateWidthFixedColumn={calculateWidthFixedColumn}
-                onCheckboxChange={onCheckboxChange}
-                currentPage={currentPage}
-                limit={limit}
+                originControl={control}
                 setFormValue={setFormValue}
-                columns={columns}
-                tableHeight={tableHeight}
-                tableSettings={tableSettings}
-                pageName={pageName}
-                calculateWidth={calculateWidth}
-                tableSlug={tableSlug}
-                onDeleteClick={onDeleteClick}
-                relationAction={relationAction}
-                onChecked={onChecked}
-                relationFields={fields}
+                relationfields={fields}
                 data={data}
                 view={view}
+                onRowClick={onRowClick}
+                width={"80px"}
+                refetch={refetch}
               />
-            )
-          );
-        })}
+            )}
 
-        {addNewRow && (
-          <AddDataColumn
-            rows={isRelationTable ? fields : data}
-            columns={columns}
-            isRelationTable={isRelationTable}
-            setAddNewRow={setAddNewRow}
-            isTableView={isTableView}
-            relOptions={relOptions}
-            tableView={tableView}
-            tableSlug={relatedTableSlug ?? tableSlug}
-            fields={columns}
-            getValues={getValues}
-            mainForm={mainForm}
-            originControl={control}
-            setFormValue={setFormValue}
-            relationfields={fields}
-            data={data}
-            view={view}
-            onRowClick={onRowClick}
-            width={"80px"}
-            refetch={refetch}
-          />
-        )}
-
-        <CTableRow>
-          <CTableCell
-            align="center"
-            className="data_table__number_cell"
-            style={{
-              padding: "0",
-              position: "sticky",
-              left: "0",
-              backgroundColor: "#FFF",
-              zIndex: "1",
-            }}>
-            <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
-              <Button
-                variant="text"
+            <CTableRow>
+              <CTableCell
+                align="center"
+                className="data_table__number_cell"
                 style={{
-                  borderColor: "#F0F0F0",
-                  borderRadius: "0px",
-                  width: "100%",
-                }}
-                onClick={() => {
-                  setAddNewRow(true);
+                  padding: "0",
+                  position: "sticky",
+                  left: "0",
+                  backgroundColor: "#FFF",
+                  zIndex: "1",
                 }}>
-                <AddRoundedIcon />
-              </Button>
-            </PermissionWrapperV2>
-          </CTableCell>
-        </CTableRow>
+                <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+                  <Button
+                    variant="text"
+                    style={{
+                      borderColor: "#F0F0F0",
+                      borderRadius: "0px",
+                      width: "100%",
+                    }}
+                    onClick={() => {
+                      setAddNewRow(true);
+                    }}>
+                    <AddRoundedIcon />
+                  </Button>
+                </PermissionWrapperV2>
+              </CTableCell>
+            </CTableRow>
 
-        {!!summaries?.length && (
-          <SummaryRow summaries={summaries} columns={columns} data={data} />
-        )}
-        {additionalRow}
-      </CTableBody>
+            {!!summaries?.length && (
+              <SummaryRow summaries={summaries} columns={columns} data={data} />
+            )}
+            {additionalRow}
+          </CTableBody>
+        )}></Container>
     </CTable>
   );
 };
 
-export default ObjectDataTable;
+export default DragObjectDataTable;

@@ -25,7 +25,6 @@ const ViewForm = ({
   fields,
   refetchViews,
   setIsChanged,
-  closeModal,
   columns,
   relationColumns,
   views,

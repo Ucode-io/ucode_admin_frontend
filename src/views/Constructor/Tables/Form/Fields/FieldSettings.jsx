@@ -14,7 +14,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useForm, useWatch} from "react-hook-form";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -46,7 +46,6 @@ const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
   selectedTabIndex,
-  selectedField,
   field,
   formType,
   height,
@@ -60,7 +59,6 @@ const FieldSettings = ({
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
 
-  const [searchParams, setSearchParams] = useSearchParams();
   // const [menuItem, setMenuItem] = useState(null);
 
   // useEffect(() => {

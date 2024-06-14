@@ -182,7 +182,6 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      // queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 

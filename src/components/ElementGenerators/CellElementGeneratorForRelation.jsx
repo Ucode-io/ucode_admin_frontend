@@ -2,7 +2,6 @@ import {Parser} from "hot-formula-parser";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
-import CellElementGenerator from "./CellElementGenerator";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
 import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
@@ -13,7 +12,6 @@ const CellElementGeneratorForRelation = ({
   relOptions,
   tableView,
   field,
-  fields,
   isBlackBg = false,
   row,
   relationfields,

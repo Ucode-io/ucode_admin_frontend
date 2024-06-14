@@ -33,7 +33,6 @@ const FiltersTab = ({
   views,
   computedColumns,
   isLoading,
-  handleCloseFilter,
   setFilterVisible,
 }) => {
   const {i18n} = useTranslation();

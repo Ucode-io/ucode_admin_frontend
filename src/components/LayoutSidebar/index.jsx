@@ -40,18 +40,6 @@ const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
-
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -77,6 +65,7 @@ const LayoutSidebar = ({appId}) => {
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
@@ -207,6 +196,19 @@ const LayoutSidebar = ({appId}) => {
     }
   );
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(menuList, dropResult);
+    if (result) {
+      menuService
+        .updateOrder({
+          menus: result,
+        })
+        .then(() => {
+          getMenuList();
+        });
+    }
+  };
+
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
@@ -234,20 +236,17 @@ const LayoutSidebar = ({appId}) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-
-  const onDrop = (dropResult) => {
-    const result = applyDrag(menuList, dropResult);
-    if (result) {
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
       menuService
-        .updateOrder({
-          menus: result,
+        .getByID({
+          menuId: searchParams.get("menuId"),
         })
-        .then(() => {
-          getMenuList();
+        .then((res) => {
+          setMenuItem(res);
         });
     }
-  };
+  }, []);
 
   return (
     <>

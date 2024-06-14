@@ -107,8 +107,6 @@ const ObjectsFormPage = ({
         getLayoutData,
       ]);
 
-      // // Access dynamic keys of layoutData
-      // const layoutKeys = Object.keys(layoutData);
       setData({
         ...layoutData,
         tabs: layoutData?.tabs?.filter(
@@ -253,7 +251,6 @@ const ObjectsFormPage = ({
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -287,20 +284,12 @@ const ObjectsFormPage = ({
     navigate(-1);
   };
 
-  // useEffect(() => {
-  //   getFields();
-  // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
-
-  // const getSubtitleValue = useMemo(() => {
-  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  // }, [tableInfo]);
-
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
         <FormPageBackButton />
 
-        <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
+        <div className={styles.subTitle}></div>
 
         <SummarySectionValue
           computedSummary={summary}

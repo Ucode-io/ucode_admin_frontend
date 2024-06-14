@@ -28,9 +28,6 @@ import HFVideoUpload from "../FormElements/HFVideoUpload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
-import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
-import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
-import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 import CodeCellFormElement from "./JsonCellElement";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
@@ -39,13 +36,10 @@ import ProgrammingLan from "./ProgrammingLan";
 const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
-  relOptions,
-  tableView,
   field,
   fields,
   isBlackBg = false,
   row,
-  relationfields,
   isWrapField,
   updateObject,
   control,
@@ -55,7 +49,6 @@ const CellElementGeneratorForTableView = ({
   isTableView = false,
   isNewRow = false,
   newColumn = false,
-  mainForm,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);

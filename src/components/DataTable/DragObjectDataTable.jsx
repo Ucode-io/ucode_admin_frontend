@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -91,10 +91,9 @@ const DragObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
   const parentRef = useRef(null);
-
   const popupRef = useRef(null);
+
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -230,16 +229,16 @@ const DragObjectDataTable = ({
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(columns, dropResult);
+    const result = applyDrag(data, dropResult);
 
-    console.log("dropResult", dropResult);
+    console.log("dropResult", result);
   };
 
   const getContainerOptions = () => ({
     orientation: "vertical",
     getContainer: () => document.createElement("tbody"),
   });
-  console.log("fieldsssssssss", fields, data);
+
   return (
     <CTable
       disablePagination={disablePagination}

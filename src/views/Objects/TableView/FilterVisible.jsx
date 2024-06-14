@@ -1,6 +1,6 @@
-import {Box, Button, CircularProgress, Menu, Skeleton} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
+import {Box, Menu} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FiltersTab from "../components/ViewSettings/FiltersTab";
@@ -27,9 +27,7 @@ export default function FilterVisible({
   columns,
   views,
   relationColumns,
-  isLoading,
   form,
-  text = "",
   setFilterVisible,
 }) {
   const queryClient = useQueryClient();

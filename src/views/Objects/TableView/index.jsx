@@ -23,6 +23,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import DragObjectDataTable from "../../../components/DataTable/DragObjectDataTable";
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 
 const TableView = ({
   filterVisible,
@@ -648,60 +649,117 @@ const TableView = ({
           width: filterVisible ? "calc(100% - 200px)" : "100%",
         }}
         id="data-table">
-        <DragObjectDataTable
-          refetch={refetch}
-          filterVisible={filterVisible}
-          currentView={currentView}
-          relOptions={relOptions}
-          tableView={true}
-          defaultLimit={view?.default_limit}
-          formVisible={formVisible}
-          selectedView={selectedView}
-          setSortedDatas={setSortedDatas}
-          sortedDatas={sortedDatas}
-          setDrawerState={setDrawerState}
-          setDrawerStateField={setDrawerStateField}
-          isTableView={true}
-          getValues={getValues}
-          setFormVisible={setFormVisible}
-          setFormValue={setFormValue}
-          mainForm={mainForm}
-          isRelationTable={false}
-          removableHeight={isDocView ? 150 : 170}
-          currentPage={currentPage}
-          pagesCount={pageCount}
-          selectedObjectsForDelete={selectedObjectsForDelete}
-          setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-          columns={columns}
-          multipleDelete={multipleDelete}
-          openFieldSettings={openFieldSettings}
-          limit={paginiation ?? limit}
-          setLimit={setLimit}
-          onPaginationChange={setCurrentPage}
-          loader={tableLoader || deleteLoader}
-          data={tableData}
-          navigateToEditPage={navigateCreatePage}
-          summaries={view?.attributes?.summaries}
-          disableFilters
-          isChecked={(row) => selectedObjects?.includes(row.guid)}
-          filters={filters}
-          filterChangeHandler={filterChangeHandler}
-          onRowClick={navigateToEditPage}
-          onDeleteClick={deleteHandler}
-          tableSlug={tableSlug}
-          view={view}
-          tableStyle={{
-            borderRadius: 0,
-            border: "none",
-            borderBottom: "1px solid #E5E9EB",
-            width: "100%",
-            margin: 0,
-          }}
-          isResizeble={true}
-          navigateToForm={navigateToForm}
-          menuItem={menuItem}
-          {...props}
-        />
+        {view?.attributes?.table_draggable ? (
+          <DragObjectDataTable
+            refetch={refetch}
+            filterVisible={filterVisible}
+            currentView={currentView}
+            relOptions={relOptions}
+            tableView={true}
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            getValues={getValues}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            navigateToEditPage={navigateCreatePage}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            navigateToForm={navigateToForm}
+            menuItem={menuItem}
+            {...props}
+          />
+        ) : (
+          <ObjectDataTable
+            refetch={refetch}
+            filterVisible={filterVisible}
+            currentView={currentView}
+            relOptions={relOptions}
+            tableView={true}
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            getValues={getValues}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            navigateToEditPage={navigateCreatePage}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            navigateToForm={navigateToForm}
+            menuItem={menuItem}
+            {...props}
+          />
+        )}
       </div>
 
       {open && (

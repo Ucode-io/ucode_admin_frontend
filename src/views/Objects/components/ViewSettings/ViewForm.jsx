@@ -275,6 +275,13 @@ const ViewForm = ({
                         fullWidth
                       />
                     </FRow>
+                    <FRow label="Table draggable">
+                      <HFSwitch
+                        control={form.control}
+                        name={`attributes.table_draggable`}
+                        fullWidth
+                      />
+                    </FRow>
                   </div>
                 </div>
               </div>

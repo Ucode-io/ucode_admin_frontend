@@ -355,6 +355,7 @@ const DragObjectDataTable = ({
                   columns && (
                     <>
                       <Draggable
+                        key={virtualRowObject?.id}
                         render={() => (
                           <CTableRow
                             ref={parentRef}

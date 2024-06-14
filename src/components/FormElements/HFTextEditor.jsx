@@ -1,9 +1,10 @@
-import {lazy, Suspense} from "react";
+import React, {lazy, Suspense, useRef} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
+import {Quill} from "react-quill";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -27,14 +28,22 @@ const HFTextEditor = ({
     control,
     name,
   });
+
+  let fonts = Quill.import("attributors/style/font");
+  fonts.whitelist = ["initial", "sans-serif", "serif", "monospace"];
+  Quill.register(fonts, true);
+
   const modules = {
-    toolbar: [
-      [{header: "1"}, {header: "2"}, {font: []}],
-      [{list: "ordered"}, {list: "bullet"}],
-      ["bold", "italic", "underline"],
-      [{color: []}],
-      ["link", "image", "video"],
-    ],
+    toolbar: {
+      container: [
+        [{header: "1"}, {header: "2"}],
+        [({list: "ordered"}, {list: "bullet"})],
+        ["bold", "italic", "underline"],
+        [{color: []}],
+        ["link", "image", "video"],
+        [{font: ["roboto", "lato", "inter", "serif", "monospace"]}],
+      ],
+    },
   };
   return (
     <FRowMultiLine
@@ -49,7 +58,7 @@ const HFTextEditor = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({field: {onChange, ref}, fieldState: {error}}) => (
+        render={({field: {onChange}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               theme="snow"
@@ -63,14 +72,16 @@ const HFTextEditor = ({
               tabIndex={tabIndex}
               autoFocus={false}
               style={{
-                backgroundColor: `${isTransparent ? "transparent" : ""}`,
+                backgroundColor: isTransparent ? "transparent" : "",
                 minWidth: "200px",
                 width: "100%",
                 border: "1px solid #FFF",
+                // fontFamily: "'sans-serif'", // Ensure default font family is set correctly
               }}
             />
           </Suspense>
-        )}></Controller>
+        )}
+      />
     </FRowMultiLine>
   );
 };

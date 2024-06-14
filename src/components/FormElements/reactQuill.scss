@@ -1,7 +1,48 @@
-.tableView .ql-toolbar{
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Inter:wght@400;700&display=swap");
+
+.tableView .ql-toolbar {
   border: 0 !important;
   border-bottom: 1px solid #ccc !important;
 }
-.tableView .ql-container.ql-snow{
+.tableView .ql-container.ql-snow {
   border: 0 !important;
+}
+
+.ql-toolbar {
+  .ql-font {
+    option[value="roboto"] {
+      font-family: "Roboto", sans-serif;
+    }
+    option[value="lato"] {
+      font-family: "Lato", sans-serif;
+    }
+    option[value="inter"] {
+      font-family: "Inter", sans-serif;
+    }
+    option[value="serif"] {
+      font-family: "serif";
+    }
+    option[value="monospace"] {
+      font-family: "monospace";
+    }
+  }
+}
+
+.ql-editor {
+  font-family: "Roboto", sans-serif; // Default font family for the editor
+  .ql-font-roboto {
+    font-family: "Roboto", sans-serif;
+  }
+  .ql-font-lato {
+    font-family: "Lato", sans-serif;
+  }
+  .ql-font-inter {
+    font-family: "Inter", sans-serif;
+  }
+  .ql-font-serif {
+    font-family: "serif";
+  }
+  .ql-font-monospace {
+    font-family: "monospace";
+  }
 }

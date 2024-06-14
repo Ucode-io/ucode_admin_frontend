@@ -459,3 +459,9 @@ div {
 u {
   text-decoration: underline;
 }
+
+#wrapper_drag {
+  .smooth-dnd-draggable-wrapper {
+    display: table-row !important;
+  }
+}

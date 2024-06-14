@@ -14,7 +14,6 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 const AddDataColumn = React.memo(
   ({
     columns,
-    isTableView,
     relOptions,
     getValues,
     mainForm,
@@ -43,7 +42,6 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      watch,
       formState: {errors},
     } = useForm({});
 

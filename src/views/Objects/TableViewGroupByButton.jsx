@@ -239,7 +239,6 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                           display: "flex",
                           alignItems: "center",
                           border: 0,
-                          // borderBottom: "1px solid #eee",
                           paddingLeft: 0,
                           paddingRight: 0,
                           padding: "8px 0px",
@@ -264,7 +263,6 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                         style={{
                           width: 70,
                           border: 0,
-                          // borderBottom: "1px solid #eee",
                           paddingLeft: 0,
                           paddingRight: 0,
                           display: "flex",
@@ -313,7 +311,6 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                       display: "flex",
                       alignItems: "center",
                       border: 0,
-                      // borderBottom: "1px solid #eee",
                       paddingLeft: 0,
                       paddingRight: 0,
                       padding: "8px 0px",
@@ -338,7 +335,6 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                     style={{
                       width: 70,
                       border: 0,
-                      // borderBottom: "1px solid #eee",
                       paddingLeft: 0,
                       paddingRight: 0,
                       display: "flex",
@@ -368,13 +364,6 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                         }}
                       />
                     )}
-                    {/* <Switch
-                      size="small"
-                      checked={false}
-                      onChange={(e) => {
-                        onSwitchChange(e.target.checked, column);
-                      }}
-                    /> */}
                   </div>
                 </div>
               ))}

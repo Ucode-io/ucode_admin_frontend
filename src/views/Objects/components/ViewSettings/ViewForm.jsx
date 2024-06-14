@@ -25,7 +25,6 @@ const ViewForm = ({
   fields,
   refetchViews,
   setIsChanged,
-  closeModal,
   columns,
   relationColumns,
   views,
@@ -272,6 +271,13 @@ const ViewForm = ({
                       <HFSwitch
                         control={form.control}
                         name={`attributes.table_editable`}
+                        fullWidth
+                      />
+                    </FRow>
+                    <FRow label="Table draggable">
+                      <HFSwitch
+                        control={form.control}
+                        name={`attributes.table_draggable`}
                         fullWidth
                       />
                     </FRow>

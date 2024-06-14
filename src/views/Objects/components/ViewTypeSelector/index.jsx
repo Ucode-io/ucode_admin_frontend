@@ -3,11 +3,11 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {Button, Modal, Popover} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -20,7 +20,6 @@ import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import menuService from "../../../../services/menuService";
 import {viewsActions} from "../../../../store/views/view.slice";
 
 const ViewTabSelector = ({
@@ -49,8 +48,6 @@ const ViewTabSelector = ({
   const id = open ? "simple-popover" : undefined;
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -178,7 +175,6 @@ const ViewTabSelector = ({
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>
-                      {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
                       {selectedTabIndex === index && (
                         <MoreButtonViewType
                           onEditClick={() => openModal(view)}
@@ -192,9 +188,6 @@ const ViewTabSelector = ({
             ))}
           </Container>
         </div>
-        {/* <div className={style.element} onClick={openModal}>
-          <Settings className={style.icon} />
-        </div> */}
 
         <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
           <div

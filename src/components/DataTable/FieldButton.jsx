@@ -19,7 +19,6 @@ import {
   useRelationsCreateMutation,
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
-import menuService from "../../services/menuService";
 
 export default function FieldButton({
   openFieldSettings,

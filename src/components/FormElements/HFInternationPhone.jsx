@@ -43,6 +43,7 @@ const HFInternationPhone = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <PhoneInput
+          disabled={disabled}
           placeholder="Enter phone number"
           value={
             isString(value) ? (value?.includes("+") ? value : `+${value}`) : ""

@@ -232,16 +232,14 @@ const DragObjectDataTable = ({
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
 
-    if (result) {
-      console.log("resultttttttttt", result);
-    }
+    console.log("dropResult", dropResult);
   };
 
   const getContainerOptions = () => ({
     orientation: "vertical",
     getContainer: () => document.createElement("tbody"),
   });
-
+  console.log("fieldsssssssss", fields, data);
   return (
     <CTable
       disablePagination={disablePagination}
@@ -353,63 +351,59 @@ const DragObjectDataTable = ({
               (virtualRowObject, index) => {
                 return (
                   columns && (
-                    <>
-                      <Draggable
-                        key={virtualRowObject?.id}
-                        render={() => (
-                          <CTableRow
-                            ref={parentRef}
-                            style={{
-                              cursor: "grab",
-                            }}>
-                            <DragTableRow
-                              key={virtualRowObject?.id}
-                              relOptions={relOptions}
-                              tableView={tableView}
-                              width={"80px"}
-                              remove={remove}
-                              watch={watch}
-                              getValues={getValues}
-                              control={control}
-                              row={virtualRowObject}
-                              mainForm={mainForm}
-                              formVisible={formVisible}
-                              rowIndex={index}
-                              isTableView={isTableView}
-                              selectedObjectsForDelete={
-                                selectedObjectsForDelete
-                              }
-                              setSelectedObjectsForDelete={
-                                setSelectedObjectsForDelete
-                              }
-                              isRelationTable={isRelationTable}
-                              relatedTableSlug={relatedTableSlug}
-                              onRowClick={onRowClick}
-                              isChecked={isChecked}
-                              calculateWidthFixedColumn={
-                                calculateWidthFixedColumn
-                              }
-                              onCheckboxChange={onCheckboxChange}
-                              currentPage={currentPage}
-                              limit={limit}
-                              setFormValue={setFormValue}
-                              columns={columns}
-                              tableHeight={tableHeight}
-                              tableSettings={tableSettings}
-                              pageName={pageName}
-                              calculateWidth={calculateWidth}
-                              tableSlug={tableSlug}
-                              onDeleteClick={onDeleteClick}
-                              relationAction={relationAction}
-                              onChecked={onChecked}
-                              relationFields={fields}
-                              data={data}
-                              view={view}
-                            />
-                          </CTableRow>
-                        )}
-                      />
-                    </>
+                    <Draggable
+                      key={virtualRowObject?.id}
+                      render={() => (
+                        <CTableRow
+                          ref={parentRef}
+                          style={{
+                            cursor: "grab",
+                          }}>
+                          <DragTableRow
+                            key={virtualRowObject?.id}
+                            relOptions={relOptions}
+                            tableView={tableView}
+                            width={"80px"}
+                            remove={remove}
+                            watch={watch}
+                            getValues={getValues}
+                            control={control}
+                            row={virtualRowObject}
+                            mainForm={mainForm}
+                            formVisible={formVisible}
+                            rowIndex={index}
+                            isTableView={isTableView}
+                            selectedObjectsForDelete={selectedObjectsForDelete}
+                            setSelectedObjectsForDelete={
+                              setSelectedObjectsForDelete
+                            }
+                            isRelationTable={isRelationTable}
+                            relatedTableSlug={relatedTableSlug}
+                            onRowClick={onRowClick}
+                            isChecked={isChecked}
+                            calculateWidthFixedColumn={
+                              calculateWidthFixedColumn
+                            }
+                            onCheckboxChange={onCheckboxChange}
+                            currentPage={currentPage}
+                            limit={limit}
+                            setFormValue={setFormValue}
+                            columns={columns}
+                            tableHeight={tableHeight}
+                            tableSettings={tableSettings}
+                            pageName={pageName}
+                            calculateWidth={calculateWidth}
+                            tableSlug={tableSlug}
+                            onDeleteClick={onDeleteClick}
+                            relationAction={relationAction}
+                            onChecked={onChecked}
+                            relationFields={fields}
+                            data={data}
+                            view={view}
+                          />
+                        </CTableRow>
+                      )}
+                    />
                   )
                 );
               }

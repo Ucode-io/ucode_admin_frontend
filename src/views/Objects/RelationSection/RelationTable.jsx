@@ -222,8 +222,12 @@ const RelationTable = forwardRef(
         relationFilter[
           `${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`
         ] = id;
+      else if (
+        getRelatedTabeSlug?.order === 3 &&
+        getRelatedTabeSlug?.relation_table_slug === "account"
+      )
+        relationFilter[`${tableSlug}_id_2`] = id;
       else relationFilter[`${tableSlug}_id`] = id;
-
       return {
         ...filters,
         ...relationFilter,

@@ -1,4 +1,4 @@
-import React, {lazy, Suspense, useRef} from "react";
+import React, {lazy, Suspense, useEffect} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
@@ -29,22 +29,25 @@ const HFTextEditor = ({
     name,
   });
 
-  let fonts = Quill.import("attributors/style/font");
-  fonts.whitelist = ["initial", "sans-serif", "serif", "monospace"];
-  Quill.register(fonts, true);
+  useEffect(() => {
+    const Font = Quill.import("formats/font");
+    Font.whitelist = ["sans-serif", "roboto", "lato", "serif", "monospace"];
+    Quill.register(Font, true);
+  }, []);
 
   const modules = {
     toolbar: {
       container: [
         [{header: "1"}, {header: "2"}],
-        [({list: "ordered"}, {list: "bullet"})],
+        [{list: "ordered"}, {list: "bullet"}],
         ["bold", "italic", "underline"],
         [{color: []}],
         ["link", "image", "video"],
-        [{font: ["roboto", "lato", "inter", "serif", "monospace"]}],
+        [{font: ["sans-serif", "roboto", "lato", "serif", "monospace"]}],
       ],
     },
   };
+
   return (
     <FRowMultiLine
       label={label}
@@ -76,7 +79,7 @@ const HFTextEditor = ({
                 minWidth: "200px",
                 width: "100%",
                 border: "1px solid #FFF",
-                // fontFamily: "'sans-serif'", // Ensure default font family is set correctly
+                fontFamily: "sans-serif",
               }}
             />
           </Suspense>

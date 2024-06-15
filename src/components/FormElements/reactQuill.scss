@@ -8,41 +8,37 @@
   border: 0 !important;
 }
 
-.ql-toolbar {
-  .ql-font {
-    option[value="roboto"] {
-      font-family: "Roboto", sans-serif;
-    }
-    option[value="lato"] {
-      font-family: "Lato", sans-serif;
-    }
-    option[value="inter"] {
-      font-family: "Inter", sans-serif;
-    }
-    option[value="serif"] {
-      font-family: "serif";
-    }
-    option[value="monospace"] {
-      font-family: "monospace";
-    }
-  }
+.ql-font-roboto {
+  font-family: "Roboto", sans-serif;
 }
 
-.ql-editor {
-  font-family: "Roboto", sans-serif; // Default font family for the editor
-  .ql-font-roboto {
-    font-family: "Roboto", sans-serif;
-  }
-  .ql-font-lato {
-    font-family: "Lato", sans-serif;
-  }
-  .ql-font-inter {
-    font-family: "Inter", sans-serif;
-  }
-  .ql-font-serif {
-    font-family: "serif";
-  }
-  .ql-font-monospace {
-    font-family: "monospace";
-  }
+.ql-font-lato {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+}
+
+.ql-font-sans-serif {
+  font-family: "sans-serif", sans-serif;
+}
+
+.ql-font-serif {
+  font-family: "serif", serif;
+}
+
+.ql-font-monospace {
+  font-family: "monospace", monospace;
+}
+
+/* Roboto Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+  content: "Roboto";
+  font-family: "Roboto", sans-serif; /* Ensure to specify the correct font stack */
+}
+
+/* Lato Light Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato-light"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato-light"]::before {
+  content: "Lato Light";
+  font-family: "Lato Light", sans-serif; /* Ensure to specify the correct font stack */
 }

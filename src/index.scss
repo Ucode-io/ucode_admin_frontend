@@ -497,16 +497,22 @@ u {
 }
 
 /* Lato Light Font */
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato-light"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato-light"]::before {
-  content: "Lato Light";
-  font-family: "Lato Light", sans-serif;
-  font-weight: 400;
-}
-/* Lato Light Font */
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato"]::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato"]::before {
   content: "Lato";
   font-family: "Lato", sans-serif;
   font-weight: 300;
+}
+
+/* San Francisco Font */
+.ql-snow
+  .ql-picker.ql-font
+  .ql-picker-label[data-value="san-francisco"]::before,
+.ql-snow
+  .ql-picker.ql-font
+  .ql-picker-item[data-value="san-francisco"]::before {
+  content: "San Francisco";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+  font-weight: 400;
 }

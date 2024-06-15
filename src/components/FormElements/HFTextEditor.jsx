@@ -31,7 +31,14 @@ const HFTextEditor = ({
 
   useEffect(() => {
     const Font = Quill.import("formats/font");
-    Font.whitelist = ["sans-serif", "roboto", "lato", "serif", "monospace"];
+    Font.whitelist = [
+      "sans-serif",
+      "lato",
+      "roboto",
+      "san-francisco",
+      "serif",
+      "monospace",
+    ];
     Quill.register(Font, true);
   }, []);
 
@@ -43,7 +50,18 @@ const HFTextEditor = ({
         ["bold", "italic", "underline"],
         [{color: []}],
         ["link", "image", "video"],
-        [{font: ["sans-serif", "roboto", "lato", "serif", "monospace"]}],
+        [
+          {
+            font: [
+              "sans-serif",
+              "lato",
+              "roboto",
+              "san-francisco",
+              "serif",
+              "monospace",
+            ],
+          },
+        ],
       ],
     },
   };

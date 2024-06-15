@@ -1,6 +1,7 @@
 @use "/src/scss/colors";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Inter:wght@400;700&display=swap");
 
 html {
   font-size: 0.8rem;
@@ -464,4 +465,48 @@ u {
   .smooth-dnd-draggable-wrapper {
     display: table-row !important;
   }
+}
+
+.ql-font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+
+.ql-font-lato {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+}
+
+.ql-font-sans-serif {
+  font-family: "sans-serif", sans-serif;
+}
+
+.ql-font-serif {
+  font-family: "serif", serif;
+}
+
+.ql-font-monospace {
+  font-family: "monospace", monospace;
+}
+
+/* Roboto Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+  content: "Roboto";
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+/* Lato Light Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato-light"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato-light"]::before {
+  content: "Lato Light";
+  font-family: "Lato Light", sans-serif;
+  font-weight: 400;
+}
+/* Lato Light Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato"]::before {
+  content: "Lato";
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
 }

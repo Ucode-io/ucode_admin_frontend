@@ -189,6 +189,8 @@ const ObjectsFormPage = ({
 
   const update = (data) => {
     delete data.invite;
+    delete data?.merchant_ids_data;
+    delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, {data})
@@ -218,6 +220,10 @@ const ObjectsFormPage = ({
     if (window?.location.pathname?.includes("create")) {
       delete data.guid;
     }
+    delete data.invite;
+    delete data?.$merchant_ids_data;
+    delete data?.merchant_ids;
+
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
@@ -257,7 +263,7 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    if (id && !window.location.pathname?.includes("create")) {
+    if (Boolean(id) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);

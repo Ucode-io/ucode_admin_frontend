@@ -35,6 +35,13 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const {appId} = useParams();
 
+  const menuStyle = menuTemplate?.menu_template;
+
+  const [searchParams] = useSearchParams();
+
+  const menuItem = searchParams.get("menuId");
+  const defaultLanguage = i18n.language;
+
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
@@ -42,6 +49,11 @@ const AppSidebar = ({
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
+
+  const activeMenu =
+    Boolean(
+      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
+    ) || selectedApp?.id === element?.id;
 
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
@@ -94,11 +106,6 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
     }
   };
-  const menuStyle = menuTemplate?.menu_template;
-
-  const [searchParams] = useSearchParams();
-
-  const menuItem = searchParams.get("menuId");
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -110,12 +117,6 @@ const AppSidebar = ({
     setElement(element);
   }, [element]);
 
-  const defaultLanguage = i18n.language;
-
-  const activeMenu =
-    Boolean(
-      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
-    ) || selectedApp?.id === element?.id;
   return (
     <Draggable key={index}>
       {permission ? (

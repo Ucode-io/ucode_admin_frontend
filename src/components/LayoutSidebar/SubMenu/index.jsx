@@ -286,14 +286,6 @@ const SubMenu = ({
                       pinIsEnabled={pinIsEnabled}
                     />
                   )}
-                  {/* {selectedApp?.id === adminId && (
-                    <EnvironmentMenu
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      level={2}
-                      menuItem={menuItem}
-                    />
-                  )} */}
                 </div>
               </Box>
             )}

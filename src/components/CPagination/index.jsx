@@ -124,9 +124,7 @@ const CPagination = ({
                 } else {
                   isRelationTable
                     ? navigateToForm(
-                        isRelationTable
-                          ? selectedTab?.relation?.relation_table_slug
-                          : tableSlug,
+                        selectedTab?.relation?.relation_table_slug,
                         "CREATE",
                         {},
                         {},

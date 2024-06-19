@@ -306,11 +306,6 @@ const RelationTable = forwardRef(
 
           const fieldsMap = listToMap(data.fields);
 
-          // setFieldSlug(
-          //   Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
-          //     ?.slug
-          // );
-
           const array = [];
           for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
             if (

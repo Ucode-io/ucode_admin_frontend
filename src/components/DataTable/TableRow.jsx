@@ -10,7 +10,6 @@ import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import TableRowForm from "./TableRowForm";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 const TableRow = ({
   relOptions,

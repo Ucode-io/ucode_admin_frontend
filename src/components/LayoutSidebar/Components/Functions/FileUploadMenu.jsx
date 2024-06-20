@@ -96,7 +96,7 @@ function FileUploadMenu({level = 1, menuStyle, menuItem}) {
           }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"upload.svg"} size={18} />
-            Upload
+            Upload ERD
           </div>
         </Button>
       </div>

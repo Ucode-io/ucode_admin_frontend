@@ -350,7 +350,11 @@ const AutoCompleteElement = ({
           changeHandler(value, options);
         }}
         onInputChange={(_, val) => {
-          inputChangeHandler(val);
+          if (typeof val === "string") {
+            inputChangeHandler(val?.prevInputValue);
+          } else if (Boolean(val?.prevInputValue)) {
+            inputChangeHandler(val?.prevInputValue);
+          }
         }}
         components={{
           DropdownIndicator: null,

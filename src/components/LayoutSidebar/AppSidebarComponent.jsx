@@ -34,15 +34,14 @@ const AppSidebar = ({
   const queryClient = useQueryClient();
   const auth = store.getState().auth;
   const {appId} = useParams();
-
-  const menuStyle = menuTemplate?.menu_template;
-
   const [searchParams] = useSearchParams();
 
+  const menuStyle = menuTemplate?.menu_template;
   const menuItem = searchParams.get("menuId");
   const defaultLanguage = i18n.language;
-
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+
+  // Permissions
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.id === adminId || element?.id === analyticsId ? true : false;

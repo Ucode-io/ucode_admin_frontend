@@ -80,13 +80,6 @@ const Resources = ({
     return [...(data?.resources || []), ...(resources || [])];
   }, [data, resources]);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutationV2({
       onSuccess: () => {
@@ -127,6 +120,13 @@ const Resources = ({
     dispatch(menuActions.setMenuItem(dataBases));
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (

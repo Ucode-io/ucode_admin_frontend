@@ -335,14 +335,12 @@ const RecursiveBlock = ({
 
               <FunctionSidebar
                 menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 level={2}
                 integrated={false}
               />
               <MicrofrontendSettingSidebar
                 menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 element={element}
                 level={2}

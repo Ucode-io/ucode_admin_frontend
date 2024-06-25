@@ -427,7 +427,7 @@ const TableView = ({
           constructorObjectService
             .getListV2(item?.table_slug, {
               data: {
-                view_id: view?.id,
+                // view_id: view?.id,
                 limit: 10,
                 offset: 0,
                 additional_request: {

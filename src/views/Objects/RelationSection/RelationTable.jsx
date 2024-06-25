@@ -212,7 +212,7 @@ const RelationTable = forwardRef(
         }
       });
     };
-    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
+
     const computedFilters = useMemo(() => {
       const relationFilter = {};
 

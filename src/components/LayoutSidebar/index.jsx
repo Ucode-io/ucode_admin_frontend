@@ -67,6 +67,22 @@ const LayoutSidebar = ({appId}) => {
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
+  const {data: menuById} = useMenuGetByIdQuery({
+    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  });
+
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        menuById?.attributes?.menu_settings_id ||
+        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
+    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  });
+
+  const menuStyle = menuTemplate?.menu_template;
+  const permissions = useSelector((state) => state.auth.globalPermissions);
+
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
   };
@@ -85,22 +101,6 @@ const LayoutSidebar = ({appId}) => {
       },
     },
   });
-
-  const {data: menuById} = useMenuGetByIdQuery({
-    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
-  });
-
-  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
-    params: {
-      template_id:
-        menuById?.attributes?.menu_settings_id ||
-        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-    },
-    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  });
-
-  const menuStyle = menuTemplate?.menu_template;
-  const permissions = useSelector((state) => state.auth.globalPermissions);
 
   const setTableModal = (element) => {
     setTableModalOpen(true);

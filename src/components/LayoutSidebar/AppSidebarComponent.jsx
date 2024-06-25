@@ -41,7 +41,7 @@ const AppSidebar = ({
   const defaultLanguage = i18n.language;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
 
-  // Permissions
+  // PERSMISSION
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.id === adminId || element?.id === analyticsId ? true : false;

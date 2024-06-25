@@ -337,7 +337,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          view_id: view?.id,
+          // view_id: view?.id,
           offset: searchText ? 0 : pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,

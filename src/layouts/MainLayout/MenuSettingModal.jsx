@@ -11,30 +11,22 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import styles from "./style.module.scss";
-import { useEffect, useState } from "react";
-import { LeftArrow, ModernSidebar, UdevsLogo } from "../../assets/icons/icon";
-import { Search } from "@mui/icons-material";
-import { Sidebar, sidebarElements } from "./mock/sidebarElements";
+import {useEffect, useState} from "react";
+import {LeftArrow, ModernSidebar, UdevsLogo} from "../../assets/icons/icon";
+import {Search} from "@mui/icons-material";
+import {Sidebar, sidebarElements} from "./mock/sidebarElements";
 import IconGenerator from "../../components/IconPicker/IconGenerator";
 import MenuSettingTheme from "../../components/MenuSetting/MenuSettingTheme";
 import MenuSettingForm from "../../components/MenuSetting/MenuSettingForm";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {
   useMenuSettingGetByIdQuery,
   useMenuSettingUpdateMutation,
 } from "../../services/menuSettingService";
-import { useQueryClient } from "react-query";
-import { store } from "../../store";
+import {useQueryClient} from "react-query";
+import {store} from "../../store";
 
-const MenuSettingModal = ({ closeModal }) => {
-  const selectedMenuTemplate = store.getState().menu.menuTemplate;
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
-    params: {
-      template_id:
-        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-    },
-    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  });
+const MenuSettingModal = ({closeModal}) => {
   const [modalType, setModalType] = useState("SETTING");
   const [type, setType] = useState(menuTemplate?.icon_style || "");
   const [size, setSize] = useState(menuTemplate?.icon_size || "");
@@ -43,14 +35,18 @@ const MenuSettingModal = ({ closeModal }) => {
   const queryClient = useQueryClient();
   const [formType, setFormType] = useState("");
 
-  const { control, reset, handleSubmit, setValue } = useForm({
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
+    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  });
+
+  const {control, reset, handleSubmit, setValue} = useForm({
     defaultValues: {},
   });
-  useEffect(() => {
-    if (menuTemplate) {
-      setSelectedTemplate(menuTemplate?.menu_template);
-    }
-  }, [menuTemplate]);
 
   const handleTypeChange = (event) => {
     setType(event.target.value);
@@ -59,7 +55,7 @@ const MenuSettingModal = ({ closeModal }) => {
     setSize(event.target.value);
   };
 
-  const { mutate: create, isLoading: createLoading } =
+  const {mutate: create, isLoading: createLoading} =
     useMenuSettingUpdateMutation({
       onSuccess: () => {
         //   setModalType("CUSTOMIZE");
@@ -79,6 +75,12 @@ const MenuSettingModal = ({ closeModal }) => {
       id: "adea69cd-9968-4ad0-8e43-327f6600abfd",
     });
   };
+
+  useEffect(() => {
+    if (menuTemplate) {
+      setSelectedTemplate(menuTemplate?.menu_template);
+    }
+  }, [menuTemplate]);
 
   return (
     <div>
@@ -107,8 +109,7 @@ const MenuSettingModal = ({ closeModal }) => {
                       <RadioGroup
                         name="type"
                         value={type}
-                        onChange={handleTypeChange}
-                      >
+                        onChange={handleTypeChange}>
                         <Box className={styles.group}>
                           <FormControlLabel
                             value="SIMPLE"
@@ -153,8 +154,7 @@ const MenuSettingModal = ({ closeModal }) => {
                       <RadioGroup
                         name="sizes"
                         value={size}
-                        onChange={handleSizeChange}
-                      >
+                        onChange={handleSizeChange}>
                         <Box className={styles.group}>
                           <FormControlLabel
                             value="SMALL"
@@ -209,8 +209,7 @@ const MenuSettingModal = ({ closeModal }) => {
                         }}
                         onClick={() => {
                           setModalType("CUSTOMIZE");
-                        }}
-                      >
+                        }}>
                         Customize
                       </Button>
                     </Box>
@@ -223,8 +222,7 @@ const MenuSettingModal = ({ closeModal }) => {
                         className={styles.menu}
                         style={{
                           background: selectedTemplate?.background,
-                        }}
-                      >
+                        }}>
                         <UdevsLogo fill={"#007AFF"} />
                         <Search className={styles.searchicon} />
                         {Sidebar.map((element) => (
@@ -234,16 +232,15 @@ const MenuSettingModal = ({ closeModal }) => {
                               background: element.active
                                 ? selectedTemplate?.active_background
                                 : selectedTemplate?.background,
-                            }}
-                          >
+                            }}>
                             <IconGenerator
                               icon={element.icon}
                               size={
                                 size === "SMALL"
                                   ? 10
                                   : size === "MEDIUM"
-                                  ? 13
-                                  : 17
+                                    ? 13
+                                    : 17
                               }
                               style={{
                                 color: element.active
@@ -259,8 +256,7 @@ const MenuSettingModal = ({ closeModal }) => {
                         className={styles.modernmenu}
                         style={{
                           background: selectedTemplate?.background,
-                        }}
-                      >
+                        }}>
                         <UdevsLogo className={styles.logo} fill={"#007AFF"} />
                         <ModernSidebar />
                         {Sidebar.map((element) => (
@@ -270,8 +266,7 @@ const MenuSettingModal = ({ closeModal }) => {
                               background: element.active
                                 ? selectedTemplate?.active_background
                                 : selectedTemplate?.background,
-                            }}
-                          >
+                            }}>
                             <IconGenerator
                               icon={element.icon}
                               style={{
@@ -285,8 +280,7 @@ const MenuSettingModal = ({ closeModal }) => {
                                 color: element.active
                                   ? selectedTemplate?.active_text
                                   : selectedTemplate?.text,
-                              }}
-                            >
+                              }}>
                               {element.title}
                             </p>
                           </div>
@@ -297,10 +291,9 @@ const MenuSettingModal = ({ closeModal }) => {
                       className={styles.submenu}
                       style={{
                         background: selectedTemplate?.background,
-                      }}
-                    >
+                      }}>
                       <div className={styles.submenuheader}>
-                        <p style={{ color: selectedTemplate?.text }}>
+                        <p style={{color: selectedTemplate?.text}}>
                           Mobile apps
                         </p>
                         <LeftArrow fill={selectedTemplate?.text} />
@@ -316,8 +309,7 @@ const MenuSettingModal = ({ closeModal }) => {
                             background: element.active
                               ? selectedTemplate?.active_background
                               : selectedTemplate?.background,
-                          }}
-                        >
+                          }}>
                           <IconGenerator
                             icon={element.icon}
                             style={{
@@ -331,8 +323,7 @@ const MenuSettingModal = ({ closeModal }) => {
                               color: element.active
                                 ? selectedTemplate?.active_text
                                 : selectedTemplate?.text,
-                            }}
-                          >
+                            }}>
                             {element.title}
                           </p>
                         </div>
@@ -346,8 +337,7 @@ const MenuSettingModal = ({ closeModal }) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={submitHandler}
-                >
+                  onClick={submitHandler}>
                   Apply
                 </Button>
               </div>

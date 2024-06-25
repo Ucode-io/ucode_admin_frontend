@@ -212,7 +212,7 @@ const RelationTable = forwardRef(
         }
       });
     };
-
+    console.log("getRelatedTabeSlug", getRelatedTabeSlug);
     const computedFilters = useMemo(() => {
       const relationFilter = {};
 
@@ -223,12 +223,12 @@ const RelationTable = forwardRef(
           `${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`
         ] = id;
       else if (
-        getRelatedTabeSlug?.order === 3 &&
-        getRelatedTabeSlug?.relation_table_slug === "account" &&
-        getRelatedTabeSlug?.relation_id !==
-          "30e70db2-ed4f-4531-9f80-52c017e0cdd0"
+        getRelatedTabeSlug?.relation_index &&
+        getRelatedTabeSlug?.relation_index > 1
       )
-        relationFilter[`${tableSlug}_id_2`] = id;
+        relationFilter[
+          `${tableSlug}_id_${getRelatedTabeSlug?.relation_index}`
+        ] = id;
       else relationFilter[`${tableSlug}_id`] = id;
       return {
         ...filters,

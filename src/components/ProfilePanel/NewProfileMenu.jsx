@@ -381,26 +381,6 @@ const NewProfilePanel = ({
                 onClick={openEnvironmentList}
               />
             )}
-            {/* {permissions?.version_button && (
-            <ProfileItem
-              children={
-                <LocalOfferIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={
-                company?.version?.version
-                  ? `Version - ${company?.version?.version}`
-                  : "Version"
-              }
-              onClick={(e) => {
-                openVersionModal();
-                closeMenu(e);
-              }}
-            />
-          )} */}
 
             <ProfileItem
               children={
@@ -497,15 +477,6 @@ const NewProfilePanel = ({
               />
             )}
 
-            {/* {permissions?.project_settings_button && (
-              <ProfileItem
-                text={"Settings"}
-                onClick={(e) => {
-                  closeMenu(e);
-                  navigate(`/main/${appId}/project-setting`);
-                }}
-              />
-            )} */}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
           </div>
         </Box>

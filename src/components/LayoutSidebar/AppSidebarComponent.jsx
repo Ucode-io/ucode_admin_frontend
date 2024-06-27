@@ -1,6 +1,6 @@
 import "./style.scss";
 import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -13,6 +13,7 @@ import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
 import {useQueryClient} from "react-query";
+import FolderIcon from "@mui/icons-material/Folder";
 import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -34,25 +35,14 @@ const AppSidebar = ({
   const queryClient = useQueryClient();
   const auth = store.getState().auth;
   const {appId} = useParams();
-  const [searchParams] = useSearchParams();
 
-  const menuStyle = menuTemplate?.menu_template;
-  const menuItem = searchParams.get("menuId");
-  const defaultLanguage = i18n.language;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
-
-  // PERSMISSION
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.id === adminId || element?.id === analyticsId ? true : false;
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
-
-  const activeMenu =
-    Boolean(
-      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
-    ) ?? selectedApp?.id === element?.id;
 
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
@@ -105,6 +95,11 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
     }
   };
+  const menuStyle = menuTemplate?.menu_template;
+
+  const [searchParams] = useSearchParams();
+
+  const menuItem = searchParams.get("menuId");
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -115,6 +110,13 @@ const AppSidebar = ({
   useEffect(() => {
     setElement(element);
   }, [element]);
+
+  const defaultLanguage = i18n.language;
+
+  const activeMenu =
+    element?.type === "FOLDER"
+      ? Boolean(selectedApp?.id === element?.id)
+      : element?.id === menuItem;
 
   return (
     <Draggable key={index}>
@@ -270,9 +272,10 @@ const AppSidebar = ({
                 setElement(element);
               }}
               style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
               element={element}
             />

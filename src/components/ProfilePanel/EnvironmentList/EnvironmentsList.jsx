@@ -42,8 +42,7 @@ const EnvironmentsList = ({
       classes={{
         list: styles.environmentslist,
         paper: styles.environmentpaper,
-      }}
-    >
+      }}>
       <div className={styles.block}>
         {computedEnvironmentList?.map((item) => (
           <ProfileItem
@@ -53,8 +52,7 @@ const EnvironmentsList = ({
                   className={styles.projectavatar}
                   style={{
                     background: item?.display_color,
-                  }}
-                >
+                  }}>
                   {item?.name?.charAt(0).toUpperCase()}
                 </p>
                 {item?.name}

@@ -2,7 +2,7 @@ import {MenuItem} from "@mui/material";
 import React from "react";
 import {useParams} from "react-router-dom";
 
-export default function MicroFrontPdf({row, handleClose, view}) {
+export default function MicroFrontPdf({row, handleClose = () => {}, view}) {
   const {appId, tableSlug} = useParams();
 
   const replaceUrlVariables = (urlTemplate, data) => {
@@ -11,17 +11,25 @@ export default function MicroFrontPdf({row, handleClose, view}) {
     });
   };
 
-  const navigateToDocumentEditPage = () => {
+  const navigateToDocumentEditPage = (event) => {
+    event.stopPropagation();
+    handleClose();
     const urlTemplate = view?.attributes?.pdf_url;
 
     const url = replaceUrlVariables(urlTemplate, row);
-    window.open(url, "_blank", "noopener,noreferrer");
-    handleClose();
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
     <>
-      <MenuItem onClick={navigateToDocumentEditPage}>PDF page</MenuItem>
+      <MenuItem
+        onClick={(event) => {
+          navigateToDocumentEditPage(event);
+        }}>
+        PDF page
+      </MenuItem>
     </>
   );
 }

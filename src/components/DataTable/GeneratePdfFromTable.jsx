@@ -14,7 +14,6 @@ export default function GeneratePdfFromTable({row, view}) {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (event) => {
-    event.stopPropagation();
     setAnchorEl(null);
   };
 

@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -18,6 +18,7 @@ import AddDataColumn from "./AddDataColumn";
 import {Container, Draggable} from "react-smooth-dnd";
 import DragTableRow from "./DragTableRow";
 import {applyDrag} from "../../utils/applyDrag";
+import draggableRowService from "../../services/draggableRowService";
 
 const DragObjectDataTable = ({
   selectedTab,
@@ -91,6 +92,7 @@ const DragObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+
   const parentRef = useRef(null);
   const popupRef = useRef(null);
 
@@ -228,10 +230,25 @@ const DragObjectDataTable = ({
     return totalWidth;
   };
 
+  const updateRowIndex = (objectData) => {
+    const data = {
+      objects: [...objectData],
+    };
+    draggableRowService
+      .update(tableSlug, {
+        data,
+      })
+      .then((res) => {
+        console.log("resssssssssssss", res);
+      });
+  };
+
   const onDrop = (dropResult) => {
     const result = applyDrag(data, dropResult);
 
-    console.log("dropResult", result);
+    if (result) {
+      updateRowIndex(result);
+    }
   };
 
   const getContainerOptions = () => ({

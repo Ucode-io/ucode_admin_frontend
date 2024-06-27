@@ -229,6 +229,10 @@ const LayoutSidebar = ({appId}) => {
   }, [menuList]);
 
   useEffect(() => {
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
+  }, [appId]);
+
+  useEffect(() => {
     if (
       selectedApp?.type === "FOLDER" ||
       (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)

@@ -1,4 +1,3 @@
-import {useCallback, useRef} from "react";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import {useDropzone} from "react-dropzone";
 import "./index.module.scss";

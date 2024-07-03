@@ -107,8 +107,6 @@ const ObjectsFormPage = ({
         getLayoutData,
       ]);
 
-      // // Access dynamic keys of layoutData
-      // const layoutKeys = Object.keys(layoutData);
       setData({
         ...layoutData,
         tabs: layoutData?.tabs?.filter(
@@ -191,6 +189,8 @@ const ObjectsFormPage = ({
 
   const update = (data) => {
     delete data.invite;
+    delete data?.merchant_ids_data;
+    delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, {data})
@@ -220,6 +220,10 @@ const ObjectsFormPage = ({
     if (window?.location.pathname?.includes("create")) {
       delete data.guid;
     }
+    delete data.invite;
+    delete data?.$merchant_ids_data;
+    delete data?.merchant_ids;
+
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
@@ -253,14 +257,13 @@ const ObjectsFormPage = ({
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
 
   const onSubmit = (data) => {
-    if (id && !window.location.pathname?.includes("create")) {
+    if (Boolean(id) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);
@@ -287,20 +290,12 @@ const ObjectsFormPage = ({
     navigate(-1);
   };
 
-  // useEffect(() => {
-  //   getFields();
-  // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
-
-  // const getSubtitleValue = useMemo(() => {
-  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  // }, [tableInfo]);
-
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
         <FormPageBackButton />
 
-        <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
+        <div className={styles.subTitle}></div>
 
         <SummarySectionValue
           computedSummary={summary}

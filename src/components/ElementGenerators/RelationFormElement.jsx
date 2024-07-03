@@ -181,7 +181,6 @@ const AutoCompleteElement = ({
     control: (provided) => ({
       ...provided,
       border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
-      // maxWidth: "300px",
       minWidth: "200px",
     }),
     menu: (provided) => ({
@@ -327,17 +326,20 @@ const AutoCompleteElement = ({
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
 
-      if (data.prepayment_balance) {
+      if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
 
-      setLocalValue(data ? [data] : null);
+      setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
         setFormValue(name, data?.guid);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
@@ -449,7 +451,10 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (field?.attributes?.object_id_from_jwt === true) {
       const foundOption = allOptions?.find((el) => el?.guid === isUserId);
-      setLocalValue([foundOption]);
+
+      if (foundOption) {
+        setLocalValue([foundOption]);
+      }
     }
   }, [allOptions?.length, field]);
 

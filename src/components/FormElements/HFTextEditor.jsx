@@ -1,9 +1,10 @@
-import {lazy, Suspense} from "react";
+import React, {lazy, Suspense, useEffect} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
+import {Quill} from "react-quill";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -27,7 +28,44 @@ const HFTextEditor = ({
     control,
     name,
   });
-  console.log("namenamename", name, field);
+
+  useEffect(() => {
+    const Font = Quill.import("formats/font");
+    Font.whitelist = [
+      "sans-serif",
+      "lato",
+      "roboto",
+      "san-francisco",
+      "serif",
+      "monospace",
+    ];
+    Quill.register(Font, true);
+  }, []);
+
+  const modules = {
+    toolbar: {
+      container: [
+        [{header: "1"}, {header: "2"}],
+        [{list: "ordered"}, {list: "bullet"}],
+        ["bold", "italic", "underline"],
+        [{color: []}],
+        ["link", "image", "video"],
+        [
+          {
+            font: [
+              "sans-serif",
+              "lato",
+              "roboto",
+              "san-francisco",
+              "serif",
+              "monospace",
+            ],
+          },
+        ],
+      ],
+    },
+  };
+
   return (
     <FRowMultiLine
       label={label}
@@ -41,11 +79,12 @@ const HFTextEditor = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({field: {onChange, ref}, fieldState: {error}}) => (
+        render={({field: {onChange}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               theme="snow"
               value={value}
+              modules={modules}
               defaultValue={value}
               onChange={(val) => {
                 onChange(val);
@@ -54,14 +93,16 @@ const HFTextEditor = ({
               tabIndex={tabIndex}
               autoFocus={false}
               style={{
-                backgroundColor: `${isTransparent ? "transparent" : ""}`,
+                backgroundColor: isTransparent ? "transparent" : "",
                 minWidth: "200px",
                 width: "100%",
                 border: "1px solid #FFF",
+                fontFamily: "sans-serif",
               }}
             />
           </Suspense>
-        )}></Controller>
+        )}
+      />
     </FRowMultiLine>
   );
 };

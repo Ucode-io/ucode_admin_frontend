@@ -143,6 +143,41 @@ const Form = ({
                     placeholder: "Password",
                   }}
                 />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}>
+                  Default otp
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name={`settings.smtp.default_otp`}
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Default otp",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Number of otp
+                </Box>
+                <HFNumberField
+                  control={control}
+                  required
+                  name="settings.smtp.number_of_otp"
+                  fullWidth
+                  type="number"
+                  inputProps={{
+                    placeholder: "Number of otp",
+                  }}
+                />
               </>
             )}
 

@@ -17,6 +17,7 @@ const initialState = {
   after_login: false,
   environment_ids: [],
   access_type: "",
+  user_data: null,
 };
 
 export const {actions: authActions, reducer: authReducer} = createSlice({
@@ -27,6 +28,7 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
       state.token = payload.token.access_token;
       state.refreshToken = payload.token.refresh_token;
       state.userInfo = payload.user;
+      state.user_data = payload.user_data;
       state.clientType = payload.client_type;
       state.roleInfo = payload.role;
       state.loginTableSlug = payload.login_table_slug;

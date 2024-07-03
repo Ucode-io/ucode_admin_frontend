@@ -114,9 +114,10 @@ const AppSidebar = ({
   const defaultLanguage = i18n.language;
 
   const activeMenu =
-    Boolean(
-      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" && appId === element?.id
-    ) || selectedApp?.id === element?.id;
+    element?.type === "FOLDER"
+      ? Boolean(selectedApp?.id === element?.id)
+      : element?.id === menuItem;
+
   return (
     <Draggable key={index}>
       {permission ? (
@@ -158,10 +159,9 @@ const AppSidebar = ({
             className="folder-icon"
             style={{
               marginRight: sidebarIsOpen ? "8px" : "0px",
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
+              color: activeMenu
+                ? menuStyle?.active_text
+                : menuStyle?.text || "",
             }}
           />
 

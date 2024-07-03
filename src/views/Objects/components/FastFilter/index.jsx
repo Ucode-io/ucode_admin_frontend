@@ -57,7 +57,7 @@ const FastFilter = ({
           ?.map((fast) => fast),
       ]
         ?.map((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOKKUPS") {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
             return fieldsMap[el?.relation_id];
           } else {
             return fieldsMap[el?.id];
@@ -82,7 +82,7 @@ const FastFilter = ({
     <div
       className={styles.filtersBlock}
       style={{flexDirection: isVertical ? "column" : "row"}}>
-      {computedFields?.map((filter) => (
+      {view?.attributes?.quick_filters?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}

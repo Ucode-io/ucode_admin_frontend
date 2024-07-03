@@ -23,17 +23,14 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const {control, handleSubmit, reset, watch} = useForm();
+
+  const tableOptions = useMemo(() => {
+    return tables?.tables?.map((item, index) => ({
+      label: item.label,
+      value: item.id,
+    }));
+  }, [tables]);
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "TABLE") {
@@ -42,20 +39,6 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       createType(data, selectedFolder);
     }
   };
-
-  const {control, handleSubmit, reset, watch} = useForm();
-
-  useEffect(() => {
-    if (selectedFolder.type === "TABLE")
-      menuSettingsService
-        .getById(selectedFolder.id, projectId)
-        .then((res) => {
-          reset(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-  }, [selectedFolder]);
 
   const createType = (data, selectedFolder) => {
     menuSettingsService
@@ -101,15 +84,32 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   useEffect(() => {
-    getTables();
+    if (selectedFolder.type === "TABLE")
+      menuSettingsService
+        .getById(selectedFolder.id, projectId)
+        .then((res) => {
+          reset(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [selectedFolder]);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
   }, []);
 
-  const tableOptions = useMemo(() => {
-    return tables?.tables?.map((item, index) => ({
-      label: item.label,
-      value: item.id,
-    }));
-  }, [tables]);
+  useEffect(() => {
+    getTables();
+  }, []);
 
   return (
     <div>
@@ -130,23 +130,12 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {/* {languages?.map((item, index) => (
-                <HFTextField autoFocus required fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))} */}
 
               {languages?.map((language) => {
                 const languageFieldName = `attributes.label_${language?.slug}`;
                 const fieldValue = watch(languageFieldName);
 
                 return (
-                  // <HFTextField
-                  //   control={control}
-                  //   name={languageFieldName}
-                  //   fullWidth
-                  //   placeholder={`Название (${language?.slug})`}
-                  //   name={`attributes.label_${item?.slug}`}
-                  //   defaultValue={fieldValue || menuItemLabel}
-                  // />
                   <HFTextField
                     autoFocus
                     fullWidth

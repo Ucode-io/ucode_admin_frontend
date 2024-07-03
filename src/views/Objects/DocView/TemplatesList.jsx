@@ -1,6 +1,6 @@
 import {Add, Delete} from "@mui/icons-material";
 import {IconButton} from "@mui/material";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import PageFallback from "../../../components/PageFallback";
 import SearchInput from "../../../components/SearchInput";
 import {generateID} from "../../../utils/generateID";
@@ -22,6 +22,7 @@ const TemplatesList = ({
 }) => {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
+  const location = useLocation();
   const onCreateButtonClick = () => {
     const data = {
       id: generateID(),
@@ -70,11 +71,13 @@ const TemplatesList = ({
                 {template.title ?? ""}
 
                 <div className={styles.deleteBtn}>
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => onDelete(template?.guid)}>
-                    <Delete color="error" />
-                  </RectangleIconButton>
+                  {!location?.state?.isTableView && (
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() => onDelete(template?.guid)}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  )}
                 </div>
               </div>
             ))}

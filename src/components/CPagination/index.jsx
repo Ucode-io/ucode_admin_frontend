@@ -47,10 +47,6 @@ const CPagination = ({
 
   const options = [
     {value: "all", label: "All"},
-    // {
-    //   value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    //   label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-    // },
     {value: 10, label: 10},
     {value: 15, label: 15},
     {value: 20, label: 20},
@@ -84,25 +80,43 @@ const CPagination = ({
         marginTop: "15px",
         paddingRight: "15px",
       }}>
-      {!disablePagination && !isGroupByTable && (
-        <div>
-          {limit && (
-            <div className={styles.limitSide}>
-              {t("showing")}
-              <CSelect
-                options={options}
-                disabledHelperText
-                size="small"
-                value={paginiation ?? limit}
-                onChange={(e) => getLimitValue(e.target.value)}
-                inputProps={{style: {borderRadius: 50}}}
-                endAdornment={null}
-                sx={null}
-              />
-            </div>
-          )}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "20px",
+        }}>
+        {!disablePagination && !isGroupByTable && (
+          <div>
+            {limit && (
+              <div className={styles.limitSide}>
+                {t("showing")}
+                <CSelect
+                  options={options}
+                  disabledHelperText
+                  size="small"
+                  value={paginiation ?? limit}
+                  onChange={(e) => getLimitValue(e.target.value)}
+                  inputProps={{style: {borderRadius: 50}}}
+                  endAdornment={null}
+                  sx={null}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            color: "#6E7C87",
+            alignItems: "center",
+          }}>
+          Count:{" "}
+          <strong style={{fontSize: "16px"}}> {props?.dataCount ?? 0}</strong>
         </div>
-      )}
+      </div>
       <div
         style={{
           display: "flex",
@@ -128,9 +142,7 @@ const CPagination = ({
                 } else {
                   isRelationTable
                     ? navigateToForm(
-                        isRelationTable
-                          ? selectedTab?.relation?.relation_table_slug
-                          : tableSlug,
+                        selectedTab?.relation?.relation_table_slug,
                         "CREATE",
                         {},
                         {},

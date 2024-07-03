@@ -33,7 +33,7 @@ export const getRelationFieldTabsLabel = (field, option) => {
     else if (el?.type === "DATE_TIME")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
     else if (el?.type === "NUMBER") result = numberWithSpaces(option[el?.slug]);
-    else result = option[el?.slug];
+    else result = option?.[el?.slug];
 
     label += `${result ?? ""} `;
   });

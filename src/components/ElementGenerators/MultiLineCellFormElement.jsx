@@ -1,8 +1,8 @@
 import React from "react";
 import HFTextEditor from "../FormElements/HFTextEditor";
-import { Box, Button, Modal, Popover } from "@mui/material";
+import {Box, Button, Modal, Popover} from "@mui/material";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 
 const style = {
   position: "absolute",
@@ -58,8 +58,7 @@ export default function MultiLineCellFormElement({
       <Box
         style={{
           display: "flex",
-        }}
-      >
+        }}>
         <p
           onClick={handleClick}
           style={
@@ -81,8 +80,7 @@ export default function MultiLineCellFormElement({
                   cursor: "text",
                   minHeight: "16px",
                 }
-          }
-        >
+          }>
           {stripHtmlTags(
             value
               ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
@@ -102,8 +100,7 @@ export default function MultiLineCellFormElement({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}
-        >
+          }}>
           <HFTextEditor
             control={control}
             updateObject={updateObject}

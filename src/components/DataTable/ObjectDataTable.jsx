@@ -18,6 +18,7 @@ import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
 
 const ObjectDataTable = ({
+  dataCount,
   selectedTab,
   relOptions,
   filterVisible,
@@ -239,6 +240,7 @@ const ObjectDataTable = ({
 
   return (
     <CTable
+      dataCount={dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}
       count={pagesCount}

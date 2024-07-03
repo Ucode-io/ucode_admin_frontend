@@ -1,25 +1,31 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useMemo, useState } from "react";
-import { FaFolder } from "react-icons/fa";
-import { HiOutlineCodeBracket } from "react-icons/hi2";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useFunctionFolderDeleteMutation, useFunctionFoldersListQuery } from "../../../../services/functionFolderService";
-import { useFunctionDeleteMutation, useFunctionsListQuery } from "../../../../services/functionService";
-import { store } from "../../../../store";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useMemo, useState} from "react";
+import {FaFolder} from "react-icons/fa";
+import {HiOutlineCodeBracket} from "react-icons/hi2";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {
+  useFunctionFolderDeleteMutation,
+  useFunctionFoldersListQuery,
+} from "../../../../services/functionFolderService";
+import {
+  useFunctionDeleteMutation,
+  useFunctionsListQuery,
+} from "../../../../services/functionService";
+import {store} from "../../../../store";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import FunctionRecursive from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
-import { BsThreeDots } from "react-icons/bs";
-import { useQueryClient } from "react-query";
+import {BsThreeDots} from "react-icons/bs";
+import {useQueryClient} from "react-query";
 import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
-import { updateLevel } from "../../../../utils/level";
+import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const functionFolder = {
@@ -38,29 +44,36 @@ const functionFolder = {
   },
 };
 
-const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, menuItem, integrated = false }) => {
+const FunctionSidebar = ({
+  setValue,
+  level = 1,
+  menuStyle,
+  menuItem,
+  integrated = false,
+}) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
-  const { appId } = useParams();
+  const {appId} = useParams();
   const navigate = useNavigate();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openMenu = Boolean(menu?.event);
   const queryClient = useQueryClient();
-  const handleOpenNotify = (event, type, element) => {
-    setMenu({ event: event?.currentTarget, type: type, element });
-  };
-
-  const handleCloseNotify = () => {
-    setMenu(null);
-  };
 
   const [folderModalIsOpen, setFolderModalIsOpen] = useState(false);
   const [functionModalIsOpen, setFunctionModalIsOpen] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState();
   const [selectedFolder, setSelectedFolder] = useState(null);
+
+  const handleOpenNotify = (event, type, element) => {
+    setMenu({event: event?.currentTarget, type: type, element});
+  };
+
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
 
   const openFolderModal = (folder) => {
     setSelectedFolder(folder);
@@ -81,20 +94,22 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
     setFunctionModalIsOpen(false);
   };
 
-  const { data: functionFolders, isLoading: folderLoading } = useFunctionFoldersListQuery({
-    params: {
-      "project-id": company.projectId,
-    },
-    queryParams: {
-      select: (res) => res.function_folders,
-    },
-  });
+  const {data: functionFolders, isLoading: folderLoading} =
+    useFunctionFoldersListQuery({
+      params: {
+        "project-id": company.projectId,
+      },
+      queryParams: {
+        select: (res) => res.function_folders,
+      },
+    });
 
-  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } = useFunctionDeleteMutation({
-    onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
-  });
+  const {mutate: deleteFunction, isLoading: deleteFunctionLoading} =
+    useFunctionDeleteMutation({
+      onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
+    });
 
-  const { data: functions, isLoading: functionLoading } = useFunctionsListQuery({
+  const {data: functions, isLoading: functionLoading} = useFunctionsListQuery({
     params: {
       "project-id": company.projectId,
     },
@@ -103,11 +118,12 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
     },
   });
 
-  const { mutate: deleteFolder, isLoading: deleteLoading } = useFunctionFolderDeleteMutation({
-    onSuccess: () => {
-      queryClient.refetchQueries("FUNCTION_FOLDERS");
-    },
-  });
+  const {mutate: deleteFolder, isLoading: deleteLoading} =
+    useFunctionFolderDeleteMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("FUNCTION_FOLDERS");
+      },
+    });
 
   const sidebarElements = useMemo(() => {
     return functionFolders?.map((folder) => ({
@@ -123,7 +139,10 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
             handleOpenNotify(e, "FOLDER", folder);
           }}
           style={{
-            color: menuItem?.id === selected?.id ? menuStyle?.active_text : menuStyle?.text || "",
+            color:
+              menuItem?.id === selected?.id
+                ? menuStyle?.active_text
+                : menuStyle?.text || "",
           }}
         />
       ),
@@ -143,7 +162,10 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
                 handleOpenNotify(e, "FUNCTION", func);
               }}
               style={{
-                color: menuItem?.id === selected?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  menuItem?.id === selected?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           ),
@@ -152,24 +174,11 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
     }));
   }, [functionFolders, functions]);
 
-  // const selectHandler = (id, element) => {
-  //   dispatch(menuActions.setMenuItem(element));
-  //   if (element.type === "FOLDER") return;
-  //   // setValue("request_info.url", element.path);
-  //   // setValue("request_info.title", element.title);
-  // };
-
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(functionFolder));
     setSelected(functionFolder);
     navigate(`/main/${appId}/openfaas-functions`);
-
-    // if (!pinIsEnabled && functionFolder.type !== "USER_FOLDER") {
-    //   setSubMenuIsOpen(false);
-    // }
-    // setChildBlockVisible((prev) => !prev);
-    // !integrated && navigate(`/main/${adminId}`);
   };
 
   // --CREATE FOLDERS--
@@ -187,16 +196,27 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
   };
 
   const activeStyle = {
-    backgroundColor: functionFolder?.id === menuItem?.id ? menuStyle?.active_background || "#007AFF" : menuStyle?.background,
-    color: functionFolder?.id === menuItem?.id ? menuStyle?.active_text || "#fff" : menuStyle?.text,
+    backgroundColor:
+      functionFolder?.id === menuItem?.id
+        ? menuStyle?.active_background || "#007AFF"
+        : menuStyle?.background,
+    color:
+      functionFolder?.id === menuItem?.id
+        ? menuStyle?.active_text || "#fff"
+        : menuStyle?.text,
     paddingLeft: updateLevel(level),
     borderRadius: "8px",
-    display: menuItem?.id === "0" || (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+    display:
+      menuItem?.id === "0" ||
+      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const labelStyle = {
     paddingLeft: "15px",
-    color: functionFolder?.id === menuItem?.id ? menuStyle?.active_text : menuStyle?.text,
+    color:
+      functionFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text,
   };
 
   return (
@@ -207,8 +227,7 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
@@ -245,8 +264,19 @@ const FunctionSidebar = ({ setValue, level = 1, menuStyle, setSubMenuIsOpen, men
         openFunctionModal={openFunctionModal}
         deleteFunction={deleteFunction}
       />
-      {folderModalIsOpen && <FunctionFolderCreateModal folder={selectedFolder} closeModal={closeFolderModal} />}
-      {functionModalIsOpen && <FunctionCreateModal folder={selectedFolder} func={selectedFunction} closeModal={closeFunctionModal} />}
+      {folderModalIsOpen && (
+        <FunctionFolderCreateModal
+          folder={selectedFolder}
+          closeModal={closeFolderModal}
+        />
+      )}
+      {functionModalIsOpen && (
+        <FunctionCreateModal
+          folder={selectedFolder}
+          func={selectedFunction}
+          closeModal={closeFunctionModal}
+        />
+      )}
     </Box>
   );
 };

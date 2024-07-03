@@ -15,6 +15,7 @@ export default function ColumnVisible({
   form,
   text = "Columns",
   width = "",
+  refetch = () => {},
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,24 +47,25 @@ export default function ColumnVisible({
     });
   }, [selectedTabIndex, views, form, computedColumns]);
 
-  const updateView = () => {
-    constructorViewService
+  const updateView = async () => {
+    await constructorViewService
       .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           ...views?.[selectedTabIndex]?.attributes,
-          group_by_columns: form
-            .getValues("attributes.group_by_columns")
-            ?.filter((el) => el?.is_checked)
-            ?.map((el) => el.id),
         },
+        group_by_columns: form
+          .getValues("attributes.group_by_columns")
+          ?.filter((el) => el?.is_checked)
+          ?.map((el) => el.id),
         columns: form
           .getValues("columns")
           ?.filter((el) => el.is_checked)
           ?.map((el) => el.id),
       })
-      .then(() => {
+      .then((res) => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        refetch();
       });
   };
 

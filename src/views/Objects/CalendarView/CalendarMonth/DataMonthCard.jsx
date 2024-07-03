@@ -143,7 +143,7 @@ const DataMonthCard = ({
       onPositionChange(lastEvent.drag, lastEvent.height);
     }
   };
-  console.log("viewFieldviewFieldss", viewFields);
+
   return (
     <>
       <div

@@ -103,10 +103,14 @@ const FormElementGenerator = ({
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
       return `${removeLangFromSlug(field.slug)}_${activeLang}`;
-    }
-
-    if (field.id?.includes("@")) {
+    } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
     }
 
     return field?.slug;

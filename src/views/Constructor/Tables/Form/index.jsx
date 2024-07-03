@@ -2,7 +2,12 @@ import {Save} from "@mui/icons-material";
 import {useEffect, useState} from "react";
 import {useForm, useWatch} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
@@ -42,6 +47,7 @@ const ConstructorTablesFormPage = () => {
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
+  const location = useLocation();
 
   const mainForm = useForm({
     defaultValues: {
@@ -101,12 +107,12 @@ const ConstructorTablesFormPage = () => {
 
     try {
       const [tableData, {custom_events: actions = []}] = await Promise.all([
-        constructorViewRelationService.getList({table_slug: tableSlug}),
-        constructorCustomEventService.getList(
+        await constructorViewRelationService.getList({table_slug: tableSlug}),
+        await constructorCustomEventService.getList(
           {table_slug: tableSlug},
           tableSlug
         ),
-        layoutService
+        await layoutService
           .getList(
             {"table-slug": tableSlug, language_setting: i18n?.language},
             tableSlug
@@ -232,7 +238,9 @@ const ConstructorTablesFormPage = () => {
       .unwrap()
       .then((res) => {
         createType(res);
-        // navigate(-1);
+        if (location?.state?.create_table) {
+          navigate(-1);
+        }
       })
       .catch(() => setBtnLoader(false));
   };

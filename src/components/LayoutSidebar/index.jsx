@@ -35,22 +35,11 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import {useSearchParams} from "react-router-dom";
+import AiChatMenu from "../ProfilePanel/AiChatMenu";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -77,6 +66,23 @@ const LayoutSidebar = ({appId}) => {
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
+  const {data: menuById} = useMenuGetByIdQuery({
+    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  });
+
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        menuById?.attributes?.menu_settings_id ||
+        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
+    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  });
+
+  const menuStyle = menuTemplate?.menu_template;
+  const permissions = useSelector((state) => state.auth.globalPermissions);
 
   const handleOpenNotify = (event, type) => {
     setMenu({event: event?.currentTarget, type: type});
@@ -96,22 +102,6 @@ const LayoutSidebar = ({appId}) => {
       },
     },
   });
-
-  const {data: menuById} = useMenuGetByIdQuery({
-    menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
-  });
-
-  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
-    params: {
-      template_id:
-        menuById?.attributes?.menu_settings_id ||
-        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-    },
-    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  });
-
-  const menuStyle = menuTemplate?.menu_template;
-  const permissions = useSelector((state) => state.auth.globalPermissions);
 
   const setTableModal = (element) => {
     setTableModalOpen(true);
@@ -207,6 +197,19 @@ const LayoutSidebar = ({appId}) => {
     }
   );
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(menuList, dropResult);
+    if (result) {
+      menuService
+        .updateOrder({
+          menus: result,
+        })
+        .then(() => {
+          getMenuList();
+        });
+    }
+  };
+
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
@@ -227,6 +230,10 @@ const LayoutSidebar = ({appId}) => {
   }, [menuList]);
 
   useEffect(() => {
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
+  }, [appId]);
+
+  useEffect(() => {
     if (
       selectedApp?.type === "FOLDER" ||
       (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)
@@ -234,20 +241,17 @@ const LayoutSidebar = ({appId}) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-
-  const onDrop = (dropResult) => {
-    const result = applyDrag(menuList, dropResult);
-    if (result) {
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
       menuService
-        .updateOrder({
-          menus: result,
+        .getByID({
+          menuId: searchParams.get("menuId"),
         })
-        .then(() => {
-          getMenuList();
+        .then((res) => {
+          setMenuItem(res);
         });
     }
-  };
+  }, []);
 
   return (
     <>
@@ -309,7 +313,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "85vh",
+            height: "80vh",
             overflow: "hidden",
           }}>
           <div
@@ -380,16 +384,34 @@ const LayoutSidebar = ({appId}) => {
             )}
           </div>
         </Box>
+        {/* <MenuBox
+          title={""}
+          openFolderCreateModal={openFolderCreateModal}
+          children={<AiChatMenu />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+            height: "40px",
+            cursor: "pointer",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        /> */}
         <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}
           children={
-            <NewProfilePanel
-              sidebarAnchorEl={sidebarAnchorEl}
-              setSidebarAnchor={setSidebarAnchor}
-              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              handleTemplateModalOpen={handleTemplateModalOpen}
-            />
+            <>
+              <NewProfilePanel
+                sidebarAnchorEl={sidebarAnchorEl}
+                setSidebarAnchor={setSidebarAnchor}
+                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+                handleTemplateModalOpen={handleTemplateModalOpen}
+              />
+            </>
           }
           onClick={(e) => {
             e.stopPropagation();

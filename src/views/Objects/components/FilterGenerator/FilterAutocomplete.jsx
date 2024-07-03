@@ -59,7 +59,7 @@ const FilterAutoComplete = ({
             <span
               className={styles.placeholder}
               style={{color: !value?.length ? "#909EAB" : "#000"}}>
-              {value[0] ?? label}
+              {value[0] || label}
             </span>
           )}
         </div>

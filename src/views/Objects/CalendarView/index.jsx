@@ -77,7 +77,7 @@ const CalendarView = ({
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [date, setDate] = useState(
-    views?.[selectedTabIndex]?.attributes?.period
+    views?.[selectedTabIndex]?.attributes?.period ?? "MONTH"
   );
 
   const [tab, setTab] = useState();
@@ -226,7 +226,6 @@ const CalendarView = ({
     {
       select: (res) => {
         const result = {};
-
         res?.data?.response?.forEach((el) => {
           const date = el[view?.disable_dates?.day_slug];
           const calendarFromTime = el[view?.disable_dates?.time_from_slug];
@@ -275,6 +274,8 @@ const CalendarView = ({
     },
     {
       select: ({data}) => {
+        console.log("resssssssssssssss", data);
+
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],

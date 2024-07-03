@@ -1,7 +1,7 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Box, Divider, Menu, MenuItem, Tooltip} from "@mui/material";
+import {Box, Button, Divider, Menu, MenuItem, Tooltip} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate, useParams} from "react-router-dom";

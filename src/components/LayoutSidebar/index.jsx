@@ -35,6 +35,7 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import {useSearchParams} from "react-router-dom";
+import AiChatMenu from "../ProfilePanel/AiChatMenu";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -312,7 +313,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "85vh",
+            height: "80vh",
             overflow: "hidden",
           }}>
           <div
@@ -383,16 +384,34 @@ const LayoutSidebar = ({appId}) => {
             )}
           </div>
         </Box>
+        {/* <MenuBox
+          title={""}
+          openFolderCreateModal={openFolderCreateModal}
+          children={<AiChatMenu />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+            height: "40px",
+            cursor: "pointer",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        /> */}
         <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}
           children={
-            <NewProfilePanel
-              sidebarAnchorEl={sidebarAnchorEl}
-              setSidebarAnchor={setSidebarAnchor}
-              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              handleTemplateModalOpen={handleTemplateModalOpen}
-            />
+            <>
+              <NewProfilePanel
+                sidebarAnchorEl={sidebarAnchorEl}
+                setSidebarAnchor={setSidebarAnchor}
+                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+                handleTemplateModalOpen={handleTemplateModalOpen}
+              />
+            </>
           }
           onClick={(e) => {
             e.stopPropagation();

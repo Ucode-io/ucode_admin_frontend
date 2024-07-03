@@ -228,7 +228,7 @@ const TableView = ({
     let a = sortedDatas?.map((el) => {
       if (el.field) {
         return {
-          [fieldsMap[el?.field].slug]: el.order === "ASC" ? 1 : -1,
+          [fieldsMap[el?.field]?.slug]: el.order === "ASC" ? 1 : -1,
         };
       }
     });
@@ -311,11 +311,12 @@ const TableView = ({
   });
 
   const {
-    data: {tableData, pageCount} = {
+    data: {tableData, pageCount, dataCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
       fiedlsarray: [],
+      dataCount: 0,
     },
     refetch,
     isLoading: tableLoader,
@@ -337,7 +338,7 @@ const TableView = ({
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          // view_id: view?.id,
+          row_view_id: view?.id,
           offset: searchText ? 0 : pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
@@ -363,6 +364,7 @@ const TableView = ({
         pageCount: isNaN(res.data?.count)
           ? 1
           : Math.ceil(res.data?.count / (paginiation ?? limit)),
+        dataCount: res?.data?.count,
       };
     },
     onSuccess: (data) => {
@@ -427,7 +429,7 @@ const TableView = ({
           constructorObjectService
             .getListV2(item?.table_slug, {
               data: {
-                // view_id: view?.id,
+                row_view_id: view?.id,
                 limit: 10,
                 offset: 0,
                 additional_request: {
@@ -707,6 +709,7 @@ const TableView = ({
           />
         ) : (
           <ObjectDataTable
+            dataCount={dataCount}
             refetch={refetch}
             filterVisible={filterVisible}
             currentView={currentView}

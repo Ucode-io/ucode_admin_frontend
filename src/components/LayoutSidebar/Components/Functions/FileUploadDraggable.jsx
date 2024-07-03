@@ -1,10 +1,9 @@
-import {useCallback, useRef} from "react";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import {useDropzone} from "react-dropzone";
 import "./index.module.scss";
 import RingLoader from "../../../Loaders/RingLoader";
 
-const FileUploadDraggable = ({setData, loader, data}) => {
+const FileUploadWithDraggable = ({setData, loader, data}) => {
   const inputRef = useRef(null);
 
   const onDrop = useCallback((files) => {
@@ -24,7 +23,7 @@ const FileUploadDraggable = ({setData, loader, data}) => {
         className="dropzone"
         ref={inputRef}
         style={{height: 164}}>
-        <input {...getInputProps()} className="" />
+        <input {...getInputProps()} />
         {!loader ? (
           <>
             <MoveToInboxIcon className="dropzone-icon" />
@@ -39,4 +38,4 @@ const FileUploadDraggable = ({setData, loader, data}) => {
   );
 };
 
-export default FileUploadDraggable;
+export default FileUploadWithDraggable;

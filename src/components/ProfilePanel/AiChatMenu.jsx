@@ -47,7 +47,7 @@ function AiChatMenu() {
       setInputValue("");
 
       sendToGptService
-        .sendText({prompt: userMessage})
+        .sendText({promt: userMessage})
         .then((res) => {
           updateChatMessage(res);
         })

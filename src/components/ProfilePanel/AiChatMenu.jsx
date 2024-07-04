@@ -28,7 +28,6 @@ function AiChatMenu() {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
   const [loader, setLoader] = useState(false);
-  const [displayText, setDisplayText] = useState("");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,6 +40,7 @@ function AiChatMenu() {
   const handleSendClick = () => {
     setLoader(true);
     const userMessage = inputValue.trim();
+
     if (userMessage) {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -48,11 +48,11 @@ function AiChatMenu() {
         {type: "loader", sender: "chat"},
       ]);
       setInputValue("");
-
       sendToGptService
         .sendText({promt: userMessage})
         .then((res) => {
           updateChatMessage(res);
+          setInputValue("");
         })
         .catch((err) => {
           console.log("Error:", err?.data?.data);
@@ -107,22 +107,7 @@ function AiChatMenu() {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({behavior: "smooth"});
     }
-  }, [messages]);
-
-  // function animateText(text, speed) {
-  //   let index = 0;
-  //   let animatedText = "";
-
-  //   function typeNextCharacter() {
-  //     if (index < text.length) {
-  //       animatedText += text[index];
-  //       index++;
-  //       setTimeout(typeNextCharacter, speed); // Recursive call with delay
-  //     }
-  //   }
-
-  //   typeNextCharacter();
-  // }
+  }, [inputValue]);
 
   return (
     <Box
@@ -291,6 +276,7 @@ function AiChatMenu() {
               backgroundColor: "#fff",
             }}>
             <TextField
+              multiline={!loader}
               fullWidth
               placeholder="Type your message..."
               value={inputValue}
@@ -306,7 +292,9 @@ function AiChatMenu() {
                   borderRadius: "20px",
                   paddingRight: "0px",
                 },
+
                 "& .MuiOutlinedInput-root": {
+                  padding: "10px 10px 10px 0px",
                   "&.Mui-focused fieldset": {
                     borderColor: "transparent",
                     borderWidth: 0,
@@ -323,6 +311,7 @@ function AiChatMenu() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <button
+                      disabled={loader}
                       style={{
                         width: "40px",
                         height: "40px",
@@ -332,7 +321,8 @@ function AiChatMenu() {
                         borderRadius: "50%",
                         border: "none",
                         cursor: "pointer",
-                        background: "#000",
+                        background: inputValue?.length ? "#000" : "#eee",
+                        cursor: inputValue?.length ? "pointer" : "not-allowed",
                       }}
                       onClick={handleSendClick}>
                       <img src="/img/gptSendIcon.svg" alt="" />

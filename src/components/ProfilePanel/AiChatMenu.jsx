@@ -9,12 +9,15 @@ import {
 } from "@mui/material";
 import React, {useState, useEffect, useRef} from "react";
 import sendToGptService from "../../services/sendToGptService";
+import styles from "./style.module.scss";
 
 function Loader() {
   return (
-    <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>
+    <div
+      className={styles.animated_text}
+      sx={{fontSize: "12px", fontWeight: "bold"}}>
       Analyzing...
-    </Typography>
+    </div>
   );
 }
 

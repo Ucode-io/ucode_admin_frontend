@@ -327,16 +327,16 @@ const ViewsWithGroups = ({
           </div>
 
           <div className={style.rightExtra}>
-            <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <GroupByButton
-              selectedTabIndex={selectedTabIndex}
-              view={view}
-              fieldsMap={fieldsMap}
-              relationColumns={visibleRelationColumns}
-            />
             {permissions?.header && (
               <>
+                <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+                <Divider orientation="vertical" flexItem />
+                <GroupByButton
+                  selectedTabIndex={selectedTabIndex}
+                  view={view}
+                  fieldsMap={fieldsMap}
+                  relationColumns={visibleRelationColumns}
+                />
                 <Divider orientation="vertical" flexItem />
                 <VisibleColumnsButton
                   currentView={view}

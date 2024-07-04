@@ -13,7 +13,7 @@ import {Button, Menu} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorViewService from "../../services/constructorViewService";
 import relationService from "../../services/relationService";
@@ -63,6 +63,10 @@ export default function TableHeadForTableView({
   const summaryIsOpen = Boolean(summaryOpen);
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -421,15 +425,17 @@ export default function TableHeadForTableView({
               column.label}
           </span>
 
-          <Button
-            onClick={handleClick}
-            variant="text"
-            style={{
-              minWidth: "auto",
-              padding: "0 5px",
-            }}>
-            <ExpandCircleDownIcon />
-          </Button>
+          {permissions?.field_filter && (
+            <Button
+              onClick={handleClick}
+              variant="text"
+              style={{
+                minWidth: "auto",
+                padding: "0 5px",
+              }}>
+              <ExpandCircleDownIcon />
+            </Button>
+          )}
         </div>
       </CTableHeadCell>
 

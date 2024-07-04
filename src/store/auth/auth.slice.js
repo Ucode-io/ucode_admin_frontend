@@ -57,6 +57,9 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
               settings: curr.settings !== "No",
               share_modal: curr.share_modal !== "No",
               view_create: curr.view_create !== "No",
+              add_filter: curr.add_filter !== "No",
+              field_filter: curr.field_filter !== "No",
+              header: curr.header !== "No",
             };
             return acc;
           }, {})

@@ -12,7 +12,7 @@ import sendToGptService from "../../services/sendToGptService";
 
 function Loader() {
   return (
-    <Typography sx={{marginLeft: "10px", fontSize: "16px", fontWeight: "bold"}}>
+    <Typography sx={{fontSize: "16px", fontWeight: "bold"}}>
       Analyzing...
     </Typography>
   );
@@ -209,15 +209,15 @@ function AiChatMenu() {
                         padding: "10px",
                         backgroundColor: "#F4F4F4",
                         alignSelf: "flex-end",
-                        maxWidth: "80%",
+                        maxWidth: "70%",
                         color: "#000",
                         wordBreak: "break-all",
-                        borderRadius: "50px",
-                        padding: "10px 15px",
-                        marginRight: "10px",
+                        borderRadius: "20px",
+                        padding: "10px 10px 10px 10px",
                         minHeight: "40px",
+                        marginRight: "10px",
                       }}>
-                      <Typography sx={{fontSize: "14px"}}>
+                      <Typography sx={{fontSize: "14px", padding: "5px 10px"}}>
                         {msg.text}
                       </Typography>
                     </Paper>
@@ -241,9 +241,8 @@ function AiChatMenu() {
                         maxWidth: "80%",
                         color: "#000",
                         wordBreak: "break-all",
-                        borderRadius: "50px",
-                        padding: "10px 15px",
-                        marginLeft: "10px",
+                        borderRadius: "20px",
+                        padding: "10px 15px 10px 10px",
                         minHeight: "40px",
                       }}>
                       {msg.errorText ? (
@@ -255,7 +254,6 @@ function AiChatMenu() {
                       ) : (
                         <Typography sx={{fontSize: "14px"}}>
                           {msg.text}
-                          {/* {animateText(msg?.text, 200)} */}
                         </Typography>
                       )}
                     </Paper>

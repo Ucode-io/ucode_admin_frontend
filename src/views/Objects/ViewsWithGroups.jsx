@@ -66,6 +66,9 @@ const ViewsWithGroups = ({
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -332,10 +335,20 @@ const ViewsWithGroups = ({
               fieldsMap={fieldsMap}
               relationColumns={visibleRelationColumns}
             />
-            <Divider orientation="vertical" flexItem />
-            <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
+            {permissions?.header && (
+              <>
+                <Divider orientation="vertical" flexItem />
+                <VisibleColumnsButton
+                  currentView={view}
+                  fieldsMap={fieldsMap}
+                />
+                <Divider orientation="vertical" flexItem />
+                <TableViewGroupByButton
+                  currentView={view}
+                  fieldsMap={fieldsMap}
+                />
+              </>
+            )}
             {view.type === "TABLE" && (
               <>
                 <Menu
@@ -398,20 +411,22 @@ const ViewsWithGroups = ({
               </>
             )}
             <Divider orientation="vertical" flexItem />
-            <Button
-              onClick={handleClick}
-              variant="text"
-              style={{
-                color: "#A8A8A8",
-                borderColor: "#A8A8A8",
-                minWidth: "auto",
-              }}>
-              <MoreVertOutlined
+            {permissions?.header && (
+              <Button
+                onClick={handleClick}
+                variant="text"
                 style={{
-                  color: "#888",
-                }}
-              />
-            </Button>
+                  color: "#A8A8A8",
+                  borderColor: "#A8A8A8",
+                  minWidth: "auto",
+                }}>
+                <MoreVertOutlined
+                  style={{
+                    color: "#888",
+                  }}
+                />
+              </Button>
+            )}
 
             <Menu
               open={open}

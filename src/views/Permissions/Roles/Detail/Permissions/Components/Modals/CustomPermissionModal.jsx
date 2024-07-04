@@ -85,10 +85,11 @@ const CustomPermissionModal = ({
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
-      add_field: val ? "Yes" : "No",
-      add_filter: val ? "Yes" : "No",
-      header: val ? "Yes" : "No",
-      field_filter: val ? "Yes" : "No",
+      fix_column: val ? "Yes" : "No",
+      columns: val ? "Yes" : "No",
+      group: val ? "Yes" : "No",
+      excel_menu: val ? "Yes" : "No",
+      tab_group: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };
@@ -96,7 +97,7 @@ const CustomPermissionModal = ({
   const allYes = Object.values(watch(basePath)).every(
     (value) => value === "Yes"
   );
-  console.log("fieldsfieldsfields", fields);
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>

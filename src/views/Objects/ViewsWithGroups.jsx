@@ -66,6 +66,7 @@ const ViewsWithGroups = ({
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
+  const permissions = useSelector((state) => state.auth.permissions);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),

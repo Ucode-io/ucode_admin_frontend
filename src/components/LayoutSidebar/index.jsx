@@ -384,7 +384,7 @@ const LayoutSidebar = ({appId}) => {
             )}
           </div>
         </Box>
-        <MenuBox
+        {/* <MenuBox
           title={""}
           openFolderCreateModal={openFolderCreateModal}
           children={<AiChatMenu />}
@@ -399,7 +399,7 @@ const LayoutSidebar = ({appId}) => {
             cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}
-        />
+        /> */}
         <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}

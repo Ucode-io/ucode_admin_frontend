@@ -60,6 +60,21 @@ const CustomPermissionModal = ({
       name: "Delete All",
       controlName: "delete_all",
     },
+    {
+      guid: "9",
+      name: "Add Filter",
+      controlName: "add_filter",
+    },
+    {
+      guid: "10",
+      name: "Header",
+      controlName: "header",
+    },
+    {
+      guid: "11",
+      name: "Field filter",
+      controlName: "field_filter",
+    },
   ];
 
   const updateView = (val) => {
@@ -71,6 +86,9 @@ const CustomPermissionModal = ({
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
       add_field: val ? "Yes" : "No",
+      add_filter: val ? "Yes" : "No",
+      header: val ? "Yes" : "No",
+      field_filter: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };
@@ -78,7 +96,7 @@ const CustomPermissionModal = ({
   const allYes = Object.values(watch(basePath)).every(
     (value) => value === "Yes"
   );
-
+  console.log("fieldsfieldsfields", fields);
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -99,8 +117,7 @@ const CustomPermissionModal = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}
-              >
+                }}>
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>

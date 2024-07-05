@@ -62,18 +62,28 @@ const CustomPermissionModal = ({
     },
     {
       guid: "9",
-      name: "Add Filter",
-      controlName: "add_filter",
+      name: "Fix column",
+      controlName: "fix_column",
     },
     {
       guid: "10",
-      name: "Header",
-      controlName: "header",
+      name: "columns",
+      controlName: "columns",
     },
     {
       guid: "11",
-      name: "Field filter",
-      controlName: "field_filter",
+      name: "Group",
+      controlName: "group",
+    },
+    {
+      guid: "12",
+      name: "Excel menu",
+      controlName: "excel_menu",
+    },
+    {
+      guid: "13",
+      name: "Tab group",
+      controlName: "tab_group",
     },
   ];
 

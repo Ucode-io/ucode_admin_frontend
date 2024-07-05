@@ -62,28 +62,43 @@ const CustomPermissionModal = ({
     },
     {
       guid: "9",
+      name: "Add filter",
+      controlName: "add_filter",
+    },
+    {
+      guid: "10",
+      name: "Field filter",
+      controlName: "field_filter",
+    },
+    {
+      guid: "11",
       name: "Fix column",
       controlName: "fix_column",
     },
     {
-      guid: "10",
+      guid: "12",
       name: "columns",
       controlName: "columns",
     },
     {
-      guid: "11",
+      guid: "13",
       name: "Group",
       controlName: "group",
     },
     {
-      guid: "12",
+      guid: "14",
       name: "Excel menu",
       controlName: "excel_menu",
     },
     {
-      guid: "13",
+      guid: "15",
       name: "Tab group",
       controlName: "tab_group",
+    },
+    {
+      guid: "16",
+      name: "Search button",
+      controlName: "search_button",
     },
   ];
 
@@ -95,11 +110,14 @@ const CustomPermissionModal = ({
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
+      add_filter: val ? "Yes" : "No",
+      field_filter: val ? "Yes" : "No",
       fix_column: val ? "Yes" : "No",
       columns: val ? "Yes" : "No",
       group: val ? "Yes" : "No",
       excel_menu: val ? "Yes" : "No",
       tab_group: val ? "Yes" : "No",
+      search_button: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };

@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import sendToGptService from "../../../services/sendToGptService";
 import GptChat from "./GptChat";
 import UserChat from "./UserChat";
+import ChatInput from "./ChatInput";
 
 function AiChatMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -199,61 +200,12 @@ function AiChatMenu() {
               borderTop: "1px solid #ccc",
               backgroundColor: "#fff",
             }}>
-            <TextField
-              multiline={!loader}
-              fullWidth
-              placeholder="Type your message..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              sx={{
-                "& .MuiInputBase-input": {
-                  width: "316px",
-                  padding: "10px",
-                  fontSize: "16px",
-                  border: "1px solid #000",
-                  overflow: "hidden",
-                  borderRadius: "20px",
-                  paddingRight: "0px",
-                },
-
-                "& .MuiOutlinedInput-root": {
-                  padding: "10px 10px 10px 0px",
-                  "&.Mui-focused fieldset": {
-                    borderColor: "transparent",
-                    borderWidth: 0,
-                  },
-                  "& fieldset": {
-                    borderWidth: 0,
-                  },
-                },
-                "& .MuiInputBase-root": {
-                  paddingRight: 0,
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <button
-                      disabled={loader}
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        border: "none",
-                        cursor: "pointer",
-                        background: inputValue?.length ? "#000" : "#eee",
-                        cursor: inputValue?.length ? "pointer" : "not-allowed",
-                      }}
-                      onClick={handleSendClick}>
-                      <img src="/img/gptSendIcon.svg" alt="" />
-                    </button>
-                  </InputAdornment>
-                ),
-              }}
+            <ChatInput
+              loader={loader}
+              setInputValue={setInputValue}
+              handleSendClick={handleClick}
+              inputValue={inputValue}
+              handleKeyDown={handleKeyDown}
             />
           </Box>
         </Box>

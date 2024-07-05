@@ -1,26 +1,8 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import {
-  Box,
-  InputAdornment,
-  Menu,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, {useState, useEffect, useRef} from "react";
-import sendToGptService from "../../services/sendToGptService";
-import styles from "./style.module.scss";
-import Typewriter from "./TypeWriter";
-
-function Loader() {
-  return (
-    <div
-      className={styles.animated_text}
-      sx={{fontSize: "12px", fontWeight: "bold"}}>
-      Analyzing...
-    </div>
-  );
-}
+import {Box, InputAdornment, Menu, TextField, Typography} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
+import sendToGptService from "../../../services/sendToGptService";
+import GptChat from "./GptChat";
+import UserChat from "./UserChat";
 
 function AiChatMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -185,70 +167,9 @@ function AiChatMenu() {
             {messages.length > 0 ? (
               messages.map((msg, index) =>
                 msg.sender === "user" ? (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      margin: "10px",
-                      justifyContent: "flex-end",
-                    }}>
-                    <Paper
-                      sx={{
-                        padding: "10px",
-                        backgroundColor: "#F4F4F4",
-                        alignSelf: "flex-end",
-                        maxWidth: "70%",
-                        color: "#000",
-                        wordBreak: "break-all",
-                        borderRadius: "20px",
-                        padding: "10px 10px 10px 10px",
-                        minHeight: "40px",
-                        marginRight: "10px",
-                      }}>
-                      <Typography sx={{fontSize: "14px", padding: "5px 10px"}}>
-                        {msg.text}
-                      </Typography>
-                    </Paper>
-                    <AccountCircleIcon sx={{width: "24px", height: "24px"}} />
-                  </Box>
+                  <UserChat index={index} msg={msg} />
                 ) : (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      margin: "10px",
-                      justifyContent: "flex-start",
-                    }}>
-                    <img width={24} height={24} src="/img/chat.png" alt="" />
-                    <Paper
-                      sx={{
-                        padding: "10px",
-                        backgroundColor: "#fff",
-                        alignSelf: "flex-start",
-                        maxWidth: "80%",
-                        color: "#000",
-                        wordBreak: "break-all",
-                        borderRadius: "20px",
-                        padding: "10px 15px 10px 10px",
-                        minHeight: "40px",
-                      }}>
-                      {msg.errorText ? (
-                        <Typography sx={{fontSize: "14px", color: "red"}}>
-                          {msg.errorText}
-                        </Typography>
-                      ) : msg.type === "loader" ? (
-                        <Loader />
-                      ) : (
-                        <Typography sx={{fontSize: "14px"}}>
-                          <Typewriter text={msg.text} delay={73} />
-
-                          {/* {msg.text} */}
-                        </Typography>
-                      )}
-                    </Paper>
-                  </Box>
+                  <GptChat index={index} msg={msg} />
                 )
               )
             ) : (

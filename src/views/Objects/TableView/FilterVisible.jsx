@@ -4,7 +4,7 @@ import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FiltersTab from "../components/ViewSettings/FiltersTab";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {quickFiltersActions} from "../../../store/filter/quick_filter";
 import styles from "./styles.module.scss";
 import {useParams} from "react-router-dom";
@@ -35,7 +35,9 @@ export default function FilterVisible({
   const {tableSlug} = useParams();
   const [filterAnchor, setFilterAnchor] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
-
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
   const handleClickFilter = (event) => {
     setFilterAnchor(event.currentTarget);
   };
@@ -77,14 +79,16 @@ export default function FilterVisible({
 
   return (
     <div>
-      <Box
-        variant={"text"}
-        className={styles.add_filter}
-        sx={customStyles}
-        onClick={handleClickFilter}>
-        <FilterAltOutlinedIcon color={"#A8A8A8"} />
-        Add Filters
-      </Box>
+      {permissions?.add_filter && (
+        <Box
+          variant={"text"}
+          className={styles.add_filter}
+          sx={customStyles}
+          onClick={handleClickFilter}>
+          <FilterAltOutlinedIcon color={"#A8A8A8"} />
+          Add Filters
+        </Box>
+      )}
       <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
         <FiltersTab
           form={form}

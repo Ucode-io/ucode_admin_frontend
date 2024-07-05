@@ -9,12 +9,16 @@ import {
 } from "@mui/material";
 import React, {useState, useEffect, useRef} from "react";
 import sendToGptService from "../../services/sendToGptService";
+import styles from "./style.module.scss";
+import Typewriter from "./TypeWriter";
 
 function Loader() {
   return (
-    <Typography sx={{marginLeft: "10px", fontSize: "16px", fontWeight: "bold"}}>
+    <div
+      className={styles.animated_text}
+      sx={{fontSize: "12px", fontWeight: "bold"}}>
       Analyzing...
-    </Typography>
+    </div>
   );
 }
 
@@ -25,7 +29,6 @@ function AiChatMenu() {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
   const [loader, setLoader] = useState(false);
-  const [displayText, setDisplayText] = useState("");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -38,6 +41,7 @@ function AiChatMenu() {
   const handleSendClick = () => {
     setLoader(true);
     const userMessage = inputValue.trim();
+
     if (userMessage) {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -45,11 +49,11 @@ function AiChatMenu() {
         {type: "loader", sender: "chat"},
       ]);
       setInputValue("");
-
       sendToGptService
         .sendText({promt: userMessage})
         .then((res) => {
           updateChatMessage(res);
+          setInputValue("");
         })
         .catch((err) => {
           console.log("Error:", err?.data?.data);
@@ -104,22 +108,7 @@ function AiChatMenu() {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({behavior: "smooth"});
     }
-  }, [messages]);
-
-  // function animateText(text, speed) {
-  //   let index = 0;
-  //   let animatedText = "";
-
-  //   function typeNextCharacter() {
-  //     if (index < text.length) {
-  //       animatedText += text[index];
-  //       index++;
-  //       setTimeout(typeNextCharacter, speed); // Recursive call with delay
-  //     }
-  //   }
-
-  //   typeNextCharacter();
-  // }
+  }, [inputValue]);
 
   return (
     <Box
@@ -209,15 +198,15 @@ function AiChatMenu() {
                         padding: "10px",
                         backgroundColor: "#F4F4F4",
                         alignSelf: "flex-end",
-                        maxWidth: "80%",
+                        maxWidth: "70%",
                         color: "#000",
                         wordBreak: "break-all",
-                        borderRadius: "50px",
-                        padding: "10px 15px",
-                        marginRight: "10px",
+                        borderRadius: "20px",
+                        padding: "10px 10px 10px 10px",
                         minHeight: "40px",
+                        marginRight: "10px",
                       }}>
-                      <Typography sx={{fontSize: "14px"}}>
+                      <Typography sx={{fontSize: "14px", padding: "5px 10px"}}>
                         {msg.text}
                       </Typography>
                     </Paper>
@@ -241,9 +230,8 @@ function AiChatMenu() {
                         maxWidth: "80%",
                         color: "#000",
                         wordBreak: "break-all",
-                        borderRadius: "50px",
-                        padding: "10px 15px",
-                        marginLeft: "10px",
+                        borderRadius: "20px",
+                        padding: "10px 15px 10px 10px",
                         minHeight: "40px",
                       }}>
                       {msg.errorText ? (
@@ -254,8 +242,9 @@ function AiChatMenu() {
                         <Loader />
                       ) : (
                         <Typography sx={{fontSize: "14px"}}>
+                          {/* <Typewriter text={msg.text} delay={100} /> */}
+
                           {msg.text}
-                          {/* {animateText(msg?.text, 200)} */}
                         </Typography>
                       )}
                     </Paper>
@@ -290,6 +279,7 @@ function AiChatMenu() {
               backgroundColor: "#fff",
             }}>
             <TextField
+              multiline={!loader}
               fullWidth
               placeholder="Type your message..."
               value={inputValue}
@@ -305,7 +295,9 @@ function AiChatMenu() {
                   borderRadius: "20px",
                   paddingRight: "0px",
                 },
+
                 "& .MuiOutlinedInput-root": {
+                  padding: "10px 10px 10px 0px",
                   "&.Mui-focused fieldset": {
                     borderColor: "transparent",
                     borderWidth: 0,
@@ -322,6 +314,7 @@ function AiChatMenu() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <button
+                      disabled={loader}
                       style={{
                         width: "40px",
                         height: "40px",
@@ -331,7 +324,8 @@ function AiChatMenu() {
                         borderRadius: "50%",
                         border: "none",
                         cursor: "pointer",
-                        background: "#000",
+                        background: inputValue?.length ? "#000" : "#eee",
+                        cursor: inputValue?.length ? "pointer" : "not-allowed",
                       }}
                       onClick={handleSendClick}>
                       <img src="/img/gptSendIcon.svg" alt="" />

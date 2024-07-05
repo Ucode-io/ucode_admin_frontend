@@ -106,6 +106,7 @@ const CPagination = ({
             )}
           </div>
         )}
+
         <div
           style={{
             display: "flex",
@@ -113,7 +114,7 @@ const CPagination = ({
             color: "#6E7C87",
             alignItems: "center",
           }}>
-          Count:{" "}
+          Count:
           <strong style={{fontSize: "16px"}}> {props?.dataCount ?? 0}</strong>
         </div>
       </div>

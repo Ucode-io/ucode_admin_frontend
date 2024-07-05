@@ -66,6 +66,9 @@ const ViewsWithGroups = ({
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -275,14 +278,16 @@ const ViewsWithGroups = ({
                 setSearchText(e);
               }}
             />
-            <button
-              className={style.moreButton}
-              onClick={handleClickSearch}
-              style={{
-                paddingRight: "10px",
-              }}>
-              <MoreHorizIcon />
-            </button>
+            {permissions?.search_button && (
+              <button
+                className={style.moreButton}
+                onClick={handleClickSearch}
+                style={{
+                  paddingRight: "10px",
+                }}>
+                <MoreHorizIcon />
+              </button>
+            )}
 
             <Menu
               open={openSearch}
@@ -324,18 +329,29 @@ const ViewsWithGroups = ({
           </div>
 
           <div className={style.rightExtra}>
-            <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+            {permissions?.fix_column && (
+              <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+            )}
             <Divider orientation="vertical" flexItem />
-            <GroupByButton
-              selectedTabIndex={selectedTabIndex}
-              view={view}
-              fieldsMap={fieldsMap}
-              relationColumns={visibleRelationColumns}
-            />
+            {permissions?.group && (
+              <GroupByButton
+                selectedTabIndex={selectedTabIndex}
+                view={view}
+                fieldsMap={fieldsMap}
+                relationColumns={visibleRelationColumns}
+              />
+            )}
             <Divider orientation="vertical" flexItem />
-            <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
+            {permissions?.columns && (
+              <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
+            )}
             <Divider orientation="vertical" flexItem />
-            <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
+            {permissions?.tab_group && (
+              <TableViewGroupByButton
+                currentView={view}
+                fieldsMap={fieldsMap}
+              />
+            )}
             {view.type === "TABLE" && (
               <>
                 <Menu
@@ -398,20 +414,22 @@ const ViewsWithGroups = ({
               </>
             )}
             <Divider orientation="vertical" flexItem />
-            <Button
-              onClick={handleClick}
-              variant="text"
-              style={{
-                color: "#A8A8A8",
-                borderColor: "#A8A8A8",
-                minWidth: "auto",
-              }}>
-              <MoreVertOutlined
+            {permissions?.excel_menu && (
+              <Button
+                onClick={handleClick}
+                variant="text"
                 style={{
-                  color: "#888",
-                }}
-              />
-            </Button>
+                  color: "#A8A8A8",
+                  borderColor: "#A8A8A8",
+                  minWidth: "auto",
+                }}>
+                <MoreVertOutlined
+                  style={{
+                    color: "#888",
+                  }}
+                />
+              </Button>
+            )}
 
             <Menu
               open={open}

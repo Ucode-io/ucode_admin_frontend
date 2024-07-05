@@ -242,9 +242,9 @@ function AiChatMenu() {
                         <Loader />
                       ) : (
                         <Typography sx={{fontSize: "14px"}}>
-                          {/* <Typewriter text={msg.text} delay={100} /> */}
+                          <Typewriter text={msg.text} delay={73} />
 
-                          {msg.text}
+                          {/* {msg.text} */}
                         </Typography>
                       )}
                     </Paper>

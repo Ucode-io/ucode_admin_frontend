@@ -69,7 +69,6 @@ const ViewsWithGroups = ({
   const permissions = useSelector(
     (state) => state.auth.permissions?.[tableSlug]
   );
-
   const fix_column = permissions?.fix_column ?? true;
   const columns = permissions?.columns ?? true;
   const group = permissions?.group ?? true;

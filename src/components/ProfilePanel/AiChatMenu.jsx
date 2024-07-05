@@ -10,6 +10,7 @@ import {
 import React, {useState, useEffect, useRef} from "react";
 import sendToGptService from "../../services/sendToGptService";
 import styles from "./style.module.scss";
+import Typewriter from "./TypeWriter";
 
 function Loader() {
   return (
@@ -241,7 +242,9 @@ function AiChatMenu() {
                         <Loader />
                       ) : (
                         <Typography sx={{fontSize: "14px"}}>
-                          {msg.text}
+                          <Typewriter text={msg.text} delay={73} />
+
+                          {/* {msg.text} */}
                         </Typography>
                       )}
                     </Paper>

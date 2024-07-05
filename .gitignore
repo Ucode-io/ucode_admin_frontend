@@ -27,3 +27,7 @@ yarn.lock
 *.njsproj
 *.sln
 *.sw?
+
+
+# LayoutSidebar directory
+src/components/LayoutSidebar

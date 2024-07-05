@@ -313,7 +313,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "80vh",
+            height: "85vh",
             overflow: "hidden",
           }}>
           <div

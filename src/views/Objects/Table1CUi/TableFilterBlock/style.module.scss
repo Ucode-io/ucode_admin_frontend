@@ -1,0 +1,64 @@
+@mixin btn_style {
+  height: 42px;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@mixin flexCenter {
+  display: flex;
+  align-items: center;
+}
+
+.tableFilterBlock {
+  padding: 20px 24px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .searchFilter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .filterBtn {
+      width: 44px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid #d0d5dd;
+      background: none;
+      cursor: pointer;
+    }
+  }
+
+  .filterCreatBtns {
+    @include flexCenter;
+    gap: 12px;
+
+    .createBtn {
+      width: 104px;
+      @include btn_style;
+      background: #449424;
+      border: none;
+      color: #fff;
+    }
+
+    .createGroupBtn {
+      @include btn_style;
+      width: 162px;
+      background: none;
+      border: 1px solid #d0d5dd;
+    }
+    .moreBtn {
+      @include btn_style;
+      width: 44px;
+      border: 1px solid #d0d5dd;
+      background: none;
+    }
+  }
+}

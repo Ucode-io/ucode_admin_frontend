@@ -1,0 +1,176 @@
+.expandable_table {
+  width: 100%;
+  background: #fff;
+  border-collapse: collapse;
+  margin: 0 0;
+}
+
+thead {
+  position: relative;
+}
+
+thead th {
+  font-weight: 500;
+  color: #475467;
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 46px;
+}
+
+.expandable_table th,
+.expandable_table td {
+  border-top: 1px solid #eaecf0;
+  border-right: 1px solid #eaecf0;
+  border-bottom: 1px solid #eaecf0;
+  padding: 12px 16px;
+  text-align: left;
+  background: #fff;
+}
+
+.expandable_table th {
+  background-color: #f9fafb;
+}
+
+.group_row {
+  cursor: pointer;
+}
+
+.child_row {
+  background-color: #f9f9f9;
+
+  p {
+    font-size: 12px;
+    font-weight: 400;
+    color: #475467;
+  }
+
+  td {
+    font-size: 12px;
+    font-weight: 400;
+    color: #475467;
+  }
+}
+
+.folder_icon {
+  margin-right: 10px;
+}
+
+.item_icon {
+  margin-right: 10px;
+}
+
+.toggle_btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.td_row {
+  display: flex;
+  align-items: center;
+
+  p {
+    font-size: 12px;
+    font-weight: 400;
+    color: #475467;
+  }
+}
+.childTd {
+  margin-left: 30px;
+  display: flex;
+  gap: 12px;
+}
+.tableHeaditem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  p {
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+tbody {
+  height: 100%;
+  overflow: scroll;
+}
+.tableWrapper {
+  height: calc(100vh - 260px);
+  background: #fff;
+  overflow: scroll;
+}
+
+.tableWrapperActive {
+  height: calc(100vh - 375px);
+  background: #fff;
+  overflow: scroll;
+}
+
+.tableComponent {
+  background: #fff;
+  // height: calc(100vh - 190px);
+}
+
+.tableFooter {
+  border-top: 1px solid #eaecf0;
+  width: 100%;
+  background: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .limitSide {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    color: #6e7c87;
+    padding-left: 8px;
+    width: 150px;
+  }
+
+  .selectLimit {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+
+    p {
+      font-size: 12px;
+      font-weight: 600;
+      color: #344054;
+    }
+  }
+
+  .limitSide {
+    width: 70px;
+  }
+
+  .cpagination {
+    min-width: 250px;
+
+    .paginationBtn {
+      width: 80px;
+      height: 40px;
+      border-radius: 8px;
+      background: none;
+      border: 1px solid #d0d5dd;
+      margin: 0 10px;
+      font-weight: 600;
+      font-size: 12px;
+      color: #344054;
+    }
+  }
+}

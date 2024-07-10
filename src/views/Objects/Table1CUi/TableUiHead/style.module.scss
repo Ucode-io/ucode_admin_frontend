@@ -1,18 +1,18 @@
 .tableUiHead {
-  padding: 22px 24px;
+  padding: 16px 18px;
   background: #fff;
 }
 
 // tableHeadTitle
 .tableHeadTitle {
-  padding: 24px;
+  padding: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   h2 {
     color: #101828;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
   }
 
@@ -27,6 +27,7 @@
       gap: 8px;
       color: #337e28;
       font-weight: 600;
+      font-size: 12px;
     }
   }
 }

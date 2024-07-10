@@ -208,7 +208,7 @@ const ViewsWithGroups = ({
   return (
     <>
       {view?.attributes?.table_1c_ui ? (
-        <Table1CUi />
+        <Table1CUi menuItem={menuItem} />
       ) : (
         <Box>
           {updateLoading && (

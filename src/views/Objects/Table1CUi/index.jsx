@@ -1,17 +1,18 @@
 import {Box, Container} from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
 import TableUiHead from "./TableUiHead/TableUiHead";
-import MainContent from "./MainContent";
 import TableHeadTitle from "./TableUiHead/TableHeadTitle";
 import TableFilterBlock from "./TableFilterBlock";
+import TableComponent from "./TableComponent/TableComponent";
 
-function Table1CUi() {
+function Table1CUi({menuItem}) {
+  const [openFilter, setOpenFilter] = useState(false);
   return (
     <Box>
-      <TableUiHead />
+      <TableUiHead menuItem={menuItem} />
       <TableHeadTitle />
-      <TableFilterBlock />
-      <MainContent />
+      <TableFilterBlock openFilter={openFilter} setOpenFilter={setOpenFilter} />
+      <TableComponent openFilter={openFilter} />
     </Box>
   );
 }

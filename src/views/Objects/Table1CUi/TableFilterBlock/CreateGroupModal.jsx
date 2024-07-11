@@ -6,6 +6,7 @@ import styles from "./style.module.scss";
 import MinHeightTextarea from "../../../../theme/TextArea";
 import HFTextArea from "../../../../components/FormElements/HFTextArea";
 import {useForm} from "react-hook-form";
+import HCTextField from "../TableComponent/TableElements/HCTextField";
 
 const style = {
   position: "absolute",
@@ -21,7 +22,11 @@ const style = {
 };
 
 function CreateGroupModal({handleGroupClose, groupOpen}) {
-  const {control} = useForm();
+  const {control, handleSubmit} = useForm();
+
+  const onSubmit = (values) => {
+    console.log("valuesssssssss", values);
+  };
   return (
     <Modal open={groupOpen} onClose={handleGroupClose}>
       <Box sx={style}>
@@ -47,76 +52,68 @@ function CreateGroupModal({handleGroupClose, groupOpen}) {
           </button>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            gap: "24px",
-            flexWrap: "wrap",
-            marginBottom: "15px",
-          }}>
-          <div className={styles.groupLabel}>
-            <p>Наименование</p>
-            <TextField
-              sx={{
-                width: "440px",
-                height: "46px",
-                "& .MuiInputBase-input": {
-                  padding: "12px 14px",
-                },
-              }}
-              placeholder="Search"
-              variant="outlined"
-              size="small"
-            />
-          </div>
-          <div className={styles.groupLabel}>
-            <p>Код</p>
-            <TextField
-              sx={{
-                width: "120px",
-                height: "46px",
-                "& .MuiInputBase-input": {
-                  padding: "12px 14px",
-                },
-              }}
-              placeholder="Код"
-              variant="outlined"
-              size="small"
-            />
-          </div>
-          <div className={styles.groupLabel}>
-            <p>Комментарий</p>
-            <div className={styles.groupdTextArea}>
-              <HFTextArea
-                resize={false}
+        <form onSubmit={handleSubmit(onSubmit)} action="">
+          <Box
+            sx={{
+              display: "flex",
+              gap: "24px",
+              flexWrap: "wrap",
+              marginBottom: "15px",
+            }}>
+            <div className={styles.groupLabel}>
+              <p>Наименование</p>
+              <HCTextField
                 control={control}
-                name="desc"
-                minHeight="118px"
-                placeholder={"Комментарий"}
+                placeholder={"Search"}
+                name="name"
+                width={"440px"}
+                height={"46px"}
               />
             </div>
-          </div>
-        </Box>
+            <div className={styles.groupLabel}>
+              <p>Код</p>
+              <HCTextField
+                control={control}
+                placeholder={"Код"}
+                name="code"
+                width={"120px"}
+                height={"46px"}
+              />
+            </div>
+            <div className={styles.groupLabel}>
+              <p>Комментарий</p>
+              <div className={styles.groupdTextArea}>
+                <HFTextArea
+                  resize={false}
+                  control={control}
+                  name="comment"
+                  minHeight="118px"
+                  placeholder={"Комментарий"}
+                />
+              </div>
+            </div>
+          </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}>
-          <button className={styles.moreBtn}>
-            <span>Еще</span>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+            <button className={styles.moreBtn}>
+              <span>Еще</span>
 
-            <img src="/img/chevron_down.svg" alt="" />
-          </button>
-
-          <div className={styles.actionBtns}>
-            <button className={styles.actionRegBtn}>Записать</button>
-            <button className={styles.actionCloseBtn}>
-              Записать и закрыть
+              <img src="/img/chevron_down.svg" alt="" />
             </button>
-          </div>
-        </Box>
+
+            <div className={styles.actionBtns}>
+              <button className={styles.actionRegBtn}>Записать</button>
+              <button className={styles.actionCloseBtn}>
+                Записать и закрыть
+              </button>
+            </div>
+          </Box>
+        </form>
       </Box>
     </Modal>
   );

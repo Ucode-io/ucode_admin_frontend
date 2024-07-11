@@ -281,6 +281,13 @@ const ViewForm = ({
                         fullWidth
                       />
                     </FRow>
+                    {/* <FRow label="1C UI">
+                      <HFSwitch
+                        control={form.control}
+                        name={`attributes.table_1c_ui`}
+                        fullWidth
+                      />
+                    </FRow> */}
                   </div>
                 </div>
               </div>

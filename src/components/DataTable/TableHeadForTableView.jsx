@@ -158,7 +158,7 @@ export default function TableHeadForTableView({
       return true;
     else return false;
   }, [view?.attributes?.summaries, column]);
-  console.log("sortedDatassortedDatas", sortedDatas, column);
+
   const menu = [
     {
       id: 1,

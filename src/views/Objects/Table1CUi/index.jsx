@@ -49,7 +49,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
       },
     }
   );
-  console.log("foldersfolders", folders);
+
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {

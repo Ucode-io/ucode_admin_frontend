@@ -2,9 +2,9 @@ import {TextField} from "@mui/material";
 import React, {useState} from "react";
 import CreateGroupModal from "./CreateGroupModal";
 import DownloadMenu from "./DownloadMenu";
-import FilterSearchMenu from "./FilterSearchMenu";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
+import NewFastFilter from "./FastFilter";
 
 function TableFilterBlock({
   openFilter,
@@ -88,9 +88,7 @@ function TableFilterBlock({
           <p>Сбросить фильтры</p>
         </div>
 
-        {fields?.map((item) => (
-          <FilterSearchMenu fieldsMap={fieldsMap} view={view} item={item} />
-        ))}
+        <NewFastFilter fields={fields} fieldsMap={fieldsMap} view={view} />
       </div>
 
       <GroupSwitchMenu

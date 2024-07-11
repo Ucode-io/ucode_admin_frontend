@@ -39,7 +39,7 @@ function TableBody({toggleGroup, openGroups, folders}) {
       folder_id: "c00dbd2d-5e76-4a65-a9be-e9371f0b1e1f",
     },
   ];
-  console.log("foldersfolders", folders);
+
   return (
     <tbody>
       {folders?.map((folder, index) => (

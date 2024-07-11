@@ -28,6 +28,3 @@ yarn.lock
 *.sln
 *.sw?
 
-
-# LayoutSidebar directory
-src/components/LayoutSidebar

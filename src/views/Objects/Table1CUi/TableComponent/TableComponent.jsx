@@ -5,7 +5,7 @@ import TableBody from "./TableBody";
 import CPagination from "./NewCPagination";
 import {useParams} from "react-router-dom";
 
-const TableComponent = ({openFilter, fields}) => {
+const TableComponent = ({openFilter, fields, folders}) => {
   const [openGroups, setOpenGroups] = useState({});
   const [limit, setLimit] = useState(0);
 
@@ -24,7 +24,11 @@ const TableComponent = ({openFilter, fields}) => {
         }>
         <table className={styles.expandable_table}>
           <TableHead columns={fields} />
-          <TableBody toggleGroup={toggleGroup} openGroups={openGroups} />
+          <TableBody
+            folders={folders}
+            toggleGroup={toggleGroup}
+            openGroups={openGroups}
+          />
         </table>
       </div>
       <CPagination limit={limit} setLimit={setLimit} />

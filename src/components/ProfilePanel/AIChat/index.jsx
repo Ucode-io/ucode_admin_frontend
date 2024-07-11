@@ -201,9 +201,10 @@ function AiChatMenu({sidebarIsOpen}) {
               backgroundColor: "#fff",
             }}>
             <ChatInput
+              setLoader={setLoader}
               loader={loader}
               setInputValue={setInputValue}
-              handleSendClick={handleClick}
+              handleSendClick={handleSendClick}
               inputValue={inputValue}
               handleKeyDown={handleKeyDown}
             />

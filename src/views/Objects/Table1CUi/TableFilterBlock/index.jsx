@@ -12,6 +12,7 @@ function TableFilterBlock({
   fields,
   fieldsMap,
   view,
+  menuItem,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
@@ -106,6 +107,7 @@ function TableFilterBlock({
       <CreateGroupModal
         handleGroupClose={handleGroupClose}
         groupOpen={groupOpen}
+        menuItem={menuItem}
       />
     </>
   );

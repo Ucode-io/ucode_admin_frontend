@@ -1,4 +1,4 @@
-import {Box, InputAdornment, TextField} from "@mui/material";
+import {InputAdornment, TextField} from "@mui/material";
 import React from "react";
 
 function ChatInput({
@@ -7,6 +7,7 @@ function ChatInput({
   handleSendClick,
   inputValue,
   handleKeyDown,
+  setLoader,
 }) {
   return (
     <TextField
@@ -14,7 +15,12 @@ function ChatInput({
       fullWidth
       placeholder="Type your message..."
       value={inputValue}
-      onChange={(e) => setInputValue(e.target.value)}
+      onChange={(e) => {
+        if (inputValue?.length > 0) {
+          setLoader(true);
+        }
+        setInputValue(e.target.value);
+      }}
       onKeyDown={handleKeyDown}
       sx={{
         "& .MuiInputBase-input": {
@@ -45,7 +51,7 @@ function ChatInput({
         endAdornment: (
           <InputAdornment position="end">
             <button
-              disabled={loader}
+              disabled={inputValue?.length === 0}
               style={{
                 width: "40px",
                 height: "40px",
@@ -58,7 +64,10 @@ function ChatInput({
                 background: inputValue?.length ? "#000" : "#eee",
                 cursor: inputValue?.length ? "pointer" : "not-allowed",
               }}
-              onClick={handleSendClick}>
+              onClick={() => {
+                console.log("ssssssss");
+                handleSendClick();
+              }}>
               <img src="/img/gptSendIcon.svg" alt="" />
             </button>
           </InputAdornment>

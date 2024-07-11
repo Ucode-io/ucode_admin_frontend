@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./style.module.scss";
 
-function TableBody({toggleGroup, openGroups}) {
+function TableBody({toggleGroup, openGroups, folders}) {
   const mockFolders = [
     {
       id: "57c22903-2b32-4311-8125-c18d0d90152e",
@@ -39,10 +39,10 @@ function TableBody({toggleGroup, openGroups}) {
       folder_id: "c00dbd2d-5e76-4a65-a9be-e9371f0b1e1f",
     },
   ];
-
+  console.log("foldersfolders", folders);
   return (
     <tbody>
-      {mockFolders.map((folder, index) => (
+      {folders?.map((folder, index) => (
         <React.Fragment key={folder.id}>
           <tr
             className={styles.group_row}

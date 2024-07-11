@@ -7,8 +7,7 @@ import TableComponent from "./TableComponent/TableComponent";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
-import constructorViewService from "../../../services/constructorViewService";
-import {viewsReducer} from "../../../store/views/view.slice";
+import newTableService from "../../../services/newTableService";
 
 function Table1CUi({menuItem, view, fieldsMap}) {
   const {tableSlug} = useParams();
@@ -32,6 +31,25 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     }
   );
 
+  const {data: {folders} = {data: []}, isLoading2} = useQuery(
+    ["GET_FOLDER_LIST", {tableSlug}],
+    () => {
+      return newTableService.getFolderList({
+        table_id: menuItem?.table_id,
+      });
+    },
+    {
+      enabled: Boolean(menuItem?.table_id),
+      cacheTime: 10,
+      select: (res) => {
+        const folders = res?.folder_groups ?? [];
+        return {
+          folders,
+        };
+      },
+    }
+  );
+  console.log("foldersfolders", folders);
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
@@ -77,8 +95,13 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         setOpenFilter={setOpenFilter}
         view={view}
         fieldsMap={fieldsMap}
+        menuItem={menuItem}
       />
-      <TableComponent fields={columns} openFilter={openFilter} />
+      <TableComponent
+        folders={folders}
+        fields={columns}
+        openFilter={openFilter}
+      />
     </Box>
   );
 }

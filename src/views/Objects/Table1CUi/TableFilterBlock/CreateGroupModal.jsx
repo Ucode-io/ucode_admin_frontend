@@ -1,12 +1,13 @@
-import {Box, Modal, TextField, TextareaAutosize} from "@mui/material";
-import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
-import styles from "./style.module.scss";
-import MinHeightTextarea from "../../../../theme/TextArea";
-import HFTextArea from "../../../../components/FormElements/HFTextArea";
+import {Box, Modal} from "@mui/material";
+import React from "react";
 import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import HFTextArea from "../../../../components/FormElements/HFTextArea";
+import newTableService from "../../../../services/newTableService";
 import HCTextField from "../TableComponent/TableElements/HCTextField";
+import styles from "./style.module.scss";
 
 const style = {
   position: "absolute",
@@ -21,11 +22,19 @@ const style = {
   padding: "26px 24px",
 };
 
-function CreateGroupModal({handleGroupClose, groupOpen}) {
+function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
   const {control, handleSubmit} = useForm();
-
+  const queryClient = useQueryClient();
   const onSubmit = (values) => {
-    console.log("valuesssssssss", values);
+    newTableService
+      .createFolder({
+        table_id: menuItem?.table_id,
+        ...values,
+      })
+      .then((res) => {
+        queryClient.refetchQueries("GET_FOLDER_LIST");
+        handleGroupClose();
+      });
   };
   return (
     <Modal open={groupOpen} onClose={handleGroupClose}>

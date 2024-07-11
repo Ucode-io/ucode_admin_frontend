@@ -1,22 +1,21 @@
 .expandable_table {
   width: 100%;
+  min-width: 700px;
   background: #fff;
   border-collapse: collapse;
   margin: 0 0;
-}
-
-thead {
-  position: relative;
+  overflow: auto;
+  table-layout: fixed;
 }
 
 thead th {
+  position: sticky;
+  top: 0;
   font-weight: 500;
   color: #475467;
   font-size: 12px;
-  position: sticky;
-  top: 0;
-  left: 0;
   height: 46px;
+  width: 250px;
 }
 
 .expandable_table th,
@@ -27,10 +26,12 @@ thead th {
   padding: 12px 16px;
   text-align: left;
   background: #fff;
+  width: 250px;
 }
 
 .expandable_table th {
   background-color: #f9fafb;
+  width: 250px;
 }
 
 .group_row {
@@ -81,17 +82,17 @@ thead th {
     color: #475467;
   }
 }
+
 .childTd {
   margin-left: 30px;
   display: flex;
   gap: 12px;
 }
+
 .tableHeaditem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  p {
-  }
 
   button {
     background: none;
@@ -100,25 +101,22 @@ thead th {
   }
 }
 
-tbody {
-  height: 100%;
-  overflow: scroll;
-}
 .tableWrapper {
   height: calc(100vh - 260px);
   background: #fff;
-  overflow: scroll;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .tableWrapperActive {
-  height: calc(100vh - 375px);
+  height: calc(100vh - 320px);
   background: #fff;
-  overflow: scroll;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .tableComponent {
   background: #fff;
-  // height: calc(100vh - 190px);
 }
 
 .tableFooter {
@@ -171,6 +169,7 @@ tbody {
       font-weight: 600;
       font-size: 12px;
       color: #344054;
+      cursor: pointer;
     }
   }
 }

@@ -5,7 +5,7 @@ import GptChat from "./GptChat";
 import UserChat from "./UserChat";
 import ChatInput from "./ChatInput";
 
-function AiChatMenu() {
+function AiChatMenu({sidebarIsOpen}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [messages, setMessages] = useState([]);
@@ -103,11 +103,11 @@ function AiChatMenu() {
         gap: "10px",
         padding: "0 5px",
       }}>
-      <img width={30} src="/img/ai.png" alt="AI" />
+      <img onClick={handleClick} width={30} src="/img/ai.png" alt="AI" />
       <Box
         onClick={handleClick}
         sx={{fontSize: "13px", color: "#093979", fontWeight: 900}}>
-        AI Chat
+        {sidebarIsOpen ? "AI Chat" : ""}
       </Box>
 
       <Menu

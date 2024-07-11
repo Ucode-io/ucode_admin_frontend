@@ -387,7 +387,7 @@ const LayoutSidebar = ({appId}) => {
         <MenuBox
           title={""}
           openFolderCreateModal={openFolderCreateModal}
-          children={<AiChatMenu />}
+          children={<AiChatMenu sidebarIsOpen={sidebarIsOpen} />}
           onClick={(e) => {
             e.stopPropagation();
             setSidebarAnchor(true);

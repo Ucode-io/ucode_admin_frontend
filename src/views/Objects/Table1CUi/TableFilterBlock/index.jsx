@@ -1,12 +1,18 @@
-import React, {useState} from "react";
-import styles from "./style.module.scss";
 import {TextField} from "@mui/material";
+import React, {useState} from "react";
 import CreateGroupModal from "./CreateGroupModal";
-import GroupSwitchMenu from "./GroupSwitchMenu";
 import DownloadMenu from "./DownloadMenu";
 import FilterSearchMenu from "./FilterSearchMenu";
+import GroupSwitchMenu from "./GroupSwitchMenu";
+import styles from "./style.module.scss";
 
-function TableFilterBlock({openFilter, setOpenFilter}) {
+function TableFilterBlock({
+  openFilter,
+  setOpenFilter,
+  fields,
+  fieldsMap,
+  view,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
@@ -35,37 +41,6 @@ function TableFilterBlock({openFilter, setOpenFilter}) {
       )
     );
   };
-
-  const mockData = [
-    {
-      label: "Наименование в программе",
-      filter: 2,
-    },
-    {
-      label: "ИНН",
-      filter: 0,
-    },
-    {
-      label: "Полное наименование",
-      filter: 0,
-    },
-    {
-      label: "ЭДО",
-      filter: 1,
-    },
-    {
-      label: "Полное наименование",
-      filter: 0,
-    },
-    {
-      label: "Полное наименование",
-      filter: 0,
-    },
-    {
-      label: "Полное наименование",
-      filter: 0,
-    },
-  ];
 
   return (
     <>
@@ -112,18 +87,20 @@ function TableFilterBlock({openFilter, setOpenFilter}) {
           <p>Сбросить фильтры</p>
         </div>
 
-        {mockData?.map((item) => (
-          <FilterSearchMenu item={item} />
+        {fields?.map((item) => (
+          <FilterSearchMenu fieldsMap={fieldsMap} view={view} item={item} />
         ))}
       </div>
 
       <GroupSwitchMenu
-        columns={columns}
+        columns={fields}
         toggleColumnVisibility={toggleColumnVisibility}
         setColumns={setColumns}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={open}
+        view={view}
+        fieldsMap={fieldsMap}
       />
 
       <CreateGroupModal

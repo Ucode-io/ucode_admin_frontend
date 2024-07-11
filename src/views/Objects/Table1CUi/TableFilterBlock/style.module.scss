@@ -71,12 +71,12 @@
 
 .filterList {
   background: #fff;
-  padding: 14px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid #d0d5dd;
   border-top: 1px solid #d0d5dd;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 
   .filterListItem {
     height: 28px;
@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  // margin-bottom: 8px;
 }
 
 .addFilter {

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Box, Menu, TextField} from "@mui/material";
 import styles from "./style.module.scss";
 
-function FilterSearchMenu({item}) {
+function FilterSearchMenu({item, view, fieldsMap}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const open = Boolean(anchorEl);
@@ -11,30 +11,21 @@ function FilterSearchMenu({item}) {
   const handleClose = () => setAnchorEl(null);
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
-  const filters = [
-    "Эдо фильтр 1",
-    "Эдо фильтр 2",
-    "Эдо фильтр 3",
-    "Эдо фильтр 4",
-  ];
-  const filteredItems = filters.filter((filter) =>
-    filter.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <>
       {item?.filter === 0 ? (
-        <div onClick={handleClick} className={styles.filterListItem}>
+        <div className={styles.filterListItemActive}>
           <p>{item?.label}</p>
-          <button className={styles.addFilter}>
-            <img src="/img/plus.svg" alt="" />
+          <button onClick={handleClick} className={styles.addFilter}>
+            <img src="/img/x_close.svg" alt="" />
           </button>
         </div>
       ) : (
-        <div onClick={handleClick} className={styles.filterListItemActive}>
+        <div onClick={handleClick} className={styles.filterListItem}>
           <p className={styles.filterLabel}>{item?.label}</p>
           <p className={styles.filterCount}>{item?.filter}</p>
-          <img src="/img/x_close.svg" alt="" />
+
+          <img src="/img/plus.svg" alt="" />
         </div>
       )}
 
@@ -64,18 +55,18 @@ function FilterSearchMenu({item}) {
                   },
                 },
                 "& .MuiInputBase-input": {
-                  padding: "15px 15px 15px 5px",
+                  padding: "15px 15px 15px 15px",
                 },
               }}
             />
           </div>
           <div className={styles.menuItems}>
-            {filters.map((filter, index) => (
+            {view?.attribtes?.quick_filters.map((filter, index) => (
               <div
                 className={styles.menuItem}
                 key={index}
                 onClick={handleClose}>
-                {filter}
+                {filter?.label}
               </div>
             ))}
           </div>

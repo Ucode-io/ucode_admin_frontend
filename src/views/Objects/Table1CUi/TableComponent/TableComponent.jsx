@@ -3,8 +3,9 @@ import styles from "./style.module.scss";
 import TableHead from "./TableHead";
 import TableBody from "./TableBody";
 import CPagination from "./NewCPagination";
+import {useParams} from "react-router-dom";
 
-const TableComponent = ({openFilter}) => {
+const TableComponent = ({openFilter, fields}) => {
   const [openGroups, setOpenGroups] = useState({});
   const [limit, setLimit] = useState(0);
 
@@ -22,7 +23,7 @@ const TableComponent = ({openFilter}) => {
           openFilter ? styles.tableWrapperActive : styles.tableWrapper
         }>
         <table className={styles.expandable_table}>
-          <TableHead />
+          <TableHead columns={fields} />
           <TableBody toggleGroup={toggleGroup} openGroups={openGroups} />
         </table>
       </div>

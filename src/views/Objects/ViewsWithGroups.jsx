@@ -2,7 +2,15 @@ import {Description, MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Backdrop, Badge, Button, Divider, Menu, Switch} from "@mui/material";
+import {
+  Backdrop,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Menu,
+  Switch,
+} from "@mui/material";
 import {endOfMonth, startOfMonth} from "date-fns";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
@@ -33,6 +41,7 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import Table1CUi from "./Table1CUi";
 
 const ViewsWithGroups = ({
   views,
@@ -198,166 +207,250 @@ const ViewsWithGroups = ({
 
   return (
     <>
-      {updateLoading && (
-        <Backdrop
-          sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-          open={true}>
-          <RingLoaderWithWrapper />
-        </Backdrop>
-      )}
-      <FiltersBlock
-        extra={
-          <>
-            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-              <ShareModal />
-            </PermissionWrapperV2>
+      {view?.attributes?.table_1c_ui ? (
+        <Table1CUi menuItem={menuItem} view={view} fieldsMap={fieldsMap} />
+      ) : (
+        <Box>
+          {updateLoading && (
+            <Backdrop
+              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
+              open={true}>
+              <RingLoaderWithWrapper />
+            </Backdrop>
+          )}
+          <FiltersBlock
+            extra={
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+                  <ShareModal />
+                </PermissionWrapperV2>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button
-                variant="outlined"
-                onClick={navigateToSettingsPage}
-                style={{
-                  borderColor: "#A8A8A8",
-                  width: "35px",
-                  height: "35px",
-                  padding: "0px",
-                  minWidth: "35px",
-                }}>
-                <SettingsIcon
-                  style={{
-                    color: "#A8A8A8",
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Button
+                    variant="outlined"
+                    onClick={navigateToSettingsPage}
+                    style={{
+                      borderColor: "#A8A8A8",
+                      width: "35px",
+                      height: "35px",
+                      padding: "0px",
+                      minWidth: "35px",
+                    }}>
+                    <SettingsIcon
+                      style={{
+                        color: "#A8A8A8",
+                      }}
+                    />
+                  </Button>
+                </PermissionWrapperV2>
+              </>
+            }>
+            <ViewTabSelector
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+              views={views}
+              settingsModalVisible={settingsModalVisible}
+              setSettingsModalVisible={setSettingsModalVisible}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+              menuItem={menuItem}
+            />
+            {view?.type === "FINANCE CALENDAR" && (
+              <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+            )}
+          </FiltersBlock>
+
+          <div
+            className={style.extraNavbar}
+            style={{
+              minHeight: "42px",
+            }}>
+            <div className={style.extraWrapper}>
+              <div className={style.search}>
+                <Badge
+                  sx={{
+                    width: "35px",
+                    paddingLeft: "10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setFilterVisible((prev) => !prev);
+                  }}
+                  badgeContent={filterCount}
+                  color="primary">
+                  <FilterAltOutlinedIcon color={"#A8A8A8"} />
+                </Badge>
+
+                <Divider orientation="vertical" flexItem />
+                <SearchInput
+                  placeholder={"Search"}
+                  onChange={(e) => {
+                    setCurrentPage(1);
+                    setSearchText(e);
                   }}
                 />
-              </Button>
-            </PermissionWrapperV2>
-          </>
-        }>
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          settingsModalVisible={settingsModalVisible}
-          setSettingsModalVisible={setSettingsModalVisible}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-          menuItem={menuItem}
-        />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
-      </FiltersBlock>
+                {permissions?.search_button && (
+                  <button
+                    className={style.moreButton}
+                    onClick={handleClickSearch}
+                    style={{
+                      paddingRight: "10px",
+                    }}>
+                    <MoreHorizIcon />
+                  </button>
+                )}
 
-      <div
-        className={style.extraNavbar}
-        style={{
-          minHeight: "42px",
-        }}>
-        <div className={style.extraWrapper}>
-          <div className={style.search}>
-            <Badge
-              sx={{
-                width: "35px",
-                paddingLeft: "10px",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setFilterVisible((prev) => !prev);
-              }}
-              badgeContent={filterCount}
-              color="primary">
-              <FilterAltOutlinedIcon color={"#A8A8A8"} />
-            </Badge>
-
-            <Divider orientation="vertical" flexItem />
-            <SearchInput
-              placeholder={"Search"}
-              onChange={(e) => {
-                setCurrentPage(1);
-                setSearchText(e);
-              }}
-            />
-            {permissions?.search_button && (
-              <button
-                className={style.moreButton}
-                onClick={handleClickSearch}
-                style={{
-                  paddingRight: "10px",
-                }}>
-                <MoreHorizIcon />
-              </button>
-            )}
-
-            <Menu
-              open={openSearch}
-              onClose={handleCloseSearch}
-              anchorEl={anchorElSearch}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    left: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}>
-              <SearchParams
-                checkedColumns={checkedColumns}
-                setCheckedColumns={setCheckedColumns}
-                columns={columnsForSearch}
-                updateField={updateField}
-              />
-            </Menu>
-          </div>
-
-          <div className={style.rightExtra}>
-            {permissions?.fix_column && (
-              <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
-            )}
-            <Divider orientation="vertical" flexItem />
-            {permissions?.group && (
-              <GroupByButton
-                selectedTabIndex={selectedTabIndex}
-                view={view}
-                fieldsMap={fieldsMap}
-                relationColumns={visibleRelationColumns}
-              />
-            )}
-            <Divider orientation="vertical" flexItem />
-            {permissions?.columns && (
-              <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
-            )}
-            <Divider orientation="vertical" flexItem />
-            {permissions?.tab_group && (
-              <TableViewGroupByButton
-                currentView={view}
-                fieldsMap={fieldsMap}
-              />
-            )}
-            {view.type === "TABLE" && (
-              <>
                 <Menu
-                  open={openHeightControl}
-                  onClose={handleCloseHeightControl}
-                  anchorEl={anchorElHeightControl}
+                  open={openSearch}
+                  onClose={handleCloseSearch}
+                  anchorEl={anchorElSearch}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                      "& .MuiAvatar-root": {
+                        // width: 100,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        left: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
+                      },
+                    },
+                  }}>
+                  <SearchParams
+                    checkedColumns={checkedColumns}
+                    setCheckedColumns={setCheckedColumns}
+                    columns={columnsForSearch}
+                    updateField={updateField}
+                  />
+                </Menu>
+              </div>
+
+              <div className={style.rightExtra}>
+                {permissions?.fix_column && (
+                  <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {permissions?.group && (
+                  <GroupByButton
+                    selectedTabIndex={selectedTabIndex}
+                    view={view}
+                    fieldsMap={fieldsMap}
+                    relationColumns={visibleRelationColumns}
+                  />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {permissions?.columns && (
+                  <VisibleColumnsButton
+                    currentView={view}
+                    fieldsMap={fieldsMap}
+                  />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {permissions?.tab_group && (
+                  <TableViewGroupByButton
+                    currentView={view}
+                    fieldsMap={fieldsMap}
+                  />
+                )}
+                {view.type === "TABLE" && (
+                  <>
+                    <Menu
+                      open={openHeightControl}
+                      onClose={handleCloseHeightControl}
+                      anchorEl={anchorElHeightControl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      PaperProps={{
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          mt: 1.5,
+                          "& .MuiAvatar-root": {
+                            // width: 100,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&:before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      }}>
+                      <div className={style.menuBar}>
+                        {tableHeightOptions.map((el) => (
+                          <div
+                            className={style.template}
+                            onClick={() => handleHeightControl(el.value)}>
+                            <span>{el.label}</span>
+
+                            <Switch
+                              size="small"
+                              checked={tableHeight === el.value}
+                              onChange={() => handleHeightControl(el.value)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </Menu>
+                  </>
+                )}
+                <Divider orientation="vertical" flexItem />
+                {permissions?.excel_menu && (
+                  <Button
+                    onClick={handleClick}
+                    variant="text"
+                    style={{
+                      color: "#A8A8A8",
+                      borderColor: "#A8A8A8",
+                      minWidth: "auto",
+                    }}>
+                    <MoreVertOutlined
+                      style={{
+                        color: "#888",
+                      }}
+                    />
+                  </Button>
+                )}
+
+                <Menu
+                  open={open}
+                  onClose={handleClose}
+                  anchorEl={anchorEl}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
@@ -393,251 +486,176 @@ const ViewsWithGroups = ({
                     },
                   }}>
                   <div className={style.menuBar}>
-                    {tableHeightOptions.map((el) => (
+                    <ExcelButtons
+                      computedVisibleFields={computedVisibleFields}
+                      fieldsMap={fieldsMap}
+                      view={view}
+                    />
+                    <div
+                      className={style.template}
+                      onClick={() => setSelectedTabIndex(views?.length)}>
                       <div
-                        className={style.template}
-                        onClick={() => handleHeightControl(el.value)}>
-                        <span>{el.label}</span>
-
-                        <Switch
-                          size="small"
-                          checked={tableHeight === el.value}
-                          onChange={() => handleHeightControl(el.value)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
+                        className={`${style.element} ${
+                          selectedTabIndex === views?.length ? style.active : ""
+                        }`}>
+                        <Description
+                          className={style.icon}
+                          style={{color: "#6E8BB7"}}
                         />
                       </div>
-                    ))}
+                      <span>Template</span>
+                    </div>
                   </div>
                 </Menu>
-              </>
-            )}
-            <Divider orientation="vertical" flexItem />
-            {permissions?.excel_menu && (
-              <Button
-                onClick={handleClick}
-                variant="text"
-                style={{
-                  color: "#A8A8A8",
-                  borderColor: "#A8A8A8",
-                  minWidth: "auto",
-                }}>
-                <MoreVertOutlined
-                  style={{
-                    color: "#888",
-                  }}
-                />
-              </Button>
-            )}
-
-            <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}>
-              <div className={style.menuBar}>
-                <ExcelButtons
-                  computedVisibleFields={computedVisibleFields}
-                  fieldsMap={fieldsMap}
-                  view={view}
-                />
-                <div
-                  className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div
-                    className={`${style.element} ${
-                      selectedTabIndex === views?.length ? style.active : ""
-                    }`}>
-                    <Description
-                      className={style.icon}
-                      style={{color: "#6E8BB7"}}
-                    />
-                  </div>
-                  <span>Template</span>
-                </div>
-              </div>
-            </Menu>
-          </div>
-        </div>
-      </div>
-
-      <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard type="withoutPadding">
-          {tabs?.length > 0 && (
-            <div className={style.tableCardHeader}>
-              <div style={{display: "flex", alignItems: "center"}}>
-                <div className="title" style={{marginRight: "20px"}}>
-                  <h3>{view.table_label}</h3>
-                </div>
-                <TabList style={{border: "none"}}>
-                  {tabs?.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      selectedClassName={style.activeTab}
-                      className={`${style.disableTab} react-tabs__tab`}>
-                      {tab.label}
-                    </Tab>
-                  ))}
-                </TabList>
               </div>
             </div>
-          )}
-          {
-            <>
-              {!tabs?.length && (
+          </div>
+
+          <Tabs direction={"ltr"} defaultIndex={0}>
+            <TableCard type="withoutPadding">
+              {tabs?.length > 0 && (
+                <div className={style.tableCardHeader}>
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <div className="title" style={{marginRight: "20px"}}>
+                      <h3>{view.table_label}</h3>
+                    </div>
+                    <TabList style={{border: "none"}}>
+                      {tabs?.map((tab) => (
+                        <Tab
+                          key={tab.value}
+                          selectedClassName={style.activeTab}
+                          className={`${style.disableTab} react-tabs__tab`}>
+                          {tab.label}
+                        </Tab>
+                      ))}
+                    </TabList>
+                  </div>
+                </div>
+              )}
+              {
                 <>
-                  {view.type === "TABLE" && groupTable?.length ? (
-                    <GroupTableView
-                      selectedTabIndex={selectedTabIndex}
-                      reset={reset}
-                      sortedDatas={sortedDatas}
-                      menuItem={menuItem}
-                      fields={fields}
-                      setFormValue={setFormValue}
-                      control={control}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      checkedColumns={checkedColumns}
-                      view={view}
-                      setSortedDatas={setSortedDatas}
-                      fieldsMap={fieldsMap}
-                      searchText={searchText}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      selectedView={selectedView}
-                    />
+                  {!tabs?.length && (
+                    <>
+                      {view.type === "TABLE" && groupTable?.length ? (
+                        <GroupTableView
+                          selectedTabIndex={selectedTabIndex}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          menuItem={menuItem}
+                          fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
+                          checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
+                          searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
+                          selectedView={selectedView}
+                        />
+                      ) : null}
+                    </>
+                  )}
+                  {!groupTable?.length &&
+                    tabs?.map((tab) => (
+                      <TabPanel key={tab.value}>
+                        {view.type === "TREE" ? (
+                          <TreeView
+                            tableSlug={tableSlug}
+                            filters={filters}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            tab={tab}
+                          />
+                        ) : (
+                          <TableView
+                            isVertical
+                            setCurrentPage={setCurrentPage}
+                            currentPage={currentPage}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            filterVisible={filterVisible}
+                            control={control}
+                            getValues={getValues}
+                            setFormVisible={setFormVisible}
+                            formVisible={formVisible}
+                            filters={filters}
+                            setFilterVisible={setFilterVisible}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            setFormValue={setFormValue}
+                            setSortedDatas={setSortedDatas}
+                            tab={tab}
+                            selectedObjects={selectedObjects}
+                            setSelectedObjects={setSelectedObjects}
+                            menuItem={menuItem}
+                            selectedTabIndex={selectedTabIndex}
+                            reset={reset}
+                            sortedDatas={sortedDatas}
+                            fields={fields}
+                            checkedColumns={checkedColumns}
+                            searchText={searchText}
+                            selectedView={selectedView}
+                            currentView={view}
+                          />
+                        )}
+                      </TabPanel>
+                    ))}
+
+                  {!tabs?.length && !groupTable?.length ? (
+                    <>
+                      {view.type === "TREE" ? (
+                        <TreeView
+                          tableSlug={tableSlug}
+                          filters={filters}
+                          view={view}
+                          fieldsMap={fieldsMap}
+                        />
+                      ) : (
+                        <TableView
+                          visibleColumns={visibleColumns}
+                          setCurrentPage={setCurrentPage}
+                          currentPage={currentPage}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          currentView={view}
+                          filterVisible={filterVisible}
+                          setFilterVisible={setFilterVisible}
+                          getValues={getValues}
+                          selectedTabIndex={selectedTabIndex}
+                          isTableView={true}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          menuItem={menuItem}
+                          fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
+                          checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
+                          searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
+                          selectedView={selectedView}
+                        />
+                      )}
+                    </>
                   ) : null}
                 </>
-              )}
-              {!groupTable?.length &&
-                tabs?.map((tab) => (
-                  <TabPanel key={tab.value}>
-                    {view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                      />
-                    ) : (
-                      <TableView
-                        isVertical
-                        setCurrentPage={setCurrentPage}
-                        currentPage={currentPage}
-                        visibleColumns={visibleColumns}
-                        visibleRelationColumns={visibleRelationColumns}
-                        visibleForm={visibleForm}
-                        filterVisible={filterVisible}
-                        control={control}
-                        getValues={getValues}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        filters={filters}
-                        setFilterVisible={setFilterVisible}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        setFormValue={setFormValue}
-                        setSortedDatas={setSortedDatas}
-                        tab={tab}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        menuItem={menuItem}
-                        selectedTabIndex={selectedTabIndex}
-                        reset={reset}
-                        sortedDatas={sortedDatas}
-                        fields={fields}
-                        checkedColumns={checkedColumns}
-                        searchText={searchText}
-                        selectedView={selectedView}
-                        currentView={view}
-                      />
-                    )}
-                  </TabPanel>
-                ))}
-
-              {!tabs?.length && !groupTable?.length ? (
-                <>
-                  {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
-                  ) : (
-                    <TableView
-                      visibleColumns={visibleColumns}
-                      setCurrentPage={setCurrentPage}
-                      currentPage={currentPage}
-                      visibleRelationColumns={visibleRelationColumns}
-                      visibleForm={visibleForm}
-                      currentView={view}
-                      filterVisible={filterVisible}
-                      setFilterVisible={setFilterVisible}
-                      getValues={getValues}
-                      selectedTabIndex={selectedTabIndex}
-                      isTableView={true}
-                      reset={reset}
-                      sortedDatas={sortedDatas}
-                      menuItem={menuItem}
-                      fields={fields}
-                      setFormValue={setFormValue}
-                      control={control}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      checkedColumns={checkedColumns}
-                      view={view}
-                      setSortedDatas={setSortedDatas}
-                      fieldsMap={fieldsMap}
-                      searchText={searchText}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      selectedView={selectedView}
-                    />
-                  )}
-                </>
-              ) : null}
-            </>
-          }
-        </TableCard>
-      </Tabs>
+              }
+            </TableCard>
+          </Tabs>
+        </Box>
+      )}
     </>
   );
 };

@@ -4,11 +4,11 @@ import {
   TextareaAutosize,
   Tooltip,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { Controller } from "react-hook-form";
+import {makeStyles} from "@mui/styles";
+import {Controller} from "react-hook-form";
 
-import { numberWithSpaces } from "@/utils/formatNumbers";
-import { Lock } from "@mui/icons-material";
+import {numberWithSpaces} from "@/utils/formatNumbers";
+import {Lock} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   textarea: {
@@ -34,6 +34,7 @@ const HFTextArea = ({
   tabIndex,
   placeholder,
   minHeight = "120px",
+  resize,
   ...props
 }) => {
   const classes = useStyles();
@@ -47,7 +48,7 @@ const HFTextArea = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextareaAutosize
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
@@ -56,8 +57,8 @@ const HFTextArea = ({
               withTrim
                 ? e.target.value?.trim()
                 : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
+                  ? numberWithSpaces(e.target.value)
+                  : e.target.value
             );
           }}
           name={name}
@@ -71,10 +72,12 @@ const HFTextArea = ({
             border: "1px solid #d4d2d2",
             borderRadius: "4px",
             minHeight: minHeight,
+            maxHeight: minHeight,
+            resize: !resize ? "none" : "",
           }}
           InputProps={{
             readOnly: disabled,
-            inputProps: { tabIndex },
+            inputProps: {tabIndex},
             classes: {
               input: isBlackBg ? classes.textarea : classes.textarea,
             },
@@ -91,7 +94,7 @@ const HFTextArea = ({
             endAdornment: disabled && (
               <Tooltip title="This field is disabled for this role!">
                 <InputAdornment position="start">
-                  <Lock style={{ fontSize: "20px" }} />
+                  <Lock style={{fontSize: "20px"}} />
                 </InputAdornment>
               </Tooltip>
             ),

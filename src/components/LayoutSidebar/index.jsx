@@ -35,7 +35,7 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import {useSearchParams} from "react-router-dom";
-import AiChatMenu from "../ProfilePanel/AiChatMenu";
+import AiChatMenu from "../ProfilePanel/AIChat";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -387,7 +387,7 @@ const LayoutSidebar = ({appId}) => {
         <MenuBox
           title={""}
           openFolderCreateModal={openFolderCreateModal}
-          children={<AiChatMenu />}
+          children={<AiChatMenu sidebarIsOpen={sidebarIsOpen} />}
           onClick={(e) => {
             e.stopPropagation();
             setSidebarAnchor(true);

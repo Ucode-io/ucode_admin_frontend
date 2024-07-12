@@ -1,44 +1,17 @@
+import React, {useMemo, useState} from "react";
 import {TextField} from "@mui/material";
-import {useMemo, useState} from "react";
-import TableOrderingButton from "../../../../components/TableOrderingButton";
-import BooleanFilter from "./BooleanFilter";
-import DateFilter from "./DateFilter";
-import DefaultFilter from "./DefaultFilter";
-import FilterAutoComplete from "./FilterAutocomplete";
-import RelationFilter from "./RelationFilter";
+import NewFiltersAutoComplete from "./FastFilter/NewFiltersAutoComplete";
+import NewDefaultFilter from "./FastFilter/NewDefaultFilter";
+import NewRelationFilter from "./FastFilter/NewRelationFilter";
 
-const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
-  const orderingType = useMemo(
-    () => filters.order?.[name],
-    [filters.order, name]
-  );
-
-  const onOrderingChange = (value) => {
-    if (!value) return onChange(value, "order");
-    const data = {
-      [name]: value,
-    };
-    onChange(data, "order");
-  };
-
-  return (
-    <div style={{display: "flex", alignItems: "center"}}>
-      <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
-    </div>
-  );
-};
-
-export default FilterGenerator;
-
-export const Filter = ({
+function FilterSearchMenu({
   field = {},
   name,
   filters = {},
-  onChange,
+  onChange = () => {},
   tableSlug,
-}) => {
+}) {
   const [debouncedValue, setDebouncedValue] = useState("");
-
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
@@ -59,7 +32,7 @@ export const Filter = ({
     case "LOOKUP":
     case "LOOKUPS":
       return (
-        <RelationFilter
+        <NewRelationFilter
           field={field}
           filters={filters}
           onChange={onChange}
@@ -71,7 +44,7 @@ export const Filter = ({
     case "PICK_LIST":
     case "MULTISELECT":
       return (
-        <FilterAutoComplete
+        <NewFiltersAutoComplete
           searchText={debouncedValue}
           setSearchText={setDebouncedValue}
           options={computedOptions}
@@ -85,17 +58,17 @@ export const Filter = ({
     case "PHOTO":
       return null;
 
-    case "DATE_TIME_WITHOUT_TIME_ZONE":
-    case "DATE":
-    case "DATE_TIME":
-      return (
-        <DateFilter
-          field={field}
-          placeholder={field?.label}
-          value={filters[name]}
-          onChange={(val) => onChange(val, name)}
-        />
-      );
+    // case "DATE_TIME_WITHOUT_TIME_ZONE":
+    // case "DATE":
+    // case "DATE_TIME":
+    //   return (
+    //     <DateFilter
+    //       field={field}
+    //       placeholder={field?.label}
+    //       value={filters[name]}
+    //       onChange={(val) => onChange(val, name)}
+    //     />
+    //   );
 
     case "NUMBER":
       return (
@@ -109,19 +82,19 @@ export const Filter = ({
         />
       );
 
-    case "SWITCH":
-      return (
-        <BooleanFilter
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          field={field}
-        />
-      );
+    // case "SWITCH":
+    //   return (
+    //     <BooleanFilter
+    //       filters={filters}
+    //       onChange={onChange}
+    //       name={name}
+    //       field={field}
+    //     />
+    //   );
 
     default:
       return (
-        <DefaultFilter
+        <NewDefaultFilter
           field={field}
           filters={filters}
           onChange={onChange}
@@ -130,4 +103,6 @@ export const Filter = ({
         />
       );
   }
-};
+}
+
+export default FilterSearchMenu;

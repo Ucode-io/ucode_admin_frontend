@@ -1,0 +1,33 @@
+.tableUiHead {
+  padding: 16px 18px;
+  background: #fff;
+}
+
+// tableHeadTitle
+.tableHeadTitle {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    color: #101828;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .tableHeadLinks {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #337e28;
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
+}

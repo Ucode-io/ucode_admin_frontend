@@ -309,6 +309,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            field={field}
             setFormValue={setFormValue}
             control={control}
             name={computedSlug}

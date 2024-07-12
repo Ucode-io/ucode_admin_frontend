@@ -204,7 +204,7 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
-
+  console.log("permissionspermissions", permissions);
   return (
     <>
       {view?.attributes?.table_1c_ui ? (

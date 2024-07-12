@@ -8,12 +8,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
+import useFilters from "../../../hooks/useFilters";
 
 function Table1CUi({menuItem, view, fieldsMap}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(1);
+  const {filters} = useFilters(tableSlug, view.id);
 
   const {data: {fields} = {data: []}, isLoading} = useQuery(
     ["GET_OBJECT_FIELDS", {tableSlug}],
@@ -34,10 +36,13 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   );
 
   const {data: {folders, count} = {data: []}, isLoading2} = useQuery(
-    ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
+    ["GET_FOLDER_LIST", {tableSlug, limit, offset, filters}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
+        ...filters,
+        limit: limit,
+        offset: offset,
       });
     },
     {

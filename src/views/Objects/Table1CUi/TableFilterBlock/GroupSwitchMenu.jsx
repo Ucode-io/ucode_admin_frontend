@@ -1,30 +1,23 @@
-import {Box, Menu, MenuItem, Typography} from "@mui/material";
-import React, {useMemo} from "react";
-import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
-import constructorViewService from "../../../../services/constructorViewService";
-import {useNavigate, useParams} from "react-router-dom";
+import {Box, Menu, MenuItem, Typography, CircularProgress} from "@mui/material";
+import React, {useMemo, useState} from "react";
 import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
+import constructorViewService from "../../../../services/constructorViewService";
+import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
 
-function GroupSwitchMenu({
-  columns = [],
-  toggleColumnVisibility = () => {},
-  setColumns,
-  anchorEl,
-  handleClose,
-  open,
-  view,
-  fieldsMap,
-}) {
+function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
+  const [switchLoading, setSwitchLoading] = useState({});
 
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
 
-  const updateView = (data) => {
-    console.log("datadatadatadata", data);
-    // setIsLoading(true);
+  const updateView = (data, fieldId) => {
+    setLoading(true);
+    setSwitchLoading((prev) => ({...prev, [fieldId]: true}));
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -34,7 +27,8 @@ function GroupSwitchMenu({
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       })
       .finally(() => {
-        // setIsLoading(false);
+        setLoading(false);
+        setSwitchLoading((prev) => ({...prev, [fieldId]: false}));
       });
   };
 
@@ -109,21 +103,27 @@ function GroupSwitchMenu({
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               {column.label}
             </Typography>
-
             {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-              <IOSSwitch
-                size="small"
-                checked={view?.columns?.includes(column?.relation_id)}
-                onChange={(e) => {
-                  updateView(
-                    e.target.checked
-                      ? [...view?.columns, column?.relation_id]
-                      : view?.columns?.filter(
-                          (el) => el !== column?.relation_id
-                        )
-                  );
-                }}
-              />
+              switchLoading[column.relation_id] ? (
+                <CircularProgress sx={{color: "#449424"}} size={24} />
+              ) : (
+                <IOSSwitch
+                  size="small"
+                  checked={view?.columns?.includes(column?.relation_id)}
+                  onChange={(e) => {
+                    updateView(
+                      e.target.checked
+                        ? [...view?.columns, column?.relation_id]
+                        : view?.columns?.filter(
+                            (el) => el !== column?.relation_id
+                          ),
+                      column?.relation_id
+                    );
+                  }}
+                />
+              )
+            ) : switchLoading[column.id] ? (
+              <CircularProgress sx={{color: "#449424"}} size={24} />
             ) : (
               <IOSSwitch
                 size="small"
@@ -132,7 +132,8 @@ function GroupSwitchMenu({
                   updateView(
                     e.target.checked
                       ? [...view?.columns, column?.id]
-                      : view?.columns?.filter((el) => el !== column?.id)
+                      : view?.columns?.filter((el) => el !== column?.id),
+                    column?.id
                   );
                 }}
               />
@@ -152,19 +153,26 @@ function GroupSwitchMenu({
               {column.label}
             </Typography>
             {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-              <IOSSwitch
-                size="small"
-                checked={view?.columns?.includes(column?.relation_id)}
-                onChange={(e) => {
-                  updateView(
-                    e.target.checked
-                      ? [...view?.columns, column?.relation_id]
-                      : view?.columns?.filter(
-                          (el) => el !== column?.relation_id
-                        )
-                  );
-                }}
-              />
+              switchLoading[column.relation_id] ? (
+                <CircularProgress sx={{color: "#449424"}} size={24} />
+              ) : (
+                <IOSSwitch
+                  size="small"
+                  checked={view?.columns?.includes(column?.relation_id)}
+                  onChange={(e) => {
+                    updateView(
+                      e.target.checked
+                        ? [...view?.columns, column?.relation_id]
+                        : view?.columns?.filter(
+                            (el) => el !== column?.relation_id
+                          ),
+                      column?.relation_id
+                    );
+                  }}
+                />
+              )
+            ) : switchLoading[column.id] ? (
+              <CircularProgress sx={{color: "#449424"}} size={24} />
             ) : (
               <IOSSwitch
                 size="small"
@@ -173,7 +181,8 @@ function GroupSwitchMenu({
                   updateView(
                     e.target.checked
                       ? [...view?.columns, column?.id]
-                      : view?.columns?.filter((el) => el !== column?.id)
+                      : view?.columns?.filter((el) => el !== column?.id),
+                    column?.id
                   );
                 }}
               />

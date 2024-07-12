@@ -57,10 +57,6 @@ function TableFilterBlock({
     );
   };
 
-  const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/create`);
-  };
-
   const navigateCreatePage = (row) => {
     navigateToForm(
       tableSlug,

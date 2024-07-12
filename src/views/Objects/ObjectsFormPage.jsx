@@ -225,7 +225,12 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
 
     constructorObjectService
-      .create(tableSlug, {...data, folder_id: state?.folder_id ?? undefined})
+      .create(tableSlug, {
+        data: {
+          ...data,
+          folder_id: state?.folder_id ?? undefined,
+        },
+      })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(

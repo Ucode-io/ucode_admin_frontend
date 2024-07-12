@@ -8,6 +8,7 @@ import HFTextArea from "../../../../components/FormElements/HFTextArea";
 import newTableService from "../../../../services/newTableService";
 import HCTextField from "../TableComponent/TableElements/HCTextField";
 import styles from "./style.module.scss";
+import {useSearchParams} from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -25,10 +26,12 @@ const style = {
 function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
   const {control, handleSubmit} = useForm();
   const queryClient = useQueryClient();
+
   const onSubmit = (values) => {
     newTableService
       .createFolder({
         table_id: menuItem?.table_id,
+        parent_id: localStorage.getItem("folder_id") ?? undefined,
         ...values,
       })
       .then((res) => {

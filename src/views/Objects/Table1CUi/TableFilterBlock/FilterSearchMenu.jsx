@@ -8,13 +8,10 @@ function FilterSearchMenu({
   field = {},
   name,
   filters = {},
-  onChange,
+  onChange = () => {},
   tableSlug,
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
-
   const [debouncedValue, setDebouncedValue] = useState("");
-
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {

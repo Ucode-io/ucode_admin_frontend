@@ -3,7 +3,13 @@ import styles from "./style.module.scss";
 import CSelect from "../../../../components/CSelect";
 import {Pagination, PaginationItem, Stack} from "@mui/material";
 
-function CPagination({paginiation = 0, limit = 10, setLimit = () => {}}) {
+function CPagination({
+  pagination = 0,
+  limit = 10,
+  setLimit = () => {},
+  count,
+  setOffset,
+}) {
   const options = [
     {value: "all", label: "All"},
     {value: 10, label: 10},
@@ -17,13 +23,9 @@ function CPagination({paginiation = 0, limit = 10, setLimit = () => {}}) {
 
   const getLimitValue = (item) => {
     setLimit(item);
-    // dispatch(
-    //   paginationActions.setTablePages({
-    //     tableSlug: tableSlug,
-    //     pageLimit: item,
-    //   })
-    // );
+    setOffset(1);
   };
+
   return (
     <div className={styles.tableFooter}>
       <div className={styles.selectLimit}>
@@ -45,7 +47,9 @@ function CPagination({paginiation = 0, limit = 10, setLimit = () => {}}) {
       <div className={styles.cpagination}>
         <Stack spacing={2}>
           <Pagination
-            count={10}
+            onChange={(e, value) => setOffset(value)}
+            count={Math.ceil(count / limit)}
+            page={pagination}
             shape="rounded"
             renderItem={(item) => {
               if (item?.type === "previous") {

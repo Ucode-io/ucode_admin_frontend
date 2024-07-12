@@ -7,7 +7,7 @@ import NewFiltersAutoComplete from "./NewFiltersAutoComplete";
 const NewDefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [data, setData] = useState([]);
-
+  console.log("onChangeonChange", onChange);
   const value = filters[name];
 
   const options = useMemo(() => {
@@ -42,7 +42,9 @@ const NewDefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
       setSearchText={setDebouncedValue}
       options={options}
       value={filters[name] ?? []}
-      onChange={(val) => onChange(val?.length ? val : undefined, name)}
+      onChange={(val) => {
+        onChange(val?.length ? val : undefined, name);
+      }}
       label={field.label}
     />
   );

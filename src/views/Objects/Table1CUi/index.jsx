@@ -12,6 +12,8 @@ import newTableService from "../../../services/newTableService";
 function Table1CUi({menuItem, view, fieldsMap}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(1);
 
   const {data: {fields} = {data: []}, isLoading} = useQuery(
     ["GET_OBJECT_FIELDS", {tableSlug}],
@@ -31,8 +33,8 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     }
   );
 
-  const {data: {folders} = {data: []}, isLoading2} = useQuery(
-    ["GET_FOLDER_LIST", {tableSlug}],
+  const {data: {folders, count} = {data: []}, isLoading2} = useQuery(
+    ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
@@ -43,8 +45,10 @@ function Table1CUi({menuItem, view, fieldsMap}) {
       cacheTime: 10,
       select: (res) => {
         const folders = res?.folder_groups ?? [];
+        const count = res?.count;
         return {
           folders,
+          count,
         };
       },
     }
@@ -101,6 +105,11 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         folders={folders}
         fields={columns}
         openFilter={openFilter}
+        count={count}
+        limit={limit}
+        setLimit={setLimit}
+        offset={offset}
+        setOffset={setOffset}
       />
     </Box>
   );

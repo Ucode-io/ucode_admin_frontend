@@ -9,12 +9,12 @@ const FilterAutoComplete = ({
   setSearchText,
   localCheckedValues,
   value = [],
-  onChange,
+  onChange = () => {},
   label,
   field,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const menuVisible = Boolean(anchorEl);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -28,10 +28,6 @@ const FilterAutoComplete = ({
       .filter((el) => el);
   }, [value, options]);
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   // const inputChangeHandler = useDebounce((val) => {
   //   setSearchText(val);
   // }, 300);
@@ -42,7 +38,7 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
-    closeMenu();
+    handleClose();
     if (value?.includes(option.value)) {
       onChange(value.filter((item) => item !== option.value));
     } else {
@@ -75,9 +71,9 @@ const FilterAutoComplete = ({
 
       <Menu
         anchorEl={anchorEl}
-        open={menuVisible}
+        open={open}
         TransitionComponent={Fade}
-        onClose={closeMenu}
+        onClose={handleClose}
         classes={{list: styles.menu, paper: styles.paper}}>
         <Box sx={{width: "326px"}}>
           <div className={styles.searchBox}>
@@ -104,7 +100,7 @@ const FilterAutoComplete = ({
                   },
                 },
                 "& .MuiInputBase-input": {
-                  padding: "15px 15px 15px 15px",
+                  padding: "15px 15px 15px 0px",
                 },
               }}
             />
@@ -114,7 +110,9 @@ const FilterAutoComplete = ({
               <div
                 className={styles.menuItem}
                 key={index}
-                onClick={handleClose}>
+                onClick={() => {
+                  rowClickHandler(filter);
+                }}>
                 {filter?.label}
               </div>
             ))}

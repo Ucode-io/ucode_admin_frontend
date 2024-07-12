@@ -4,7 +4,12 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import {getRelationFieldTabsLabel} from "../../../../../utils/getRelationFieldLabel";
 import NewFiltersAutoComplete from "./NewFiltersAutoComplete";
 
-const NewRelationFilter = ({field = {}, filters, name, onChange}) => {
+const NewRelationFilter = ({
+  field = {},
+  filters,
+  name,
+  onChange = () => {},
+}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const {

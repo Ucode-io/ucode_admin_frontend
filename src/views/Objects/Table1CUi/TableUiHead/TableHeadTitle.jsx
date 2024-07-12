@@ -7,12 +7,12 @@ function TableHeadTitle() {
     <div className={styles.tableHeadTitle}>
       <h2>Контрагенты</h2>
       <div className={styles.tableHeadLinks}>
-        <a href="#">
+        {/* <a href="#">
           Счета расходов с контрагентами <OpenInNewIcon />
         </a>
         <a href="#">
           Номенклатура поставщика <OpenInNewIcon />
-        </a>
+        </a> */}
       </div>
     </div>
   );

@@ -5,6 +5,14 @@ import DownloadMenu from "./DownloadMenu";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
 import NewFastFilter from "./FastFilter";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import {mergeStringAndState} from "../../../../utils/jsonPath";
+import useTabRouter from "../../../../hooks/useTabRouter";
 
 function TableFilterBlock({
   openFilter,
@@ -14,9 +22,15 @@ function TableFilterBlock({
   view,
   menuItem,
 }) {
+  const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const [columns, setColumns] = useState([
     {label: "Наименование в программе", visible: true},
@@ -40,6 +54,20 @@ function TableFilterBlock({
       prevColumns.map((col, i) =>
         i === index ? {...col, visible: !col.visible} : col
       )
+    );
+  };
+
+  const navigateToCreateForm = () => {
+    navigate(`${location.pathname}/create`);
+  };
+
+  const navigateCreatePage = (row) => {
+    navigateToForm(
+      tableSlug,
+      "CREATE",
+      {},
+      {folder_id: localStorage.getItem("folder_id")},
+      menuId ?? appId
     );
   };
 
@@ -73,7 +101,13 @@ function TableFilterBlock({
         </div>
 
         <div className={styles.filterCreatBtns}>
-          <button className={styles.createBtn}>Создать</button>
+          <button
+            onClick={() => {
+              navigateCreatePage(tableSlug);
+            }}
+            className={styles.createBtn}>
+            Создать
+          </button>
           <button onClick={handleGroup} className={styles.createGroupBtn}>
             Создать группу
           </button>

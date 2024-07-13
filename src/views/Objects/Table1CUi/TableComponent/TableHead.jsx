@@ -15,7 +15,7 @@ function TableHead({columns}) {
       <thead>
         <tr>
           {columns?.map((item) => (
-            <th>
+            <th key={item.accessor}>
               <div className={styles.tableHeaditem}>
                 <p>{item?.label}</p>
                 <button onClick={handleClick}>
@@ -26,7 +26,6 @@ function TableHead({columns}) {
               <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
                 <Box sx={{width: "244px"}}>
                   <MenuItem
-                    // key={index}
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
@@ -38,16 +37,11 @@ function TableHead({columns}) {
                         fontWeight: 500,
                         fontSize: "14px",
                       }}>
-                      Зафиксировать
+                      Fix
                     </Typography>
-                    <IOSSwitch
-                      //   checked={col.visible}
-                      //   onChange={() => toggleColumnVisibility(index)}
-                      color="primary"
-                    />
+                    <IOSSwitch color="primary" />
                   </MenuItem>
                   <MenuItem
-                    // key={index}
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
@@ -59,13 +53,9 @@ function TableHead({columns}) {
                         fontWeight: 500,
                         fontSize: "14px",
                       }}>
-                      Скрыть
+                      Hide
                     </Typography>
-                    <IOSSwitch
-                      //   checked={col.visible}
-                      //   onChange={() => toggleColumnVisibility(index)}
-                      color="primary"
-                    />
+                    <IOSSwitch color="primary" />
                   </MenuItem>
                 </Box>
               </Menu>

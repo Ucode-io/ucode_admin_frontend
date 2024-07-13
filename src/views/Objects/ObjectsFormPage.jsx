@@ -54,7 +54,7 @@ const ObjectsFormPage = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
-
+  console.log("stateeeeeeee", state);
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
@@ -225,7 +225,12 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, {
+        data: {
+          ...data,
+          folder_id: state?.folder_id ?? undefined,
+        },
+      })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(

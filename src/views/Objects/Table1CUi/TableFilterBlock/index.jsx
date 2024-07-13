@@ -2,9 +2,20 @@ import {TextField} from "@mui/material";
 import React, {useState} from "react";
 import CreateGroupModal from "./CreateGroupModal";
 import DownloadMenu from "./DownloadMenu";
-import FilterSearchMenu from "./FilterSearchMenu";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
+import NewFastFilter from "./FastFilter";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import {mergeStringAndState} from "../../../../utils/jsonPath";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import {useDispatch} from "react-redux";
+import {filterActions} from "../../../../store/filter/filter.slice";
+import useFilters from "../../../../hooks/useFilters";
 
 function TableFilterBlock({
   openFilter,
@@ -14,9 +25,16 @@ function TableFilterBlock({
   view,
   menuItem,
 }) {
+  const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+  const dispatch = useDispatch();
 
   const [columns, setColumns] = useState([
     {label: "Наименование в программе", visible: true},
@@ -42,6 +60,18 @@ function TableFilterBlock({
       )
     );
   };
+
+  const navigateCreatePage = (row) => {
+    navigateToForm(
+      tableSlug,
+      "CREATE",
+      {},
+      {folder_id: localStorage.getItem("folder_id")},
+      menuId ?? appId
+    );
+  };
+
+  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
 
   return (
     <>
@@ -73,7 +103,13 @@ function TableFilterBlock({
         </div>
 
         <div className={styles.filterCreatBtns}>
-          <button className={styles.createBtn}>Создать</button>
+          <button
+            onClick={() => {
+              navigateCreatePage(tableSlug);
+            }}
+            className={styles.createBtn}>
+            Создать
+          </button>
           <button onClick={handleGroup} className={styles.createGroupBtn}>
             Создать группу
           </button>
@@ -84,13 +120,11 @@ function TableFilterBlock({
       <div
         style={{display: openFilter ? "flex" : "none"}}
         className={styles.filterList}>
-        <div className={styles.filterListItem}>
+        <div onClick={clearFilters} className={styles.filterListItem}>
           <p>Сбросить фильтры</p>
         </div>
 
-        {fields?.map((item) => (
-          <FilterSearchMenu fieldsMap={fieldsMap} view={view} item={item} />
-        ))}
+        <NewFastFilter fields={fields} fieldsMap={fieldsMap} view={view} />
       </div>
 
       <GroupSwitchMenu

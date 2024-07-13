@@ -173,3 +173,48 @@
     }
   }
 }
+
+.back_row {
+  cursor: pointer;
+}
+
+.back_btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 20px;
+}
+
+.back_btn img {
+  margin-right: 5px;
+}
+
+.td_row {
+  display: flex;
+  align-items: center;
+}
+
+.childTd {
+  display: flex;
+  align-items: center;
+}
+
+.toggle_btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.folder_icon img {
+  margin-right: 5px;
+}
+.current_folder_name {
+  display: flex;
+  align-items: center;
+
+  .folder_icon {
+    margin-right: 2px;
+  }
+}

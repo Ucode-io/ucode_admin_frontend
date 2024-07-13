@@ -1,10 +1,17 @@
 import {useMemo} from "react";
 import {useState} from "react";
-import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery";
 
-import FilterAutoComplete from "./FilterAutocomplete";
+import useObjectsQuery from "../../../../../queries/hooks/useObjectsQuery";
+import NewFiltersAutoComplete from "./NewFiltersAutoComplete";
 
-const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
+const NewDefaultFilter = ({
+  field,
+  filters,
+  onChange,
+  name,
+  tableSlug,
+  view,
+}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [data, setData] = useState([]);
 
@@ -36,15 +43,19 @@ const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
   });
 
   return (
-    <FilterAutoComplete
+    <NewFiltersAutoComplete
+      field={field}
       searchText={debouncedValue}
       setSearchText={setDebouncedValue}
       options={options}
       value={filters[name] ?? []}
-      onChange={(val) => onChange(val?.length ? val : undefined, name)}
+      onChange={(val) => {
+        onChange(val?.length ? val : undefined, name);
+      }}
       label={field.label}
+      view={view}
     />
   );
 };
 
-export default DefaultFilter;
+export default NewDefaultFilter;

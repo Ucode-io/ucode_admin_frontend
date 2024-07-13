@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import styles from "./style.module.scss";
 import {Box, Menu, MenuItem, Typography} from "@mui/material";
+import {useSearchParams} from "react-router-dom";
 
 function DownloadMenu() {
   const [anchorEl, setAnchorEl] = useState(null);

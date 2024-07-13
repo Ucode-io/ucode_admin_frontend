@@ -3,11 +3,18 @@ import styles from "./style.module.scss";
 import TableHead from "./TableHead";
 import TableBody from "./TableBody";
 import CPagination from "./NewCPagination";
-import {useParams} from "react-router-dom";
 
-const TableComponent = ({openFilter, fields, folders}) => {
+const TableComponent = ({
+  openFilter,
+  fields,
+  folders,
+  count,
+  limit,
+  setLimit,
+  offset,
+  setOffset,
+}) => {
   const [openGroups, setOpenGroups] = useState({});
-  const [limit, setLimit] = useState(0);
 
   const toggleGroup = (groupId) => {
     setOpenGroups((prevOpenGroups) => ({
@@ -25,13 +32,20 @@ const TableComponent = ({openFilter, fields, folders}) => {
         <table className={styles.expandable_table}>
           <TableHead columns={fields} />
           <TableBody
+            columns={fields}
             folders={folders}
             toggleGroup={toggleGroup}
             openGroups={openGroups}
           />
         </table>
       </div>
-      <CPagination limit={limit} setLimit={setLimit} />
+      <CPagination
+        offset={offset}
+        setOffset={setOffset}
+        limit={limit}
+        setLimit={setLimit}
+        count={count}
+      />
     </div>
   );
 };

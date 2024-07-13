@@ -1,79 +1,112 @@
-import React, {useState} from "react";
-import {Box, Menu, TextField} from "@mui/material";
-import styles from "./style.module.scss";
+import React, {useMemo, useState} from "react";
+import {TextField} from "@mui/material";
+import NewFiltersAutoComplete from "./FastFilter/NewFiltersAutoComplete";
+import NewDefaultFilter from "./FastFilter/NewDefaultFilter";
+import NewRelationFilter from "./FastFilter/NewRelationFilter";
 
-function FilterSearchMenu({item, view, fieldsMap}) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const open = Boolean(anchorEl);
+function FilterSearchMenu({
+  field = {},
+  name,
+  filters = {},
+  onChange = () => {},
+  tableSlug,
+  view,
+}) {
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const computedOptions = useMemo(() => {
+    if (!field.attributes?.options) return [];
+    return field.attributes.options.map((option) => {
+      if (field.type === "PICK_LIST")
+        return {
+          value: option.value,
+          label: option.value,
+        };
+      if (field.type === "MULTISELECT")
+        return {
+          value: option.value,
+          label: option.label ?? option.value,
+        };
+    });
+  }, [field.attributes?.options, field.type]);
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-  const handleSearch = (e) => setSearchTerm(e.target.value);
+  switch (field.type) {
+    case "LOOKUP":
+    case "LOOKUPS":
+      return (
+        <NewRelationFilter
+          field={field}
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          tableSlug={tableSlug}
+          view={view}
+        />
+      );
 
-  return (
-    <>
-      {item?.filter === 0 ? (
-        <div className={styles.filterListItemActive}>
-          <p>{item?.label}</p>
-          <button onClick={handleClick} className={styles.addFilter}>
-            <img src="/img/x_close.svg" alt="" />
-          </button>
-        </div>
-      ) : (
-        <div onClick={handleClick} className={styles.filterListItem}>
-          <p className={styles.filterLabel}>{item?.label}</p>
-          <p className={styles.filterCount}>{item?.filter}</p>
+    case "PICK_LIST":
+    case "MULTISELECT":
+      return (
+        <NewFiltersAutoComplete
+          searchText={debouncedValue}
+          setSearchText={setDebouncedValue}
+          options={computedOptions}
+          value={filters[name] ?? []}
+          onChange={(val) => onChange(val?.length ? val : undefined, name)}
+          label={field.label}
+          field={field}
+          view={view}
+        />
+      );
 
-          <img src="/img/plus.svg" alt="" />
-        </div>
-      )}
+    case "PHOTO":
+      return null;
 
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <Box sx={{width: "326px"}}>
-          <div className={styles.searchBox}>
-            <button className={styles.searchBtn}>
-              <img src="/img/search_icon.svg" alt="" />
-            </button>
-            <TextField
-              variant="outlined"
-              placeholder="Поиск"
-              value={searchTerm}
-              onChange={handleSearch}
-              fullWidth
-              InputProps={{
-                sx: {
-                  height: "44px",
-                  padding: 0,
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  padding: "0 10px",
-                  "& fieldset": {
-                    border: "none",
-                  },
-                },
-                "& .MuiInputBase-input": {
-                  padding: "15px 15px 15px 15px",
-                },
-              }}
-            />
-          </div>
-          <div className={styles.menuItems}>
-            {view?.attribtes?.quick_filters.map((filter, index) => (
-              <div
-                className={styles.menuItem}
-                key={index}
-                onClick={handleClose}>
-                {filter?.label}
-              </div>
-            ))}
-          </div>
-        </Box>
-      </Menu>
-    </>
-  );
+    // case "DATE_TIME_WITHOUT_TIME_ZONE":
+    // case "DATE":
+    // case "DATE_TIME":
+    //   return (
+    //     <DateFilter
+    //       field={field}
+    //       placeholder={field?.label}
+    //       value={filters[name]}
+    //       onChange={(val) => onChange(val, name)}
+    //     />
+    //   );
+
+    // case "NUMBER":
+    //   return (
+    //     <TextField
+    //       fullWidth
+    //       size="small"
+    //       placeholder={field.label}
+    //       type="number"
+    //       value={filters[name] ?? ""}
+    //       onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+    //     />
+    //   );
+
+    // case "SWITCH":
+    //   return (
+    //     <BooleanFilter
+    //       filters={filters}
+    //       onChange={onChange}
+    //       name={name}
+    //       field={field}
+    //     />
+    //   );
+
+    default:
+      return (
+        <NewDefaultFilter
+          field={field}
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          tableSlug={tableSlug}
+          view={view}
+        />
+      );
+  }
 }
 
 export default FilterSearchMenu;

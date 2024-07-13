@@ -8,10 +8,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
+import useFilters from "../../../hooks/useFilters";
 
 function Table1CUi({menuItem, view, fieldsMap}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(1);
+  const {filters} = useFilters(tableSlug, view.id);
 
   const {data: {fields} = {data: []}, isLoading} = useQuery(
     ["GET_OBJECT_FIELDS", {tableSlug}],
@@ -31,25 +35,74 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     }
   );
 
-  const {data: {folders} = {data: []}, isLoading2} = useQuery(
-    ["GET_FOLDER_LIST", {tableSlug}],
+  function hasValidFilters(filters) {
+    if (!filters || typeof filters !== "object") {
+      return false;
+    }
+
+    return Object.keys(filters).some((key) => {
+      const value = filters[key];
+      if (typeof value === "string" && value.trim() !== "") return true;
+      if (typeof value === "number") return true;
+      if (Array.isArray(value) && value.length > 0) return true;
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        Object.keys(value).length > 0
+      )
+        return true;
+      return false;
+    });
+  }
+
+  const {data: {filteredItems} = {data: []}, isLoading4} = useQuery({
+    queryKey: [
+      "GET_OBJECTS_LIST",
+      {
+        filters,
+      },
+    ],
+    queryFn: () => {
+      return constructorObjectService.getListV2(tableSlug, {
+        data: {
+          ...filters,
+        },
+      });
+    },
+    cacheTime: 10,
+    enabled: hasValidFilters(filters),
+    select: (res) => {
+      const filteredItems = res?.data?.response;
+      return {
+        filteredItems,
+      };
+    },
+  });
+
+  const {data: {foldersList, count} = {data: []}, isLoading2} = useQuery(
+    ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
+        limit: limit,
+        offset: offset,
       });
     },
     {
-      enabled: Boolean(menuItem?.table_id),
+      enabled: Boolean(menuItem?.table_id) && !hasValidFilters(filters),
       cacheTime: 10,
       select: (res) => {
-        const folders = res?.folder_groups ?? [];
+        const foldersList = res?.folder_groups ?? [];
+        const count = res?.count;
         return {
-          folders,
+          foldersList,
+          count,
         };
       },
     }
   );
-  console.log("foldersfolders", folders);
+
+  const folders = hasValidFilters(filters) ? filteredItems : foldersList;
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
@@ -84,7 +137,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     const sortedArray = commonItems?.concat(remainingItems);
     return sortedArray;
   }
-
+  console.log("filtersssssssssssssss", filters);
   return (
     <Box>
       <TableUiHead menuItem={menuItem} />
@@ -101,6 +154,11 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         folders={folders}
         fields={columns}
         openFilter={openFilter}
+        count={count}
+        limit={limit}
+        setLimit={setLimit}
+        offset={offset}
+        setOffset={setOffset}
       />
     </Box>
   );

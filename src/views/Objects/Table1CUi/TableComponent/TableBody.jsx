@@ -1,75 +1,165 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function TableBody({toggleGroup, openGroups, folders, columns}) {
   const [currentFolder, setCurrentFolder] = useState(null);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [openGroupId, setOpenGroupId] = useState(null);
+  const [folderHierarchy, setFolderHierarchy] = useState([]);
+
+  useEffect(() => {
+    const folderMap = {};
+    const rootFolders = [];
+    const lastFolder = folders?.[folders.length - 1];
+
+    folders?.slice(0, -1).forEach((folder) => {
+      folderMap[folder.id] = {...folder, children: []};
+    });
+
+    folders?.slice(0, -1).forEach((folder) => {
+      if (folder?.parent_id) {
+        if (folderMap[folder?.parent_id]) {
+          folderMap[folder?.parent_id].children.push(folderMap[folder?.id]);
+        }
+      } else {
+        rootFolders.push(folderMap[folder?.id]);
+      }
+    });
+
+    const itemsWithoutParent = (lastFolder?.items?.response ?? folders)?.filter(
+      (item) => !item.folder_id
+    );
+
+    if (itemsWithoutParent) {
+      rootFolders.push(...itemsWithoutParent);
+    }
+
+    setFolderHierarchy(rootFolders);
+  }, [folders]);
 
   const handleFolderDoubleClick = (folder) => {
     setCurrentFolder(folder);
-    localStorage.setItem("folder_id", folder?.id);
+    setBreadcrumbs([...breadcrumbs, folder]);
+    if (folder?.id) {
+      localStorage.setItem("folder_id", folder?.id);
+    }
   };
 
   const handleBackClick = () => {
-    setCurrentFolder(null);
-    localStorage.removeItem("folder_id");
+    const updatedBreadcrumbs = breadcrumbs.slice(0, -1);
+    setBreadcrumbs(updatedBreadcrumbs);
+    setCurrentFolder(updatedBreadcrumbs[updatedBreadcrumbs.length - 1] || null);
+    if (!updatedBreadcrumbs.length) {
+      localStorage.removeItem("folder_id");
+    }
   };
 
-  const renderRows = (folders) => {
-    return folders?.map((folder) => (
-      <React.Fragment key={folder.id}>
-        <tr
-          className={styles.group_row}
-          onDoubleClick={() => handleFolderDoubleClick(folder)}>
-          {columns.map((col, index) => (
-            <td key={index}>
-              {index === 0 ? (
-                <div className={styles.td_row}>
-                  <button
-                    onClick={() => toggleGroup(folder.id)}
-                    className={styles.toggle_btn}>
-                    {openGroups[folder.id] ? (
-                      <img src="/img/dropdown_icon.svg" alt="" />
-                    ) : (
-                      <img src="/img/right_icon.svg" alt="" />
-                    )}
-                  </button>
-                  <span className={styles.folder_icon}>
-                    <img src="/img/folder_icon.svg" alt="" />
-                  </span>
-                  <p>{folder.name}</p>
-                </div>
-              ) : (
-                folder[col.slug]
-              )}
-            </td>
-          ))}
-        </tr>
-        {openGroups[folder.id] &&
-          folder?.items?.response
-            ?.filter((item) => item.folder_id === folder.id)
-            .map((item) => (
-              <tr key={item.guid} className={styles.child_row}>
-                {columns.map((col, index) => (
-                  <td key={index}>
-                    {index === 0 ? (
-                      <div className={styles.childTd}>
-                        <img src="/img/child_icon.svg" alt="" />
-                        <p>{item[col.slug]}</p>
-                      </div>
-                    ) : (
-                      item[col.slug]
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
-      </React.Fragment>
-    ));
+  useEffect(() => {
+    if (!currentFolder?.id) {
+      localStorage.removeItem("folder_id");
+    }
+  }, [currentFolder]);
+
+  const handleToggleGroup = (groupId) => {
+    if (openGroupId === groupId) {
+      setOpenGroupId(null);
+    } else {
+      setOpenGroupId(groupId);
+    }
   };
+
+  const renderRows = (items, level = 0) => {
+    return items?.map((item) => {
+      if (item.type === "FOLDER") {
+        const hasChildren =
+          item?.children?.length > 0 || item?.items?.response?.length > 0;
+        const isOpen = openGroupId === item.id;
+        return (
+          <React.Fragment key={item.id}>
+            <tr
+              className={styles.group_row}
+              style={{paddingLeft: `${(level + 1) * 20}px`}}>
+              {columns.map((col, index) => (
+                <td key={index}>
+                  {index === 0 ? (
+                    <div className={styles.td_row}>
+                      {level === 0 && (
+                        <button
+                          onClick={() => handleToggleGroup(item.id)}
+                          className={styles.toggle_btn}>
+                          {isOpen ? (
+                            <img src="/img/dropdown_icon.svg" alt="" />
+                          ) : (
+                            <img src="/img/right_icon.svg" alt="" />
+                          )}
+                        </button>
+                      )}
+                      <span
+                        onDoubleClick={() => handleFolderDoubleClick(item)}
+                        style={{marginLeft: `${level * 30}px`}}
+                        className={styles.folder_icon}>
+                        <img src="/img/folder_icon.svg" alt="" />
+                      </span>
+                      <p>{item.name}</p>
+                    </div>
+                  ) : (
+                    item[col.slug]
+                  )}
+                </td>
+              ))}
+            </tr>
+            {isOpen && hasChildren && renderRows(item.children, level + 1)}
+            {isOpen &&
+              item.items?.response?.map((subItem) => (
+                <tr
+                  key={subItem.guid}
+                  className={styles.child_row}
+                  style={{paddingLeft: `${(level + 1) * 40}px`}}>
+                  {columns.map((col, index) => (
+                    <td key={index}>
+                      {index === 0 ? (
+                        <div className={styles.childTd}>
+                          <img src="/img/child_icon.svg" alt="" />
+                          <p>{subItem[col.slug]}</p>
+                        </div>
+                      ) : (
+                        subItem[col.slug]
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+          </React.Fragment>
+        );
+      } else {
+        return (
+          <tr
+            key={item.guid}
+            className={styles.child_row}
+            style={{paddingLeft: `${(level + 1) * 40}px`}}>
+            {columns.map((col, index) => (
+              <td key={index}>
+                {index === 0 ? (
+                  <div className={styles.childTd}>
+                    <img src="/img/child_icon.svg" alt="" />
+                    <p>{item[col.slug]}</p>
+                  </div>
+                ) : (
+                  item[col.slug]
+                )}
+              </td>
+            ))}
+          </tr>
+        );
+      }
+    });
+  };
+
   if (currentFolder) {
-    const {items} = currentFolder;
+    const {children, items} = currentFolder;
     const hasItems = items && items.response && items.response.length > 0;
+    const hasChildren = children && children.length > 0;
 
     return (
       <tbody>
@@ -88,9 +178,13 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
             </button>
           </td>
         </tr>
+        {hasChildren && renderRows(children, 1)}
         {hasItems ? (
           items.response.map((item) => (
-            <tr key={item.guid} className={styles.child_row}>
+            <tr
+              key={item.guid}
+              className={styles.child_row}
+              style={{paddingLeft: "40px"}}>
               {columns.map((col, index) => (
                 <td key={index}>
                   {index === 0 ? (
@@ -107,7 +201,10 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
           ))
         ) : (
           <tr>
-            <td colSpan={columns.length} className={styles.empty_state}>
+            <td
+              style={{paddingLeft: "60px"}}
+              colSpan={columns.length}
+              className={styles.empty_state}>
               No items found in this folder.
             </td>
           </tr>
@@ -116,7 +213,7 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
     );
   }
 
-  return <tbody>{renderRows(folders)}</tbody>;
+  return <tbody>{renderRows(folderHierarchy)}</tbody>;
 }
 
 export default TableBody;

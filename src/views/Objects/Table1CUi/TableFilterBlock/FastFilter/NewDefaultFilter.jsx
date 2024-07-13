@@ -4,10 +4,17 @@ import {useState} from "react";
 import useObjectsQuery from "../../../../../queries/hooks/useObjectsQuery";
 import NewFiltersAutoComplete from "./NewFiltersAutoComplete";
 
-const NewDefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
+const NewDefaultFilter = ({
+  field,
+  filters,
+  onChange,
+  name,
+  tableSlug,
+  view,
+}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [data, setData] = useState([]);
-  console.log("onChangeonChange", onChange);
+
   const value = filters[name];
 
   const options = useMemo(() => {
@@ -46,6 +53,7 @@ const NewDefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
         onChange(val?.length ? val : undefined, name);
       }}
       label={field.label}
+      view={view}
     />
   );
 };

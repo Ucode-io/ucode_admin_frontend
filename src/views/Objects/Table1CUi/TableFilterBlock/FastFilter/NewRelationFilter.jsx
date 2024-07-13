@@ -9,6 +9,7 @@ const NewRelationFilter = ({
   filters,
   name,
   onChange = () => {},
+  view,
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
@@ -60,6 +61,7 @@ const NewRelationFilter = ({
       }}
       options={options}
       label={field.label}
+      view={view}
     />
   );
 };

@@ -2,6 +2,10 @@ import {Box, Fade, Menu, TextField} from "@mui/material";
 import {useMemo, useState} from "react";
 
 import styles from "./style.module.scss";
+import useDebounce from "../../../../../hooks/useDebounce";
+import {useDispatch} from "react-redux";
+import {filterActions} from "../../../../../store/filter/filter.slice";
+import {useParams} from "react-router-dom";
 
 const FilterAutoComplete = ({
   options = [],
@@ -12,13 +16,19 @@ const FilterAutoComplete = ({
   onChange = () => {},
   label,
   field,
+  view,
 }) => {
+  const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
 
   const open = Boolean(anchorEl);
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setAnchorEl(e.currentTarget);
+  };
   const handleClose = () => setAnchorEl(null);
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
@@ -28,9 +38,9 @@ const FilterAutoComplete = ({
       .filter((el) => el);
   }, [value, options]);
 
-  // const inputChangeHandler = useDebounce((val) => {
-  //   setSearchText(val);
-  // }, 300);
+  const inputChangeHandler = useDebounce((val) => {
+    setSearchText(val.target.value);
+  }, 300);
 
   const closeMenu = () => {
     setAnchorEl(null);
@@ -51,21 +61,30 @@ const FilterAutoComplete = ({
     onChange(undefined);
   };
 
+  const clearFilter = (e) => {
+    e.stopPropagation();
+    dispatch(
+      filterActions.removeFromList({
+        tableSlug,
+        viewId: view.id,
+        name: field?.slug,
+      })
+    );
+  };
   return (
     <div className={styles.autocomplete}>
-      {field?.filter === 0 ? (
-        <div className={styles.filterListItemActive}>
+      {value?.length === 0 ? (
+        <div onClick={handleClick} className={styles.filterListItem}>
           <p>{field?.label}</p>
-          <button onClick={handleClick} className={styles.addFilter}>
-            <img src="/img/x_close.svg" alt="" />
-          </button>
+          <img src="/img/plus.svg" alt="" />
         </div>
       ) : (
-        <div onClick={handleClick} className={styles.filterListItem}>
+        <div onClick={handleClick} className={styles.filterListItemActive}>
           <p className={styles.filterLabel}>{field?.label}</p>
-          <p className={styles.filterCount}>{field?.filter}</p>
-
-          <img src="/img/plus.svg" alt="" />
+          <p className={styles.filterCount}>{value?.length}</p>
+          <button onClick={clearFilter} className={styles.addFilter}>
+            <img src="/img/x_close.svg" alt="" />
+          </button>
         </div>
       )}
 
@@ -83,8 +102,7 @@ const FilterAutoComplete = ({
             <TextField
               variant="outlined"
               placeholder="Поиск"
-              // value={searchTerm}
-              onChange={handleSearch}
+              onChange={inputChangeHandler}
               fullWidth
               InputProps={{
                 sx: {

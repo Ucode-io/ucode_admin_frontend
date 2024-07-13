@@ -13,6 +13,9 @@ import {
 } from "react-router-dom";
 import {mergeStringAndState} from "../../../../utils/jsonPath";
 import useTabRouter from "../../../../hooks/useTabRouter";
+import {useDispatch} from "react-redux";
+import {filterActions} from "../../../../store/filter/filter.slice";
+import useFilters from "../../../../hooks/useFilters";
 
 function TableFilterBlock({
   openFilter,
@@ -31,6 +34,7 @@ function TableFilterBlock({
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const dispatch = useDispatch();
 
   const [columns, setColumns] = useState([
     {label: "Наименование в программе", visible: true},
@@ -57,10 +61,6 @@ function TableFilterBlock({
     );
   };
 
-  const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/create`);
-  };
-
   const navigateCreatePage = (row) => {
     navigateToForm(
       tableSlug,
@@ -70,6 +70,8 @@ function TableFilterBlock({
       menuId ?? appId
     );
   };
+
+  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
 
   return (
     <>
@@ -118,7 +120,7 @@ function TableFilterBlock({
       <div
         style={{display: openFilter ? "flex" : "none"}}
         className={styles.filterList}>
-        <div className={styles.filterListItem}>
+        <div onClick={clearFilters} className={styles.filterListItem}>
           <p>Сбросить фильтры</p>
         </div>
 

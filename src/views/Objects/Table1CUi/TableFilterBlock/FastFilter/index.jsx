@@ -39,7 +39,7 @@ function NewFastFilter({view, fieldsMap, fields}) {
 
   return (
     <>
-      {view?.attributes?.quick_filters?.map((filter) => (
+      {fields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <FilterSearchMenu
             field={filter}
@@ -47,6 +47,7 @@ function NewFastFilter({view, fieldsMap, fields}) {
             tableSlug={tableSlug}
             filters={filters}
             onChange={onChange}
+            view={view}
           />
         </div>
       ))}

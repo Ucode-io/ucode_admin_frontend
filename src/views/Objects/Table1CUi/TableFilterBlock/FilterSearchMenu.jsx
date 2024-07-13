@@ -10,6 +10,7 @@ function FilterSearchMenu({
   filters = {},
   onChange = () => {},
   tableSlug,
+  view,
 }) {
   const [debouncedValue, setDebouncedValue] = useState("");
   const computedOptions = useMemo(() => {
@@ -38,6 +39,7 @@ function FilterSearchMenu({
           onChange={onChange}
           name={name}
           tableSlug={tableSlug}
+          view={view}
         />
       );
 
@@ -52,6 +54,7 @@ function FilterSearchMenu({
           onChange={(val) => onChange(val?.length ? val : undefined, name)}
           label={field.label}
           field={field}
+          view={view}
         />
       );
 
@@ -70,17 +73,17 @@ function FilterSearchMenu({
     //     />
     //   );
 
-    case "NUMBER":
-      return (
-        <TextField
-          fullWidth
-          size="small"
-          placeholder={field.label}
-          type="number"
-          value={filters[name] ?? ""}
-          onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
-        />
-      );
+    // case "NUMBER":
+    //   return (
+    //     <TextField
+    //       fullWidth
+    //       size="small"
+    //       placeholder={field.label}
+    //       type="number"
+    //       value={filters[name] ?? ""}
+    //       onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+    //     />
+    //   );
 
     // case "SWITCH":
     //   return (
@@ -100,6 +103,7 @@ function FilterSearchMenu({
           onChange={onChange}
           name={name}
           tableSlug={tableSlug}
+          view={view}
         />
       );
   }

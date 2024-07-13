@@ -5,7 +5,38 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 function TableBody({toggleGroup, openGroups, folders, columns}) {
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
-  const [openGroupId, setOpenGroupId] = useState(null); // new state to manage currently open group
+  const [openGroupId, setOpenGroupId] = useState(null);
+  const [folderHierarchy, setFolderHierarchy] = useState([]);
+
+  useEffect(() => {
+    const folderMap = {};
+    const rootFolders = [];
+    const lastFolder = folders?.[folders.length - 1];
+
+    folders?.slice(0, -1).forEach((folder) => {
+      folderMap[folder.id] = {...folder, children: []};
+    });
+
+    folders?.slice(0, -1).forEach((folder) => {
+      if (folder?.parent_id) {
+        if (folderMap[folder?.parent_id]) {
+          folderMap[folder?.parent_id].children.push(folderMap[folder?.id]);
+        }
+      } else {
+        rootFolders.push(folderMap[folder?.id]);
+      }
+    });
+
+    const itemsWithoutParent = (lastFolder?.items?.response ?? folders)?.filter(
+      (item) => !item.folder_id
+    );
+
+    if (itemsWithoutParent) {
+      rootFolders.push(...itemsWithoutParent);
+    }
+
+    setFolderHierarchy(rootFolders);
+  }, [folders]);
 
   const handleFolderDoubleClick = (folder) => {
     setCurrentFolder(folder);
@@ -30,32 +61,11 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
     }
   }, [currentFolder]);
 
-  const buildFolderHierarchy = (folders) => {
-    const folderMap = {};
-    const rootFolders = [];
-
-    folders?.forEach((folder) => {
-      folderMap[folder.id] = {...folder, children: []};
-    });
-
-    folders?.forEach((folder) => {
-      if (folder?.parent_id) {
-        if (folderMap[folder?.parent_id]) {
-          folderMap[folder?.parent_id].children.push(folderMap[folder?.id]);
-        }
-      } else {
-        rootFolders.push(folderMap[folder?.id]);
-      }
-    });
-
-    return rootFolders;
-  };
-
   const handleToggleGroup = (groupId) => {
     if (openGroupId === groupId) {
-      setOpenGroupId(null); // close the group if it's already open
+      setOpenGroupId(null);
     } else {
-      setOpenGroupId(groupId); // open the new group and close the others
+      setOpenGroupId(groupId);
     }
   };
 
@@ -64,12 +74,11 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
       if (item.type === "FOLDER") {
         const hasChildren =
           item?.children?.length > 0 || item?.items?.response?.length > 0;
-        const isOpen = openGroupId === item.id; // check if this folder is open
+        const isOpen = openGroupId === item.id;
         return (
           <React.Fragment key={item.id}>
             <tr
               className={styles.group_row}
-              onDoubleClick={() => handleFolderDoubleClick(item)}
               style={{paddingLeft: `${(level + 1) * 20}px`}}>
               {columns.map((col, index) => (
                 <td key={index}>
@@ -87,6 +96,7 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
                         </button>
                       )}
                       <span
+                        onDoubleClick={() => handleFolderDoubleClick(item)}
                         style={{marginLeft: `${level * 30}px`}}
                         className={styles.folder_icon}>
                         <img src="/img/folder_icon.svg" alt="" />
@@ -103,7 +113,7 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
             {isOpen &&
               item.items?.response?.map((subItem) => (
                 <tr
-                  key={subItem.id}
+                  key={subItem.guid}
                   className={styles.child_row}
                   style={{paddingLeft: `${(level + 1) * 40}px`}}>
                   {columns.map((col, index) => (
@@ -125,7 +135,7 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
       } else {
         return (
           <tr
-            key={item.id}
+            key={item.guid}
             className={styles.child_row}
             style={{paddingLeft: `${(level + 1) * 40}px`}}>
             {columns.map((col, index) => (
@@ -145,8 +155,6 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
       }
     });
   };
-
-  const folderHierarchy = buildFolderHierarchy(folders);
 
   if (currentFolder) {
     const {children, items} = currentFolder;
@@ -193,7 +201,10 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
           ))
         ) : (
           <tr>
-            <td colSpan={columns.length} className={styles.empty_state}>
+            <td
+              style={{paddingLeft: "60px"}}
+              colSpan={columns.length}
+              className={styles.empty_state}>
               No items found in this folder.
             </td>
           </tr>

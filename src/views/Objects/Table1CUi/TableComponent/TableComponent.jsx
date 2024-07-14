@@ -31,7 +31,7 @@ const TableComponent = ({
           openFilter ? styles.tableWrapperActive : styles.tableWrapper
         }>
         <table className={styles.expandable_table}>
-          <TableHead columns={fields} />
+          <TableHead columns={fields} view={view} />
           <TableBody
             columns={fields}
             folders={folders}

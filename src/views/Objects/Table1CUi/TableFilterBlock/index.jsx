@@ -1,21 +1,19 @@
 import {TextField} from "@mui/material";
 import React, {useState} from "react";
-import CreateGroupModal from "./CreateGroupModal";
-import DownloadMenu from "./DownloadMenu";
-import GroupSwitchMenu from "./GroupSwitchMenu";
-import styles from "./style.module.scss";
-import NewFastFilter from "./FastFilter";
+import {useDispatch} from "react-redux";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {mergeStringAndState} from "../../../../utils/jsonPath";
-import useTabRouter from "../../../../hooks/useTabRouter";
-import {useDispatch} from "react-redux";
-import {filterActions} from "../../../../store/filter/filter.slice";
 import useFilters from "../../../../hooks/useFilters";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import CreateGroupModal from "./CreateGroupModal";
+import DownloadMenu from "./DownloadMenu";
+import NewFastFilter from "./FastFilter";
+import GroupSwitchMenu from "./GroupSwitchMenu";
+import styles from "./style.module.scss";
 
 function TableFilterBlock({
   openFilter,
@@ -35,13 +33,7 @@ function TableFilterBlock({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
-
-  const [columns, setColumns] = useState([
-    {label: "Наименование в программе", visible: true},
-    {label: "ИНН", visible: true},
-    {label: "Полное наименование", visible: true},
-    {label: "ЭДО", visible: true},
-  ]);
+  const [columns, setColumns] = useState([]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -128,7 +120,7 @@ function TableFilterBlock({
       </div>
 
       <GroupSwitchMenu
-        columns={fields}
+        columns={columns}
         toggleColumnVisibility={toggleColumnVisibility}
         setColumns={setColumns}
         anchorEl={anchorEl}

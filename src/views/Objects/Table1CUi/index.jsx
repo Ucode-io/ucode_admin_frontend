@@ -103,6 +103,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   );
 
   const folders = hasValidFilters(filters) ? filteredItems : foldersList;
+
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
@@ -137,7 +138,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     const sortedArray = commonItems?.concat(remainingItems);
     return sortedArray;
   }
-  console.log("filtersssssssssssssss", filters);
+
   return (
     <Box>
       <TableUiHead menuItem={menuItem} />
@@ -159,6 +160,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         setLimit={setLimit}
         offset={offset}
         setOffset={setOffset}
+        view={view}
       />
     </Box>
   );

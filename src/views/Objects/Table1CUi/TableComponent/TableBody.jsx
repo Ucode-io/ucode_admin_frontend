@@ -1,12 +1,36 @@
 import React, {useEffect, useState} from "react";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import useFilters from "../../../../hooks/useFilters";
+import {useParams} from "react-router-dom";
 
-function TableBody({toggleGroup, openGroups, folders, columns}) {
+function TableBody({toggleGroup, openGroups, folders, columns, view}) {
+  const {tableSlug} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
+  const {filters} = useFilters(tableSlug, view.id);
+
+  function hasValidFilters(filters) {
+    if (!filters || typeof filters !== "object") {
+      return false;
+    }
+
+    return Object.keys(filters).some((key) => {
+      const value = filters[key];
+      if (typeof value === "string" && value.trim() !== "") return true;
+      if (typeof value === "number") return true;
+      if (Array.isArray(value) && value.length > 0) return true;
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        Object.keys(value).length > 0
+      )
+        return true;
+      return false;
+    });
+  }
 
   useEffect(() => {
     const folderMap = {};
@@ -27,13 +51,29 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
       }
     });
 
-    const itemsWithoutParent = (lastFolder?.items?.response ?? folders)?.filter(
-      (item) => !item.folder_id
-    );
+    const itemsWithFolderId = [];
+    folders?.forEach((folder) => {
+      if (folder.items?.response) {
+        folder.items.response.forEach((item) => {
+          if (item.folder_id) {
+            itemsWithFolderId.push(item);
+          } else {
+            rootFolders.push(item);
+          }
+        });
+      }
+    });
 
-    if (itemsWithoutParent) {
-      rootFolders.push(...itemsWithoutParent);
-    }
+    itemsWithFolderId.forEach((item) => {
+      if (folderMap[item.folder_id]) {
+        if (!folderMap[item.folder_id].items) {
+          folderMap[item.folder_id].items = {response: []};
+        }
+        folderMap[item.folder_id].items.response.push(item);
+      } else {
+        rootFolders.push(item);
+      }
+    });
 
     setFolderHierarchy(rootFolders);
   }, [folders]);
@@ -155,6 +195,32 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
       }
     });
   };
+
+  if (hasValidFilters(filters)) {
+    return (
+      <tbody>
+        {folders?.map((item) => (
+          <tr
+            key={item.guid}
+            className={styles.child_row}
+            style={{paddingLeft: "40px"}}>
+            {columns.map((col, index) => (
+              <td key={index}>
+                {index === 0 ? (
+                  <div className={styles.childTd}>
+                    <img src="/img/child_icon.svg" alt="" />
+                    <p>{item[col.slug]}</p>
+                  </div>
+                ) : (
+                  item[col.slug]
+                )}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    );
+  }
 
   if (currentFolder) {
     const {children, items} = currentFolder;

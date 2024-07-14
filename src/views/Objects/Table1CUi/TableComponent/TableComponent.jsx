@@ -13,6 +13,7 @@ const TableComponent = ({
   setLimit,
   offset,
   setOffset,
+  view,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
 
@@ -36,6 +37,7 @@ const TableComponent = ({
             folders={folders}
             toggleGroup={toggleGroup}
             openGroups={openGroups}
+            view={view}
           />
         </table>
       </div>

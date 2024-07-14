@@ -56,11 +56,6 @@ const FilterAutoComplete = ({
     }
   };
 
-  const onClearButtonClick = (e) => {
-    e.stopPropagation();
-    onChange(undefined);
-  };
-
   const clearFilter = (e) => {
     e.stopPropagation();
     dispatch(
@@ -71,6 +66,7 @@ const FilterAutoComplete = ({
       })
     );
   };
+
   return (
     <div className={styles.autocomplete}>
       {value?.length === 0 ? (

@@ -35,47 +35,37 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
   useEffect(() => {
     const folderMap = {};
     const rootFolders = [];
-    const lastFolder = folders?.[folders.length - 1];
+    const rootItems = [];
 
-    folders?.slice(0, -1).forEach((folder) => {
-      folderMap[folder.id] = {...folder, children: []};
+    folders?.forEach((folder) => {
+      folderMap[folder.id] = {...folder, children: [], items: {response: []}};
     });
 
-    folders?.slice(0, -1).forEach((folder) => {
-      if (folder?.parent_id) {
-        if (folderMap[folder?.parent_id]) {
-          folderMap[folder?.parent_id].children.push(folderMap[folder?.id]);
+    folders
+      ?.filter((item) => item?.id)
+      ?.forEach((folder) => {
+        if (folder.parent_id) {
+          if (folderMap[folder.parent_id]) {
+            folderMap[folder.parent_id].children.push(folderMap[folder.id]);
+          }
+        } else {
+          rootFolders.push(folderMap[folder.id]);
         }
-      } else {
-        rootFolders.push(folderMap[folder?.id]);
-      }
-    });
+      });
 
-    const itemsWithFolderId = [];
     folders?.forEach((folder) => {
       if (folder.items?.response) {
         folder.items.response.forEach((item) => {
-          if (item.folder_id) {
-            itemsWithFolderId.push(item);
+          if (item.folder_id && folderMap[item.folder_id]) {
+            folderMap[item.folder_id].items.response.push(item);
           } else {
-            rootFolders.push(item);
+            rootItems.push(item);
           }
         });
       }
     });
 
-    itemsWithFolderId.forEach((item) => {
-      if (folderMap[item.folder_id]) {
-        if (!folderMap[item.folder_id].items) {
-          folderMap[item.folder_id].items = {response: []};
-        }
-        folderMap[item.folder_id].items.response.push(item);
-      } else {
-        rootFolders.push(item);
-      }
-    });
-
-    setFolderHierarchy(rootFolders);
+    setFolderHierarchy([...rootFolders, ...rootItems]);
   }, [folders]);
 
   const handleFolderDoubleClick = (folder) => {

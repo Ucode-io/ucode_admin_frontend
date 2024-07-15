@@ -7,6 +7,7 @@ import hasValidFilters from "../../../../utils/hasValidFilters";
 import {mergeStringAndState} from "../../../../utils/jsonPath";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import {useSelector} from "react-redux";
+import {CircularProgress} from "@mui/material";
 
 function TableBody({folders, columns, view, menuItem}) {
   const {tableSlug, appId} = useParams();
@@ -465,7 +466,25 @@ function TableBody({folders, columns, view, menuItem}) {
     );
   }
 
-  return <tbody>{renderRows(folderHierarchy)}</tbody>;
+  return (
+    <tbody>
+      {folders?.length ? (
+        renderRows(folderHierarchy)
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <CircularProgress sx={{color: "#449424"}} size={50} />
+        </div>
+      )}
+    </tbody>
+  );
 }
 
 export default TableBody;

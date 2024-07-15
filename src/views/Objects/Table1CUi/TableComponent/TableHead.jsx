@@ -11,6 +11,7 @@ function TableHead({columns, view}) {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
+  const [columnFix, setColumnFix] = useState(false);
   const open = Boolean(anchorEl);
   const queryClient = useQueryClient();
   const handleClose = () => {
@@ -62,6 +63,7 @@ function TableHead({columns, view}) {
   };
 
   const fixColumnChangeHandler = (column, isChecked) => {
+    setColumnFix(true);
     const computedData = {
       ...view,
       attributes: {
@@ -73,9 +75,14 @@ function TableHead({columns, view}) {
       },
     };
 
-    constructorViewService.update(tableSlug, computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-    });
+    constructorViewService
+      .update(tableSlug, computedData)
+      .then((res) => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        setColumnFix(false);
+      });
   };
 
   return (
@@ -142,18 +149,22 @@ function TableHead({columns, view}) {
                       }}>
                       Fix
                     </Typography>
-                    <IOSSwitch
-                      checked={
-                        view?.attributes?.fixedColumns?.[selectedColumn?.id]
-                      }
-                      onChange={(e) => {
-                        fixColumnChangeHandler(
-                          selectedColumn,
-                          e.target.checked
-                        );
-                      }}
-                      color="primary"
-                    />
+                    {columnFix ? (
+                      <CircularProgress sx={{color: "#449424"}} size={24} />
+                    ) : (
+                      <IOSSwitch
+                        checked={
+                          view?.attributes?.fixedColumns?.[selectedColumn?.id]
+                        }
+                        onChange={(e) => {
+                          fixColumnChangeHandler(
+                            selectedColumn,
+                            e.target.checked
+                          );
+                        }}
+                        color="primary"
+                      />
+                    )}
                   </MenuItem>
                   <MenuItem
                     sx={{

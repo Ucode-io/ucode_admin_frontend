@@ -108,6 +108,7 @@ const TableComponent = ({
             toggleGroup={toggleGroup}
             openGroups={openGroups}
             view={view}
+            menuItem={menuItem}
           />
         </table>
       </div>

@@ -1,19 +1,32 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import styles from "./style.module.scss";
 import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 function TableHead({columns, view}) {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedColumn, setSelectedColumn] = useState(null);
   const open = Boolean(anchorEl);
   const queryClient = useQueryClient();
-  const handleClose = () => setAnchorEl(null);
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedColumn(null);
+  };
+  const handleClick = (e, column) => {
+    setAnchorEl(e.currentTarget);
+    setSelectedColumn(column);
+  };
   const [switchLoading, setSwitchLoading] = useState(false);
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const location = useLocation();
+  const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
   const updateView = (data, fieldId) => {
     setSwitchLoading((prev) => ({...prev, [fieldId]: true}));
@@ -31,15 +44,85 @@ function TableHead({columns, view}) {
       });
   };
 
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
+
+    if (prevElementIndex === -1 || prevElementIndex === 0) {
+      return 0;
+    }
+
+    let totalWidth = 0;
+
+    for (let i = 0; i < prevElementIndex; i++) {
+      const element = document.querySelector(`[id='${columns?.[i].id}']`);
+      console.log("elementelement", element?.offsetWidth);
+      totalWidth += element?.offsetWidth || 0;
+    }
+
+    return totalWidth;
+  };
+
+  const fixColumnChangeHandler = (column, isChecked) => {
+    const computedData = {
+      ...view,
+      attributes: {
+        ...view?.attributes,
+        fixedColumns: {
+          ...view?.attributes?.fixedColumns,
+          [column.id]: isChecked,
+        },
+      },
+    };
+
+    constructorViewService.update(tableSlug, computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
+  console.log("tableSizetableSize", tableSize, pageName);
   return (
     <>
       <thead>
         <tr>
           {columns?.map((column) => (
-            <th key={column.accessor}>
+            <th
+              id={column.id}
+              style={{
+                minWidth: tableSize?.[pageName]?.[column.id]
+                  ? tableSize?.[pageName]?.[column.id]
+                  : "auto",
+                width: !tableSize?.[pageName]?.[column.id]
+                  ? tableSize?.[pageName]?.[column.id]
+                  : "auto",
+                position: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "sticky"
+                    : "sticky"
+                }`,
+                left: view?.attributes?.fixedColumns?.[column?.id]
+                  ? `${calculateWidthFixedColumn(column.id) + 0}px`
+                  : "0",
+                backgroundColor: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "#F6F6F6"
+                    : "#fff"
+                }`,
+                zIndex: `${
+                  tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    ? "3"
+                    : "2"
+                }`,
+                top: 0,
+              }}
+              key={column.accessor}>
               <div className={styles.tableHeaditem}>
                 <p>{column?.label}</p>
-                <button onClick={handleClick}>
+                <button onClick={(e) => handleClick(e, column)}>
                   <img src="/img/dots_horizontal.svg" alt="" />
                 </button>
               </div>
@@ -60,7 +143,18 @@ function TableHead({columns, view}) {
                       }}>
                       Fix
                     </Typography>
-                    <IOSSwitch color="primary" />
+                    <IOSSwitch
+                      checked={
+                        view?.attributes?.fixedColumns?.[selectedColumn?.id]
+                      }
+                      onChange={(e) => {
+                        fixColumnChangeHandler(
+                          selectedColumn,
+                          e.target.checked
+                        );
+                      }}
+                      color="primary"
+                    />
                   </MenuItem>
                   <MenuItem
                     sx={{
@@ -76,41 +170,47 @@ function TableHead({columns, view}) {
                       }}>
                       Hide
                     </Typography>
-                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                      switchLoading[column.relation_id] ? (
+                    {selectedColumn?.type === "LOOKUP" ||
+                    selectedColumn?.type === "LOOKUPS" ? (
+                      switchLoading[selectedColumn.relation_id] ? (
                         <CircularProgress sx={{color: "#449424"}} size={24} />
                       ) : (
                         <IOSSwitch
                           size="small"
                           checked={
-                            !view?.columns?.includes(column?.relation_id)
+                            !view?.columns?.includes(
+                              selectedColumn?.relation_id
+                            )
                           }
                           onChange={(e) => {
                             updateView(
                               !e.target.checked
-                                ? [...view?.columns, column?.relation_id]
+                                ? [
+                                    ...view?.columns,
+                                    selectedColumn?.relation_id,
+                                  ]
                                 : view?.columns?.filter(
-                                    (el) => el !== column?.relation_id
+                                    (el) => el !== selectedColumn?.relation_id
                                   ),
-                              column?.relation_id
+                              selectedColumn?.relation_id
                             );
                           }}
                         />
                       )
-                    ) : switchLoading[column.id] ? (
+                    ) : switchLoading[selectedColumn?.id] ? (
                       <CircularProgress sx={{color: "#449424"}} size={24} />
                     ) : (
                       <IOSSwitch
                         size="small"
-                        checked={!view?.columns?.includes(column?.id)}
+                        checked={!view?.columns?.includes(selectedColumn?.id)}
                         onChange={(e) => {
                           updateView(
                             !e.target.checked
-                              ? [...view?.columns, column?.id]
+                              ? [...view?.columns, selectedColumn?.id]
                               : view?.columns?.filter(
-                                  (el) => el !== column?.id
+                                  (el) => el !== selectedColumn?.id
                                 ),
-                            column?.id
+                            selectedColumn?.id
                           );
                         }}
                       />

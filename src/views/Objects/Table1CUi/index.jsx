@@ -79,13 +79,17 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     },
   });
 
+  const pageToOffset = (pageNumber = 1, limit = 10) => {
+    return (pageNumber - 1) * limit;
+  };
+
   const {data: {foldersList, count} = {data: []}, isLoading2} = useQuery(
     ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
         limit: limit,
-        offset: offset,
+        offset: pageToOffset(offset, limit),
       });
     },
     {

@@ -176,6 +176,14 @@
 
 .back_row {
   cursor: pointer;
+  width: 200px !important;
+
+  td {
+    display: flex;
+    position: sticky;
+    left: 0;
+    border: none !important;
+  }
 }
 
 .back_btn {

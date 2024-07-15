@@ -4,10 +4,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useFilters from "../../../../hooks/useFilters";
 import {useLocation, useParams} from "react-router-dom";
 import hasValidFilters from "../../../../utils/hasValidFilters";
+import {mergeStringAndState} from "../../../../utils/jsonPath";
+import useTabRouter from "../../../../hooks/useTabRouter";
 import {useSelector} from "react-redux";
 
-function TableBody({folders, columns, view}) {
-  const {tableSlug} = useParams();
+function TableBody({folders, columns, view, menuItem}) {
+  const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [openGroupId, setOpenGroupId] = useState(null);
@@ -15,6 +17,7 @@ function TableBody({folders, columns, view}) {
   const {filters} = useFilters(tableSlug, view.id);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const location = useLocation();
+  const {navigateToForm} = useTabRouter();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -41,6 +44,34 @@ function TableBody({folders, columns, view}) {
       setOpenGroupId(null);
     } else {
       setOpenGroupId(groupId);
+    }
+  };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 
@@ -174,9 +205,15 @@ function TableBody({folders, columns, view}) {
             {isOpen &&
               item.items?.response?.map((subItem) => (
                 <tr
+                  onClick={() => {
+                    navigateToDetailPage(subItem);
+                  }}
                   key={subItem.guid}
                   className={styles.child_row}
-                  style={{paddingLeft: `${(level + 1) * 40}px`}}>
+                  style={{
+                    paddingLeft: `${(level + 1) * 40}px`,
+                    cursor: "pointer",
+                  }}>
                   {columns.map((col, index) => (
                     <td
                       style={{
@@ -226,9 +263,12 @@ function TableBody({folders, columns, view}) {
       } else {
         return (
           <tr
+            onClick={() => {
+              navigateToDetailPage(item);
+            }}
             key={item.guid}
             className={styles.child_row}
-            style={{paddingLeft: `${(level + 1) * 40}px`}}>
+            style={{paddingLeft: `${(level + 1) * 40}px`, cursor: "pointer"}}>
             {columns.map((col, index) => (
               <td
                 style={{
@@ -279,12 +319,19 @@ function TableBody({folders, columns, view}) {
       <tbody>
         {folders?.map((item) => (
           <tr
+            onClick={() => {
+              navigateToDetailPage(item);
+            }}
             key={item.guid}
             className={styles.child_row}
             style={{paddingLeft: "40px"}}>
             {columns.map((col, index) => (
               <td
+                onClick={() => {
+                  navigateToDetailPage(item);
+                }}
                 style={{
+                  cursor: "pointer",
                   position: `${
                     tableSettings?.[pageName]?.find(
                       (item) => item?.id === col?.id
@@ -334,7 +381,11 @@ function TableBody({folders, columns, view}) {
 
     return (
       <tbody>
-        <tr onClick={handleBackClick} className={styles.back_row}>
+        <tr
+          onClick={() => {
+            handleBackClick();
+          }}
+          className={styles.back_row}>
           <td colSpan={columns.length}>
             <button className={styles.back_btn}>
               <span>
@@ -353,6 +404,9 @@ function TableBody({folders, columns, view}) {
         {hasItems ? (
           items.response.map((item) => (
             <tr
+              onClick={() => {
+                navigateToDetailPage(item);
+              }}
               key={item.guid}
               className={styles.child_row}
               style={{paddingLeft: "40px"}}>

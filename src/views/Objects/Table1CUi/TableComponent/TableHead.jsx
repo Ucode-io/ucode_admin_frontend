@@ -55,7 +55,6 @@ function TableHead({columns, view}) {
 
     for (let i = 0; i < prevElementIndex; i++) {
       const element = document.querySelector(`[id='${columns?.[i].id}']`);
-      console.log("elementelement", element?.offsetWidth);
       totalWidth += element?.offsetWidth || 0;
     }
 
@@ -78,7 +77,7 @@ function TableHead({columns, view}) {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-  console.log("tableSizetableSize", tableSize, pageName);
+
   return (
     <>
       <thead>

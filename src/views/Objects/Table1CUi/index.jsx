@@ -165,6 +165,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         offset={offset}
         setOffset={setOffset}
         view={view}
+        menuItem={menuItem}
       />
     </Box>
   );

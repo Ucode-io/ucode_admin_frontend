@@ -18,6 +18,7 @@ const TableComponent = ({
   setOffset,
   view,
   isResizeble = false,
+  menuItem,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const location = useLocation();

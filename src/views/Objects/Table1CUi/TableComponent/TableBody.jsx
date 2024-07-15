@@ -2,35 +2,47 @@ import React, {useEffect, useState} from "react";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useFilters from "../../../../hooks/useFilters";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
+import hasValidFilters from "../../../../utils/hasValidFilters";
+import {useSelector} from "react-redux";
 
-function TableBody({toggleGroup, openGroups, folders, columns, view}) {
+function TableBody({folders, columns, view}) {
   const {tableSlug} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
   const {filters} = useFilters(tableSlug, view.id);
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const location = useLocation();
+  const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
-  function hasValidFilters(filters) {
-    if (!filters || typeof filters !== "object") {
-      return false;
+  const handleFolderDoubleClick = (folder) => {
+    setCurrentFolder(folder);
+    setBreadcrumbs([...breadcrumbs, folder]);
+    if (folder?.id) {
+      localStorage.setItem("folder_id", folder?.id);
     }
+  };
 
-    return Object.keys(filters).some((key) => {
-      const value = filters[key];
-      if (typeof value === "string" && value.trim() !== "") return true;
-      if (typeof value === "number") return true;
-      if (Array.isArray(value) && value.length > 0) return true;
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        Object.keys(value).length > 0
-      )
-        return true;
-      return false;
-    });
-  }
+  const handleBackClick = () => {
+    const updatedBreadcrumbs = breadcrumbs.slice(0, -1);
+    setBreadcrumbs(updatedBreadcrumbs);
+    setCurrentFolder(updatedBreadcrumbs[updatedBreadcrumbs.length - 1] || null);
+    if (!updatedBreadcrumbs.length) {
+      localStorage.removeItem("folder_id");
+    }
+  };
+
+  const handleToggleGroup = (groupId) => {
+    if (openGroupId === groupId) {
+      setOpenGroupId(null);
+    } else {
+      setOpenGroupId(groupId);
+    }
+  };
 
   useEffect(() => {
     const folderMap = {};
@@ -68,21 +80,21 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
     setFolderHierarchy([...rootFolders, ...rootItems]);
   }, [folders]);
 
-  const handleFolderDoubleClick = (folder) => {
-    setCurrentFolder(folder);
-    setBreadcrumbs([...breadcrumbs, folder]);
-    if (folder?.id) {
-      localStorage.setItem("folder_id", folder?.id);
-    }
-  };
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
 
-  const handleBackClick = () => {
-    const updatedBreadcrumbs = breadcrumbs.slice(0, -1);
-    setBreadcrumbs(updatedBreadcrumbs);
-    setCurrentFolder(updatedBreadcrumbs[updatedBreadcrumbs.length - 1] || null);
-    if (!updatedBreadcrumbs.length) {
-      localStorage.removeItem("folder_id");
+    if (prevElementIndex === -1 || prevElementIndex === 0) {
+      return 0;
     }
+
+    let totalWidth = 0;
+
+    for (let i = 0; i < prevElementIndex; i++) {
+      const element = document.querySelector(`[id='${columns?.[i].id}']`);
+      totalWidth += element?.offsetWidth || 0;
+    }
+
+    return totalWidth;
   };
 
   useEffect(() => {
@@ -90,14 +102,6 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
       localStorage.removeItem("folder_id");
     }
   }, [currentFolder]);
-
-  const handleToggleGroup = (groupId) => {
-    if (openGroupId === groupId) {
-      setOpenGroupId(null);
-    } else {
-      setOpenGroupId(groupId);
-    }
-  };
 
   const renderRows = (items, level = 0) => {
     return items?.map((item) => {
@@ -111,7 +115,34 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
               className={styles.group_row}
               style={{paddingLeft: `${(level + 1) * 20}px`}}>
               {columns.map((col, index) => (
-                <td key={index}>
+                <td
+                  style={{
+                    position: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "sticky"
+                        : "relative"
+                    }`,
+                    left: view?.attributes?.fixedColumns?.[col?.id]
+                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                      : "0",
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "#F6F6F6"
+                        : "#fff"
+                    }`,
+                    zIndex: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "1"
+                        : "0"
+                    }`,
+                  }}
+                  key={index}>
                   {index === 0 ? (
                     <div className={styles.td_row}>
                       {level === 0 && (
@@ -147,7 +178,37 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
                   className={styles.child_row}
                   style={{paddingLeft: `${(level + 1) * 40}px`}}>
                   {columns.map((col, index) => (
-                    <td key={index}>
+                    <td
+                      style={{
+                        position: `${
+                          tableSettings?.[pageName]?.find(
+                            (item) => item?.id === col?.id
+                          )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[col?.id]
+                            ? "sticky"
+                            : "relative"
+                        }`,
+                        left: view?.attributes?.fixedColumns?.[col?.id]
+                          ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                          : "0",
+                        backgroundColor: `${
+                          tableSettings?.[pageName]?.find(
+                            (item) => item?.id === col?.id
+                          )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[col?.id]
+                            ? "#F6F6F6"
+                            : "#fff"
+                        }`,
+                        zIndex: `${
+                          tableSettings?.[pageName]?.find(
+                            (item) => item?.id === col?.id
+                          )?.isStiky ||
+                          view?.attributes?.fixedColumns?.[col?.id]
+                            ? "1"
+                            : "0"
+                        }`,
+                      }}
+                      key={index}>
                       {index === 0 ? (
                         <div className={styles.childTd}>
                           <img src="/img/child_icon.svg" alt="" />
@@ -169,7 +230,34 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
             className={styles.child_row}
             style={{paddingLeft: `${(level + 1) * 40}px`}}>
             {columns.map((col, index) => (
-              <td key={index}>
+              <td
+                style={{
+                  position: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "sticky"
+                      : "relative"
+                  }`,
+                  left: view?.attributes?.fixedColumns?.[col?.id]
+                    ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                    : "0",
+                  backgroundColor: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "#F6F6F6"
+                      : "#fff"
+                  }`,
+                  zIndex: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "1"
+                      : "0"
+                  }`,
+                }}
+                key={index}>
                 {index === 0 ? (
                   <div className={styles.childTd}>
                     <img src="/img/child_icon.svg" alt="" />
@@ -195,7 +283,34 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
             className={styles.child_row}
             style={{paddingLeft: "40px"}}>
             {columns.map((col, index) => (
-              <td key={index}>
+              <td
+                style={{
+                  position: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "sticky"
+                      : "relative"
+                  }`,
+                  left: view?.attributes?.fixedColumns?.[col?.id]
+                    ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                    : "0",
+                  backgroundColor: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "#F6F6F6"
+                      : "#fff"
+                  }`,
+                  zIndex: `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === col?.id
+                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                      ? "1"
+                      : "0"
+                  }`,
+                }}
+                key={index}>
                 {index === 0 ? (
                   <div className={styles.childTd}>
                     <img src="/img/child_icon.svg" alt="" />
@@ -242,7 +357,34 @@ function TableBody({toggleGroup, openGroups, folders, columns, view}) {
               className={styles.child_row}
               style={{paddingLeft: "40px"}}>
               {columns.map((col, index) => (
-                <td key={index}>
+                <td
+                  style={{
+                    position: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "sticky"
+                        : "relative"
+                    }`,
+                    left: view?.attributes?.fixedColumns?.[col?.id]
+                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                      : "0",
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "#F6F6F6"
+                        : "#fff"
+                    }`,
+                    zIndex: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "1"
+                        : "0"
+                    }`,
+                  }}
+                  key={index}>
                   {index === 0 ? (
                     <div className={styles.childTd}>
                       <img src="/img/child_icon.svg" alt="" />

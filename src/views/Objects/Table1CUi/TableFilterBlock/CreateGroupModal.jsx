@@ -127,9 +127,9 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
             </button>
 
             <div className={styles.actionBtns}>
-              <button type="submit" className={styles.actionRegBtn}>
+              {/* <button type="submit" className={styles.actionRegBtn}>
                 Записать
-              </button>
+              </button> */}
               <button type="submit" className={styles.actionCloseBtn}>
                 {loading ? (
                   <CircularProgress sx={{color: "#fff"}} size={20} />

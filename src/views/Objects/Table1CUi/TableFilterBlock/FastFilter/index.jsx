@@ -6,9 +6,8 @@ import useFilters from "../../../../../hooks/useFilters";
 import styles from "./style.module.scss";
 import FilterSearchMenu from "../FilterSearchMenu";
 
-function NewFastFilter({view, fieldsMap, fields}) {
+function NewFastFilter({view, fields}) {
   const {tableSlug} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const dispatch = useDispatch();
   const {filters} = useFilters(tableSlug, view?.id);

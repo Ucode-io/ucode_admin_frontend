@@ -128,6 +128,7 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
 
     return totalWidth;
   };
+  console.log("foldersssssss", folders);
 
   useEffect(() => {
     if (!currentFolder?.id) {
@@ -318,59 +319,73 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
   if (hasValidFilters(filters) || Boolean(searchText)) {
     return (
       <tbody>
-        {folders?.map((item) => (
-          <tr
-            onClick={() => {
-              navigateToDetailPage(item);
-            }}
-            key={item.guid}
-            className={styles.child_row}
-            style={{paddingLeft: "40px"}}>
-            {columns.map((col, index) => (
-              <td
-                onClick={() => {
-                  navigateToDetailPage(item);
-                }}
-                style={{
-                  cursor: "pointer",
-                  position: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "sticky"
-                      : "relative"
-                  }`,
-                  left: view?.attributes?.fixedColumns?.[col?.id]
-                    ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                    : "0",
-                  backgroundColor: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "#F6F6F6"
-                      : "#fff"
-                  }`,
-                  zIndex: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "1"
-                      : "0"
-                  }`,
-                }}
-                key={index}>
-                {index === 0 ? (
-                  <div className={styles.childTd}>
-                    <img src="/img/child_icon.svg" alt="" />
-                    <p>{item[col.slug]}</p>
-                  </div>
-                ) : (
-                  item[col.slug]
-                )}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {folders?.length ? (
+          folders?.map((item) => (
+            <tr
+              onClick={() => {
+                navigateToDetailPage(item);
+              }}
+              key={item.guid}
+              className={styles.child_row}
+              style={{paddingLeft: "40px"}}>
+              {columns.map((col, index) => (
+                <td
+                  onClick={() => {
+                    navigateToDetailPage(item);
+                  }}
+                  style={{
+                    cursor: "pointer",
+                    position: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "sticky"
+                        : "relative"
+                    }`,
+                    left: view?.attributes?.fixedColumns?.[col?.id]
+                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                      : "0",
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "#F6F6F6"
+                        : "#fff"
+                    }`,
+                    zIndex: `${
+                      tableSettings?.[pageName]?.find(
+                        (item) => item?.id === col?.id
+                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                        ? "1"
+                        : "0"
+                    }`,
+                  }}
+                  key={index}>
+                  {index === 0 ? (
+                    <div className={styles.childTd}>
+                      <img src="/img/child_icon.svg" alt="" />
+                      <p>{item[col.slug]}</p>
+                    </div>
+                  ) : (
+                    item[col.slug]
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <CircularProgress sx={{color: "#449424"}} size={50} />
+          </div>
+        )}
       </tbody>
     );
   }

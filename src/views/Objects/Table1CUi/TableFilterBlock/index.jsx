@@ -1,12 +1,8 @@
-import {Badge, TextField} from "@mui/material";
+import {TextField} from "@mui/material";
 import React, {useState} from "react";
 import {useDispatch} from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
+import useDebounce from "../../../../hooks/useDebounce";
 import useFilters from "../../../../hooks/useFilters";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import CreateGroupModal from "./CreateGroupModal";
@@ -14,7 +10,6 @@ import DownloadMenu from "./DownloadMenu";
 import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
-import useDebounce from "../../../../hooks/useDebounce";
 
 function TableFilterBlock({
   openFilter,
@@ -29,8 +24,6 @@ function TableFilterBlock({
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
-  const location = useLocation();
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -116,7 +109,7 @@ function TableFilterBlock({
           <button onClick={handleGroup} className={styles.createGroupBtn}>
             Создать группу
           </button>
-          <DownloadMenu />
+          <DownloadMenu menuItem={menuItem} />
         </div>
       </div>
 

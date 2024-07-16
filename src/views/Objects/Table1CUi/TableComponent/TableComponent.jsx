@@ -19,6 +19,7 @@ const TableComponent = ({
   view,
   isResizeble = false,
   menuItem,
+  searchText,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const location = useLocation();
@@ -109,6 +110,7 @@ const TableComponent = ({
             openGroups={openGroups}
             view={view}
             menuItem={menuItem}
+            searchText={searchText}
           />
         </table>
       </div>

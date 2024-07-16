@@ -16,6 +16,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(1);
   const {filters} = useFilters(tableSlug, view.id);
+  const [searchText, setSearchText] = useState();
 
   const {data: {fields} = {data: []}, isLoading} = useQuery(
     ["GET_OBJECT_FIELDS", {tableSlug}],
@@ -60,17 +61,19 @@ function Table1CUi({menuItem, view, fieldsMap}) {
       "GET_OBJECTS_LIST",
       {
         filters,
+        searchText,
       },
     ],
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
+          search: searchText,
         },
       });
     },
     cacheTime: 10,
-    enabled: hasValidFilters(filters),
+    enabled: hasValidFilters(filters) || Boolean(searchText),
     select: (res) => {
       const filteredItems = res?.data?.response;
       return {
@@ -79,17 +82,13 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     },
   });
 
-  const pageToOffset = (pageNumber = 1, limit = 10) => {
-    return (pageNumber - 1) * limit;
-  };
-
   const {data: {foldersList, count} = {data: []}, isLoading2} = useQuery(
     ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
         limit: limit,
-        offset: pageToOffset(offset, limit),
+        offset: offset,
       });
     },
     {
@@ -106,7 +105,10 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     }
   );
 
-  const folders = hasValidFilters(filters) ? filteredItems : foldersList;
+  const folders =
+    hasValidFilters(filters) || Boolean(searchText)
+      ? filteredItems
+      : foldersList;
 
   const columns = useMemo(() => {
     const result = [];
@@ -154,7 +156,9 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         view={view}
         fieldsMap={fieldsMap}
         menuItem={menuItem}
+        setSearchText={setSearchText}
       />
+
       <TableComponent
         folders={folders}
         fields={columns}
@@ -166,6 +170,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         setOffset={setOffset}
         view={view}
         menuItem={menuItem}
+        searchText={searchText}
       />
     </Box>
   );

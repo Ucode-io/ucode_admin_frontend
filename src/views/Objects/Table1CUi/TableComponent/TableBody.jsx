@@ -9,7 +9,7 @@ import useTabRouter from "../../../../hooks/useTabRouter";
 import {useSelector} from "react-redux";
 import {CircularProgress} from "@mui/material";
 
-function TableBody({folders, columns, view, menuItem}) {
+function TableBody({folders, columns, view, menuItem, searchText}) {
   const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
@@ -315,7 +315,7 @@ function TableBody({folders, columns, view, menuItem}) {
     });
   };
 
-  if (hasValidFilters(filters)) {
+  if (hasValidFilters(filters) || Boolean(searchText)) {
     return (
       <tbody>
         {folders?.map((item) => (

@@ -39,6 +39,24 @@
       border: 1px solid #d0d5dd;
       background: none;
       cursor: pointer;
+      position: relative;
+
+      .filterBadge {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #449424;
+        border-radius: 50%;
+        top: -10px;
+        right: -10px;
+        z-index: 2;
+        background: #fff;
+        color: #449424;
+        font-size: 12px;
+        font-weight: 500;
+        @include flexCenter;
+        justify-content: center;
+      }
     }
   }
 

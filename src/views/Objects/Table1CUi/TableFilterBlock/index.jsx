@@ -1,4 +1,4 @@
-import {TextField} from "@mui/material";
+import {Badge, TextField} from "@mui/material";
 import React, {useState} from "react";
 import {useDispatch} from "react-redux";
 import {
@@ -14,6 +14,7 @@ import DownloadMenu from "./DownloadMenu";
 import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
+import useDebounce from "../../../../hooks/useDebounce";
 
 function TableFilterBlock({
   openFilter,
@@ -22,6 +23,7 @@ function TableFilterBlock({
   fieldsMap,
   view,
   menuItem,
+  setSearchText,
 }) {
   const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -34,6 +36,7 @@ function TableFilterBlock({
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
   const [columns, setColumns] = useState([]);
+  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,7 +66,9 @@ function TableFilterBlock({
     );
   };
 
-  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
+  const inputChangeHandler = useDebounce((val) => {
+    setSearchText(val.target.value);
+  }, 300);
 
   return (
     <>
@@ -77,6 +82,7 @@ function TableFilterBlock({
                 padding: "10px 12px",
               },
             }}
+            onChange={inputChangeHandler}
             placeholder="Search"
             variant="outlined"
             size="small"
@@ -88,6 +94,11 @@ function TableFilterBlock({
               setOpenFilter(!openFilter);
             }}>
             <img src="/img/filter_funnel.svg" alt="" />
+            {Object.values(filters)?.length > 0 && (
+              <div className={styles.filterBadge}>
+                {Object.values(filters)?.length}
+              </div>
+            )}
           </button>
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />

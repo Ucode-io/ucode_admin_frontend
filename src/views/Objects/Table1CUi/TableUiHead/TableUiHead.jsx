@@ -6,10 +6,10 @@ import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import {useNavigate, useParams} from "react-router-dom";
 
 function TableUiHead({menuItem}) {
-  const {appId} = useParams();
+  const {appId, tableSlug} = useParams();
   const [parentMenu, setParentMenu] = useState();
   const navigate = useNavigate();
-
+  console.log("menuItem", menuItem, appId, tableSlug);
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: appId,
     queryParams: {
@@ -23,7 +23,11 @@ function TableUiHead({menuItem}) {
   return (
     <div className={styles.tableUiHead}>
       <Box sx={{display: "flex", gap: "6px", alignItems: "center"}}>
-        <Box>
+        <Box
+          sx={{cursor: "pointer"}}
+          onClick={() => {
+            navigate("/c57eedc3-a954-4262-a0af-376c65b5a284");
+          }}>
           <img src="/img/homeIcon.svg" alt="" />
         </Box>
         <Box sx={{height: "19px"}}>
@@ -31,7 +35,7 @@ function TableUiHead({menuItem}) {
         </Box>
         <Box
           sx={{fontWeight: 500, fontSize: "12px", cursor: "pointer"}}
-          onClick={() => navigate(-1)}>
+          onClick={() => navigate(`/main/${appId}`)}>
           {parentMenu?.label}
         </Box>
         <Box sx={{height: "19px"}}>

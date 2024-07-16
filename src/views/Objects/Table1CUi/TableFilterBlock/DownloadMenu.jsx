@@ -53,7 +53,10 @@ function DownloadMenu({menuItem}) {
             </Typography>
           </MenuItem>
           <MenuItem
-            onClick={handleClose}
+            onClick={() => {
+              navigateToSettingsPage();
+              handleClose();
+            }}
             // key={index}
             sx={{
               display: "flex",
@@ -61,7 +64,6 @@ function DownloadMenu({menuItem}) {
               padding: "12px 14px",
             }}>
             <Typography
-              onClick={navigateToSettingsPage}
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Settings
             </Typography>

@@ -6,6 +6,7 @@ import constructorViewService from "../../../../services/constructorViewService"
 import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
 import {Container, Draggable} from "react-smooth-dnd";
 import {applyDrag} from "../../../../utils/applyDrag";
+import styles from "./style.module.scss";
 
 function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
   const {tableSlug} = useParams();
@@ -18,7 +19,6 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
   }, [fieldsMap]);
 
   const updateView = (data, fieldId) => {
-    setLoading(true);
     setSwitchLoading((prev) => ({...prev, [fieldId]: true}));
     constructorViewService
       .update(tableSlug, {
@@ -35,6 +35,7 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
   };
 
   const onDrop = (dropResult) => {
+    setLoading(true);
     const result = applyDrag(visibleFields, dropResult);
     const computedResult = result?.filter((item) => {
       if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
@@ -83,45 +84,102 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
 
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-      <Box sx={{width: "360px"}}>
-        <MenuItem
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "10px 14px",
-            borderBottom: "1px solid #d0d5dd",
-          }}>
-          <Typography
+      <Box sx={{width: "360px", position: "relative"}}>
+        <Box>
+          <MenuItem
             sx={{
-              fontSize: "14px",
-              color: "#101828",
-              fontWeight: 500,
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "10px 14px",
+              borderBottom: "1px solid #d0d5dd",
             }}>
-            Показать все
-          </Typography>
-          <IOSSwitch
-            checked={visibleFields.length === allFields.length}
-            onChange={(e) => {
-              updateView(
-                e.target.checked
-                  ? allFields.map((el) => {
-                      if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
-                        return el.relation_id;
-                      } else {
-                        return el.id;
-                      }
-                    })
-                  : []
-              );
-            }}
-          />
-        </MenuItem>
-        <Box sx={{height: "235px", overflow: "auto"}}>
-          <Container
-            onDrop={onDrop}
-            dropPlaceholder={{className: "drag-row-drop-preview"}}>
-            {visibleFields.map((column, index) => (
-              <Draggable key={column?.id}>
+            <Typography
+              sx={{
+                fontSize: "14px",
+                color: "#101828",
+                fontWeight: 500,
+              }}>
+              Показать все
+            </Typography>
+            <IOSSwitch
+              checked={visibleFields.length === allFields.length}
+              onChange={(e) => {
+                updateView(
+                  e.target.checked
+                    ? allFields.map((el) => {
+                        if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+                          return el.relation_id;
+                        } else {
+                          return el.id;
+                        }
+                      })
+                    : []
+                );
+              }}
+            />
+          </MenuItem>
+          <Box sx={{height: "235px", overflow: "auto"}}>
+            <Container
+              onDrop={onDrop}
+              dropPlaceholder={{className: "drag-row-drop-preview"}}>
+              {visibleFields.map((column, index) => (
+                <Draggable key={column?.id}>
+                  <MenuItem
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 14px",
+                    }}>
+                    <Typography
+                      sx={{
+                        color: "#101828",
+                        fontWeight: 500,
+                        fontSize: "14px",
+                      }}>
+                      {column.label}
+                    </Typography>
+                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                      switchLoading[column.relation_id] ? (
+                        <CircularProgress sx={{color: "#449424"}} size={24} />
+                      ) : (
+                        <IOSSwitch
+                          size="small"
+                          checked={view?.columns?.includes(column?.relation_id)}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? [...view?.columns, column?.relation_id]
+                                : view?.columns?.filter(
+                                    (el) => el !== column?.relation_id
+                                  ),
+                              column?.relation_id
+                            );
+                          }}
+                        />
+                      )
+                    ) : switchLoading[column.id] ? (
+                      <CircularProgress sx={{color: "#449424"}} size={24} />
+                    ) : (
+                      <IOSSwitch
+                        size="small"
+                        checked={view?.columns?.includes(column?.id)}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? [...view?.columns, column?.id]
+                              : view?.columns?.filter(
+                                  (el) => el !== column?.id
+                                ),
+                            column?.id
+                          );
+                        }}
+                      />
+                    )}
+                  </MenuItem>
+                </Draggable>
+              ))}
+              {unVisibleFields.map((column, index) => (
                 <MenuItem
                   key={index}
                   sx={{
@@ -130,7 +188,11 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
                     padding: "10px 14px",
                   }}>
                   <Typography
-                    sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
+                    sx={{
+                      color: "#101828",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                    }}>
                     {column.label}
                   </Typography>
                   {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
@@ -169,59 +231,15 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
                     />
                   )}
                 </MenuItem>
-              </Draggable>
-            ))}
-            {unVisibleFields.map((column, index) => (
-              <MenuItem
-                key={index}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "10px 14px",
-                }}>
-                <Typography
-                  sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
-                  {column.label}
-                </Typography>
-                {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                  switchLoading[column.relation_id] ? (
-                    <CircularProgress sx={{color: "#449424"}} size={24} />
-                  ) : (
-                    <IOSSwitch
-                      size="small"
-                      checked={view?.columns?.includes(column?.relation_id)}
-                      onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? [...view?.columns, column?.relation_id]
-                            : view?.columns?.filter(
-                                (el) => el !== column?.relation_id
-                              ),
-                          column?.relation_id
-                        );
-                      }}
-                    />
-                  )
-                ) : switchLoading[column.id] ? (
-                  <CircularProgress sx={{color: "#449424"}} size={24} />
-                ) : (
-                  <IOSSwitch
-                    size="small"
-                    checked={view?.columns?.includes(column?.id)}
-                    onChange={(e) => {
-                      updateView(
-                        e.target.checked
-                          ? [...view?.columns, column?.id]
-                          : view?.columns?.filter((el) => el !== column?.id),
-                        column?.id
-                      );
-                    }}
-                  />
-                )}
-              </MenuItem>
-            ))}
-          </Container>
+              ))}
+            </Container>
+          </Box>
         </Box>
+        {loading && (
+          <div className={styles.columnsLoading}>
+            <CircularProgress sx={{color: "#449424", opacity: "1"}} />
+          </div>
+        )}
       </Box>
     </Menu>
   );

@@ -18,24 +18,6 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   const {filters} = useFilters(tableSlug, view.id);
   const [searchText, setSearchText] = useState();
 
-  // const {data: {fields} = {data: []}, isLoading} = useQuery(
-  //   ["GET_OBJECT_FIELDS", {tableSlug}],
-  //   () => {
-  //     return constructorObjectService.getList(tableSlug, {
-  //       data: {},
-  //     });
-  //   },
-  //   {
-  //     cacheTime: 10,
-  //     select: (res) => {
-  //       const fields = res.data?.fields ?? [];
-  //       return {
-  //         fields,
-  //       };
-  //     },
-  //   }
-  // );
-
   function hasValidFilters(filters) {
     if (!filters || typeof filters !== "object") {
       return false;

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import styles from "./style.module.scss";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useFilters from "../../../../hooks/useFilters";
 import {useLocation, useParams} from "react-router-dom";
 import hasValidFilters from "../../../../utils/hasValidFilters";
@@ -8,6 +7,10 @@ import {mergeStringAndState} from "../../../../utils/jsonPath";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import {useSelector} from "react-redux";
 import {CircularProgress} from "@mui/material";
+import newTableService from "../../../../services/newTableService";
+import {useQuery} from "react-query";
+import ChildRows from "./ChildRows";
+import FiltersRow from "./FiltersRow";
 
 function TableBody({folders, columns, view, menuItem, searchText}) {
   const {tableSlug, appId} = useParams();
@@ -15,15 +18,23 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
+  const [parentId, setParentId] = useState("");
+  const [folderIds, setFolderIds] = useState([]);
   const {filters} = useFilters(tableSlug, view.id);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const location = useLocation();
   const {navigateToForm} = useTabRouter();
-  const tableSize = useSelector((state) => state.tableSize.tableSize);
   const pageName =
-    location?.pathname.split("/")[location.pathname.split("/").length - 1];
+    location?.pathname.split("/")[location.pathname.split("/")?.length - 1];
+
+  const [foldersState, setFoldersState] = useState(folders);
+  useEffect(() => {
+    setFoldersState(folders);
+  }, [folders]);
 
   const handleFolderDoubleClick = (folder) => {
+    setFolderIds((prev) => [...prev, folder?.id]);
+    setParentId(folder?.id);
     setCurrentFolder(folder);
     setBreadcrumbs([...breadcrumbs, folder]);
     if (folder?.id) {
@@ -34,19 +45,21 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
   const handleBackClick = () => {
     const updatedBreadcrumbs = breadcrumbs.slice(0, -1);
     setBreadcrumbs(updatedBreadcrumbs);
-    setCurrentFolder(updatedBreadcrumbs[updatedBreadcrumbs.length - 1] || null);
-    if (!updatedBreadcrumbs.length) {
+    setCurrentFolder(
+      updatedBreadcrumbs[updatedBreadcrumbs?.length - 1] || null
+    );
+    if (!updatedBreadcrumbs?.length) {
       localStorage.removeItem("folder_id");
     }
   };
 
-  const handleToggleGroup = (groupId) => {
-    if (openGroupId === groupId) {
-      setOpenGroupId(null);
-    } else {
-      setOpenGroupId(groupId);
-    }
-  };
+  // const handleToggleGroup = (groupId) => {
+  //   if (openGroupId === groupId) {
+  //     setOpenGroupId(null);
+  //   } else {
+  //     setOpenGroupId(groupId);
+  //   }
+  // };
 
   const navigateToDetailPage = (row) => {
     if (
@@ -64,10 +77,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
       const matches = replaceUrlVariables(urlTemplate, row);
 
       navigate(`${matches}${params ? "?" + params : ""}`);
@@ -81,11 +90,11 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
     const rootFolders = [];
     const rootItems = [];
 
-    folders?.forEach((folder) => {
+    foldersState?.forEach((folder) => {
       folderMap[folder.id] = {...folder, children: [], items: {response: []}};
     });
 
-    folders
+    foldersState
       ?.filter((item) => item?.id)
       ?.forEach((folder) => {
         if (folder.parent_id) {
@@ -97,7 +106,7 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
         }
       });
 
-    folders?.forEach((folder) => {
+    foldersState?.forEach((folder) => {
       if (folder.items?.response) {
         folder.items.response.forEach((item) => {
           if (item.folder_id && folderMap[item.folder_id]) {
@@ -110,7 +119,7 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
     });
 
     setFolderHierarchy([...rootFolders, ...rootItems]);
-  }, [folders]);
+  }, [foldersState]);
 
   const calculateWidthFixedColumn = (colId) => {
     const prevElementIndex = columns?.findIndex((item) => item.id === colId);
@@ -128,7 +137,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
 
     return totalWidth;
   };
-  console.log("foldersssssss", folders);
 
   useEffect(() => {
     if (!currentFolder?.id) {
@@ -178,7 +186,7 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
                   key={index}>
                   {index === 0 ? (
                     <div className={styles.td_row}>
-                      {level === 0 && (
+                      {/* {level === 0 && (
                         <button
                           onClick={() => handleToggleGroup(item.id)}
                           className={styles.toggle_btn}>
@@ -188,9 +196,11 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
                             <img src="/img/right_icon.svg" alt="" />
                           )}
                         </button>
-                      )}
+                      )} */}
                       <span
-                        onDoubleClick={() => handleFolderDoubleClick(item)}
+                        onDoubleClick={() =>
+                          handleFolderDoubleClick(item, level)
+                        }
                         style={{marginLeft: `${level * 30}px`}}
                         className={styles.folder_icon}>
                         <img src="/img/folder_icon.svg" alt="" />
@@ -319,59 +329,17 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
   if (hasValidFilters(filters) || Boolean(searchText)) {
     return (
       <tbody>
-        {folders?.length ? (
-          folders?.map((item) => (
-            <tr
-              onClick={() => {
-                navigateToDetailPage(item);
-              }}
-              key={item.guid}
-              className={styles.child_row}
-              style={{paddingLeft: "40px"}}>
-              {columns.map((col, index) => (
-                <td
-                  onClick={() => {
-                    navigateToDetailPage(item);
-                  }}
-                  style={{
-                    cursor: "pointer",
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                      : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                  }}
-                  key={index}>
-                  {index === 0 ? (
-                    <div className={styles.childTd}>
-                      <img src="/img/child_icon.svg" alt="" />
-                      <p>{item[col.slug]}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
+        {foldersState?.length ? (
+          foldersState?.map((item) => (
+            <FiltersRow
+              navigateToDetailPage={navigateToDetailPage}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              columns={columns}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              view={view}
+              item={item}
+            />
           ))
         ) : (
           <div
@@ -397,93 +365,32 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
 
     return (
       <tbody>
-        <tr
-          onClick={() => {
-            handleBackClick();
-          }}
-          className={styles.back_row}>
-          <td colSpan={columns.length}>
-            <button className={styles.back_btn}>
-              <span>
-                <ArrowBackIcon />
-              </span>
-              <div className={styles.current_folder_name}>
-                <span className={styles.folder_icon}>
-                  <img src="/img/folder_icon.svg" alt="" />
-                </span>
-                {currentFolder.name}
-              </div>
-            </button>
-          </td>
-        </tr>
-        {hasChildren && renderRows(children, 1)}
-        {hasItems ? (
-          items.response.map((item) => (
-            <tr
-              onClick={() => {
-                navigateToDetailPage(item);
-              }}
-              key={item.guid}
-              className={styles.child_row}
-              style={{paddingLeft: "40px"}}>
-              {columns.map((col, index) => (
-                <td
-                  style={{
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                      : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                  }}
-                  key={index}>
-                  {index === 0 ? (
-                    <div className={styles.childTd}>
-                      <img src="/img/child_icon.svg" alt="" />
-                      <p>{item[col.slug]}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td
-              style={{paddingLeft: "60px"}}
-              colSpan={columns.length}
-              className={styles.empty_state}>
-              No items found in this folder.
-            </td>
-          </tr>
-        )}
+        <ChildRows
+          handleBackClick={handleBackClick}
+          currentFolder={currentFolder}
+          renderRows={renderRows}
+          navigateToDetailPage={navigateToDetailPage}
+          columns={columns}
+          hasChildren={hasChildren}
+          hasItems={hasItems}
+          items={items}
+          children={children}
+          tableSettings={tableSettings}
+          pageName={pageName}
+          handleFolderDoubleClick={handleFolderDoubleClick}
+          setFoldersState={setFoldersState}
+          parentId={parentId}
+          menuItem={menuItem}
+          folderIds={folderIds}
+          setFolderIds={setFolderIds}
+        />
       </tbody>
     );
   }
 
   return (
     <tbody>
-      {folders?.length ? (
+      {foldersState?.length ? (
         renderRows(folderHierarchy)
       ) : (
         <div

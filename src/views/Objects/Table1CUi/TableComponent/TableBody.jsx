@@ -11,6 +11,7 @@ import newTableService from "../../../../services/newTableService";
 import {useQuery} from "react-query";
 import ChildRows from "./ChildRows";
 import FiltersRow from "./FiltersRow";
+import FolderRow from "./FolderRow";
 
 function TableBody({folders, columns, view, menuItem, searchText}) {
   const {tableSlug, appId} = useParams();
@@ -52,14 +53,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
       localStorage.removeItem("folder_id");
     }
   };
-
-  // const handleToggleGroup = (groupId) => {
-  //   if (openGroupId === groupId) {
-  //     setOpenGroupId(null);
-  //   } else {
-  //     setOpenGroupId(groupId);
-  //   }
-  // };
 
   const navigateToDetailPage = (row) => {
     if (
@@ -152,68 +145,17 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
         const isOpen = openGroupId === item.id;
         return (
           <React.Fragment key={item.id}>
-            <tr
-              className={styles.group_row}
-              style={{paddingLeft: `${(level + 1) * 20}px`}}>
-              {columns.map((col, index) => (
-                <td
-                  style={{
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                      : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                  }}
-                  key={index}>
-                  {index === 0 ? (
-                    <div className={styles.td_row}>
-                      {/* {level === 0 && (
-                        <button
-                          onClick={() => handleToggleGroup(item.id)}
-                          className={styles.toggle_btn}>
-                          {isOpen ? (
-                            <img src="/img/dropdown_icon.svg" alt="" />
-                          ) : (
-                            <img src="/img/right_icon.svg" alt="" />
-                          )}
-                        </button>
-                      )} */}
-                      <span
-                        onDoubleClick={() =>
-                          handleFolderDoubleClick(item, level)
-                        }
-                        style={{marginLeft: `${level * 30}px`}}
-                        className={styles.folder_icon}>
-                        <img src="/img/folder_icon.svg" alt="" />
-                      </span>
-                      <p>{item.name}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-            {isOpen && hasChildren && renderRows(item.children, level + 1)}
+            <FolderRow
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              pageName={pageName}
+              tableSettings={tableSettings}
+              view={view}
+              level={level}
+              columns={columns}
+              item={item}
+              handleFolderDoubleClick={handleFolderDoubleClick}
+            />
+            {/* {isOpen && hasChildren && renderRows(item.children, level + 1)}
             {isOpen &&
               item.items?.response?.map((subItem) => (
                 <tr
@@ -269,7 +211,7 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
                     </td>
                   ))}
                 </tr>
-              ))}
+              ))} */}
           </React.Fragment>
         );
       } else {
@@ -333,7 +275,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
           foldersState?.map((item) => (
             <FiltersRow
               navigateToDetailPage={navigateToDetailPage}
-              calculateWidthFixedColumn={calculateWidthFixedColumn}
               columns={columns}
               tableSettings={tableSettings}
               pageName={pageName}

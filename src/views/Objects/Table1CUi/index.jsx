@@ -14,7 +14,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
   const [limit, setLimit] = useState(10);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState(0);
   const {filters} = useFilters(tableSlug, view.id);
   const [searchText, setSearchText] = useState();
 
@@ -130,7 +130,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
   return (
     <Box>
       <TableUiHead menuItem={menuItem} />
-      <TableHeadTitle />
+      <TableHeadTitle menuItem={menuItem} />
       <TableFilterBlock
         fields={columns}
         openFilter={openFilter}

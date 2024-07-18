@@ -10,14 +10,13 @@ import useDownloader from "../../../../hooks/useDownloader";
 import csvFileService from "../../../../services/csvFileService";
 
 function DownloadMenu({
-  menuItem,
   fieldSlugId,
   fieldSlug,
   view,
   computedVisibleFields,
   sort,
 }) {
-  const {appId, tableSlug} = useParams();
+  const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const {t, i18n} = useTranslation();
   const open = Boolean(anchorEl);
@@ -91,6 +90,9 @@ function DownloadMenu({
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Скачать CSV
             </Typography>
+            {loaderCsv && (
+              <CircularProgress sx={{color: "#337E28"}} size={24} />
+            )}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -107,7 +109,7 @@ function DownloadMenu({
             </Typography>
             {loader && (
               <div>
-                <CircularProgress size={24} />
+                <CircularProgress sx={{color: "#337E28"}} size={24} />
               </div>
             )}
           </MenuItem>

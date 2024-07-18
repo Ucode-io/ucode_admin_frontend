@@ -1,6 +1,6 @@
 .expandable_table {
   width: 100%;
-  min-width: 700px;
+  // min-width: 700px;
   background: #fff;
   border-collapse: collapse;
   margin: 0 0;
@@ -127,6 +127,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 60px;
 
   .limitSide {
     display: flex;
@@ -176,6 +177,14 @@
 
 .back_row {
   cursor: pointer;
+  width: 200px !important;
+
+  td {
+    display: flex;
+    position: sticky;
+    left: 0;
+    border: none !important;
+  }
 }
 
 .back_btn {

@@ -1,21 +1,15 @@
 import {TextField} from "@mui/material";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
+import {useDispatch} from "react-redux";
+import {useParams, useSearchParams} from "react-router-dom";
+import useDebounce from "../../../../hooks/useDebounce";
+import useFilters from "../../../../hooks/useFilters";
+import useTabRouter from "../../../../hooks/useTabRouter";
 import CreateGroupModal from "./CreateGroupModal";
 import DownloadMenu from "./DownloadMenu";
+import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
-import NewFastFilter from "./FastFilter";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import {mergeStringAndState} from "../../../../utils/jsonPath";
-import useTabRouter from "../../../../hooks/useTabRouter";
-import {useDispatch} from "react-redux";
-import {filterActions} from "../../../../store/filter/filter.slice";
-import useFilters from "../../../../hooks/useFilters";
 
 function TableFilterBlock({
   openFilter,
@@ -24,24 +18,33 @@ function TableFilterBlock({
   fieldsMap,
   view,
   menuItem,
+  setSearchText,
+  computedVisibleFields,
 }) {
   const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
-  const location = useLocation();
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
+  const [columns, setColumns] = useState([]);
+  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
 
-  const [columns, setColumns] = useState([
-    {label: "Наименование в программе", visible: true},
-    {label: "ИНН", visible: true},
-    {label: "Полное наименование", visible: true},
-    {label: "ЭДО", visible: true},
-  ]);
+  const visibleFields = useMemo(() => {
+    return (
+      view?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        }) ?? []
+    );
+  }, [view?.columns, fieldsMap]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,7 +74,9 @@ function TableFilterBlock({
     );
   };
 
-  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
+  const inputChangeHandler = useDebounce((val) => {
+    setSearchText(val.target.value);
+  }, 300);
 
   return (
     <>
@@ -85,6 +90,7 @@ function TableFilterBlock({
                 padding: "10px 12px",
               },
             }}
+            onChange={inputChangeHandler}
             placeholder="Search"
             variant="outlined"
             size="small"
@@ -96,6 +102,11 @@ function TableFilterBlock({
               setOpenFilter(!openFilter);
             }}>
             <img src="/img/filter_funnel.svg" alt="" />
+            {Object.values(filters)?.length > 0 && (
+              <div className={styles.filterBadge}>
+                {Object.values(filters)?.length}
+              </div>
+            )}
           </button>
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
@@ -113,7 +124,11 @@ function TableFilterBlock({
           <button onClick={handleGroup} className={styles.createGroupBtn}>
             Создать группу
           </button>
-          <DownloadMenu />
+          <DownloadMenu
+            computedVisibleFields={computedVisibleFields}
+            view={view}
+            menuItem={menuItem}
+          />
         </div>
       </div>
 
@@ -128,7 +143,7 @@ function TableFilterBlock({
       </div>
 
       <GroupSwitchMenu
-        columns={fields}
+        columns={columns}
         toggleColumnVisibility={toggleColumnVisibility}
         setColumns={setColumns}
         anchorEl={anchorEl}

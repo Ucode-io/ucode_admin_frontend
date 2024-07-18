@@ -1,44 +1,41 @@
+import {CircularProgress} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import styles from "./style.module.scss";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {useSelector} from "react-redux";
+import {useLocation, useParams} from "react-router-dom";
+import useFilters from "../../../../hooks/useFilters";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import hasValidFilters from "../../../../utils/hasValidFilters";
+import {mergeStringAndState} from "../../../../utils/jsonPath";
+import ChildRows from "./ChildRows";
+import FiltersRow from "./FiltersRow";
+import FolderRow from "./FolderRow";
+import ItemsRow from "./ItemsRow";
 
-function TableBody({toggleGroup, openGroups, folders, columns}) {
+function TableBody({
+  folders,
+  columns,
+  view,
+  menuItem,
+  searchText,
+  setFolderIds,
+  folderIds,
+}) {
+  const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
-  const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
+  const [foldersState, setFoldersState] = useState(folders);
 
-  useEffect(() => {
-    const folderMap = {};
-    const rootFolders = [];
-    const lastFolder = folders?.[folders.length - 1];
+  const {filters} = useFilters(tableSlug, view.id);
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const location = useLocation();
+  const {navigateToForm} = useTabRouter();
 
-    folders?.slice(0, -1).forEach((folder) => {
-      folderMap[folder.id] = {...folder, children: []};
-    });
-
-    folders?.slice(0, -1).forEach((folder) => {
-      if (folder?.parent_id) {
-        if (folderMap[folder?.parent_id]) {
-          folderMap[folder?.parent_id].children.push(folderMap[folder?.id]);
-        }
-      } else {
-        rootFolders.push(folderMap[folder?.id]);
-      }
-    });
-
-    const itemsWithoutParent = (lastFolder?.items?.response ?? folders)?.filter(
-      (item) => !item.folder_id
-    );
-
-    if (itemsWithoutParent) {
-      rootFolders.push(...itemsWithoutParent);
-    }
-
-    setFolderHierarchy(rootFolders);
-  }, [folders]);
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/")?.length - 1];
 
   const handleFolderDoubleClick = (folder) => {
+    setFolderIds((prev) => [...prev, folder?.id]);
     setCurrentFolder(folder);
     setBreadcrumbs([...breadcrumbs, folder]);
     if (folder?.id) {
@@ -49,11 +46,73 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
   const handleBackClick = () => {
     const updatedBreadcrumbs = breadcrumbs.slice(0, -1);
     setBreadcrumbs(updatedBreadcrumbs);
-    setCurrentFolder(updatedBreadcrumbs[updatedBreadcrumbs.length - 1] || null);
-    if (!updatedBreadcrumbs.length) {
+    setCurrentFolder(
+      updatedBreadcrumbs[updatedBreadcrumbs?.length - 1] || null
+    );
+    if (!updatedBreadcrumbs?.length) {
       localStorage.removeItem("folder_id");
     }
   };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
+  useEffect(() => {
+    const folderMap = {};
+    const rootFolders = [];
+    const rootItems = [];
+
+    foldersState?.forEach((folder) => {
+      folderMap[folder.id] = {...folder, children: [], items: {response: []}};
+    });
+
+    foldersState
+      ?.filter((item) => item?.id)
+      ?.forEach((folder) => {
+        if (folder.parent_id) {
+          if (folderMap[folder.parent_id]) {
+            folderMap[folder.parent_id].children.push(folderMap[folder.id]);
+          }
+        } else {
+          rootFolders.push(folderMap[folder.id]);
+        }
+      });
+
+    foldersState?.forEach((folder) => {
+      if (folder.items?.response) {
+        folder.items.response.forEach((item) => {
+          if (item.folder_id && folderMap[item.folder_id]) {
+            folderMap[item.folder_id].items.response.push(item);
+          } else {
+            rootItems.push(item);
+          }
+        });
+      }
+    });
+
+    setFolderHierarchy([...rootFolders, ...rootItems]);
+  }, [foldersState]);
 
   useEffect(() => {
     if (!currentFolder?.id) {
@@ -61,100 +120,72 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
     }
   }, [currentFolder]);
 
-  const handleToggleGroup = (groupId) => {
-    if (openGroupId === groupId) {
-      setOpenGroupId(null);
-    } else {
-      setOpenGroupId(groupId);
-    }
-  };
+  useEffect(() => {
+    setFoldersState(folders);
+  }, [folders]);
 
   const renderRows = (items, level = 0) => {
     return items?.map((item) => {
       if (item.type === "FOLDER") {
-        const hasChildren =
-          item?.children?.length > 0 || item?.items?.response?.length > 0;
-        const isOpen = openGroupId === item.id;
         return (
           <React.Fragment key={item.id}>
-            <tr
-              className={styles.group_row}
-              style={{paddingLeft: `${(level + 1) * 20}px`}}>
-              {columns.map((col, index) => (
-                <td key={index}>
-                  {index === 0 ? (
-                    <div className={styles.td_row}>
-                      {level === 0 && (
-                        <button
-                          onClick={() => handleToggleGroup(item.id)}
-                          className={styles.toggle_btn}>
-                          {isOpen ? (
-                            <img src="/img/dropdown_icon.svg" alt="" />
-                          ) : (
-                            <img src="/img/right_icon.svg" alt="" />
-                          )}
-                        </button>
-                      )}
-                      <span
-                        onDoubleClick={() => handleFolderDoubleClick(item)}
-                        style={{marginLeft: `${level * 30}px`}}
-                        className={styles.folder_icon}>
-                        <img src="/img/folder_icon.svg" alt="" />
-                      </span>
-                      <p>{item.name}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-            {isOpen && hasChildren && renderRows(item.children, level + 1)}
-            {isOpen &&
-              item.items?.response?.map((subItem) => (
-                <tr
-                  key={subItem.guid}
-                  className={styles.child_row}
-                  style={{paddingLeft: `${(level + 1) * 40}px`}}>
-                  {columns.map((col, index) => (
-                    <td key={index}>
-                      {index === 0 ? (
-                        <div className={styles.childTd}>
-                          <img src="/img/child_icon.svg" alt="" />
-                          <p>{subItem[col.slug]}</p>
-                        </div>
-                      ) : (
-                        subItem[col.slug]
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+            <FolderRow
+              pageName={pageName}
+              tableSettings={tableSettings}
+              view={view}
+              level={level}
+              columns={columns}
+              item={item}
+              handleFolderDoubleClick={handleFolderDoubleClick}
+            />
           </React.Fragment>
         );
       } else {
         return (
-          <tr
-            key={item.guid}
-            className={styles.child_row}
-            style={{paddingLeft: `${(level + 1) * 40}px`}}>
-            {columns.map((col, index) => (
-              <td key={index}>
-                {index === 0 ? (
-                  <div className={styles.childTd}>
-                    <img src="/img/child_icon.svg" alt="" />
-                    <p>{item[col.slug]}</p>
-                  </div>
-                ) : (
-                  item[col.slug]
-                )}
-              </td>
-            ))}
-          </tr>
+          <ItemsRow
+            view={view}
+            tableSettings={tableSettings}
+            pageName={pageName}
+            navigateToDetailPage={navigateToDetailPage}
+            columns={columns}
+            level={level}
+            item={item}
+          />
         );
       }
     });
   };
+
+  if (hasValidFilters(filters) || Boolean(searchText)) {
+    return (
+      <tbody>
+        {foldersState?.length ? (
+          foldersState?.map((item) => (
+            <FiltersRow
+              navigateToDetailPage={navigateToDetailPage}
+              columns={columns}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              view={view}
+              item={item}
+            />
+          ))
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <CircularProgress sx={{color: "#449424"}} size={50} />
+          </div>
+        )}
+      </tbody>
+    );
+  }
 
   if (currentFolder) {
     const {children, items} = currentFolder;
@@ -163,57 +194,47 @@ function TableBody({toggleGroup, openGroups, folders, columns}) {
 
     return (
       <tbody>
-        <tr onClick={handleBackClick} className={styles.back_row}>
-          <td colSpan={columns.length}>
-            <button className={styles.back_btn}>
-              <span>
-                <ArrowBackIcon />
-              </span>
-              <div className={styles.current_folder_name}>
-                <span className={styles.folder_icon}>
-                  <img src="/img/folder_icon.svg" alt="" />
-                </span>
-                {currentFolder.name}
-              </div>
-            </button>
-          </td>
-        </tr>
-        {hasChildren && renderRows(children, 1)}
-        {hasItems ? (
-          items.response.map((item) => (
-            <tr
-              key={item.guid}
-              className={styles.child_row}
-              style={{paddingLeft: "40px"}}>
-              {columns.map((col, index) => (
-                <td key={index}>
-                  {index === 0 ? (
-                    <div className={styles.childTd}>
-                      <img src="/img/child_icon.svg" alt="" />
-                      <p>{item[col.slug]}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td
-              style={{paddingLeft: "60px"}}
-              colSpan={columns.length}
-              className={styles.empty_state}>
-              No items found in this folder.
-            </td>
-          </tr>
-        )}
+        <ChildRows
+          handleBackClick={handleBackClick}
+          currentFolder={currentFolder}
+          renderRows={renderRows}
+          navigateToDetailPage={navigateToDetailPage}
+          columns={columns}
+          hasChildren={hasChildren}
+          hasItems={hasItems}
+          items={items}
+          children={children}
+          tableSettings={tableSettings}
+          pageName={pageName}
+          handleFolderDoubleClick={handleFolderDoubleClick}
+          setFoldersState={setFoldersState}
+          menuItem={menuItem}
+          folderIds={folderIds}
+          setFolderIds={setFolderIds}
+        />
       </tbody>
     );
   }
 
-  return <tbody>{renderRows(folderHierarchy)}</tbody>;
+  return (
+    <tbody>
+      {foldersState?.length ? (
+        renderRows(folderHierarchy)
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <CircularProgress sx={{color: "#449424"}} size={50} />
+        </div>
+      )}
+    </tbody>
+  );
 }
 
 export default TableBody;

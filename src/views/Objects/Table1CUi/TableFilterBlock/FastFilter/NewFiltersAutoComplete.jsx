@@ -1,6 +1,5 @@
 import {Box, Fade, Menu, TextField} from "@mui/material";
 import {useMemo, useState} from "react";
-
 import styles from "./style.module.scss";
 import useDebounce from "../../../../../hooks/useDebounce";
 import {useDispatch} from "react-redux";
@@ -56,11 +55,6 @@ const FilterAutoComplete = ({
     }
   };
 
-  const onClearButtonClick = (e) => {
-    e.stopPropagation();
-    onChange(undefined);
-  };
-
   const clearFilter = (e) => {
     e.stopPropagation();
     dispatch(
@@ -71,12 +65,13 @@ const FilterAutoComplete = ({
       })
     );
   };
+
   return (
     <div className={styles.autocomplete}>
       {value?.length === 0 ? (
         <div onClick={handleClick} className={styles.filterListItem}>
           <p>{field?.label}</p>
-          <img src="/img/plus.svg" alt="" />
+          {/* <img src="/img/plus.svg" alt="" /> */}
         </div>
       ) : (
         <div onClick={handleClick} className={styles.filterListItemActive}>
@@ -94,7 +89,7 @@ const FilterAutoComplete = ({
         TransitionComponent={Fade}
         onClose={handleClose}
         classes={{list: styles.menu, paper: styles.paper}}>
-        <Box sx={{width: "326px"}}>
+        <Box className={styles.menuBox} sx={{minWidth: "326px"}}>
           <div className={styles.searchBox}>
             <button className={styles.searchBtn}>
               <img src="/img/search_icon.svg" alt="" />
@@ -123,18 +118,33 @@ const FilterAutoComplete = ({
               }}
             />
           </div>
-          <div className={styles.menuItems}>
-            {options?.map((filter, index) => (
-              <div
-                className={styles.menuItem}
-                key={index}
-                onClick={() => {
-                  rowClickHandler(filter);
-                }}>
-                {filter?.label}
-              </div>
-            ))}
-          </div>
+          {field?.type === "SINGLE_LINE" ? (
+            <div className={styles.menuItemsSingle}>
+              {options?.map((filter, index) => (
+                <div
+                  className={styles.menuItem}
+                  key={index}
+                  onClick={() => {
+                    rowClickHandler(filter);
+                  }}>
+                  {filter?.label}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.menuItems}>
+              {options?.map((filter, index) => (
+                <div
+                  className={styles.menuItem}
+                  key={index}
+                  onClick={() => {
+                    rowClickHandler(filter);
+                  }}>
+                  {filter?.label}
+                </div>
+              ))}
+            </div>
+          )}
         </Box>
       </Menu>
     </div>

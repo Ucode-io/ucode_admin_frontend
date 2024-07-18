@@ -10,30 +10,13 @@ import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
 import useFilters from "../../../hooks/useFilters";
 
-function Table1CUi({menuItem, view, fieldsMap}) {
+function Table1CUi({menuItem, view, fieldsMap, computedVisibleFields}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
   const [limit, setLimit] = useState(10);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState(0);
   const {filters} = useFilters(tableSlug, view.id);
-
-  const {data: {fields} = {data: []}, isLoading} = useQuery(
-    ["GET_OBJECT_FIELDS", {tableSlug}],
-    () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {},
-      });
-    },
-    {
-      cacheTime: 10,
-      select: (res) => {
-        const fields = res.data?.fields ?? [];
-        return {
-          fields,
-        };
-      },
-    }
-  );
+  const [searchText, setSearchText] = useState();
 
   function hasValidFilters(filters) {
     if (!filters || typeof filters !== "object") {
@@ -55,22 +38,24 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     });
   }
 
-  const {data: {filteredItems} = {data: []}, isLoading4} = useQuery({
+  const {data: {filteredItems} = {data: []}, isLoading} = useQuery({
     queryKey: [
       "GET_OBJECTS_LIST",
       {
         filters,
+        searchText,
       },
     ],
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
+          search: searchText,
         },
       });
     },
     cacheTime: 10,
-    enabled: hasValidFilters(filters),
+    enabled: hasValidFilters(filters) || Boolean(searchText),
     select: (res) => {
       const filteredItems = res?.data?.response;
       return {
@@ -102,7 +87,11 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     }
   );
 
-  const folders = hasValidFilters(filters) ? filteredItems : foldersList;
+  const folders =
+    hasValidFilters(filters) || Boolean(searchText)
+      ? filteredItems
+      : foldersList;
+
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
@@ -137,11 +126,11 @@ function Table1CUi({menuItem, view, fieldsMap}) {
     const sortedArray = commonItems?.concat(remainingItems);
     return sortedArray;
   }
-  console.log("filtersssssssssssssss", filters);
+
   return (
     <Box>
       <TableUiHead menuItem={menuItem} />
-      <TableHeadTitle />
+      <TableHeadTitle menuItem={menuItem} />
       <TableFilterBlock
         fields={columns}
         openFilter={openFilter}
@@ -149,7 +138,10 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         view={view}
         fieldsMap={fieldsMap}
         menuItem={menuItem}
+        setSearchText={setSearchText}
+        computedVisibleFields={computedVisibleFields}
       />
+
       <TableComponent
         folders={folders}
         fields={columns}
@@ -159,6 +151,9 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         setLimit={setLimit}
         offset={offset}
         setOffset={setOffset}
+        view={view}
+        menuItem={menuItem}
+        searchText={searchText}
       />
     </Box>
   );

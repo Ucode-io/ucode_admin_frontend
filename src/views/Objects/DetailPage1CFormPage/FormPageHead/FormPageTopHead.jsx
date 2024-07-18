@@ -1,14 +1,11 @@
-import {Box, Button} from "@mui/material";
+import {Box} from "@mui/material";
 import React, {useState} from "react";
 import styles from "./style.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import {useNavigate, useParams} from "react-router-dom";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ShareModal from "../../ShareModal/ShareModal";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 
-function TableUiHead({menuItem}) {
+function FormPageTopHead({menuItem}) {
   const {appId, tableSlug} = useParams();
   const [parentMenu, setParentMenu] = useState();
   const navigate = useNavigate();
@@ -22,11 +19,6 @@ function TableUiHead({menuItem}) {
       },
     },
   });
-
-  const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
-    navigate(url);
-  };
 
   return (
     <div className={styles.tableUiHead}>
@@ -53,32 +45,8 @@ function TableUiHead({menuItem}) {
           {menuItem?.label ?? ""}
         </Box>
       </Box>
-      <Box sx={{display: "flex", alignItems: "center", gap: "12px"}}>
-        <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-          <ShareModal newTableView={true} />
-        </PermissionWrapperV2>
-
-        <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-          <Button
-            variant="outlined"
-            onClick={navigateToSettingsPage}
-            style={{
-              borderColor: "#337E28",
-              width: "35px",
-              height: "35px",
-              padding: "0px",
-              minWidth: "35px",
-            }}>
-            <SettingsIcon
-              style={{
-                color: "#337E28",
-              }}
-            />
-          </Button>
-        </PermissionWrapperV2>
-      </Box>
     </div>
   );
 }
 
-export default TableUiHead;
+export default FormPageTopHead;

@@ -10,7 +10,7 @@ import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
 import useFilters from "../../../hooks/useFilters";
 
-function Table1CUi({menuItem, view, fieldsMap}) {
+function Table1CUi({menuItem, view, fieldsMap, computedVisibleFields}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
   const [limit, setLimit] = useState(10);
@@ -139,6 +139,7 @@ function Table1CUi({menuItem, view, fieldsMap}) {
         fieldsMap={fieldsMap}
         menuItem={menuItem}
         setSearchText={setSearchText}
+        computedVisibleFields={computedVisibleFields}
       />
 
       <TableComponent

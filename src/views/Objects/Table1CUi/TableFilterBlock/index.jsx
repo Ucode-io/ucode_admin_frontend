@@ -19,6 +19,7 @@ function TableFilterBlock({
   view,
   menuItem,
   setSearchText,
+  computedVisibleFields,
 }) {
   const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -124,7 +125,7 @@ function TableFilterBlock({
             Создать группу
           </button>
           <DownloadMenu
-            visibleFields={visibleFields}
+            computedVisibleFields={computedVisibleFields}
             view={view}
             menuItem={menuItem}
           />

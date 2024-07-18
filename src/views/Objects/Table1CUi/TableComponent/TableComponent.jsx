@@ -22,6 +22,7 @@ const TableComponent = ({
   searchText,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
+  const [folderIds, setFolderIds] = useState([]);
   const location = useLocation();
   const dispatch = useDispatch();
   const pageName =
@@ -102,8 +103,10 @@ const TableComponent = ({
           openFilter ? styles.tableWrapperActive : styles.tableWrapper
         }>
         <table className={styles.expandable_table}>
-          <TableHead columns={fields} view={view} />
+          <TableHead folderIds={folderIds} columns={fields} view={view} />
           <TableBody
+            setFolderIds={setFolderIds}
+            folderIds={folderIds}
             columns={fields}
             folders={folders}
             toggleGroup={toggleGroup}
@@ -115,6 +118,7 @@ const TableComponent = ({
         </table>
       </div>
       <CPagination
+        folderIds={folderIds}
         offset={offset}
         setOffset={setOffset}
         limit={limit}

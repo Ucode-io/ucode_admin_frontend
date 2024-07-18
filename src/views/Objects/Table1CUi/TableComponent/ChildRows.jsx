@@ -96,7 +96,7 @@ const ChildRows = ({
                         : "relative"
                     }`,
                     left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                      ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
@@ -161,7 +161,7 @@ const ChildRows = ({
                         : "relative"
                     }`,
                     left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id) + 0}px`
+                      ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(

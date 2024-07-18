@@ -1,4 +1,4 @@
-const calculateWidthFixedColumn = (colId) => {
+const calculateWidthFixedColumn = (colId, columns) => {
   const prevElementIndex = columns?.findIndex((item) => item.id === colId);
 
   if (prevElementIndex === -1 || prevElementIndex === 0) {

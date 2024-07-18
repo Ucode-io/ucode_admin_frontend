@@ -14,7 +14,7 @@ function DownloadMenu({
   fieldSlugId,
   fieldSlug,
   view,
-  visibleFields,
+  computedVisibleFields,
   sort,
 }) {
   const {appId, tableSlug} = useParams();
@@ -37,7 +37,7 @@ function DownloadMenu({
           [fieldSlug]: fieldSlugId,
           ...sort,
           ...filters,
-          field_ids: visibleFields,
+          field_ids: computedVisibleFields,
           language: i18n?.language,
         },
       });
@@ -58,7 +58,7 @@ function DownloadMenu({
           [fieldSlug]: fieldSlugId,
           ...sort,
           ...filters,
-          field_ids: visibleFields,
+          field_ids: computedVisibleFields,
           language: i18n?.language,
         },
       });

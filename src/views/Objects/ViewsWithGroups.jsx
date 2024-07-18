@@ -208,7 +208,12 @@ const ViewsWithGroups = ({
   return (
     <>
       {view?.attributes?.table_1c_ui ? (
-        <Table1CUi menuItem={menuItem} view={view} fieldsMap={fieldsMap} />
+        <Table1CUi
+          computedVisibleFields={computedVisibleFields}
+          menuItem={menuItem}
+          view={view}
+          fieldsMap={fieldsMap}
+        />
       ) : (
         <Box>
           {updateLoading && (

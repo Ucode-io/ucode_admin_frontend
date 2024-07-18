@@ -11,14 +11,22 @@ import FiltersRow from "./FiltersRow";
 import FolderRow from "./FolderRow";
 import ItemsRow from "./ItemsRow";
 
-function TableBody({folders, columns, view, menuItem, searchText}) {
+function TableBody({
+  folders,
+  columns,
+  view,
+  menuItem,
+  searchText,
+  setFolderIds,
+  folderIds,
+}) {
   const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
   const [parentId, setParentId] = useState("");
-  const [folderIds, setFolderIds] = useState([]);
+
   const {filters} = useFilters(tableSlug, view.id);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const location = useLocation();

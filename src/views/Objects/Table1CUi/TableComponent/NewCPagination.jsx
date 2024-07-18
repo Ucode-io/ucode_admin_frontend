@@ -9,6 +9,7 @@ function CPagination({
   count,
   setOffset,
   offset,
+  folderIds,
 }) {
   const userRef = useRef();
   const options = [
@@ -54,47 +55,49 @@ function CPagination({
 
       <div className={styles.cpagination}>
         <Stack spacing={2}>
-          <Pagination
-            ref={userRef}
-            onChange={handlePageChange}
-            count={Math.ceil(count / limit)}
-            page={currentPage}
-            shape="rounded"
-            renderItem={(item) => {
-              if (item.type === "previous") {
-                return (
-                  <button
-                    className={styles.paginationBtn}
-                    onClick={() => setOffset(offset - limit)}
-                    disabled={currentPage === 1}>
-                    Previous
-                  </button>
-                );
-              } else if (item.type === "next") {
-                return (
-                  <button
-                    className={styles.paginationBtn}
-                    onClick={() => setOffset(offset + limit)}
-                    disabled={currentPage === Math.ceil(count / limit)}>
-                    Next
-                  </button>
-                );
-              } else {
-                return (
-                  <PaginationItem
-                    {...item}
-                    selected={item.page === currentPage}
-                    sx={{
-                      "&.Mui-selected": {
-                        backgroundColor: "#F9FAFB",
-                        fontWeight: "bold",
-                      },
-                    }}
-                  />
-                );
-              }
-            }}
-          />
+          {!folderIds?.length && (
+            <Pagination
+              ref={userRef}
+              onChange={handlePageChange}
+              count={Math.ceil(count / limit)}
+              page={currentPage}
+              shape="rounded"
+              renderItem={(item) => {
+                if (item.type === "previous") {
+                  return (
+                    <button
+                      className={styles.paginationBtn}
+                      onClick={() => setOffset(offset - limit)}
+                      disabled={currentPage === 1}>
+                      Previous
+                    </button>
+                  );
+                } else if (item.type === "next") {
+                  return (
+                    <button
+                      className={styles.paginationBtn}
+                      onClick={() => setOffset(offset + limit)}
+                      disabled={currentPage === Math.ceil(count / limit)}>
+                      Next
+                    </button>
+                  );
+                } else {
+                  return (
+                    <PaginationItem
+                      {...item}
+                      selected={item.page === currentPage}
+                      sx={{
+                        "&.Mui-selected": {
+                          backgroundColor: "#F9FAFB",
+                          fontWeight: "bold",
+                        },
+                      }}
+                    />
+                  );
+                }
+              }}
+            />
+          )}
         </Stack>
       </div>
     </div>

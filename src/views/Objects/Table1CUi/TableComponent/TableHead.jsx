@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import styles from "./style.module.scss";
 import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
@@ -6,8 +6,9 @@ import constructorViewService from "../../../../services/constructorViewService"
 import {useQueryClient} from "react-query";
 import {useLocation, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
+import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 
-function TableHead({columns, view}) {
+function TableHead({columns, view, folderIds}) {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
@@ -45,23 +46,6 @@ function TableHead({columns, view}) {
       });
   };
 
-  const calculateWidthFixedColumn = (colId) => {
-    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
-
-    if (prevElementIndex === -1 || prevElementIndex === 0) {
-      return 0;
-    }
-
-    let totalWidth = 0;
-
-    for (let i = 0; i < prevElementIndex; i++) {
-      const element = document.querySelector(`[id='${columns?.[i].id}']`);
-      totalWidth += element?.offsetWidth || 0;
-    }
-
-    return totalWidth;
-  };
-
   const fixColumnChangeHandler = (column, isChecked) => {
     setColumnFix(true);
     const computedData = {
@@ -85,6 +69,8 @@ function TableHead({columns, view}) {
       });
   };
 
+  console.log("folderIdsfolderIds", folderIds);
+
   return (
     <>
       <thead>
@@ -93,12 +79,14 @@ function TableHead({columns, view}) {
             <th
               id={column.id}
               style={{
-                minWidth: tableSize?.[pageName]?.[column.id]
-                  ? tableSize?.[pageName]?.[column.id]
-                  : "auto",
-                width: !tableSize?.[pageName]?.[column.id]
-                  ? tableSize?.[pageName]?.[column.id]
-                  : "auto",
+                minWidth:
+                  tableSize?.[pageName]?.[column.id] && !folderIds?.length
+                    ? tableSize?.[pageName]?.[column.id]
+                    : "auto",
+                width:
+                  !tableSize?.[pageName]?.[column.id] && !folderIds?.length
+                    ? tableSize?.[pageName]?.[column.id]
+                    : "auto",
                 position: `${
                   tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
@@ -106,13 +94,17 @@ function TableHead({columns, view}) {
                     ? "sticky"
                     : "sticky"
                 }`,
-                left: view?.attributes?.fixedColumns?.[column?.id]
-                  ? `${calculateWidthFixedColumn(column.id) + 0}px`
-                  : "0",
+                left:
+                  view?.attributes?.fixedColumns?.[column?.id] &&
+                  !folderIds?.length
+                    ? `${calculateWidthFixedColumn(column.id, columns) + 0}px`
+                    : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
-                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                  )?.isStiky ||
+                  (view?.attributes?.fixedColumns?.[column?.id] &&
+                    !folderIds?.length)
                     ? "#F6F6F6"
                     : "#fff"
                 }`,

@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./style.module.scss";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
+import {useSelector} from "react-redux";
 
 function FolderRow({
   pageName,
@@ -25,7 +26,7 @@ function FolderRow({
                 : "relative"
             }`,
             left: view?.attributes?.fixedColumns?.[col?.id]
-              ? `${calculateWidthFixedColumn(col.id) + 0}px`
+              ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
               : "0",
             backgroundColor: `${
               tableSettings?.[pageName]?.find((item) => item?.id === col?.id)

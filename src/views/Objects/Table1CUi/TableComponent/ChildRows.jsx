@@ -85,7 +85,10 @@ const ChildRows = ({
         !isLoading ? (
           <>
             {foldersList?.map((item) => (
-              <tr className={styles.group_row} style={{paddingLeft: `20px`}}>
+              <tr
+                onDoubleClick={() => handleFolderDoubleClick(item)}
+                className={styles.group_row}
+                style={{paddingLeft: `20px`}}>
                 {columns.map((col, index) => (
                   <td
                     style={{
@@ -117,19 +120,7 @@ const ChildRows = ({
                     key={index}>
                     {index === 0 ? (
                       <div className={styles.td_row}>
-                        {/* {level === 0 && (
-                    <button
-                      onClick={() => handleToggleGroup(item.id)}
-                      className={styles.toggle_btn}>
-                      {isOpen ? (
-                        <img src="/img/dropdown_icon.svg" alt="" />
-                      ) : (
-                        <img src="/img/right_icon.svg" alt="" />
-                      )}
-                    </button>
-                  )} */}
                         <span
-                          onDoubleClick={() => handleFolderDoubleClick(item)}
                           style={{marginLeft: `30px`}}
                           className={styles.folder_icon}>
                           <img src="/img/folder_icon.svg" alt="" />

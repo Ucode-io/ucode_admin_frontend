@@ -37,21 +37,23 @@ function CPagination({
 
   return (
     <div className={styles.tableFooter}>
-      <div className={styles.selectLimit}>
-        <p> Показать по</p>
-        <div className={styles.limitSide}>
-          <CSelect
-            options={options}
-            disabledHelperText
-            size="small"
-            value={limit}
-            onChange={(e) => getLimitValue(e.target.value)}
-            inputProps={{style: {borderRadius: 50}}}
-            endAdornment={null}
-            sx={null}
-          />
+      {!folderIds?.length && (
+        <div className={styles.selectLimit}>
+          <p> Показать по</p>
+          <div className={styles.limitSide}>
+            <CSelect
+              options={options}
+              disabledHelperText
+              size="small"
+              value={limit}
+              onChange={(e) => getLimitValue(e.target.value)}
+              inputProps={{style: {borderRadius: 50}}}
+              endAdornment={null}
+              sx={null}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.cpagination}>
         <Stack spacing={2}>

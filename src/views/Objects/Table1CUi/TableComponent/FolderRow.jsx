@@ -14,6 +14,7 @@ function FolderRow({
 }) {
   return (
     <tr
+      onDoubleClick={() => handleFolderDoubleClick(item, level)}
       className={styles.group_row}
       style={{paddingLeft: `${(level + 1) * 20}px`}}>
       {columns.map((col, index) => (
@@ -45,7 +46,6 @@ function FolderRow({
           {index === 0 ? (
             <div className={styles.td_row}>
               <span
-                onDoubleClick={() => handleFolderDoubleClick(item, level)}
                 style={{marginLeft: `${level * 30}px`}}
                 className={styles.folder_icon}>
                 <img src="/img/folder_icon.svg" alt="" />

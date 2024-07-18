@@ -1,17 +1,15 @@
+import {CircularProgress} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import styles from "./style.module.scss";
-import useFilters from "../../../../hooks/useFilters";
+import {useSelector} from "react-redux";
 import {useLocation, useParams} from "react-router-dom";
+import useFilters from "../../../../hooks/useFilters";
+import useTabRouter from "../../../../hooks/useTabRouter";
 import hasValidFilters from "../../../../utils/hasValidFilters";
 import {mergeStringAndState} from "../../../../utils/jsonPath";
-import useTabRouter from "../../../../hooks/useTabRouter";
-import {useSelector} from "react-redux";
-import {CircularProgress} from "@mui/material";
-import newTableService from "../../../../services/newTableService";
-import {useQuery} from "react-query";
 import ChildRows from "./ChildRows";
 import FiltersRow from "./FiltersRow";
 import FolderRow from "./FolderRow";
+import ItemsRow from "./ItemsRow";
 
 function TableBody({folders, columns, view, menuItem, searchText}) {
   const {tableSlug, appId} = useParams();
@@ -114,23 +112,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
     setFolderHierarchy([...rootFolders, ...rootItems]);
   }, [foldersState]);
 
-  const calculateWidthFixedColumn = (colId) => {
-    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
-
-    if (prevElementIndex === -1 || prevElementIndex === 0) {
-      return 0;
-    }
-
-    let totalWidth = 0;
-
-    for (let i = 0; i < prevElementIndex; i++) {
-      const element = document.querySelector(`[id='${columns?.[i].id}']`);
-      totalWidth += element?.offsetWidth || 0;
-    }
-
-    return totalWidth;
-  };
-
   useEffect(() => {
     if (!currentFolder?.id) {
       localStorage.removeItem("folder_id");
@@ -146,7 +127,6 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
         return (
           <React.Fragment key={item.id}>
             <FolderRow
-              calculateWidthFixedColumn={calculateWidthFixedColumn}
               pageName={pageName}
               tableSettings={tableSettings}
               view={view}
@@ -155,114 +135,19 @@ function TableBody({folders, columns, view, menuItem, searchText}) {
               item={item}
               handleFolderDoubleClick={handleFolderDoubleClick}
             />
-            {/* {isOpen && hasChildren && renderRows(item.children, level + 1)}
-            {isOpen &&
-              item.items?.response?.map((subItem) => (
-                <tr
-                  onClick={() => {
-                    navigateToDetailPage(subItem);
-                  }}
-                  key={subItem.guid}
-                  className={styles.child_row}
-                  style={{
-                    paddingLeft: `${(level + 1) * 40}px`,
-                    cursor: "pointer",
-                  }}>
-                  {columns.map((col, index) => (
-                    <td
-                      style={{
-                        position: `${
-                          tableSettings?.[pageName]?.find(
-                            (item) => item?.id === col?.id
-                          )?.isStiky ||
-                          view?.attributes?.fixedColumns?.[col?.id]
-                            ? "sticky"
-                            : "relative"
-                        }`,
-                        left: view?.attributes?.fixedColumns?.[col?.id]
-                          ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                          : "0",
-                        backgroundColor: `${
-                          tableSettings?.[pageName]?.find(
-                            (item) => item?.id === col?.id
-                          )?.isStiky ||
-                          view?.attributes?.fixedColumns?.[col?.id]
-                            ? "#F6F6F6"
-                            : "#fff"
-                        }`,
-                        zIndex: `${
-                          tableSettings?.[pageName]?.find(
-                            (item) => item?.id === col?.id
-                          )?.isStiky ||
-                          view?.attributes?.fixedColumns?.[col?.id]
-                            ? "1"
-                            : "0"
-                        }`,
-                      }}
-                      key={index}>
-                      {index === 0 ? (
-                        <div className={styles.childTd}>
-                          <img src="/img/child_icon.svg" alt="" />
-                          <p>{subItem[col.slug]}</p>
-                        </div>
-                      ) : (
-                        subItem[col.slug]
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))} */}
           </React.Fragment>
         );
       } else {
         return (
-          <tr
-            onClick={() => {
-              navigateToDetailPage(item);
-            }}
-            key={item.guid}
-            className={styles.child_row}
-            style={{paddingLeft: `${(level + 1) * 40}px`, cursor: "pointer"}}>
-            {columns.map((col, index) => (
-              <td
-                style={{
-                  position: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "sticky"
-                      : "relative"
-                  }`,
-                  left: view?.attributes?.fixedColumns?.[col?.id]
-                    ? `${calculateWidthFixedColumn(col.id) + 0}px`
-                    : "0",
-                  backgroundColor: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "#F6F6F6"
-                      : "#fff"
-                  }`,
-                  zIndex: `${
-                    tableSettings?.[pageName]?.find(
-                      (item) => item?.id === col?.id
-                    )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                      ? "1"
-                      : "0"
-                  }`,
-                }}
-                key={index}>
-                {index === 0 ? (
-                  <div className={styles.childTd}>
-                    <img src="/img/child_icon.svg" alt="" />
-                    <p>{item[col.slug]}</p>
-                  </div>
-                ) : (
-                  item[col.slug]
-                )}
-              </td>
-            ))}
-          </tr>
+          <ItemsRow
+            view={view}
+            tableSettings={tableSettings}
+            pageName={pageName}
+            navigateToDetailPage={navigateToDetailPage}
+            columns={columns}
+            level={level}
+            item={item}
+          />
         );
       }
     });

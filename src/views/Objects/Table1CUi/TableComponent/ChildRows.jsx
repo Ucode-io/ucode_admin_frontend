@@ -5,6 +5,7 @@ import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
 import newTableService from "../../../../services/newTableService";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
+import {Box, CircularProgress} from "@mui/material";
 
 const ChildRows = ({
   columns,
@@ -18,15 +19,14 @@ const ChildRows = ({
   handleBackClick,
   handleFolderDoubleClick,
   setFoldersState,
-  parentId,
   menuItem,
   folderIds,
   setFolderIds,
 }) => {
   const {tableSlug} = useParams();
 
-  const {data: {foldersList, count} = {data: []}, isLoading2} = useQuery(
-    ["GET_FOLDER_LIST", {tableSlug, folderIds}],
+  const {data: {foldersList, count} = {data: []}, isLoading} = useQuery(
+    ["GET_FOLDER_LIST", {tableSlug, currentFolder}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
@@ -34,7 +34,7 @@ const ChildRows = ({
       });
     },
     {
-      enabled: Boolean(parentId),
+      enabled: Boolean(currentFolder?.id),
       cacheTime: 10,
       select: (res) => {
         const foldersList = res?.folder_groups ?? [];
@@ -82,116 +82,130 @@ const ChildRows = ({
         </td>
       </tr>
       {hasItems ? (
-        <>
-          {foldersList?.map((item) => (
-            <tr className={styles.group_row} style={{paddingLeft: `20px`}}>
-              {columns.map((col, index) => (
-                <td
-                  style={{
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
-                      : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                  }}
-                  key={index}>
-                  {index === 0 ? (
-                    <div className={styles.td_row}>
-                      {/* {level === 0 && (
-                      <button
-                        onClick={() => handleToggleGroup(item.id)}
-                        className={styles.toggle_btn}>
-                        {isOpen ? (
-                          <img src="/img/dropdown_icon.svg" alt="" />
-                        ) : (
-                          <img src="/img/right_icon.svg" alt="" />
-                        )}
-                      </button>
-                    )} */}
-                      <span
-                        onDoubleClick={() => handleFolderDoubleClick(item)}
-                        style={{marginLeft: `30px`}}
-                        className={styles.folder_icon}>
-                        <img src="/img/folder_icon.svg" alt="" />
-                      </span>
-                      <p>{item.name}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-          {items.response.map((item) => (
-            <tr
-              onClick={() => {
-                navigateToDetailPage(item);
-              }}
-              key={item.guid}
-              className={styles.child_row}
-              style={{paddingLeft: "40px"}}>
-              {columns.map((col, index) => (
-                <td
-                  style={{
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[col?.id]
-                      ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
-                      : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === col?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                  }}
-                  key={index}>
-                  {index === 0 ? (
-                    <div className={styles.childTd}>
-                      <img src="/img/child_icon.svg" alt="" />
-                      <p>{item[col.slug]}</p>
-                    </div>
-                  ) : (
-                    item[col.slug]
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </>
+        !isLoading ? (
+          <>
+            {foldersList?.map((item) => (
+              <tr className={styles.group_row} style={{paddingLeft: `20px`}}>
+                {columns.map((col, index) => (
+                  <td
+                    style={{
+                      position: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "sticky"
+                          : "relative"
+                      }`,
+                      left: view?.attributes?.fixedColumns?.[col?.id]
+                        ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
+                        : "0",
+                      backgroundColor: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "#F6F6F6"
+                          : "#fff"
+                      }`,
+                      zIndex: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "1"
+                          : "0"
+                      }`,
+                    }}
+                    key={index}>
+                    {index === 0 ? (
+                      <div className={styles.td_row}>
+                        {/* {level === 0 && (
+                    <button
+                      onClick={() => handleToggleGroup(item.id)}
+                      className={styles.toggle_btn}>
+                      {isOpen ? (
+                        <img src="/img/dropdown_icon.svg" alt="" />
+                      ) : (
+                        <img src="/img/right_icon.svg" alt="" />
+                      )}
+                    </button>
+                  )} */}
+                        <span
+                          onDoubleClick={() => handleFolderDoubleClick(item)}
+                          style={{marginLeft: `30px`}}
+                          className={styles.folder_icon}>
+                          <img src="/img/folder_icon.svg" alt="" />
+                        </span>
+                        <p>{item.name}</p>
+                      </div>
+                    ) : (
+                      item[col.slug]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {items.response.map((item) => (
+              <tr
+                onClick={() => {
+                  navigateToDetailPage(item);
+                }}
+                key={item.guid}
+                className={styles.child_row}
+                style={{paddingLeft: "40px"}}>
+                {columns.map((col, index) => (
+                  <td
+                    style={{
+                      position: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "sticky"
+                          : "relative"
+                      }`,
+                      left: view?.attributes?.fixedColumns?.[col?.id]
+                        ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
+                        : "0",
+                      backgroundColor: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "#F6F6F6"
+                          : "#fff"
+                      }`,
+                      zIndex: `${
+                        tableSettings?.[pageName]?.find(
+                          (item) => item?.id === col?.id
+                        )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
+                          ? "1"
+                          : "0"
+                      }`,
+                    }}
+                    key={index}>
+                    {index === 0 ? (
+                      <div className={styles.childTd}>
+                        <img src="/img/child_icon.svg" alt="" />
+                        <p>{item[col.slug]}</p>
+                      </div>
+                    ) : (
+                      item[col.slug]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </>
+        ) : (
+          <Box
+            sx={{
+              position: "absolute",
+              height: "50%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <CircularProgress sx={{color: "#449424"}} size={50} />
+          </Box>
+        )
       ) : (
         <tr>
           <td

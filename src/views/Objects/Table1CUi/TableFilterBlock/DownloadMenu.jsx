@@ -52,7 +52,7 @@ function DownloadMenu({menuItem}) {
               Скачать XLSX
             </Typography>
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               navigateToSettingsPage();
               handleClose();
@@ -67,7 +67,7 @@ function DownloadMenu({menuItem}) {
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Settings
             </Typography>
-          </MenuItem>
+          </MenuItem> */}
         </Box>
       </Menu>
     </>

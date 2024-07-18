@@ -2,7 +2,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, {useEffect} from "react";
 import styles from "./style.module.scss";
 import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import newTableService from "../../../../services/newTableService";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import {Box, CircularProgress} from "@mui/material";
@@ -23,7 +23,8 @@ const ChildRows = ({
   folderIds,
   setFolderIds,
 }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug, appId} = useParams();
+  const navigate = useNavigate();
 
   const {data: {foldersList, count} = {data: []}, isLoading} = useQuery(
     ["GET_FOLDER_LIST", {tableSlug, currentFolder}],
@@ -86,7 +87,7 @@ const ChildRows = ({
           <>
             {foldersList?.map((item) => (
               <tr
-                onDoubleClick={() => handleFolderDoubleClick(item)}
+                onClick={() => handleFolderDoubleClick(item)}
                 className={styles.group_row}
                 style={{paddingLeft: `20px`}}>
                 {columns.map((col, index) => (
@@ -137,7 +138,8 @@ const ChildRows = ({
             {items.response.map((item) => (
               <tr
                 onClick={() => {
-                  navigateToDetailPage(item);
+                  // navigateToDetailPage(item);
+                  navigate(`/main/${appId}/1c/${tableSlug}/${item?.guid}`);
                 }}
                 key={item.guid}
                 className={styles.child_row}

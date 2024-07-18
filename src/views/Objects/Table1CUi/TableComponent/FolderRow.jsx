@@ -14,7 +14,7 @@ function FolderRow({
 }) {
   return (
     <tr
-      onDoubleClick={() => handleFolderDoubleClick(item, level)}
+      onClick={() => handleFolderDoubleClick(item, level)}
       className={styles.group_row}
       style={{paddingLeft: `${(level + 1) * 20}px`}}>
       {columns.map((col, index) => (

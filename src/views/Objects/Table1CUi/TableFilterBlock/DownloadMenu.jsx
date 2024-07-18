@@ -7,6 +7,7 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import useFilters from "../../../../hooks/useFilters";
 import {useTranslation} from "react-i18next";
 import useDownloader from "../../../../hooks/useDownloader";
+import csvFileService from "../../../../services/csvFileService";
 
 function DownloadMenu({
   menuItem,
@@ -23,6 +24,7 @@ function DownloadMenu({
   const {filters} = useFilters(tableSlug, view?.id);
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
+  const [loaderCsv, setLoaderCsv] = useState(false);
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -41,7 +43,6 @@ function DownloadMenu({
       });
 
       const fileName = `${tableSlug}.xlsx`;
-      // window.open('https://' + data.link, { target: '__blank' })
       await download({link: "https://" + data.link, fileName});
     } finally {
       handleClose();
@@ -49,6 +50,26 @@ function DownloadMenu({
     }
   };
 
+  const onClickCsv = async () => {
+    try {
+      setLoaderCsv(true);
+      const {data} = await csvFileService.downloadCsv(tableSlug, {
+        data: {
+          [fieldSlug]: fieldSlugId,
+          ...sort,
+          ...filters,
+          field_ids: visibleFields,
+          language: i18n?.language,
+        },
+      });
+
+      const fileName = `${tableSlug}.csv`;
+      await download({link: "https://" + data.link, fileName});
+    } finally {
+      handleClose();
+      setLoaderCsv(false);
+    }
+  };
   return (
     <>
       <button onClick={handleClick} className={styles.moreBtn}>
@@ -58,8 +79,9 @@ function DownloadMenu({
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <Box sx={{width: "286px"}}>
           <MenuItem
-            onClick={handleClose}
-            // key={index}
+            onClick={() => {
+              onClickCsv();
+            }}
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -74,7 +96,6 @@ function DownloadMenu({
             onClick={() => {
               onClick();
             }}
-            // key={index}
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -90,22 +111,6 @@ function DownloadMenu({
               </div>
             )}
           </MenuItem>
-          {/* <MenuItem
-            onClick={() => {
-              navigateToSettingsPage();
-              handleClose();
-            }}
-            // key={index}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "12px 14px",
-            }}>
-            <Typography
-              sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
-              Settings
-            </Typography>
-          </MenuItem> */}
         </Box>
       </Menu>
     </>

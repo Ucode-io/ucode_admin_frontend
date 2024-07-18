@@ -2,7 +2,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, {useEffect} from "react";
 import styles from "./style.module.scss";
 import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import newTableService from "../../../../services/newTableService";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import {Box, CircularProgress} from "@mui/material";
@@ -23,7 +23,8 @@ const ChildRows = ({
   folderIds,
   setFolderIds,
 }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug, appId} = useParams();
+  const navigate = useNavigate();
 
   const {data: {foldersList, count} = {data: []}, isLoading} = useQuery(
     ["GET_FOLDER_LIST", {tableSlug, currentFolder}],
@@ -85,7 +86,10 @@ const ChildRows = ({
         !isLoading ? (
           <>
             {foldersList?.map((item) => (
-              <tr className={styles.group_row} style={{paddingLeft: `20px`}}>
+              <tr
+                onClick={() => handleFolderDoubleClick(item)}
+                className={styles.group_row}
+                style={{paddingLeft: `20px`}}>
                 {columns.map((col, index) => (
                   <td
                     style={{
@@ -117,19 +121,7 @@ const ChildRows = ({
                     key={index}>
                     {index === 0 ? (
                       <div className={styles.td_row}>
-                        {/* {level === 0 && (
-                    <button
-                      onClick={() => handleToggleGroup(item.id)}
-                      className={styles.toggle_btn}>
-                      {isOpen ? (
-                        <img src="/img/dropdown_icon.svg" alt="" />
-                      ) : (
-                        <img src="/img/right_icon.svg" alt="" />
-                      )}
-                    </button>
-                  )} */}
                         <span
-                          onDoubleClick={() => handleFolderDoubleClick(item)}
                           style={{marginLeft: `30px`}}
                           className={styles.folder_icon}>
                           <img src="/img/folder_icon.svg" alt="" />
@@ -146,7 +138,8 @@ const ChildRows = ({
             {items.response.map((item) => (
               <tr
                 onClick={() => {
-                  navigateToDetailPage(item);
+                  // navigateToDetailPage(item);
+                  navigate(`/main/${appId}/1c/${tableSlug}/${item?.guid}`);
                 }}
                 key={item.guid}
                 className={styles.child_row}

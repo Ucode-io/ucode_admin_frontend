@@ -79,20 +79,20 @@ function TableHead({columns, view, folderIds}) {
             <th
               id={column.id}
               style={{
-                minWidth:
-                  tableSize?.[pageName]?.[column.id] && !folderIds?.length
-                    ? tableSize?.[pageName]?.[column.id]
-                    : "auto",
-                width:
-                  !tableSize?.[pageName]?.[column.id] && !folderIds?.length
-                    ? tableSize?.[pageName]?.[column.id]
-                    : "auto",
+                minWidth: tableSize?.[pageName]?.[column.id]
+                  ? tableSize?.[pageName]?.[column.id]
+                  : "auto",
+                width: !tableSize?.[pageName]?.[column.id]
+                  ? tableSize?.[pageName]?.[column.id]
+                  : "auto",
                 position: `${
                   tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
-                  )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                  )?.isStiky ||
+                  (view?.attributes?.fixedColumns?.[column?.id] &&
+                    !folderIds?.length)
                     ? "sticky"
-                    : "sticky"
+                    : "relative"
                 }`,
                 left:
                   view?.attributes?.fixedColumns?.[column?.id] &&

@@ -71,7 +71,7 @@ const FilterAutoComplete = ({
       {value?.length === 0 ? (
         <div onClick={handleClick} className={styles.filterListItem}>
           <p>{field?.label}</p>
-          <img src="/img/plus.svg" alt="" />
+          {/* <img src="/img/plus.svg" alt="" /> */}
         </div>
       ) : (
         <div onClick={handleClick} className={styles.filterListItemActive}>

@@ -23,7 +23,7 @@
   min-width: 66px;
   @include flexCenter;
   border: 1px solid #d0d5dd;
-  border-radius: 36px;
+  border-radius: 8px;
   padding: 4px 14px;
   color: #344054;
   font-weight: 600;
@@ -31,6 +31,10 @@
   cursor: pointer;
   justify-content: center;
   gap: 5px;
+
+  p {
+    color: #959292;
+  }
 
   .filteLabel {
     font-size: 14px;
@@ -44,7 +48,7 @@
   min-width: 74px;
   @include flexCenter;
   border: 1px solid #d0d5dd;
-  border-radius: 36px;
+  border-radius: 8px;
   padding: 4px 14px;
   color: #344054;
   font-weight: 600;

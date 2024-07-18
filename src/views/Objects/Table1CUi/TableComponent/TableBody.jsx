@@ -23,25 +23,19 @@ function TableBody({
   const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
-  const [openGroupId, setOpenGroupId] = useState(null);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
-  const [parentId, setParentId] = useState("");
+  const [foldersState, setFoldersState] = useState(folders);
 
   const {filters} = useFilters(tableSlug, view.id);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const location = useLocation();
   const {navigateToForm} = useTabRouter();
+
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/")?.length - 1];
 
-  const [foldersState, setFoldersState] = useState(folders);
-  useEffect(() => {
-    setFoldersState(folders);
-  }, [folders]);
-
   const handleFolderDoubleClick = (folder) => {
     setFolderIds((prev) => [...prev, folder?.id]);
-    setParentId(folder?.id);
     setCurrentFolder(folder);
     setBreadcrumbs([...breadcrumbs, folder]);
     if (folder?.id) {
@@ -126,12 +120,13 @@ function TableBody({
     }
   }, [currentFolder]);
 
+  useEffect(() => {
+    setFoldersState(folders);
+  }, [folders]);
+
   const renderRows = (items, level = 0) => {
     return items?.map((item) => {
       if (item.type === "FOLDER") {
-        const hasChildren =
-          item?.children?.length > 0 || item?.items?.response?.length > 0;
-        const isOpen = openGroupId === item.id;
         return (
           <React.Fragment key={item.id}>
             <FolderRow
@@ -213,7 +208,6 @@ function TableBody({
           pageName={pageName}
           handleFolderDoubleClick={handleFolderDoubleClick}
           setFoldersState={setFoldersState}
-          parentId={parentId}
           menuItem={menuItem}
           folderIds={folderIds}
           setFolderIds={setFolderIds}

@@ -69,8 +69,6 @@ function TableHead({columns, view, folderIds}) {
       });
   };
 
-  console.log("folderIdsfolderIds", folderIds);
-
   return (
     <>
       <thead>

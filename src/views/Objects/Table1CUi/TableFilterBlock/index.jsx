@@ -1,5 +1,5 @@
 import {TextField} from "@mui/material";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useDispatch} from "react-redux";
 import {useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -30,6 +30,20 @@ function TableFilterBlock({
   const dispatch = useDispatch();
   const [columns, setColumns] = useState([]);
   const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
+
+  const visibleFields = useMemo(() => {
+    return (
+      view?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        }) ?? []
+    );
+  }, [view?.columns, fieldsMap]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -109,7 +123,11 @@ function TableFilterBlock({
           <button onClick={handleGroup} className={styles.createGroupBtn}>
             Создать группу
           </button>
-          <DownloadMenu menuItem={menuItem} />
+          <DownloadMenu
+            visibleFields={visibleFields}
+            view={view}
+            menuItem={menuItem}
+          />
         </div>
       </div>
 

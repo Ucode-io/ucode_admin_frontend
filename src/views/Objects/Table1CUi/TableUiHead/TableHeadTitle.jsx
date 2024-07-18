@@ -1,11 +1,10 @@
 import React from "react";
 import styles from "./style.module.scss";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-function TableHeadTitle() {
+function TableHeadTitle({menuItem}) {
   return (
     <div className={styles.tableHeadTitle}>
-      <h2>Контрагенты</h2>
+      <h2>{menuItem?.label ?? ""}</h2>
       <div className={styles.tableHeadLinks}>
         {/* <a href="#">
           Счета расходов с контрагентами <OpenInNewIcon />

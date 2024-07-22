@@ -341,6 +341,7 @@
         display: flex;
         align-items: center;
         gap: 20px;
+        position: relative;
       }
     }
 
@@ -464,4 +465,13 @@
 .sections_wrapper {
   height: 500px;
   overflow: auto;
+}
+
+.countBtn {
+  position: absolute;
+  right: 5px;
+  background: #fff;
+  border: none;
+  top: 8px;
+  cursor: pointer;
 }

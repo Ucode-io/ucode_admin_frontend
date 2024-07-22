@@ -3,7 +3,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {Box, Button, Modal, Popover, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Popover,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
@@ -13,6 +20,7 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import useDebounce from "../../hooks/useDebounce";
 
 const style = {
   position: "absolute",
@@ -40,7 +48,8 @@ const ImageUpload = ({
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const [altText, setAltText] = useState("");
+  const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
   const handleCloseImg = () => setOpenFullImg(false);
@@ -111,6 +120,12 @@ const ImageUpload = ({
     }
   };
 
+  const inputChange = useDebounce((val) => {
+    if (value) {
+      onChange(`${value.split("#")[0]}#${val}`);
+    }
+  }, 500);
+
   return (
     <div className={`Gallery ${className}`}>
       {value && (
@@ -128,7 +143,7 @@ const ImageUpload = ({
                   objectFit: "cover",
                 }}
                 className="img"
-                alt=""
+                alt={splitVal}
               />
             </div>
             <Typography
@@ -136,7 +151,7 @@ const ImageUpload = ({
                 fontSize: "10px",
                 color: "#747474",
               }}>
-              {value?.split?.("_")?.[1] ?? ""}
+              {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
 
@@ -203,6 +218,13 @@ const ImageUpload = ({
                 <ChangeCircleIcon />
                 Change Image
               </Button>
+              <Box id="imgAlt">
+                <TextField
+                  defaultValue={splitVal ?? ""}
+                  onChange={(e) => inputChange(e.target.value)}
+                  placeholder="Alt"
+                />
+              </Box>
             </Box>
             <input
               type="file"

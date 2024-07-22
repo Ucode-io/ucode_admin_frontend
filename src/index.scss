@@ -521,3 +521,49 @@ u {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+#detailPage {
+  .MuiPaper-root {
+    margin: 0 0;
+    border-radius: 0px;
+  }
+
+  .MuiButtonBase-root {
+    min-height: 50px !important;
+    border-top: 1px solid #eaecf0;
+  }
+  .css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+    margin: 10px 0;
+  }
+}
+
+#detailPageTabs {
+  .react-tabs__tab--selected {
+    color: #449424;
+    border-bottom: 2px solid #449424;
+  }
+}
+
+#hcTextfield {
+  .MuiFormHelperText-root {
+    color: red;
+  }
+}
+
+#hcMultiline {
+  .ql-toolbar {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .ql-container {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
+#imgAlt {
+  .MuiInputBase-root {
+    height: 30px;
+  }
+}

@@ -54,7 +54,7 @@ const ObjectsFormPage = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
-  console.log("stateeeeeeee", state);
+
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {

@@ -21,6 +21,7 @@ import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import useDebounce from "../../hooks/useDebounce";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 
 const style = {
   position: "absolute",
@@ -33,7 +34,7 @@ const style = {
   p: 4,
 };
 
-const ImageUpload = ({
+const OneCImageUpload = ({
   value,
   onChange,
   className = "",
@@ -52,7 +53,9 @@ const ImageUpload = ({
   const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
-  const handleCloseImg = () => setOpenFullImg(false);
+  const handleCloseImg = () => {
+    setOpenFullImg(false);
+  };
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -131,7 +134,7 @@ const ImageUpload = ({
       {value && (
         <>
           <div
-            className="uploadedImage"
+            className="OneCUploadedImage"
             aria-describedby={id}
             onClick={handleClick}>
             <div className="img">
@@ -322,8 +325,10 @@ const ImageUpload = ({
           sx={{
             padding: 0,
             minWidth: 0,
-            width: "25px",
+            width: "40px",
             height: "25px",
+            background: "none",
+            borderTop: "none",
           }}>
           <input
             type="file"
@@ -335,7 +340,7 @@ const ImageUpload = ({
             disabled={disabled}
             accept=".jpg, .jpeg, .png, .gif"
           />
-          <UploadFileIcon
+          <PhotoLibraryIcon
             style={{
               color: "#747474",
               fontSize: "25px",
@@ -347,4 +352,4 @@ const ImageUpload = ({
   );
 };
 
-export default ImageUpload;
+export default OneCImageUpload;

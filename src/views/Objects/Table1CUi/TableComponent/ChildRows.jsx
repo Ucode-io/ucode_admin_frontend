@@ -139,7 +139,9 @@ const ChildRows = ({
               <tr
                 onClick={() => {
                   // navigateToDetailPage(item);
-                  navigate(`/main/${appId}/1c/${tableSlug}/${item?.guid}`);
+                  navigate(
+                    `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+                  );
                 }}
                 key={item.guid}
                 className={styles.child_row}

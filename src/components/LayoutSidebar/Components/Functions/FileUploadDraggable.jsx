@@ -2,6 +2,7 @@ import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import {useDropzone} from "react-dropzone";
 import "./index.module.scss";
 import RingLoader from "../../../Loaders/RingLoader";
+import {useCallback, useRef} from "react";
 
 const FileUploadWithDraggable = ({setData, loader, data}) => {
   const inputRef = useRef(null);

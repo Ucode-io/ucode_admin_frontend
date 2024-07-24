@@ -2,7 +2,7 @@ import {Controller, useWatch} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
 
-const HFFloatField = ({
+const HCFloatNumberField = ({
   control,
   name = "",
   disabledHelperText = false,
@@ -49,7 +49,6 @@ const HFFloatField = ({
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(" ", "");
-              console.log("valvalvalvalval", val);
               if (!valueWithoutSpaces) onChange("");
               else {
                 if (valueWithoutSpaces.at(-1) === ".")
@@ -85,4 +84,4 @@ const HFFloatField = ({
   );
 };
 
-export default HFFloatField;
+export default HCFloatNumberField;

@@ -537,6 +537,38 @@ u {
   }
 }
 
+#hcSwitchfield {
+  .MuiPaper-root {
+    margin: 0 0;
+    border-radius: 0px;
+  }
+
+  .MuiButtonBase-root {
+    min-height: 0px !important;
+    border-top: 1px solid #eaecf0;
+    bottom: 2px;
+  }
+  .css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+    margin: 10px 0;
+  }
+}
+
+#hcCheckboxfield {
+  .css-17ceore-MuiSvgIcon-root {
+    color: #449424;
+  }
+
+  .MuiButtonBase-root {
+    border-top: none;
+    min-height: 0px !important;
+    padding: 0 !important;
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 26px;
+  }
+}
+
 #detailPageTabs {
   .react-tabs__tab--selected {
     color: #449424;
@@ -565,5 +597,21 @@ u {
 #imgAlt {
   .MuiInputBase-root {
     height: 30px;
+  }
+}
+
+#hcMapfield {
+  .ymaps-2-1-79-inner-panes {
+    border-radius: 8px;
+  }
+}
+
+#hcDatapicker {
+  .css-eih2dq-MuiInputBase-root-MuiOutlinedInput-root {
+    padding-left: 0 !important;
+  }
+  .MuiButtonBase-root {
+    min-height: 30px !important;
+    border-top: none;
   }
 }

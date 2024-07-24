@@ -130,14 +130,19 @@ const OneCImageUpload = ({
   }, 500);
 
   return (
-    <div className={`Gallery ${className}`}>
+    <div id="hcImage" className={`Gallery ${className}`}>
       {value && (
         <>
           <div
             className="OneCUploadedImage"
             aria-describedby={id}
             onClick={handleClick}>
-            <div className="img">
+            <div
+              style={{
+                width: "140px",
+                height: "90px",
+              }}
+              className="img">
               <img
                 src={value}
                 style={{
@@ -325,10 +330,11 @@ const OneCImageUpload = ({
           sx={{
             padding: 0,
             minWidth: 0,
-            width: "40px",
-            height: "25px",
+            width: "140px",
+            height: "90px",
             background: "none",
-            borderTop: "none",
+            border: "1px solid #D0D5DD",
+            borderTop: "1px solid #D0D5DD !important",
           }}>
           <input
             type="file"

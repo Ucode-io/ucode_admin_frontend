@@ -25,7 +25,7 @@ const OneCDateTimePicker = ({
   sectionModal,
 }) => {
   return (
-    <div className="main_wrapper">
+    <div className="main_wrapper_onec">
       <DatePicker
         id={`date_time_${name}`}
         portal={sectionModal ? false : document.body}
@@ -115,7 +115,6 @@ const OneCDateTimePicker = ({
                   portal={document.body}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
-                  // size="small"
                   autoComplete="off"
                   placeholder={placeholder.split("#")[1]}
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -183,7 +182,10 @@ const OneCDateTimePicker = ({
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
       {showCopyBtn && (
-        <OneCCopyToClipboard copyText={value} style={{marginLeft: 8}} />
+        <OneCCopyToClipboard
+          copyText={value}
+          style={{marginLeft: 8, height: "38px"}}
+        />
       )}
     </div>
   );

@@ -175,8 +175,10 @@ export default function OneCFileUpload({
           sx={{
             padding: 0,
             minWidth: "25px",
-            width: "45px",
-            height: "25px",
+            width: "140px",
+            height: "90px",
+            border: "1px solid #D0D5DD",
+            borderTop: "1px solid #D0D5DD !important",
           }}>
           <input
             type="file"

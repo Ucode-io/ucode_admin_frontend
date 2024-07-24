@@ -111,8 +111,8 @@ function OneCMultiImageUpload({
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",
-                width: "100px",
-                height: "120px",
+                width: "150px",
+                height: "90px",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
@@ -185,8 +185,8 @@ function OneCMultiImageUpload({
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",
-                width: "100px",
-                height: "120px",
+                width: "150px",
+                height: "90px",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",

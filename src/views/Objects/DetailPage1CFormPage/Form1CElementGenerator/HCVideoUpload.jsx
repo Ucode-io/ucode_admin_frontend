@@ -34,7 +34,6 @@ const HCVideoUpload = ({
             }}
             tabIndex={tabIndex}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (

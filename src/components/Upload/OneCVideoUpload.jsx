@@ -106,16 +106,6 @@ const OneCVideoUpload = ({
           />
         </div>
       )}
-
-      {/* {previewVisible && (
-        <ImageViewer
-          src={[value]}
-          currentIndex={0}
-          disableScroll={true}
-          closeOnClickOutside={true}
-          onClose={() => setPreviewVisible(false)}
-        />
-      )} */}
     </div>
   );
 };

@@ -52,9 +52,10 @@ function DetailPageSection({item, control}) {
               }}>
               <Typography
                 sx={{
-                  fontWeight: "500",
                   color: "#101828",
+                  // color: "#449424",
                   fontSize: "16px",
+                  fontWeight: "700",
                 }}>
                 {section?.attributes?.[`label_${i18n?.language}`] ||
                   "No Section Name!"}
@@ -79,7 +80,7 @@ function DetailPageSection({item, control}) {
                 display: "grid",
                 gridTemplateColumns: `repeat(${fieldCount}, 1fr)`,
                 gap: "18px",
-                padding: "24px",
+                padding: "16px",
               }}>
               {fields.map((field, idx) => (
                 <Box

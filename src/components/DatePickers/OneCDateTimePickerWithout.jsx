@@ -37,7 +37,7 @@ const OneCDateTimePickerWithout = ({
   }, [value]);
 
   return (
-    <div className="main_wrapper">
+    <div className="main_wrapper_onec">
       <DatePicker
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
@@ -57,12 +57,15 @@ const OneCDateTimePickerWithout = ({
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
+                      borderRadius: "0px",
+                      borderTopLeftRadius: "8px",
+                      borderBottomLeftRadius: "8px",
                     },
                     "& input": {
                       padding: "5px !important",
                       height: "28px",
                     },
-                    maxWidth: "150px",
+                    width: "100%",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -119,12 +122,15 @@ const OneCDateTimePickerWithout = ({
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
+                      borderRadius: "0px",
+                      borderTopRightRadius: "8px",
+                      borderBottomRightRadius: "8px",
                     },
                     "& input": {
                       padding: "5px !important",
                       height: "28px",
                     },
-                    maxWidth: "150px",
+                    width: "100%",
                   }}
                   InputProps={{
                     readOnly: disabled,
@@ -143,12 +149,6 @@ const OneCDateTimePickerWithout = ({
                       <InputAdornment position="end">
                         <Box sx={{display: "flex", alignItems: "center"}}>
                           <img src="/img/calendar.svg" alt="" />
-                          {/* <DateRange
-                            style={{
-                              color: isBlackBg ? "#fff" : "",
-                              fontSize: "20px",
-                            }}
-                          /> */}
                           {disabled && (
                             <Tooltip title="This field is disabled for this role!">
                               <Lock style={{fontSize: "20px"}} />

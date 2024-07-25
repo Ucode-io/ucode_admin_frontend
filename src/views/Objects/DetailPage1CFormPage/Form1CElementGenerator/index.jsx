@@ -24,6 +24,9 @@ import HCFormulaField from "./HCFormulaField";
 import HCInternationPhone from "./HCInternationPhone";
 import {InputAdornment, Tooltip} from "@mui/material";
 import {Lock} from "@mui/icons-material";
+import OneCRelationFormElement from "./OneCRelationFormElement";
+import OneCMany2ManyFormElement from "./OneCMany2ManyFormElement";
+import OneCDynamicFormElement from "./OneCDynamicFormElement";
 
 function Form1CElementGenerator({
   field = {},
@@ -147,68 +150,85 @@ function Form1CElementGenerator({
     return null;
   }
 
-  //   if (field?.id?.includes("#")) {
-  //     if (field?.relation_type === "Many2Many") {
-  //       return field?.attributes?.multiple_input ? (
-  //         <ManyToManyRelationMultipleInput
-  //           control={control}
-  //           field={field}
-  //           setFormValue={setFormValue}
-  //           defaultValue={defaultValue}
-  //           disabled={isDisabled}
-  //           checkRequiredField={checkRequiredField}
-  //           name={computedSlug}
-  //           {...props}
-  //         />
-  //       ) : (
-  //         <ManyToManyRelationFormElement
-  //           control={control}
-  //           field={field}
-  //           setFormValue={setFormValue}
-  //           defaultValue={defaultValue}
-  //           disabled={isDisabled}
-  //           checkRequiredField={checkRequiredField}
-  //           name={computedSlug}
-  //           {...props}
-  //         />
-  //       );
-  //     } else if (field?.relation_type === "Many2Dynamic") {
-  //       return (
-  //         <DynamicRelationFormElement
-  //           control={control}
-  //           field={field}
-  //           setFormValue={setFormValue}
-  //           defaultValue={defaultValue}
-  //           disabled={isDisabled}
-  //           checkRequiredField={checkRequiredField}
-  //           {...props}
-  //         />
-  //       );
-  //     } else {
-  //       return (
-  //         <RelationFormElement
-  //           control={control}
-  //           field={field}
-  //           name={computedSlug}
-  //           setFormValue={setFormValue}
-  //           formTableSlug={formTableSlug}
-  //           defaultValue={defaultValue}
-  //           disabled={isDisabled}
-  //           key={computedSlug}
-  //           activeLang={activeLang}
-  //           checkRequiredField={checkRequiredField}
-  //           errors={errors}
-  //           rules={{
-  //             pattern: {
-  //               value: new RegExp(field?.attributes?.validation),
-  //               message: field?.attributes?.validation_message,
-  //             },
-  //           }}
-  //           {...props}
-  //         />
-  //       );
-  //     }
-  //   }
+  if (field?.id?.includes("#")) {
+    if (field?.relation_type === "Many2Many") {
+      return (
+        <FieldLabel
+          label={
+            field?.attributes[`title_${i18n?.language}`] ||
+            field?.attributes[`name_${i18n?.language}`] ||
+            field?.attributes[`label_to_${i18n?.language}`] ||
+            field?.attributes[`label_${i18n?.language}`] ||
+            field?.label ||
+            "No Label found"
+          }>
+          <OneCMany2ManyFormElement
+            control={control}
+            field={field}
+            setFormValue={setFormValue}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            checkRequiredField={checkRequiredField}
+            name={computedSlug}
+            {...props}
+          />
+        </FieldLabel>
+      );
+    } else if (field?.relation_type === "Many2Dynamic") {
+      return (
+        <FieldLabel
+          label={
+            field?.attributes[`title_${i18n?.language}`] ||
+            field?.attributes[`name${i18n?.language}`] ||
+            field?.attributes[`label_${i18n?.language}`] ||
+            field?.label ||
+            "No Label found"
+          }>
+          <OneCDynamicFormElement
+            control={control}
+            field={field}
+            setFormValue={setFormValue}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            checkRequiredField={checkRequiredField}
+            {...props}
+          />
+        </FieldLabel>
+      );
+    } else {
+      return (
+        <FieldLabel
+          label={
+            field?.attributes?.[`label_${i18n?.language}`] ||
+            field?.attributes?.[`title_${i18n?.language}`] ||
+            field?.attributes[`label_to_${i18n?.language}`] ||
+            field?.label ||
+            "No Label found"
+          }>
+          <OneCRelationFormElement
+            control={control}
+            field={field}
+            name={computedSlug}
+            setFormValue={setFormValue}
+            formTableSlug={formTableSlug}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            activeLang={activeLang}
+            checkRequiredField={checkRequiredField}
+            errors={errors}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message: field?.attributes?.validation_message,
+              },
+            }}
+            {...props}
+          />
+        </FieldLabel>
+      );
+    }
+  }
 
   switch (field?.type) {
     case "SINGLE_LINE":

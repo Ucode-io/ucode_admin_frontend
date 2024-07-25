@@ -3,7 +3,6 @@ import {CircularProgress, IconButton} from "@mui/material";
 import {useEffect} from "react";
 import {useMemo, useState} from "react";
 import {useQuery} from "react-query";
-import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -13,6 +12,7 @@ import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../../../services/constructorFunctionService";
 import request from "../../../../utils/request";
+import SearchInput from "../../../../components/SearchInput";
 
 const DynamicDropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
   const [selectedTable, setSelectedTable] = useState(null);

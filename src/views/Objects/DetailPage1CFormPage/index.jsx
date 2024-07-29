@@ -296,7 +296,6 @@ function DetailPage1CFormPage({
         sx={{
           height: "calc(100vh - 125px)",
           overflow: "auto",
-          background: "#fff",
         }}>
         <FormPageHead onSubmit={handleSubmit(onSubmit)} />
         <DetailPageTabs

@@ -1,27 +1,27 @@
 import React from "react";
 import styles from "./style.module.scss";
+import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
+import {useNavigate, useParams} from "react-router-dom";
 
-function FiltersRow({
-  navigateToDetailPage,
-  calculateWidthFixedColumn,
-  columns,
-  tableSettings,
-  pageName,
-  view,
-  item,
-}) {
+function FiltersRow({columns, tableSettings, pageName, view, item, menuItem}) {
+  const {tableSlug, appId} = useParams();
+  const navigate = useNavigate();
   return (
     <tr
       onClick={() => {
-        navigateToDetailPage(item);
+        navigate(
+          `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+        );
       }}
       key={item.guid}
       className={styles.child_row}
-      style={{paddingLeft: "40px"}}>
+      style={{paddingLeft: "40px", cursor: "pointer"}}>
       {columns.map((col, index) => (
         <td
           onClick={() => {
-            navigateToDetailPage(item);
+            navigate(
+              `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+            );
           }}
           style={{
             cursor: "pointer",

@@ -31,12 +31,15 @@ function TableFilterBlock({
   const [columns, setColumns] = useState([]);
   const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view?.id);
   const [openFilter, setOpenFilter] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState(null);
 
-  const handleClick = (event) => {
+  const handleClick = (event, column) => {
     setAnchorEl(event.currentTarget);
+    setSelectedColumn(column);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    setSelectedColumn(null);
   };
   const visibleFields = useMemo(() => {
     return (

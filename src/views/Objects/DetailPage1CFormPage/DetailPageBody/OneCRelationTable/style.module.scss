@@ -161,6 +161,9 @@
 
 .tableComponent {
   background: #fff;
+  height: calc(100vh - 288px);
+  overflow: auto;
+  background: #fff;
 }
 
 /////////Table

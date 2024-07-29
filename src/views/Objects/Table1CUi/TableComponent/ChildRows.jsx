@@ -67,6 +67,7 @@ const ChildRows = ({
           handleBackClick();
           setFolderIds((prevIds) => prevIds.slice(0, -1));
         }}
+        style={{cursor: "pointer"}}
         className={styles.back_row}>
         <td colSpan={columns.length}>
           <button className={styles.back_btn}>
@@ -89,7 +90,7 @@ const ChildRows = ({
               <tr
                 onClick={() => handleFolderDoubleClick(item)}
                 className={styles.group_row}
-                style={{paddingLeft: `20px`}}>
+                style={{paddingLeft: `20px`, cursor: "pointer"}}>
                 {columns.map((col, index) => (
                   <td
                     style={{
@@ -138,14 +139,13 @@ const ChildRows = ({
             {items.response.map((item) => (
               <tr
                 onClick={() => {
-                  // navigateToDetailPage(item);
                   navigate(
                     `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
                   );
                 }}
                 key={item.guid}
                 className={styles.child_row}
-                style={{paddingLeft: "40px"}}>
+                style={{paddingLeft: "40px", cursor: "pointer"}}>
                 {columns.map((col, index) => (
                   <td
                     style={{

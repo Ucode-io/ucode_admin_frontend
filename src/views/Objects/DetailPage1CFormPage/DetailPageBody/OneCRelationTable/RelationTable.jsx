@@ -19,6 +19,8 @@ import {useForm} from "react-hook-form";
 import RelationTableFilter from "./RelationTableFilter";
 import styles from "./style.module.scss";
 import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
+import RelationTableHead from "./RelationTableHead";
+import RelationTableBody from "./RelationTableBody";
 
 const mockData = [
   {
@@ -77,6 +79,7 @@ function RelationTable({
   getAllData = () => {},
   layoutData,
   computedVisibleFields,
+  view,
 }) {
   const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
@@ -157,7 +160,7 @@ function RelationTable({
       },
     },
   });
-
+  console.log("selectedTabselectedTab", selectedTab);
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({table_id: id});
@@ -521,103 +524,27 @@ function RelationTable({
         <table className={styles.expandable_table}>
           <thead>
             <tr>
-              {mockData?.map((column) => (
-                <th
-                  onClick={handleClick}
-                  id={column.id}
-                  // style={{
-                  //   minWidth: tableSize?.[pageName]?.[column.id]
-                  //     ? tableSize?.[pageName]?.[column.id]
-                  //     : "auto",
-                  //   width: !tableSize?.[pageName]?.[column.id]
-                  //     ? tableSize?.[pageName]?.[column.id]
-                  //     : "auto",
-                  //   position: `${
-                  //     tableSettings?.[pageName]?.find(
-                  //       (item) => item?.id === column?.id
-                  //     )?.isStiky ||
-                  //     (view?.attributes?.fixedColumns?.[column?.id] &&
-                  //       !folderIds?.length)
-                  //       ? "sticky"
-                  //       : "relative"
-                  //   }`,
-                  //   left:
-                  //     view?.attributes?.fixedColumns?.[column?.id] &&
-                  //     !folderIds?.length
-                  //       ? `${calculateWidthFixedColumn(column.id, columns) + 0}px`
-                  //       : "0",
-                  //   backgroundColor: `${
-                  //     tableSettings?.[pageName]?.find(
-                  //       (item) => item?.id === column?.id
-                  //     )?.isStiky ||
-                  //     (view?.attributes?.fixedColumns?.[column?.id] &&
-                  //       !folderIds?.length)
-                  //       ? "#F6F6F6"
-                  //       : "#fff"
-                  //   }`,
-                  //   zIndex: `${
-                  //     tableSettings?.[pageName]?.find(
-                  //       (item) => item?.id === column?.id
-                  //     )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                  //       ? "3"
-                  //       : "2"
-                  //   }`,
-                  //   top: 0,
-                  // }}
-                  key={column.accessor}>
-                  <div className={styles.tableHeaditem}>
-                    <p>{column?.label ?? column?.title}</p>
-                    <button>
-                      <img src="/img/dots_horizontal.svg" alt="" />
-                    </button>
-                  </div>
-                </th>
+              {columns?.map((column) => (
+                <RelationTableHead
+                  view={getRelatedTabeSlug}
+                  column={column}
+                  handleClick={handleClick}
+                  fieldsMap={fieldsMap}
+                  data={layoutData}
+                  selectedTabIndex={selectedTabIndex}
+                  getAllData={getAllData}
+                />
               ))}
             </tr>
           </thead>
           <tbody>
-            <tr
-              onClick={() => {
-                // navigateToDetailPage(item);
-              }}
-              //   key={item.guid}
-              className={styles.child_row}
-              //   style={{paddingLeft: `${(level + 1) * 40}px`, cursor: "pointer"}}
-            >
-              {mockData?.map((col, index) => (
-                <td
-                  style={{height: "35px"}}
-                  //   style={{
-                  //     position: `${
-                  //       tableSettings?.[pageName]?.find(
-                  //         (item) => item?.id === col?.id
-                  //       )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                  //         ? "sticky"
-                  //         : "relative"
-                  //     }`,
-                  //     left: view?.attributes?.fixedColumns?.[col?.id]
-                  //       ? `${calculateWidthFixedColumn(col.id, columns) + 0}px`
-                  //       : "0",
-                  //     backgroundColor: `${
-                  //       tableSettings?.[pageName]?.find(
-                  //         (item) => item?.id === col?.id
-                  //       )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                  //         ? "#F6F6F6"
-                  //         : "#fff"
-                  //     }`,
-                  //     zIndex: `${
-                  //       tableSettings?.[pageName]?.find(
-                  //         (item) => item?.id === col?.id
-                  //       )?.isStiky || view?.attributes?.fixedColumns?.[col?.id]
-                  //         ? "1"
-                  //         : "0"
-                  //     }`,
-                  //   }}
-                  key={index}>
-                  {col?.title}
-                </td>
-              ))}
-            </tr>
+            {tableData?.map((item) => (
+              <RelationTableBody
+                view={getRelatedTabeSlug}
+                columns={columns}
+                item={item}
+              />
+            ))}
           </tbody>
         </table>
         {/* </div> */}
@@ -627,80 +554,3 @@ function RelationTable({
 }
 
 export default RelationTable;
-
-{
-  /* <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-  <Box sx={{width: "244px"}}>
-    <MenuItem
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "11px 14px",
-      }}>
-      <Typography
-        sx={{
-          color: "#101828",
-          fontWeight: 500,
-          fontSize: "14px",
-        }}>
-        Fix
-      </Typography>
-      {columnFix ? (
-     <CircularProgress sx={{color: "#449424"}} size={24} /> 
-      ) : ( 
-      <IOSSwitch
-          checked={
-            view?.attributes?.fixedColumns?.[selectedColumn?.id]
-          }
-          onChange={(e) => {
-            fixColumnChangeHandler(
-              selectedColumn,
-              e.target.checked
-            );
-          }}
-        color="primary"
-      />
-   )}
-    </MenuItem>
-    <MenuItem
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "11px 14px",
-      }}>
-      <Typography
-        sx={{
-          color: "#101828",
-          fontWeight: 500,
-          fontSize: "14px",
-        }}>
-        Hide
-      </Typography>
-      {selectedColumn?.type === "LOOKUP" ||
-                        selectedColumn?.type === "LOOKUPS" ? (
-                          switchLoading[selectedColumn.relation_id] ? (
-                            <CircularProgress
-                              sx={{color: "#449424"}}
-                              size={24}
-                            />
-                          ) : (
-
-      <IOSSwitch
-        size="small"
-          checked={!view?.columns?.includes(selectedColumn?.id)}
-        onChange={(e) => {
-          updateView(
-            !e.target.checked
-              ? [...view?.columns, selectedColumn?.id]
-              : view?.columns?.filter(
-                  (el) => el !== selectedColumn?.id
-                ),
-            selectedColumn?.id
-          );
-        }}
-      />
-     )}
-    </MenuItem>
-  </Box>
-</Menu>; */
-}

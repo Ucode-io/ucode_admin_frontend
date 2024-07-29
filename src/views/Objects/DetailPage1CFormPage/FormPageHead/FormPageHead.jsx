@@ -11,9 +11,9 @@ function FormPageHead({onSubmit = () => {}}) {
         <button onClick={onSubmit} className={styles.headRegister}>
           Записать
         </button>
-        <button className={styles.headMore}>
+        {/* <button className={styles.headMore}>
           <MoreVertIcon />
-        </button>
+        </button> */}
       </div>
     </div>
   );

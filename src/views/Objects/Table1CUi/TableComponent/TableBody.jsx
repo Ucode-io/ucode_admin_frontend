@@ -150,6 +150,7 @@ function TableBody({
             columns={columns}
             level={level}
             item={item}
+            menuItem={menuItem}
           />
         );
       }
@@ -168,6 +169,7 @@ function TableBody({
               pageName={pageName}
               view={view}
               item={item}
+              menuItem={menuItem}
             />
           ))
         ) : (

@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import FormPageTopHead from "./FormPageHead/FormPageTopHead";
 import FormPageHead from "./FormPageHead/FormPageHead";
-import DetailPageBody from "./DetailPageBody";
 import {useForm} from "react-hook-form";
 import {
   useLocation,
@@ -19,6 +18,9 @@ import constructorObjectService from "../../../services/constructorObjectService
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {store} from "../../../store";
+import DetailPageTabs from "./DetailPageBody/DetailPageTabs";
+import {Box} from "@mui/material";
+import CPagination from "../Table1CUi/TableComponent/NewCPagination";
 
 function DetailPage1CFormPage({
   tableSlugFromProps,
@@ -27,7 +29,7 @@ function DetailPage1CFormPage({
   selectedRow,
   dateInfo,
 }) {
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -40,6 +42,7 @@ function DetailPage1CFormPage({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [data, setData] = useState([]);
+  const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -63,6 +66,9 @@ function DetailPage1CFormPage({
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
+
+  const {deleteTab} = useTabRouter();
+  const {pathname} = useLocation();
 
   const {
     handleSubmit,
@@ -180,7 +186,6 @@ function DetailPage1CFormPage({
     delete data?.merchant_ids_data;
     delete data?.merchant_ids;
     setBtnLoader(true);
-
     constructorObjectService
       .update(tableSlug, {data})
       .then(() => {
@@ -279,16 +284,45 @@ function DetailPage1CFormPage({
     else getFields();
   }, [id]);
 
+  const clickHandler = () => {
+    deleteTab(pathname);
+    navigate(-1);
+  };
+
   return (
     <>
       <FormPageTopHead />
-      <FormPageHead onSubmit={handleSubmit(onSubmit)} />
-      <DetailPageBody
-        setSelectedTab={setSelectedTab}
-        selectedTab={selectedTab}
-        control={control}
-        data={data}
-      />
+      <Box
+        sx={{
+          height: "calc(100vh - 125px)",
+          overflow: "auto",
+          background: "#fff",
+        }}>
+        <FormPageHead onSubmit={handleSubmit(onSubmit)} />
+        <DetailPageTabs
+          selectedTab={selectedTab}
+          control={control}
+          data={data}
+          getAllData={getAllData}
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          relations={tableRelations ?? []}
+          getValues={getValues}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          reset={reset}
+          setFormValue={setFormValue}
+          tableSlug={tableSlugFromProps}
+          watch={watch}
+          loader={loader}
+          setSelectTab={setSelectTab}
+          errors={errors}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          id={id}
+          menuItem={menuItem}
+        />
+      </Box>
+      <CPagination />
     </>
   );
 }

@@ -11,6 +11,7 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import {pageToOffset} from "../../../../utils/pageToOffset";
 import useDebounce from "../../../../hooks/useDebounce";
 import useTabRouter from "../../../../hooks/useTabRouter";
+import {getRelationFieldLabel} from "../../../../utils/getRelationFieldLabel";
 
 const OneCMany2ManyFormElement = ({
   control,

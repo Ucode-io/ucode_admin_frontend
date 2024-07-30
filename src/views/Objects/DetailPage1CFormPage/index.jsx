@@ -336,6 +336,7 @@ function DetailPage1CFormPage({
           setCount={setCount}
         />
       </Box>
+      {/* {selectedTab?.type !== "section" && ( */}
       <CPagination
         setOffset={setOffset}
         offset={offset}
@@ -343,6 +344,7 @@ function DetailPage1CFormPage({
         setLimit={setLimit}
         count={count}
       />
+      {/* )} */}
     </>
   );
 }

@@ -4,11 +4,9 @@ import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
 import {useParams, useSearchParams} from "react-router-dom";
 import layoutService from "../../../../../services/layoutService";
-import {useTranslation} from "react-i18next";
 import menuService from "../../../../../services/menuService";
 
 function RelationTableHead({
-  handleClick = () => {},
   column,
   view,
   fieldsMap,
@@ -25,8 +23,6 @@ function RelationTableHead({
   const {tableSlug} = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
-  const {i18n} = useTranslation();
-  const {id} = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -141,7 +137,6 @@ function RelationTableHead({
   return (
     <>
       <th
-        onClick={handleClick}
         id={column.id}
         // style={{
         //   minWidth: tableSize?.[pageName]?.[column.id]

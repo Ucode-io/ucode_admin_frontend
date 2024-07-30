@@ -43,10 +43,9 @@ function RelationTable({
   offset,
 }) {
   const {appId, tableSlug} = useParams();
-  const navigate = useNavigate();
-  const {navigateToForm} = useTabRouter();
+  // const navigate = useNavigate();
   const [filters, setFilters] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
   const [searchParams] = useSearchParams();
@@ -55,16 +54,13 @@ function RelationTable({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-  const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value ?? undefined,
-    });
-  };
+  // const filterChangeHandler = (value, name) => {
+  //   setFilters({
+  //     ...filters,
+  //     [name]: value ?? undefined,
+  //   });
+  // };
 
   const mainForm = useForm({
     defaultValues: {
@@ -95,15 +91,15 @@ function RelationTable({
     return getObject?.pageLimit ?? limit;
   }, [paginationInfo, tableSlug]);
 
-  const limitPage = useMemo(() => {
-    if (typeof paginiation === "number") {
-      return paginiation;
-    } else if (paginiation === "all" && limit === "all") {
-      return undefined;
-    } else {
-      return pageToOffset(currentPage, limit);
-    }
-  }, [paginiation, limit, currentPage]);
+  // const limitPage = useMemo(() => {
+  //   if (typeof paginiation === "number") {
+  //     return paginiation;
+  //   } else if (paginiation === "all" && limit === "all") {
+  //     return undefined;
+  //   } else {
+  //     return pageToOffset(currentPage, limit);
+  //   }
+  // }, [paginiation, limit, currentPage]);
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
@@ -114,65 +110,6 @@ function RelationTable({
       },
     },
   });
-
-  // const getRelationFields = async () => {
-  //   return new Promise(async (resolve) => {
-  //     const getFieldsData = constructorFieldService.getList({table_id: id});
-
-  //     const getRelations = constructorRelationService.getList({
-  //       table_slug: tableSlug,
-  //       relation_table_slug: tableSlug,
-  //     });
-  //     const [{relations = []}, {fields = []}] = await Promise.all([
-  //       getRelations,
-  //       getFieldsData,
-  //     ]);
-  //     mainForm.setValue("fields", fields);
-  //     const relationsWithRelatedTableSlug = relations?.map((relation) => ({
-  //       ...relation,
-  //       relatedTableSlug:
-  //         relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
-  //     }));
-
-  //     const layoutRelations = [];
-  //     const tableRelations = [];
-
-  //     relationsWithRelatedTableSlug?.forEach((relation) => {
-  //       if (
-  //         (relation.type === "Many2One" &&
-  //           relation.table_from?.slug === tableSlug) ||
-  //         (relation.type === "One2Many" &&
-  //           relation.table_to?.slug === tableSlug) ||
-  //         relation.type === "Recursive" ||
-  //         (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-  //         (relation.type === "Many2Dynamic" &&
-  //           relation.table_from?.slug === tableSlug)
-  //       ) {
-  //         layoutRelations.push(relation);
-  //       } else {
-  //         tableRelations.push(relation);
-  //       }
-  //     });
-
-  //     const layoutRelationsFields = layoutRelations.map((relation) => ({
-  //       ...relation,
-  //       id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
-  //       attributes: {
-  //         fields: relation.view_fields ?? [],
-  //       },
-  //       label:
-  //         relation?.label ?? relation[relation.relatedTableSlug]?.label
-  //           ? relation[relation.relatedTableSlug]?.label
-  //           : relation?.title,
-  //     }));
-
-  //     mainForm.setValue("relations", relations);
-  //     mainForm.setValue("relationsMap", listToMap(relations));
-  //     mainForm.setValue("layoutRelations", layoutRelationsFields);
-  //     mainForm.setValue("tableRelations", tableRelations);
-  //     resolve();
-  //   });
-  // };
 
   const getRelatedTabeSlug = useMemo(() => {
     return relation?.find((el) => el?.id === selectedTab?.relation_id);
@@ -211,12 +148,6 @@ function RelationTable({
     getRelatedTabeSlug?.type,
     getRelatedTabeSlug?.relation_field_slug,
   ]);
-
-  //============VIEW PERMISSION=========
-  const viewPermission = useMemo(() => {
-    if (getRelatedTabeSlug?.permission?.view_permission) return true;
-    else return false;
-  }, [getRelatedTabeSlug?.permission?.view_permission]);
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
@@ -438,7 +369,6 @@ function RelationTable({
                 <RelationTableHead
                   view={getRelatedTabeSlug}
                   column={column}
-                  handleClick={handleClick}
                   fieldsMap={fieldsMap}
                   data={layoutData}
                   selectedTabIndex={selectedTabIndex}

@@ -40,6 +40,7 @@ function RelationTable({
   setLimit = () => {},
   setCount = () => {},
   control,
+  offset,
 }) {
   const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function RelationTable({
   const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
   const [searchParams] = useSearchParams();
+  const [searchText, setSearchText] = useState("");
   const [menuItem, setMenuItem] = useState(null);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -241,9 +243,10 @@ function RelationTable({
       "GET_OBJECT_LIST",
       relatedTableSlug,
       shouldGet,
+      searchText,
       {
         filters: computedFilters,
-        offset: pageToOffset(currentPage, limit),
+        offset: offset,
         limit,
       },
     ],
@@ -252,10 +255,11 @@ function RelationTable({
         relatedTableSlug,
         {
           data: {
-            offset: pageToOffset(currentPage, limit),
-            limit: limitPage !== 0 ? limitPage : limit,
+            offset: offset,
+            limit: limit,
             from_tab: type === "relation" ? true : false,
             ...computedFilters,
+            search: searchText,
           },
         },
         {
@@ -423,6 +427,7 @@ function RelationTable({
         selectedTabIndex={selectedTabIndex}
         data={layoutData}
         fields={columns}
+        setSearchText={setSearchText}
       />
       <div className={styles.tableComponent}>
         <table className={styles.expandable_table}>

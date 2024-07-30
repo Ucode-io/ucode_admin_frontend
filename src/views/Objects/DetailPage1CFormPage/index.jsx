@@ -44,10 +44,12 @@ function DetailPage1CFormPage({
   const [data, setData] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
+  const [count, setCount] = useState(0);
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
@@ -279,6 +281,10 @@ function DetailPage1CFormPage({
     },
   });
 
+  const getRelatedTabeSlug = useMemo(() => {
+    return tableRelations?.find((el) => el?.id === selectedTab?.relation_id);
+  }, [tableRelations, selectedTab]);
+
   useEffect(() => {
     if (id) getAllData();
     else getFields();
@@ -296,9 +302,12 @@ function DetailPage1CFormPage({
         sx={{
           height: "calc(100vh - 125px)",
           overflow: "auto",
-          background: "#fff",
         }}>
-        <FormPageHead onSubmit={handleSubmit(onSubmit)} />
+        <FormPageHead
+          getRelatedTabeSlug={getRelatedTabeSlug}
+          onSubmit={handleSubmit(onSubmit)}
+          selectedTab={selectedTab}
+        />
         <DetailPageTabs
           selectedTab={selectedTab}
           control={control}
@@ -320,9 +329,20 @@ function DetailPage1CFormPage({
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
           menuItem={menuItem}
+          limit={limit}
+          setLimit={setLimit}
+          setOffset={setOffset}
+          offset={offset}
+          setCount={setCount}
         />
       </Box>
-      <CPagination />
+      <CPagination
+        setOffset={setOffset}
+        offset={offset}
+        limit={limit}
+        setLimit={setLimit}
+        count={count}
+      />
     </>
   );
 }

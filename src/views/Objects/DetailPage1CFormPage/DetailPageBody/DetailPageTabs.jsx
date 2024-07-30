@@ -13,6 +13,7 @@ import RelationTable from "./OneCRelationTable/RelationTable";
 import {relationTabActions} from "../../../../store/relationTab/relationTab.slice";
 import constructorTableService from "../../../../services/constructorTableService";
 import {listToMap} from "../../../../utils/listToMap";
+import constructorObjectService from "../../../../services/constructorObjectService";
 
 function DetailPageTabs({
   selectedTabIndex,
@@ -35,6 +36,9 @@ function DetailPageTabs({
   errors,
   menuItem,
   data,
+  setOffset = () => {},
+  offset,
+  setCount = () => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -354,6 +358,7 @@ function DetailPageTabs({
                 reset={reset}
                 selectedTabIndex={selectedTabIndex}
                 watch={watch}
+                view={getRelatedTabeSlug}
                 selectedTab={selectedTab}
                 control={control}
                 getValues={getValues}
@@ -375,6 +380,11 @@ function DetailPageTabs({
                 getAllData={getAllData}
                 layoutData={data}
                 computedVisibleFields={computedVisibleFields}
+                limit={limit}
+                setLimit={setLimit}
+                setOffset={setOffset}
+                offset={offset}
+                setCount={setCount}
               />
             )}
           </TabPanel>

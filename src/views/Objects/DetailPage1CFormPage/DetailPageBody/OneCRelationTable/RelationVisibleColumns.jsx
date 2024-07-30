@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {Menu, Switch} from "@mui/material";
+import {CircularProgress, Menu, Switch} from "@mui/material";
 import {Container, Draggable} from "react-smooth-dnd";
 import LinkIcon from "@mui/icons-material/Link";
 import {useParams, useSearchParams} from "react-router-dom";
@@ -8,6 +8,7 @@ import menuService from "../../../../../services/menuService";
 import layoutService from "../../../../../services/layoutService";
 import {applyDrag} from "../../../../../utils/applyDrag";
 import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
+import {columnIcons} from "../../../../../utils/constants/columnIcons";
 
 export default function RelationVisibleColumns({
   currentView,
@@ -26,11 +27,14 @@ export default function RelationVisibleColumns({
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
+  const [switchLoading, setSwitchLoading] = useState({});
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  const updateView = async (datas) => {
+  const updateView = async (datas, id) => {
+    setSwitchLoading((prev) => ({...prev, [id]: true}));
+
     setIsLoading(true);
 
     const result = data?.tabs;
@@ -76,6 +80,7 @@ export default function RelationVisibleColumns({
       console.error("Error updating layout:", error);
     } finally {
       setIsLoading(false);
+      setSwitchLoading((prev) => ({...prev, [id]: false}));
     }
   };
 
@@ -174,7 +179,7 @@ export default function RelationVisibleColumns({
         }}>
         <div
           style={{
-            minWidth: "300px",
+            minWidth: "320px",
             minHeight: "100px",
             overflowY: "auto",
             padding: "10px 14px",
@@ -290,37 +295,46 @@ export default function RelationVisibleColumns({
                       }}>
                       {column.type === "LOOKUP" ||
                       column?.type === "LOOKUPS" ? (
-                        <IOSSwitch
-                          size="small"
-                          checked={computedColumns?.includes(
-                            column?.relation_id
-                          )}
-                          onChange={(e) => {
-                            updateView(
-                              e.target.checked
-                                ? data?.tabs?.[selectedTabIndex]?.attributes
-                                    ?.columns ??
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                  ? [
-                                      ...(data?.tabs[selectedTabIndex]
-                                        ?.attributes?.columns ??
-                                        data?.tabs?.[selectedTabIndex]?.relation
-                                          ?.columns),
-                                      column?.relation_id,
-                                    ]
-                                  : [column?.relation_id]
-                                : (
-                                    data?.tabs?.[selectedTabIndex]?.attributes
+                        switchLoading[column.relation_id] ? (
+                          <CircularProgress sx={{color: "#449424"}} size={24} />
+                        ) : (
+                          <IOSSwitch
+                            size="small"
+                            checked={computedColumns?.includes(
+                              column?.relation_id
+                            )}
+                            onChange={(e) => {
+                              updateView(
+                                e.target.checked
+                                  ? data?.tabs?.[selectedTabIndex]?.attributes
                                       ?.columns ??
                                     data?.tabs?.[selectedTabIndex]?.relation
                                       ?.columns
-                                  )?.filter((el) => el !== column?.relation_id)
-                            );
-                          }}
-                        />
+                                    ? [
+                                        ...(data?.tabs[selectedTabIndex]
+                                          ?.attributes?.columns ??
+                                          data?.tabs?.[selectedTabIndex]
+                                            ?.relation?.columns),
+                                        column?.relation_id,
+                                      ]
+                                    : [column?.relation_id]
+                                  : (
+                                      data?.tabs?.[selectedTabIndex]?.attributes
+                                        ?.columns ??
+                                      data?.tabs?.[selectedTabIndex]?.relation
+                                        ?.columns
+                                    )?.filter(
+                                      (el) => el !== column?.relation_id
+                                    ),
+                                column?.relation_id
+                              );
+                            }}
+                          />
+                        )
+                      ) : switchLoading?.[column?.id] ? (
+                        <CircularProgress sx={{color: "#449424"}} size={24} />
                       ) : (
-                        <Switch
+                        <IOSSwitch
                           size="small"
                           checked={computedColumns?.includes(column?.id)}
                           onChange={(e) => {
@@ -343,7 +357,8 @@ export default function RelationVisibleColumns({
                                       ?.columns ??
                                     data?.tabs?.[selectedTabIndex]?.relation
                                       ?.columns
-                                  )?.filter((el) => el !== column?.id)
+                                  )?.filter((el) => el !== column?.id),
+                              column?.id
                             );
                           }}
                         />
@@ -402,35 +417,43 @@ export default function RelationVisibleColumns({
                       justifyContent: "flex-end",
                     }}>
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                      <Switch
-                        size="small"
-                        checked={computedColumns?.includes(column?.relation_id)}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? data?.tabs?.[selectedTabIndex]?.attributes
-                                  ?.columns ??
-                                data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
-                                ? [
-                                    ...(data?.tabs?.[selectedTabIndex]
-                                      ?.attributes?.columns ??
-                                      data?.tabs?.[selectedTabIndex]?.relation
-                                        ?.columns),
-                                    column?.relation_id,
-                                  ]
-                                : [column?.relation_id]
-                              : (
-                                  data?.tabs?.[selectedTabIndex]?.attributes
+                      switchLoading?.[column?.relation_id] ? (
+                        <CircularProgress sx={{color: "#449424"}} size={24} />
+                      ) : (
+                        <IOSSwitch
+                          size="small"
+                          checked={computedColumns?.includes(
+                            column?.relation_id
+                          )}
+                          onChange={(e) => {
+                            updateView(
+                              e.target.checked
+                                ? data?.tabs?.[selectedTabIndex]?.attributes
                                     ?.columns ??
                                   data?.tabs?.[selectedTabIndex]?.relation
                                     ?.columns
-                                )?.filter((el) => el !== column?.relation_id)
-                          );
-                        }}
-                      />
+                                  ? [
+                                      ...(data?.tabs?.[selectedTabIndex]
+                                        ?.attributes?.columns ??
+                                        data?.tabs?.[selectedTabIndex]?.relation
+                                          ?.columns),
+                                      column?.relation_id,
+                                    ]
+                                  : [column?.relation_id]
+                                : (
+                                    data?.tabs?.[selectedTabIndex]?.attributes
+                                      ?.columns ??
+                                    data?.tabs?.[selectedTabIndex]?.relation
+                                      ?.columns
+                                  )?.filter((el) => el !== column?.relation_id)
+                            );
+                          }}
+                        />
+                      )
+                    ) : switchLoading?.[column?.id] ? (
+                      <CircularProgress sx={{color: "#449424"}} size={24} />
                     ) : (
-                      <Switch
+                      <IOSSwitch
                         size="small"
                         checked={computedColumns?.includes(column?.id)}
                         onChange={(e) => {

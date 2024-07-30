@@ -31,12 +31,15 @@ function TableFilterBlock({
   const [columns, setColumns] = useState([]);
   const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view?.id);
   const [openFilter, setOpenFilter] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState(null);
 
-  const handleClick = (event) => {
+  const handleClick = (event, column) => {
     setAnchorEl(event.currentTarget);
+    setSelectedColumn(column);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    setSelectedColumn(null);
   };
   const visibleFields = useMemo(() => {
     return (
@@ -52,16 +55,16 @@ function TableFilterBlock({
     );
   }, [view?.columns, fieldsMap]);
 
-  const handleGroup = () => setGroupOpen(true);
-  const handleGroupClose = () => setGroupOpen(false);
+  // const handleGroup = () => setGroupOpen(true);
+  // const handleGroupClose = () => setGroupOpen(false);
 
-  const toggleColumnVisibility = (index) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((col, i) =>
-        i === index ? {...col, visible: !col.visible} : col
-      )
-    );
-  };
+  // const toggleColumnVisibility = (index) => {
+  //   setColumns((prevColumns) =>
+  //     prevColumns.map((col, i) =>
+  //       i === index ? {...col, visible: !col.visible} : col
+  //     )
+  //   );
+  // };
 
   const navigateCreatePage = (row) => {
     navigateToForm(
@@ -95,7 +98,7 @@ function TableFilterBlock({
             size="small"
           />
 
-          <button
+          {/* <button
             className={styles.filterBtn}
             onClick={() => {
               setOpenFilter(!openFilter);
@@ -106,13 +109,13 @@ function TableFilterBlock({
                 {Object.values(filters)?.length}
               </div>
             )}
-          </button>
+          </button> */}
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
           </button>
         </div>
       </div>
-      <div
+      {/* <div
         style={{display: openFilter ? "flex" : "none"}}
         className={styles.filterList}>
         <div onClick={clearFilters} className={styles.filterListItem}>
@@ -120,7 +123,7 @@ function TableFilterBlock({
         </div>
 
         <NewFastFilter fields={fields} fieldsMap={fieldsMap} view={view} />
-      </div>
+      </div> */}
 
       <RelationVisibleColumns
         fieldsMap={fieldsMap}

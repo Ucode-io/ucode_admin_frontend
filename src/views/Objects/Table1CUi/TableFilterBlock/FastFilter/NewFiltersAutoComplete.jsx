@@ -65,7 +65,7 @@ const FilterAutoComplete = ({
       })
     );
   };
-
+  console.log("fieldddddddddddd", field);
   return (
     <div className={styles.autocomplete}>
       {value?.length === 0 ? (

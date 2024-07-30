@@ -78,6 +78,7 @@ const ViewsWithGroups = ({
   const permissions = useSelector(
     (state) => state.auth.permissions?.[tableSlug]
   );
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -296,7 +297,8 @@ const ViewsWithGroups = ({
                     setSearchText(e);
                   }}
                 />
-                {permissions?.search_button && (
+                {(roleInfo === "DEFAULT ADMIN" ||
+                  permissions?.search_button) && (
                   <button
                     className={style.moreButton}
                     onClick={handleClickSearch}
@@ -347,11 +349,11 @@ const ViewsWithGroups = ({
               </div>
 
               <div className={style.rightExtra}>
-                {permissions?.fix_column && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
                   <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.group && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
                   <GroupByButton
                     selectedTabIndex={selectedTabIndex}
                     view={view}
@@ -360,14 +362,14 @@ const ViewsWithGroups = ({
                   />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.columns && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
                   <VisibleColumnsButton
                     currentView={view}
                     fieldsMap={fieldsMap}
                   />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.tab_group && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
                   <TableViewGroupByButton
                     currentView={view}
                     fieldsMap={fieldsMap}

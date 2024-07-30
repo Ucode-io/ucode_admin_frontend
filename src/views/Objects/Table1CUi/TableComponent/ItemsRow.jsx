@@ -1,20 +1,26 @@
 import React from "react";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import styles from "./style.module.scss";
+import {useNavigate, useParams} from "react-router-dom";
 
 function ItemsRow({
-  navigateToDetailPage,
   view,
   pageName,
   tableSettings,
   columns,
   level,
   item,
+  menuItem,
 }) {
+  const {tableSlug, appId} = useParams();
+  const navigate = useNavigate();
   return (
     <tr
       onClick={() => {
-        navigateToDetailPage(item);
+        navigate(
+          `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+        );
+        // navigateToDetailPage(item);
       }}
       key={item.guid}
       className={styles.child_row}

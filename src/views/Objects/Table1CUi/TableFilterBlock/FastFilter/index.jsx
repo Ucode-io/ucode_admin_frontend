@@ -35,7 +35,7 @@ function NewFastFilter({view, fields}) {
       })
     );
   };
-
+  console.log("fieldsfieldsfields", fields);
   return (
     <>
       {fields?.map((filter) => (

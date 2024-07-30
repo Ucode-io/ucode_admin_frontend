@@ -36,6 +36,9 @@ function DetailPageTabs({
   errors,
   menuItem,
   data,
+  setOffset = () => {},
+  offset,
+  setCount = () => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -377,6 +380,11 @@ function DetailPageTabs({
                 getAllData={getAllData}
                 layoutData={data}
                 computedVisibleFields={computedVisibleFields}
+                limit={limit}
+                setLimit={setLimit}
+                setOffset={setOffset}
+                offset={offset}
+                setCount={setCount}
               />
             )}
           </TabPanel>

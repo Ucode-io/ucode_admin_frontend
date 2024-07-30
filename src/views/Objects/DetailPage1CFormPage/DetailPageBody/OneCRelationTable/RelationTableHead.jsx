@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import styles from "./style.module.scss";
-import {Box, Menu, MenuItem, Typography} from "@mui/material";
+import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
 import {useParams, useSearchParams} from "react-router-dom";
 import layoutService from "../../../../../services/layoutService";
@@ -235,29 +235,36 @@ function RelationTableHead({
             </Typography>
 
             {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-              <IOSSwitch
-                size="small"
-                checked={computedColumns?.includes(column?.relation_id)}
-                onChange={(e) => {
-                  updateView(
-                    e.target.checked
-                      ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                        data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        ? [
-                            ...(data?.tabs?.[selectedTabIndex]?.attributes
-                              ?.columns ??
-                              data?.tabs?.[selectedTabIndex]?.relation
-                                ?.columns),
-                            column?.relation_id,
-                          ]
-                        : [column?.relation_id]
-                      : (
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+              isLoading ? (
+                <CircularProgress sx={{color: "#449424"}} size={24} />
+              ) : (
+                <IOSSwitch
+                  size="small"
+                  checked={computedColumns?.includes(column?.relation_id)}
+                  onChange={(e) => {
+                    updateView(
+                      e.target.checked
+                        ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
                           data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.filter((el) => el !== column?.relation_id)
-                  );
-                }}
-              />
+                          ? [
+                              ...(data?.tabs?.[selectedTabIndex]?.attributes
+                                ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns),
+                              column?.relation_id,
+                            ]
+                          : [column?.relation_id]
+                        : (
+                            data?.tabs?.[selectedTabIndex]?.attributes
+                              ?.columns ??
+                            data?.tabs?.[selectedTabIndex]?.relation?.columns
+                          )?.filter((el) => el !== column?.relation_id)
+                    );
+                  }}
+                />
+              )
+            ) : isLoading ? (
+              <CircularProgress sx={{color: "#449424"}} size={24} />
             ) : (
               <IOSSwitch
                 size="small"

@@ -348,9 +348,14 @@ function DetailPageTabs({
           </TabList>
 
           {data?.tabs?.map((item) => (
-            <TabPanel style={{width: "100%", overflow: "scroll"}} key={item.id}>
+            <TabPanel style={{width: "100%", overflow: "auto"}} key={item.id}>
               {item?.type === "section" ? (
-                <DetailPageSection control={control} item={item} />
+                <DetailPageSection
+                  control={control}
+                  item={item}
+                  watch={watch}
+                  selectedTab={selectedTab}
+                />
               ) : (
                 <RelationTable
                   ref={myRef}

@@ -58,8 +58,7 @@ const HFDateDatePickerWithoutTimeZoneTable = ({
             isTableView={isTableView}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

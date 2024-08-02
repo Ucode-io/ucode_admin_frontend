@@ -298,11 +298,7 @@ function DetailPage1CFormPage({
   return (
     <>
       <FormPageTopHead />
-      <Box
-        sx={{
-          height: "calc(100vh - 125px)",
-          overflow: "auto",
-        }}>
+      <Box>
         <FormPageHead
           getRelatedTabeSlug={getRelatedTabeSlug}
           onSubmit={handleSubmit(onSubmit)}
@@ -336,15 +332,15 @@ function DetailPage1CFormPage({
           setCount={setCount}
         />
       </Box>
-      {/* {selectedTab?.type !== "section" && ( */}
-      <CPagination
-        setOffset={setOffset}
-        offset={offset}
-        limit={limit}
-        setLimit={setLimit}
-        count={count}
-      />
-      {/* )} */}
+      {selectedTab?.type !== "section" && (
+        <CPagination
+          setOffset={setOffset}
+          offset={offset}
+          limit={limit}
+          setLimit={setLimit}
+          count={count}
+        />
+      )}
     </>
   );
 }

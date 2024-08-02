@@ -1,6 +1,5 @@
 .expandable_table {
   width: 100%;
-  // min-width: 700px;
   background: #fff;
   border-collapse: collapse;
   margin: 0 0;
@@ -117,6 +116,7 @@
 
 .tableComponent {
   background: #fff;
+  position: relative;
 }
 
 .tableFooter {
@@ -226,4 +226,17 @@
   .folder_icon {
     margin-right: 2px;
   }
+}
+
+.addROwBtn {
+  background: none;
+  border: none;
+  width: 120px;
+  height: 35px;
+  border: 1px solid #d0d5dd;
+  margin: 0px 0px;
+  border-left: none;
+  border-top: none;
+  // border-bottom: none;
+  cursor: pointer;
 }

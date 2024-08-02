@@ -12,8 +12,9 @@ import {useTranslation} from "react-i18next";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Form1CElementGenerator from "../Form1CElementGenerator";
+import DetailPageTable from "../DetailPageTable";
 
-function DetailPageSection({item, control}) {
+function DetailPageSection({item, control, watch, selectedTab}) {
   const {i18n} = useTranslation();
   const [expanded, setExpanded] = useState([]);
 
@@ -81,8 +82,7 @@ function DetailPageSection({item, control}) {
                 sx={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${fieldCount}, 1fr)`,
-                  gap: "18px",
-                  padding: "16px",
+                  padding: "0px",
                 }}>
                 {fields.map((field, idx) => (
                   <Box
@@ -92,8 +92,23 @@ function DetailPageSection({item, control}) {
                         idx % fieldCount === 0 && idx === fields.length - 1
                           ? `span ${fieldCount}`
                           : "auto",
+                      overflow: "auto",
                     }}>
-                    <Form1CElementGenerator control={control} field={field} />
+                    {field?.attributes?.isTab ? (
+                      <DetailPageTable
+                        control={control}
+                        field={field}
+                        index={index}
+                        selectedTab={selectedTab}
+                      />
+                    ) : (
+                      <Box sx={{padding: "14px"}}>
+                        <Form1CElementGenerator
+                          control={control}
+                          field={field}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 ))}
               </AccordionDetails>

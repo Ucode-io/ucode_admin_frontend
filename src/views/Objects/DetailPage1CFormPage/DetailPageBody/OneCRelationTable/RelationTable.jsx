@@ -3,28 +3,22 @@ import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useMutation, useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import useTabRouter from "../../../../../hooks/useTabRouter";
+import {useParams, useSearchParams} from "react-router-dom";
 import useCustomActionsQuery from "../../../../../queries/hooks/useCustomActionsQuery";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import {useMenuGetByIdQuery} from "../../../../../services/menuService";
 import {generateGUID} from "../../../../../utils/generateID";
 import {listToMap} from "../../../../../utils/listToMap";
 import {objectToArray} from "../../../../../utils/objectToArray";
-import {pageToOffset} from "../../../../../utils/pageToOffset";
 import RelationTableBody from "./RelationTableBody";
 import RelationTableFilter from "./RelationTableFilter";
 import RelationTableHead from "./RelationTableHead";
 import styles from "./style.module.scss";
-import CPagination from "../../../Table1CUi/TableComponent/NewCPagination";
 
 function RelationTable({
   relation,
   shouldGet,
   remove,
-  loader,
-  setSelectedObjects,
-  setFieldSlug,
   id,
   selectedTabIndex,
   setFormValue,
@@ -43,9 +37,7 @@ function RelationTable({
   offset,
 }) {
   const {appId, tableSlug} = useParams();
-  // const navigate = useNavigate();
   const [filters, setFilters] = useState({});
-  // const [currentPage, setCurrentPage] = useState(1);
   const {i18n} = useTranslation();
   const [relOptions, setRelOptions] = useState([]);
   const [searchParams] = useSearchParams();
@@ -54,13 +46,6 @@ function RelationTable({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-
-  // const filterChangeHandler = (value, name) => {
-  //   setFilters({
-  //     ...filters,
-  //     [name]: value ?? undefined,
-  //   });
-  // };
 
   const mainForm = useForm({
     defaultValues: {
@@ -337,7 +322,6 @@ function RelationTable({
     {
       onSuccess: (a, b) => {
         remove(tableData.findIndex((i) => i.guid === b.guid));
-        // queryClient.refetchQueries(["GET_OBJECT_LIST"]);
         refetch();
       },
     }
@@ -391,7 +375,6 @@ function RelationTable({
           </tbody>
         </table>
       </div>
-      <CPagination />
     </>
   );
 }

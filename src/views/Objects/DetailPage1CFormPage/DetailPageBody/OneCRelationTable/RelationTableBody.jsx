@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./style.module.scss";
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import CellElementGenerator from "../../../../../components/ElementGenerators/CellElementGenerator";
 import {useNavigate, useParams} from "react-router-dom";
 

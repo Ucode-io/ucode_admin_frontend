@@ -51,8 +51,7 @@ const CDateDatePickerNoTimeZoneTable = ({
               mask={mask}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -86,13 +85,13 @@ const CDateDatePickerNoTimeZoneTable = ({
                           border: "none",
                         }
                       : disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
+                        ? {
+                            background: "#c0c0c039",
+                          }
+                        : {
+                            background: isBlackBg ? "#2A2D34" : "",
+                            color: isBlackBg ? "#fff" : "",
+                          },
                   }}
                 />
               )}
@@ -115,8 +114,7 @@ const CDateDatePickerNoTimeZoneTable = ({
               mask={"99:99"}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
@@ -151,13 +149,13 @@ const CDateDatePickerNoTimeZoneTable = ({
                           background: "transparent",
                         }
                       : disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
+                        ? {
+                            background: "#c0c0c039",
+                          }
+                        : {
+                            background: isBlackBg ? "#2A2D34" : "",
+                            color: isBlackBg ? "#fff" : "",
+                          },
                     endAdornment: (
                       <InputAdornment position="end">
                         <Box sx={{display: "flex", alignItems: "center"}}>

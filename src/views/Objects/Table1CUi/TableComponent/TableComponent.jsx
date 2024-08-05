@@ -122,13 +122,13 @@ const TableComponent = ({
         {addNewRow && (
           <OneCAddDataColumn setAddNewRow={setAddNewRow} columns={fields} />
         )}
-        {!addNewRow && (
+        {/* {!addNewRow && (
           <button
             onClick={() => setAddNewRow(!addNewRow)}
             className={styles.addROwBtn}>
             <AddIcon />
           </button>
-        )}
+        )} */}
       </div>
       <CPagination
         folderIds={folderIds}

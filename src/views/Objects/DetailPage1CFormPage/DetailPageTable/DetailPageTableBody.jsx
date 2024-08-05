@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import styles from "./style.module.scss";
 import CPagination from "../../Table1CUi/TableComponent/NewCPagination";
 import {Box} from "@mui/material";
@@ -18,6 +18,7 @@ const DetailPageTableBody = ({
   view,
   field,
   relatedTableSlug,
+  computedColumn,
 }) => {
   const {appId} = useParams();
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const DetailPageTableBody = ({
         <thead>
           <tr>
             <th style={{width: "30px", textAlign: "center"}}>№</th>
-            {fields?.map((column) => (
+            {computedColumn?.map((column) => (
               <DetailPageHead view={view} column={column} fields={fields} />
             ))}
           </tr>
@@ -56,7 +57,7 @@ const DetailPageTableBody = ({
               }}
               key={index}>
               <td style={{textAlign: "center"}}>{index + 1}</td>
-              {fields?.map((field) => (
+              {computedColumn?.map((field) => (
                 <td>
                   <CellElementGenerator row={row} field={field} />
                 </td>

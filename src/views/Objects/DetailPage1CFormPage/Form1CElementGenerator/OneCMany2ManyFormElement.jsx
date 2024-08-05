@@ -320,6 +320,7 @@ const AutoCompleteElement = ({field, value, tableSlug, setValue, control}) => {
         onChange={(value, options) => {
           changeHandler(value, options);
         }}
+        menuPortalTarget={document.body}
         onInputChange={(_, val) => {
           if (typeof val === "string") {
             inputChangeHandler(val?.prevInputValue);

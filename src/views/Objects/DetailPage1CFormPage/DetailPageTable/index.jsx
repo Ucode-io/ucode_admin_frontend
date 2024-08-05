@@ -10,23 +10,24 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import {useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
+import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
 
 function DetailPageTable({field, control, selectedTab}) {
   const {i18n} = useTranslation();
   const relatedTableSlug = field?.attributes?.table_from?.slug;
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
   const {navigateToRelationForm} = useRelationTabRouter();
 
-  const [columnAnchor, setColumnAnchor] = useState(null);
-  const openColumn = Boolean(columnAnchor);
+  const open = Boolean(anchorEl);
 
-  const handleColumnClick = (e) => setColumnAnchor(e.currentTarget);
-  const handleColumnClose = () => setColumnAnchor(null);
+  const handleColumnClick = (e) => setAnchorEl(e.currentTarget);
+  const handleColumnClose = () => setAnchorEl(null);
 
   const params = {
     language_setting: i18n?.language,
@@ -40,7 +41,7 @@ function DetailPageTable({field, control, selectedTab}) {
       visibleRelationColumns: [],
     },
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", i18n?.language, relatedTableSlug],
+    ["GET_VIEWS_AND_FIELDS_LIST", i18n?.language, relatedTableSlug],
     () => {
       return constructorTableService.getTableInfo(
         relatedTableSlug,
@@ -51,6 +52,7 @@ function DetailPageTable({field, control, selectedTab}) {
       );
     },
     {
+      enabled: Boolean(relatedTableSlug),
       select: ({data}) => {
         return {
           fields: data?.fields,
@@ -63,7 +65,7 @@ function DetailPageTable({field, control, selectedTab}) {
 
   const computedView = useMemo(() => {
     return views?.find((el) => el?.table_slug === relatedTableSlug);
-  }, [field]);
+  }, [field, views]);
 
   const {
     data: {tableData = [], count} = {},
@@ -117,6 +119,16 @@ function DetailPageTable({field, control, selectedTab}) {
     },
   });
 
+  const computedColumn = useMemo(() => {
+    return fields?.filter((item) => {
+      if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+        return computedView?.columns?.includes(item?.relation_id);
+      } else {
+        return computedView?.columns?.includes(item?.id);
+      }
+    });
+  }, [fields, computedView]);
+
   return (
     <Box sx={{overflow: "auto"}}>
       <Box
@@ -133,9 +145,9 @@ function DetailPageTable({field, control, selectedTab}) {
           className={styles.addBtn}>
           Добавить
         </button>
-        {/* <button onClick={handleColumnClick} className={styles.addBtnColumn}>
+        <button onClick={handleColumnClick} className={styles.addBtnColumn}>
           <img src="/img/eye_off.svg" alt="" />
-        </button> */}
+        </button>
       </Box>
       <DetailPageTableBody
         setLimit={setLimit}
@@ -147,6 +159,17 @@ function DetailPageTable({field, control, selectedTab}) {
         count={count}
         view={computedView}
         field={field}
+        relatedTableSlug={relatedTableSlug}
+        computedColumn={computedColumn}
+      />
+
+      <DetailRelationVisibleColumns
+        fields={fields}
+        fieldsMap={fieldsMap}
+        currentView={computedView}
+        handleColumnClose={handleColumnClose}
+        anchorEl={anchorEl}
+        open={open}
         relatedTableSlug={relatedTableSlug}
       />
     </Box>

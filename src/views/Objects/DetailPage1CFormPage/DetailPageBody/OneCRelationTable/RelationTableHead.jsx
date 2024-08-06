@@ -1,14 +1,12 @@
 import React, {useEffect, useMemo, useState} from "react";
 import styles from "./style.module.scss";
-import {Box, Menu, MenuItem, Typography} from "@mui/material";
+import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
 import {useParams, useSearchParams} from "react-router-dom";
 import layoutService from "../../../../../services/layoutService";
-import {useTranslation} from "react-i18next";
 import menuService from "../../../../../services/menuService";
 
 function RelationTableHead({
-  handleClick = () => {},
   column,
   view,
   fieldsMap,
@@ -25,8 +23,6 @@ function RelationTableHead({
   const {tableSlug} = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
-  const {i18n} = useTranslation();
-  const {id} = useParams();
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -141,7 +137,6 @@ function RelationTableHead({
   return (
     <>
       <th
-        onClick={handleClick}
         id={column.id}
         // style={{
         //   minWidth: tableSize?.[pageName]?.[column.id]
@@ -235,36 +230,43 @@ function RelationTableHead({
             </Typography>
 
             {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-              <IOSSwitch
-                size="small"
-                checked={computedColumns?.includes(column?.relation_id)}
-                onChange={(e) => {
-                  updateView(
-                    e.target.checked
-                      ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                        data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        ? [
-                            ...(data?.tabs?.[selectedTabIndex]?.attributes
-                              ?.columns ??
-                              data?.tabs?.[selectedTabIndex]?.relation
-                                ?.columns),
-                            column?.relation_id,
-                          ]
-                        : [column?.relation_id]
-                      : (
-                          data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
+              isLoading ? (
+                <CircularProgress sx={{color: "#449424"}} size={24} />
+              ) : (
+                <IOSSwitch
+                  size="small"
+                  checked={!computedColumns?.includes(column?.relation_id)}
+                  onChange={(e) => {
+                    updateView(
+                      !e.target.checked
+                        ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
                           data?.tabs?.[selectedTabIndex]?.relation?.columns
-                        )?.filter((el) => el !== column?.relation_id)
-                  );
-                }}
-              />
+                          ? [
+                              ...(data?.tabs?.[selectedTabIndex]?.attributes
+                                ?.columns ??
+                                data?.tabs?.[selectedTabIndex]?.relation
+                                  ?.columns),
+                              column?.relation_id,
+                            ]
+                          : [column?.relation_id]
+                        : (
+                            data?.tabs?.[selectedTabIndex]?.attributes
+                              ?.columns ??
+                            data?.tabs?.[selectedTabIndex]?.relation?.columns
+                          )?.filter((el) => el !== column?.relation_id)
+                    );
+                  }}
+                />
+              )
+            ) : isLoading ? (
+              <CircularProgress sx={{color: "#449424"}} size={24} />
             ) : (
               <IOSSwitch
                 size="small"
-                checked={computedColumns?.includes(column?.id)}
+                checked={!computedColumns?.includes(column?.id)}
                 onChange={(e) => {
                   updateView(
-                    e.target.checked
+                    !e.target.checked
                       ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
                         data?.tabs?.[selectedTabIndex]?.relation?.columns
                         ? [

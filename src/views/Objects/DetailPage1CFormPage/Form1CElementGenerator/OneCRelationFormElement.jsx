@@ -458,6 +458,7 @@ const AutoCompleteElement = ({
           value={localValue ?? []}
           required={required}
           defaultValue={value ?? ""}
+          menuPortalTarget={document.body}
           onChange={(e) => {
             changeHandler(e);
           }}

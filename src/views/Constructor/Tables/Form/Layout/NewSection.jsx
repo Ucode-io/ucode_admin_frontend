@@ -58,8 +58,16 @@ const NewSection = ({
 
   const onDrop = (dropResult) => {
     const {fields, insert, move, remove} = sectionFields;
-
-    const result = applyDrag(fields, dropResult);
+    let result = [];
+    if (dropResult?.payload?.isTab) {
+      if (fields?.length === 0) {
+        result = applyDrag(fields, dropResult);
+      } else {
+        return;
+      }
+    } else {
+      result = applyDrag(fields, dropResult);
+    }
 
     if (!result) return;
     if (result.length > fields.length) {
@@ -152,24 +160,52 @@ const NewSection = ({
           getChildPayload={(index) => sectionFields.fields[index]}>
           {sectionFieldsWatch?.map((field, fieldIndex) => (
             <Draggable key={fieldIndex} style={{minWidth: "300px"}}>
-              <div className={styles.newsectionCardRow}>
-                <FormElementGenerator
-                  control={mainForm.control}
-                  field={fieldsMap[field.id] ?? field}
-                  // isLayout={true}
-                  // sectionIndex={index}
-                  // column={1}
-                  // fieldIndex={fieldIndex}
-                  // mainForm={mainForm}
-                  checkPermission={false}
-                  checkRequired={false}
-                />
-                <ButtonsPopover
-                  className={styles.deleteButton}
-                  onEditClick={() => openSettingsBlock(field)}
-                  onDeleteClick={() => removeField(fieldIndex, 1)}
-                />
-              </div>
+              {field?.attributes?.isTab ? (
+                <div className={styles.tableSectionTable}>
+                  <table className={styles.relationTable}>
+                    <thead>
+                      <tr>
+                        <th>№</th>
+                        <th>
+                          {field?.attributes?.[`label_to_${i18n?.language}`] ||
+                            field.title ||
+                            field[field.relatedTableSlug]?.label}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>{""}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <ButtonsPopover
+                    className={styles.deleteButtonSection}
+                    onEditClick={() => openSettingsBlock(field)}
+                    onDeleteClick={() => removeField(fieldIndex, 1)}
+                  />
+                </div>
+              ) : (
+                <div className={styles.newsectionCardRow}>
+                  <FormElementGenerator
+                    control={mainForm.control}
+                    field={fieldsMap[field.id] ?? field}
+                    // isLayout={true}
+                    // sectionIndex={index}
+                    // column={1}
+                    // fieldIndex={fieldIndex}
+                    // mainForm={mainForm}
+                    checkPermission={false}
+                    checkRequired={false}
+                  />
+                  <ButtonsPopover
+                    className={styles.deleteButton}
+                    onEditClick={() => openSettingsBlock(field)}
+                    onDeleteClick={() => removeField(fieldIndex, 1)}
+                  />
+                </div>
+              )}
             </Draggable>
           ))}
         </Container>

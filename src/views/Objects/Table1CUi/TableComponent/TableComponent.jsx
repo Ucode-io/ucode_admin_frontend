@@ -6,6 +6,8 @@ import CPagination from "./NewCPagination";
 import {useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {tableSizeAction} from "../../../../store/tableSize/tableSizeSlice";
+import AddIcon from "@mui/icons-material/Add";
+import OneCAddDataColumn from "./AddDataColumn";
 
 const TableComponent = ({
   openFilter,
@@ -23,6 +25,7 @@ const TableComponent = ({
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const [folderIds, setFolderIds] = useState([]);
+  const [addNewRow, setAddNewRow] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
   const pageName =
@@ -116,6 +119,16 @@ const TableComponent = ({
             searchText={searchText}
           />
         </table>
+        {addNewRow && (
+          <OneCAddDataColumn setAddNewRow={setAddNewRow} columns={fields} />
+        )}
+        {/* {!addNewRow && (
+          <button
+            onClick={() => setAddNewRow(!addNewRow)}
+            className={styles.addROwBtn}>
+            <AddIcon />
+          </button>
+        )} */}
       </div>
       <CPagination
         folderIds={folderIds}

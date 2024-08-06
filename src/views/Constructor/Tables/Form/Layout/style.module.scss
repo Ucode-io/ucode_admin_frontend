@@ -475,3 +475,77 @@
   top: 8px;
   cursor: pointer;
 }
+
+.tableSectionTable {
+  display: flex;
+  align-items: center;
+  .deleteButtonSection {
+  }
+}
+
+.draggableContainer {
+  margin-bottom: 12px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.draggableContainer:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.relationTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  table-layout: auto;
+}
+
+.relationTable thead {
+  background-color: #f8f8f8;
+  color: #333;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.relationTable th,
+.relationTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #333;
+}
+
+.relationTable th {
+  font-weight: bold;
+}
+
+.relationTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.relationTable th:first-child,
+.relationTable td:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.relationTable tr:hover td {
+  background-color: #f5f5f5;
+}
+
+.relationTable th,
+.relationTable td {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}

@@ -1,149 +1,74 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {CircularProgress, Menu, Switch} from "@mui/material";
+import {CircularProgress, Menu} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
 import {Container, Draggable} from "react-smooth-dnd";
-import LinkIcon from "@mui/icons-material/Link";
-import {useParams, useSearchParams} from "react-router-dom";
-import menuService from "../../../../../services/menuService";
-import layoutService from "../../../../../services/layoutService";
-import {applyDrag} from "../../../../../utils/applyDrag";
-import {IOSSwitch} from "../../../../../theme/overrides/IosSwitch";
-import {columnIcons} from "../../../../../utils/constants/columnIcons";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
+import {useTranslation} from "react-i18next";
+import constructorViewService from "../../../../services/constructorViewService";
+import {useQueryClient} from "react-query";
 
-export default function RelationVisibleColumns({
-  currentView,
+function DetailRelationVisibleColumns({
   fieldsMap,
-  getAllData = () => {},
-  selectedTabIndex,
-  data,
+  currentView,
+  handleColumnClose,
   anchorEl,
-  handleClose,
+  open,
+  fields,
+  relatedTableSlug,
 }) {
-  const {tableSlug} = useParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const open = Boolean(anchorEl);
+  const [switchLoading, setSwitchLoading] = useState({});
   const {i18n} = useTranslation();
-  const {id} = useParams();
+  const queryClient = useQueryClient();
+
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
-  const [switchLoading, setSwitchLoading] = useState({});
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
-
-  const updateView = async (datas, id) => {
-    setSwitchLoading((prev) => ({...prev, [id]: true}));
-
-    setIsLoading(true);
-
-    const result = data?.tabs;
-
-    if (!result) {
-      setIsLoading(false);
-      return;
-    }
-
-    const computeTabs = result.map((item, index) => {
-      if (index === selectedTabIndex) {
-        return {
-          ...item,
-          attributes: {
-            ...item.attributes,
-            columns: [...datas],
-          },
-        };
-      } else {
-        return {
-          ...item,
-          attributes: {
-            ...item.attributes,
-            columns: Array.isArray(item?.attributes?.columns)
-              ? [...item?.attributes?.columns]
-              : [],
-          },
-        };
-      }
-    });
-
-    try {
-      await layoutService.update(
-        {
-          ...data,
-          tabs: computeTabs,
+  const updateView = async (datas) => {
+    await constructorViewService
+      .update(relatedTableSlug, {
+        ...currentView,
+        attributes: {
+          ...currentView?.attributes,
         },
-        tableSlug
-      );
-
-      await getAllData();
-    } catch (error) {
-      console.error("Error updating layout:", error);
-    } finally {
-      setIsLoading(false);
-      setSwitchLoading((prev) => ({...prev, [id]: false}));
-    }
+        columns: datas,
+      })
+      .then((res) => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS_LIST"]);
+      });
   };
-
-  const computedColumns = useMemo(() => {
-    if (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)) {
-      return (
-        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-        data?.tabs?.[selectedTabIndex]?.relation?.columns
-      );
-    } else {
-      return [];
-    }
-  }, [data?.tabs, selectedTabIndex]);
 
   const visibleFields = useMemo(() => {
     return (
-      computedColumns?.map((id) => fieldsMap[id])?.filter((el) => el?.type) ??
-      []
+      currentView?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        }) ?? []
     );
-  }, [computedColumns, fieldsMap]);
+  }, [currentView?.columns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter((field) => {
+    return fields.filter((field) => {
       if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-        return !computedColumns?.includes(field.relation_id);
+        return !currentView?.columns?.includes(field.relation_id);
       } else {
-        return !computedColumns?.includes(field.id);
+        return !currentView?.columns?.includes(field.id);
       }
     });
-  }, [allFields, computedColumns]);
+  }, [fields, currentView?.columns]);
 
-  const onDrop = (dropResult) => {
-    const result = applyDrag(visibleFields, dropResult);
-    if (result) {
-      updateView(
-        result.map((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
-            return el.relation_id;
-          } else {
-            return el.id;
-          }
-        })
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const onDrop = (dropResult) => {};
 
   return (
-    <div>
+    <>
       <Menu
         open={open}
-        onClose={handleClose}
+        onClose={handleColumnClose}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
@@ -198,7 +123,6 @@ export default function RelationVisibleColumns({
                   display: "flex",
                   alignItems: "center",
                   padding: "8px 0px",
-                  margin: "-1px -1px 0 0",
                 }}>
                 <b>All</b>
               </div>
@@ -207,7 +131,6 @@ export default function RelationVisibleColumns({
                   flex: 1,
                   alignItems: "center",
                   padding: "8px 16px",
-                  margin: "-1px -1px 0 0",
                   width: 70,
                   border: 0,
                   paddingLeft: 0,
@@ -221,7 +144,7 @@ export default function RelationVisibleColumns({
                   onChange={(e) => {
                     updateView(
                       e.target.checked
-                        ? allFields.map((el) => {
+                        ? fields.map((el) => {
                             if (
                               el?.type === "LOOKUP" ||
                               el?.type === "LOOKUPS"
@@ -255,7 +178,6 @@ export default function RelationVisibleColumns({
                         display: "flex",
                         alignItems: "center",
                         padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
                       }}>
                       <div
                         style={{
@@ -299,33 +221,19 @@ export default function RelationVisibleColumns({
                         ) : (
                           <IOSSwitch
                             size="small"
-                            checked={computedColumns?.includes(
+                            checked={currentView?.columns?.includes(
                               column?.relation_id
                             )}
                             onChange={(e) => {
                               updateView(
                                 e.target.checked
-                                  ? data?.tabs?.[selectedTabIndex]?.attributes
-                                      ?.columns ??
-                                    data?.tabs?.[selectedTabIndex]?.relation
-                                      ?.columns
-                                    ? [
-                                        ...(data?.tabs[selectedTabIndex]
-                                          ?.attributes?.columns ??
-                                          data?.tabs?.[selectedTabIndex]
-                                            ?.relation?.columns),
-                                        column?.relation_id,
-                                      ]
-                                    : [column?.relation_id]
-                                  : (
-                                      data?.tabs?.[selectedTabIndex]?.attributes
-                                        ?.columns ??
-                                      data?.tabs?.[selectedTabIndex]?.relation
-                                        ?.columns
-                                    )?.filter(
+                                  ? [
+                                      ...currentView?.columns,
+                                      column?.relation_id,
+                                    ]
+                                  : currentView?.columns?.filter(
                                       (el) => el !== column?.relation_id
-                                    ),
-                                column?.relation_id
+                                    )
                               );
                             }}
                           />
@@ -335,29 +243,14 @@ export default function RelationVisibleColumns({
                       ) : (
                         <IOSSwitch
                           size="small"
-                          checked={computedColumns?.includes(column?.id)}
+                          checked={currentView?.columns?.includes(column?.id)}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
-                                ? data?.tabs?.[selectedTabIndex]?.attributes
-                                    ?.columns ??
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                  ? [
-                                      ...(data?.tabs[selectedTabIndex]
-                                        ?.attributes?.columns ??
-                                        data?.tabs?.[selectedTabIndex]?.relation
-                                          ?.columns),
-                                      column?.id,
-                                    ]
-                                  : [column?.id]
-                                : (
-                                    data?.tabs?.[selectedTabIndex]?.attributes
-                                      ?.columns ??
-                                    data?.tabs?.[selectedTabIndex]?.relation
-                                      ?.columns
-                                  )?.filter((el) => el !== column?.id),
-                              column?.id
+                                ? [...currentView?.columns, column?.id]
+                                : currentView?.columns?.filter(
+                                    (el) => el !== column?.id
+                                  )
                             );
                           }}
                         />
@@ -381,7 +274,6 @@ export default function RelationVisibleColumns({
                       display: "flex",
                       alignItems: "center",
                       padding: "8px 0px",
-                      margin: "-1px -1px 0 0",
                     }}>
                     <div
                       style={{
@@ -407,7 +299,6 @@ export default function RelationVisibleColumns({
                       flex: 1,
                       alignItems: "center",
                       padding: "8px 16px",
-                      margin: "-1px -1px 0 0",
                       width: 70,
                       border: 0,
                       paddingLeft: 0,
@@ -421,30 +312,16 @@ export default function RelationVisibleColumns({
                       ) : (
                         <IOSSwitch
                           size="small"
-                          checked={computedColumns?.includes(
+                          checked={currentView?.columns?.includes(
                             column?.relation_id
                           )}
                           onChange={(e) => {
                             updateView(
                               e.target.checked
-                                ? data?.tabs?.[selectedTabIndex]?.attributes
-                                    ?.columns ??
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                  ? [
-                                      ...(data?.tabs?.[selectedTabIndex]
-                                        ?.attributes?.columns ??
-                                        data?.tabs?.[selectedTabIndex]?.relation
-                                          ?.columns),
-                                      column?.relation_id,
-                                    ]
-                                  : [column?.relation_id]
-                                : (
-                                    data?.tabs?.[selectedTabIndex]?.attributes
-                                      ?.columns ??
-                                    data?.tabs?.[selectedTabIndex]?.relation
-                                      ?.columns
-                                  )?.filter((el) => el !== column?.relation_id)
+                                ? [...currentView?.columns, column?.relation_id]
+                                : currentView?.columns?.filter(
+                                    (el) => el !== column?.relation_id
+                                  )
                             );
                           }}
                         />
@@ -454,28 +331,14 @@ export default function RelationVisibleColumns({
                     ) : (
                       <IOSSwitch
                         size="small"
-                        checked={computedColumns?.includes(column?.id)}
+                        checked={currentView?.columns?.includes(column?.id)}
                         onChange={(e) => {
                           updateView(
                             e.target.checked
-                              ? data?.tabs?.[selectedTabIndex]?.attributes
-                                  ?.columns ??
-                                data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
-                                ? [
-                                    ...(data?.tabs?.[selectedTabIndex]
-                                      ?.attributes?.columns ??
-                                      data?.tabs?.[selectedTabIndex]?.relation
-                                        ?.columns),
-                                    column?.id,
-                                  ]
-                                : [column?.id]
-                              : (
-                                  data?.tabs?.[selectedTabIndex]?.attributes
-                                    ?.columns ??
-                                  data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
-                                )?.filter((el) => el !== column?.id)
+                              ? [...currentView?.columns, column?.id]
+                              : currentView?.columns?.filter(
+                                  (el) => el !== column?.id
+                                )
                           );
                         }}
                       />
@@ -487,6 +350,8 @@ export default function RelationVisibleColumns({
           </div>
         </div>
       </Menu>
-    </div>
+    </>
   );
 }
+
+export default DetailRelationVisibleColumns;

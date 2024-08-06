@@ -1,18 +1,37 @@
 import React from "react";
 import styles from "./style.module.scss";
+import CellElementGenerator from "../../../../../components/ElementGenerators/CellElementGenerator";
+import {useNavigate, useParams} from "react-router-dom";
 
-function RelationTableBody({columns, item, view}) {
+function RelationTableBody({
+  columns,
+  item,
+  view,
+  tableData,
+  control,
+  menuItem,
+  index,
+}) {
+  const {appId} = useParams();
+  const navigate = useNavigate();
   return (
     <tr
-      onClick={() => {
-        // navigateToDetailPage(item);
-      }}
-      //   key={item.guid}
-      className={styles.child_row}
-      //   style={{paddingLeft: `${(level + 1) * 40}px`, cursor: "pointer"}}
-    >
+      style={{cursor: "pointer"}}
+      key={item.guid}
+      className={styles.child_row}>
+      <td style={{textAlign: "center"}}>{index + 1}</td>
       {columns?.map((col, index) => (
         <td
+          onClick={() => {
+            navigate(
+              `/main/${appId}/1c/${view?.relation_table_slug}/${item?.guid}?menuId=${menuItem?.id}`,
+              {
+                state: {
+                  label: item?.[col?.slug],
+                },
+              }
+            );
+          }}
           style={{height: "35px"}}
           //   style={{
           //     position: `${
@@ -41,7 +60,7 @@ function RelationTableBody({columns, item, view}) {
           //     }`,
           //   }}
           key={index}>
-          {item?.[col?.slug]}
+          <CellElementGenerator row={item} field={col} />
         </td>
       ))}
     </tr>

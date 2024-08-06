@@ -419,6 +419,15 @@ const Router = () => {
           />
 
           <Route
+            path=":appId/1c/:tableSlug/create/:id"
+            element={
+              <KeepAliveWrapper>
+                <DetailPage1CFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+
+          <Route
             path=":appId/1c/:tableSlug/:id"
             element={
               <KeepAliveWrapper>

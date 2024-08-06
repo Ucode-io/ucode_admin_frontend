@@ -205,7 +205,7 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
-  console.log("roleInfo", roleInfo === "DEFAULT ADMIN");
+
   return (
     <>
       {view?.attributes?.table_1c_ui ? (

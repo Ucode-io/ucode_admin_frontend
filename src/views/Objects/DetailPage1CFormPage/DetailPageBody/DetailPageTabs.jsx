@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import {Box, Menu, MenuItem} from "@mui/material";
+import {Box, CircularProgress, Menu, MenuItem} from "@mui/material";
 import styles from "./style.module.scss";
 import DetailPageSection from "./DetailPageSection";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -36,6 +36,9 @@ function DetailPageTabs({
   errors,
   menuItem,
   data,
+  setOffset = () => {},
+  offset,
+  setCount = () => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -297,91 +300,114 @@ function DetailPageTabs({
 
   return (
     <Box id="detailPageTabs">
-      <Tabs selectedIndex={selectedIndex} onSelect={handleTabChange}>
-        <TabList>
-          {visibleTabs?.map((item, index) => (
-            <Tab
-              onClick={() => {
-                dispatch(
-                  relationTabActions.addTab({
-                    slug: tableSlug,
-                    tabIndex: index,
-                  })
-                );
-                setSelectedIndex(index);
-                onSelect(item);
-              }}
-              key={item.id}
-              className={styles.reactTabs}>
-              {item.label}
-            </Tab>
-          ))}
-          {moreTabs?.length > 0 && (
-            <>
-              <button onClick={handleMoreClick} className={styles.moreButton}>
-                Еще
-                <KeyboardArrowDownIcon />
-              </button>
-              <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                <Box sx={{minWidth: "200px"}}>
-                  {moreTabs?.map((item, index) => (
-                    <MenuItem
-                      sx={{
-                        padding: "10px 15px",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        color: "#667085",
-                      }}
-                      key={item.id}
-                      onClick={() => handleTabChange(maxVisibleTabs + index)}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Box>
-              </Menu>
-            </>
-          )}
-        </TabList>
-
-        {data?.tabs?.map((item) => (
-          <TabPanel style={{width: "100%", overflow: "scroll"}} key={item.id}>
-            {item?.type === "section" ? (
-              <DetailPageSection control={control} item={item} />
-            ) : (
-              <RelationTable
-                ref={myRef}
-                loader={loader}
-                remove={remove}
-                reset={reset}
-                selectedTabIndex={selectedTabIndex}
-                watch={watch}
-                view={getRelatedTabeSlug}
-                selectedTab={selectedTab}
-                control={control}
-                getValues={getValues}
-                setFormValue={setFormValue}
-                fields={fields}
-                setFormVisible={setFormVisible}
-                formVisible={formVisible}
-                key={selectedTab?.id}
-                relation={relations}
-                createFormVisible={relationsCreateFormVisible}
-                setCreateFormVisible={setCreateFormVisible}
-                selectedObjects={selectedObjects}
-                setSelectedObjects={setSelectedObjects}
-                tableSlug={tableSlug}
-                id={id}
-                type={type}
-                fieldsMap={fieldsMap}
-                relatedTable={relatedTable}
-                getAllData={getAllData}
-                layoutData={data}
-                computedVisibleFields={computedVisibleFields}
-              />
+      {data?.tabs?.length ? (
+        <Tabs selectedIndex={selectedIndex} onSelect={handleTabChange}>
+          <TabList>
+            {visibleTabs?.map((item, index) => (
+              <Tab
+                onClick={() => {
+                  dispatch(
+                    relationTabActions.addTab({
+                      slug: tableSlug,
+                      tabIndex: index,
+                    })
+                  );
+                  setSelectedIndex(index);
+                  onSelect(item);
+                }}
+                key={item.id}
+                className={styles.reactTabs}>
+                {item.label}
+              </Tab>
+            ))}
+            {moreTabs?.length > 0 && (
+              <>
+                <button onClick={handleMoreClick} className={styles.moreButton}>
+                  Еще
+                  <KeyboardArrowDownIcon />
+                </button>
+                <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                  <Box sx={{minWidth: "200px"}}>
+                    {moreTabs?.map((item, index) => (
+                      <MenuItem
+                        sx={{
+                          padding: "10px 15px",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          color: "#667085",
+                        }}
+                        key={item.id}
+                        onClick={() => handleTabChange(maxVisibleTabs + index)}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Box>
+                </Menu>
+              </>
             )}
-          </TabPanel>
-        ))}
-      </Tabs>
+          </TabList>
+
+          {data?.tabs?.map((item) => (
+            <TabPanel style={{width: "100%", overflow: "auto"}} key={item.id}>
+              {item?.type === "section" ? (
+                <DetailPageSection
+                  control={control}
+                  item={item}
+                  watch={watch}
+                  selectedTab={selectedTab}
+                />
+              ) : (
+                <RelationTable
+                  ref={myRef}
+                  loader={loader}
+                  remove={remove}
+                  reset={reset}
+                  selectedTabIndex={selectedTabIndex}
+                  watch={watch}
+                  view={getRelatedTabeSlug}
+                  selectedTab={selectedTab}
+                  control={control}
+                  getValues={getValues}
+                  setFormValue={setFormValue}
+                  fields={fields}
+                  setFormVisible={setFormVisible}
+                  formVisible={formVisible}
+                  key={selectedTab?.id}
+                  relation={relations}
+                  createFormVisible={relationsCreateFormVisible}
+                  setCreateFormVisible={setCreateFormVisible}
+                  selectedObjects={selectedObjects}
+                  setSelectedObjects={setSelectedObjects}
+                  tableSlug={tableSlug}
+                  id={id}
+                  type={type}
+                  fieldsMap={fieldsMap}
+                  relatedTable={relatedTable}
+                  getAllData={getAllData}
+                  layoutData={data}
+                  computedVisibleFields={computedVisibleFields}
+                  limit={limit}
+                  setLimit={setLimit}
+                  setOffset={setOffset}
+                  offset={offset}
+                  setCount={setCount}
+                />
+              )}
+            </TabPanel>
+          ))}
+        </Tabs>
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            height: "calc(100vh - 200px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <CircularProgress size={50} sx={{color: "#449424"}} />
+        </Box>
+      )}
     </Box>
   );
 }

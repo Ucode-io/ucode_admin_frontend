@@ -11,6 +11,7 @@ import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
 import TableFieldButton from "../TableFieldButton";
+import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 
 function TableFilterBlock({
   openFilter,
@@ -27,6 +28,7 @@ function TableFilterBlock({
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
   const {navigateToForm} = useTabRouter();
+  const {navigateToRelationForm} = useRelationTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
@@ -66,7 +68,7 @@ function TableFilterBlock({
   };
 
   const navigateCreatePage = (row) => {
-    navigateToForm(
+    navigateToRelationForm(
       tableSlug,
       "CREATE",
       {},

@@ -149,7 +149,7 @@ function Form1CElementGenerator({
   ) {
     return null;
   }
-  console.log("fieldddddddddd", field);
+
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return (

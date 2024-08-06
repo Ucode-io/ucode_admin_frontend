@@ -14,11 +14,17 @@ function ItemsRow({
 }) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
+
   return (
     <tr
       onClick={() => {
         navigate(
-          `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+          `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`,
+          {
+            state: {
+              label: item?.label || item?.title,
+            },
+          }
         );
         // navigateToDetailPage(item);
       }}

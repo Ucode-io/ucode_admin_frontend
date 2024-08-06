@@ -367,6 +367,7 @@ function RelationTable({
                 view={getRelatedTabeSlug}
                 columns={columns}
                 item={item}
+                index={index}
                 tableData={tableData}
                 control={control}
                 menuItem={menuItem}

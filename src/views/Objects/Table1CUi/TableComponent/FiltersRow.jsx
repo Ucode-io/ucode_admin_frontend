@@ -6,13 +6,9 @@ import {useNavigate, useParams} from "react-router-dom";
 function FiltersRow({columns, tableSettings, pageName, view, item, menuItem}) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
+
   return (
     <tr
-      onClick={() => {
-        navigate(
-          `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
-        );
-      }}
       key={item.guid}
       className={styles.child_row}
       style={{paddingLeft: "40px", cursor: "pointer"}}>
@@ -20,7 +16,12 @@ function FiltersRow({columns, tableSettings, pageName, view, item, menuItem}) {
         <td
           onClick={() => {
             navigate(
-              `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`
+              `/main/${appId}/1c/${tableSlug}/${item?.guid}?menuId=${menuItem?.id}`,
+              {
+                state: {
+                  label: item[col?.slug],
+                },
+              }
             );
           }}
           style={{

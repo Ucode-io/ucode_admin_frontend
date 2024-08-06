@@ -64,7 +64,6 @@ function DetailRelationVisibleColumns({
 
   const onDrop = (dropResult) => {};
 
-  console.log("visibleFields", visibleFields, unVisibleFields);
   return (
     <>
       <Menu
@@ -124,7 +123,6 @@ function DetailRelationVisibleColumns({
                   display: "flex",
                   alignItems: "center",
                   padding: "8px 0px",
-                  margin: "-1px -1px 0 0",
                 }}>
                 <b>All</b>
               </div>
@@ -133,7 +131,6 @@ function DetailRelationVisibleColumns({
                   flex: 1,
                   alignItems: "center",
                   padding: "8px 16px",
-                  margin: "-1px -1px 0 0",
                   width: 70,
                   border: 0,
                   paddingLeft: 0,
@@ -181,7 +178,6 @@ function DetailRelationVisibleColumns({
                         display: "flex",
                         alignItems: "center",
                         padding: "8px 0px",
-                        margin: "-1px -1px 0 0",
                       }}>
                       <div
                         style={{
@@ -211,7 +207,6 @@ function DetailRelationVisibleColumns({
                         flex: 1,
                         alignItems: "center",
                         padding: "8px 16px",
-                        margin: "-1px -1px 0 0",
                         width: 70,
                         border: 0,
                         paddingLeft: 0,
@@ -279,7 +274,6 @@ function DetailRelationVisibleColumns({
                       display: "flex",
                       alignItems: "center",
                       padding: "8px 0px",
-                      margin: "-1px -1px 0 0",
                     }}>
                     <div
                       style={{
@@ -305,7 +299,6 @@ function DetailRelationVisibleColumns({
                       flex: 1,
                       alignItems: "center",
                       padding: "8px 16px",
-                      margin: "-1px -1px 0 0",
                       width: 70,
                       border: 0,
                       paddingLeft: 0,

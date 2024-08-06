@@ -10,24 +10,28 @@ function RelationTableBody({
   tableData,
   control,
   menuItem,
+  index,
 }) {
   const {appId} = useParams();
   const navigate = useNavigate();
   return (
     <tr
-      onClick={() => {
-        navigate(
-          `/main/${appId}/1c/${view?.relation_table_slug}/${item?.guid}?menuId=${menuItem?.id}`
-        );
-      }}
       style={{cursor: "pointer"}}
       key={item.guid}
       className={styles.child_row}>
-      {tableData?.map((el, index) => (
-        <td style={{textAlign: "center"}}>{index + 1}</td>
-      ))}
+      <td style={{textAlign: "center"}}>{index + 1}</td>
       {columns?.map((col, index) => (
         <td
+          onClick={() => {
+            navigate(
+              `/main/${appId}/1c/${view?.relation_table_slug}/${item?.guid}?menuId=${menuItem?.id}`,
+              {
+                state: {
+                  label: item?.[col?.slug],
+                },
+              }
+            );
+          }}
           style={{height: "35px"}}
           //   style={{
           //     position: `${

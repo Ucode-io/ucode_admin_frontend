@@ -36,7 +36,7 @@ function DetailPageSection({item, control, watch, selectedTab}) {
     <div className={styles.tabSections} id="detailPage">
       {item?.sections?.length ? (
         item?.sections?.map((section, index) => {
-          const fieldCount = section?.attributes?.field_count || 1;
+          const fieldCount = section?.attributes?.field_count || 2;
           const fields = section?.fields || [];
           return (
             <Accordion

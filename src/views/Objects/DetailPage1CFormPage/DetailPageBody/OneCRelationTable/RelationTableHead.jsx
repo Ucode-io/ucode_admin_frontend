@@ -235,10 +235,10 @@ function RelationTableHead({
               ) : (
                 <IOSSwitch
                   size="small"
-                  checked={computedColumns?.includes(column?.relation_id)}
+                  checked={!computedColumns?.includes(column?.relation_id)}
                   onChange={(e) => {
                     updateView(
-                      e.target.checked
+                      !e.target.checked
                         ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
                           data?.tabs?.[selectedTabIndex]?.relation?.columns
                           ? [
@@ -263,10 +263,10 @@ function RelationTableHead({
             ) : (
               <IOSSwitch
                 size="small"
-                checked={computedColumns?.includes(column?.id)}
+                checked={!computedColumns?.includes(column?.id)}
                 onChange={(e) => {
                   updateView(
-                    e.target.checked
+                    !e.target.checked
                       ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
                         data?.tabs?.[selectedTabIndex]?.relation?.columns
                         ? [

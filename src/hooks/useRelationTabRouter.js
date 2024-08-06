@@ -19,7 +19,7 @@ export default function useRelationTabRouter() {
     menuId = ""
   ) => {
     if (type === "CREATE") {
-      const id = generateID();
+      const id = generateGUID();
 
       const link = `/main/${appId}/1c/${tableSlug}/create/${id}?menuId=${menuId}`;
 

@@ -285,7 +285,6 @@ export default function RelationVisibleColumns({
                         flex: 1,
                         alignItems: "center",
                         padding: "8px 16px",
-                        margin: "-1px -1px 0 0",
                         width: 70,
                         border: 0,
                         paddingLeft: 0,

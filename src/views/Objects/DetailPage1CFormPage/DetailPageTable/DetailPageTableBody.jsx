@@ -52,7 +52,7 @@ const DetailPageTableBody = ({
             <tr
               onClick={() => {
                 navigate(
-                  `/main/${appId}/1c/${relatedTableSlug}/${field?.id}?menuId=${menuItem?.id}`
+                  `/main/${appId}/1c/${relatedTableSlug}/${row?.guid}?menuId=${menuItem?.id}`
                 );
               }}
               key={index}>

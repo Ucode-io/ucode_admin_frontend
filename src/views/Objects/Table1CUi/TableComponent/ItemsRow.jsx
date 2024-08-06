@@ -14,7 +14,7 @@ function ItemsRow({
 }) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
-
+  console.log("itemmmmmmmmmmm", item);
   return (
     <tr
       onClick={() => {
@@ -26,7 +26,6 @@ function ItemsRow({
             },
           }
         );
-        // navigateToDetailPage(item);
       }}
       key={item.guid}
       className={styles.child_row}

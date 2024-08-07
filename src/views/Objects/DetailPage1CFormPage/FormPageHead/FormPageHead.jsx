@@ -1,19 +1,18 @@
 import React from "react";
 import styles from "./style.module.scss";
-import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
+import FormPageBackBtn from "./FormPageBackBtn";
 
 function FormPageHead({onSubmit = () => {}, getRelatedTabeSlug, selectedTab}) {
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const stateLabel = useLocation();
 
-  const navigate = useNavigate();
   const {navigateToRelationForm} = useRelationTabRouter();
   return (
     <div className={styles.tableHeadTitle}>
       <div className={styles.tabBackBtn}>
-        {/* <h2>{stateLabel?.state?.label}</h2> */}
+        <FormPageBackBtn />
       </div>
       <div className={styles.tableHeadLinks}>
         {selectedTab?.type !== "section" && (

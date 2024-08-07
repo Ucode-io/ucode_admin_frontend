@@ -6,7 +6,6 @@ import CPagination from "./NewCPagination";
 import {useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {tableSizeAction} from "../../../../store/tableSize/tableSizeSlice";
-import AddIcon from "@mui/icons-material/Add";
 import OneCAddDataColumn from "./AddDataColumn";
 
 const TableComponent = ({

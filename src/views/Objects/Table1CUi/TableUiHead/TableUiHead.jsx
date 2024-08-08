@@ -7,7 +7,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShareModal from "../../ShareModal/ShareModal";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import NewViewTabSelector from "./NewViewTabSelector";
 
 function TableUiHead({
   menuItem,
@@ -74,7 +73,7 @@ function TableUiHead({
             </Box>
           </Box>
         </Menu>
-        <NewViewTabSelector
+        {/* <NewViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
@@ -85,7 +84,7 @@ function TableUiHead({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
           menuItem={menuItem}
-        />
+        /> */}
 
         {/* <ViewTabSelector
           selectedTabIndex={selectedTabIndex}

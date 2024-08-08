@@ -380,7 +380,7 @@ const AutoCompleteElement = ({
     const findedOption = options?.find((el) => el?.guid === value || state?.id);
     return findedOption ? findedOption : [];
   }, [options, value, state?.id]);
-  console.log("computedValue", computedValue);
+
   useEffect(() => {
     let val;
 
@@ -458,6 +458,13 @@ const AutoCompleteElement = ({
     }
   }, [allOptions?.length, field]);
 
+  useEffect(() => {
+    if (localValue?.length === 0 && computedValue?.guid) {
+      setLocalValue([computedValue]);
+      setValue(computedValue?.guid);
+    }
+  }, [state?.id]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -512,7 +519,7 @@ const AutoCompleteElement = ({
             options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}
-            value={localValue?.length ? localValue : computedValue ?? []}
+            value={localValue ?? []}
             required={required}
             defaultValue={value ?? ""}
             onChange={(e) => {

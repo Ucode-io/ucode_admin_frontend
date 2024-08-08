@@ -41,15 +41,21 @@ const DetailPageTableBody = ({
       <table className={styles.custom_table}>
         <thead>
           <tr>
-            <th style={{width: "30px", textAlign: "center"}}>№</th>
+            <th style={{width: "50px", textAlign: "center"}}>№</th>
             {computedColumn?.map((column) => (
-              <DetailPageHead view={view} column={column} fields={fields} />
+              <DetailPageHead
+                relatedTableSlug={relatedTableSlug}
+                view={view}
+                column={column}
+                fields={fields}
+              />
             ))}
           </tr>
         </thead>
         <tbody>
           {tableData?.map((row, index) => (
             <tr
+              style={{cursor: "pointer"}}
               onClick={() => {
                 navigate(
                   `/main/${appId}/1c/${relatedTableSlug}/${row?.guid}?menuId=${menuItem?.id}`

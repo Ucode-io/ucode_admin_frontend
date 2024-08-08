@@ -96,7 +96,7 @@ const RelationFormElement = ({
     <Controller
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
-      defaultValue={field.label}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
@@ -159,7 +159,7 @@ const AutoCompleteElement = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const {id} = useParams();
+
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
@@ -377,10 +377,10 @@ const AutoCompleteElement = ({
   };
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
-
+    const findedOption = options?.find((el) => el?.guid === value || state?.id);
+    return findedOption ? findedOption : [];
+  }, [options, value, state?.id]);
+  console.log("computedValue", computedValue);
   useEffect(() => {
     let val;
 
@@ -512,7 +512,7 @@ const AutoCompleteElement = ({
             options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}
-            value={localValue ?? []}
+            value={localValue?.length ? localValue : computedValue ?? []}
             required={required}
             defaultValue={value ?? ""}
             onChange={(e) => {

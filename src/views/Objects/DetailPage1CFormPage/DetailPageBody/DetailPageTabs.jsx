@@ -33,8 +33,6 @@ function DetailPageTabs({
   watch,
   setSelectTab,
   selectedTab,
-  errors,
-  menuItem,
   data,
   setOffset = () => {},
   offset,
@@ -66,9 +64,6 @@ function DetailPageTabs({
   const id = idFromProps ?? idFromParams;
 
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
-    useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
@@ -85,10 +80,6 @@ function DetailPageTabs({
   const tabSelected = useSelector((state) =>
     state?.relationTab?.tabs?.find((item) => item?.slug === tableSlug)
   );
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -132,7 +123,6 @@ function DetailPageTabs({
     update();
   }, [update]);
 
-  const selectedRelation = filteredRelations?.[selectedTabIndex];
   useEffect(() => {
     setSelectedObjects([]);
     setFormVisible(false);
@@ -152,41 +142,6 @@ function DetailPageTabs({
       [relationId]: value,
     }));
   };
-
-  /*****************************JWT START*************************/
-
-  const navigateToCreatePage = () => {
-    let mapped = {
-      [`${tableSlug}_id`]: idFromParams ?? "",
-    };
-    defaultValuesFromJwt.forEach((el) => {
-      let keys = Object.keys(el);
-      let values = Object.values(el);
-      mapped[keys[0]] = values[0];
-    });
-    // const relation = filteredRelations[selectedTabIndex];
-    if (getRelatedTabeSlug?.type === "Many2Many")
-      setSelectedManyToManyRelation(getRelatedTabeSlug);
-    else {
-      append(mapped);
-      setFormVisible(true);
-    }
-  };
-
-  const computedSections = useMemo(() => {
-    const sections = [];
-    data?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
-      return !sections?.[el] && sections.push(el);
-    });
-    return sections;
-  }, [data, selectedTabIndex]);
-
-  const onSelect = (el) => {
-    setType(el?.type);
-    setSelectTab(el || relations[selectedTabIndex]);
-  };
-
-  /*****************************JWT END*************************/
 
   useEffect(() => {
     Boolean(getRelatedTabeSlug && relationFieldSlug) &&
@@ -233,15 +188,15 @@ function DetailPageTabs({
     );
   }, [jwtObjects, tables]);
 
-  const isMultiLanguage = useMemo(() => {
-    const allFields = [];
-    selectedTab?.sections?.map((section) => {
-      return section?.fields?.map((field) => {
-        return allFields.push(field);
-      });
-    });
-    return !!allFields.find((field) => field?.enable_multilanguage === true);
-  }, [selectedTab]);
+  // const isMultiLanguage = useMemo(() => {
+  //   const allFields = [];
+  //   selectedTab?.sections?.map((section) => {
+  //     return section?.fields?.map((field) => {
+  //       return allFields.push(field);
+  //     });
+  //   });
+  //   return !!allFields.find((field) => field?.enable_multilanguage === true);
+  // }, [selectedTab]);
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 

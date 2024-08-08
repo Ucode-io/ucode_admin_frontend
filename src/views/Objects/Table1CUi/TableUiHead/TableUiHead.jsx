@@ -1,4 +1,4 @@
-import {Box, Button} from "@mui/material";
+import {Box, Button, Menu} from "@mui/material";
 import React, {useState} from "react";
 import styles from "./style.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -8,10 +8,26 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ShareModal from "../../ShareModal/ShareModal";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 
-function TableUiHead({menuItem}) {
+function TableUiHead({
+  menuItem,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  views,
+  settingsModalVisible,
+  setSettingsModalVisible,
+  isChanged,
+  setIsChanged,
+  selectedView,
+  setSelectedView,
+}) {
   const {appId, tableSlug} = useParams();
   const [parentMenu, setParentMenu] = useState();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: appId,
@@ -33,25 +49,55 @@ function TableUiHead({menuItem}) {
       <Box sx={{display: "flex", gap: "6px", alignItems: "center"}}>
         <Box
           sx={{cursor: "pointer"}}
-          onClick={() => {
-            navigate("/c57eedc3-a954-4262-a0af-376c65b5a284");
+          onClick={(e) => {
+            // navigate("/c57eedc3-a954-4262-a0af-376c65b5a284");
+            handleClick(e);
           }}>
           <img src="/img/homeIcon.svg" alt="" />
         </Box>
-        <Box sx={{height: "19px"}}>
-          <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} />
-        </Box>
-        <Box
-          sx={{fontWeight: 500, fontSize: "12px", cursor: "pointer"}}
-          onClick={() => navigate(`/main/${appId}`)}>
-          {parentMenu?.label}
-        </Box>
-        <Box sx={{height: "19px"}}>
-          <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} />
-        </Box>
-        <Box sx={{color: "#337E28", fontWeight: 600, fontSize: "12px"}}>
-          {menuItem?.label ?? ""}
-        </Box>
+        <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
+          <Box sx={{width: "150px", padding: "10px"}}>
+            <Box sx={{padding: "5px 0"}}>
+              <Box
+                sx={{fontWeight: 500, fontSize: "12px", cursor: "pointer"}}
+                onClick={() => navigate(`/main/${appId}`)}>
+                {parentMenu?.label}
+              </Box>
+              {/* <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} /> */}
+            </Box>
+            <Box sx={{padding: "5px 0"}}>
+              <Box sx={{color: "#337E28", fontWeight: 600, fontSize: "12px"}}>
+                {menuItem?.label ?? ""}
+              </Box>
+              {/* <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} /> */}
+            </Box>
+          </Box>
+        </Menu>
+        {/* <NewViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          menuItem={menuItem}
+        /> */}
+
+        {/* <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          menuItem={menuItem}
+        /> */}
       </Box>
       <Box sx={{display: "flex", alignItems: "center", gap: "12px"}}>
         <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">

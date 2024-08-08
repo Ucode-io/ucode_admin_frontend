@@ -76,16 +76,6 @@ function RelationTable({
     return getObject?.pageLimit ?? limit;
   }, [paginationInfo, tableSlug]);
 
-  // const limitPage = useMemo(() => {
-  //   if (typeof paginiation === "number") {
-  //     return paginiation;
-  //   } else if (paginiation === "all" && limit === "all") {
-  //     return undefined;
-  //   } else {
-  //     return pageToOffset(currentPage, limit);
-  //   }
-  // }, [paginiation, limit, currentPage]);
-
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {

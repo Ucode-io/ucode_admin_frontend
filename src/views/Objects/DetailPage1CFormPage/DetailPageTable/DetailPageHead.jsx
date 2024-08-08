@@ -2,19 +2,46 @@ import React, {useState} from "react";
 import styles from "./style.module.scss";
 import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
 import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
+import constructorViewService from "../../../../services/constructorViewService";
+import {useQueryClient} from "react-query";
 
-function DetailPageHead({fields, column, view}) {
+function DetailPageHead({column, view, relatedTableSlug}) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedColumn, setSelectedColumn] = useState(null);
   const open = Boolean(anchorEl);
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClick = (e, column) => {
+    setAnchorEl(e.currentTarget);
+    setSelectedColumn(column);
+  };
   const handleClose = () => setAnchorEl(null);
+
+  const updateView = (data, fieldId) => {
+    setIsLoading(true);
+    constructorViewService
+      .update(relatedTableSlug, {
+        ...view,
+        columns: data,
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS_LIST"]);
+      })
+      .finally(() => {
+        handleClose();
+        setIsLoading(false);
+      });
+  };
   return (
     <>
       <th>
         {column?.label}
-        <button onClick={handleClick} className={styles.detailRelationhead}>
+        <button
+          onClick={(e) => {
+            handleClick(e, column);
+          }}
+          className={styles.detailRelationhead}>
           <img src="/img/dots_horizontal.svg" alt="" />
         </button>
       </th>
@@ -35,17 +62,7 @@ function DetailPageHead({fields, column, view}) {
               }}>
               Fix
             </Typography>
-            {/* {columnFix ? (
-              <CircularProgress sx={{color: "#449424"}} size={24} />
-            ) : ( */}
-            <IOSSwitch
-              //   checked={view?.attributes?.fixedColumns?.[selectedColumn?.id]}
-              // onChange={(e) => {
-              //   fixColumnChangeHandler(selectedColumn, e.target.checked);
-              // }}
-              color="primary"
-            />
-            {/* )} */}
+            <IOSSwitch disabled={true} color="primary" />
           </MenuItem>
           <MenuItem
             sx={{
@@ -68,27 +85,17 @@ function DetailPageHead({fields, column, view}) {
               ) : (
                 <IOSSwitch
                   size="small"
-                  //   checked={computedColumns?.includes(column?.relation_id)}
-                  //   onChange={(e) => {
-                  //     updateView(
-                  //       e.target.checked
-                  //         ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                  //           data?.tabs?.[selectedTabIndex]?.relation?.columns
-                  //           ? [
-                  //               ...(data?.tabs?.[selectedTabIndex]?.attributes
-                  //                 ?.columns ??
-                  //                 data?.tabs?.[selectedTabIndex]?.relation
-                  //                   ?.columns),
-                  //               column?.relation_id,
-                  //             ]
-                  //           : [column?.relation_id]
-                  //         : (
-                  //             data?.tabs?.[selectedTabIndex]?.attributes
-                  //               ?.columns ??
-                  //             data?.tabs?.[selectedTabIndex]?.relation?.columns
-                  //           )?.filter((el) => el !== column?.relation_id)
-                  //     );
-                  //   }}
+                  checked={!view?.columns?.includes(column?.relation_id)}
+                  onChange={(e) => {
+                    updateView(
+                      !e.target.checked
+                        ? [...view?.columns, selectedColumn?.relation_id]
+                        : view?.columns?.filter(
+                            (el) => el !== selectedColumn?.relation_id
+                          ),
+                      selectedColumn?.relation_id
+                    );
+                  }}
                 />
               )
             ) : isLoading ? (
@@ -96,26 +103,17 @@ function DetailPageHead({fields, column, view}) {
             ) : (
               <IOSSwitch
                 size="small"
-                // checked={computedColumns?.includes(column?.id)}
-                // onChange={(e) => {
-                //   updateView(
-                //     e.target.checked
-                //       ? data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                //         data?.tabs?.[selectedTabIndex]?.relation?.columns
-                //         ? [
-                //             ...(data?.tabs?.[selectedTabIndex]?.attributes
-                //               ?.columns ??
-                //               data?.tabs?.[selectedTabIndex]?.relation
-                //                 ?.columns),
-                //             column?.id,
-                //           ]
-                //         : [column?.id]
-                //       : (
-                //           data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-                //           data?.tabs?.[selectedTabIndex]?.relation?.columns
-                //         )?.filter((el) => el !== column?.id)
-                //   );
-                // }}
+                checked={!view?.columns?.includes(column?.id)}
+                onChange={(e) => {
+                  updateView(
+                    !e.target.checked
+                      ? [...view?.columns, selectedColumn?.id]
+                      : view?.columns?.filter(
+                          (el) => el !== selectedColumn?.id
+                        ),
+                    selectedColumn?.id
+                  );
+                }}
               />
             )}
           </MenuItem>

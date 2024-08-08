@@ -14,7 +14,7 @@ function ItemsRow({
 }) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
-  console.log("itemmmmmmmmmmm", item);
+
   return (
     <tr
       onClick={() => {

@@ -463,7 +463,7 @@ const AutoCompleteElement = ({
       setLocalValue([computedValue]);
       setValue(computedValue?.guid);
     }
-  }, [state?.id]);
+  }, [state?.id, computedValue]);
 
   return (
     <div className={styles.autocompleteWrapper}>

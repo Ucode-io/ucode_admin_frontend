@@ -6,10 +6,11 @@ import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
 import {isOnlineReducerAction} from "../../store/isOnline/isOnline.slice";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Box} from "@mui/material";
 
 const MainLayout = ({setFavicon, favicon}) => {
+  const isOnline = useSelector(store => store.isOnline.isOnline)
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
@@ -22,10 +23,15 @@ const MainLayout = ({setFavicon, favicon}) => {
   }, [projectInfo]);
 
   useEffect(() => {
-    const handleOnline = () =>
+    const handleOnline = () => {
+      console.log("GGGG ONLINE")
       dispatch(isOnlineReducerAction.setisOnline(true));
-    const handleOffline = () =>
+    }
+    const handleOffline = () => {
+      console.log("GGGG OFFLINE")
       dispatch(isOnlineReducerAction.setisOnline(false));
+    }
+      
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
@@ -34,7 +40,7 @@ const MainLayout = ({setFavicon, favicon}) => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, [navigator.onLine]);
+  }, []);
 
   return (
     <>
@@ -46,7 +52,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           <Outlet />
         </div>
       </div>
-      {!navigator?.onLine && (
+      {!isOnline && (
         <Box
           sx={{
             position: "fixed",

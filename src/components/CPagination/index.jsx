@@ -162,7 +162,15 @@ const CPagination = ({
           <>
             <Pagination
               color="primary"
-              onChange={(e, val) => setCurrentPage(val)}
+              onChange={(e, val) => {
+                setCurrentPage(val);
+                dispatch(
+                  paginationActions.setTablePageCount({
+                    tableSlug: tableSlug,
+                    pageCount: val,
+                  })
+                );
+              }}
               {...props}
             />
             {paginationExtraButton}

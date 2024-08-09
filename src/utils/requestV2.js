@@ -13,7 +13,7 @@ const requestV2 = axios.create({
 // const errorHandler = (error, hooks) => {
 
 //   if(error.response?.data?.data) store.dispatch(showAlert(error.response.data.data))
-//   else store.dispatch(showAlert('___ERROR___'))
+//   else store.dispatch(showAlert('No connection to the server, try again'))
 
 //   return Promise.reject(error.response)
 // }
@@ -71,7 +71,7 @@ const errorHandler = (error, hooks) => {
       }
     } else {
       console.log("ERRRRR =>", error);
-      isOnline?.isOnline && store.dispatch(showAlert("___ERROR___"));
+      isOnline?.isOnline && store.dispatch(showAlert("No connection to the server, try again"));
     }
 
     return Promise.reject(error.response);

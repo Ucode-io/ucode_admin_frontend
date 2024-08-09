@@ -24,6 +24,8 @@ const errorHandler = (error, hooks) => {
   //   access_token: token,
   // };
 
+  const isOnline = store.getState().isOnline;
+
   if (
     error?.response?.status === 401 &&
     error?.response?.data?.data ===
@@ -59,7 +61,8 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
-          store.dispatch(showAlert(error.response.data.data));
+          isOnline?.isOnline &&
+            store.dispatch(showAlert(error.response.data.data));
         }
       }
       if (error?.response?.status === 403) {
@@ -68,7 +71,7 @@ const errorHandler = (error, hooks) => {
       }
     } else {
       console.log("ERRRRR =>", error);
-      store.dispatch(showAlert("___ERROR___"));
+      isOnline?.isOnline && store.dispatch(showAlert("___ERROR___"));
     }
 
     return Promise.reject(error.response);

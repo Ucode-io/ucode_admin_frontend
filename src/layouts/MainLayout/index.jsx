@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Box} from "@mui/material";
 
 const MainLayout = ({setFavicon, favicon}) => {
-  const isOnline = useSelector(store => store.isOnline.isOnline)
+  const isOnline = useSelector((store) => store.isOnline.isOnline);
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
@@ -24,14 +24,13 @@ const MainLayout = ({setFavicon, favicon}) => {
 
   useEffect(() => {
     const handleOnline = () => {
-      console.log("GGGG ONLINE")
+      console.log("GGGG ONLINE");
       dispatch(isOnlineReducerAction.setisOnline(true));
-    }
+    };
     const handleOffline = () => {
-      console.log("GGGG OFFLINE")
+      console.log("GGGG OFFLINE");
       dispatch(isOnlineReducerAction.setisOnline(false));
-    }
-      
+    };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
@@ -52,7 +51,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           <Outlet />
         </div>
       </div>
-      {!isOnline && (
+      {/* {!isOnline && (
         <Box
           sx={{
             position: "fixed",
@@ -69,7 +68,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           }}>
           No Internet Connection!
         </Box>
-      )}
+      )} */}
     </>
   );
 };

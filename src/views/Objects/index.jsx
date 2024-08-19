@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
   useLocation,
   useNavigate,
@@ -24,6 +24,7 @@ import TimeLineView from "./TimeLineView";
 import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
+import Table1CUi from "./Table1CUi";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();

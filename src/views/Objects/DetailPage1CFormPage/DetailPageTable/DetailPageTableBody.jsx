@@ -55,6 +55,7 @@ const DetailPageTableBody = ({
         <tbody>
           {tableData?.map((row, index) => (
             <tr
+              style={{cursor: "pointer"}}
               onClick={() => {
                 navigate(
                   `/main/${appId}/1c/${relatedTableSlug}/${row?.guid}?menuId=${menuItem?.id}`

@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./style.module.scss";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import {useSelector} from "react-redux";
+import {es} from "date-fns/locale";
 
 function FolderRow({
   pageName,

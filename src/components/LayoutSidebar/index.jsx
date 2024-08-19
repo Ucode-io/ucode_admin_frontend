@@ -273,7 +273,7 @@ const LayoutSidebar = ({appId}) => {
                 onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
                 style={{
                   position: "absolute",
-                  zIndex: "9",
+                  zIndex: "2",
                   left: "58px",
                   width: "20px",
                   height: "20px",

@@ -71,13 +71,24 @@ const ViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
   const permissions = useSelector(
     (state) => state.auth.permissions?.[tableSlug]
   );
+  const paginationCount = useSelector(
+    (state) => state?.pagination?.paginationCount
+  );
+
+  const paginiationCount = useMemo(() => {
+    const getObject = paginationCount.find((el) => el?.tableSlug === tableSlug);
+
+    return getObject?.pageCount ?? 1;
+  }, [paginationCount, tableSlug]);
+
+  const [currentPage, setCurrentPage] = useState(paginiationCount);
+
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
@@ -214,6 +225,15 @@ const ViewsWithGroups = ({
           menuItem={menuItem}
           view={view}
           fieldsMap={fieldsMap}
+          views={views}
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
         />
       ) : (
         <Box>

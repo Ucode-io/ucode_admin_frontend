@@ -2,6 +2,7 @@ import React from "react";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import styles from "./style.module.scss";
 import {useNavigate, useParams} from "react-router-dom";
+import ArticleIcon from "@mui/icons-material/Article";
 
 function ItemsRow({
   view,
@@ -14,7 +15,7 @@ function ItemsRow({
 }) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
-  console.log("itemmmmmmmmmmm", item);
+
   return (
     <tr
       onClick={() => {
@@ -66,6 +67,38 @@ function ItemsRow({
           )}
         </td>
       ))}
+      <td
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "50px",
+          padding: "5px",
+          backgroundColor: "#fff",
+          borderLeft: "1px solid #D0D5DD",
+        }}>
+        <button
+          style={{
+            width: "34px",
+            height: "34px",
+            border: "1px solid #D0D5DD",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#fff",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(
+              `/main/${appId}/object/${tableSlug}/templates?id=${item?.guid}`
+            );
+            console.log("Button clicked");
+          }}>
+          <ArticleIcon style={{color: "#429424"}} />
+        </button>
+      </td>
     </tr>
   );
 }

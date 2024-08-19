@@ -62,18 +62,7 @@ function DetailPageHead({column, view, relatedTableSlug}) {
               }}>
               Fix
             </Typography>
-            {/* {columnFix ? (
-              <CircularProgress sx={{color: "#449424"}} size={24} />
-            ) : ( */}
-            <IOSSwitch
-              disabled={true}
-              //   checked={view?.attributes?.fixedColumns?.[selectedColumn?.id]}
-              // onChange={(e) => {
-              //   fixColumnChangeHandler(selectedColumn, e.target.checked);
-              // }}
-              color="primary"
-            />
-            {/* )} */}
+            <IOSSwitch disabled={true} color="primary" />
           </MenuItem>
           <MenuItem
             sx={{

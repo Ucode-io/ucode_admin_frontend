@@ -220,6 +220,8 @@ function TableHead({columns, view, folderIds}) {
               </Menu>
             </th>
           ))}
+
+          <th style={{width: "50px", background: "#fff"}}></th>
         </tr>
       </thead>
     </>

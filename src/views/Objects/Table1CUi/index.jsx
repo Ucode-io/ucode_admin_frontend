@@ -10,7 +10,21 @@ import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
 import useFilters from "../../../hooks/useFilters";
 
-function Table1CUi({menuItem, view, fieldsMap, computedVisibleFields}) {
+function Table1CUi({
+  menuItem,
+  view,
+  fieldsMap,
+  views,
+  computedVisibleFields,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  settingsModalVisible,
+  setSettingsModalVisible,
+  isChanged,
+  setIsChanged,
+  selectedView,
+  setSelectedView,
+}) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
   const [limit, setLimit] = useState(10);
@@ -129,7 +143,18 @@ function Table1CUi({menuItem, view, fieldsMap, computedVisibleFields}) {
 
   return (
     <Box>
-      <TableUiHead menuItem={menuItem} />
+      <TableUiHead
+        menuItem={menuItem}
+        views={views}
+        selectedTabIndex={selectedTabIndex}
+        setSelectedTabIndex={setSelectedTabIndex}
+        settingsModalVisible={settingsModalVisible}
+        setSettingsModalVisible={setSettingsModalVisible}
+        isChanged={isChanged}
+        setIsChanged={setIsChanged}
+        selectedView={selectedView}
+        setSelectedView={setSelectedView}
+      />
       <TableHeadTitle menuItem={menuItem} />
       <TableFilterBlock
         fields={columns}

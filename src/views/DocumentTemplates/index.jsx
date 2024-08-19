@@ -15,6 +15,7 @@ import useSearchParams from "../../hooks/useSearchParams";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 
 const breadCrumbItems = [
   { label: "ЭДО", link: "" },
@@ -55,7 +56,6 @@ const DocumentTemplates = () => {
     },
     querySettings: {
       select: (res) => {
-        // return;
         return res.docx_templates?.filter((el) => el.title) ?? [];
       },
     },
@@ -159,7 +159,7 @@ const DocumentTemplates = () => {
           >
             Создать шаблон
           </Button>
-          <Button
+          {selectedTemplate && <Button
             variant="outlined"
             style={{ borderColor: "#337E28", color: "#337E28" }}
             className={styles.secondaryButton}
@@ -168,7 +168,7 @@ const DocumentTemplates = () => {
             }}
           >
             Изменить шаблон
-          </Button>
+          </Button>}
           <LoadingButton
             loading={pdfIsLoading}
             onClick={onPDFDownloadClick}
@@ -181,7 +181,8 @@ const DocumentTemplates = () => {
       </div>
 
       {!templates?.length ? <div className={styles.noDataWrapper} >
-
+            <FileOpenIcon />
+            <div className={styles.noDataText} >Пока нет шаблонов. Сначала создайте шаблон</div>
       </div> : <>
         <div className={styles.tabsWrapper}>
           <div className={styles.tabs}>

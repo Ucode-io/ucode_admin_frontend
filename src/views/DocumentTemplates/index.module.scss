@@ -126,3 +126,24 @@
   }
 
 }
+
+.noDataWrapper {
+  height: calc(100vh - 130px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  svg {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    fill: #449424;
+  }
+
+  .noDataText {
+    font-size: 18px;
+    font-weight: 500;
+    
+  }
+}

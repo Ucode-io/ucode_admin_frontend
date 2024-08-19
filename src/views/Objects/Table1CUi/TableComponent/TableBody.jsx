@@ -219,23 +219,25 @@ function TableBody({
   }
 
   return (
-    <tbody>
-      {foldersState?.length ? (
-        renderRows(folderHierarchy)
-      ) : (
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <CircularProgress sx={{color: "#449424"}} size={50} />
-        </div>
-      )}
-    </tbody>
+    <>
+      <tbody>
+        {foldersState?.length ? (
+          <>{renderRows(folderHierarchy)}</>
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <CircularProgress sx={{color: "#449424"}} size={50} />
+          </div>
+        )}
+      </tbody>
+    </>
   );
 }
 

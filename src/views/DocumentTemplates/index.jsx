@@ -100,7 +100,6 @@ const DocumentTemplates = () => {
     const url = `https://${selectedTemplate?.file_url}`;
     const data = form?.getValues();
 
-    console.log("DATA ==>", data);
     converToPDF({
       data: {
         data,
@@ -203,8 +202,8 @@ const DocumentTemplates = () => {
             <ObjectForm form={form} />
           </div>
           <div className={styles.viewer}>
-            {selectedTemplate?.file_url && (
-              <Viewer url={`https://${selectedTemplate?.file_url}`} />
+            {selectedTemplate?.pdf_url && (
+              <Viewer url={`https://${selectedTemplate?.pdf_url}`} />
             )}
           </div>
         </div>

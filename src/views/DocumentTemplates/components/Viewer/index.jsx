@@ -4,7 +4,7 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import "./index.scss"
 
-const Viewer = ({ onDownLoad, url, setViewerId = () => {} }) => {
+const Viewer = ({ url }) => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
 
@@ -12,7 +12,7 @@ const Viewer = ({ onDownLoad, url, setViewerId = () => {} }) => {
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
       <div style={{ height: 'calc(100vh - 186px)' }} className="PDF-viewer"  >
         <PDFViewer
-          fileUrl="https://rangsimanketkaew.github.io/sample/sample.pdf"
+          fileUrl={url}
           plugins={[defaultLayoutPluginInstance]}
         />
       </div>

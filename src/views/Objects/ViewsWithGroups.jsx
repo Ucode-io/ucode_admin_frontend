@@ -225,6 +225,15 @@ const ViewsWithGroups = ({
           menuItem={menuItem}
           view={view}
           fieldsMap={fieldsMap}
+          views={views}
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
         />
       ) : (
         <Box>

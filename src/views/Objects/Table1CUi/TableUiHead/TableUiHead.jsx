@@ -7,6 +7,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShareModal from "../../ShareModal/ShareModal";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import NewViewTabSelector from "./NewViewTabSelector";
 
 function TableUiHead({
   menuItem,
@@ -50,7 +51,6 @@ function TableUiHead({
         <Box
           sx={{cursor: "pointer"}}
           onClick={(e) => {
-            // navigate("/c57eedc3-a954-4262-a0af-376c65b5a284");
             handleClick(e);
           }}>
           <img src="/img/homeIcon.svg" alt="" />
@@ -73,7 +73,7 @@ function TableUiHead({
             </Box>
           </Box>
         </Menu>
-        {/* <NewViewTabSelector
+        <NewViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
@@ -84,20 +84,7 @@ function TableUiHead({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
           menuItem={menuItem}
-        /> */}
-
-        {/* <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          settingsModalVisible={settingsModalVisible}
-          setSettingsModalVisible={setSettingsModalVisible}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-          menuItem={menuItem}
-        /> */}
+        />
       </Box>
       <Box sx={{display: "flex", alignItems: "center", gap: "12px"}}>
         <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">

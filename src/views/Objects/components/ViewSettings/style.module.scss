@@ -206,6 +206,48 @@
       }
     }
   }
+
+  .OneCviewForm {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: calc(100vh - 400px);
+    overflow: auto;
+
+    .section {
+      border: 0;
+      border-radius: 0;
+
+      .sectionHeader {
+        padding: 16px 12px;
+        box-shadow: inset 0px -1px 0px #ebedee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .sectionTitle {
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 24px;
+        }
+      }
+
+      .sectionBody {
+        padding: 16px 12px;
+
+        .formRow {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          fieldset {
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
 }
 
 .section {

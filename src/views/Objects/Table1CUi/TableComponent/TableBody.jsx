@@ -125,7 +125,7 @@ function TableBody({
   }, [folders]);
 
   const renderRows = (items, level = 0) => {
-    return items?.map((item) => {
+    return items?.map((item, index) => {
       if (item.type === "FOLDER") {
         return (
           <React.Fragment key={item.id}>

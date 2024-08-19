@@ -116,7 +116,7 @@ function DownloadMenu({
           </MenuItem>
           <MenuItem
             onClick={() => {
-              navigate(`/main/${appId}/${tableSlug}/templates`);
+              navigate(`/main/${appId}/object/${tableSlug}/templates`);
             }}
             sx={{
               display: "flex",

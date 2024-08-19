@@ -16,7 +16,8 @@ function DownloadMenu({
   computedVisibleFields,
   sort,
 }) {
-  const {tableSlug} = useParams();
+  const {tableSlug, appId} = useParams();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const {t, i18n} = useTranslation();
   const open = Boolean(anchorEl);
@@ -106,6 +107,25 @@ function DownloadMenu({
             <Typography
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Скачать XLSX
+            </Typography>
+            {loader && (
+              <div>
+                <CircularProgress sx={{color: "#337E28"}} size={24} />
+              </div>
+            )}
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              navigate(`/main/${appId}/object/${tableSlug}/templates`);
+            }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "12px 14px",
+            }}>
+            <Typography
+              sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
+              Документ
             </Typography>
             {loader && (
               <div>

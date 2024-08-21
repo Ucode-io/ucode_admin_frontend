@@ -113,8 +113,8 @@ httpsRequestV2.interceptors.request.use(
 );
 
 httpsRequestV2.interceptors.response.use((response, request) => {
-  if (response?.config?.responseType === "blob") {
-    return response.data;
+  if(response?.config?.responseType === 'blob') {
+    return response.data
   }
 
   customMessageHandler(response);

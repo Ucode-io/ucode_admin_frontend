@@ -110,7 +110,11 @@ httpsRequestV2.interceptors.request.use(
   (error) => errorHandler(error)
 );
 
-httpsRequestV2.interceptors.response.use((response) => {
+httpsRequestV2.interceptors.response.use((response, request) => {
+  if(response?.config?.responseType === 'blob') {
+    return response.data
+  }
+
   customMessageHandler(response);
   return response.data.data;
 }, errorHandler);

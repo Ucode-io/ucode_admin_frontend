@@ -5,6 +5,7 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
   initialState: {
     settingsSidebarIsOpen: true,
     pinIsEnabled: false,
+    subMenuIsOpen: false,
   },
   reducers: {
     setSettingsSidebarIsOpen: (state, { payload }) => {
@@ -12,6 +13,9 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
     },
     setPinIsEnabled: (state, { payload }) => {
       state.pinIsEnabled = payload;
+    },
+    setSubMenuIsOpen: (state, { payload }) => {
+      state.subMenuIsOpen = payload;
     },
   },
 });

@@ -21,7 +21,7 @@ import constructorTableService from "../../../../services/constructorTableServic
 import { listToMap } from "../../../../utils/listToMap";
 
 const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
-  const { id, tableSlug, appId } = useParams();
+  const { tableSlug, appId } = useParams();  
 
   const [editAcces, setEditAccess] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -44,7 +44,7 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-
+  const id = searchParams.get('id')
 
   const {
     handleSubmit,
@@ -61,6 +61,7 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
+    
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {

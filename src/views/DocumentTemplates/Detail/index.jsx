@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styles from "./index.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Button } from "@mui/material";
@@ -29,6 +29,7 @@ const DocumentTemplateDetail = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [fileUrl, setFileUrl] = useState();
+  const [searchParams] = useSearchParams()
 
   const [btnIsLoading, setBtnIsLoading] = useState(false);
 
@@ -56,7 +57,7 @@ const DocumentTemplateDetail = () => {
     onSuccess: (res) => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}`,
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}&id=${searchParams.get('id')}&menuId=${searchParams.get('menuId')}`,
         { replace: true }
       );
       showAlert("Successfully created", "success");
@@ -70,7 +71,7 @@ const DocumentTemplateDetail = () => {
     onSuccess: () => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}`,
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&id=${searchParams.get('id')}&menuId=${searchParams.get('menuId')}`,
         { replace: true }
       );
       showAlert("Successfully updated", "success");
@@ -141,7 +142,7 @@ const DocumentTemplateDetail = () => {
             className={styles.secondaryButton}
             onClick={() =>
               navigate(
-                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}`,
+                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&id=${searchParams.get('id')}&menuId=${searchParams.get('menuId')}`,
                 { replace: true }
               )
             }

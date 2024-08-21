@@ -162,6 +162,7 @@ const CalendarView = ({
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
             $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            view_type: "CALENDAR",
           },
           ...dataFilters,
         },

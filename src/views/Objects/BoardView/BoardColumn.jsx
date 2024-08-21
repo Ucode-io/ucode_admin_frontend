@@ -25,10 +25,13 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
       return el[tab.slug] === tab.value;
     })
   );
-
+  console.log(
+    "datadatadata",
+    data?.map((item) => item),
+    tab
+  );
   const {mutate} = useMutation(
     ({data, index}) => {
-      console.log("datadatadatadata", data);
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
@@ -79,7 +82,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     setDateInfo({[tab.slug]: tab.value});
     setSelectedRow(null);
   };
-  console.log("computedDatacomputedData", computedData);
+
   return (
     <>
       <div className={styles.column}>

@@ -25,17 +25,13 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
       return el[tab.slug] === tab.value;
     })
   );
-  console.log(
-    "datadatadata",
-    data?.map((item) => item),
-    tab
-  );
+  console.log("tabbbbbbbbb", tab);
   const {mutate} = useMutation(
     ({data, index}) => {
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
-          [tab.slug]: tab.value,
+          [tab.slug]: [tab.value],
           board_order: index + 1,
         },
       });

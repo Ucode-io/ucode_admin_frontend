@@ -17,6 +17,7 @@ import PermissionWrapperV2 from "../../../../components/PermissionWrapper/Permis
 import MoreButtonViewType from "../../components/ViewTypeSelector/MoreButtonViewType";
 import ViewTypeList from "../../components/ViewTypeList";
 import OneCViewSettings from "../../components/ViewSettings/OneCViewSettings";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
 
 function NewViewTabSelector({
   selectedTabIndex,

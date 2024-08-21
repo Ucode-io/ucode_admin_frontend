@@ -77,6 +77,7 @@ const DocumentTemplates = () => {
 
   const { mutate: converToPDF } = useDocxTemplateConvertToPDFMutation({
     onSuccess: (res) => {
+      console.log("RRRR ==>", res)
       const href = URL.createObjectURL(res);
 
       // create "a" HTML element with href to file & click
@@ -99,6 +100,8 @@ const DocumentTemplates = () => {
     setPDFIsLoading(true);
     const url = `https://${selectedTemplate?.file_url}`;
     const data = form?.getValues();
+
+    console.log("GGGG =>", url)
 
     converToPDF({
       data: {

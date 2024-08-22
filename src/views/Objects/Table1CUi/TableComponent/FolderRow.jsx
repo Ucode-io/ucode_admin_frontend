@@ -58,6 +58,8 @@ function FolderRow({
           )}
         </td>
       ))}
+
+      <td>{""}</td>
     </tr>
   );
 }

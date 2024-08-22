@@ -72,10 +72,13 @@ function ItemsRow({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: "50px",
+          width: "70px",
           padding: "5px",
           backgroundColor: "#fff",
-          borderLeft: "1px solid #D0D5DD",
+          borderTop: "none",
+          borderLeft: "none",
+          borderRight: "none",
+          // borderBottom: "1px solid #D0D5DD",
         }}>
         <button
           style={{

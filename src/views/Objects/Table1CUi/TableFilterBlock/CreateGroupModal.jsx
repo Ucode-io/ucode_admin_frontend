@@ -120,16 +120,14 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               alignItems: "center",
               justifyContent: "space-between",
             }}>
-            <button className={styles.moreBtn}>
-              <span>Еще</span>
+            <button style={{border: "none"}}>
+              {/* className={styles.moreBtn} */}
+              {/* <span>Еще</span> */}
 
-              <img src="/img/chevron_down.svg" alt="" />
+              {/* <img src="/img/chevron_down.svg" alt="" /> */}
             </button>
 
             <div className={styles.actionBtns}>
-              {/* <button type="submit" className={styles.actionRegBtn}>
-                Записать
-              </button> */}
               <button type="submit" className={styles.actionCloseBtn}>
                 {loading ? (
                   <CircularProgress sx={{color: "#fff"}} size={20} />

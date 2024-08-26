@@ -221,7 +221,7 @@ function TableHead({columns, view, folderIds}) {
             </th>
           ))}
 
-          <th style={{width: "50px", background: "#fff"}}></th>
+          <th style={{width: "70px", background: "#fff"}}></th>
         </tr>
       </thead>
     </>

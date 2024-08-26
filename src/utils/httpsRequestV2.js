@@ -59,15 +59,17 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
-          isOnline?.isOnline &&
-            store.dispatch(showAlert(error.response.data.data));
+          // isOnline?.isOnline &&
+          store.dispatch(showAlert(error.response.data.data));
         }
       }
       if (error?.response?.status === 403) {
         store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    } else isOnline?.isOnline && store.dispatch(showAlert("No connection to the server, try again"));
+    }
+    // isOnline?.isOnline &&
+    else store.dispatch(showAlert("No connection to the server, try again"));
 
     return Promise.reject(error.response);
   }
@@ -110,7 +112,11 @@ httpsRequestV2.interceptors.request.use(
   (error) => errorHandler(error)
 );
 
-httpsRequestV2.interceptors.response.use((response) => {
+httpsRequestV2.interceptors.response.use((response, request) => {
+  if (response?.config?.responseType === "blob") {
+    return response.data;
+  }
+
   customMessageHandler(response);
   return response.data.data;
 }, errorHandler);

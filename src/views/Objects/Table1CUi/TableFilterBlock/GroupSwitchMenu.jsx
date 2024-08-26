@@ -26,7 +26,7 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
         columns: data,
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug]);
       })
       .finally(() => {
         setLoading(false);

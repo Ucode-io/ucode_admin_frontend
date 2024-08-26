@@ -4,7 +4,7 @@ import {isOnlineReducerAction} from "../store/isOnline/isOnline.slice";
 
 export function useOnlineStatus() {
   const dispatch = useDispatch();
-  console.log("navigator", navigator.onLine);
+
   useEffect(() => {
     const handleOnline = () =>
       dispatch(isOnlineReducerAction.setisOnline(true));

@@ -75,7 +75,7 @@ const DetailPageTableBody = ({
           {addRow && (
             <AddRow
               fields={computedColumn}
-              DetailPageTableBody={DetailPageTableBody}
+              relatedTableSlug={relatedTableSlug}
               view={view}
               data={tableData}
               setAddRow={setAddRow}

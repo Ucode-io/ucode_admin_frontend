@@ -166,7 +166,7 @@ function RelationTable({
             offset: offset,
             limit: limit,
             from_tab: type === "relation" ? true : false,
-            ...computedFilters,
+            // ...computedFilters,
             search: searchText,
           },
         },
@@ -327,7 +327,7 @@ function RelationTable({
       },
     }
   );
-  console.log("tableDatatableData", tableData);
+
   return (
     <>
       <RelationTableFilter

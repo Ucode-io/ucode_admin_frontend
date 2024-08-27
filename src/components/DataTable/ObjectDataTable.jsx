@@ -41,6 +41,7 @@ const ObjectDataTable = ({
   fields = [],
   isRelationTable,
   disablePagination,
+  count,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
@@ -240,7 +241,7 @@ const ObjectDataTable = ({
 
   return (
     <CTable
-      dataCount={dataCount}
+      dataCount={count ?? dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}
       count={pagesCount}

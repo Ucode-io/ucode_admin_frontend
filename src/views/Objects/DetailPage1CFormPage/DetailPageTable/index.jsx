@@ -12,10 +12,9 @@ import {useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
 import AddIcon from "@mui/icons-material/Add";
-import {useForm} from "react-hook-form";
 
 function DetailPageTable({field, selectedTab}) {
-  const {i18n} = useTranslation();
+  const {i18n, tableSlug} = useTranslation();
   const relatedTableSlug = field?.attributes?.table_from?.slug;
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -30,14 +29,9 @@ function DetailPageTable({field, selectedTab}) {
 
   const handleColumnClick = (e) => setAnchorEl(e.currentTarget);
   const handleColumnClose = () => setAnchorEl(null);
-  const handleAddRowClick = () => setAddRow(!addRow);
-
-  const {
-    handleSubmit,
-    control,
-    setValue: setFormValue,
-    formState: {errors},
-  } = useForm({});
+  const handleAddRowClick = () => {
+    setAddRow(!addRow);
+  };
 
   const params = {
     language_setting: i18n?.language,
@@ -83,7 +77,7 @@ function DetailPageTable({field, selectedTab}) {
     isLoading: dataFetchingLoading,
   } = useQuery(
     [
-      "GET_OBJECT_LIST",
+      "GET_OBJECT_LIST_ROW",
       relatedTableSlug,
       {
         offset: offset,
@@ -175,6 +169,7 @@ function DetailPageTable({field, selectedTab}) {
         relatedTableSlug={relatedTableSlug}
         computedColumn={computedColumn}
         addRow={addRow}
+        setAddRow={setAddRow}
       />
 
       <DetailRelationVisibleColumns

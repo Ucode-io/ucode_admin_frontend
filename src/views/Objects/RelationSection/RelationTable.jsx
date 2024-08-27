@@ -265,6 +265,7 @@ const RelationTable = forwardRef(
         columns = [],
         quickFilters = [],
         fieldsMap = {},
+        count = 0,
       } = {},
       refetch,
       isLoading: dataFetchingLoading,
@@ -305,6 +306,7 @@ const RelationTable = forwardRef(
               : Math.ceil(data.count / paginiation);
 
           const fieldsMap = listToMap(data.fields);
+          const count = data?.count;
 
           const array = [];
           for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
@@ -340,6 +342,7 @@ const RelationTable = forwardRef(
             columns,
             quickFilters,
             fieldsMap,
+            count,
           };
         },
         onSuccess: () => {
@@ -529,6 +532,7 @@ const RelationTable = forwardRef(
               disableFilters
               pagesCount={pageCount}
               currentPage={currentPage}
+              count={count}
               onRowClick={navigateToEditPage}
               onDeleteClick={deleteHandler}
               onPaginationChange={setCurrentPage}

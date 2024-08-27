@@ -252,7 +252,7 @@ function DetailPageTabs({
     Object.values(fieldsMap)?.length,
     selectedTab?.attributes?.columns?.length,
   ]);
-
+  console.log("datadatadata", data);
   return (
     <Box id="detailPageTabs">
       {data?.tabs?.length ? (

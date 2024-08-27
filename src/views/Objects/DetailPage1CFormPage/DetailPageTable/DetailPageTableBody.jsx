@@ -21,10 +21,10 @@ const DetailPageTableBody = ({
   relatedTableSlug,
   computedColumn,
   addRow,
+  setAddRow,
 }) => {
-  const {appId} = useParams();
+  const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -43,7 +43,7 @@ const DetailPageTableBody = ({
       <table className={styles.custom_table}>
         <thead>
           <tr>
-            <th style={{width: "50px", textAlign: "center"}}>№</th>
+            <th style={{width: "60px", textAlign: "center"}}>№</th>
             {computedColumn?.map((column) => (
               <DetailPageHead
                 relatedTableSlug={relatedTableSlug}
@@ -70,9 +70,17 @@ const DetailPageTableBody = ({
                   <CellElementGenerator row={row} field={field} />
                 </td>
               ))}
-              {addRow && <AddRow computedColumn={computedColumn} />}
             </tr>
           ))}
+          {addRow && (
+            <AddRow
+              fields={computedColumn}
+              DetailPageTableBody={DetailPageTableBody}
+              view={view}
+              data={tableData}
+              setAddRow={setAddRow}
+            />
+          )}
         </tbody>
       </table>
       <Box

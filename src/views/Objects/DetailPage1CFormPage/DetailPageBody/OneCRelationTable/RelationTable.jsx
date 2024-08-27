@@ -14,6 +14,7 @@ import RelationTableBody from "./RelationTableBody";
 import RelationTableFilter from "./RelationTableFilter";
 import RelationTableHead from "./RelationTableHead";
 import styles from "./style.module.scss";
+import AddRow from "../../DetailPageTable/AddRow";
 
 function RelationTable({
   relation,
@@ -43,6 +44,7 @@ function RelationTable({
   const [searchParams] = useSearchParams();
   const [searchText, setSearchText] = useState("");
   const [menuItem, setMenuItem] = useState(null);
+  const [addRow, setAddRow] = useState(false);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -146,7 +148,7 @@ function RelationTable({
     isLoading: dataFetchingLoading,
   } = useQuery(
     [
-      "GET_OBJECT_LIST",
+      "GET_OBJECT_LIST_ROW",
       relatedTableSlug,
       shouldGet,
       searchText,
@@ -284,6 +286,15 @@ function RelationTable({
           });
       });
   };
+  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
+    {
+      tableSlug: relatedTableSlug,
+    }
+  );
+
+  const addNewRow = () => {
+    setAddRow(!addRow);
+  };
 
   useEffect(() => {
     getOptionsList();
@@ -316,13 +327,7 @@ function RelationTable({
       },
     }
   );
-
-  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
-    {
-      tableSlug: relatedTableSlug,
-    }
-  );
-
+  console.log("tableDatatableData", tableData);
   return (
     <>
       <RelationTableFilter
@@ -333,12 +338,19 @@ function RelationTable({
         data={layoutData}
         fields={columns}
         setSearchText={setSearchText}
+        addNewRow={addNewRow}
       />
       <div className={styles.tableComponent}>
         <table className={styles.expandable_table}>
           <thead>
             <tr>
-              <th style={{width: "40px", textAlign: "center"}}>№</th>
+              <th
+                style={{
+                  width: "60px",
+                  textAlign: "center",
+                }}>
+                №
+              </th>
               {columns?.map((column) => (
                 <RelationTableHead
                   view={getRelatedTabeSlug}
@@ -363,6 +375,15 @@ function RelationTable({
                 menuItem={menuItem}
               />
             ))}
+            {addRow && (
+              <AddRow
+                fields={columns}
+                relatedTableSlug={relatedTableSlug}
+                view={view}
+                data={tableData}
+                setAddRow={setAddRow}
+              />
+            )}
           </tbody>
         </table>
       </div>

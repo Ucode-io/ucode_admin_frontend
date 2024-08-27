@@ -14,7 +14,7 @@ const DetailPageTableBody = ({
   setLimit,
   setOffset,
   limit,
-  offset,
+  offset = 1,
   count,
   view,
   field,
@@ -27,6 +27,7 @@ const DetailPageTableBody = ({
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
+  const currentPage = offset === 0 ? 1 : offset + 1;
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
@@ -64,7 +65,9 @@ const DetailPageTableBody = ({
                 );
               }}
               key={index}>
-              <td style={{textAlign: "center"}}>{index + 1}</td>
+              <td style={{textAlign: "center"}}>
+                {limit === "all" ? index + 1 : currentPage + index}
+              </td>
               {computedColumn?.map((field) => (
                 <td>
                   <CellElementGenerator row={row} field={field} />

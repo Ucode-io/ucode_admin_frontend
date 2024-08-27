@@ -11,15 +11,21 @@ function RelationTableBody({
   control,
   menuItem,
   index,
+  offset,
+  limit,
 }) {
   const {appId} = useParams();
   const navigate = useNavigate();
+  const currentPage = offset === 0 ? 1 : offset + 1;
+  console.log("currentPagecurrentPage", currentPage, offset);
   return (
     <tr
       style={{cursor: "pointer"}}
       key={item.guid}
       className={styles.child_row}>
-      <td style={{textAlign: "center"}}>{index + 1}</td>
+      <td style={{textAlign: "center"}}>
+        {limit === "all" ? index + 1 : currentPage + index}
+      </td>
       {columns?.map((col, index) => (
         <td
           onClick={() => {

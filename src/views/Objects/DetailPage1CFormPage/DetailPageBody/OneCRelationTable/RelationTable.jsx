@@ -37,6 +37,7 @@ function RelationTable({
   control,
   offset,
 }) {
+  console.log("offsetoffset", offset);
   const {appId, tableSlug} = useParams();
   const [filters, setFilters] = useState({});
   const {i18n} = useTranslation();
@@ -373,6 +374,8 @@ function RelationTable({
                 tableData={tableData}
                 control={control}
                 menuItem={menuItem}
+                offset={offset}
+                limit={limit}
               />
             ))}
             {addRow && (

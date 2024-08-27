@@ -88,10 +88,13 @@ const CellElementGeneratorForTableView = ({
 
   const defaultValue = useMemo(() => {
     const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+      field.attributes?.defaultValue || field.attributes?.default_values;
 
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return userId;
+
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
       if (Array.isArray(defaultValue)) {
@@ -110,9 +113,6 @@ const CellElementGeneratorForTableView = ({
         return defaultValue;
       }
     }
-
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
 
     if (!defaultValue) return undefined;
 

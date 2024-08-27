@@ -6,6 +6,7 @@ import DetailPageHead from "./DetailPageHead";
 import CellElementGenerator from "../../../../components/ElementGenerators/CellElementGenerator";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
+import AddRow from "./AddRow";
 
 const DetailPageTableBody = ({
   fields,
@@ -19,6 +20,7 @@ const DetailPageTableBody = ({
   field,
   relatedTableSlug,
   computedColumn,
+  addRow,
 }) => {
   const {appId} = useParams();
   const navigate = useNavigate();
@@ -68,6 +70,7 @@ const DetailPageTableBody = ({
                   <CellElementGenerator row={row} field={field} />
                 </td>
               ))}
+              {addRow && <AddRow computedColumn={computedColumn} />}
             </tr>
           ))}
         </tbody>

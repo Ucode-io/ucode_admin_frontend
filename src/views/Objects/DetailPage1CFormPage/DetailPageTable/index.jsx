@@ -11,23 +11,33 @@ import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import {useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
+import AddIcon from "@mui/icons-material/Add";
+import {useForm} from "react-hook-form";
 
-function DetailPageTable({field, control, selectedTab}) {
+function DetailPageTable({field, selectedTab}) {
   const {i18n} = useTranslation();
   const relatedTableSlug = field?.attributes?.table_from?.slug;
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [addRow, setAddRow] = useState(false);
+  const open = Boolean(anchorEl);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
   const {navigateToRelationForm} = useRelationTabRouter();
 
-  const open = Boolean(anchorEl);
-
   const handleColumnClick = (e) => setAnchorEl(e.currentTarget);
   const handleColumnClose = () => setAnchorEl(null);
+  const handleAddRowClick = () => setAddRow(!addRow);
+
+  const {
+    handleSubmit,
+    control,
+    setValue: setFormValue,
+    formState: {errors},
+  } = useForm({});
 
   const params = {
     language_setting: i18n?.language,
@@ -148,6 +158,9 @@ function DetailPageTable({field, control, selectedTab}) {
         <button onClick={handleColumnClick} className={styles.addBtnColumn}>
           <img src="/img/eye_off.svg" alt="" />
         </button>
+        <button onClick={handleAddRowClick} className={styles.addBtnColumn}>
+          <AddIcon sx={{fontSize: "24px", color: "#000"}} />
+        </button>
       </Box>
       <DetailPageTableBody
         setLimit={setLimit}
@@ -161,6 +174,7 @@ function DetailPageTable({field, control, selectedTab}) {
         field={field}
         relatedTableSlug={relatedTableSlug}
         computedColumn={computedColumn}
+        addRow={addRow}
       />
 
       <DetailRelationVisibleColumns

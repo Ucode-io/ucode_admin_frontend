@@ -11,7 +11,6 @@ import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import {useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
-import AddIcon from "@mui/icons-material/Add";
 
 function DetailPageTable({field, selectedTab}) {
   const {i18n, tableSlug} = useTranslation();

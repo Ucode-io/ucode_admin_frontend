@@ -7,8 +7,6 @@ function RelationTableBody({
   columns,
   item,
   view,
-  tableData,
-  control,
   menuItem,
   index,
   offset,

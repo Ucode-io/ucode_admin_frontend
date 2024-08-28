@@ -15,6 +15,7 @@ import RelationTableFilter from "./RelationTableFilter";
 import RelationTableHead from "./RelationTableHead";
 import styles from "./style.module.scss";
 import AddRow from "../../DetailPageTable/AddRow";
+import AddIcon from "@mui/icons-material/Add";
 
 function RelationTable({
   relation,
@@ -361,6 +362,7 @@ function RelationTable({
                   getAllData={getAllData}
                 />
               ))}
+              <th style={{width: "60px"}}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -373,6 +375,9 @@ function RelationTable({
                 tableData={tableData}
                 control={control}
                 menuItem={menuItem}
+                offset={offset}
+                limit={limit}
+                relatedTableSlug={relatedTableSlug}
               />
             ))}
             {addRow && (
@@ -382,7 +387,26 @@ function RelationTable({
                 view={view}
                 data={tableData}
                 setAddRow={setAddRow}
+                padding={"20px"}
               />
+            )}
+            {!addRow && (
+              <tr>
+                <td
+                  onClick={addNewRow}
+                  style={{
+                    padding: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    borderTop: "none",
+                    borderBottom: "none",
+                    cursor: "pointer",
+                  }}>
+                  <AddIcon sx={{fontSize: "20px", color: "#000"}} />
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

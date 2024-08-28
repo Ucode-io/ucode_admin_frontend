@@ -11,7 +11,6 @@ import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import {useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
-import AddIcon from "@mui/icons-material/Add";
 
 function DetailPageTable({field, selectedTab}) {
   const {i18n, tableSlug} = useTranslation();
@@ -152,9 +151,9 @@ function DetailPageTable({field, selectedTab}) {
         <button onClick={handleColumnClick} className={styles.addBtnColumn}>
           <img src="/img/eye_off.svg" alt="" />
         </button>
-        <button onClick={handleAddRowClick} className={styles.addBtnColumn}>
+        {/* <button onClick={handleAddRowClick} className={styles.addBtnColumn}>
           <AddIcon sx={{fontSize: "24px", color: "#000"}} />
-        </button>
+        </button> */}
       </Box>
       <DetailPageTableBody
         setLimit={setLimit}
@@ -170,6 +169,7 @@ function DetailPageTable({field, selectedTab}) {
         computedColumn={computedColumn}
         addRow={addRow}
         setAddRow={setAddRow}
+        handleAddRowClick={handleAddRowClick}
       />
 
       <DetailRelationVisibleColumns

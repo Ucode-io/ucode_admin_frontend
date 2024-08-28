@@ -90,6 +90,8 @@ export const Filter = ({
     case "DATE_TIME":
       return (
         <DateFilter
+          field={field}
+          placeholder={field?.label}
           value={filters[name]}
           onChange={(val) => onChange(val, name)}
         />

@@ -1,5 +1,5 @@
 import {Add, Delete} from "@mui/icons-material";
-import {Card} from "@mui/material";
+import {Box, Card, Menu, TextField} from "@mui/material";
 import {useFieldArray} from "react-hook-form";
 import {Container, Draggable} from "react-smooth-dnd";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
@@ -9,8 +9,9 @@ import HFTextField from "../../../../../components/FormElements/HFTextField";
 import {applyDrag} from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
-import {useMemo} from "react";
 import {useTranslation} from "react-i18next";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import {useState} from "react";
 
 const NewSection = ({
   mainForm,
@@ -25,6 +26,8 @@ const NewSection = ({
   removeSection,
   allTabs,
 }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const {i18n} = useTranslation();
   const sectionFields = useFieldArray({
     control: mainForm.control,
@@ -35,6 +38,9 @@ const NewSection = ({
   const sectionFieldsWatch = mainForm.watch(
     `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`
   );
+
+  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
 
   const openSettingsBlock = (field) => {
     if (!field.id?.includes("#")) {
@@ -52,8 +58,16 @@ const NewSection = ({
 
   const onDrop = (dropResult) => {
     const {fields, insert, move, remove} = sectionFields;
-
-    const result = applyDrag(fields, dropResult);
+    let result = [];
+    if (dropResult?.payload?.isTab) {
+      if (fields?.length === 0) {
+        result = applyDrag(fields, dropResult);
+      } else {
+        return;
+      }
+    } else {
+      result = applyDrag(fields, dropResult);
+    }
 
     if (!result) return;
     if (result.length > fields.length) {
@@ -93,34 +107,6 @@ const NewSection = ({
         <div
           className={styles.newsectionCardHeaderLeftSide}
           style={{display: "flex", flexDirection: "column"}}>
-          {/* <HFIconPicker
-            control={mainForm.control}
-            name={`sections[${index}].icon`}
-            disabledHelperText
-          /> */}
-
-          {/* {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`) ? (
-            <HFTextField
-              placeholder={`Section`}
-              required={index === 0}
-              control={mainForm.control}
-              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
-              size="small"
-              style={{ width: 170 }}
-            />
-          ) : (
-            languages.map((language) => (
-              <HFTextField
-                placeholder={`Section ${language.slug}`}
-                required={index === 0}
-                control={mainForm.control}
-                name={nameGenerator(language.slug)}
-                size="small"
-                style={{ width: 170 }}
-              />
-            ))
-          )} */}
-
           {languages.map((language) => (
             <HFTextField
               placeholder={`Section ${language.slug}`}
@@ -133,6 +119,20 @@ const NewSection = ({
               id={`section_lan_${i18n?.language}`}
             />
           ))}
+          <button onClick={handleClick} className={styles.countBtn}>
+            <MoreVertIcon />
+          </button>
+
+          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <Box sx={{padding: "5px"}}>
+              <HFTextField
+                control={mainForm.control}
+                name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.field_count`}
+                defaultValue={2}
+                type="number"
+              />
+            </Box>
+          </Menu>
         </div>
 
         <div className="flex gap-1" style={{marginLeft: "5px"}}>
@@ -140,13 +140,6 @@ const NewSection = ({
             <Add />
           </RectangleIconButton>
         </div>
-
-        {/* <SectionSettingsDropdown
-          columnType={columnType}
-          setColumnType={setColumnType}
-          control={mainForm.control}
-          onDelete={() => sectionsFieldArray.remove(index)}
-        /> */}
       </div>
 
       <div className={styles.newsectionCardBody}>
@@ -167,38 +160,52 @@ const NewSection = ({
           getChildPayload={(index) => sectionFields.fields[index]}>
           {sectionFieldsWatch?.map((field, fieldIndex) => (
             <Draggable key={fieldIndex} style={{minWidth: "300px"}}>
-              <div className={styles.newsectionCardRow}>
-                <FormElementGenerator
-                  control={mainForm.control}
-                  field={fieldsMap[field.id] ?? field}
-                  // isLayout={true}
-                  // sectionIndex={index}
-                  // column={1}
-                  // fieldIndex={fieldIndex}
-                  // mainForm={mainForm}
-                  checkPermission={false}
-                  checkRequired={false}
-                />
-                <ButtonsPopover
-                  className={styles.deleteButton}
-                  onEditClick={() => openSettingsBlock(field)}
-                  onDeleteClick={() => removeField(fieldIndex, 1)}
-                />
-                {/* <RectangleIconButton
-                  className={styles.deleteButton}
-                  color={"error"}
-                  onClick={() => removeField(fieldIndex, 1)}
-                >
-                  <Delete color="error" />
-                </RectangleIconButton>
-                <RectangleIconButton
-                  className={styles.deleteButton}
-                  color={"primary"}
-                  onClick={() => openFieldSettingsBlock(fieldsMap[field.id] ?? field)}
-                >
-                  <Settings color="primary" />
-                </RectangleIconButton> */}
-              </div>
+              {field?.attributes?.isTab ? (
+                <div className={styles.tableSectionTable}>
+                  <table className={styles.relationTable}>
+                    <thead>
+                      <tr>
+                        <th>№</th>
+                        <th>
+                          {field?.attributes?.[`label_to_${i18n?.language}`] ||
+                            field.title ||
+                            field[field.relatedTableSlug]?.label}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>{""}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <ButtonsPopover
+                    className={styles.deleteButtonSection}
+                    onEditClick={() => openSettingsBlock(field)}
+                    onDeleteClick={() => removeField(fieldIndex, 1)}
+                  />
+                </div>
+              ) : (
+                <div className={styles.newsectionCardRow}>
+                  <FormElementGenerator
+                    control={mainForm.control}
+                    field={fieldsMap[field.id] ?? field}
+                    // isLayout={true}
+                    // sectionIndex={index}
+                    // column={1}
+                    // fieldIndex={fieldIndex}
+                    // mainForm={mainForm}
+                    checkPermission={false}
+                    checkRequired={false}
+                  />
+                  <ButtonsPopover
+                    className={styles.deleteButton}
+                    onEditClick={() => openSettingsBlock(field)}
+                    onDeleteClick={() => removeField(fieldIndex, 1)}
+                  />
+                </div>
+              )}
             </Draggable>
           ))}
         </Container>

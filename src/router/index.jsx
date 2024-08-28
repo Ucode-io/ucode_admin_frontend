@@ -83,6 +83,9 @@ import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMic
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
 import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
 import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
+import DetailPage1CFormPage from "../views/Objects/DetailPage1CFormPage";
+import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
+import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -401,6 +404,21 @@ const Router = () => {
           />
 
           <Route
+            path=":appId/object/:tableSlug/templates"
+            element={<DocumentTemplates />}
+          />
+
+          <Route
+            path=":appId/object/:tableSlug/templates/create"
+            element={<DocumentTemplateDetail />}
+          />
+
+          <Route
+            path=":appId/object/:tableSlug/templates/:templateId"
+            element={<DocumentTemplateDetail />}
+          />
+
+          <Route
             path=":appId/object/:tableSlug/create/:formId"
             element={
               <KeepAliveWrapper>
@@ -413,6 +431,24 @@ const Router = () => {
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+
+          <Route
+            path=":appId/1c/:tableSlug/create/:id"
+            element={
+              <KeepAliveWrapper>
+                <DetailPage1CFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+
+          <Route
+            path=":appId/1c/:tableSlug/:id"
+            element={
+              <KeepAliveWrapper>
+                <DetailPage1CFormPage />
               </KeepAliveWrapper>
             }
           />

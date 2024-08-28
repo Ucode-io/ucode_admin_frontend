@@ -19,6 +19,7 @@ import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
 import {paginationReducer} from "./pagination/pagination.slice";
 import {relationTabReducer} from "./relationTab/relationTab.slice";
 import {viewsReducer} from "./views/view.slice";
+import {isOnlineReducer} from "./isOnline/isOnline.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -104,6 +105,11 @@ const viewTab = {
   storage,
 };
 
+const isOnline = {
+  key: "isOnline",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -136,6 +142,7 @@ const rootReducer = combineReducers({
   viewSelectedTab: persistReducer(viewTab, viewsReducer),
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),
   alert: alertReducer,
+  isOnline: persistReducer(isOnline, isOnlineReducer),
 });
 
 export default rootReducer;

@@ -12,7 +12,6 @@ import {Container, Draggable} from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 import constructorViewService from "../../../../services/constructorViewService";
-import {store} from "../../../../store";
 import {applyDrag} from "../../../../utils/applyDrag";
 import {viewTypes} from "../../../../utils/constants/viewTypes";
 import ViewSettings from "../ViewSettings";

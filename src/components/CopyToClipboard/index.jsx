@@ -1,21 +1,21 @@
-import { useState } from "react"
-import ContentCopyIcon from "@mui/icons-material/ContentCopy"
-import DoneIcon from "@mui/icons-material/Done"
+import {useState} from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DoneIcon from "@mui/icons-material/Done";
 
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
-import { useDispatch } from "react-redux"
-import { showAlert } from "../../store/alert/alert.thunk"
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../store/alert/alert.thunk";
 
-const CopyToClipboard = ({ copyText, ...props }) => {
-  const [isCopied, setIsCopied] = useState(false)
-  const dispatch = useDispatch()
+const CopyToClipboard = ({copyText, ...props}) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClick = () => {
-    navigator.clipboard.writeText(copyText)
-    setIsCopied(true)
-    dispatch(showAlert("Скопировано в буфер обмена", "success"))
-    setTimeout(() => setIsCopied(false), 3000)
-  }
+    navigator.clipboard.writeText(copyText);
+    setIsCopied(true);
+    dispatch(showAlert("Скопировано в буфер обмена", "success"));
+    setTimeout(() => setIsCopied(false), 3000);
+  };
 
   return (
     <RectangleIconButton {...props}>
@@ -25,7 +25,7 @@ const CopyToClipboard = ({ copyText, ...props }) => {
         <ContentCopyIcon onClick={handleClick} htmlColor="#6e8bb7" />
       )}
     </RectangleIconButton>
-  )
-}
+  );
+};
 
-export default CopyToClipboard
+export default CopyToClipboard;

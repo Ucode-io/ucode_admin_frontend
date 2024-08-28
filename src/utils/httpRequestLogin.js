@@ -13,7 +13,7 @@ const httpRequestLogin = axios.create({
 // const errorHandler = (error, hooks) => {
 
 //   if(error.response?.data?.data) store.dispatch(showAlert(error.response.data.data))
-//   else store.dispatch(showAlert('___ERROR___'))
+//   else store.dispatch(showAlert('No connection to the server, try again'))
 
 //   return Promise.reject(error.response)
 // }
@@ -58,7 +58,7 @@ const errorHandler = (error, hooks) => {
         store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    } else store.dispatch(showAlert("___ERROR___"));
+    } else store.dispatch(showAlert("No connection to the server, try again"));
 
     return Promise.reject(error.response);
   }

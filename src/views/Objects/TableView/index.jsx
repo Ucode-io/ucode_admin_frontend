@@ -563,16 +563,6 @@ const TableView = ({
 
       const matches = replaceUrlVariables(urlTemplate, row);
 
-      // if (matches) {
-      //   matches.forEach((match) => {
-      //     const variableName = match.slice(4, -2);
-      //     const variableValue = row[variableName];
-      //     if (variableValue !== undefined) {
-      //       query = query.replace(match, variableValue);
-      //     }
-      //   });
-      // }
-
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);

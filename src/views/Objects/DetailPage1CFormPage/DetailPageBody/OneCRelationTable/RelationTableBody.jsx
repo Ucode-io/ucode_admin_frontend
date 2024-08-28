@@ -2,6 +2,12 @@ import React from "react";
 import styles from "./style.module.scss";
 import CellElementGenerator from "../../../../../components/ElementGenerators/CellElementGenerator";
 import {useNavigate, useParams} from "react-router-dom";
+import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import {Delete} from "@mui/icons-material";
+import constructorObjectService from "../../../../../services/constructorObjectService";
+import {useQueryClient} from "react-query";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
 
 function RelationTableBody({
   columns,
@@ -11,10 +17,21 @@ function RelationTableBody({
   index,
   offset,
   limit,
+  relatedTableSlug,
 }) {
-  const {appId} = useParams();
+  const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const currentPage = offset === 0 ? 1 : offset + 1;
+
+  const deleteHandler = async (row) => {
+    try {
+      await constructorObjectService.delete(relatedTableSlug, row.guid);
+      queryClient.refetchQueries(["GET_OBJECT_LIST_ROW"]);
+      dispatch(showAlert("Successfully created!", "success"));
+    } finally {
+    }
+  };
 
   return (
     <tr
@@ -67,7 +84,15 @@ function RelationTableBody({
           <CellElementGenerator row={item} field={col} />
         </td>
       ))}
-      <td></td>
+      <td style={{textAlign: "center", padding: "0"}}>
+        <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+          <RectangleIconButton
+            color="error"
+            onClick={() => deleteHandler(item, index)}>
+            <Delete color="error" />
+          </RectangleIconButton>
+        </PermissionWrapperV2>
+      </td>
     </tr>
   );
 }

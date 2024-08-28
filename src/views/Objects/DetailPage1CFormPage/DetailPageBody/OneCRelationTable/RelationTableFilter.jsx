@@ -115,9 +115,9 @@ function TableFilterBlock({
             <img src="/img/eye_off.svg" alt="" />
           </button>
 
-          <button onClick={addNewRow} className={styles.filterBtn}>
+          {/* <button onClick={addNewRow} className={styles.filterBtn}>
             <AddIcon sx={{fontSize: "24px", color: "#000"}} />
-          </button>
+          </button> */}
         </div>
       </div>
       {/* <div

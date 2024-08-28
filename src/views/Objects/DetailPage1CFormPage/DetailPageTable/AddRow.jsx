@@ -11,7 +11,7 @@ import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import ClearIcon from "@mui/icons-material/Clear";
 
-function AddRow({fields, data, setAddRow, relatedTableSlug}) {
+function AddRow({fields, data, setAddRow, relatedTableSlug, padding = 0}) {
   const {tableSlug} = useParams();
   const dispatch = useDispatch();
 
@@ -47,27 +47,7 @@ function AddRow({fields, data, setAddRow, relatedTableSlug}) {
 
   return (
     <tr style={{overflow: "scroll"}} id="newRow">
-      <td
-        style={{
-          width: "100%",
-          padding: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "10px",
-          borderTop: "none",
-        }}>
-        <RectangleIconButton color="success" onClick={handleSubmit(onSubmit)}>
-          <DoneIcon color="success" />
-        </RectangleIconButton>
-        <RectangleIconButton
-          color="success"
-          onClick={() => {
-            setAddRow(false);
-          }}>
-          <ClearIcon color="error" />
-        </RectangleIconButton>
-      </td>
+      <td style={{textAlign: "center"}}></td>
       {fields?.map((field, index) => (
         <td style={{padding: 0}}>
           {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
@@ -103,6 +83,29 @@ function AddRow({fields, data, setAddRow, relatedTableSlug}) {
           )}
         </td>
       ))}
+      <td
+        style={{
+          width: "100%",
+          padding: padding,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+
+          borderBottom: "none",
+          border: "none",
+        }}>
+        <RectangleIconButton color="success" onClick={handleSubmit(onSubmit)}>
+          <DoneIcon color="success" />
+        </RectangleIconButton>
+        <RectangleIconButton
+          color="success"
+          onClick={() => {
+            setAddRow(false);
+          }}>
+          <ClearIcon color="error" />
+        </RectangleIconButton>
+      </td>
     </tr>
   );
 }

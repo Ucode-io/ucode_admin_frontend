@@ -17,7 +17,7 @@ function RelationTableBody({
   const {appId} = useParams();
   const navigate = useNavigate();
   const currentPage = offset === 0 ? 1 : offset + 1;
-  console.log("currentPagecurrentPage", currentPage, offset);
+
   return (
     <tr
       style={{cursor: "pointer"}}
@@ -69,6 +69,7 @@ function RelationTableBody({
           <CellElementGenerator row={item} field={col} />
         </td>
       ))}
+      <td></td>
     </tr>
   );
 }

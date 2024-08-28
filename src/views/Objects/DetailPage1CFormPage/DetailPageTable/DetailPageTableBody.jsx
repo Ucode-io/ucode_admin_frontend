@@ -7,6 +7,7 @@ import CellElementGenerator from "../../../../components/ElementGenerators/CellE
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import AddRow from "./AddRow";
+import AddIcon from "@mui/icons-material/Add";
 
 const DetailPageTableBody = ({
   fields,
@@ -22,6 +23,7 @@ const DetailPageTableBody = ({
   computedColumn,
   addRow,
   setAddRow,
+  handleAddRowClick,
 }) => {
   const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
@@ -44,7 +46,7 @@ const DetailPageTableBody = ({
       <table className={styles.custom_table}>
         <thead>
           <tr>
-            <th style={{width: "60px", textAlign: "center"}}>№</th>
+            <th style={{width: "40px", textAlign: "center"}}>№</th>
             {computedColumn?.map((column) => (
               <DetailPageHead
                 relatedTableSlug={relatedTableSlug}
@@ -53,6 +55,7 @@ const DetailPageTableBody = ({
                 fields={fields}
               />
             ))}
+            <th style={{width: "60px"}}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -73,8 +76,10 @@ const DetailPageTableBody = ({
                   <CellElementGenerator row={row} field={field} />
                 </td>
               ))}
+              <td></td>
             </tr>
           ))}
+
           {addRow && (
             <AddRow
               fields={computedColumn}
@@ -82,7 +87,25 @@ const DetailPageTableBody = ({
               view={view}
               data={tableData}
               setAddRow={setAddRow}
+              padding={"5px"}
             />
+          )}
+          {!addRow && (
+            <tr style={{borderBottom: "1px solid #fff", borderTop: "none"}}>
+              <td
+                onClick={handleAddRowClick}
+                style={{
+                  padding: "5px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  borderTop: "none",
+                  cursor: "pointer",
+                }}>
+                <AddIcon sx={{fontSize: "20px", color: "#000"}} />
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

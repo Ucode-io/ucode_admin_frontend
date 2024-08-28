@@ -63,7 +63,7 @@ const DetailPageTableBody = ({
       <table className={styles.custom_table}>
         <thead>
           <tr>
-            <th style={{width: "40px", textAlign: "center"}}>№</th>
+            <th style={{width: "50px", textAlign: "center"}}>№</th>
             {computedColumn?.map((column, rowIndex) => (
               <DetailPageHead
                 relatedTableSlug={relatedTableSlug}

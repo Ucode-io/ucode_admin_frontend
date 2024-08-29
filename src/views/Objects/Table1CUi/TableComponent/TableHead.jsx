@@ -72,7 +72,16 @@ function TableHead({columns, view, folderIds}) {
   return (
     <>
       <thead>
-        <tr>
+        <tr
+          style={{
+            position: "sticky",
+            width: "100%",
+            overflow: "auto",
+            left: 0,
+            top: 0,
+            zIndex: 8,
+          }}>
+          {/* <th style={{width: "40px", textAlign: "center"}}>№</th> */}
           {columns?.map((column) => (
             <th
               id={column.id}
@@ -221,7 +230,9 @@ function TableHead({columns, view, folderIds}) {
             </th>
           ))}
 
-          <th style={{width: "70px", background: "#fff"}}></th>
+          <th style={{width: "70px", background: "#fff", textAlign: "center"}}>
+            Actions
+          </th>
         </tr>
       </thead>
     </>

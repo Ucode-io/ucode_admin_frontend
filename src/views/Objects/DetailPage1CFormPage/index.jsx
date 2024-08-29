@@ -332,7 +332,7 @@ function DetailPage1CFormPage({
           setCount={setCount}
         />
       </Box>
-      {selectedTab?.type !== "section" && (
+      {selectedTab?.type === "relation" && (
         <CPagination
           setOffset={setOffset}
           offset={offset}

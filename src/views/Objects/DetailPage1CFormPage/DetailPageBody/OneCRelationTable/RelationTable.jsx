@@ -64,7 +64,6 @@ function RelationTable({
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -167,7 +166,6 @@ function RelationTable({
             offset: offset,
             limit: limit,
             from_tab: type === "relation" ? true : false,
-            // ...computedFilters,
             search: searchText,
           },
         },
@@ -401,7 +399,6 @@ function RelationTable({
                     justifyContent: "center",
                     width: "100%",
                     borderTop: "none",
-                    borderBottom: "none",
                     cursor: "pointer",
                   }}>
                   <AddIcon sx={{fontSize: "20px", color: "#000"}} />

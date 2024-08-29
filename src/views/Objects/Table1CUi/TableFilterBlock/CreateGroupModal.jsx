@@ -61,7 +61,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               gap: "12px",
               justifyContent: "space-between",
             }}>
-            <ArrowBackIcon sx={{fontSize: "22px"}} />
+            {/* <ArrowBackIcon sx={{fontSize: "22px"}} /> */}
             <h3 className={styles.groupHead}>Контрагенты (создание группы)</h3>
           </Box>
           <button onClick={handleGroupClose} className={styles.closeBtn}>

@@ -12,6 +12,7 @@ function FolderRow({
   columns,
   item,
   handleFolderDoubleClick,
+  index,
 }) {
   return (
     <tr

@@ -56,7 +56,6 @@ function DetailPageSection({item, control, watch, selectedTab}) {
                 <Typography
                   sx={{
                     color: "#101828",
-                    // color: "#449424",
                     fontSize: "16px",
                     fontWeight: "700",
                   }}>

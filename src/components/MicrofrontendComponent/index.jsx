@@ -17,7 +17,7 @@ const MicrofrontendComponent = ({link, loginAction}) => {
     };
 
     const comp = await window.__federation_method_getRemote(
-      `remote_app_${link}`,
+      `remote_app_234r5tyhj${link}`,
       "./Page"
     );
     return comp;

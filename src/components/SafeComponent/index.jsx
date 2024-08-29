@@ -1,5 +1,5 @@
 import React from "react";
-import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import styles from "./style.module.scss";
 
 export default class SafeComponent extends React.Component {
   constructor(props) {
@@ -16,19 +16,12 @@ export default class SafeComponent extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          style={{
-            width: "100%",
-            height: "calc(100vh)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}>
-          <h1>Week internet connection</h1>
-          {/* <div>
-            <NotInterestedIcon style={{color: "red", fontSize: "32px"}} />
-          </div> */}
+        <div className={styles.saveComponent}>
+          <div className={styles.cloud}>
+            {/* <img src="/img/weakInternet.svg" width={"100px"} alt="" />
+            <h1>Week internet connection!</h1>
+            <p>Please connect to the internet and try again.</p> */}
+          </div>
         </div>
       );
     }

@@ -6,14 +6,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import newTableService from "../../../../services/newTableService";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import {Box, CircularProgress} from "@mui/material";
-import ArticleIcon from "@mui/icons-material/Article";
 
 const ChildRows = ({
   columns,
   view,
   tableSettings,
   pageName,
-  navigateToDetailPage,
   currentFolder,
   hasItems,
   items,

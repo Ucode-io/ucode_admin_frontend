@@ -137,13 +137,7 @@ function RelationTable({
   }
 
   const {
-    data: {
-      tableData = [],
-      pageCount = 1,
-      columns = [],
-      quickFilters = [],
-      fieldsMap = {},
-    } = {},
+    data: {tableData = [], pageCount = 1, columns = [], fieldsMap = {}} = {},
     refetch,
     isLoading: dataFetchingLoading,
   } = useQuery(

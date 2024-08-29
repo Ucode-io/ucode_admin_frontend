@@ -155,7 +155,6 @@ function Table1CUi({
         selectedView={selectedView}
         setSelectedView={setSelectedView}
       />
-      <TableHeadTitle menuItem={menuItem} />
       <TableFilterBlock
         fields={columns}
         openFilter={openFilter}

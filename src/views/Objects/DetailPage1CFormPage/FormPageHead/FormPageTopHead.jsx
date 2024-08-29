@@ -6,7 +6,7 @@ import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import {useNavigate, useParams} from "react-router-dom";
 
 function FormPageTopHead({menuItem}) {
-  const {appId, tableSlug} = useParams();
+  const {appId} = useParams();
   const [parentMenu, setParentMenu] = useState();
   const navigate = useNavigate();
 

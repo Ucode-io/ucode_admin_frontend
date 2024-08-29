@@ -84,7 +84,7 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
 
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-      <Box sx={{width: "360px", position: "relative"}}>
+      <Box sx={{width: "360px", position: "relative", zIndex: 9}}>
         <Box>
           <MenuItem
             sx={{

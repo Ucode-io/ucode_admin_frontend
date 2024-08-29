@@ -137,6 +137,7 @@ function TableBody({
               columns={columns}
               item={item}
               handleFolderDoubleClick={handleFolderDoubleClick}
+              index={index}
             />
           </React.Fragment>
         );
@@ -151,6 +152,7 @@ function TableBody({
             level={level}
             item={item}
             menuItem={menuItem}
+            index={index}
           />
         );
       }

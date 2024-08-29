@@ -33,7 +33,7 @@ const Editor = ({ onDownLoad, id: idFromProps, url }) => {
         "fileType": "docx",
         "key": id,
         "title": " ",
-        "url": url ?? "https://cec.ustozim.uz/api/v1/files/d4ab31bfcc55b9748f9093a17cc820b9",
+        "url": url ?? "https://cdn-api.ucode.run/docs/9533890a-d5d8-4adc-8573-f60bb76c2e3c.docx",
       },
       "documentType": "word",
       "editorConfig": {

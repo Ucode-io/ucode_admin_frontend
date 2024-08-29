@@ -5,9 +5,11 @@ import { useTranslation } from "react-i18next";
 import { useProjectGetByIdQuery } from "../../../../../services/projectService";
 import menuService from "../../../../../services/menuService";
 import PageFallback from "../../../../../components/PageFallback";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import styles from "./index.module.scss";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
+import { IconButton } from "@mui/material";
 
 const Sections = ({
   relation,
@@ -20,6 +22,7 @@ const Sections = ({
   setFormValue,
   errors,
   relatedTable,
+  onBackButtonClick,
 }) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -91,13 +94,16 @@ const Sections = ({
             (section, index) =>
               isVisibleSection(section) && (
                 <div className={styles.section}>
-                  <div className={styles.sectinoHeader}>
-                    Section #1
+                  <div
+                    className={styles.sectinoHeader}
+                    style={{ borderTop: index === 0 && "none" }}
+                  >
+                    Section #{index + 1}
                     {/* {section?.attributes?.[`label_${i18n.language}`] ??
                       section.label} */}
                   </div>
 
-                  <div className={styles.sectionBody} >
+                  <div className={styles.sectionBody}>
                     {section.fields?.map((field, fieldIndex) => (
                       <FormElementGenerator
                         key={field.id}

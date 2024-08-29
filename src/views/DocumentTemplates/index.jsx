@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import styles from "./index.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {
@@ -15,7 +15,9 @@ import useSearchParams from "../../hooks/useSearchParams";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import FileOpenIcon from '@mui/icons-material/FileOpen';
+import FileOpenIcon from "@mui/icons-material/FileOpen";
+import DescriptionIcon from "@mui/icons-material/Description";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const breadCrumbItems = [
   { label: "ЭДО", link: "" },
@@ -27,7 +29,8 @@ const DocumentTemplates = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
+  const [step, setStep] = useState("TEMPLATES");
   // const [selectedTemplateId, setSelectedTemplateId] = useState(null);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
@@ -41,13 +44,7 @@ const DocumentTemplates = () => {
   );
 
   //  ===== FORM =========
-  const form = useForm({
-    // defaultValues: {
-    //   ...state,
-    //   ...dateInfo,
-    //   invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-    // },
-  });
+  const form = useForm({});
 
   // ===== TEMPLATES QUERY ===========
   const { data: templates, isLoading } = useDocxTemplatesQuery({
@@ -67,17 +64,16 @@ const DocumentTemplates = () => {
   }, [templates, selectedTemplateId]);
 
   // ===== AUTO SELECT TEMPLATE ===========
-  useEffect(() => {
-    if (!templates?.length || selectedTemplate) return;
+  // useEffect(() => {
+  //   if (!templates?.length || selectedTemplate) return;
 
-    setSelectedTemplateId(templates[0]?.id);
-  }, [selectedTemplate, templates, setSelectedTemplateId]);
+  //   setSelectedTemplateId(templates[0]?.id);
+  // }, [selectedTemplate, templates, setSelectedTemplateId]);
 
   // ===== ON DOWNLOAD ==============
 
   const { mutate: converToPDF } = useDocxTemplateConvertToPDFMutation({
     onSuccess: (res) => {
-      console.log("RRRR ==>", res)
       const href = URL.createObjectURL(res);
 
       // create "a" HTML element with href to file & click
@@ -101,7 +97,7 @@ const DocumentTemplates = () => {
     const url = `https://${selectedTemplate?.file_url}`;
     const data = form?.getValues();
 
-    console.log("GGGG =>", url)
+    console.log("GGGG =>", url);
 
     converToPDF({
       data: {
@@ -148,69 +144,121 @@ const DocumentTemplates = () => {
         ))}
       </div>
 
-      <div className={styles.titleBlock}>
-        <h3 className={styles.title}>{selectedTemplate?.title}</h3>
+      {templates && (
+        <div className={styles.titleBlock}>
+          <h3 className={styles.title}>
+            <IconButton
+              onClick={() => {
+                console.log("ggg =>", selectedTemplateId)
+                if (selectedTemplateId) setSelectedTemplateId('');
+                else
+                  navigate(
+                    `/main/${appId}/object/${tableSlug}?menuId=${searchParams.get("menuId")}`
+                  );
+              }}
+              className={styles.backButton}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            {selectedTemplateId ? selectedTemplate?.title : "Выберите шаблон"}
+          </h3>
 
-        <div className={styles.buttons}>
-          <Button
-            variant="outlined"
-            className={styles.secondaryButton}
-            onClick={() => {
-              navigate(`${pathname}/create`);
-            }}
-          >
-            Создать шаблон
-          </Button>
-          {selectedTemplate && <Button
-            variant="outlined"
-            style={{ borderColor: "#337E28", color: "#337E28" }}
-            className={styles.secondaryButton}
-            onClick={() => {
-              navigate(`${pathname}/${selectedTemplateId}`);
-            }}
-          >
-            Изменить шаблон
-          </Button>}
-          <LoadingButton
-            loading={pdfIsLoading}
-            onClick={onPDFDownloadClick}
-            variant="contained"
-            className={styles.primaryButton}
-          >
-            Скачать PDF
-          </LoadingButton>
-        </div>
-      </div>
-
-      {!templates?.length ? <div className={styles.noDataWrapper} >
-            <FileOpenIcon />
-            <div className={styles.noDataText} >Пока нет шаблонов. Сначала создайте шаблон</div>
-      </div> : <>
-        <div className={styles.tabsWrapper}>
-          <div className={styles.tabs}>
-            {templates?.map((template) => (
-              <div
-                onClick={() => setSelectedTemplateId(template.id)}
-                className={`${styles.tab} ${selectedTemplateId === template.id ? styles.active : ""}`}
-                key={template.id}
+          {selectedTemplate && (
+            <div className={styles.buttons}>
+              <Button
+                variant="outlined"
+                style={{ borderColor: "#337E28", color: "#337E28" }}
+                className={styles.secondaryButton}
+                onClick={() => {
+                  navigate(
+                    `${pathname}/${selectedTemplateId}?id=${searchParams.get("id")}&menuId=${searchParams.get("menuId")}`
+                  );
+                }}
               >
-                {template.title}
-              </div>
-            ))}
-          </div>
+                Изменить шаблон
+              </Button>
+              <LoadingButton
+                loading={pdfIsLoading}
+                onClick={onPDFDownloadClick}
+                variant="contained"
+                className={styles.primaryButton}
+              >
+                Скачать PDF
+              </LoadingButton>
+            </div>
+          )}
         </div>
+      )}
 
-        <div className={styles.content}>
-          <div className={styles.form}>
-            <ObjectForm form={form} />
+      {!templates?.length ? (
+        <div className={styles.noDataWrapper}>
+          <FileOpenIcon />
+          <div className={styles.noDataText}>
+            Пока нет шаблонов. Сначала создайте шаблон
           </div>
-          <div className={styles.viewer}>
-            {selectedTemplate?.pdf_url && (
-              <Viewer url={`https://${selectedTemplate?.pdf_url}`} />
-            )}
+          <div style={{ width: "300px" }}>
+            <Button
+              variant="outlined"
+              className={styles.addTemplateButton}
+              onClick={() => {
+                navigate(`${pathname}/create`);
+              }}
+            >
+              Создать шаблон
+            </Button>
           </div>
         </div>
-      </>}
+      ) : (
+        <>
+          <div className={styles.content}>
+            {!selectedTemplateId ? (
+              <div className={styles.templatesList}>
+                {/* <p className={styles.title}>Выберите шаблон</p> */}
+
+                <div className={styles.list}>
+                  {templates?.map((template) => (
+                    <div
+                      onClick={() => setSelectedTemplateId(template.id)}
+                      className={styles.row}
+                      key={template.id}
+                    >
+                      <DescriptionIcon className={styles.icon} />
+                      {template.title}
+                    </div>
+                  ))}
+                  <div className={styles.buttonWrapper}>
+                    <Button
+                      variant="outlined"
+                      className={styles.addTemplateButton}
+                      onClick={() => {
+                        navigate(`${pathname}/create`);
+                      }}
+                    >
+                      Создать шаблон
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.form}>
+                <ObjectForm
+                  form={form}
+                  onBackButtonClick={() => setSelectedTemplateId("")}
+                />
+              </div>
+            )}
+            <div className={styles.viewer}>
+              <Viewer
+                url={
+                  selectedTemplate?.pdf_url
+                    ? `https://${selectedTemplate?.pdf_url}`
+                    : `https://cdn-api.ucode.run/docs/9533890a-d5d8-4adc-8573-f60bb76c2e3c.pdf`
+                }
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

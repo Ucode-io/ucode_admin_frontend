@@ -79,7 +79,7 @@ function TableHead({columns, view, folderIds}) {
             overflow: "auto",
             left: 0,
             top: 0,
-            zIndex: 8,
+            zIndex: 3,
           }}>
           {/* <th style={{width: "40px", textAlign: "center"}}>№</th> */}
           {columns?.map((column) => (

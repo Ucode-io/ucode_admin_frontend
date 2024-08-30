@@ -188,16 +188,6 @@ function DetailPageTabs({
     );
   }, [jwtObjects, tables]);
 
-  // const isMultiLanguage = useMemo(() => {
-  //   const allFields = [];
-  //   selectedTab?.sections?.map((section) => {
-  //     return section?.fields?.map((field) => {
-  //       return allFields.push(field);
-  //     });
-  //   });
-  //   return !!allFields.find((field) => field?.enable_multilanguage === true);
-  // }, [selectedTab]);
-
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
   const params = {

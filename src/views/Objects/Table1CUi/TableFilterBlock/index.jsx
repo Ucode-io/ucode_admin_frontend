@@ -12,6 +12,7 @@ import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
 import TableFieldButton from "../TableFieldButton";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
+import TableHeadTitle from "../TableUiHead/TableHeadTitle";
 
 function TableFilterBlock({
   openFilter,
@@ -83,6 +84,7 @@ function TableFilterBlock({
 
   return (
     <>
+      <TableHeadTitle menuItem={menuItem} />
       <div className={styles.tableFilterBlock}>
         <div className={styles.searchFilter}>
           <TextField

@@ -1,7 +1,7 @@
 import React from "react";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import styles from "./style.module.scss";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import ArticleIcon from "@mui/icons-material/Article";
 
 function ItemsRow({
@@ -15,6 +15,8 @@ function ItemsRow({
 }) {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   return (
     <tr
@@ -94,7 +96,7 @@ function ItemsRow({
           onClick={(e) => {
             e.stopPropagation();
             navigate(
-              `/main/${appId}/object/${tableSlug}/templates?id=${item?.guid}`
+              `/main/${appId}/object/${tableSlug}/templates?id=${item?.guid}&menuId=${menuId}`
             );
             console.log("Button clicked");
           }}>

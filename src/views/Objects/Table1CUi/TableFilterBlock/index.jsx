@@ -116,7 +116,6 @@ function TableFilterBlock({
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
           </button>
-          <TableFieldButton menuItem={menuItem} view={view} />
         </div>
 
         <div className={styles.filterCreatBtns}>

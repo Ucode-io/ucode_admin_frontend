@@ -9,7 +9,6 @@ import {useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
-import layoutService from "../../../services/layoutService";
 import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";

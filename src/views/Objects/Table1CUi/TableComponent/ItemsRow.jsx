@@ -10,6 +10,7 @@ import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {useQueryClient} from "react-query";
 import CellElementGenerator from "../../../../components/ElementGenerators/CellElementGenerator";
+import CellElementGeneratorForTable from "../../../../components/ElementGenerators/CellElementGeneratorForTable";
 
 function ItemsRow({
   view,
@@ -98,10 +99,10 @@ function ItemsRow({
           {index === 0 ? (
             <div className={styles.childTd}>
               <img src="/img/child_icon.svg" alt="" />
-              <p>{<CellElementGenerator field={col} row={item} />}</p>
+              <p>{<CellElementGeneratorForTable field={col} row={item} />}</p>
             </div>
           ) : (
-            <CellElementGenerator field={col} row={item} />
+            <CellElementGeneratorForTable field={col} row={item} />
           )}
         </td>
       ))}

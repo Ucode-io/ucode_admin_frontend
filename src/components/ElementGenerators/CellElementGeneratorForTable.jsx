@@ -24,6 +24,7 @@ import {makeStyles} from "@mui/styles";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import SingleLine from "./SingleLine";
+import Many2OneValue from "./Many2OneValue";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles(() => ({
 
 const CellElementGeneratorForTable = ({field = {}, row}) => {
   const classes = useStyles();
+
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -122,6 +124,9 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
+
+    case "LOOKUP":
+      return <Many2OneValue field={field} value={row?.[field?.slug]} />;
 
     case "SINGLE_LINE":
       return <SingleLine field={field} value={value} row={row} />;

@@ -234,6 +234,7 @@ const ViewsWithGroups = ({
           setIsChanged={setIsChanged}
           selectedView={selectedView}
           setSelectedView={setSelectedView}
+          control={control}
         />
       ) : (
         <Box>

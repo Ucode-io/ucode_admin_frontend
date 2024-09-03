@@ -91,7 +91,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
             <div className={styles.groupLabel}>
               <p>Код</p>
               <HCTextField
-                required={true}
+                required={false}
                 control={control}
                 placeholder={"Код"}
                 name="code"
@@ -103,7 +103,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               <p>Комментарий</p>
               <div className={styles.groupdTextArea}>
                 <HFTextArea
-                  required={true}
+                  required={false}
                   resize={false}
                   control={control}
                   name="comment"

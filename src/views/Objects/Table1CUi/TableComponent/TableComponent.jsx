@@ -21,10 +21,12 @@ const TableComponent = ({
   isResizeble = false,
   menuItem,
   searchText,
+  control,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const [folderIds, setFolderIds] = useState([]);
   const [addNewRow, setAddNewRow] = useState(false);
+
   const location = useLocation();
   const dispatch = useDispatch();
   const pageName =
@@ -105,7 +107,12 @@ const TableComponent = ({
           openFilter ? styles.tableWrapperActive : styles.tableWrapper
         }>
         <table className={styles.expandable_table}>
-          <TableHead folderIds={folderIds} columns={fields} view={view} />
+          <TableHead
+            folderIds={folderIds}
+            columns={fields}
+            menuItem={menuItem}
+            view={view}
+          />
           <TableBody
             setFolderIds={setFolderIds}
             folderIds={folderIds}
@@ -116,7 +123,18 @@ const TableComponent = ({
             view={view}
             menuItem={menuItem}
             searchText={searchText}
+            offset={offset}
+            control={control}
           />
+
+          {/* <AddRow
+            fields={columns}
+            relatedTableSlug={relatedTableSlug}
+            view={view}
+            data={tableData}
+            setAddRow={setAddRow}
+            padding={"20px"}
+          /> */}
         </table>
         {addNewRow && (
           <OneCAddDataColumn setAddNewRow={setAddNewRow} columns={fields} />

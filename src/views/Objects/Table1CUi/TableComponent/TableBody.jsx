@@ -19,6 +19,8 @@ function TableBody({
   searchText,
   setFolderIds,
   folderIds,
+  offset,
+  control,
 }) {
   const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
@@ -138,6 +140,7 @@ function TableBody({
               item={item}
               handleFolderDoubleClick={handleFolderDoubleClick}
               index={index}
+              offset={offset}
             />
           </React.Fragment>
         );
@@ -153,6 +156,8 @@ function TableBody({
             item={item}
             menuItem={menuItem}
             index={index}
+            offset={offset}
+            control={control}
           />
         );
       }
@@ -163,7 +168,7 @@ function TableBody({
     return (
       <tbody>
         {foldersState?.length ? (
-          foldersState?.map((item) => (
+          foldersState?.map((item, index) => (
             <FiltersRow
               navigateToDetailPage={navigateToDetailPage}
               columns={columns}
@@ -172,6 +177,7 @@ function TableBody({
               view={view}
               item={item}
               menuItem={menuItem}
+              index={index}
             />
           ))
         ) : (

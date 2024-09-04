@@ -69,7 +69,7 @@ function TableHead({columns, view, folderIds, menuItem}) {
         setColumnFix(false);
       });
   };
-
+  console.log("columnscolumns", columns);
   return (
     <>
       <thead>

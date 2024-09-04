@@ -72,6 +72,7 @@ const FieldsBlock = ({
   const tabRelationTabs = useMemo(() => {
     return tableRelations?.map((item) => ({
       ...item,
+      id: `${item?.table_from?.slug}#${item?.id}`,
       attributes: {
         ...item?.attributes,
         isTab: true,

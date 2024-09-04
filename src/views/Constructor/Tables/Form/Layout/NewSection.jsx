@@ -59,7 +59,7 @@ const NewSection = ({
   const onDrop = (dropResult) => {
     const {fields, insert, move, remove} = sectionFields;
     let result = [];
-    if (dropResult?.payload?.isTab) {
+    if (dropResult?.payload?.attributes?.isTab) {
       if (fields?.length === 0) {
         result = applyDrag(fields, dropResult);
       } else {

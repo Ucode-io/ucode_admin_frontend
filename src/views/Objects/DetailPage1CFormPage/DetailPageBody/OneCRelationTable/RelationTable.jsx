@@ -320,7 +320,7 @@ function RelationTable({
       },
     }
   );
-  console.log("computedRelationFields", computedRelationFields);
+
   return (
     <>
       <RelationTableFilter

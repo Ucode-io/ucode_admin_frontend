@@ -1,57 +1,37 @@
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import styles from "./index.module.scss";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useTabRouter from "../../../../hooks/useTabRouter";
-import { useQuery, useQueryClient } from "react-query";
-import { store } from "../../../../store";
+import { useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
 import { sortSections } from "../../../../utils/sectionsOrderNumber";
 import layoutService from "../../../../services/layoutService";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import RelationSectionForModal from "../../../Objects/RelationSection/RelationSectionForModal";
 import Sections from "./Sections";
 import constructorTableService from "../../../../services/constructorTableService";
 import { listToMap } from "../../../../utils/listToMap";
+import { IconButton } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
-  const { id, tableSlug, appId } = useParams();
+const ObjectForm = ({ onBackButtonClick, form }) => {
+  const { tableSlug } = useParams();
 
-  const [editAcces, setEditAccess] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
-  const queryClient = useQueryClient();
-  const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
-  const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-  const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const menu = store.getState().menu;
-  const isInvite = menu.invite;
   const { i18n } = useTranslation();
-  const [layout, setLayout] = useState({});
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 
+  const id = searchParams.get("id");
 
   const {
-    handleSubmit,
     control,
     reset,
     setValue: setFormValue,
-    watch,
     formState: { errors },
   } = form;
 
@@ -102,9 +82,6 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
       };
       setData(layout2);
       setSections(sortSections(sections));
-      setSummary(layout?.summary_fields ?? []);
-
-      setLayout(layout);
 
       const relations =
         layout?.tabs?.map((el) => ({
@@ -173,7 +150,6 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
         }),
       };
       setData(layout2);
-      setLayout(layout);
       setSections(sortSections(sections));
 
       const relations =
@@ -213,9 +189,8 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
     else getFields();
   }, [id]);
 
-
   const {
-    data: {views, fieldsMap, visibleColumns, visibleRelationColumns} = {
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -229,12 +204,12 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
         tableSlug,
         {
           data: {},
-        },
+        }
         // params
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -249,7 +224,7 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -264,20 +239,23 @@ const ObjectForm = ({ dateInfo, fullScreen, menuItem, form }) => {
   }, [data, selectedTabIndex]);
 
   return (
-    <div className={styles.wrapper}>
-      <Sections
-        relation={tableRelations}
-        editAcces={false}
-        isMultiLanguage={false}
-        fieldsMapFromProps={fieldsMap}
-        loader={loader || isLoading}
-        computedSections={computedSections}
-        control={control}
-        setFormValue={setFormValue}
-        errors={errors}
-        relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
-      />
-    </div>
+    <>
+      <div className={styles.wrapper}>
+        <Sections
+          onBackButtonClick={onBackButtonClick}
+          relation={tableRelations}
+          editAcces={false}
+          isMultiLanguage={false}
+          fieldsMapFromProps={fieldsMap}
+          loader={loader || isLoading}
+          computedSections={computedSections}
+          control={control}
+          setFormValue={setFormValue}
+          errors={errors}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+        />
+      </div>
+    </>
   );
 };
 

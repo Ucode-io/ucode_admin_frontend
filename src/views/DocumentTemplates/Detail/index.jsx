@@ -1,7 +1,7 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styles from "./index.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import Editor from "../components/Editor";
 import useId from "../../../hooks/useId";
 import { useState } from "react";
@@ -15,6 +15,9 @@ import { useQueryClient } from "react-query";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { useForm } from "react-hook-form";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import Variables from "../components/Variables";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 
 const breadCrumbItems = [
   { label: "ЭДО", link: "" },
@@ -29,6 +32,7 @@ const DocumentTemplateDetail = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [fileUrl, setFileUrl] = useState();
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [btnIsLoading, setBtnIsLoading] = useState(false);
 
@@ -56,7 +60,7 @@ const DocumentTemplateDetail = () => {
     onSuccess: (res) => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}`,
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
         { replace: true }
       );
       showAlert("Successfully created", "success");
@@ -70,7 +74,7 @@ const DocumentTemplateDetail = () => {
     onSuccess: () => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}`,
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
         { replace: true }
       );
       showAlert("Successfully updated", "success");
@@ -120,12 +124,24 @@ const DocumentTemplateDetail = () => {
       </div>
 
       <div className={styles.titleBlock}>
-        {/* <h3 className={styles.title}>Новый шаблон</h3> */}
-        <input
-          {...register("title")}
-          className={styles.titleInput}
-          placeholder="Введите название шаблона"
-        />
+        <div className={styles.leftSide} >
+          <IconButton
+            onClick={() =>
+              navigate(
+                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
+                { replace: true }
+              )
+            }
+            className={styles.backButton}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <input
+            {...register("title")}
+            className={styles.titleInput}
+            placeholder="Введите название шаблона"
+          />
+        </div>
 
         <div className={styles.buttons}>
           <LoadingButton
@@ -141,7 +157,7 @@ const DocumentTemplateDetail = () => {
             className={styles.secondaryButton}
             onClick={() =>
               navigate(
-                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}`,
+                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
                 { replace: true }
               )
             }
@@ -152,11 +168,17 @@ const DocumentTemplateDetail = () => {
       </div>
 
       <div className={styles.content}>
-        <Editor
-          id={editorId}
-          onDownLoad={onDownload}
-          url={fileUrl ? `https://${fileUrl}` : null}
-        />
+        <div className={styles.variables}>
+          <Variables />
+        </div>
+
+        <div className={styles.editor}>
+          <Editor
+            id={editorId}
+            onDownLoad={onDownload}
+            url={fileUrl ? `https://${fileUrl}` : null}
+          />
+        </div>
       </div>
     </div>
   );

@@ -9,7 +9,8 @@ const docxTemplateService = {
   create: data => httpsRequestV2.post('/docx-template', data),
   udpate: data => httpsRequestV2.put('/docx-template', data),
   delete: id => httpsRequestV2.put(`/docx-template/${id}`),
-  convertToPDF: ({data, link}) => httpsRequestV2.post('/docx-template/convert/pdf', data, { params: { link }, responseType: "blob" })
+  convertToPDF: ({data, link}) => httpsRequestV2.post('/docx-template/convert/pdf', data, { params: { link }, responseType: "blob" }),
+  getVariables: (tableSlug) => httpsRequestV2.get(`/fields/${tableSlug}/with-relations`)
 }
 
 export const useDocxTemplatesQuery = ({ params, querySettings }) => {
@@ -35,6 +36,10 @@ export const useDocxTemplateDeleteMutation = (mutationSettings) => {
 
 export const useDocxTemplateConvertToPDFMutation = (mutationSettings) => {
   return useMutation(docxTemplateService.convertToPDF, mutationSettings)
+}
+
+export const useDocxTemplateVariablesQuery = ({ tableSlug, querySettings }) => {
+  return useQuery(["DOCX_TEMPLATES_VARIABLES", { tableSlug }], () => docxTemplateService.getVariables(tableSlug), querySettings)
 }
 
 

@@ -320,7 +320,7 @@ function RelationTable({
       },
     }
   );
-
+  console.log("computedRelationFields", computedRelationFields);
   return (
     <>
       <RelationTableFilter
@@ -380,6 +380,7 @@ function RelationTable({
                 data={tableData}
                 setAddRow={setAddRow}
                 padding={"20px"}
+                request_type={"GET_OBJECT_LIST_ROW"}
               />
             )}
             {!addRow && (

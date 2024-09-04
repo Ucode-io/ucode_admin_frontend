@@ -76,7 +76,7 @@ function DetailPageTable({field, selectedTab}) {
     isLoading: dataFetchingLoading,
   } = useQuery(
     [
-      "GET_OBJECT_LIST_ROW",
+      "GET_OBJECT_LIST_DATA",
       relatedTableSlug,
       {
         offset: offset,

@@ -113,6 +113,7 @@ const DetailPageTableBody = ({
               data={tableData}
               setAddRow={setAddRow}
               padding={"5px"}
+              request_type={"GET_OBJECT_LIST_DATA"}
             />
           )}
           {!addRow && (

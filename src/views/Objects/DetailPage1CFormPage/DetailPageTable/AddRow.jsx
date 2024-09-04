@@ -11,7 +11,14 @@ import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import ClearIcon from "@mui/icons-material/Clear";
 
-function AddRow({fields, data, setAddRow, relatedTableSlug, padding = 0}) {
+function AddRow({
+  fields,
+  data,
+  setAddRow,
+  relatedTableSlug,
+  padding = 0,
+  request_type,
+}) {
   const {tableSlug} = useParams();
   const dispatch = useDispatch();
 
@@ -35,7 +42,7 @@ function AddRow({fields, data, setAddRow, relatedTableSlug, padding = 0}) {
         },
       })
       .then((res) => {
-        queryClient.refetchQueries(["GET_OBJECT_LIST_ROW"]);
+        queryClient.refetchQueries([request_type]);
         dispatch(showAlert("Successfully created!", "success"));
         setAddRow(false);
       })

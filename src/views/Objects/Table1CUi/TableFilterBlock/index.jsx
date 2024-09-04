@@ -10,7 +10,6 @@ import DownloadMenu from "./DownloadMenu";
 import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
-import TableFieldButton from "../TableFieldButton";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import TableHeadTitle from "../TableUiHead/TableHeadTitle";
 

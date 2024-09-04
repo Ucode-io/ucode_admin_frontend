@@ -14,6 +14,8 @@ import RelationTableBody from "./RelationTableBody";
 import RelationTableFilter from "./RelationTableFilter";
 import RelationTableHead from "./RelationTableHead";
 import styles from "./style.module.scss";
+import AddRow from "../../DetailPageTable/AddRow";
+import AddIcon from "@mui/icons-material/Add";
 
 function RelationTable({
   relation,
@@ -43,6 +45,7 @@ function RelationTable({
   const [searchParams] = useSearchParams();
   const [searchText, setSearchText] = useState("");
   const [menuItem, setMenuItem] = useState(null);
+  const [addRow, setAddRow] = useState(false);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -61,7 +64,6 @@ function RelationTable({
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -135,18 +137,12 @@ function RelationTable({
   }
 
   const {
-    data: {
-      tableData = [],
-      pageCount = 1,
-      columns = [],
-      quickFilters = [],
-      fieldsMap = {},
-    } = {},
+    data: {tableData = [], pageCount = 1, columns = [], fieldsMap = {}} = {},
     refetch,
     isLoading: dataFetchingLoading,
   } = useQuery(
     [
-      "GET_OBJECT_LIST",
+      "GET_OBJECT_LIST_ROW",
       relatedTableSlug,
       shouldGet,
       searchText,
@@ -164,7 +160,6 @@ function RelationTable({
             offset: offset,
             limit: limit,
             from_tab: type === "relation" ? true : false,
-            ...computedFilters,
             search: searchText,
           },
         },
@@ -284,6 +279,15 @@ function RelationTable({
           });
       });
   };
+  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
+    {
+      tableSlug: relatedTableSlug,
+    }
+  );
+
+  const addNewRow = () => {
+    setAddRow(!addRow);
+  };
 
   useEffect(() => {
     getOptionsList();
@@ -317,12 +321,6 @@ function RelationTable({
     }
   );
 
-  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
-    {
-      tableSlug: relatedTableSlug,
-    }
-  );
-
   return (
     <>
       <RelationTableFilter
@@ -333,12 +331,19 @@ function RelationTable({
         data={layoutData}
         fields={columns}
         setSearchText={setSearchText}
+        addNewRow={addNewRow}
       />
       <div className={styles.tableComponent}>
         <table className={styles.expandable_table}>
           <thead>
             <tr>
-              <th style={{width: "40px", textAlign: "center"}}>№</th>
+              <th
+                style={{
+                  width: "60px",
+                  textAlign: "center",
+                }}>
+                №
+              </th>
               {columns?.map((column) => (
                 <RelationTableHead
                   view={getRelatedTabeSlug}
@@ -349,6 +354,7 @@ function RelationTable({
                   getAllData={getAllData}
                 />
               ))}
+              <th style={{width: "60px"}}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -361,8 +367,39 @@ function RelationTable({
                 tableData={tableData}
                 control={control}
                 menuItem={menuItem}
+                offset={offset}
+                limit={limit}
+                relatedTableSlug={relatedTableSlug}
               />
             ))}
+            {addRow && (
+              <AddRow
+                fields={columns}
+                relatedTableSlug={relatedTableSlug}
+                view={view}
+                data={tableData}
+                setAddRow={setAddRow}
+                padding={"20px"}
+                request_type={"GET_OBJECT_LIST_ROW"}
+              />
+            )}
+            {!addRow && (
+              <tr>
+                <td
+                  onClick={addNewRow}
+                  style={{
+                    padding: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    borderTop: "none",
+                    cursor: "pointer",
+                  }}>
+                  <AddIcon sx={{fontSize: "20px", color: "#000"}} />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

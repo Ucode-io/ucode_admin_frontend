@@ -7,9 +7,11 @@ import {IOSSwitch} from "../../../../theme/overrides/IosSwitch";
 import {Container, Draggable} from "react-smooth-dnd";
 import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [switchLoading, setSwitchLoading] = useState({});
@@ -26,7 +28,7 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
         columns: data,
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug]);
       })
       .finally(() => {
         setLoading(false);
@@ -81,10 +83,10 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
         }) ?? []
     );
   }, [view?.columns, fieldsMap]);
-
+  console.log("unVisibleFields", unVisibleFields);
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-      <Box sx={{width: "360px", position: "relative"}}>
+      <Box sx={{width: "360px", position: "relative", zIndex: 9}}>
         <Box>
           <MenuItem
             sx={{
@@ -137,7 +139,8 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
                         fontWeight: 500,
                         fontSize: "14px",
                       }}>
-                      {column.label}
+                      {column?.attributes?.[`label_${i18n?.language}`] ||
+                        column?.label}
                     </Typography>
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                       switchLoading[column.relation_id] ? (
@@ -193,7 +196,8 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
                       fontWeight: 500,
                       fontSize: "14px",
                     }}>
-                    {column.label}
+                    {column?.attributes?.[`label_${i18n?.language}`] ||
+                      column?.label}
                   </Typography>
                   {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                     switchLoading[column.relation_id] ? (

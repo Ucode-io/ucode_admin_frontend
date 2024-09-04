@@ -61,7 +61,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               gap: "12px",
               justifyContent: "space-between",
             }}>
-            <ArrowBackIcon sx={{fontSize: "22px"}} />
+            {/* <ArrowBackIcon sx={{fontSize: "22px"}} /> */}
             <h3 className={styles.groupHead}>Контрагенты (создание группы)</h3>
           </Box>
           <button onClick={handleGroupClose} className={styles.closeBtn}>
@@ -91,7 +91,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
             <div className={styles.groupLabel}>
               <p>Код</p>
               <HCTextField
-                required={true}
+                required={false}
                 control={control}
                 placeholder={"Код"}
                 name="code"
@@ -103,7 +103,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               <p>Комментарий</p>
               <div className={styles.groupdTextArea}>
                 <HFTextArea
-                  required={true}
+                  required={false}
                   resize={false}
                   control={control}
                   name="comment"
@@ -120,16 +120,14 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               alignItems: "center",
               justifyContent: "space-between",
             }}>
-            <button className={styles.moreBtn}>
-              <span>Еще</span>
+            <button style={{border: "none"}}>
+              {/* className={styles.moreBtn} */}
+              {/* <span>Еще</span> */}
 
-              <img src="/img/chevron_down.svg" alt="" />
+              {/* <img src="/img/chevron_down.svg" alt="" /> */}
             </button>
 
             <div className={styles.actionBtns}>
-              {/* <button type="submit" className={styles.actionRegBtn}>
-                Записать
-              </button> */}
               <button type="submit" className={styles.actionCloseBtn}>
                 {loading ? (
                   <CircularProgress sx={{color: "#fff"}} size={20} />

@@ -10,8 +10,8 @@ import DownloadMenu from "./DownloadMenu";
 import NewFastFilter from "./FastFilter";
 import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
-import TableFieldButton from "../TableFieldButton";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
+import TableHeadTitle from "../TableUiHead/TableHeadTitle";
 
 function TableFilterBlock({
   openFilter,
@@ -83,6 +83,7 @@ function TableFilterBlock({
 
   return (
     <>
+      <TableHeadTitle menuItem={menuItem} />
       <div className={styles.tableFilterBlock}>
         <div className={styles.searchFilter}>
           <TextField
@@ -114,7 +115,6 @@ function TableFilterBlock({
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
           </button>
-          <TableFieldButton menuItem={menuItem} view={view} />
         </div>
 
         <div className={styles.filterCreatBtns}>

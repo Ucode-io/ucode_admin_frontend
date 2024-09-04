@@ -1,6 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
 
-export const { actions: mainActions, reducer: mainReducer } = createSlice({
+export const {actions: mainActions, reducer: mainReducer} = createSlice({
   name: "tableColumn",
   initialState: {
     settingsSidebarIsOpen: true,
@@ -8,10 +8,10 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
     subMenuIsOpen: false,
   },
   reducers: {
-    setSettingsSidebarIsOpen: (state, { payload }) => {
+    setSettingsSidebarIsOpen: (state, {payload}) => {
       state.settingsSidebarIsOpen = payload;
     },
-    setPinIsEnabled: (state, { payload }) => {
+    setPinIsEnabled: (state, {payload}) => {
       state.pinIsEnabled = payload;
     },
     setSubMenuIsOpen: (state, { payload }) => {

@@ -41,6 +41,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
+    
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {

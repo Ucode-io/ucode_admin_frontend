@@ -7,7 +7,7 @@ import useTabRouter from "../../../../../hooks/useTabRouter";
 import useFilters from "../../../../../hooks/useFilters";
 import useDebounce from "../../../../../hooks/useDebounce";
 import RelationVisibleColumns from "./RelationVisibleColumns";
-import NewFastFilter from "../../../Table1CUi/TableFilterBlock/FastFilter";
+import AddIcon from "@mui/icons-material/Add";
 
 function TableFilterBlock({
   fields,
@@ -19,6 +19,7 @@ function TableFilterBlock({
   getAllData = () => {},
   data,
   selectedTabIndex,
+  addNewRow,
 }) {
   const {tableSlug, appId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -113,6 +114,10 @@ function TableFilterBlock({
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
           </button>
+
+          {/* <button onClick={addNewRow} className={styles.filterBtn}>
+            <AddIcon sx={{fontSize: "24px", color: "#000"}} />
+          </button> */}
         </div>
       </div>
       {/* <div

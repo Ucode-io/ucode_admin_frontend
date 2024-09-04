@@ -45,7 +45,7 @@ function DetailPage1CFormPage({
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
   const [limit, setLimit] = useState(10);
-  const [offset, setOffset] = useState();
+  const [offset, setOffset] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
@@ -332,7 +332,7 @@ function DetailPage1CFormPage({
           setCount={setCount}
         />
       </Box>
-      {selectedTab?.type !== "section" && (
+      {selectedTab?.type === "relation" && (
         <CPagination
           setOffset={setOffset}
           offset={offset}

@@ -1,19 +1,19 @@
-import { Add } from "@mui/icons-material";
-import { Button, IconButton } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Add} from "@mui/icons-material";
+import {Button, IconButton} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useState} from "react";
+import {useMutation, useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { applyDrag, applyDragIndex } from "../../../utils/applyDrag";
+import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 
-const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
-  const { tableSlug } = useParams();
+const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState();
   const [index, setIndex] = useState();
@@ -25,13 +25,13 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
       return el[tab.slug] === tab.value;
     })
   );
-
-  const { mutate } = useMutation(
-    ({ data, index }) => {
+  console.log("tabbbbbbbbb", tab);
+  const {mutate} = useMutation(
+    ({data, index}) => {
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
-          [tab.slug]: tab.value,
+          [tab.slug]: [tab.value],
           board_order: index + 1,
         },
       });
@@ -48,9 +48,9 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
     if (result?.length > computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
+      mutate({data: dropResult.payload, index: dropResult.addedIndex});
     } else if (result?.length === computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
+      mutate({data: dropResult.payload, index: dropResult.addedIndex});
     }
   };
 
@@ -75,7 +75,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
   };
   const navigateToCreatePage = (slug) => {
     setOpen(true);
-    setDateInfo({ [tab.slug]: tab.value });
+    setDateInfo({[tab.slug]: tab.value});
     setSelectedRow(null);
   };
 
@@ -90,8 +90,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 navigateToCreatePage();
-              }}
-            >
+              }}>
               <Add />
             </IconButton>
             <div className={styles.counter}>{computedData?.length ?? 0}</div>
@@ -110,8 +109,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
           onDrop={(e) => {
             onDrop(e);
           }}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        >
+          dropPlaceholder={{className: "drag-row-drop-preview"}}>
           {computedData.map((el) => (
             <Draggable
               key={el.guid}
@@ -121,13 +119,11 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
                 borderRadius: "12px",
                 marginBottom: "6px",
                 cursor: "pointer",
-              }}
-            >
+              }}>
               <div
                 className={styles.card}
                 key={el.guid}
-                onClick={() => navigateToEditPage(el)}
-              >
+                onClick={() => navigateToEditPage(el)}>
                 {viewFields.map((field) => (
                   <BoardPhotoGenerator key={field.id} field={field} el={el} />
                 ))}
@@ -146,8 +142,7 @@ const BoardColumn = ({ tab, data = [], fieldsMap, view = [] }) => {
             onClick={(e) => {
               e.stopPropagation();
               navigateToCreatePage();
-            }}
-          >
+            }}>
             <Add /> Add new
           </Button>
         </div>

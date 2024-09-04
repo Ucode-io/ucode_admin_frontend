@@ -347,9 +347,7 @@ const ObjectsFormPage = ({
               id={id}
               getAllData={getAllData}
             />
-            <PermissionWrapperV2
-              tableSlug={tableSlug}
-              type={id ? "update" : "write"}>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"update"}>
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"

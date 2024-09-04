@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import styles from "./style.module.scss";
 import {Box, CircularProgress, Menu, MenuItem, Typography} from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import useFilters from "../../../../hooks/useFilters";
 import {useTranslation} from "react-i18next";
@@ -25,6 +25,8 @@ function DownloadMenu({
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
   const [loaderCsv, setLoaderCsv] = useState(false);
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -116,7 +118,9 @@ function DownloadMenu({
           </MenuItem>
           <MenuItem
             onClick={() => {
-              navigate(`/main/${appId}/object/${tableSlug}/templates`);
+              navigate(
+                `/main/${appId}/object/${tableSlug}/templates?menuId=${menuId}`
+              );
             }}
             sx={{
               display: "flex",
@@ -127,11 +131,6 @@ function DownloadMenu({
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Документ
             </Typography>
-            {loader && (
-              <div>
-                <CircularProgress sx={{color: "#337E28"}} size={24} />
-              </div>
-            )}
           </MenuItem>
         </Box>
       </Menu>

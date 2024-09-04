@@ -24,6 +24,7 @@ function Table1CUi({
   setIsChanged,
   selectedView,
   setSelectedView,
+  control,
 }) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
@@ -155,7 +156,6 @@ function Table1CUi({
         selectedView={selectedView}
         setSelectedView={setSelectedView}
       />
-      <TableHeadTitle menuItem={menuItem} />
       <TableFilterBlock
         fields={columns}
         openFilter={openFilter}
@@ -179,6 +179,7 @@ function Table1CUi({
         view={view}
         menuItem={menuItem}
         searchText={searchText}
+        control={control}
       />
     </Box>
   );

@@ -101,6 +101,7 @@ const ObjectsPage = () => {
       );
     },
     {
+      enabled: Boolean(tableSlug),
       select: ({data}) => {
         return {
           views:

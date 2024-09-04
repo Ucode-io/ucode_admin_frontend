@@ -59,7 +59,7 @@ const NewSection = ({
   const onDrop = (dropResult) => {
     const {fields, insert, move, remove} = sectionFields;
     let result = [];
-    if (dropResult?.payload?.isTab) {
+    if (dropResult?.payload?.attributes?.isTab) {
       if (fields?.length === 0) {
         result = applyDrag(fields, dropResult);
       } else {
@@ -101,6 +101,7 @@ const NewSection = ({
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
+  console.log("sectionFieldsWatch", sectionFieldsWatch);
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
@@ -165,11 +166,11 @@ const NewSection = ({
                   <table className={styles.relationTable}>
                     <thead>
                       <tr>
-                        <th>№</th>
+                        <th style={{width: "50px"}}>№</th>
                         <th>
-                          {field?.attributes?.[`label_to_${i18n?.language}`] ||
-                            field.title ||
-                            field[field.relatedTableSlug]?.label}
+                          {field?.attributes?.["table_from"]?.label ||
+                            field?.attributes?.[`label_to_${i18n?.language}`] ||
+                            field.title}
                         </th>
                       </tr>
                     </thead>

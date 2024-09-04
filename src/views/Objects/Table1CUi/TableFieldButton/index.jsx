@@ -173,16 +173,17 @@ export default function TableFieldButton({view, setDrawerState, menuItem}) {
           setFieldData(null);
         }}
         sx={{
-          width: "38px",
-          height: "40px",
+          width: "100%",
+          height: "100%",
           color: "#747474",
           backgroundColor: "#fff",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          border: "1px solid #D0D5DD",
-          borderRadius: "8px",
+          border: "none",
+          // borderRadius: "8px",
           cursor: "pointer",
+          background: "#F9FAFB",
         }}>
         <AddRoundedIcon sx={{fontSize: "24px"}} />
       </Box>

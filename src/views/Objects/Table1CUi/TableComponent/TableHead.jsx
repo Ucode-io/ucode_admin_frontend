@@ -7,8 +7,9 @@ import {useQueryClient} from "react-query";
 import {useLocation, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
+import TableFieldButton from "../TableFieldButton";
 
-function TableHead({columns, view, folderIds}) {
+function TableHead({columns, view, folderIds, menuItem}) {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
@@ -68,11 +69,32 @@ function TableHead({columns, view, folderIds}) {
         setColumnFix(false);
       });
   };
-
+  console.log("columnscolumns", columns);
   return (
     <>
       <thead>
-        <tr>
+        <tr
+          style={{
+            position: "sticky",
+            width: "100%",
+            overflow: "auto",
+            left: 0,
+            top: 0,
+            zIndex: 3,
+          }}>
+          <th
+            style={{
+              width: "50px",
+              textAlign: "center",
+              position: "sticky",
+              left: "0",
+              zIndex: 9999,
+              outline: "#EAECF0 1px solid",
+              border: "none",
+              background: "#F9FAFB",
+            }}>
+            №
+          </th>
           {columns?.map((column) => (
             <th
               id={column.id}
@@ -83,6 +105,7 @@ function TableHead({columns, view, folderIds}) {
                 width: !tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
+                background: "#F9FAFB",
                 position: `${
                   tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
@@ -95,7 +118,7 @@ function TableHead({columns, view, folderIds}) {
                 left:
                   view?.attributes?.fixedColumns?.[column?.id] &&
                   !folderIds?.length
-                    ? `${calculateWidthFixedColumn(column.id, columns) + 0}px`
+                    ? `${calculateWidthFixedColumn(column.id, columns) + 50}px`
                     : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(
@@ -103,8 +126,8 @@ function TableHead({columns, view, folderIds}) {
                   )?.isStiky ||
                   (view?.attributes?.fixedColumns?.[column?.id] &&
                     !folderIds?.length)
-                    ? "#F6F6F6"
-                    : "#fff"
+                    ? "#F9FAFB"
+                    : "#F9FAFB"
                 }`,
                 zIndex: `${
                   tableSettings?.[pageName]?.find(
@@ -221,7 +244,22 @@ function TableHead({columns, view, folderIds}) {
             </th>
           ))}
 
-          <th style={{width: "50px", background: "#fff"}}></th>
+          <th
+            style={{
+              width: "100px",
+              background: "#fff",
+              textAlign: "center",
+              borderRight: "none",
+              position: "sticky",
+              right: 0,
+              outline: "#EAECF0 1px solid",
+              border: "none",
+              zIndex: 5,
+              background: "#F9FAFB",
+              padding: "0px",
+            }}>
+            <TableFieldButton menuItem={menuItem} view={view} />
+          </th>
         </tr>
       </thead>
     </>

@@ -36,8 +36,7 @@ const MultiselectCellColoredElement = ({
         // justifyContent: "center",
         alignItems: "center",
         minWidth: "150px",
-      }}
-    >
+      }}>
       {tags?.map((tag) => (
         <div
           style={{
@@ -49,8 +48,7 @@ const MultiselectCellColoredElement = ({
             display: "flex",
             ...style,
           }}
-          {...props}
-        >
+          {...props}>
           {hasIcon && (
             <IconGenerator
               icon={tag.icon}

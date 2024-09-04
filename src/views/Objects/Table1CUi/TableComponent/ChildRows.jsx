@@ -1,19 +1,23 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, {useEffect} from "react";
 import styles from "./style.module.scss";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
 import newTableService from "../../../../services/newTableService";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import {Box, CircularProgress} from "@mui/material";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import ArticleIcon from "@mui/icons-material/Article";
+import DeleteIcon from "@mui/icons-material/Delete";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import {showAlert} from "../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
 
 const ChildRows = ({
   columns,
   view,
   tableSettings,
   pageName,
-  navigateToDetailPage,
   currentFolder,
   hasItems,
   items,
@@ -26,9 +30,11 @@ const ChildRows = ({
 }) => {
   const {tableSlug, appId} = useParams();
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  console.log("currentFoldercurrentFolder", currentFolder);
   const {data: {foldersList, count} = {data: []}, isLoading} = useQuery(
-    ["GET_FOLDER_LIST", {tableSlug, currentFolder}],
+    ["GET_FOLDER_LIST_SINGLE", {tableSlug, currentFolder}],
     () => {
       return newTableService.getFolderList({
         table_id: menuItem?.table_id,
@@ -48,6 +54,22 @@ const ChildRows = ({
       },
     }
   );
+
+  const deleteHandler = async (row) => {
+    try {
+      await constructorObjectService.delete(tableSlug, row.guid);
+      queryClient.refetchQueries(["GET_FOLDER_LIST"]);
+      queryClient.refetchQueries(["GET_FOLDER_LIST_SINGLE"]);
+      dispatch(showAlert("Successfully created!", "success"));
+    } finally {
+    }
+  };
+
+  const deleteHandlerFolder = (id) => {
+    return newTableService.deleteFolder(id).then((res) => {
+      queryClient.refetchQueries(["GET_FOLDER_LIST_SINGLE"]);
+    });
+  };
 
   useEffect(() => {
     if (foldersList?.length) {
@@ -92,6 +114,7 @@ const ChildRows = ({
                 onClick={() => handleFolderDoubleClick(item)}
                 className={styles.group_row}
                 style={{paddingLeft: `20px`, cursor: "pointer"}}>
+                <td></td>
                 {columns.map((col, index) => (
                   <td
                     style={{
@@ -135,6 +158,26 @@ const ChildRows = ({
                     )}
                   </td>
                 ))}
+                <td
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    padding: "5px",
+                    backgroundColor: "#fff",
+                    position: "sticky",
+                    right: 0,
+                    outline: "#EAECF0 1px solid",
+                    border: "none",
+                    height: "45px",
+                  }}>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() => deleteHandlerFolder(item?.id)}>
+                    <DeleteIcon color="error" />
+                  </RectangleIconButton>
+                </td>
               </tr>
             ))}
             {items.response.map((item) => (
@@ -147,6 +190,7 @@ const ChildRows = ({
                 key={item.guid}
                 className={styles.child_row}
                 style={{paddingLeft: "40px", cursor: "pointer"}}>
+                <td></td>
                 {columns.map((col, index) => (
                   <td
                     style={{
@@ -186,6 +230,47 @@ const ChildRows = ({
                     )}
                   </td>
                 ))}
+                <td
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    padding: "5px",
+                    backgroundColor: "#fff",
+                    position: "sticky",
+                    right: 0,
+                    outline: "#EAECF0 1px solid",
+                    border: "none",
+                    height: "45px",
+                  }}>
+                  <button
+                    style={{
+                      width: "34px",
+                      minHeight: "34px",
+                      border: "1px solid #D0D5DD",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#fff",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      marginRight: "10px",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // navigate(
+                      //   `/main/${appId}/object/${tableSlug}/templates?id=${item?.guid}&menuId=${menuItem?.id}`
+                      // );
+                    }}>
+                    <ArticleIcon style={{color: "#429424"}} />
+                  </button>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() => deleteHandler(item)}>
+                    <DeleteIcon color="error" />
+                  </RectangleIconButton>
+                </td>
               </tr>
             ))}
           </>

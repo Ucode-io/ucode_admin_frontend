@@ -131,11 +131,6 @@ function DownloadMenu({
               sx={{color: "#101828", fontWeight: 500, fontSize: "14px"}}>
               Документ
             </Typography>
-            {loader && (
-              <div>
-                <CircularProgress sx={{color: "#337E28"}} size={24} />
-              </div>
-            )}
           </MenuItem>
         </Box>
       </Menu>

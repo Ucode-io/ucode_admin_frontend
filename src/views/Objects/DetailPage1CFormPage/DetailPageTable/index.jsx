@@ -8,12 +8,13 @@ import {useQuery} from "react-query";
 import styles from "./style.module.scss";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
-import {useSearchParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import DetailRelationVisibleColumns from "./DetailRelationVisibleColumns";
 
 function DetailPageTable({field, selectedTab}) {
-  const {i18n, tableSlug} = useTranslation();
+  const {id} = useParams();
+  const {i18n} = useTranslation();
   const relatedTableSlug = field?.attributes?.table_from?.slug;
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -31,6 +32,9 @@ function DetailPageTable({field, selectedTab}) {
   const handleAddRowClick = () => {
     setAddRow(!addRow);
   };
+
+  const createLimit = window.location.pathname.includes("create") ? 0 : limit;
+  const createOffset = window.location.pathname.includes("create") ? 0 : offset;
 
   const params = {
     language_setting: i18n?.language,
@@ -88,8 +92,9 @@ function DetailPageTable({field, selectedTab}) {
         relatedTableSlug,
         {
           data: {
-            offset: offset,
-            limit: limit,
+            offset: createOffset,
+            limit: createLimit,
+            [`${field?.attributes?.table_to?.slug}_id`]: id,
           },
         },
         {

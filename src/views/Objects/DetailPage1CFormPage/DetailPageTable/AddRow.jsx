@@ -18,8 +18,9 @@ function AddRow({
   relatedTableSlug,
   padding = 0,
   request_type,
+  field,
 }) {
-  const {tableSlug} = useParams();
+  const {tableSlug, id} = useParams();
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
@@ -39,6 +40,7 @@ function AddRow({
       .create(relatedTableSlug, {
         data: {
           ...values,
+          [`${field?.attributes?.table_to?.slug}_id`]: id,
         },
       })
       .then((res) => {

@@ -50,6 +50,7 @@ const HFTextField = ({
       setFormValue(name, "");
     }
   }, []);
+
   return (
     <Controller
       control={control}

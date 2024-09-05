@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useMutation, useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import useCustomActionsQuery from "../../../../../queries/hooks/useCustomActionsQuery";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import {useMenuGetByIdQuery} from "../../../../../services/menuService";

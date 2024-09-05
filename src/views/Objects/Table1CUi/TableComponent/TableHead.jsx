@@ -8,9 +8,11 @@ import {useLocation, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import calculateWidthFixedColumn from "../../../../utils/calculateWidthFixedColumn";
 import TableFieldButton from "../TableFieldButton";
+import {useTranslation} from "react-i18next";
 
 function TableHead({columns, view, folderIds, menuItem}) {
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState(null);
   const [columnFix, setColumnFix] = useState(false);
@@ -140,7 +142,7 @@ function TableHead({columns, view, folderIds, menuItem}) {
               }}
               key={column.accessor}>
               <div className={styles.tableHeaditem}>
-                <p>{column?.label}</p>
+                <p>{column?.attributes?.[`label_${i18n?.language}`]}</p>
                 <button onClick={(e) => handleClick(e, column)}>
                   <img src="/img/dots_horizontal.svg" alt="" />
                 </button>

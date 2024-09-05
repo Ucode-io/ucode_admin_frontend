@@ -157,7 +157,8 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: Object.values(field?.attributes).find((item) => item),
+      label: field?.label,
+      // Object.values(field?.attributes).find((item) => item),
       show_label: true,
     };
     if (id || menuItem?.table_id) {
@@ -202,6 +203,7 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
+    console.log("valueeeeeeeee", values);
     const data = {
       ...values,
       attributes: {
@@ -209,7 +211,7 @@ const FieldSettings = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-
+    console.log("datadatadatadatadata", data);
     if (formType === "CREATE") createField(data);
     else updateField(data);
   };

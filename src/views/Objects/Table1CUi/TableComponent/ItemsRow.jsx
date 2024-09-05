@@ -32,7 +32,6 @@ function ItemsRow({
   const dispatch = useDispatch();
 
   const deleteHandler = async (row) => {
-    console.log("rowrowrowrowrow", row);
     try {
       await constructorObjectService.delete(tableSlug, row.guid);
       queryClient.refetchQueries(["GET_FOLDER_LIST"]);
@@ -98,7 +97,7 @@ function ItemsRow({
           key={index}>
           {index === 0 ? (
             <div className={styles.childTd}>
-              <img src="/img/child_icon.svg" alt="" />
+              {/* <img src="/img/child_icon.svg" alt="" /> */}
               <p>{<CellElementGeneratorForTable field={col} row={item} />}</p>
             </div>
           ) : (

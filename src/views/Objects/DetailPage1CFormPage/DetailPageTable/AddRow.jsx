@@ -17,13 +17,11 @@ function AddRow({
   setAddRow,
   relatedTableSlug,
   padding = 0,
-  request_type,
   field,
   refetch = () => {},
 }) {
   const {tableSlug, id} = useParams();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
   const {

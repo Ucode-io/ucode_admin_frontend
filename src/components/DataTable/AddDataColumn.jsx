@@ -29,7 +29,7 @@ const AddDataColumn = React.memo(
   }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
-
+    console.log("columnscolumns", columns, relationfields);
     const computedSlug = isRelationTable
       ? view?.type === "Many2One"
         ? `${tableSlug}_id`

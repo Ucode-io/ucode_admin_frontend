@@ -18,6 +18,7 @@ function RelationTableBody({
   offset,
   limit,
   relatedTableSlug,
+  refetch = () => {},
 }) {
   const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function RelationTableBody({
   const deleteHandler = async (row) => {
     try {
       await constructorObjectService.delete(relatedTableSlug, row.guid);
-      queryClient.refetchQueries(["GET_OBJECT_LIST_ROW"]);
+      refetch();
       dispatch(showAlert("Successfully created!", "success"));
     } finally {
     }

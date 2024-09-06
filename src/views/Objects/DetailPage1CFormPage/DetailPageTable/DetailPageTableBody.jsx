@@ -31,6 +31,7 @@ const DetailPageTableBody = ({
   setAddRow,
   handleAddRowClick,
   field,
+  refetch = () => {},
 }) => {
   const {appId, tableSlug} = useParams();
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const DetailPageTableBody = ({
   const deleteHandler = async (row) => {
     try {
       await constructorObjectService.delete(relatedTableSlug, row.guid);
-      queryClient.refetchQueries(["GET_OBJECT_LIST_DATA"]);
+      refetch();
       dispatch(showAlert("Successfully created!", "success"));
     } finally {
     }
@@ -115,7 +116,7 @@ const DetailPageTableBody = ({
               setAddRow={setAddRow}
               padding={"5px"}
               field={field}
-              request_type={"GET_OBJECT_LIST_DATA"}
+              refetch={refetch}
             />
           )}
           {!addRow && (

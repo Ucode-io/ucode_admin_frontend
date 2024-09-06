@@ -46,19 +46,6 @@ function DetailPageTabs({
   const visibleTabs = data?.tabs?.slice(0, maxVisibleTabs);
   const moreTabs = data?.tabs?.slice(maxVisibleTabs);
 
-  const handleMoreClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleTabChange = (index) => {
-    setSelectedIndex(index);
-    handleClose();
-  };
-
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
@@ -95,6 +82,55 @@ function DetailPageTabs({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
+  const {fields, remove, append, update} = useFieldArray({
+    control,
+    name: "multi",
+  });
+
+  const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+
+  const {
+    data: {fieldsMap, views} = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      return constructorTableService.getTableInfo(
+        relatedTableSlug,
+        {
+          data: {},
+        },
+        params
+      );
+    },
+    {
+      select: ({data}) => {
+        return {
+          fieldsMap: listToMap(data?.fields),
+          views: data?.views,
+        };
+      },
+      enabled: !!relatedTableSlug,
+    }
+  );
+
+  const handleMoreClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleTabChange = (index) => {
+    setSelectedIndex(index);
+    handleClose();
+  };
+
   useEffect(() => {
     if (!selectedTab) {
       if (data?.tabs?.length > 0) {
@@ -113,11 +149,6 @@ function DetailPageTabs({
         : setSelectedTabIndex(0);
     }
   }, [queryTab, tabSelected, selectedTab, setSelectedTabIndex]);
-
-  const {fields, remove, append, update} = useFieldArray({
-    control,
-    name: "multi",
-  });
 
   useEffect(() => {
     update();
@@ -188,40 +219,9 @@ function DetailPageTabs({
     );
   }, [jwtObjects, tables]);
 
-  const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
-
   const params = {
     language_setting: i18n?.language,
   };
-
-  const {
-    data: {fieldsMap, views} = {
-      views: [],
-      fieldsMap: {},
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
-    () => {
-      return constructorTableService.getTableInfo(
-        relatedTableSlug,
-        {
-          data: {},
-        },
-        params
-      );
-    },
-    {
-      select: ({data}) => {
-        return {
-          fieldsMap: listToMap(data?.fields),
-          views: data?.views,
-        };
-      },
-      enabled: !!relatedTableSlug,
-    }
-  );
 
   const computedVisibleFields = useMemo(() => {
     const mappedObjects = [];
@@ -258,7 +258,6 @@ function DetailPageTabs({
                     })
                   );
                   setSelectedIndex(index);
-                  onSelect(item);
                 }}
                 key={item.id}
                 className={styles.reactTabs}>

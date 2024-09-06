@@ -103,6 +103,7 @@ function DetailPageTable({field, selectedTab}) {
       );
     },
     {
+      enabled: Boolean(relatedTableSlug),
       select: ({data}) => {
         const count = data?.count;
         const tableData = data?.response ?? [];
@@ -175,6 +176,7 @@ function DetailPageTable({field, selectedTab}) {
         addRow={addRow}
         setAddRow={setAddRow}
         handleAddRowClick={handleAddRowClick}
+        refetch={refetch}
       />
 
       <DetailRelationVisibleColumns

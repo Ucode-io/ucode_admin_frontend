@@ -19,12 +19,11 @@ function AddRow({
   padding = 0,
   request_type,
   field,
+  refetch = () => {},
 }) {
   const {tableSlug, id} = useParams();
   const dispatch = useDispatch();
-
   const queryClient = useQueryClient();
-
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
   const {
@@ -40,11 +39,11 @@ function AddRow({
       .create(relatedTableSlug, {
         data: {
           ...values,
-          [`${field?.attributes?.table_to?.slug}_id`]: id,
+          [`${field?.attributes?.table_to?.slug || tableSlug}_id`]: id,
         },
       })
       .then((res) => {
-        queryClient.refetchQueries([request_type]);
+        refetch();
         dispatch(showAlert("Successfully created!", "success"));
         setAddRow(false);
       })

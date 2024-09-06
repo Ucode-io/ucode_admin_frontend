@@ -40,7 +40,7 @@ function DetailPage1CFormPage({
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-  const [summary, setSummary] = useState([]);
+  // const [summary, setSummary] = useState([]);
   const [data, setData] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
@@ -68,9 +68,6 @@ function DetailPage1CFormPage({
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
-
-  const {deleteTab} = useTabRouter();
-  const {pathname} = useLocation();
 
   const {
     handleSubmit,
@@ -112,7 +109,7 @@ function DetailPage1CFormPage({
         ),
       });
       setSections(sortSections(sections));
-      setSummary(layoutData.summary_fields ?? []);
+      // setSummary(layoutData.summary_fields ?? []);
 
       const defaultLayout = layoutData;
 
@@ -289,11 +286,6 @@ function DetailPage1CFormPage({
     if (id) getAllData();
     else getFields();
   }, [id]);
-
-  const clickHandler = () => {
-    deleteTab(pathname);
-    navigate(-1);
-  };
 
   return (
     <>

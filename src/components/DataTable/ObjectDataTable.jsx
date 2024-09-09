@@ -91,17 +91,6 @@ const ObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: !Boolean(objectMenuItem),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));

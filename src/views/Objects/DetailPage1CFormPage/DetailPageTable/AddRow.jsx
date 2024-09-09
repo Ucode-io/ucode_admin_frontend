@@ -97,9 +97,6 @@ function AddRow({
           alignItems: "center",
           justifyContent: "center",
           gap: "10px",
-
-          borderBottom: "none",
-          border: "none",
         }}>
         <RectangleIconButton color="success" onClick={handleSubmit(onSubmit)}>
           <DoneIcon color="success" />

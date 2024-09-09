@@ -10,6 +10,8 @@ import ChildRows from "./ChildRows";
 import FiltersRow from "./FiltersRow";
 import FolderRow from "./FolderRow";
 import ItemsRow from "./ItemsRow";
+import AddRow from "../../DetailPage1CFormPage/DetailPageTable/AddRow";
+import AddIcon from "@mui/icons-material/Add";
 
 function TableBody({
   folders,
@@ -21,12 +23,14 @@ function TableBody({
   folderIds,
   offset,
   control,
+  refetch = () => {},
 }) {
   const {tableSlug, appId} = useParams();
   const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [folderHierarchy, setFolderHierarchy] = useState([]);
   const [foldersState, setFoldersState] = useState(folders);
+  const [addRow, setAddRow] = useState(false);
 
   const {filters} = useFilters(tableSlug, view.id);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
@@ -78,6 +82,10 @@ function TableBody({
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
+  };
+
+  const addNewRow = () => {
+    setAddRow(!addRow);
   };
 
   useEffect(() => {
@@ -243,6 +251,34 @@ function TableBody({
             }}>
             <CircularProgress sx={{color: "#449424"}} size={50} />
           </div>
+        )}
+        {!addRow && (
+          <tr>
+            <td
+              onClick={addNewRow}
+              style={{
+                padding: "5px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                borderTop: "none",
+                cursor: "pointer",
+              }}>
+              <AddIcon sx={{fontSize: "20px", color: "#000"}} />
+            </td>
+          </tr>
+        )}
+        {addRow && (
+          <AddRow
+            fields={columns}
+            relatedTableSlug={tableSlug}
+            view={view}
+            data={[]}
+            setAddRow={setAddRow}
+            padding={"6px"}
+            refetch={refetch}
+          />
         )}
       </tbody>
     </>

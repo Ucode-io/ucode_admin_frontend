@@ -4,7 +4,6 @@ import {useDispatch} from "react-redux";
 import {useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../../hooks/useDebounce";
 import useFilters from "../../../../hooks/useFilters";
-import useTabRouter from "../../../../hooks/useTabRouter";
 import CreateGroupModal from "./CreateGroupModal";
 import DownloadMenu from "./DownloadMenu";
 import NewFastFilter from "./FastFilter";
@@ -27,27 +26,12 @@ function TableFilterBlock({
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
-  const {navigateToForm} = useTabRouter();
   const {navigateToRelationForm} = useRelationTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
   const [columns, setColumns] = useState([]);
-  const {filters, clearFilters, clearOrders} = useFilters(tableSlug, view.id);
-
-  const visibleFields = useMemo(() => {
-    return (
-      view?.columns
-        ?.map((id) => fieldsMap[id])
-        .filter((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
-            return el?.relation_id;
-          } else {
-            return el?.id;
-          }
-        }) ?? []
-    );
-  }, [view?.columns, fieldsMap]);
+  const {filters, clearFilters} = useFilters(tableSlug, view.id);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

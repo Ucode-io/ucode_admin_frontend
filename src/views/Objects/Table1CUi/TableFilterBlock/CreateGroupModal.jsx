@@ -1,4 +1,3 @@
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import {Box, CircularProgress, Modal} from "@mui/material";
 import React, {useState} from "react";
@@ -61,7 +60,6 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               gap: "12px",
               justifyContent: "space-between",
             }}>
-            {/* <ArrowBackIcon sx={{fontSize: "22px"}} /> */}
             <h3 className={styles.groupHead}>Контрагенты (создание группы)</h3>
           </Box>
           <button onClick={handleGroupClose} className={styles.closeBtn}>
@@ -120,12 +118,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               alignItems: "center",
               justifyContent: "space-between",
             }}>
-            <button style={{border: "none"}}>
-              {/* className={styles.moreBtn} */}
-              {/* <span>Еще</span> */}
-
-              {/* <img src="/img/chevron_down.svg" alt="" /> */}
-            </button>
+            <button style={{border: "none"}}></button>
 
             <div className={styles.actionBtns}>
               <button type="submit" className={styles.actionCloseBtn}>

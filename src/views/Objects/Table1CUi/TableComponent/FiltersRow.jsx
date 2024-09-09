@@ -92,7 +92,6 @@ function FiltersRow({
           key={index}>
           {index === 0 ? (
             <div className={styles.childTd}>
-              <img src="/img/child_icon.svg" alt="" />
               <p>{item[col.slug]}</p>
             </div>
           ) : (

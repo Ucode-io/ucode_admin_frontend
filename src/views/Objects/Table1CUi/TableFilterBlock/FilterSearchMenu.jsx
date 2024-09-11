@@ -1,5 +1,4 @@
 import React, {useMemo, useState} from "react";
-import {TextField} from "@mui/material";
 import NewFiltersAutoComplete from "./FastFilter/NewFiltersAutoComplete";
 import NewDefaultFilter from "./FastFilter/NewDefaultFilter";
 import NewRelationFilter from "./FastFilter/NewRelationFilter";
@@ -60,40 +59,6 @@ function FilterSearchMenu({
 
     case "PHOTO":
       return null;
-
-    // case "DATE_TIME_WITHOUT_TIME_ZONE":
-    // case "DATE":
-    // case "DATE_TIME":
-    //   return (
-    //     <DateFilter
-    //       field={field}
-    //       placeholder={field?.label}
-    //       value={filters[name]}
-    //       onChange={(val) => onChange(val, name)}
-    //     />
-    //   );
-
-    // case "NUMBER":
-    //   return (
-    //     <TextField
-    //       fullWidth
-    //       size="small"
-    //       placeholder={field.label}
-    //       type="number"
-    //       value={filters[name] ?? ""}
-    //       onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
-    //     />
-    //   );
-
-    // case "SWITCH":
-    //   return (
-    //     <BooleanFilter
-    //       filters={filters}
-    //       onChange={onChange}
-    //       name={name}
-    //       field={field}
-    //     />
-    //   );
 
     default:
       return (

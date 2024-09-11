@@ -45,7 +45,7 @@ const ObjectsPage = () => {
     viewSelectedIndex?.tabIndex || 1
   );
   const [menuItem, setMenuItem] = useState(null);
-  const roleId = useSelector((state) => state.auth.roleInfo.id);
+  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
   const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);

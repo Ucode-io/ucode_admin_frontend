@@ -9,7 +9,6 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {useQueryClient} from "react-query";
-import CellElementGenerator from "../../../../components/ElementGenerators/CellElementGenerator";
 import CellElementGeneratorForTable from "../../../../components/ElementGenerators/CellElementGeneratorForTable";
 
 function ItemsRow({
@@ -97,7 +96,6 @@ function ItemsRow({
           key={index}>
           {index === 0 ? (
             <div className={styles.childTd}>
-              {/* <img src="/img/child_icon.svg" alt="" /> */}
               <p>{<CellElementGeneratorForTable field={col} row={item} />}</p>
             </div>
           ) : (

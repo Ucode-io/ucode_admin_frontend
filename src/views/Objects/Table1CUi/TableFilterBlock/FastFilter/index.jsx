@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useParams, useSearchParams} from "react-router-dom";
 import {filterActions} from "../../../../../store/filter/filter.slice";
 import useFilters from "../../../../../hooks/useFilters";
@@ -35,7 +35,7 @@ function NewFastFilter({view, fields}) {
       })
     );
   };
-  console.log("fieldsfieldsfields", fields);
+
   return (
     <>
       {fields?.map((filter) => (

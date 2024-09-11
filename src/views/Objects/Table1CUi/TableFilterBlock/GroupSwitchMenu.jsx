@@ -83,7 +83,7 @@ function GroupSwitchMenu({anchorEl, handleClose, open, view, fieldsMap}) {
         }) ?? []
     );
   }, [view?.columns, fieldsMap]);
-  console.log("unVisibleFields", unVisibleFields);
+
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
       <Box sx={{width: "360px", position: "relative", zIndex: 9}}>

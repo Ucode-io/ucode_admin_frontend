@@ -17,13 +17,11 @@ function AddRow({
   setAddRow,
   relatedTableSlug,
   padding = 0,
-  request_type,
   field,
   refetch = () => {},
 }) {
   const {tableSlug, id} = useParams();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
   const {
@@ -99,9 +97,6 @@ function AddRow({
           alignItems: "center",
           justifyContent: "center",
           gap: "10px",
-
-          borderBottom: "none",
-          border: "none",
         }}>
         <RectangleIconButton color="success" onClick={handleSubmit(onSubmit)}>
           <DoneIcon color="success" />

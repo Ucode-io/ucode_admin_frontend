@@ -105,7 +105,6 @@ function RelationTable({
               limit: limit,
               from_tab: type === "relation" ? true : false,
               search: searchText,
-              good: true,
             },
           },
           {

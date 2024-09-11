@@ -1,12 +1,12 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 import authService from "../../services/auth/authService";
-import { authActions } from "./auth.slice";
-import { store } from "..";
-import { companyActions } from "../company/company.slice";
+import {authActions} from "./auth.slice";
+import {store} from "..";
+import {companyActions} from "../company/company.slice";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
-  async (data, { dispatch }) => {
+  async (data, {dispatch}) => {
     try {
       const res = await authService.login(data);
       dispatch(
@@ -20,6 +20,11 @@ export const loginAction = createAsyncThunk(
       dispatch(companyActions.setProjectId(data.project_id));
       dispatch(companyActions.setEnvironmentId(res?.environment_id));
       dispatch(companyActions.setDefaultPage(data?.default_page));
+      localStorage.setItem(
+        "permissions",
+        JSON.stringify(res?.data?.permissions) ||
+          JSON.stringify(res?.permissions)
+      );
       await authService
         .updateToken({
           refresh_token: res.token.access_token,

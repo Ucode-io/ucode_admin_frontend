@@ -1,7 +1,6 @@
-import {Box, Container} from "@mui/material";
+import {Box} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import TableUiHead from "./TableUiHead/TableUiHead";
-import TableHeadTitle from "./TableUiHead/TableHeadTitle";
 import TableFilterBlock from "./TableFilterBlock";
 import TableComponent from "./TableComponent/TableComponent";
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -9,6 +8,7 @@ import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
 import useFilters from "../../../hooks/useFilters";
+import {customSortArray} from "../../../utils/customSortArray";
 
 function Table1CUi({
   menuItem,
@@ -53,7 +53,7 @@ function Table1CUi({
     });
   }
 
-  const {data: {filteredItems} = {data: []}, isLoading} = useQuery({
+  const {data: {filteredItems} = {data: []}} = useQuery({
     queryKey: [
       "GET_OBJECTS_LIST",
       {
@@ -79,7 +79,7 @@ function Table1CUi({
     },
   });
 
-  const {data: {foldersList, count} = {data: []}, isLoading2} = useQuery(
+  const {data: {foldersList, count} = {data: []}, refetch} = useQuery(
     ["GET_FOLDER_LIST", {tableSlug, limit, offset}],
     () => {
       return newTableService.getFolderList({
@@ -134,14 +134,6 @@ function Table1CUi({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
-  function customSortArray(a, b) {
-    const commonItems = a?.filter((item) => b.includes(item));
-    commonItems?.sort();
-    const remainingItems = a?.filter((item) => !b.includes(item));
-    const sortedArray = commonItems?.concat(remainingItems);
-    return sortedArray;
-  }
-
   return (
     <Box>
       <TableUiHead
@@ -180,6 +172,7 @@ function Table1CUi({
         menuItem={menuItem}
         searchText={searchText}
         control={control}
+        refetch={refetch}
       />
     </Box>
   );

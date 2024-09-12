@@ -76,7 +76,7 @@ const ViewsWithGroups = ({
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
   const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug]
   );
   const paginationCount = useSelector(
     (state) => state?.pagination?.paginationCount

@@ -41,6 +41,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -75,6 +76,7 @@ const FieldSettings = ({
 
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
+  const {i18n} = useTranslation();
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
@@ -157,7 +159,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: Object.values(field?.attributes).find((item) => item),
+      label: field?.attributes?.[`label_${i18n?.language}`],
       show_label: true,
     };
     if (id || menuItem?.table_id) {

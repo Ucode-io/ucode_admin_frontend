@@ -27,6 +27,7 @@ import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import {useMenuGetByIdQuery} from "../../services/menuService";
+import {generateID} from "../../utils/generateID";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -52,10 +53,13 @@ const ObjectsFormPage = ({
   const menu = store.getState().menu;
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+
+  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}`;
 
   const id = useMemo(() => {
     return (
@@ -336,6 +340,15 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
+            {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
+              tableSlug === "investors" && (
+                <PrimaryButton
+                  onClick={() => {
+                    navigate(microPath);
+                  }}>
+                  Пополнить баланс
+                </PrimaryButton>
+              )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
               color="error">

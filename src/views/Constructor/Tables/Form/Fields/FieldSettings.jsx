@@ -41,6 +41,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -72,7 +73,7 @@ const FieldSettings = ({
   //       });
   //   }
   // }, []);
-
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
@@ -157,7 +158,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: field?.label,
+      label: field?.attributes?.[`label_${i18n?.language}`],
       // Object.values(field?.attributes).find((item) => item),
       show_label: true,
     };

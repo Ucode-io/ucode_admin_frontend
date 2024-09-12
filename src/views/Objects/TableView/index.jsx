@@ -171,7 +171,7 @@ const TableView = ({
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));
@@ -339,7 +339,7 @@ const TableView = ({
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           row_view_id: view?.id,
-          offset: searchText ? 0 : pageToOffset(currentPage, paginiation),
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
           search:

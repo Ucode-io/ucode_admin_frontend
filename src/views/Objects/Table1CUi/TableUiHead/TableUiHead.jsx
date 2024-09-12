@@ -1,7 +1,6 @@
 import {Box, Button, Menu} from "@mui/material";
 import React, {useState} from "react";
 import styles from "./style.module.scss";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {useMenuGetByIdQuery} from "../../../../services/menuService";
 import {useNavigate, useParams} from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -63,13 +62,11 @@ function TableUiHead({
                 onClick={() => navigate(`/main/${appId}`)}>
                 {parentMenu?.label}
               </Box>
-              {/* <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} /> */}
             </Box>
             <Box sx={{padding: "5px 0"}}>
               <Box sx={{color: "#337E28", fontWeight: 600, fontSize: "12px"}}>
                 {menuItem?.label ?? ""}
               </Box>
-              {/* <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} /> */}
             </Box>
           </Box>
         </Menu>

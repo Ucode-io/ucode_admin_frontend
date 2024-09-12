@@ -18,6 +18,14 @@ function TableHead({columns, view, folderIds, menuItem}) {
   const [columnFix, setColumnFix] = useState(false);
   const open = Boolean(anchorEl);
   const queryClient = useQueryClient();
+
+  const [switchLoading, setSwitchLoading] = useState(false);
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const location = useLocation();
+  const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
+
   const handleClose = () => {
     setAnchorEl(null);
     setSelectedColumn(null);
@@ -26,12 +34,6 @@ function TableHead({columns, view, folderIds, menuItem}) {
     setAnchorEl(e.currentTarget);
     setSelectedColumn(column);
   };
-  const [switchLoading, setSwitchLoading] = useState(false);
-  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
-  const location = useLocation();
-  const tableSize = useSelector((state) => state.tableSize.tableSize);
-  const pageName =
-    location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
   const updateView = (data, fieldId) => {
     setSwitchLoading((prev) => ({...prev, [fieldId]: true}));

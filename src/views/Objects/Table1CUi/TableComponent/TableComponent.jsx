@@ -22,6 +22,7 @@ const TableComponent = ({
   menuItem,
   searchText,
   control,
+  refetch = () => {},
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const [folderIds, setFolderIds] = useState([]);
@@ -31,6 +32,7 @@ const TableComponent = ({
   const dispatch = useDispatch();
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
+
   const toggleGroup = (groupId) => {
     setOpenGroups((prevOpenGroups) => ({
       ...prevOpenGroups,
@@ -98,7 +100,7 @@ const TableComponent = ({
     };
 
     createResizableTable(document.getElementById("resizeMe"));
-  }, [, dispatch]);
+  }, [dispatch]);
 
   return (
     <div className={styles.tableComponent}>
@@ -125,6 +127,7 @@ const TableComponent = ({
             searchText={searchText}
             offset={offset}
             control={control}
+            refetch={refetch}
           />
 
           {/* <AddRow

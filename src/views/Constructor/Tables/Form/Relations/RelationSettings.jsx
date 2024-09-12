@@ -177,8 +177,8 @@ const RelationSettings = ({
 
   const computedFieldsListOptions = useMemo(() => {
     return values?.columnsList?.map((field) => ({
-      label: field?.label || field.view_fields[0]?.label,
-      value: field.id,
+      label: field?.label || field?.view_fields?.[0]?.label,
+      value: field?.id,
     }));
   }, [values.columnsList, values]);
 

@@ -20,6 +20,7 @@ import {paginationReducer} from "./pagination/pagination.slice";
 import {relationTabReducer} from "./relationTab/relationTab.slice";
 import {viewsReducer} from "./views/view.slice";
 import {isOnlineReducer} from "./isOnline/isOnline.slice";
+import {permissionsReducer} from "./permissions/permissions.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -110,6 +111,11 @@ const isOnline = {
   storage,
 };
 
+const permissions = {
+  key: "permissions",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -143,6 +149,7 @@ const rootReducer = combineReducers({
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),
   alert: alertReducer,
   isOnline: persistReducer(isOnline, isOnlineReducer),
+  permissions: persistReducer(permissions, permissionsReducer),
 });
 
 export default rootReducer;

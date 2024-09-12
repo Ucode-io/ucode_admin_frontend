@@ -42,6 +42,7 @@ import style from "./style.module.scss";
 import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Table1CUi from "./Table1CUi";
+import useDebounce from "../../hooks/useDebounce";
 
 const ViewsWithGroups = ({
   views,
@@ -75,7 +76,7 @@ const ViewsWithGroups = ({
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const openHeightControl = Boolean(anchorElHeightControl);
   const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug]
   );
   const paginationCount = useSelector(
     (state) => state?.pagination?.paginationCount
@@ -205,6 +206,11 @@ const ViewsWithGroups = ({
     return mappedObjects.map((obj) => obj.id);
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
+  const inputChangeHandler = useDebounce((val) => {
+    setCurrentPage(1);
+    setSearchText(val);
+  }, 300);
+
   const selectAll = () => {
     setCheckedColumns(
       columnsForSearch
@@ -314,8 +320,7 @@ const ViewsWithGroups = ({
                 <SearchInput
                   placeholder={"Search"}
                   onChange={(e) => {
-                    setCurrentPage(1);
-                    setSearchText(e);
+                    inputChangeHandler(e);
                   }}
                 />
                 {(roleInfo === "DEFAULT ADMIN" ||

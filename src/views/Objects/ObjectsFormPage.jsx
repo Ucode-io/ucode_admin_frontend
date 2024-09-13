@@ -344,7 +344,11 @@ const ObjectsFormPage = ({
               tableSlug === "investors" && (
                 <PrimaryButton
                   onClick={() => {
-                    navigate(microPath);
+                    navigate(microPath, {
+                      state: {
+                        id: idFromParam,
+                      },
+                    });
                   }}>
                   Пополнить баланс
                 </PrimaryButton>

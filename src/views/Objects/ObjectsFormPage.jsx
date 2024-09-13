@@ -59,7 +59,7 @@ const ObjectsFormPage = ({
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
-  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}`;
+  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}`;
 
   const id = useMemo(() => {
     return (
@@ -344,11 +344,7 @@ const ObjectsFormPage = ({
               tableSlug === "investors" && (
                 <PrimaryButton
                   onClick={() => {
-                    navigate(microPath, {
-                      state: {
-                        id: idFromParam,
-                      },
-                    });
+                    navigate(microPath);
                   }}>
                   Пополнить баланс
                 </PrimaryButton>

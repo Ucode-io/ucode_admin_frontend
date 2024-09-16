@@ -53,9 +53,9 @@ const headerStyle = {
 const ResourceDetail = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const {projectId, resourceId, resourceType} = useParams();
-
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+  const [selectedEnv, setSelectedEnv] = useState("");
 
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
@@ -151,7 +151,7 @@ const ResourceDetail = () => {
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
-      enabled: Boolean(selectedEnvironment?.[0].resource_environment_id),
+      enabled: Boolean(selectedEnvironment?.[0]?.resource_environment_id),
       onSuccess: (res) => {
         const isDefault = Boolean(
           res.environments?.find(

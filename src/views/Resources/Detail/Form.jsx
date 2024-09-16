@@ -1,6 +1,6 @@
 import stringifyQueryParams from "@/utils/stringifyQueryParams";
 import {Box, Button, Grid, Stack, Typography} from "@mui/material";
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -27,14 +27,14 @@ const Form = ({
 }) => {
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
-      value: item.id,
+      value: item.environment_id ?? item.id,
       label: item.name,
       name: item.name,
       project_id: item.project_id,
       description: item.description,
       display_color: item.display_color,
       is_configured: item.is_configured,
-      id: item.id,
+      id: item?.id,
     }));
   }, [projectEnvironments]);
 
@@ -320,7 +320,7 @@ const Form = ({
                 control={control}
                 required
                 name="environment_id"
-                customOnChange={(value) => {
+                onChange={(value) => {
                   setSelectedEnvironment(value);
                 }}
               />
@@ -331,7 +331,7 @@ const Form = ({
 
         {/* <Divider /> */}
 
-        {selectedEnvironment?.length > 0 && (
+        {/* {selectedEnvironment?.length > 0 && (
           <>
             <Box sx={{padding: "15px", fontSize: "24px"}}>
               <Typography variant="h6">Credentials</Typography>
@@ -390,16 +390,16 @@ const Form = ({
               )}
             </Grid>
           </>
-        )}
+        )} */}
       </Box>
       {resurceType === 4 && <VariableResources control={control} />}
 
       <Footer>
-        {selectedEnvironment?.length && (
+        {/* {selectedEnvironment?.length && (
           <Button type="submit" variant="contained" disabled={btnLoading}>
             Save
           </Button>
-        )}
+        )} */}
       </Footer>
     </Box>
   );

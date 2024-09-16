@@ -9,11 +9,13 @@ import {
 } from "react-router-dom";
 import {Box, Button} from "@mui/material";
 import {useEnvironmentsListQuery} from "../../../services/environmentService";
-import {
+import resourceService, {
+  useCreateResourceMutationV1,
   useResourceConfigureMutation,
   useResourceCreateMutation,
   useResourceCreateMutationV2,
   useResourceEnvironmentGetByIdQuery,
+  useResourceGetByIdClickHouse,
   useResourceGetByIdQueryV1,
   useResourceGetByIdQueryV2,
   useResourceReconnectMutation,
@@ -34,6 +36,8 @@ import {
   useGithubUserQuery,
 } from "@/services/githubService";
 import GitForm from "./GitForm";
+import ClickHouseForm from "./ClickHouseForm";
+import {useQuery} from "react-query";
 
 const headerStyle = {
   width: "100%",
@@ -49,8 +53,10 @@ const headerStyle = {
 const ResourceDetail = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const {projectId, resourceId, resourceType} = useParams();
+
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -68,25 +74,6 @@ const ResourceDetail = () => {
     },
   });
 
-  // const resourceType = watch("resource_type");
-
-  // const {isLoading} = useResourceGetByIdQueryV1({
-  //   id: resourceId,
-  //   params: {
-  //     type: resourceType,
-  //   },
-  //   queryParams: {
-  //     cacheTime: false,
-  //     enabled: isEditPage && location?.state?.type !== "REST",
-  //     onSuccess: (res) => {
-  //       reset(res);
-  //       setSelectedEnvironment(
-  //         res.environments?.filter((env) => env.is_configured)
-  //       );
-  //     },
-  //   },
-  // });
-
   const {isLoading} = useResourceGetByIdQueryV2({
     id: resourceId,
     params: {
@@ -94,12 +81,55 @@ const ResourceDetail = () => {
     },
     queryParams: {
       cacheTime: false,
-      enabled: isEditPage && location?.state?.type !== "REST",
+      enabled:
+        isEditPage &&
+        location?.state?.type !== "REST" &&
+        location?.state?.type !== "CLICK_HOUSE",
       onSuccess: (res) => {
         reset(res);
         setSelectedEnvironment(
           res.environments?.filter((env) => env.is_configured)
         );
+      },
+    },
+  });
+
+  const {data: clickHouseList} = useQuery(
+    ["GET_OBJECT_LIST"],
+    () => {
+      return resourceService.getListClickHouse({
+        data: {
+          environment_id: authStore.environmentId,
+          limit: 0,
+          offset: 0,
+          project_id: company?.projectId,
+        },
+      });
+    },
+    {
+      enabled: true,
+      select: (res) => {
+        return (
+          res?.airbytes?.map((item) => ({
+            ...item,
+            type: "CLICK_HOUSE",
+            name: "Click house",
+          })) ?? []
+        );
+      },
+    }
+  );
+
+  const {isLoadingClickH} = useResourceGetByIdClickHouse({
+    id: resourceId,
+    params: {
+      type: resourceType,
+    },
+    queryParams: {
+      cacheTime: false,
+      enabled: isEditPage && location?.state?.type === "CLICK_HOUSE",
+      onSuccess: (res) => {
+        reset(res);
       },
     },
   });
@@ -151,6 +181,14 @@ const ResourceDetail = () => {
       },
     });
 
+  const {mutate: createResourceV1, isLoading: createLoadingV1} =
+    useCreateResourceMutationV1({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully created", "success"));
+        navigate("/main");
+      },
+    });
+
   const {mutate: configureResource, isLoading: configureLoading} =
     useResourceConfigureMutation({
       onSuccess: () => {
@@ -183,7 +221,8 @@ const ResourceDetail = () => {
 
   useGithubUserQuery({
     token: searchParams.get("access_token"),
-    enabled: !!searchParams.get("access_token"),
+    enabled:
+      !!searchParams.get("access_token") && !resourceType == "CLICK_HOUSE",
     queryParams: {
       select: (res) => res?.data?.login,
       onSuccess: (username) =>
@@ -208,6 +247,8 @@ const ResourceDetail = () => {
     }
   }, []);
 
+  const resource_type = watch("resource_type");
+
   const onSubmit = (values) => {
     const computedValues2 = {
       ...values,
@@ -216,7 +257,6 @@ const ResourceDetail = () => {
       project_id: projectId,
       resource_id: resourceId,
       user_id: authStore.userId,
-      // environment_id: selectedEnvironment?.[0].id,
       is_configured: true,
       id:
         selectedEnvironment?.[0].resource_environment_id ??
@@ -228,6 +268,23 @@ const ResourceDetail = () => {
           searchParams.get("access_token") ??
           values.integration_resource?.token,
       },
+    };
+
+    const computedValuesClickHouse = {
+      ...values,
+      client_type_id: authStore?.clientType?.id,
+      company_id: company?.companyId,
+      node_type: "LOW",
+      project_id: authStore?.projectId,
+      resource: {
+        is_configured: true,
+        node_type: "LOW",
+        project_id: authStore?.projectId,
+        resource_type: 2,
+        title: "Light",
+      },
+      role_id: authStore?.roleInfo?.id,
+      user_id: authStore?.userId,
     };
 
     if (isEditPage) {
@@ -250,9 +307,9 @@ const ResourceDetail = () => {
         });
     } else {
       if (values?.resource_type === 4 || values?.resource_type === 5) {
-        // delete computedValues2.resource_type;
-
         createResourceV2(computedValues2);
+      } else if (values?.resource_type === 8) {
+        createResourceV1(computedValuesClickHouse);
       } else if (!isEditPage) createResourceV2(computedValues2);
       else {
         if (!selectedEnvironment?.[0].is_configured) {
@@ -311,14 +368,21 @@ const ResourceDetail = () => {
             <h2>Resource settings</h2>
           </Box>
           <Box>
-            <Button
-              bg="primary"
-              type="submit"
-              sx={{fontSize: "14px", margin: "0 10px"}}
-              hidden={isEditPage}
-              isLoading={createLoading}>
-              Save changes
-            </Button>
+            {(resourceType === "CLICK_HOUSE"
+              ? !isEditPage
+              : resource_type !== 2 ||
+                (resource_type === 2 &&
+                  !isEditPage &&
+                  clickHouseList?.length === 0)) && (
+              <Button
+                bg="primary"
+                type="submit"
+                sx={{fontSize: "14px", margin: "0 10px"}}
+                isLoading={createLoading}>
+                Save changes
+              </Button>
+            )}
+
             {isEditPage && variables?.type !== "REST" && (
               <Button
                 sx={{
@@ -357,6 +421,15 @@ const ResourceDetail = () => {
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
             />
+          ) : resourceType === "CLICK_HOUSE" ? (
+            <ClickHouseForm
+              control={control}
+              selectedEnvironment={selectedEnvironment}
+              btnLoading={configureLoading || updateLoading}
+              setSelectedEnvironment={setSelectedEnvironment}
+              projectEnvironments={projectEnvironments}
+              isEditPage={isEditPage}
+            />
           ) : (
             <Form
               control={control}
@@ -367,6 +440,7 @@ const ResourceDetail = () => {
               isEditPage={isEditPage}
             />
           )}
+
           <AllowList />
         </Box>
       </form>

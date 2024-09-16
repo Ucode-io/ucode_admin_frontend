@@ -298,7 +298,7 @@ const ObjectsFormPage = ({
     deleteTab(pathname);
     navigate(-1);
   };
-
+  console.log("idFromParamsidFromParams", localStorage.getItem("idFromParams"));
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
@@ -344,6 +344,7 @@ const ObjectsFormPage = ({
               tableSlug === "investors" && (
                 <PrimaryButton
                   onClick={() => {
+                    localStorage.setItem("idFromParams", idFromParam);
                     navigate(microPath);
                   }}>
                   Пополнить баланс

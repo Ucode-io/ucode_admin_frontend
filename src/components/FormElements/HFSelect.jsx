@@ -73,9 +73,9 @@ const HFSelect = ({
                   : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
               }
               onChange={(e) => {
-                setSelectedValue(e.target.value);
-                onChange(e.target.value);
                 onFormChange(e.target.value);
+                onChange(e.target.value);
+                setSelectedValue(e.target.value);
               }}
               onOpen={() => {
                 onOpen();

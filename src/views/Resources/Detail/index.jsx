@@ -308,7 +308,7 @@ const ResourceDetail = () => {
     } else {
       if (values?.resource_type === 4 || values?.resource_type === 5) {
         createResourceV2(computedValues2);
-      } else if (values?.resource_type === 8) {
+      } else if (values?.resource_type === 2) {
         createResourceV1(computedValuesClickHouse);
       } else if (!isEditPage) createResourceV2(computedValues2);
       else {

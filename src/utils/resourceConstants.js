@@ -12,11 +12,11 @@ export const resourceTypes = [
     value: 1,
     icon: SiMongodb,
   },
-  {
-    label: "Clickhouse",
-    value: 2,
-    icon: HiOutlineDatabase,
-  },
+  // {
+  //   label: "Clickhouse",
+  //   value: 2,
+  //   icon: HiOutlineDatabase,
+  // },
   // {
   //   label: "PosgreSQL",
   //   value: 3,
@@ -42,11 +42,11 @@ export const resourceTypes = [
     value: 7,
     icon: SiPostgresql,
   },
-  // {
-  //   label: "Click House",
-  //   value: 2,
-  //   icon: SiPostgresql,
-  // },
+  {
+    label: "Click House",
+    value: 2,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {

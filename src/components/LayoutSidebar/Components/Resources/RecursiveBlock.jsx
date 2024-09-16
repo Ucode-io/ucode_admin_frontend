@@ -69,6 +69,39 @@ const RecursiveBlock = ({
               <DeleteIcon />
             </Box>
           </Button>
+        ) : element?.type === "CLICK_HOUSE" ? (
+          <Button
+            key={element.id}
+            style={activeStyle}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
+            onClick={clickHandler}>
+            <div
+              className="label"
+              onClick={() =>
+                navigate(
+                  `/main/${appId}/resources/${element?.id}/${element.type}`
+                )
+              }>
+              <IconGenerator icon={element?.icon} size={18} />
+
+              <Tooltip title={element?.title ?? element?.name} placement="top">
+                <p>{element?.title ?? element?.name}</p>
+              </Tooltip>
+            </div>
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteResource({
+                  id: element?.id,
+                });
+              }}
+              sx={{cursor: "pointer"}}>
+              <DeleteIcon />
+            </Box>
+          </Button>
         ) : (
           <Button
             key={element.id}

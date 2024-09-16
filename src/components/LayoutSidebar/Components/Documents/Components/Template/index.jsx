@@ -1,20 +1,20 @@
-import { FormProvider, useForm } from "react-hook-form";
-import { BiExport } from "react-icons/bi";
-import { FiShare2 } from "react-icons/fi";
-import { IoDocumentOutline } from "react-icons/io5";
-import { RiArrowLeftRightFill } from "react-icons/ri";
-import { useParams, useSearchParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
-import { useEffect, useState } from "react";
+import {FormProvider, useForm} from "react-hook-form";
+import {BiExport} from "react-icons/bi";
+import {FiShare2} from "react-icons/fi";
+import {IoDocumentOutline} from "react-icons/io5";
+import {RiArrowLeftRightFill} from "react-icons/ri";
+import {useParams, useSearchParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {useEffect, useState} from "react";
 import {
   useTemplateByIdQuery,
   useTemplateCreateMutation,
   useTemplateUpdateMutation,
 } from "../../../../../../services/templateService";
-import { store } from "../../../../../../store";
-import { useGetSingleObjectDocumentQuery } from "../../../../../../services/templateNoteShareService";
-import { Box, Button } from "@mui/material";
-import Header, { HeaderExtraSide, HeaderLeftSide } from "../../../Header";
+import {store} from "../../../../../../store";
+import {useGetSingleObjectDocumentQuery} from "../../../../../../services/templateNoteShareService";
+import {Box, Button} from "@mui/material";
+import Header, {HeaderExtraSide, HeaderLeftSide} from "../../../Header";
 import ButtonTabs from "../ButtonTabs";
 import styles from "./style.module.scss";
 import TemplateSettings from "./TemplateSettings";
@@ -46,7 +46,7 @@ const tabs = [
 
 const Template = () => {
   const form = useForm();
-  const { projectId, templateId, folderId } = useParams();
+  const {projectId, templateId, folderId} = useParams();
   const queryClient = useQueryClient();
   const [queryParams, setQueryParams] = useSearchParams();
   const selectedTabIndex = Number(queryParams.get("tab") ?? 0);
@@ -54,17 +54,17 @@ const Template = () => {
   const [fieldIsLoading, setFieldIsLoading] = useState(false);
   const company = store.getState().company;
 
-  const { isLoading } = useTemplateByIdQuery({
+  const {isLoading} = useTemplateByIdQuery({
     envId: company.environmentId,
     id: templateId,
-    params: { "project-id": projectId },
+    params: {"project-id": projectId},
     queryParams: {
       enabled: templateId == 1 ? false : Boolean(templateId),
       onSuccess: form.reset,
     },
   });
 
-  const { data: createdShareDocument = {}, isLoading: loadingFromTokenDoc } =
+  const {data: createdShareDocument = {}, isLoading: loadingFromTokenDoc} =
     useGetSingleObjectDocumentQuery({
       params: {
         "project-id": projectId,
@@ -98,13 +98,13 @@ const Template = () => {
     });
   };
 
-  const { mutate: updateTemplate } = useTemplateUpdateMutation({
+  const {mutate: updateTemplate} = useTemplateUpdateMutation({
     onSuccess: (res) => {
       queryClient.refetchQueries(["TEMPLATES"]);
     },
   });
 
-  const { mutate: createTemplate } = useTemplateCreateMutation({
+  const {mutate: createTemplate} = useTemplateCreateMutation({
     onSuccess: (res) => {
       queryClient.refetchQueries(["TEMPLATES"]);
     },
@@ -114,14 +114,14 @@ const Template = () => {
     if (!!values.id) {
       updateTemplate({
         ...values,
-        tables: values.tables.map((item) => ({ ...item, relations: [] })),
+        tables: values.tables.map((item) => ({...item, relations: []})),
       });
     } else {
       createTemplate({
         ...values,
         project_id: projectId,
         folder_id: folderId,
-        tables: values.tables.map((item) => ({ ...item, relations: [] })),
+        tables: values.tables.map((item) => ({...item, relations: []})),
       });
     }
   };
@@ -180,8 +180,7 @@ const Template = () => {
               height="calc(100vh - 50px)"
               width="350px"
               minWidth="350px"
-              backgroundColor={"#fff"}
-            >
+              backgroundColor={"#fff"}>
               <TemplateSettings
                 selectedTabIndex={selectedTabIndex}
                 form={form}

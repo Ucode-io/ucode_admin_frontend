@@ -1,7 +1,7 @@
 import {TextField} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useDispatch} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../../hooks/useDebounce";
 import useFilters from "../../../../hooks/useFilters";
 import CreateGroupModal from "./CreateGroupModal";
@@ -32,6 +32,7 @@ function TableFilterBlock({
   const dispatch = useDispatch();
   const [columns, setColumns] = useState([]);
   const {filters, clearFilters} = useFilters(tableSlug, view.id);
+  const navigate = useNavigate();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,14 +52,21 @@ function TableFilterBlock({
     );
   };
 
-  const navigateCreatePage = (row) => {
-    navigateToRelationForm(
-      tableSlug,
-      "CREATE",
-      {},
-      {folder_id: localStorage.getItem("folder_id")},
-      menuId ?? appId
-    );
+  const navigateToDetailPage = (row) => {
+    if (view?.attributes?.navigate?.url) {
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      navigate(`${view?.attributes?.navigate?.url}/create`);
+    } else {
+      navigateToRelationForm(
+        tableSlug,
+        "CREATE",
+        {},
+        {folder_id: localStorage.getItem("folder_id")},
+        menuId ?? appId
+      );
+    }
   };
 
   const inputChangeHandler = useDebounce((val) => {
@@ -104,7 +112,7 @@ function TableFilterBlock({
         <div className={styles.filterCreatBtns}>
           <button
             onClick={() => {
-              navigateCreatePage(tableSlug);
+              navigateToDetailPage(tableSlug);
             }}
             className={styles.createBtn}>
             Создать

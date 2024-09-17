@@ -1,7 +1,7 @@
 import {CircularProgress} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import useFilters from "../../../../hooks/useFilters";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import hasValidFilters from "../../../../utils/hasValidFilters";
@@ -36,6 +36,7 @@ function TableBody({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const location = useLocation();
   const {navigateToForm} = useTabRouter();
+  const navigate = useNavigate();
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/")?.length - 1];
@@ -60,6 +61,12 @@ function TableBody({
     }
   };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
   const navigateToDetailPage = (row) => {
     if (
       view?.attributes?.navigate?.params?.length ||
@@ -80,7 +87,14 @@ function TableBody({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigate(
+        `/main/${appId}/1c/${tableSlug}/${row?.guid}?menuId=${menuItem?.id}`,
+        {
+          state: {
+            label: row?.label || row?.title,
+          },
+        }
+      );
     }
   };
 

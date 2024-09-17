@@ -123,11 +123,13 @@ const ConstructorTablesFormPage = () => {
       ]);
 
       const data = {
-        ...mainForm.getValues(),
         ...tableData,
+        ...mainForm.getValues(),
         fields: [],
         actions,
       };
+
+      console.log("sssssss data ===>", tableData, mainForm?.getValues());
 
       mainForm.reset({...values, ...data});
 
@@ -193,7 +195,7 @@ const ConstructorTablesFormPage = () => {
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));

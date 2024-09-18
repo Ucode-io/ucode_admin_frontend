@@ -632,3 +632,10 @@ u {
 .css-1u9des2-indicatorSeparator {
   display: none;
 }
+
+#oneCTabs {
+  .react-tabs__tab--selected {
+    border-color: #449424;
+    color: #449424;
+  }
+}

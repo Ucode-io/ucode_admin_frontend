@@ -13,7 +13,9 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorViewService from "../../../../services/constructorViewService";
 import {quickFiltersActions} from "../../../../store/filter/quick_filter";
 import {viewTypes} from "../../../../utils/constants/viewTypes";
-import styles from "./style.module.scss";
+import styles from "./onecstyles.module.scss";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import OneCNavigateSettings from "./OneCViewNavigatingSettings";
 
 const OneCViewForm = ({
   initialValues,
@@ -62,14 +64,6 @@ const OneCViewForm = ({
       setIsBalanceExist(true);
     }
   }, [relationObjInput, numberFieldInput]);
-
-  const computedColumns = useMemo(() => {
-    if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns;
-    } else {
-      return [...columns, ...relationColumns];
-    }
-  }, [columns, relationColumns, type]);
 
   const computeFinancialAcc = (values, groupByField, data) => {
     if (values === undefined) return {chart_of_accounts: []};
@@ -239,51 +233,61 @@ const OneCViewForm = ({
   }, [nameMulti]);
 
   return (
-    <div className={styles.formSection}>
+    <div className={styles.formSection} id="oneCTabs">
       <div className={styles.OneCviewForm}>
         <div className={styles.section}>
-          <div className={styles.section}>
-            <div className={styles.sectionBody}>
-              <div className={styles.formRow}>
-                <FRow label="Name">
-                  <Box style={{display: "flex", gap: "6px"}}>
-                    <HFTextField
-                      control={form.control}
-                      name={`attributes.name_${i18n?.language}`}
-                      placeholder={`Name (${i18n?.language})`}
-                      fullWidth
-                    />
-                  </Box>
-                </FRow>
+          <Tabs>
+            <TabList>
+              <Tab>View</Tab>
+              <Tab>Navigation</Tab>
+            </TabList>
+
+            <TabPanel>
+              <div className={styles.section}>
+                <div className={styles.sectionBody}>
+                  <div className={styles.formRow}>
+                    <FRow label="Name">
+                      <Box style={{display: "flex", gap: "6px"}}>
+                        <HFTextField
+                          control={form.control}
+                          name={`attributes.name_${i18n?.language}`}
+                          placeholder={`Name (${i18n?.language})`}
+                          fullWidth
+                        />
+                      </Box>
+                    </FRow>
+                  </div>
+                  <div style={{marginTop: "25px"}} className={styles.formRow}>
+                    <FRow label="Disable Table edit">
+                      <HFIosSwitch
+                        control={form.control}
+                        name={`attributes.table_editable`}
+                        fullWidth
+                      />
+                    </FRow>
+                    <FRow label="Table draggable">
+                      <HFIosSwitch
+                        control={form.control}
+                        name={`attributes.table_draggable`}
+                        fullWidth
+                      />
+                    </FRow>
+                    <FRow label="1C UI">
+                      <HFIosSwitch
+                        control={form.control}
+                        name={`attributes.table_1c_ui`}
+                        fullWidth
+                      />
+                    </FRow>
+                  </div>
+                </div>
               </div>
-              <div style={{marginTop: "25px"}} className={styles.formRow}>
-                <FRow label="Disable Table edit">
-                  <HFIosSwitch
-                    control={form.control}
-                    name={`attributes.table_editable`}
-                    fullWidth
-                  />
-                </FRow>
-                <FRow label="Table draggable">
-                  <HFIosSwitch
-                    control={form.control}
-                    name={`attributes.table_draggable`}
-                    fullWidth
-                  />
-                </FRow>
-                <FRow label="1C UI">
-                  <HFIosSwitch
-                    control={form.control}
-                    name={`attributes.table_1c_ui`}
-                    fullWidth
-                  />
-                </FRow>
-              </div>
-            </div>
-          </div>
-          {/* <TabPanel>
-            <NavigateSettings form={form} />
-          </TabPanel> */}
+            </TabPanel>
+
+            <TabPanel>
+              <OneCNavigateSettings form={form} />
+            </TabPanel>
+          </Tabs>
         </div>
       </div>
 

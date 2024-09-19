@@ -96,7 +96,6 @@ const OneCViewForm = ({
         type: data.typee,
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
-      // send balance field if relation_obj is selected
       ...(isBalanceExist && {
         balance: {
           table_slug:
@@ -218,13 +217,6 @@ const OneCViewForm = ({
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-
-  const computedFieldsListOptions = useMemo(() => {
-    return fields?.map((field) => ({
-      label: field.label,
-      value: field.id,
-    }));
-  }, [fields]);
 
   useEffect(() => {
     if (nameMulti) {

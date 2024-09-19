@@ -129,15 +129,6 @@ const TableComponent = ({
             control={control}
             refetch={refetch}
           />
-
-          {/* <AddRow
-            fields={columns}
-            relatedTableSlug={relatedTableSlug}
-            view={view}
-            data={tableData}
-            setAddRow={setAddRow}
-            padding={"20px"}
-          /> */}
         </table>
         {addNewRow && (
           <OneCAddDataColumn setAddNewRow={setAddNewRow} columns={fields} />

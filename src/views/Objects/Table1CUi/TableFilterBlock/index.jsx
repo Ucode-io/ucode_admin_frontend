@@ -1,5 +1,5 @@
 import {TextField} from "@mui/material";
-import React, {useMemo, useState} from "react";
+import React, {useState} from "react";
 import {useDispatch} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -29,7 +29,7 @@ function TableFilterBlock({
   const {navigateToRelationForm} = useRelationTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const dispatch = useDispatch();
+
   const [columns, setColumns] = useState([]);
   const {filters, clearFilters} = useFilters(tableSlug, view.id);
   const navigate = useNavigate();

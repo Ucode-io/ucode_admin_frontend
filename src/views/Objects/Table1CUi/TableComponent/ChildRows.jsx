@@ -32,7 +32,7 @@ const ChildRows = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  console.log("currentFoldercurrentFolder", currentFolder);
+
   const {data: {foldersList, count} = {data: []}, isLoading} = useQuery(
     ["GET_FOLDER_LIST_SINGLE", {tableSlug, currentFolder}],
     () => {
@@ -222,7 +222,6 @@ const ChildRows = ({
                     key={index}>
                     {index === 0 ? (
                       <div className={styles.childTd}>
-                        {/* <img src="/img/child_icon.svg" alt="" /> */}
                         <p>{item[col.slug]}</p>
                       </div>
                     ) : (

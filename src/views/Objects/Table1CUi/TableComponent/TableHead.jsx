@@ -88,7 +88,7 @@ function TableHead({columns, view, folderIds, menuItem}) {
           }}>
           <th
             style={{
-              width: "50px",
+              width: "70px",
               textAlign: "center",
               position: "sticky",
               left: "0",

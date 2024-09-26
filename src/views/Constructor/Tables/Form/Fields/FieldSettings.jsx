@@ -542,7 +542,7 @@ const FieldSettings = ({
                     <FRow label="Hide value" classname={styles.custom_label}>
                       {selectedField?.type === "MULTISELECT" ? (
                         <HFMultipleSelect
-                          options={selectedField?.attributes?.options}
+                          options={selectedField?.options}
                           disabledHelperText
                           name="attributes.hide_path"
                           control={control}

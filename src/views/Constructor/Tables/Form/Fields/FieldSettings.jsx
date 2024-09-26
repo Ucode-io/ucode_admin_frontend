@@ -65,7 +65,7 @@ const FieldSettings = ({
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const [selectedField, setSelectedField] = useState(null);
-
+  console.log("selectedField", selectedField);
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -236,6 +236,9 @@ const FieldSettings = ({
       label: table.label,
     }));
   }, [layoutRelations]);
+
+  const computedMultiSelectOptions =
+    selectedField?.options ?? selectedField?.attributes?.options;
 
   const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
@@ -542,7 +545,7 @@ const FieldSettings = ({
                     <FRow label="Hide value" classname={styles.custom_label}>
                       {selectedField?.type === "MULTISELECT" ? (
                         <HFMultipleSelect
-                          options={selectedField?.options}
+                          options={computedMultiSelectOptions}
                           disabledHelperText
                           name="attributes.hide_path"
                           control={control}

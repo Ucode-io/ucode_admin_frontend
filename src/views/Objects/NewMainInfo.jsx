@@ -47,26 +47,17 @@ const MainInfo = ({
         const hidePathArray = element?.attributes?.hide_path;
         const watchArray = watch(element?.attributes?.hide_path_field, control);
 
-        if (hidePathArray.length !== watchArray?.length) {
-          return true;
+        if (hidePathArray?.length !== watchArray?.length) {
+          return false;
         }
-
-        return !hidePathArray.every((el, index) => el === watchArray[index]);
+        return hidePathArray?.every((el, index) => el === watchArray?.[index]);
       }
+
       const isHidden =
         element?.attributes?.hide_path ===
         watch(element?.attributes?.hide_path_field, control);
 
-      if (isHidden) {
-        return false;
-      }
-
-      if (element?.type === "LOOKUP") {
-        return (
-          element?.attributes?.hide_path ===
-          watch(element?.attributes?.hide_path_field, control)
-        );
-      }
+      return isHidden;
     }
 
     return true;

@@ -35,12 +35,12 @@ function Form1CElementGenerator({
   formTableSlug,
   checkRequired = true,
   activeLang,
-  fieldsList,
   checkPermission = true,
   isMultiLanguage,
   relatedTable,
   valueGenerator,
   errors,
+  fields,
   sectionModal,
   ...props
 }) {
@@ -149,7 +149,7 @@ function Form1CElementGenerator({
   ) {
     return null;
   }
-
+  console.log("fieldsfields", fields);
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
       return (
@@ -285,7 +285,7 @@ function Form1CElementGenerator({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
           />
         </FieldLabel>
@@ -308,7 +308,7 @@ function Form1CElementGenerator({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
           />
         </FieldLabel>
@@ -340,7 +340,7 @@ function Form1CElementGenerator({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={field.defaultValue}
@@ -649,7 +649,7 @@ function Form1CElementGenerator({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}

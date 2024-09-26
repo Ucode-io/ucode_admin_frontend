@@ -421,6 +421,7 @@ const NewRelationSection = ({
                       relation={data}
                       selectedIndex={selectedIndex}
                       errors={errors}
+                      watch={watch}
                     />
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection

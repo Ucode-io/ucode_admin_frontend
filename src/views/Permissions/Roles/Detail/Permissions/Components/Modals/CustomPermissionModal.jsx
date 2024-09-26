@@ -103,7 +103,6 @@ const CustomPermissionModal = ({
   ];
 
   const updateView = (val) => {
-    console.log("valllllllllll", val);
     const computedValue = {
       view_create: val ? "Yes" : "No",
       share_modal: val ? "Yes" : "No",

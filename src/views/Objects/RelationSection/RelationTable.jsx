@@ -176,7 +176,7 @@ const RelationTable = forwardRef(
             fields: relation.view_fields ?? [],
           },
           label:
-            relation?.label ?? relation[relation.relatedTableSlug]?.label
+            (relation?.label ?? relation[relation.relatedTableSlug]?.label)
               ? relation[relation.relatedTableSlug]?.label
               : relation?.title,
         }));
@@ -356,7 +356,7 @@ const RelationTable = forwardRef(
         return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
       });
     }, [fieldsMap]);
-
+    console.log("tableDatatableData", tableData);
     const getOptionsList = () => {
       const computedIds = computedRelationFields?.map((item) => ({
         table_slug: item?.slug,

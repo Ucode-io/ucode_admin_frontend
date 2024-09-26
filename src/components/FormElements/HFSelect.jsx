@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import {Controller} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
-import ClearIcon from "@mui/icons-material/Clear"; // Import the clear icon
+import ClearIcon from "@mui/icons-material/Clear";
 import {columnIcons} from "../../utils/constants/columnIcons";
 
 const HFSelect = ({
@@ -24,6 +24,7 @@ const HFSelect = ({
   required = false,
   onChange = () => {},
   onOpen = () => {},
+  getOnchangeField = () => {},
   optionType,
   defaultValue = "",
   rules = {},
@@ -105,7 +106,9 @@ const HFSelect = ({
                   ])
                 : options?.map((option) => (
                     <MenuItem key={option?.value} value={option?.value}>
-                      <div className="flex align-center gap-2">
+                      <div
+                        onClick={(e) => getOnchangeField(option)}
+                        className="flex align-center gap-2">
                         {option?.icon && columnIcons(option?.value)}
                         {option?.label}
                       </div>

@@ -299,6 +299,7 @@ function DetailPageTabs({
                   item={item}
                   watch={watch}
                   selectedTab={selectedTab}
+                  selectedIndex={selectedIndex}
                 />
               ) : (
                 <RelationTable

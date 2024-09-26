@@ -53,6 +53,7 @@ const FormElementGenerator = ({
   valueGenerator,
   errors,
   sectionModal,
+  watch,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -315,6 +316,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
+            watch={watch}
             placeholder={
               field?.attributes?.show_label
                 ? ""

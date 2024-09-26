@@ -12,6 +12,7 @@ import {
 import {TreeView} from "@mui/x-tree-view";
 import {useEffect, useMemo, useState} from "react";
 import {useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
@@ -27,10 +28,7 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import menuService, {
-  useMenuListQuery,
-} from "../../../../../services/menuService";
-import {store} from "../../../../../store";
+import {useMenuListQuery} from "../../../../../services/menuService";
 import {
   fieldButtons,
   fieldTypesOptions,
@@ -41,7 +39,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -59,26 +57,14 @@ const FieldSettings = ({
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
-
-  // const [menuItem, setMenuItem] = useState(null);
-
-  // useEffect(() => {
-  //   if (searchParams.get("menuId")) {
-  //     menuService
-  //       .getByID({
-  //         menuId: searchParams.get("menuId"),
-  //       })
-  //       .then((res) => {
-  //         setMenuItem(res);
-  //       });
-  //   }
-  // }, []);
   const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
+  const [selectedField, setSelectedField] = useState(null);
+
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -86,6 +72,17 @@ const FieldSettings = ({
       return menuItem?.table_id;
     }
   }, [id, slug]);
+
+  const fieldsList = mainForm.getValues("fields");
+
+  const computedFilteredFields = useMemo(() => {
+    return fieldsList.map((item) => ({
+      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
+      value: item?.slug,
+      type: item?.type,
+      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
+    }));
+  }, [fieldsList]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -288,6 +285,18 @@ const FieldSettings = ({
       reset(values);
     }
   }, [field, formType, id, menuItem?.table_id, reset]);
+
+  const getOnchangeField = (element) => {
+    setSelectedField(element);
+  };
+
+  useEffect(() => {
+    setSelectedField(() =>
+      fieldsList?.find(
+        (item) => item?.slug === field?.attributes?.hide_path_field
+      )
+    );
+  }, []);
 
   return (
     <div className={styles.settingsBlock}>
@@ -510,6 +519,55 @@ const FieldSettings = ({
                       label="Automatic"
                       labelClassName={styles.custom_label}
                     />
+                  </Box>
+                </div>
+              )}
+
+              {drawerType === "FIELD_HIDE" && (
+                <div className="p-2">
+                  <Box mt={1}>
+                    <FRow
+                      label="Hide Field From"
+                      classname={styles.custom_label}>
+                      <HFSelect
+                        disabledHelperText
+                        name="attributes.hide_path_field"
+                        control={control}
+                        options={computedFilteredFields}
+                        placeholder="Type"
+                        className={styles.input}
+                        getOnchangeField={getOnchangeField}
+                      />
+                    </FRow>
+
+                    <FRow label="Hide value" classname={styles.custom_label}>
+                      {selectedField?.type === "MULTISELECT" ? (
+                        <HFMultipleSelect
+                          options={selectedField?.attributes?.options}
+                          disabledHelperText
+                          name="attributes.hide_path"
+                          control={control}
+                          placeholder="Type"
+                          className={styles.input}
+                        />
+                      ) : selectedField?.type === "LOOKUP" ? (
+                        <HFTextField
+                          disabledHelperText
+                          name="attributes.hide_path"
+                          control={control}
+                          placeholder="Type"
+                          className={styles.input}
+                        />
+                      ) : (
+                        <HFTextField
+                          disabledHelperText
+                          name="attributes.hide_path"
+                          control={control}
+                          placeholder="Type"
+                          className={styles.input}
+                        />
+                      )}
+                    </FRow>
                   </Box>
                 </div>
               )}

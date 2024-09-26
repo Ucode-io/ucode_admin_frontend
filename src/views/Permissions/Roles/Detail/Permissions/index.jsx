@@ -13,7 +13,6 @@ import TableRow from "./TableRow";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
-import InfoIcon from "@mui/icons-material/Info";
 import styles from "../../../style.module.scss";
 import {permissions, recordPermission} from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";

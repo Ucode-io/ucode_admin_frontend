@@ -14,7 +14,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Form1CElementGenerator from "../Form1CElementGenerator";
 import DetailPageTable from "../DetailPageTable";
 
-function DetailPageSection({item, control, watch, selectedTab}) {
+function DetailPageSection({item, control, watch, selectedTab, selectedIndex}) {
   const {i18n} = useTranslation();
   const [expanded, setExpanded] = useState([]);
 
@@ -105,6 +105,7 @@ function DetailPageSection({item, control, watch, selectedTab}) {
                         <Form1CElementGenerator
                           control={control}
                           field={field}
+                          fields={fields}
                         />
                       </Box>
                     )}

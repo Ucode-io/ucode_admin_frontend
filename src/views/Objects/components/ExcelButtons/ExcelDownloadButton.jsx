@@ -17,6 +17,7 @@ const ExcelDownloadButton = ({
   view,
   computedVisibleFields,
   selectedTab,
+  searchText,
 }) => {
   const {t, i18n} = useTranslation();
 
@@ -38,6 +39,7 @@ const ExcelDownloadButton = ({
             field_ids: computedVisibleFields,
             [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
             language: i18n?.language,
+            search: searchText,
           },
         }
       );

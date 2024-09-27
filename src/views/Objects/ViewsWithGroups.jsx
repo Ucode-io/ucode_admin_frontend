@@ -523,6 +523,7 @@ const ViewsWithGroups = ({
                       computedVisibleFields={computedVisibleFields}
                       fieldsMap={fieldsMap}
                       view={view}
+                      searchText={searchText}
                     />
                     <div
                       className={style.template}

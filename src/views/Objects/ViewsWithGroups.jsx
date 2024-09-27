@@ -524,6 +524,7 @@ const ViewsWithGroups = ({
                       fieldsMap={fieldsMap}
                       view={view}
                       searchText={searchText}
+                      checkedColumns={checkedColumns}
                     />
                     <div
                       className={style.template}

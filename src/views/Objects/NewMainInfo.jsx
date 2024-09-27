@@ -17,11 +17,9 @@ const MainInfo = ({
   setFormValue,
   relatedTable,
   relation,
-  selectedTabIndex,
-  selectedTab,
-  selectedIndex,
   isMultiLanguage,
   errors,
+  watch,
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -42,6 +40,28 @@ const MainInfo = ({
   }, [relation]);
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
+  const filterFields = (element, control, watch) => {
+    if (element?.attributes?.hide_path_field) {
+      if (Array.isArray(element?.attributes?.hide_path)) {
+        const hidePathArray = element?.attributes?.hide_path;
+        const watchArray = watch(element?.attributes?.hide_path_field, control);
+
+        if (hidePathArray?.length !== watchArray?.length) {
+          return false;
+        }
+        return hidePathArray?.every((el, index) => el === watchArray?.[index]);
+      }
+
+      const isHidden =
+        element?.attributes?.hide_path ===
+        watch(element?.attributes?.hide_path_field, control);
+
+      return isHidden;
+    }
+
+    return true;
+  };
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -84,27 +104,30 @@ const MainInfo = ({
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr 1fr",
                   }}>
-                  {section.fields?.map((field) => (
-                    <Box
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        minWidth: "250px",
-                      }}>
-                      <FormElementGenerator
-                        key={field.id}
-                        isMultiLanguage={isMultiLanguage}
-                        field={field}
-                        control={control}
-                        setFormValue={setFormValue}
-                        fieldsList={fieldsList}
-                        formTableSlug={tableSlug}
-                        relatedTable={relatedTable}
-                        activeLang={activeLang}
-                        errors={errors}
-                      />
-                    </Box>
-                  ))}
+                  {section?.fields
+                    ?.filter((element) => filterFields(element, control, watch))
+                    .map((field) => (
+                      <Box
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          minWidth: "250px",
+                        }}>
+                        <FormElementGenerator
+                          key={field.id}
+                          isMultiLanguage={isMultiLanguage}
+                          field={field}
+                          control={control}
+                          setFormValue={setFormValue}
+                          fieldsList={fieldsList}
+                          formTableSlug={tableSlug}
+                          relatedTable={relatedTable}
+                          activeLang={activeLang}
+                          errors={errors}
+                          watch={watch}
+                        />
+                      </Box>
+                    ))}
                 </div>
               </NewFormCard>
             ))}

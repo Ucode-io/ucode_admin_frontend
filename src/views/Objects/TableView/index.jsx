@@ -225,13 +225,17 @@ const TableView = ({
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 
-    let a = sortedDatas?.map((el) => {
-      if (el.field) {
-        return {
-          [fieldsMap[el?.field]?.slug]: el.order === "ASC" ? 1 : -1,
-        };
-      }
-    });
+    let a = sortedDatas
+      ?.map((el) => {
+        if (el?.field && el?.order === "ASC") {
+          return {
+            [fieldsMap[el?.field]?.slug]: 1,
+          };
+        } else if (el?.order === "DESC") {
+          return undefined;
+        }
+      })
+      .filter(Boolean);
 
     a.forEach((obj) => {
       for (const key in obj) {
@@ -309,7 +313,7 @@ const TableView = ({
       };
     },
   });
-
+  console.log("computedSortColumns", computedSortColumns);
   const {
     data: {tableData, pageCount, dataCount} = {
       tableData: [],

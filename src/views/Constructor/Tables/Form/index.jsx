@@ -129,9 +129,7 @@ const ConstructorTablesFormPage = () => {
         actions,
       };
 
-      console.log("sssssss data ===>", tableData, mainForm?.getValues());
-
-      mainForm.reset({...values, ...data});
+      mainForm.reset({...data, ...values});
 
       await getRelationFields();
     } catch (error) {

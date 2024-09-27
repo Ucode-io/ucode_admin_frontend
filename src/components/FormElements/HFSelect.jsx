@@ -85,11 +85,13 @@ const HFSelect = ({
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
+                      onClick={(e) => getOnchangeField(group)}
                       style={{fontWeight: 600, color: "#000", fontSize: 15}}>
                       {group.label}
                     </MenuItem>,
                     group.options?.map((option) => (
                       <MenuItem
+                        onClick={(e) => getOnchangeField(option)}
                         key={option.value}
                         value={option.value}
                         style={{paddingLeft: 30}}>
@@ -105,10 +107,11 @@ const HFSelect = ({
                     )),
                   ])
                 : options?.map((option) => (
-                    <MenuItem key={option?.value} value={option?.value}>
-                      <div
-                        onClick={(e) => getOnchangeField(option)}
-                        className="flex align-center gap-2">
+                    <MenuItem
+                      onClick={(e) => getOnchangeField(option)}
+                      key={option?.value}
+                      value={option?.value}>
+                      <div className="flex align-center gap-2">
                         {option?.icon && columnIcons(option?.value)}
                         {option?.label}
                       </div>

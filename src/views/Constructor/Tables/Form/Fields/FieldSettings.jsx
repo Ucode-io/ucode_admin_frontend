@@ -40,6 +40,8 @@ import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
+import constructorObjectService from "../../../../../services/constructorObjectService";
+import HFRelationFieldSetting from "../../../../../components/FormElements/HFRelationFieldSetting";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -65,7 +67,7 @@ const FieldSettings = ({
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const [selectedField, setSelectedField] = useState(null);
-  console.log("selectedField", selectedField);
+
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -75,15 +77,6 @@ const FieldSettings = ({
   }, [id, slug]);
 
   const fieldsList = mainForm.getValues("fields");
-
-  const computedFilteredFields = useMemo(() => {
-    return fieldsList.map((item) => ({
-      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
-      value: item?.slug,
-      type: item?.type,
-      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
-    }));
-  }, [fieldsList]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -133,6 +126,17 @@ const FieldSettings = ({
       },
     }
   );
+
+  const computedFilteredFields = useMemo(() => {
+    return columns?.map((item) => ({
+      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
+      value: item?.slug,
+      type: item?.type,
+      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
+      table_slug: item?.table_slug,
+      attributes: {...item?.attributes},
+    }));
+  }, [columns]);
 
   const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
@@ -265,6 +269,7 @@ const FieldSettings = ({
       },
     }
   );
+
   useEffect(() => {
     const values = {
       attributes: {},
@@ -294,11 +299,9 @@ const FieldSettings = ({
 
   useEffect(() => {
     setSelectedField(() =>
-      fieldsList?.find(
-        (item) => item?.slug === field?.attributes?.hide_path_field
-      )
+      columns?.find((item) => item?.slug === field?.attributes?.hide_path_field)
     );
-  }, []);
+  }, [columns]);
 
   return (
     <div className={styles.settingsBlock}>
@@ -553,12 +556,13 @@ const FieldSettings = ({
                           className={styles.input}
                         />
                       ) : selectedField?.type === "LOOKUP" ? (
-                        <HFTextField
+                        <HFRelationFieldSetting
                           disabledHelperText
                           name="attributes.hide_path"
                           control={control}
                           placeholder="Type"
                           className={styles.input}
+                          selectedField={selectedField}
                         />
                       ) : (
                         <HFTextField

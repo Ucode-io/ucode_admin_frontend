@@ -19,6 +19,8 @@ import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
+import HFRelationFieldSetting from "../../../../../components/FormElements/HFRelationFieldSetting";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
@@ -39,9 +41,6 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
-import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
-import constructorObjectService from "../../../../../services/constructorObjectService";
-import HFRelationFieldSetting from "../../../../../components/FormElements/HFRelationFieldSetting";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -76,8 +75,6 @@ const FieldSettings = ({
     }
   }, [id, slug]);
 
-  const fieldsList = mainForm.getValues("fields");
-
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
     const index = fields.findIndex((el) => el.id === field.id);
@@ -104,15 +101,15 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {slug}],
+    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
     () => {
-      if (!slug) return false;
-      return constructorTableService.getTableInfo(slug, {
+      if (!tableSlug) return false;
+      return constructorTableService.getTableInfo(tableSlug, {
         data: {limit: 10, offset: 0, app_id: appId},
       });
     },
     {
-      enabled: Boolean(!!slug),
+      enabled: Boolean(!!tableSlug),
       select: ({data}) => {
         return {
           views: data?.views ?? [],

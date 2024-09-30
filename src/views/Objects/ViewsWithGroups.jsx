@@ -217,12 +217,8 @@ const ViewsWithGroups = ({
           tableSearchText: text,
         },
       })
-      .then(() => {
-        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      })
-      .finally(() => {
-        // setIsLoading(false);
-      });
+      .then(() => {})
+      .finally(() => {});
   };
 
   const inputChangeHandler = useDebounce((val) => {

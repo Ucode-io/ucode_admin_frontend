@@ -1,12 +1,30 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Controller} from "react-hook-form";
 import {useQuery} from "react-query";
-import Select from "react-select";
 import constructorObjectService from "../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
+import {getFieldLabel} from "../../utils/getFieldLabel";
+import {
+  getLabelWithViewFields,
+  getRelationFieldTabsLabel,
+} from "../../utils/getRelationFieldLabel";
+import {MenuItem, OutlinedInput, Select} from "@mui/material";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 function HFRelationFieldSetting({control, name, selectedField}) {
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list);
 
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", selectedField],
@@ -40,6 +58,27 @@ function HFRelationFieldSetting({control, name, selectedField}) {
     }
   );
 
+  const computedViewFields = useMemo(() => {
+    if (selectedField?.attributes?.enable_multi_language) {
+      const viewFields = selectedField?.attributes?.view_fields?.map(
+        (el) => el?.slug
+      );
+      const computedLanguages = languages?.map((item) => item?.slug);
+
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return selectedField?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [selectedField, i18n?.language]);
+
   return (
     <Controller
       control={control}
@@ -48,17 +87,21 @@ function HFRelationFieldSetting({control, name, selectedField}) {
         <>
           <Select
             options={optionsFromLocale}
-            menuPortalTarget={document.body}
-            getOptionLabel={(option) =>
-              optionsFromLocale?.map((el) => {
-                if (field?.attributes?.enable_multi_language) {
-                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
-                } else {
-                  return `${option[el]} `;
-                }
-              })
+            input={<OutlinedInput error={error} size="small" />}
+            fullWidth
+            getOptionValue={(option) =>
+              option?.guid ?? option?.id ?? option?.client_type_id
             }
-          />
+            MenuProps={MenuProps}>
+            {optionsFromLocale?.map((option) => (
+              <MenuItem key={option.value} value={option.guid}>
+                {getLabelWithViewFields(
+                  selectedField?.attributes?.view_fields,
+                  option
+                )}
+              </MenuItem>
+            ))}
+          </Select>
         </>
       )}></Controller>
   );

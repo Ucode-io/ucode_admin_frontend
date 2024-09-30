@@ -59,7 +59,7 @@ const ObjectsFormPage = ({
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
-  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}`;
+  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
 
   const id = useMemo(() => {
     return (
@@ -298,7 +298,7 @@ const ObjectsFormPage = ({
     deleteTab(pathname);
     navigate(-1);
   };
-  console.log("idFromParamsidFromParams", localStorage.getItem("idFromParams"));
+
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
@@ -341,10 +341,14 @@ const ObjectsFormPage = ({
         extra={
           <>
             {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
-              tableSlug === "investors" && (
+              (tableSlug === "investors" || tableSlug === "legal_entities") && (
                 <PrimaryButton
                   onClick={() => {
                     localStorage.setItem("idFromParams", idFromParam);
+                    localStorage.setItem(
+                      "tableSlugFromParam",
+                      tableSlugFromParam
+                    );
                     navigate(microPath);
                   }}>
                   Пополнить баланс

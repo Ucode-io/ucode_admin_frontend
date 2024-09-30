@@ -19,6 +19,8 @@ import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
+import HFRelationFieldSetting from "../../../../../components/FormElements/HFRelationFieldSetting";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
@@ -39,7 +41,6 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
-import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -64,7 +65,7 @@ const FieldSettings = ({
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const [selectedField, setSelectedField] = useState(null);
-  console.log("selectedField", selectedField);
+
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -72,17 +73,6 @@ const FieldSettings = ({
       return menuItem?.table_id;
     }
   }, [id, slug]);
-
-  const fieldsList = mainForm.getValues("fields");
-
-  const computedFilteredFields = useMemo(() => {
-    return fieldsList.map((item) => ({
-      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
-      value: item?.slug,
-      type: item?.type,
-      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
-    }));
-  }, [fieldsList]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -110,15 +100,15 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {slug}],
+    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
     () => {
-      if (!slug) return false;
-      return constructorTableService.getTableInfo(slug, {
+      if (!tableSlug) return false;
+      return constructorTableService.getTableInfo(tableSlug, {
         data: {limit: 10, offset: 0, app_id: appId},
       });
     },
     {
-      enabled: Boolean(!!slug),
+      enabled: Boolean(!!tableSlug),
       select: ({data}) => {
         return {
           views: data?.views ?? [],
@@ -132,6 +122,17 @@ const FieldSettings = ({
       },
     }
   );
+
+  const computedFilteredFields = useMemo(() => {
+    return columns?.map((item) => ({
+      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
+      value: item?.slug,
+      type: item?.type,
+      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
+      table_slug: item?.table_slug,
+      attributes: {...item?.attributes},
+    }));
+  }, [columns]);
 
   const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
@@ -266,6 +267,7 @@ const FieldSettings = ({
       },
     }
   );
+
   useEffect(() => {
     const values = {
       attributes: {},
@@ -295,11 +297,9 @@ const FieldSettings = ({
 
   useEffect(() => {
     setSelectedField(() =>
-      fieldsList?.find(
-        (item) => item?.slug === field?.attributes?.hide_path_field
-      )
+      columns?.find((item) => item?.slug === field?.attributes?.hide_path_field)
     );
-  }, []);
+  }, [columns]);
 
   return (
     <div className={styles.settingsBlock}>
@@ -554,12 +554,13 @@ const FieldSettings = ({
                           className={styles.input}
                         />
                       ) : selectedField?.type === "LOOKUP" ? (
-                        <HFTextField
+                        <HFRelationFieldSetting
                           disabledHelperText
                           name="attributes.hide_path"
                           control={control}
                           placeholder="Type"
                           className={styles.input}
+                          selectedField={selectedField}
                         />
                       ) : (
                         <HFTextField

@@ -129,9 +129,12 @@ const ConstructorTablesFormPage = () => {
         actions,
       };
 
-      console.log("sssssss data ===>", tableData, mainForm?.getValues());
-
-      mainForm.reset({...values, ...data});
+      mainForm.reset({
+        ...data,
+        ...values,
+        slug: data?.slug || values?.slug,
+        label: data?.label || values?.label,
+      });
 
       await getRelationFields();
     } catch (error) {
@@ -330,11 +333,12 @@ const ConstructorTablesFormPage = () => {
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
   };
+
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
-
+  console.log("ididididididid", id);
   const [selectedTab, setSelectedTab] = useState(0);
 
   if (loader) return <PageFallback />;

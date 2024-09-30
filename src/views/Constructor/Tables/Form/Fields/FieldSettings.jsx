@@ -126,7 +126,7 @@ const FieldSettings = ({
 
   const computedFilteredFields = useMemo(() => {
     return columns?.map((item) => ({
-      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
+      label: item?.label || item?.attributes?.[`label_${i18n?.language}`],
       value: item?.slug,
       type: item?.type,
       options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],

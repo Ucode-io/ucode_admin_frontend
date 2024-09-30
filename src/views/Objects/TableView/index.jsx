@@ -313,6 +313,11 @@ const TableView = ({
       };
     },
   });
+
+  const tableSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
   console.log("computedSortColumns", computedSortColumns);
   const {
     data: {tableData, pageCount, dataCount} = {
@@ -336,6 +341,7 @@ const TableView = ({
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
+        currentView,
       },
     ],
     cacheTime: 10,
@@ -346,10 +352,8 @@ const TableView = ({
           offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
+          search: tableSearch,
+
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab

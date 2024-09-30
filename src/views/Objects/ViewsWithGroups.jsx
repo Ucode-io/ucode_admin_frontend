@@ -43,6 +43,7 @@ import {useFieldSearchUpdateMutation} from "../../services/constructorFieldServi
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Table1CUi from "./Table1CUi";
 import useDebounce from "../../hooks/useDebounce";
+import constructorViewService from "../../services/constructorViewService";
 
 const ViewsWithGroups = ({
   views,
@@ -69,6 +70,7 @@ const ViewsWithGroups = ({
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [searchText, setSearchText] = useState("");
+
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -206,9 +208,27 @@ const ViewsWithGroups = ({
     return mappedObjects.map((obj) => obj.id);
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
+  const updateView = (text) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          tableSearchText: text,
+        },
+      })
+      .then(() => {
+        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        // setIsLoading(false);
+      });
+  };
+
   const inputChangeHandler = useDebounce((val) => {
     setCurrentPage(1);
     setSearchText(val);
+    updateView(val);
   }, 300);
 
   const selectAll = () => {
@@ -222,6 +242,12 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
+
+  useEffect(() => {
+    if (view?.attributes?.tableSearchText) {
+      setSearchText(view?.attributes?.tableSearchText);
+    }
+  }, []);
 
   return (
     <>
@@ -318,6 +344,7 @@ const ViewsWithGroups = ({
 
                 <Divider orientation="vertical" flexItem />
                 <SearchInput
+                  defaultValue={searchText || view?.attributes?.tableSearchText}
                   placeholder={"Search"}
                   onChange={(e) => {
                     inputChangeHandler(e);

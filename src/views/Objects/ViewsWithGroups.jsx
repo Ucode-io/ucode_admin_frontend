@@ -208,23 +208,23 @@ const ViewsWithGroups = ({
     return mappedObjects.map((obj) => obj.id);
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
-  const updateView = (text) => {
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        attributes: {
-          ...view?.attributes,
-          tableSearchText: text,
-        },
-      })
-      .then(() => {})
-      .finally(() => {});
-  };
+  // const updateView = (text) => {
+  //   constructorViewService
+  //     .update(tableSlug, {
+  //       ...view,
+  //       attributes: {
+  //         ...view?.attributes,
+  //         tableSearchText: text,
+  //       },
+  //     })
+  //     .then(() => {})
+  //     .finally(() => {});
+  // };
 
   const inputChangeHandler = useDebounce((val) => {
     setCurrentPage(1);
     setSearchText(val);
-    updateView(val);
+    // updateView(val);
   }, 300);
 
   const selectAll = () => {

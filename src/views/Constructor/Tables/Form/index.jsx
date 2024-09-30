@@ -96,7 +96,6 @@ const ConstructorTablesFormPage = () => {
     queryParams: {
       enabled: !!id,
       onSuccess: (res) => {
-        console.log("resssssssssssss====>", res);
         mainForm.reset(res);
         setLoader(false);
       },

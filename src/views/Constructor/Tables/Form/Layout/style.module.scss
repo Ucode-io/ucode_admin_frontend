@@ -463,7 +463,7 @@
 }
 
 .sections_wrapper {
-  height: 500px;
+  height: calc(100vh - 270px);
   overflow: auto;
 }
 

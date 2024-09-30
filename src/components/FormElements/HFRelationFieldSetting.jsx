@@ -58,27 +58,6 @@ function HFRelationFieldSetting({control, name, selectedField}) {
     }
   );
 
-  const computedViewFields = useMemo(() => {
-    if (selectedField?.attributes?.enable_multi_language) {
-      const viewFields = selectedField?.attributes?.view_fields?.map(
-        (el) => el?.slug
-      );
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return selectedField?.attributes?.view_fields?.map((el) => el?.slug);
-    }
-  }, [selectedField, i18n?.language]);
-
   return (
     <Controller
       control={control}
@@ -87,6 +66,10 @@ function HFRelationFieldSetting({control, name, selectedField}) {
         <>
           <Select
             options={optionsFromLocale}
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+            value={value}
             input={<OutlinedInput error={error} size="small" />}
             fullWidth
             getOptionValue={(option) =>

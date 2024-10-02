@@ -24,7 +24,6 @@ import TimeLineView from "./TimeLineView";
 import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
-import Table1CUi from "./Table1CUi";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
@@ -34,6 +33,7 @@ const ObjectsPage = () => {
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
+
   const {i18n} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
@@ -128,6 +128,10 @@ const ObjectsPage = () => {
       ? setSelectedTabIndex(parseInt(queryTab - 1))
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
+
+  // useEffect(() => {
+  //   initDB();
+  // }, [tableSlug]);
 
   // useEffect(() => {
   //   if (searchParams.get("menuId")) {

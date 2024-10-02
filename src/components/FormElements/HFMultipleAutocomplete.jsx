@@ -63,7 +63,7 @@ const HFMultipleAutocomplete = ({
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
-  console.log("defaultValuedefaultValue", field, defaultValue);
+
   return (
     <Controller
       control={control}

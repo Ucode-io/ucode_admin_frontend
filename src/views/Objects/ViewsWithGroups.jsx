@@ -20,15 +20,24 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
+import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
+import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
+import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
 import constructorObjectService from "../../services/constructorObjectService";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "../../utils/indexedDb";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
+import Table1CUi from "./Table1CUi";
 import TableView from "./TableView";
 import GroupTableView from "./TableView/GroupTableView";
 import TableViewGroupByButton from "./TableViewGroupByButton";
@@ -39,16 +48,6 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
-import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import Table1CUi from "./Table1CUi";
-import useDebounce from "../../hooks/useDebounce";
-import constructorViewService from "../../services/constructorViewService";
-import {
-  getSearchText,
-  openDB,
-  saveOrUpdateSearchText,
-} from "../../utils/indexedDb";
 
 const ViewsWithGroups = ({
   views,

@@ -24,8 +24,6 @@ import TimeLineView from "./TimeLineView";
 import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
-import Table1CUi from "./Table1CUi";
-import {getSearchText, openDB} from "../../utils/indexedDb";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();

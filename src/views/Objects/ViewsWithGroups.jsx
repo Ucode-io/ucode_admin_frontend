@@ -44,6 +44,11 @@ import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoade
 import Table1CUi from "./Table1CUi";
 import useDebounce from "../../hooks/useDebounce";
 import constructorViewService from "../../services/constructorViewService";
+import {
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "../../utils/indexedDb";
 
 const ViewsWithGroups = ({
   views,
@@ -76,6 +81,7 @@ const ViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
+  const [inputKey, setInputKey] = useState(0);
   const openHeightControl = Boolean(anchorElHeightControl);
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
@@ -208,23 +214,10 @@ const ViewsWithGroups = ({
     return mappedObjects.map((obj) => obj.id);
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
-  // const updateView = (text) => {
-  //   constructorViewService
-  //     .update(tableSlug, {
-  //       ...view,
-  //       attributes: {
-  //         ...view?.attributes,
-  //         tableSearchText: text,
-  //       },
-  //     })
-  //     .then(() => {})
-  //     .finally(() => {});
-  // };
-
   const inputChangeHandler = useDebounce((val) => {
     setCurrentPage(1);
     setSearchText(val);
-    // updateView(val);
+    saveSearchTextToDB(tableSlug, val);
   }, 300);
 
   const selectAll = () => {
@@ -235,15 +228,27 @@ const ViewsWithGroups = ({
     );
   };
 
+  const initDB = async () => {
+    const db = await openDB();
+    const savedSearch = await getSearchText(db, tableSlug);
+    if (savedSearch && savedSearch.searchText) {
+      setSearchText(savedSearch.searchText);
+      setInputKey(inputKey + 1);
+    }
+  };
+
+  const saveSearchTextToDB = async (tableSlug, searchText) => {
+    const db = await openDB();
+    await saveOrUpdateSearchText(db, tableSlug, searchText);
+  };
+
+  useEffect(() => {
+    initDB();
+  }, [tableSlug]);
+
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
-
-  useEffect(() => {
-    if (view?.attributes?.tableSearchText) {
-      setSearchText(view?.attributes?.tableSearchText);
-    }
-  }, []);
 
   return (
     <>
@@ -340,7 +345,8 @@ const ViewsWithGroups = ({
 
                 <Divider orientation="vertical" flexItem />
                 <SearchInput
-                  defaultValue={searchText || view?.attributes?.tableSearchText}
+                  key={inputKey}
+                  defaultValue={searchText}
                   placeholder={"Search"}
                   onChange={(e) => {
                     inputChangeHandler(e);

@@ -3,7 +3,6 @@ import {InputAdornment, TextField} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
 const SearchInput = ({defaultValue, onChange, ...props}) => {
-  console.log("defaultValuedefaultValue", defaultValue);
   const {t} = useTranslation();
   return (
     <TextField

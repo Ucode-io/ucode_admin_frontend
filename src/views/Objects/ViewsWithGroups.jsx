@@ -34,7 +34,7 @@ import {
   getSearchText,
   openDB,
   saveOrUpdateSearchText,
-} from "../../utils/indexedDb";
+} from "../../utils/indexedDb.jsx";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
 import Table1CUi from "./Table1CUi";

@@ -41,6 +41,7 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -125,7 +126,7 @@ const FieldSettings = ({
 
   const computedFilteredFields = useMemo(() => {
     return columns?.map((item) => ({
-      label: item?.label ?? item?.attributes?.[`label_${i18n?.language}`],
+      label: item?.label || item?.attributes?.[`label_${i18n?.language}`],
       value: item?.slug,
       type: item?.type,
       options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
@@ -301,6 +302,17 @@ const FieldSettings = ({
     );
   }, [columns]);
 
+  const numberTypeOptions = [
+    {
+      label: "Max",
+      value: "max",
+    },
+    {
+      label: "Min",
+      value: "min",
+    },
+  ];
+  console.log("selectedFieldselectedField", selectedField);
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>
@@ -543,35 +555,56 @@ const FieldSettings = ({
                       />
                     </FRow>
 
-                    <FRow label="Hide value" classname={styles.custom_label}>
-                      {selectedField?.type === "MULTISELECT" ? (
-                        <HFMultipleSelect
-                          options={computedMultiSelectOptions}
-                          disabledHelperText
-                          name="attributes.hide_path"
-                          control={control}
-                          placeholder="Type"
-                          className={styles.input}
-                        />
-                      ) : selectedField?.type === "LOOKUP" ? (
-                        <HFRelationFieldSetting
-                          disabledHelperText
-                          name="attributes.hide_path"
-                          control={control}
-                          placeholder="Type"
-                          className={styles.input}
-                          selectedField={selectedField}
-                        />
-                      ) : (
-                        <HFTextField
-                          disabledHelperText
-                          name="attributes.hide_path"
-                          control={control}
-                          placeholder="Type"
-                          className={styles.input}
-                        />
-                      )}
-                    </FRow>
+                    {selectedField?.type === "MULTISELECT" ? (
+                      <HFMultipleSelect
+                        options={computedMultiSelectOptions}
+                        disabledHelperText
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    ) : selectedField?.type === "LOOKUP" ? (
+                      <HFRelationFieldSetting
+                        disabledHelperText
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                        selectedField={selectedField}
+                      />
+                    ) : selectedField?.type === "NUMBER" ? (
+                      <>
+                        <FRow label="Hide Value">
+                          <HFNumberField
+                            type={"number"}
+                            disabledHelperText
+                            name="attributes.hide_path"
+                            control={control}
+                            placeholder="Hide "
+                            className={styles.input}
+                          />
+                        </FRow>
+                        <FRow label="Number range">
+                          <HFSelect
+                            options={numberTypeOptions}
+                            disabledHelperText
+                            name="attributes.type"
+                            control={control}
+                            placeholder="Type"
+                            className={styles.input}
+                          />
+                        </FRow>
+                      </>
+                    ) : (
+                      <HFTextField
+                        disabledHelperText
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    )}
                   </Box>
                 </div>
               )}

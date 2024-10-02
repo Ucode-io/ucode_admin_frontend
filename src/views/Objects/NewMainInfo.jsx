@@ -52,6 +52,19 @@ const MainInfo = ({
         }
         return hidePathArray?.every((el, index) => el === watchArray?.[index]);
       }
+      if (element?.attributes?.type) {
+        const hidePathArray = element?.attributes?.hide_path;
+        const watchArray = watch(element?.attributes?.hide_path_field, control);
+        if (element?.attributes?.type === "min") {
+          if (watchArray > Number(hidePathArray)) {
+            return true;
+          } else return false;
+        } else if (element?.attributes?.type === "max") {
+          if (watchArray < Number(hidePathArray)) {
+            return true;
+          } else return false;
+        }
+      }
 
       const isHidden =
         element?.attributes?.hide_path ===

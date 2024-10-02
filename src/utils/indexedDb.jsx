@@ -1,6 +1,6 @@
 export const openDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("SearchTextDb", 1);
+    const request = indexedDB.open("SearchTextDB", 1);
 
     request.onerror = (event) => {
       console.error("Database failed to open", event);

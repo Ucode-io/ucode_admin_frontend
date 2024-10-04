@@ -333,7 +333,7 @@ const ObjectDataTable = ({
           return (
             columns && (
               <TableRow
-                key={virtualRowObject?.id}
+                key={index}
                 relOptions={relOptions}
                 tableView={tableView}
                 width={"80px"}

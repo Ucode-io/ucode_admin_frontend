@@ -344,7 +344,7 @@ const TableView = ({
         currentView,
       },
     ],
-    cacheTime: 10,
+    // cacheTime: 10,
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -385,7 +385,7 @@ const TableView = ({
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-
+  console.log("tableDatatableData", tableData);
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =

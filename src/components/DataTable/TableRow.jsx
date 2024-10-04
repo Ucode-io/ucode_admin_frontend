@@ -62,7 +62,7 @@ const TableRow = ({
   };
 
   const parentRef = useRef(null);
-
+  console.log("columnscolumns", columns);
   if (formVisible)
     return (
       <TableRowForm

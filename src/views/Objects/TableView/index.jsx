@@ -385,7 +385,7 @@ const TableView = ({
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-  console.log("tableDatatableData", tableData);
+
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =

@@ -39,7 +39,6 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
   formVisible,
   remove,
   limit = 10,
@@ -62,7 +61,7 @@ const TableRow = ({
   };
 
   const parentRef = useRef(null);
-  console.log("columnscolumns", columns);
+
   if (formVisible)
     return (
       <TableRowForm

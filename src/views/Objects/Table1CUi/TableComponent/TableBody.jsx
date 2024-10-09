@@ -112,7 +112,7 @@ function TableBody({
     });
 
     foldersState
-      ?.filter((item) => item?.id)
+      ?.filter((item) => item?.id || item?.guid)
       ?.forEach((folder) => {
         if (folder.parent_id) {
           if (folderMap[folder.parent_id]) {

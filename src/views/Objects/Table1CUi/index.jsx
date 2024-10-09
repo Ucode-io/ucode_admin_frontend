@@ -1,5 +1,5 @@
 import {Box} from "@mui/material";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import TableUiHead from "./TableUiHead/TableUiHead";
 import TableFilterBlock from "./TableFilterBlock";
 import TableComponent from "./TableComponent/TableComponent";
@@ -9,6 +9,9 @@ import {useParams} from "react-router-dom";
 import newTableService from "../../../services/newTableService";
 import useFilters from "../../../hooks/useFilters";
 import {customSortArray} from "../../../utils/customSortArray";
+import TableCard from "../../../components/TableCard";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import styles from "./style.module.scss";
 
 function Table1CUi({
   menuItem,
@@ -25,6 +28,8 @@ function Table1CUi({
   selectedView,
   setSelectedView,
   control,
+  tabs,
+  visibleRelationColumns,
 }) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);
@@ -32,6 +37,8 @@ function Table1CUi({
   const [offset, setOffset] = useState(0);
   const {filters} = useFilters(tableSlug, view.id);
   const [searchText, setSearchText] = useState();
+  const [selectedTab, setSelectedTab] = useState();
+  const [selectedTabIn, setSelectedTabIn] = useState(0);
 
   function hasValidFilters(filters) {
     if (!filters || typeof filters !== "object") {
@@ -58,6 +65,7 @@ function Table1CUi({
       "GET_OBJECTS_LIST",
       {
         filters,
+        selectedTab,
         searchText,
       },
     ],
@@ -66,11 +74,17 @@ function Table1CUi({
         data: {
           ...filters,
           search: searchText,
+          limit,
+          offset,
+          [selectedTab?.slug]: [selectedTab?.value],
         },
       });
     },
     cacheTime: 10,
-    enabled: hasValidFilters(filters) || Boolean(searchText),
+    enabled:
+      hasValidFilters(filters) ||
+      Boolean(searchText) ||
+      Boolean(selectedTab?.slug),
     select: (res) => {
       const filteredItems = res?.data?.response;
       return {
@@ -103,7 +117,9 @@ function Table1CUi({
   );
 
   const folders =
-    hasValidFilters(filters) || Boolean(searchText)
+    hasValidFilters(filters) ||
+    Boolean(searchText) ||
+    Boolean(selectedTab?.value)
       ? filteredItems
       : foldersList;
 
@@ -134,6 +150,15 @@ function Table1CUi({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
+  useEffect(() => {
+    if (tabs?.length) {
+      setSelectedTab(tabs?.[0]);
+      setSelectedTabIn(0);
+    } else if (!tabs?.length) {
+      setSelectedTab(null);
+    }
+  }, [tabs?.length]);
+
   return (
     <Box>
       <TableUiHead
@@ -159,21 +184,75 @@ function Table1CUi({
         computedVisibleFields={computedVisibleFields}
       />
 
-      <TableComponent
-        folders={folders}
-        fields={columns}
-        openFilter={openFilter}
-        count={count}
-        limit={limit}
-        setLimit={setLimit}
-        offset={offset}
-        setOffset={setOffset}
-        view={view}
-        menuItem={menuItem}
-        searchText={searchText}
-        control={control}
-        refetch={refetch}
-      />
+      <Tabs
+        selectedIndex={selectedTabIn}
+        onSelect={(index) => {
+          setSelectedTabIn(index);
+        }}>
+        <TableCard type="withoutPadding">
+          {tabs?.length > 0 && (
+            <div className={styles.tableCardHeader}>
+              <div style={{display: "flex", alignItems: "center"}}>
+                <div className="title" style={{marginRight: "20px"}}>
+                  <h3>{view.table_label}</h3>
+                </div>
+                <TabList style={{border: "none"}}>
+                  {tabs?.map((tab) => (
+                    <Tab
+                      onClick={() => setSelectedTab(tab)}
+                      key={tab.value}
+                      selectedClassName={styles.activeTab}
+                      className={`${styles.disableTab} react-tabs__tab`}>
+                      {tab.label}
+                    </Tab>
+                  ))}
+                </TabList>
+              </div>
+            </div>
+          )}
+
+          {tabs?.length
+            ? tabs?.map((tab) => (
+                <TabPanel>
+                  <TableComponent
+                    folders={folders}
+                    fields={columns}
+                    openFilter={openFilter}
+                    count={count}
+                    limit={limit}
+                    tab={tab}
+                    setLimit={setLimit}
+                    offset={offset}
+                    setOffset={setOffset}
+                    view={view}
+                    menuItem={menuItem}
+                    searchText={searchText}
+                    control={control}
+                    refetch={refetch}
+                  />
+                </TabPanel>
+              ))
+            : null}
+
+          {!tabs?.length ? (
+            <TableComponent
+              folders={folders}
+              fields={columns}
+              openFilter={openFilter}
+              count={count}
+              limit={limit}
+              setLimit={setLimit}
+              offset={offset}
+              setOffset={setOffset}
+              view={view}
+              menuItem={menuItem}
+              searchText={searchText}
+              control={control}
+              refetch={refetch}
+            />
+          ) : null}
+        </TableCard>
+      </Tabs>
     </Box>
   );
 }

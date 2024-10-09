@@ -267,6 +267,8 @@ const ViewsWithGroups = ({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
           control={control}
+          tabs={tabs}
+          visibleRelationColumns={visibleRelationColumns}
         />
       ) : (
         <Box>

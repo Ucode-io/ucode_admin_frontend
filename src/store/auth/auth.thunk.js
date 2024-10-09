@@ -36,12 +36,12 @@ export const loginAction = createAsyncThunk(
           console.log(err);
         });
       const fcmToken = localStorage.getItem("fcmToken");
-      if (res.user.id)
-        await authService.sendFcmToken({
-          token: fcmToken,
-          user_id: res.user.id,
-          platform_id: "ANDROID",
-        });
+      // if (res.user.id)
+      //   await authService.sendFcmToken({
+      //     token: fcmToken,
+      //     user_id: res.user.id,
+      //     platform_id: "ANDROID",
+      //   });
 
       // dispatch(cashboxActions.setData(cashboxData))
     } catch (error) {

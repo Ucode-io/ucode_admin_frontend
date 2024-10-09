@@ -11,6 +11,7 @@ import GroupSwitchMenu from "./GroupSwitchMenu";
 import styles from "./style.module.scss";
 import useRelationTabRouter from "../../../../hooks/useRelationTabRouter";
 import TableHeadTitle from "../TableUiHead/TableHeadTitle";
+import GroupByButtonNewDesign from "../../GroupByButtonNewDesign";
 
 function TableFilterBlock({
   openFilter,
@@ -26,6 +27,7 @@ function TableFilterBlock({
   const [anchorEl, setAnchorEl] = useState(null);
   const [groupOpen, setGroupOpen] = useState(false);
   const open = Boolean(anchorEl);
+  const openTabGroup = Boolean(anchorEl);
   const {navigateToRelationForm} = useRelationTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -37,6 +39,7 @@ function TableFilterBlock({
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -107,6 +110,8 @@ function TableFilterBlock({
           <button onClick={handleClick} className={styles.filterBtn}>
             <img src="/img/eye_off.svg" alt="" />
           </button>
+
+          <GroupByButtonNewDesign view={view} fieldsMap={fieldsMap} />
         </div>
 
         <div className={styles.filterCreatBtns}>

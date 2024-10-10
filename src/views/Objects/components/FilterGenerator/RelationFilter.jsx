@@ -3,10 +3,11 @@ import {useQuery} from "react-query";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import FilterAutoComplete from "./FilterAutocomplete";
+import {useTranslation} from "react-i18next";
 
 const RelationFilter = ({field = {}, filters, name, onChange}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-
+  const {i18n} = useTranslation();
   const {
     data: {data: options = []} = {
       data: [],
@@ -53,7 +54,7 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
         onChange(val?.length ? val : undefined, name);
       }}
       options={options}
-      label={field.label}
+      label={field.label || field?.attributes?.[`label_${i18n?.language}`]}
     />
   );
 };

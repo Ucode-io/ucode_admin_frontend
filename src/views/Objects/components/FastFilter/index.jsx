@@ -77,7 +77,7 @@ const FastFilter = ({
       })
     );
   };
-
+  console.log("viewviewviewview", view);
   return (
     <div
       className={styles.filtersBlock}

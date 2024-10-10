@@ -13,7 +13,7 @@ const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
     () => filters.order?.[name],
     [filters.order, name]
   );
-
+  console.log();
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order");
     const data = {

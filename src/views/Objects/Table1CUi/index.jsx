@@ -29,7 +29,6 @@ function Table1CUi({
   setSelectedView,
   control,
   tabs,
-  visibleRelationColumns,
 }) {
   const {tableSlug} = useParams();
   const [openFilter, setOpenFilter] = useState(false);

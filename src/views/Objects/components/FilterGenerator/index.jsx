@@ -8,12 +8,18 @@ import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import DateFilterWithoutTimeZ from "./DateFilterWithoutTimeZ";
 
-const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
+const FilterGenerator = ({
+  field,
+  name,
+  filters = {},
+  onChange = () => {},
+  tableSlug,
+}) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
   );
-  console.log();
+
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order");
     const data = {

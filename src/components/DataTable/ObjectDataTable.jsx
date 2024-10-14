@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";

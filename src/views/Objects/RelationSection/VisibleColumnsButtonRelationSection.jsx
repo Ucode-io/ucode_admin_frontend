@@ -44,7 +44,6 @@ export default function VisibleColumnsButtonRelationSection({
   };
 
   const updateView = async (datas) => {
-    console.log("datasssssssssssss", datas);
     setIsLoading(true);
 
     const result = data?.tabs;
@@ -477,7 +476,6 @@ export default function VisibleColumnsButtonRelationSection({
                         size="small"
                         checked={computedColumns?.includes(column?.id)}
                         onChange={(e) => {
-                          console.log("eeeeeeeeeeeeee", e.target.checked);
                           updateView(
                             e.target.checked
                               ? data?.tabs?.[selectedTabIndex]?.attributes

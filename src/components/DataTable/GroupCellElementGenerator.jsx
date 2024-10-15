@@ -94,6 +94,125 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
   if (field.render) {
     return field.render(row);
   }
+
+  // const renderComponentValues = {
+  //   LOOKUPS: () => <Many2ManyValue field={field} value={value} />,
+  //   LOOKUP: () =>
+  //     ((row?.group_by_slug ||
+  //       !view?.attributes?.group_by_columns?.find(
+  //         (item) => item === field?.relation_id
+  //       )) &&
+  //       resultString) ||
+  //     getRelationFieldTableCellLabel(field, row, field.slug + "_data"),
+  //   DATE: () => <span className="text-nowrap">{formatDate(value)}</span>,
+  //   NUMBER: () =>
+  //     value !== undefined && typeof value === "number"
+  //       ? numberWithSpaces(value?.toFixed(1))
+  //       : value === undefined
+  //         ? value
+  //         : "",
+  //   DATE_TIME: () => (
+  //     <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
+  //   ),
+  //   MULTISELECT: () => (
+  //     <MultiselectCellColoredElement field={field} value={value} />
+  //   ),
+  //   MULTI_LINE: () => (
+  //     <div className=" text_overflow_line">
+  //       <span
+  //         dangerouslySetInnerHTML={{
+  //           __html: `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
+  //         }}></span>
+  //     </div>
+  //   ),
+  //   DATE_TIME_WITHOUT_TIME_ZONE: () => timeValue,
+  //   PASSWORD: () => (
+  //     <div className="text-overflow">
+  //       <span
+  //         dangerouslySetInnerHTML={{
+  //           __html: "*".repeat(value?.length),
+  //         }}></span>
+  //     </div>
+  //   ),
+  //   CHECKBOX: () =>
+  //     parseBoolean(value) ? (
+  //       <TableTag color="success">
+  //         {field.attributes?.text_true ?? "Да"}
+  //       </TableTag>
+  //     ) : (
+  //       <TableTag color="error">
+  //         {field.attributes?.text_false ?? "Нет"}
+  //       </TableTag>
+  //     ),
+  //   SWITCH: () =>
+  //     parseBoolean(value) ? (
+  //       <TableTag color="success">
+  //         {field.attributes?.text_true ?? "Да"}
+  //       </TableTag>
+  //     ) : (
+  //       <TableTag color="error">
+  //         {field.attributes?.text_false ?? "Нет"}
+  //       </TableTag>
+  //     ),
+  //   DYNAMIC: () => computedInputString ?? "",
+  //   FORMULA: () => (value ? numberWithSpaces(value) : 0),
+  //   FORMULA_FRONTEND: () =>
+  //     value !== undefined && typeof value === "number"
+  //       ? numberWithSpaces(value?.toFixed(1))
+  //       : value === undefined
+  //         ? value
+  //         : "",
+
+  //   ICON: () => <IconGenerator icon={value} />,
+  //   PHOTO: () => (
+  //     <span
+  //       style={{
+  //         display: "flex",
+  //         alignItems: "center",
+  //         justifyContent: "center",
+  //       }}>
+  //       <LogoDisplay url={value} />
+  //     </span>
+  //   ),
+  //   MAP: () =>
+  //     value ? (
+  //       <a
+  //         target="_blank"
+  //         href={`${generateLink(
+  //           value?.split(",")?.[0],
+  //           value?.split(",")?.[1]
+  //         )}`}
+  //         rel="noreferrer"
+  //         onClick={(e) => e.stopPropagation()}>
+  //         {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
+  //       </a>
+  //     ) : (
+  //       ""
+  //     ),
+  //   FILE: () =>
+  //     value ? (
+  //       <a
+  //         href={value}
+  //         className=""
+  //         download
+  //         target="_blank"
+  //         onClick={(e) => e.stopPropagation()}
+  //         rel="noreferrer">
+  //         <DownloadIcon
+  //           style={{width: "25px", height: "25px", fontSize: "30px"}}
+  //         />
+  //       </a>
+  //     ) : (
+  //       ""
+  //     ),
+  // };
+
+  // return renderComponentValues[field?.type] ? (
+  //   renderComponentValues[field?.type]
+  // ) : (
+  //   typeof value === 'object' ? JSON.stringify(value) :
+  // )
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
@@ -176,10 +295,7 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
           ? value
           : "";
 
-    // case "FORMULA_FRONTEND":
-    //   return <FormulaCell field={field} row={row} />
-
-    case "ICO":
+    case "ICON":
       return <IconGenerator icon={value} />;
 
     case "PHOTO":

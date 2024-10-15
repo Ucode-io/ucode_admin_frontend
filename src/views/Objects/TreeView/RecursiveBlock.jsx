@@ -42,6 +42,7 @@ const RecursiveBlock = ({
       null,
       {
         [`${tableSlug}_id`]: row.guid,
+        isTreeView: true,
       },
       menuId
     );
@@ -60,7 +61,7 @@ const RecursiveBlock = ({
       setDeleteLoader(false);
     }
   };
-  console.log("childrenchildren", children);
+
   return (
     <>
       <div

@@ -54,7 +54,7 @@ const HFMultipleAutocomplete = ({
   onChange = () => {},
   field,
   rules = {},
-  defaultValue = "",
+  defaultValue = [],
   disabled,
   setFormValue,
 }) => {
@@ -183,6 +183,7 @@ const AutoCompleteElement = ({
   //     onFormChange(value);
   //   }
   // }, []);
+
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>

@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -16,9 +16,9 @@ import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
 import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
-import {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectDataTable = ({
+  dataCount,
   selectedTab,
   relOptions,
   filterVisible,
@@ -41,6 +41,7 @@ const ObjectDataTable = ({
   fields = [],
   isRelationTable,
   disablePagination,
+  count,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
@@ -90,17 +91,6 @@ const ObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: !Boolean(objectMenuItem),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -240,6 +230,7 @@ const ObjectDataTable = ({
 
   return (
     <CTable
+      dataCount={count ?? dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}
       count={pagesCount}
@@ -342,7 +333,7 @@ const ObjectDataTable = ({
           return (
             columns && (
               <TableRow
-                key={virtualRowObject?.id}
+                key={index}
                 relOptions={relOptions}
                 tableView={tableView}
                 width={"80px"}

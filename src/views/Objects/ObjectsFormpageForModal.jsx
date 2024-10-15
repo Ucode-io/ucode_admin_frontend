@@ -69,20 +69,8 @@ const ObjectsFormPageForModal = ({
   const {i18n} = useTranslation();
   const [layout, setLayout] = useState({});
   const [data, setData] = useState({});
-
   const [searchParams, setSearchParams] = useSearchParams();
-  // const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: Boolean(searchParams.get("menuId")),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
 
   const {
     handleSubmit,

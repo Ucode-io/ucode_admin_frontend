@@ -25,13 +25,14 @@ const HFDateTimePicker = ({
   disabled,
   sectionModal,
   defaultValue,
+  field,
 }) => {
   const classes = useStyles();
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
           <CDateTimePicker

@@ -177,8 +177,8 @@ const RelationSettings = ({
 
   const computedFieldsListOptions = useMemo(() => {
     return values?.columnsList?.map((field) => ({
-      label: field?.label || field.view_fields[0]?.label,
-      value: field.id,
+      label: field?.label || field?.view_fields?.[0]?.label,
+      value: field?.id,
     }));
   }, [values.columnsList, values]);
 
@@ -226,11 +226,7 @@ const RelationSettings = ({
     const data = {
       ...values,
       relation_table_slug: relatedTableSlug ?? tableSlug,
-      // compute columns
-      // columns: values.columnsList
-      //   ?.filter((el) => el.is_checked)
-      //   ?.map((el) => el.id),
-      // compute filters
+
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
         ?.map((el) => ({
@@ -238,7 +234,6 @@ const RelationSettings = ({
           default_value: "",
         })),
 
-      // compute default value
       default_values: values?.default_values
         ? Array.isArray(values.default_values)
           ? values.default_values
@@ -246,7 +241,6 @@ const RelationSettings = ({
         : [],
     };
 
-    // delete data?.field_name;
     delete data?.formula_name;
 
     setFormLoader(true);
@@ -284,7 +278,6 @@ const RelationSettings = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
-        console.log("resssssssssssss", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
@@ -435,7 +428,6 @@ const RelationSettings = ({
                         />
                       </FRow>
                     )}
-                    {/* {isViewFieldsVisible && ( */}
                     <FRow label="View fields">
                       <HFMultipleSelect
                         name="view_fields"
@@ -444,7 +436,6 @@ const RelationSettings = ({
                         placeholder="View fields"
                       />
                     </FRow>
-                    {/* )} */}
 
                     {values.type === "Many2Dynamic" && (
                       <DynamicRelationsBlock

@@ -397,7 +397,11 @@ const ButtonsMenu = ({
             title="Create table"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              navigate(`/settings/constructor/apps/${appId}/objects/create`, {
+                state: {
+                  create_table: true,
+                },
+              });
               handleCloseNotify();
             }}
           />

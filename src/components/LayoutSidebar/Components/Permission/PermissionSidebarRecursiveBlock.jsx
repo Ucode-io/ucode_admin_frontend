@@ -9,13 +9,14 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import {store} from "../../../../store";
 import {RiPencilFill} from "react-icons/ri";
 import activeStyles from "../MenuUtils/activeStyles";
-export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
-export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 import {Delete} from "@mui/icons-material";
 import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 import {useClientTypeDeleteMutation} from "../../../../services/clientTypeService";
 import {useQueryClient} from "react-query";
 import DeleteWrapperModal from "../../../DeleteWrapperModal";
+
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const PermissionSidebarRecursiveBlock = ({
   customFunc = () => {},
@@ -53,7 +54,6 @@ const PermissionSidebarRecursiveBlock = ({
     });
 
   const deleteRole = async (element) => {
-    console.log("element", element?.guid);
     if (element?.guid) {
       await deleteClientType({
         id: element?.guid,

@@ -18,6 +18,9 @@ import {selectedRowReducer} from "./selectedRow/selectedRow.slice";
 import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
 import {paginationReducer} from "./pagination/pagination.slice";
 import {relationTabReducer} from "./relationTab/relationTab.slice";
+import {viewsReducer} from "./views/view.slice";
+import {isOnlineReducer} from "./isOnline/isOnline.slice";
+import {permissionsReducer} from "./permissions/permissions.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -98,6 +101,21 @@ const relationTab = {
   storage,
 };
 
+const viewTab = {
+  key: "viewSelectedTab",
+  storage,
+};
+
+const isOnline = {
+  key: "isOnline",
+  storage,
+};
+
+const permissions = {
+  key: "permissions",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -127,8 +145,11 @@ const rootReducer = combineReducers({
   relationTab: persistReducer(relationTab, relationTabReducer),
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),
   selectedRow: persistReducer(selectedRowPersistConfig, selectedRowReducer),
+  viewSelectedTab: persistReducer(viewTab, viewsReducer),
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),
   alert: alertReducer,
+  isOnline: persistReducer(isOnline, isOnlineReducer),
+  permissions: persistReducer(permissions, permissionsReducer),
 });
 
 export default rootReducer;

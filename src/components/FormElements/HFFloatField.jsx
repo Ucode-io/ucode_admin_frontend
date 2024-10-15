@@ -33,8 +33,7 @@ const HFFloatField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        // const allowNegative = isFloat; // allow negatives only for float fields
-        const decimalSeparator = isFloat ? "." : undefined; // set the decimal separator only for float fields
+        const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
             thousandsGroupStyle="thousand"
@@ -46,11 +45,10 @@ const HFFloatField = ({
             autoComplete="off"
             allowNegative={true}
             fullWidth={fullWidth}
-            value={value}
+            value={value ?? ""}
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(" ", "");
-              console.log("valvalvalvalval", val);
               if (!valueWithoutSpaces) onChange("");
               else {
                 if (valueWithoutSpaces.at(-1) === ".")
@@ -73,17 +71,16 @@ const HFFloatField = ({
               isTransparent
                 ? {background: "transparent", border: "none"}
                 : disabled
-                ? {background: "#c0c0c039"}
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                  }
+                  ? {background: "#c0c0c039"}
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    }
             }
             {...props}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

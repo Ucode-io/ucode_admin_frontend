@@ -39,6 +39,7 @@ const HFDateDatePickerWithoutTimeZoneTable = ({
       name={name}
       defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => {
+        console.log("valueeeeeeeeee=====>", value);
         return (
           <CDateDatePickerNoTimeZoneTable
             isFormEdit={isFormEdit}
@@ -58,8 +59,7 @@ const HFDateDatePickerWithoutTimeZoneTable = ({
             isTableView={isTableView}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

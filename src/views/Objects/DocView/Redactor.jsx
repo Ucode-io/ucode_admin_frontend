@@ -19,7 +19,7 @@ const Redactor = forwardRef(
     const computedFields = useMemo(() => {
       return (
         fields?.map((field) => ({
-          label: field.label,
+          label: `${field.label}`,
           value: `{ ${field.label} }`,
         })) ?? []
       );

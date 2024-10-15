@@ -17,6 +17,7 @@ const FastFilter = ({
   visibleRelationColumns,
   visibleForm,
   isVisibleLoading,
+  setFilterVisible,
 }) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
@@ -56,7 +57,7 @@ const FastFilter = ({
           ?.map((fast) => fast),
       ]
         ?.map((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOKKUPS") {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
             return fieldsMap[el?.relation_id];
           } else {
             return fieldsMap[el?.id];
@@ -85,7 +86,7 @@ const FastFilter = ({
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}
-            name={filter?.path_slug ?? filter.slug}
+            name={filter?.path_slug || filter.slug}
             tableSlug={tableSlug}
             filters={filters}
             onChange={onChange}
@@ -101,6 +102,7 @@ const FastFilter = ({
         relationColumns={visibleRelationColumns}
         isLoading={isVisibleLoading}
         form={visibleForm}
+        setFilterVisible={setFilterVisible}
       />
     </div>
   );

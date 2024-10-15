@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -23,16 +23,10 @@ const projectFolder = {
   },
 };
 
-const MicrofrontendSettingSidebar = ({
-  level = 1,
-  menuStyle,
-  menuItem,
-  setSubMenuIsOpen,
-  element,
-}) => {
+const MicrofrontendSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const location = useLocation();
 
   const activeStyle = {
@@ -73,8 +67,7 @@ const MicrofrontendSettingSidebar = ({
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
             {projectFolder?.label}

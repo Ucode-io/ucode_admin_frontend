@@ -11,3 +11,13 @@ export const listToMap = (list = [], fieldName = "id") => {
 
   return map;
 };
+
+export const listToMapForCalendar = (list = [], fieldName = "id") => {
+  const map = {};
+
+  list?.forEach((item) => {
+    map[item[fieldName]] = item;
+  });
+
+  return map;
+};

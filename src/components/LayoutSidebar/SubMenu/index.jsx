@@ -16,7 +16,7 @@ import Resources from "../Components/Resources";
 import {Container} from "react-smooth-dnd";
 import {applyDrag} from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useQueryClient} from "react-query";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -25,9 +25,7 @@ import {store} from "../../../store";
 import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import {useSearchParams} from "react-router-dom";
 import QuerySidebar from "../Components/Query/QuerySidebar";
-import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
-import EnvironmentMenu from "../Components/EnvironmentMenu";
 import ProjectSettings from "../Components/ProjectSettings";
 import ApiMenu from "../Components/ApiMenu/Index";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -180,7 +178,6 @@ const SubMenu = ({
                 }}
               />
             </div>
-            {/* )} */}
             <div
               className="close-btn"
               onClick={() => {
@@ -289,14 +286,6 @@ const SubMenu = ({
                       pinIsEnabled={pinIsEnabled}
                     />
                   )}
-                  {/* {selectedApp?.id === adminId && (
-                    <EnvironmentMenu
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      level={2}
-                      menuItem={menuItem}
-                    />
-                  )} */}
                 </div>
               </Box>
             )}

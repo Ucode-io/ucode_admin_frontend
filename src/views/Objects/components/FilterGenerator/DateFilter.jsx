@@ -1,11 +1,15 @@
-import CRangePickerNew from "../../../../components/DatePickers/CRangePickerNew"
+import CRangePickerNew from "../../../../components/DatePickers/CRangePickerNew";
 
-const DateFilter = ({ onChange, value }) => {
+const DateFilter = ({onChange, value, placeholder, field}) => {
   return (
     <>
-      <CRangePickerNew value={value} onChange={onChange} />
+      <CRangePickerNew
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
     </>
-  )
-}
+  );
+};
 
-export default DateFilter
+export default DateFilter;

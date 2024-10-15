@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
   useLocation,
   useNavigate,
@@ -33,10 +33,19 @@ const ObjectsPage = () => {
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
+
   const {i18n} = useTranslation();
-  const [selectedTabIndex, setSelectedTabIndex] = useState(1);
+  const viewSelectedIndex = useSelector(
+    (state) =>
+      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
+        ?.tabIndex
+  );
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState(
+    viewSelectedIndex?.tabIndex || 1
+  );
   const [menuItem, setMenuItem] = useState(null);
-  const roleId = useSelector((state) => state.auth.roleInfo.id);
+  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
   const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
@@ -92,6 +101,7 @@ const ObjectsPage = () => {
       );
     },
     {
+      enabled: Boolean(tableSlug),
       select: ({data}) => {
         return {
           views:
@@ -116,8 +126,12 @@ const ObjectsPage = () => {
   useEffect(() => {
     queryTab
       ? setSelectedTabIndex(parseInt(queryTab - 1))
-      : setSelectedTabIndex(0);
+      : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
+
+  // useEffect(() => {
+  //   initDB();
+  // }, [tableSlug]);
 
   // useEffect(() => {
   //   if (searchParams.get("menuId")) {

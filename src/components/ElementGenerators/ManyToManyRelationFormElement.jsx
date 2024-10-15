@@ -13,6 +13,7 @@ import FRow from "../FormElements/FRow";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 import Select from "react-select";
+import {useSearchParams} from "react-router-dom";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -29,24 +30,23 @@ const ManyToManyRelationFormElement = ({
   checkRequiredField,
   ...props
 }) => {
+  const {i18n} = useTranslation();
+
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
-  const {i18n} = useTranslation();
+
+  const label =
+    field?.attributes[`title_${i18n?.language}`] ||
+    field?.attributes[`name_${i18n?.language}`] ||
+    field?.attributes[`label_to_${i18n?.language}`] ||
+    field?.attributes[`label_${i18n?.language}`] ||
+    field?.label ||
+    field.title;
 
   if (!isLayout)
     return (
-      <FRow
-        label={
-          field?.attributes[`title_${i18n?.language}`] ||
-          field?.attributes[`name_${i18n?.language}`] ||
-          field?.attributes[`label_to_${i18n?.language}`] ||
-          field?.attributes[`label_${i18n?.language}`] ||
-          field?.label ||
-          field.title
-        }
-        required={field.required}
-      >
+      <FRow label={label} required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
@@ -77,8 +77,7 @@ const ManyToManyRelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -110,8 +109,7 @@ const ManyToManyRelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -133,6 +131,8 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -170,7 +170,7 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: value,
             },
-            // additional_ids: value,
+
             search: debouncedValue,
             limit: 10,
             offset: pageToOffset(page, 10),
@@ -211,12 +211,12 @@ const AutoCompleteElement = ({
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
-            // [`name_langs_${i18n?.language}`],
+
             additional_request: {
               additional_field: "guid",
-              additional_values: value,
+              additional_values: [value],
             },
-            // additional_ids: value,
+
             search: debouncedValue,
             limit: 10,
             offset: pageToOffset(page, 10),
@@ -249,22 +249,31 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    const result = value
-      ?.map((id) => {
-        const option = allOptions?.find((el) => el?.guid === id);
+    if (Array.isArray(value)) {
+      const result = value
+        ?.map((id) => {
+          const option = allOptions?.find((el) => el?.guid === id);
 
-        if (!option) return null;
-        return {
-          ...option,
-          // label: getRelationFieldLabel(field, option)
-        };
-      })
-      ?.filter((el) => el);
+          if (!option) return null;
+          return {
+            ...option,
+            // label: getRelationFieldLabel(field, option)
+          };
+        })
+        ?.filter((el) => el);
 
-    return result?.map((item) => ({
-      label: getRelationFieldLabel(field, item),
-      value: item?.guid,
-    }));
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    } else {
+      const result = allOptions?.filter((el) => el?.guid === value);
+
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    }
   }, [value, allOptions, i18n?.language, field?.attributes?.view_fields]);
 
   const computedOptions = useMemo(() => {
@@ -279,10 +288,6 @@ const AutoCompleteElement = ({
     );
   }, [allOptions, options, i18n?.language]);
 
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
-  };
-
   const changeHandler = (value) => {
     if (!value) setValue(null);
     const val = value?.map((el) => el.value);
@@ -293,6 +298,14 @@ const AutoCompleteElement = ({
   const inputChangeHandler = useDebounce((val) => {
     setDebouncedValue(val);
   }, 300);
+
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
 
   const customStyles = {
     control: (provided, state) => ({
@@ -318,20 +331,11 @@ const AutoCompleteElement = ({
     }),
   };
 
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
   return (
     <div className={styles.autocompleteWrapper}>
       <div
         className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
+        onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
         Create new
       </div>
 
@@ -342,7 +346,11 @@ const AutoCompleteElement = ({
           changeHandler(value, options);
         }}
         onInputChange={(_, val) => {
-          inputChangeHandler(val);
+          if (typeof val === "string") {
+            inputChangeHandler(val?.prevInputValue);
+          } else if (Boolean(val?.prevInputValue)) {
+            inputChangeHandler(val?.prevInputValue);
+          }
         }}
         components={{
           DropdownIndicator: null,

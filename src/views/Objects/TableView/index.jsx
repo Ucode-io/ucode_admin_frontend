@@ -5,7 +5,6 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorFieldService from "../../../services/constructorFieldService";
@@ -23,6 +22,8 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import DragObjectDataTable from "../../../components/DataTable/DragObjectDataTable";
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 
 const TableView = ({
   filterVisible,
@@ -170,7 +171,7 @@ const TableView = ({
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));
@@ -181,7 +182,6 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      // queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -225,13 +225,17 @@ const TableView = ({
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 
-    let a = sortedDatas?.map((el) => {
-      if (el.field) {
-        return {
-          [fieldsMap[el?.field].slug]: el.order === "ASC" ? 1 : -1,
-        };
-      }
-    });
+    let a = sortedDatas
+      ?.map((el) => {
+        if (el?.field && el?.order === "ASC") {
+          return {
+            [fieldsMap[el?.field]?.slug]: 1,
+          };
+        } else if (el?.order === "DESC") {
+          return undefined;
+        }
+      })
+      .filter(Boolean);
 
     a.forEach((obj) => {
       for (const key in obj) {
@@ -310,12 +314,18 @@ const TableView = ({
     },
   });
 
+  const tableSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
+
   const {
-    data: {tableData, pageCount} = {
+    data: {tableData, pageCount, dataCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
       fiedlsarray: [],
+      dataCount: 0,
     },
     refetch,
     isLoading: tableLoader,
@@ -331,19 +341,19 @@ const TableView = ({
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
+        currentView,
       },
     ],
-    cacheTime: 10,
+    // cacheTime: 10,
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: searchText ? 1 : pageToOffset(currentPage, paginiation),
+          row_view_id: view?.id,
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
+          search: tableSearch,
+
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab
@@ -362,6 +372,7 @@ const TableView = ({
         pageCount: isNaN(res.data?.count)
           ? 1
           : Math.ceil(res.data?.count / (paginiation ?? limit)),
+        dataCount: res?.data?.count,
       };
     },
     onSuccess: (data) => {
@@ -426,6 +437,7 @@ const TableView = ({
           constructorObjectService
             .getListV2(item?.table_slug, {
               data: {
+                row_view_id: view?.id,
                 limit: 10,
                 offset: 0,
                 additional_request: {
@@ -499,7 +511,7 @@ const TableView = ({
       }
     },
     onError: (error) => {
-      console.error("ssssssswww", error);
+      console.error("Error", error);
     },
   });
 
@@ -531,9 +543,18 @@ const TableView = ({
     }
   };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
   const navigateToDetailPage = (row) => {
-    if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
         ?.map(
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
@@ -541,25 +562,16 @@ const TableView = ({
               row
             )}`
         )
-        .join("&&");
+        .join("&");
 
-      const urlTemplate = view?.navigate?.url;
+      const urlTemplate = view?.attributes?.navigate?.url;
       let query = urlTemplate;
 
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-      const matches = urlTemplate.match(variablePattern);
+      const matches = replaceUrlVariables(urlTemplate, row);
 
-      if (matches) {
-        matches.forEach((match) => {
-          const variableName = match.slice(4, -2);
-          const variableValue = row[variableName];
-          if (variableValue !== undefined) {
-            query = query.replace(match, variableValue);
-          }
-        });
-      }
-      navigate(`${query}${params ? "?" + params : ""}`);
+      navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
@@ -601,13 +613,16 @@ const TableView = ({
         view?.attributes?.quick_filters?.length ?? 0
       )
     );
+  }, [view?.attributes?.quick_filters?.length, refetch]);
+
+  useEffect(() => {
     setFilterVisible(
       view?.attributes?.quick_filters?.length < 0 ? true : false
     );
-  }, [view?.attributes?.quick_filters?.length, refetch]);
+  }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div id="wrapper_drag" className={styles.wrapper}>
       {
         <div
           className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
@@ -623,6 +638,7 @@ const TableView = ({
               visibleRelationColumns={visibleRelationColumns}
               visibleForm={visibleForm}
               isVisibleLoading={isVisibleLoading}
+              setFilterVisible={setFilterVisible}
             />
           </Box>
         </div>
@@ -634,60 +650,118 @@ const TableView = ({
           width: filterVisible ? "calc(100% - 200px)" : "100%",
         }}
         id="data-table">
-        <ObjectDataTable
-          refetch={refetch}
-          filterVisible={filterVisible}
-          currentView={currentView}
-          relOptions={relOptions}
-          tableView={true}
-          defaultLimit={view?.default_limit}
-          formVisible={formVisible}
-          selectedView={selectedView}
-          setSortedDatas={setSortedDatas}
-          sortedDatas={sortedDatas}
-          setDrawerState={setDrawerState}
-          setDrawerStateField={setDrawerStateField}
-          isTableView={true}
-          getValues={getValues}
-          setFormVisible={setFormVisible}
-          setFormValue={setFormValue}
-          mainForm={mainForm}
-          isRelationTable={false}
-          removableHeight={isDocView ? 150 : 170}
-          currentPage={currentPage}
-          pagesCount={pageCount}
-          selectedObjectsForDelete={selectedObjectsForDelete}
-          setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-          columns={columns}
-          multipleDelete={multipleDelete}
-          openFieldSettings={openFieldSettings}
-          limit={paginiation ?? limit}
-          setLimit={setLimit}
-          onPaginationChange={setCurrentPage}
-          loader={tableLoader || deleteLoader}
-          data={tableData}
-          navigateToEditPage={navigateCreatePage}
-          summaries={view?.attributes?.summaries}
-          disableFilters
-          isChecked={(row) => selectedObjects?.includes(row.guid)}
-          filters={filters}
-          filterChangeHandler={filterChangeHandler}
-          onRowClick={navigateToEditPage}
-          onDeleteClick={deleteHandler}
-          tableSlug={tableSlug}
-          view={view}
-          tableStyle={{
-            borderRadius: 0,
-            border: "none",
-            borderBottom: "1px solid #E5E9EB",
-            width: "100%",
-            margin: 0,
-          }}
-          isResizeble={true}
-          navigateToForm={navigateToForm}
-          menuItem={menuItem}
-          {...props}
-        />
+        {view?.attributes?.table_draggable ? (
+          <DragObjectDataTable
+            refetch={refetch}
+            filterVisible={filterVisible}
+            currentView={currentView}
+            relOptions={relOptions}
+            tableView={true}
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            getValues={getValues}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            navigateToEditPage={navigateCreatePage}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            navigateToForm={navigateToForm}
+            menuItem={menuItem}
+            {...props}
+          />
+        ) : (
+          <ObjectDataTable
+            dataCount={dataCount}
+            refetch={refetch}
+            filterVisible={filterVisible}
+            currentView={currentView}
+            relOptions={relOptions}
+            tableView={true}
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            getValues={getValues}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            navigateToEditPage={navigateCreatePage}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            navigateToForm={navigateToForm}
+            menuItem={menuItem}
+            {...props}
+          />
+        )}
       </div>
 
       {open && (

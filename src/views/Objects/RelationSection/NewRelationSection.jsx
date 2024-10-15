@@ -9,7 +9,6 @@ import {useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PageFallback from "../../../components/PageFallback";
 import constructorTableService from "../../../services/constructorTableService";
-import layoutService from "../../../services/layoutService";
 import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
@@ -89,7 +88,7 @@ const NewRelationSection = ({
       return data?.type;
     }
   }, [data]);
-
+  console.log("selectedTabselectedTab", selectedTab);
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
   }, [relations, selectedTab]);
@@ -177,7 +176,7 @@ const NewRelationSection = ({
 
   const onSelect = (el) => {
     setType(el?.type);
-    setSelectTab(el ?? relations[selectedTabIndex]);
+    setSelectTab(el || relations[selectedTabIndex]);
   };
 
   /*****************************JWT END*************************/
@@ -422,6 +421,7 @@ const NewRelationSection = ({
                       relation={data}
                       selectedIndex={selectedIndex}
                       errors={errors}
+                      watch={watch}
                     />
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection

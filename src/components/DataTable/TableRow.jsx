@@ -39,7 +39,6 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
   formVisible,
   remove,
   limit = 10,
@@ -115,7 +114,6 @@ const TableRow = ({
                 }}>
                 <Button
                   onClick={() => {
-                    console.log("worked 1");
                     onRowClick(row, rowIndex);
                   }}
                   className="first_button"
@@ -267,7 +265,7 @@ const TableRow = ({
                   </PermissionWrapperV2>
                 </CTableCell>
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
-                  <GeneratePdfFromTable row={row} />
+                  <GeneratePdfFromTable view={view} row={row} />
                 </PermissionWrapperV2>
               </div>
             </td>

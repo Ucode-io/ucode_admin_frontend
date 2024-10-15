@@ -28,7 +28,7 @@ function HFQrForTableView({
     px: 4,
     pb: 3,
   };
-  console.log("openModal", openModal);
+
   return (
     <Box>
       <Controller

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import {Controller} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
-import ClearIcon from "@mui/icons-material/Clear"; // Import the clear icon
+import ClearIcon from "@mui/icons-material/Clear";
 import {columnIcons} from "../../utils/constants/columnIcons";
 
 const HFSelect = ({
@@ -24,6 +24,7 @@ const HFSelect = ({
   required = false,
   onChange = () => {},
   onOpen = () => {},
+  getOnchangeField = () => {},
   optionType,
   defaultValue = "",
   rules = {},
@@ -35,7 +36,7 @@ const HFSelect = ({
     setSelectedValue("");
     onChange("");
   };
-  console.log("defaultValue", selectedValue, defaultValue);
+
   return (
     <Controller
       control={control}
@@ -49,7 +50,6 @@ const HFSelect = ({
         field: {onChange: onFormChange, value},
         fieldState: {error},
       }) => {
-        console.log("valuevaluevalue", value);
         return (
           <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
@@ -74,9 +74,9 @@ const HFSelect = ({
                   : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
               }
               onChange={(e) => {
-                setSelectedValue(e.target.value);
-                onChange(e.target.value);
                 onFormChange(e.target.value);
+                onChange(e.target.value);
+                setSelectedValue(e.target.value);
               }}
               onOpen={() => {
                 onOpen();
@@ -85,11 +85,13 @@ const HFSelect = ({
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
+                      onClick={(e) => getOnchangeField(group)}
                       style={{fontWeight: 600, color: "#000", fontSize: 15}}>
                       {group.label}
                     </MenuItem>,
                     group.options?.map((option) => (
                       <MenuItem
+                        onClick={(e) => getOnchangeField(option)}
                         key={option.value}
                         value={option.value}
                         style={{paddingLeft: 30}}>
@@ -105,7 +107,10 @@ const HFSelect = ({
                     )),
                   ])
                 : options?.map((option) => (
-                    <MenuItem key={option?.value} value={option?.value}>
+                    <MenuItem
+                      onClick={(e) => getOnchangeField(option)}
+                      key={option?.value}
+                      value={option?.value}>
                       <div className="flex align-center gap-2">
                         {option?.icon && columnIcons(option?.value)}
                         {option?.label}

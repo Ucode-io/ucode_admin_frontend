@@ -51,7 +51,7 @@ const ActionSettings = ({
   height,
 }) => {
   const {tableSlug} = useParams();
-  console.log("sluggggggggg", tableSlug);
+
   const languages = useSelector((state) => state.languages.list);
 
   const [loader, setLoader] = useState(false);
@@ -134,16 +134,14 @@ const ActionSettings = ({
       <div className={styles.settingsBlockBody} style={{height}}>
         <form
           onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
+          className={styles.fieldSettingsForm}>
           <div className="p-2">
             <FRow label="Icon" required>
               <HFIconPicker control={control} required name="icon" />
             </FRow>
             <FRow label="Label" required>
               <Box
-                style={{display: "flex", flexDirection: "column", gap: "6px"}}
-              >
+                style={{display: "flex", flexDirection: "column", gap: "6px"}}>
                 {languages?.map((lang) => (
                   <HFTextField
                     name={`attributes.label_${lang?.slug}`}
@@ -220,8 +218,7 @@ const ActionSettings = ({
               className={styles.button}
               style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
-              loader={loader}
-            >
+              loader={loader}>
               Save
             </PrimaryButton>
           </div>

@@ -1,6 +1,7 @@
 @use "/src/scss/colors";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Inter:wght@400;700&display=swap");
 
 html {
   font-size: 0.8rem;
@@ -458,4 +459,183 @@ div {
 
 u {
   text-decoration: underline;
+}
+
+#wrapper_drag {
+  .smooth-dnd-draggable-wrapper {
+    display: table-row !important;
+  }
+}
+
+.ql-font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+
+.ql-font-lato {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+}
+
+.ql-font-sans-serif {
+  font-family: "sans-serif", sans-serif;
+}
+
+.ql-font-serif {
+  font-family: "serif", serif;
+}
+
+.ql-font-monospace {
+  font-family: "monospace", monospace;
+}
+
+/* Roboto Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+  content: "Roboto";
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+/* Lato Light Font */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato"]::before {
+  content: "Lato";
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+}
+
+/* San Francisco Font */
+.ql-snow
+  .ql-picker.ql-font
+  .ql-picker-label[data-value="san-francisco"]::before,
+.ql-snow
+  .ql-picker.ql-font
+  .ql-picker-item[data-value="san-francisco"]::before {
+  content: "San Francisco";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+  font-weight: 400;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+#newRow {
+  .MuiButtonBase-root {
+    min-height: 30px !important;
+    height: 30px !important;
+  }
+}
+
+#detailPage {
+  .MuiPaper-root {
+    margin: 0 0;
+    border-radius: 0px;
+  }
+
+  .MuiButtonBase-root {
+    min-height: 50px;
+    border-top: 1px solid #eaecf0;
+  }
+  .css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+    margin: 10px 0;
+  }
+}
+
+#hcSwitchfield {
+  .MuiPaper-root {
+    margin: 0 0;
+    border-radius: 0px;
+  }
+
+  .MuiButtonBase-root {
+    min-height: 0px !important;
+    border-top: 1px solid #eaecf0;
+    bottom: 2px;
+  }
+  .css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+    margin: 10px 0;
+  }
+}
+
+#hcCheckboxfield {
+  .css-17ceore-MuiSvgIcon-root {
+    color: #449424;
+  }
+
+  .MuiButtonBase-root {
+    border-top: none;
+    min-height: 0px !important;
+    padding: 0 !important;
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 26px;
+  }
+}
+
+#detailPageTabs {
+  .react-tabs__tab--selected {
+    color: #449424;
+    border-bottom: 2px solid #449424;
+  }
+}
+
+#hcTextfield {
+  .MuiFormHelperText-root {
+    color: red;
+  }
+}
+
+#hcMultiline {
+  .ql-toolbar {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .ql-container {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
+#imgAlt {
+  .MuiInputBase-root {
+    height: 30px;
+  }
+}
+
+#hcMapfield {
+  .ymaps-2-1-79-inner-panes {
+    border-radius: 8px;
+  }
+}
+
+#hcDatapicker {
+  .css-eih2dq-MuiInputBase-root-MuiOutlinedInput-root {
+    padding-left: 0 !important;
+  }
+  .MuiButtonBase-root {
+    min-height: 30px !important;
+    border-top: none;
+  }
+}
+
+#hcImage {
+  .MuiButtonBase-root {
+    border-top: none;
+  }
+}
+
+.css-1u9des2-indicatorSeparator {
+  display: none;
+}
+
+#oneCTabs {
+  .react-tabs__tab--selected {
+    border-color: #449424;
+    color: #449424;
+  }
 }

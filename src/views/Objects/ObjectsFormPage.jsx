@@ -27,6 +27,7 @@ import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import {useMenuGetByIdQuery} from "../../services/menuService";
+import {generateID} from "../../utils/generateID";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -52,10 +53,13 @@ const ObjectsFormPage = ({
   const menu = store.getState().menu;
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+
+  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
 
   const id = useMemo(() => {
     return (
@@ -107,8 +111,6 @@ const ObjectsFormPage = ({
         getLayoutData,
       ]);
 
-      // // Access dynamic keys of layoutData
-      // const layoutKeys = Object.keys(layoutData);
       setData({
         ...layoutData,
         tabs: layoutData?.tabs?.filter(
@@ -190,8 +192,9 @@ const ObjectsFormPage = ({
   };
 
   const update = (data) => {
-    console.log("datadatadata", data);
     delete data.invite;
+    delete data?.merchant_ids_data;
+    delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, {data})
@@ -221,8 +224,17 @@ const ObjectsFormPage = ({
     if (window?.location.pathname?.includes("create")) {
       delete data.guid;
     }
+    delete data.invite;
+    delete data?.$merchant_ids_data;
+    delete data?.merchant_ids;
+
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, {
+        data: {
+          ...data,
+          folder_id: state?.folder_id ?? undefined,
+        },
+      })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -254,14 +266,13 @@ const ObjectsFormPage = ({
         }
 
         dispatch(showAlert("Successfully updated!", "success"));
-        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
 
   const onSubmit = (data) => {
-    if (id && !window.location.pathname?.includes("create")) {
+    if (Boolean(id) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);
@@ -288,20 +299,12 @@ const ObjectsFormPage = ({
     navigate(-1);
   };
 
-  // useEffect(() => {
-  //   getFields();
-  // }, [id, tableInfo, selectedTabIndex, i18n?.language]);
-
-  // const getSubtitleValue = useMemo(() => {
-  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  // }, [tableInfo]);
-
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
         <FormPageBackButton />
 
-        <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
+        <div className={styles.subTitle}></div>
 
         <SummarySectionValue
           computedSummary={summary}
@@ -337,6 +340,20 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
+            {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
+              (tableSlug === "investors" || tableSlug === "legal_entities") && (
+                <PrimaryButton
+                  onClick={() => {
+                    localStorage.setItem("idFromParams", idFromParam);
+                    localStorage.setItem(
+                      "tableSlugFromParam",
+                      tableSlugFromParam
+                    );
+                    navigate(microPath);
+                  }}>
+                  Пополнить баланс
+                </PrimaryButton>
+              )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
               color="error">
@@ -348,9 +365,7 @@ const ObjectsFormPage = ({
               id={id}
               getAllData={getAllData}
             />
-            <PermissionWrapperV2
-              tableSlug={tableSlug}
-              type={id ? "update" : "write"}>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"update"}>
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"

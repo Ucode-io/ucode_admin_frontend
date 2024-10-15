@@ -19,6 +19,7 @@ const CalendarMonth = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
+
   return (
     <div className={styles.calendarmonth} ref={parentRef}>
       {/* <TimesColumnMonth view={view} data={data} /> */}
@@ -34,8 +35,7 @@ const CalendarMonth = ({
           //   width: virtualizer.getTotalSize(),
           height: "100%",
           position: "relative",
-        }}
-      >
+        }}>
         {/* {datesList?.map((item, index) => (
           <div
             key={index}

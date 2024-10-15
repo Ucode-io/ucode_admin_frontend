@@ -25,6 +25,7 @@ import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import FileUploadMenu from "../Components/Functions/FileUploadMenu";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -335,12 +336,17 @@ const RecursiveBlock = ({
 
               <FunctionSidebar
                 menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}
                 level={2}
                 integrated={false}
               />
               <MicrofrontendSettingSidebar
+                menuStyle={menuStyle}
+                menuItem={menuItem}
+                element={element}
+                level={2}
+              />
+              <FileUploadMenu
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}

@@ -69,6 +69,19 @@ const FieldsBlock = ({
     name: "view_relations",
   });
 
+  const tabRelationTabs = useMemo(() => {
+    return tableRelations?.map((item) => ({
+      ...item,
+      id: `${item?.table_from?.slug}#${item?.id}`,
+      attributes: {
+        ...item?.attributes,
+        isTab: true,
+        table_to: item?.table_to,
+        table_from: item?.table_from,
+      },
+    }));
+  }, [tableRelations]);
+
   const usedFields = useMemo(() => {
     const list = [];
     sections?.forEach((section) => {
@@ -142,6 +155,7 @@ const FieldsBlock = ({
             <Tab>Form fields</Tab>
             <Tab>Relation tabs</Tab>
             <Tab>Section Tabs</Tab>
+            <Tab>Relation Table</Tab>
           </TabList>
 
           <TabPanel>
@@ -282,6 +296,45 @@ const FieldsBlock = ({
                   <Add />
                   Add Section tab
                 </Button>
+              </Container>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
+              <Container
+                groupName="1"
+                onDrop={onDrop}
+                dropPlaceholder={{className: "drag-row-drop-preview"}}
+                getChildPayload={(i) => tabRelationTabs[i]}>
+                {tabRelationTabs?.map(
+                  (relation, index) => (
+                    console.log("relationrelation", relation),
+                    (
+                      <Draggable
+                        key={relation.id}
+                        style={{overflow: "visible", width: "100%"}}>
+                        <div className={styles.draggableContainer}>
+                          <table className={styles.relationTable}>
+                            <thead>
+                              <tr>
+                                <th style={{width: "50px"}}>№</th>
+                                <th>
+                                  {relation[relation.relatedTableSlug]?.label}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{index + 1}</td>
+                                <td>{""}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </Draggable>
+                    )
+                  )
+                )}
               </Container>
             </div>
           </TabPanel>

@@ -4,6 +4,7 @@ import requestV2 from "../utils/requestV2";
 
 const resourceService = {
   getList: (params) => request.get(`/company/project/resource`, {params}),
+  getListClickHouse: (data) => request.post(`/company/airbyte`, data),
   getListV2: (params) => requestV2.get(`/company/project/resource`, {params}),
   getVariableResources: (id) =>
     request.get(`/company/project/resource-variable/${id}`),
@@ -11,9 +12,15 @@ const resourceService = {
     request.get(`/company/project/resource/${id}`, {params}),
   getByIDV2: (id, params) =>
     requestV2.get(`/company/project/resource/${id}`, {params}),
+
+  getClickHouseByID: (id, params) =>
+    request.get(`/company/airbyte/${id}`, {params}),
+
   getByIDV1: (id, params) =>
     request.get(`/company/project/resource/${id}`, {params}),
   create: (data) => request.post(`/company/project/resource`, data),
+  createResource: (data) =>
+    request.post(`/company/project/create-resource`, data),
   createV2: (data) => requestV2.post(`/company/project/resource`, data),
   update: (data) => request.put(`/company/project/resource/${data.id}`, data),
   updateV2: (data) =>
@@ -93,6 +100,20 @@ export const useResourceGetByIdQueryV2 = ({
   );
 };
 
+export const useResourceGetByIdClickHouse = ({
+  id,
+  params = {},
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["CLICK_HOUSE", {id, ...params}],
+    () => {
+      return resourceService.getClickHouseByID(id, params);
+    },
+    queryParams
+  );
+};
+
 export const useResourceGetByIdQueryV1 = ({
   id,
   params = {},
@@ -149,6 +170,13 @@ export const useResourceCreateMutation = (mutationSettings) => {
 export const useResourceCreateMutationV2 = (mutationSettings) => {
   return useMutation(
     (data) => resourceService.createV2(data),
+    mutationSettings
+  );
+};
+
+export const useCreateResourceMutationV1 = (mutationSettings) => {
+  return useMutation(
+    (data) => resourceService.createResource(data),
     mutationSettings
   );
 };

@@ -95,8 +95,76 @@ const CellElementGeneratorForRelation = ({
     }
   }, [row, computedSlug, defaultValue]);
 
-  switch (field.type) {
-    case "LOOKUP":
+  // switch (field.type) {
+  //   case "LOOKUP":
+  //     return newColumn ? (
+  //       <CellRelationFormElementForNewColumn
+  //         mainForm={mainForm}
+  //         relOptions={relOptions}
+  //         isNewRow={isNewRow}
+  //         tableView={tableView}
+  //         disabled={isDisabled}
+  //         isFormEdit
+  //         isBlackBg={isBlackBg}
+  //         updateObject={updateObject}
+  //         isNewTableView={true}
+  //         control={control}
+  //         name={computedSlug}
+  //         field={field}
+  //         row={row}
+  //         placeholder={field.attributes?.placeholder}
+  //         setFormValue={setFormValue}
+  //         index={index}
+  //         defaultValue={defaultValue}
+  //         relationfields={relationfields}
+  //         data={data}
+  //       />
+  //     ) : (
+  //       <CellRelationFormElementForTableView
+  //         relOptions={relOptions}
+  //         tableView={tableView}
+  //         disabled={isDisabled}
+  //         isTableView={true}
+  //         isFormEdit
+  //         isBlackBg={isBlackBg}
+  //         updateObject={updateObject}
+  //         isNewTableView={true}
+  //         control={control}
+  //         name={computedSlug}
+  //         field={field}
+  //         row={row}
+  //         placeholder={field.attributes?.placeholder}
+  //         setFormValue={setFormValue}
+  //         index={index}
+  //         defaultValue={defaultValue}
+  //         relationfields={relationfields}
+  //         data={data}
+  //       />
+  //     );
+
+  //   case "LOOKUPS":
+  //     return (
+  //       <CellManyToManyRelationElement
+  //         relOptions={relOptions}
+  //         disabled={isDisabled}
+  //         isFormEdit
+  //         updateObject={updateObject}
+  //         isNewTableView={true}
+  //         isBlackBg={isBlackBg}
+  //         control={control}
+  //         name={computedSlug}
+  //         field={field}
+  //         row={row}
+  //         placeholder={field.attributes?.placeholder}
+  //         setFormValue={setFormValue}
+  //         index={index}
+  //         defaultValue={defaultValue}
+  //       />
+  //     );
+  // }
+
+  const renderInputValues = {
+    LOOKUP: () => {
       return newColumn ? (
         <CellRelationFormElementForNewColumn
           mainForm={mainForm}
@@ -141,27 +209,28 @@ const CellElementGeneratorForRelation = ({
           data={data}
         />
       );
+    },
+    LOOKUPS: () => (
+      <CellManyToManyRelationElement
+        relOptions={relOptions}
+        disabled={isDisabled}
+        isFormEdit
+        updateObject={updateObject}
+        isNewTableView={true}
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        field={field}
+        row={row}
+        placeholder={field.attributes?.placeholder}
+        setFormValue={setFormValue}
+        index={index}
+        defaultValue={defaultValue}
+      />
+    ),
+  };
 
-    case "LOOKUPS":
-      return (
-        <CellManyToManyRelationElement
-          relOptions={relOptions}
-          disabled={isDisabled}
-          isFormEdit
-          updateObject={updateObject}
-          isNewTableView={true}
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-        />
-      );
-  }
+  return renderInputValues[field?.type] ? renderInputValues[field?.type]() : "";
 };
 
 export default CellElementGeneratorForRelation;

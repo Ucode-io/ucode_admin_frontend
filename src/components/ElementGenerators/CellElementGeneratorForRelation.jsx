@@ -95,59 +95,73 @@ const CellElementGeneratorForRelation = ({
     }
   }, [row, computedSlug, defaultValue]);
 
-  const renderFieldComponent = useMemo(() => {
-    const componentsMap = {
-      LOOKUP: newColumn
-        ? CellRelationFormElementForNewColumn
-        : CellRelationFormElementForTableView,
-      LOOKUPS: CellManyToManyRelationElement,
-    };
+  switch (field.type) {
+    case "LOOKUP":
+      return newColumn ? (
+        <CellRelationFormElementForNewColumn
+          mainForm={mainForm}
+          relOptions={relOptions}
+          isNewRow={isNewRow}
+          tableView={tableView}
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      ) : (
+        <CellRelationFormElementForTableView
+          relOptions={relOptions}
+          tableView={tableView}
+          disabled={isDisabled}
+          isTableView={true}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          updateObject={updateObject}
+          isNewTableView={true}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          data={data}
+        />
+      );
 
-    const Component = componentsMap[field.type];
-
-    return Component ? (
-      <Component
-        mainForm={mainForm}
-        relOptions={relOptions}
-        isNewRow={isNewRow}
-        tableView={tableView}
-        disabled={isDisabled}
-        isFormEdit
-        isBlackBg={isBlackBg}
-        updateObject={updateObject}
-        isNewTableView={true}
-        control={control}
-        name={computedSlug}
-        field={field}
-        row={row}
-        placeholder={field.attributes?.placeholder}
-        setFormValue={setFormValue}
-        index={index}
-        defaultValue={defaultValue}
-        relationfields={relationfields}
-        data={data}
-      />
-    ) : null;
-  }, [
-    field,
-    newColumn,
-    relOptions,
-    isNewRow,
-    tableView,
-    isDisabled,
-    isBlackBg,
-    updateObject,
-    control,
-    computedSlug,
-    row,
-    setFormValue,
-    index,
-    defaultValue,
-    relationfields,
-    data,
-  ]);
-
-  return renderFieldComponent;
+    case "LOOKUPS":
+      return (
+        <CellManyToManyRelationElement
+          relOptions={relOptions}
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+        />
+      );
+  }
 };
 
 export default CellElementGeneratorForRelation;

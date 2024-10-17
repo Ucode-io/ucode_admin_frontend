@@ -163,6 +163,7 @@ const CalendarView = ({
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
             $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
+          view_type: "CALENDAR",
           ...dataFilters,
         },
       });
@@ -202,7 +203,7 @@ const CalendarView = ({
       },
     }
   );
-
+  console.log("currentUpdatedDate", currentUpdatedDate);
   const {data: workingDays} = useQuery(
     [
       "GET_OBJECTS_LIST",
@@ -274,8 +275,6 @@ const CalendarView = ({
     },
     {
       select: ({data}) => {
-        console.log("resssssssssssssss", data);
-
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],

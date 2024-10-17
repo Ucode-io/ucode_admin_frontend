@@ -6,8 +6,15 @@ import DateFilter from "./DateFilter";
 import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
+import DateFilterWithoutTimeZ from "./DateFilterWithoutTimeZ";
 
-const FilterGenerator = ({field, name, filters = {}, onChange, tableSlug}) => {
+const FilterGenerator = ({
+  field,
+  name,
+  filters = {},
+  onChange = () => {},
+  tableSlug,
+}) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -86,6 +93,15 @@ export const Filter = ({
       return null;
 
     case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <DateFilterWithoutTimeZ
+          field={field}
+          placeholder={field?.label}
+          value={filters[name]}
+          onChange={(val) => onChange(val, name)}
+        />
+      );
+
     case "DATE":
     case "DATE_TIME":
       return (

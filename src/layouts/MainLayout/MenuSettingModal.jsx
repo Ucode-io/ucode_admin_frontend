@@ -28,8 +28,6 @@ import {store} from "../../store";
 
 const MenuSettingModal = ({closeModal}) => {
   const [modalType, setModalType] = useState("SETTING");
-  const [type, setType] = useState(menuTemplate?.icon_style || "");
-  const [size, setSize] = useState(menuTemplate?.icon_size || "");
   const [check, setCheck] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const queryClient = useQueryClient();
@@ -43,6 +41,8 @@ const MenuSettingModal = ({closeModal}) => {
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
+  const [type, setType] = useState(menuTemplate?.icon_style || "");
+  const [size, setSize] = useState(menuTemplate?.icon_size || "");
 
   const {control, reset, handleSubmit, setValue} = useForm({
     defaultValues: {},

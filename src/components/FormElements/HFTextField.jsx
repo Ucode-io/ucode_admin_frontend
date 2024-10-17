@@ -35,6 +35,7 @@ const HFTextField = ({
   endAdornment,
   field,
   inputHeight,
+  watch,
   disabled_text = "This field is disabled for this role!",
   setFormValue,
   customOnChange = () => {},
@@ -50,6 +51,7 @@ const HFTextField = ({
       setFormValue(name, "");
     }
   }, []);
+
   return (
     <Controller
       control={control}

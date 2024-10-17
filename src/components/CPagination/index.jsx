@@ -31,7 +31,7 @@ const CPagination = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {tableSlug} = useParams();
+  const {tableSlug, id} = useParams();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const dispatch = useDispatch();
@@ -146,7 +146,7 @@ const CPagination = ({
                         selectedTab?.relation?.relation_table_slug,
                         "CREATE",
                         {},
-                        {},
+                        {id: id},
                         menuId
                       )
                     : navigateToEditPage(tableSlug);
@@ -162,7 +162,15 @@ const CPagination = ({
           <>
             <Pagination
               color="primary"
-              onChange={(e, val) => setCurrentPage(val)}
+              onChange={(e, val) => {
+                setCurrentPage(val);
+                dispatch(
+                  paginationActions.setTablePageCount({
+                    tableSlug: tableSlug,
+                    pageCount: val,
+                  })
+                );
+              }}
               {...props}
             />
             {paginationExtraButton}

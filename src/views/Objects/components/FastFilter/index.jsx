@@ -82,7 +82,7 @@ const FastFilter = ({
     <div
       className={styles.filtersBlock}
       style={{flexDirection: isVertical ? "column" : "row"}}>
-      {view?.attributes?.quick_filters?.map((filter) => (
+      {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}

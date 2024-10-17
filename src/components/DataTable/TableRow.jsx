@@ -39,7 +39,6 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
   formVisible,
   remove,
   limit = 10,

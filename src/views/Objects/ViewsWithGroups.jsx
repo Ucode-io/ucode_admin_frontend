@@ -20,15 +20,24 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
+import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
+import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
+import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
 import constructorObjectService from "../../services/constructorObjectService";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "../../utils/indexedDb.jsx";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
+import Table1CUi from "./Table1CUi";
 import TableView from "./TableView";
 import GroupTableView from "./TableView/GroupTableView";
 import TableViewGroupByButton from "./TableViewGroupByButton";
@@ -39,9 +48,6 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
-import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import Table1CUi from "./Table1CUi";
 
 const ViewsWithGroups = ({
   views,
@@ -68,16 +74,30 @@ const ViewsWithGroups = ({
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [searchText, setSearchText] = useState("");
+
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
+  const [inputKey, setInputKey] = useState(0);
   const openHeightControl = Boolean(anchorElHeightControl);
   const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug]
   );
+  const paginationCount = useSelector(
+    (state) => state?.pagination?.paginationCount
+  );
+
+  const paginiationCount = useMemo(() => {
+    const getObject = paginationCount.find((el) => el?.tableSlug === tableSlug);
+
+    return getObject?.pageCount ?? 1;
+  }, [paginationCount, tableSlug]);
+
+  const [currentPage, setCurrentPage] = useState(paginiationCount);
+
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -193,6 +213,12 @@ const ViewsWithGroups = ({
     return mappedObjects.map((obj) => obj.id);
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
+  const inputChangeHandler = useDebounce((val) => {
+    setCurrentPage(1);
+    setSearchText(val);
+    saveSearchTextToDB(tableSlug, val);
+  }, 300);
+
   const selectAll = () => {
     setCheckedColumns(
       columnsForSearch
@@ -201,6 +227,24 @@ const ViewsWithGroups = ({
     );
   };
 
+  const initDB = async () => {
+    const db = await openDB();
+    const savedSearch = await getSearchText(db, tableSlug);
+    if (savedSearch && savedSearch.searchText) {
+      setSearchText(savedSearch.searchText);
+      setInputKey(inputKey + 1);
+    }
+  };
+
+  const saveSearchTextToDB = async (tableSlug, searchText) => {
+    const db = await openDB();
+    await saveOrUpdateSearchText(db, tableSlug, searchText);
+  };
+
+  useEffect(() => {
+    initDB();
+  }, [tableSlug]);
+
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
@@ -208,7 +252,23 @@ const ViewsWithGroups = ({
   return (
     <>
       {view?.attributes?.table_1c_ui ? (
-        <Table1CUi menuItem={menuItem} view={view} fieldsMap={fieldsMap} />
+        <Table1CUi
+          computedVisibleFields={computedVisibleFields}
+          menuItem={menuItem}
+          view={view}
+          fieldsMap={fieldsMap}
+          views={views}
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          control={control}
+          tabs={tabs}
+        />
       ) : (
         <Box>
           {updateLoading && (
@@ -285,13 +345,15 @@ const ViewsWithGroups = ({
 
                 <Divider orientation="vertical" flexItem />
                 <SearchInput
+                  key={inputKey}
+                  defaultValue={searchText}
                   placeholder={"Search"}
                   onChange={(e) => {
-                    setCurrentPage(1);
-                    setSearchText(e);
+                    inputChangeHandler(e);
                   }}
                 />
-                {permissions?.search_button && (
+                {(roleInfo === "DEFAULT ADMIN" ||
+                  permissions?.search_button) && (
                   <button
                     className={style.moreButton}
                     onClick={handleClickSearch}
@@ -342,11 +404,11 @@ const ViewsWithGroups = ({
               </div>
 
               <div className={style.rightExtra}>
-                {permissions?.fix_column && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
                   <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.group && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
                   <GroupByButton
                     selectedTabIndex={selectedTabIndex}
                     view={view}
@@ -355,14 +417,14 @@ const ViewsWithGroups = ({
                   />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.columns && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
                   <VisibleColumnsButton
                     currentView={view}
                     fieldsMap={fieldsMap}
                   />
                 )}
                 <Divider orientation="vertical" flexItem />
-                {permissions?.tab_group && (
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
                   <TableViewGroupByButton
                     currentView={view}
                     fieldsMap={fieldsMap}
@@ -490,6 +552,8 @@ const ViewsWithGroups = ({
                       computedVisibleFields={computedVisibleFields}
                       fieldsMap={fieldsMap}
                       view={view}
+                      searchText={searchText}
+                      checkedColumns={checkedColumns}
                     />
                     <div
                       className={style.template}

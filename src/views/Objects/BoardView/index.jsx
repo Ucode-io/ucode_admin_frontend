@@ -84,6 +84,7 @@ const BoardView = ({
     }
   );
   const updateView = (tabs) => {
+    console.log("tabstabstabs", tabs);
     const computedData = {
       ...selectedView,
       attributes: {

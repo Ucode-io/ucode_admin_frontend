@@ -171,7 +171,7 @@ const TableView = ({
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));
@@ -225,13 +225,17 @@ const TableView = ({
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 
-    let a = sortedDatas?.map((el) => {
-      if (el.field) {
-        return {
-          [fieldsMap[el?.field]?.slug]: el.order === "ASC" ? 1 : -1,
-        };
-      }
-    });
+    let a = sortedDatas
+      ?.map((el) => {
+        if (el?.field && el?.order === "ASC") {
+          return {
+            [fieldsMap[el?.field]?.slug]: 1,
+          };
+        } else if (el?.order === "DESC") {
+          return undefined;
+        }
+      })
+      .filter(Boolean);
 
     a.forEach((obj) => {
       for (const key in obj) {
@@ -310,6 +314,11 @@ const TableView = ({
     },
   });
 
+  const tableSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
+
   const {
     data: {tableData, pageCount, dataCount} = {
       tableData: [],
@@ -332,20 +341,19 @@ const TableView = ({
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
+        currentView,
       },
     ],
-    cacheTime: 10,
+    // cacheTime: 10,
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           row_view_id: view?.id,
-          offset: searchText ? 0 : pageToOffset(currentPage, paginiation),
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
+          search: tableSearch,
+
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab
@@ -562,16 +570,6 @@ const TableView = ({
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
       const matches = replaceUrlVariables(urlTemplate, row);
-
-      // if (matches) {
-      //   matches.forEach((match) => {
-      //     const variableName = match.slice(4, -2);
-      //     const variableValue = row[variableName];
-      //     if (variableValue !== undefined) {
-      //       query = query.replace(match, variableValue);
-      //     }
-      //   });
-      // }
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {

@@ -42,6 +42,11 @@ export const resourceTypes = [
     value: 7,
     icon: SiPostgresql,
   },
+  {
+    label: "Click House",
+    value: 2,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {

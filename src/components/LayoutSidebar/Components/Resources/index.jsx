@@ -6,8 +6,9 @@ import {useNavigate, useParams} from "react-router-dom";
 import {store} from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import {
+import resourceService, {
   useResourceCreateFromClusterMutation,
+  useResourceCreateMutation,
   useResourceDeleteMutation,
   useResourceDeleteMutationV2,
   useResourceListQuery,
@@ -17,7 +18,7 @@ import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import StorageIcon from "@mui/icons-material/Storage";
 import {resourceTypes} from "../../../../utils/resourceConstants";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {useDispatch, useSelector} from "react-redux";
 import activeStyles from "../MenuUtils/activeStyles";
@@ -70,6 +71,32 @@ const Resources = ({
     },
   });
 
+  const {data: clickHouseList} = useQuery(
+    ["GET_OBJECT_LIST"],
+    () => {
+      return resourceService.getListClickHouse({
+        data: {
+          environment_id: authStore.environmentId,
+          limit: 0,
+          offset: 0,
+          project_id: company?.projectId,
+        },
+      });
+    },
+    {
+      enabled: true,
+      select: (res) => {
+        return (
+          res?.airbytes?.map((item) => ({
+            ...item,
+            type: "CLICK_HOUSE",
+            name: "Click house",
+          })) ?? []
+        );
+      },
+    }
+  );
+
   const {data = {}, refetch} = useResourceListQueryV2({
     params: {
       project_id: company?.projectId,
@@ -77,8 +104,12 @@ const Resources = ({
   });
 
   const computedResources = useMemo(() => {
-    return [...(data?.resources || []), ...(resources || [])];
-  }, [data, resources]);
+    return [
+      ...(data?.resources || []),
+      ...(resources || []),
+      ...(clickHouseList || []),
+    ];
+  }, [data, resources, clickHouseList]);
 
   const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutationV2({

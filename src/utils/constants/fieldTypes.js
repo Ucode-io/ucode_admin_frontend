@@ -718,6 +718,11 @@ export const fieldButtons = [
     label: "Auto filter",
     value: "AUTO_FILTER",
   },
+
+  {
+    label: "Field Hide",
+    value: "FIELD_HIDE",
+  },
 ];
 
 export const formatIncludes = [

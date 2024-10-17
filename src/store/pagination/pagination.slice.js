@@ -5,6 +5,7 @@ export const {actions: paginationActions, reducer: paginationReducer} =
     name: "pagination",
     initialState: {
       paginationInfo: [],
+      paginationCount: [],
       sortValues: [],
     },
     reducers: {
@@ -18,6 +19,18 @@ export const {actions: paginationActions, reducer: paginationReducer} =
           state.paginationInfo[existingEntryIndex].pageLimit = pageLimit;
         } else {
           state.paginationInfo.push({tableSlug, pageLimit});
+        }
+      },
+      setTablePageCount: (state, {payload}) => {
+        const {pageCount, tableSlug} = payload;
+        const existingEntryIndex = state.paginationCount.findIndex(
+          (entry) => entry.tableSlug === tableSlug
+        );
+
+        if (existingEntryIndex !== -1) {
+          state.paginationCount[existingEntryIndex].pageCount = pageCount;
+        } else {
+          state.paginationCount.push({tableSlug, pageCount});
         }
       },
       setSortValues: (state, {payload}) => {

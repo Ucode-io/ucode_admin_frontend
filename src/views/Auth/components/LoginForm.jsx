@@ -204,6 +204,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
           setIsUserId(res?.user_id);
           setCompanies(res?.companies);
           computeCompanyElement(res?.companies);
+          localStorage.setItem("");
           setLoading(true);
         } else {
           dispatch(showAlert("The company does not exist", "error"));

@@ -110,6 +110,7 @@ const CustomPermissionModal = ({
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
+      delete_all: val ? "Yes" : "No",
       add_filter: val ? "Yes" : "No",
       field_filter: val ? "Yes" : "No",
       fix_column: val ? "Yes" : "No",

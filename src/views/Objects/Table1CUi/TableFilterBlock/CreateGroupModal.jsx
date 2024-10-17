@@ -1,7 +1,6 @@
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
-import {Box, Modal} from "@mui/material";
-import React from "react";
+import {Box, CircularProgress, Modal} from "@mui/material";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQueryClient} from "react-query";
 import HFTextArea from "../../../../components/FormElements/HFTextArea";
@@ -23,17 +22,25 @@ const style = {
 };
 
 function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
-  const {control, handleSubmit} = useForm();
+  const {control, handleSubmit, reset} = useForm();
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = (values) => {
+    setLoading(true);
     newTableService
       .createFolder({
         table_id: menuItem?.table_id,
+        parent_id: localStorage.getItem("folder_id") ?? undefined,
         ...values,
       })
       .then((res) => {
         queryClient.refetchQueries("GET_FOLDER_LIST");
         handleGroupClose();
+      })
+      .finally(() => {
+        setLoading(false);
+        reset({});
       });
   };
   return (
@@ -53,7 +60,6 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               gap: "12px",
               justifyContent: "space-between",
             }}>
-            <ArrowBackIcon sx={{fontSize: "22px"}} />
             <h3 className={styles.groupHead}>Контрагенты (создание группы)</h3>
           </Box>
           <button onClick={handleGroupClose} className={styles.closeBtn}>
@@ -72,6 +78,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
             <div className={styles.groupLabel}>
               <p>Наименование</p>
               <HCTextField
+                required={true}
                 control={control}
                 placeholder={"Search"}
                 name="name"
@@ -82,6 +89,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
             <div className={styles.groupLabel}>
               <p>Код</p>
               <HCTextField
+                required={false}
                 control={control}
                 placeholder={"Код"}
                 name="code"
@@ -93,6 +101,7 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               <p>Комментарий</p>
               <div className={styles.groupdTextArea}>
                 <HFTextArea
+                  required={false}
                   resize={false}
                   control={control}
                   name="comment"
@@ -109,16 +118,15 @@ function CreateGroupModal({handleGroupClose, groupOpen, menuItem}) {
               alignItems: "center",
               justifyContent: "space-between",
             }}>
-            <button className={styles.moreBtn}>
-              <span>Еще</span>
-
-              <img src="/img/chevron_down.svg" alt="" />
-            </button>
+            <button style={{border: "none"}}></button>
 
             <div className={styles.actionBtns}>
-              <button className={styles.actionRegBtn}>Записать</button>
-              <button className={styles.actionCloseBtn}>
-                Записать и закрыть
+              <button type="submit" className={styles.actionCloseBtn}>
+                {loading ? (
+                  <CircularProgress sx={{color: "#fff"}} size={20} />
+                ) : (
+                  "Записать и закрыть"
+                )}
               </button>
             </div>
           </Box>

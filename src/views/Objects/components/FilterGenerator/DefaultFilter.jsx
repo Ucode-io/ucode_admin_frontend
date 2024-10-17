@@ -1,14 +1,14 @@
-import { useMemo } from "react"
-import { useState } from "react"
-import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery"
+import {useMemo} from "react";
+import {useState} from "react";
+import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery";
 
-import FilterAutoComplete from "./FilterAutocomplete"
+import FilterAutoComplete from "./FilterAutocomplete";
 
-const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
-  const [debouncedValue, setDebouncedValue] = useState("")
-  const [data, setData] = useState([])
+const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const [data, setData] = useState([]);
 
-  const value = filters[name]
+  const value = filters[name];
 
   const options = useMemo(() => {
     const result = [...new Set(data.map((el) => el[field.slug]) ?? [])]
@@ -16,11 +16,11 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
       ?.map((el) => ({
         label: el,
         value: el,
-      }))
-    return result
-  }, [field.slug, data])
+      }));
+    return result;
+  }, [field.slug, data]);
 
-  const { query } = useObjectsQuery({
+  const {query} = useObjectsQuery({
     tableSlug: tableSlug,
     queryPayload: {
       [name]: debouncedValue,
@@ -30,10 +30,10 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
     queryParams: {
       enabled: !!debouncedValue,
       onSuccess: (res) => {
-        setData(res?.data?.response ?? [])
+        setData(res?.data?.response ?? []);
       },
     },
-  })
+  });
 
   return (
     <FilterAutoComplete
@@ -44,7 +44,7 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
       onChange={(val) => onChange(val?.length ? val : undefined, name)}
       label={field.label}
     />
-  )
-}
+  );
+};
 
-export default DefaultFilter
+export default DefaultFilter;

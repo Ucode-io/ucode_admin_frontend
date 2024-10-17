@@ -53,6 +53,7 @@ const FormElementGenerator = ({
   valueGenerator,
   errors,
   sectionModal,
+  watch,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -315,10 +316,11 @@ const FormElementGenerator = ({
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
+            watch={watch}
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -347,7 +349,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             mask={"(99) 999-99-99"}
@@ -427,7 +429,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={field.defaultValue}
@@ -525,7 +527,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             field={field}
@@ -650,7 +652,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -907,7 +909,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -930,7 +932,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}

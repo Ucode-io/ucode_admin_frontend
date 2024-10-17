@@ -206,41 +206,41 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  const {data: optionsFromFunctions} = useQuery(
-    ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
-    () => {
-      return request.post(
-        `/invoke_function/${field?.attributes?.function_path}`,
-        {
-          params: {
-            from_input: true,
-          },
-          data: {
-            table_slug: tableSlug,
-            ...autoFiltersValue,
-            search: debouncedValue,
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
-          },
-        }
-      );
-    },
-    {
-      enabled:
-        (!!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!!field?.attributes?.function_path && Boolean(debouncedValue)),
-      select: (res) => {
-        const options = res?.data?.response ?? [];
+  // const {data: optionsFromFunctions} = useQuery(
+  //   ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
+  //   () => {
+  //     return request.post(
+  //       `/invoke_function/${field?.attributes?.function_path}`,
+  //       {
+  //         params: {
+  //           from_input: true,
+  //         },
+  //         data: {
+  //           table_slug: tableSlug,
+  //           ...autoFiltersValue,
+  //           search: debouncedValue,
+  //           limit: 10,
+  //           offset: pageToOffset(page, 10),
+  //           view_fields:
+  //             field?.view_fields?.map((field) => field.slug) ??
+  //             field?.attributes?.view_fields?.map((field) => field.slug),
+  //         },
+  //       }
+  //     );
+  //   },
+  //   {
+  //     enabled:
+  //       (!!field?.attributes?.function_path && Boolean(page > 1)) ||
+  //       (!!field?.attributes?.function_path && Boolean(debouncedValue)),
+  //     select: (res) => {
+  //       const options = res?.data?.response ?? [];
 
-        return {
-          options,
-        };
-      },
-    }
-  );
+  //       return {
+  //         options,
+  //       };
+  //     },
+  //   }
+  // );
 
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],

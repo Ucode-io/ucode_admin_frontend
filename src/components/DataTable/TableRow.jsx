@@ -62,33 +62,33 @@ const TableRow = ({
 
   const parentRef = useRef(null);
 
-  if (formVisible)
-    return (
-      <TableRowForm
-        onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
-        remove={remove}
-        watch={watch}
-        onCheckboxChange={onCheckboxChange}
-        checkboxValue={checkboxValue}
-        row={row}
-        key={key}
-        formVisible={formVisible}
-        currentPage={currentPage}
-        limit={limit}
-        control={control}
-        setFormValue={setFormValue}
-        rowIndex={rowIndex}
-        columns={columns}
-        tableHeight={tableHeight}
-        tableSettings={tableSettings}
-        pageName={pageName}
-        calculateWidth={calculateWidth}
-        tableSlug={tableSlug}
-        relationFields={relationFields}
-        data={data}
-      />
-    );
+  // if (formVisible)
+  //   return (
+  //     <TableRowForm
+  //       onDeleteClick={onDeleteClick}
+  //       isTableView={isTableView}
+  //       remove={remove}
+  //       watch={watch}
+  //       onCheckboxChange={onCheckboxChange}
+  //       checkboxValue={checkboxValue}
+  //       row={row}
+  //       key={key}
+  //       formVisible={formVisible}
+  //       currentPage={currentPage}
+  //       limit={limit}
+  //       control={control}
+  //       setFormValue={setFormValue}
+  //       rowIndex={rowIndex}
+  //       columns={columns}
+  //       tableHeight={tableHeight}
+  //       tableSettings={tableSettings}
+  //       pageName={pageName}
+  //       calculateWidth={calculateWidth}
+  //       tableSlug={tableSlug}
+  //       relationFields={relationFields}
+  //       data={data}
+  //     />
+  //   );
 
   return (
     <>

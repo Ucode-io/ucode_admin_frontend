@@ -14,7 +14,6 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 const AddDataColumn = React.memo(
   ({
     columns,
-    relOptions,
     getValues,
     mainForm,
     relationfields,
@@ -92,7 +91,6 @@ const AddDataColumn = React.memo(
               zIndex: "1",
             }}>
             <NewTableDataForm
-              relOptions={relOptions}
               tableSlug={tableSlug}
               fields={columns}
               field={column}

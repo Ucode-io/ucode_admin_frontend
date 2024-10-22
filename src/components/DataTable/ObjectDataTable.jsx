@@ -20,7 +20,6 @@ import AddDataColumn from "./AddDataColumn";
 const ObjectDataTable = ({
   dataCount,
   selectedTab,
-  relOptions,
   filterVisible,
   tableView,
   data = [],
@@ -334,7 +333,6 @@ const ObjectDataTable = ({
             columns && (
               <TableRow
                 key={index}
-                relOptions={relOptions}
                 tableView={tableView}
                 width={"80px"}
                 remove={remove}
@@ -366,7 +364,7 @@ const ObjectDataTable = ({
                 onDeleteClick={onDeleteClick}
                 relationAction={relationAction}
                 onChecked={onChecked}
-                relationFields={fields}
+                relationFields={fields?.length}
                 data={data}
                 view={view}
               />
@@ -381,7 +379,6 @@ const ObjectDataTable = ({
             isRelationTable={isRelationTable}
             setAddNewRow={setAddNewRow}
             isTableView={isTableView}
-            relOptions={relOptions}
             tableView={tableView}
             tableSlug={relatedTableSlug ?? tableSlug}
             fields={columns}

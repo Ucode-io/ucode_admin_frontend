@@ -15,7 +15,6 @@ import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
-import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
@@ -29,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CellRelationFormElementForTableView = ({
+const CellRelationFormElementNew = ({
   relOptions,
   tableView,
   isBlackBg,
@@ -151,7 +150,9 @@ const AutoCompleteElement = ({
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState();
-  const [localValue, setLocalValue] = useState(null);
+  const [localValue, setLocalValue] = useState(
+    row?.[`${field?.slug}_data`] ?? null
+  );
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
@@ -210,43 +211,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  // const {data: optionsFromFunctions} = useQuery(
-  //   ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
-  //   () => {
-  //     return request.post(
-  //       `/invoke_function/${field?.attributes?.function_path}`,
-  //       {
-  //         params: {
-  //           from_input: true,
-  //         },
-  //         data: {
-  //           table_slug: tableSlug,
-  //           ...autoFiltersValue,
-  //           search: debouncedValue,
-  //           limit: 10,
-  //           offset: pageToOffset(page, 10),
-  //           view_fields:
-  //             field?.view_fields?.map((field) => field.slug) ??
-  //             field?.attributes?.view_fields?.map((field) => field.slug),
-  //         },
-  //       }
-  //     );
-  //   },
-  //   {
-  //     enabled:
-  //       (!!field?.attributes?.function_path && Boolean(page > 1)) ||
-  //       (!!field?.attributes?.function_path && Boolean(debouncedValue)),
-  //     select: (res) => {
-  //       const options = res?.data?.response ?? [];
-
-  //       return {
-  //         options,
-  //       };
-  //     },
-  //   }
-  // );
-
-  const {data: optionsFromLocale} = useQuery(
+  const {data: optionsFromLocale, refetch} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
@@ -263,6 +228,7 @@ const AutoCompleteElement = ({
             search: debouncedValue.trim(),
             limit: 10,
             offset: pageToOffset(page, 10),
+            with_relations: false,
           },
         },
         {
@@ -289,10 +255,6 @@ const AutoCompleteElement = ({
             ...(prevOptions ?? []),
             ...(data.options ?? []),
           ]);
-        }
-
-        if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
-          setLocalValue(null);
         }
       },
     }
@@ -330,6 +292,7 @@ const AutoCompleteElement = ({
   const changeHandler = (value) => {
     const val = value;
     setValue(val?.guid ?? null);
+    setLocalValue(value);
 
     if (!field?.attributes?.autofill) return;
     field.attributes.autofill.forEach(({field_from, field_to}) => {
@@ -338,17 +301,6 @@ const AutoCompleteElement = ({
       setName.push(field_to);
       setFormValue(setName.join("."), get(val, field_from));
     });
-  };
-  console.log("fieldddddddddd", field, allOptions, value);
-  const getValueData = async () => {
-    const id = value;
-    const data = allOptions?.find((item) => item?.guid === id);
-
-    if (data?.prepayment_balance) {
-      setFormValue("prepayment_balance", data?.prepayment_balance || 0);
-    }
-
-    setLocalValue(data ? [data] : null);
   };
 
   function loadMoreItems() {
@@ -384,20 +336,6 @@ const AutoCompleteElement = ({
       }
     });
   }, [computedValue, field]);
-
-  useEffect(() => {
-    const matchingOption = relOptions?.find(
-      (item) => item?.relationId === field?.relation_id
-    );
-
-    if (matchingOption) {
-      setAllOptions(matchingOption.response);
-    }
-  }, [relOptions, field]);
-
-  useEffect(() => {
-    if (value) getValueData();
-  }, [value, allOptions]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
@@ -509,6 +447,9 @@ const AutoCompleteElement = ({
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
+        onFocus={() => {
+          refetch();
+        }}
         onChange={(newValue, {action}) => {
           changeHandler(newValue);
         }}
@@ -534,4 +475,4 @@ const AutoCompleteElement = ({
   );
 };
 
-export default CellRelationFormElementForTableView;
+export default CellRelationFormElementNew;

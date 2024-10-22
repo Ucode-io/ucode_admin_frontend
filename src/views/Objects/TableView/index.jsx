@@ -22,7 +22,6 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import DragObjectDataTable from "../../../components/DataTable/DragObjectDataTable";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 
 const TableView = ({
@@ -81,7 +80,6 @@ const TableView = ({
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
-  const [relOptions, setRelOptions] = useState([]);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -341,10 +339,9 @@ const TableView = ({
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
-        currentView,
+        // currentView,
       },
     ],
-    // cacheTime: 10,
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -405,84 +402,6 @@ const TableView = ({
 
     return filteredFields;
   }, [fieldView, fiedlsarray]);
-
-  const computedRelationFields = useMemo(() => {
-    const computedFields = Object.values(fieldsMap)?.filter((element) => {
-      return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
-    });
-
-    return computedFields?.filter((item) => {
-      if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
-        return view?.columns?.includes(item?.relation_id);
-      } else {
-        return view?.columns?.includes(item?.id);
-      }
-    });
-  }, [fieldsMap, view]);
-
-  const getOptionsList = async () => {
-    const computedIds = computedRelationFields?.map((item) => ({
-      table_slug: item?.slug,
-      ids:
-        item?.type === "LOOKUP" || item?.type === "LOOKUPS"
-          ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
-          : Array.from(
-              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
-            ),
-    }));
-
-    try {
-      tableData?.length &&
-        (await computedRelationFields?.forEach((item, index) => {
-          constructorObjectService
-            .getListV2(item?.table_slug, {
-              data: {
-                row_view_id: view?.id,
-                limit: 10,
-                offset: 0,
-                additional_request: {
-                  additional_field: "guid",
-                  additional_values: computedIds
-                    ?.find(
-                      (computedItem) => computedItem?.table_slug === item?.slug
-                    )
-                    ?.ids?.filter((el) => el),
-                },
-              },
-            })
-            .then((res) => {
-              if (relOptions?.length > 0) {
-                setRelOptions((prev) => {
-                  const updatedOptions = prev.map((option) => {
-                    if (option.table_slug === item?.table_slug) {
-                      return {
-                        table_slug: item?.table_slug,
-                        response: res?.data?.response,
-                        relationId: item?.relation_id,
-                      };
-                    }
-                    return option;
-                  });
-                  return updatedOptions;
-                });
-              } else {
-                setRelOptions((prev) => [
-                  ...prev,
-                  {
-                    table_slug: item?.table_slug,
-                    response: res?.data?.response,
-                    relationId: item?.relation_id,
-                  },
-                ]);
-              }
-            });
-        }));
-    } catch {}
-  };
-
-  useEffect(() => {
-    getOptionsList();
-  }, [tableData?.length, computedRelationFields?.length]);
 
   const {
     data: {layout} = {
@@ -650,118 +569,60 @@ const TableView = ({
           width: filterVisible ? "calc(100% - 200px)" : "100%",
         }}
         id="data-table">
-        {view?.attributes?.table_draggable ? (
-          <DragObjectDataTable
-            refetch={refetch}
-            filterVisible={filterVisible}
-            currentView={currentView}
-            relOptions={relOptions}
-            tableView={true}
-            defaultLimit={view?.default_limit}
-            formVisible={formVisible}
-            selectedView={selectedView}
-            setSortedDatas={setSortedDatas}
-            sortedDatas={sortedDatas}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-            isTableView={true}
-            getValues={getValues}
-            setFormVisible={setFormVisible}
-            setFormValue={setFormValue}
-            mainForm={mainForm}
-            isRelationTable={false}
-            removableHeight={isDocView ? 150 : 170}
-            currentPage={currentPage}
-            pagesCount={pageCount}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            columns={columns}
-            multipleDelete={multipleDelete}
-            openFieldSettings={openFieldSettings}
-            limit={paginiation ?? limit}
-            setLimit={setLimit}
-            onPaginationChange={setCurrentPage}
-            loader={tableLoader || deleteLoader}
-            data={tableData}
-            navigateToEditPage={navigateCreatePage}
-            summaries={view?.attributes?.summaries}
-            disableFilters
-            isChecked={(row) => selectedObjects?.includes(row.guid)}
-            filters={filters}
-            filterChangeHandler={filterChangeHandler}
-            onRowClick={navigateToEditPage}
-            onDeleteClick={deleteHandler}
-            tableSlug={tableSlug}
-            view={view}
-            tableStyle={{
-              borderRadius: 0,
-              border: "none",
-              borderBottom: "1px solid #E5E9EB",
-              width: "100%",
-              margin: 0,
-            }}
-            isResizeble={true}
-            navigateToForm={navigateToForm}
-            menuItem={menuItem}
-            {...props}
-          />
-        ) : (
-          <ObjectDataTable
-            dataCount={dataCount}
-            refetch={refetch}
-            filterVisible={filterVisible}
-            currentView={currentView}
-            relOptions={relOptions}
-            tableView={true}
-            defaultLimit={view?.default_limit}
-            formVisible={formVisible}
-            selectedView={selectedView}
-            setSortedDatas={setSortedDatas}
-            sortedDatas={sortedDatas}
-            setDrawerState={setDrawerState}
-            setDrawerStateField={setDrawerStateField}
-            isTableView={true}
-            getValues={getValues}
-            setFormVisible={setFormVisible}
-            setFormValue={setFormValue}
-            mainForm={mainForm}
-            isRelationTable={false}
-            removableHeight={isDocView ? 150 : 170}
-            currentPage={currentPage}
-            pagesCount={pageCount}
-            selectedObjectsForDelete={selectedObjectsForDelete}
-            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-            columns={columns}
-            multipleDelete={multipleDelete}
-            openFieldSettings={openFieldSettings}
-            limit={paginiation ?? limit}
-            setLimit={setLimit}
-            onPaginationChange={setCurrentPage}
-            loader={tableLoader || deleteLoader}
-            data={tableData}
-            navigateToEditPage={navigateCreatePage}
-            summaries={view?.attributes?.summaries}
-            disableFilters
-            isChecked={(row) => selectedObjects?.includes(row.guid)}
-            filters={filters}
-            filterChangeHandler={filterChangeHandler}
-            onRowClick={navigateToEditPage}
-            onDeleteClick={deleteHandler}
-            tableSlug={tableSlug}
-            view={view}
-            tableStyle={{
-              borderRadius: 0,
-              border: "none",
-              borderBottom: "1px solid #E5E9EB",
-              width: "100%",
-              margin: 0,
-            }}
-            isResizeble={true}
-            navigateToForm={navigateToForm}
-            menuItem={menuItem}
-            {...props}
-          />
-        )}
+        <ObjectDataTable
+          dataCount={dataCount}
+          refetch={refetch}
+          filterVisible={filterVisible}
+          currentView={currentView}
+          tableView={true}
+          defaultLimit={view?.default_limit}
+          formVisible={formVisible}
+          selectedView={selectedView}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
+          setDrawerState={setDrawerState}
+          setDrawerStateField={setDrawerStateField}
+          isTableView={true}
+          getValues={getValues}
+          setFormVisible={setFormVisible}
+          setFormValue={setFormValue}
+          mainForm={mainForm}
+          isRelationTable={false}
+          removableHeight={isDocView ? 150 : 170}
+          currentPage={currentPage}
+          pagesCount={pageCount}
+          selectedObjectsForDelete={selectedObjectsForDelete}
+          setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+          columns={columns}
+          multipleDelete={multipleDelete}
+          openFieldSettings={openFieldSettings}
+          limit={paginiation ?? limit}
+          setLimit={setLimit}
+          onPaginationChange={setCurrentPage}
+          loader={tableLoader || deleteLoader}
+          data={tableData}
+          navigateToEditPage={navigateCreatePage}
+          summaries={view?.attributes?.summaries}
+          disableFilters
+          isChecked={(row) => selectedObjects?.includes(row.guid)}
+          filters={filters}
+          filterChangeHandler={filterChangeHandler}
+          onRowClick={navigateToEditPage}
+          onDeleteClick={deleteHandler}
+          tableSlug={tableSlug}
+          view={view}
+          tableStyle={{
+            borderRadius: 0,
+            border: "none",
+            borderBottom: "1px solid #E5E9EB",
+            width: "100%",
+            margin: 0,
+          }}
+          isResizeble={true}
+          navigateToForm={navigateToForm}
+          menuItem={menuItem}
+          {...props}
+        />
       </div>
 
       {open && (

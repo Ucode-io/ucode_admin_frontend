@@ -4,12 +4,11 @@ import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
-import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
+import CellRelationFormElementNew from "./CellRelationFormElementNew";
 
 const parser = new Parser();
 
 const CellElementGeneratorForRelation = ({
-  relOptions,
   tableView,
   field,
   isBlackBg = false,
@@ -95,12 +94,11 @@ const CellElementGeneratorForRelation = ({
     }
   }, [row, computedSlug, defaultValue]);
 
-  switch (field.type) {
-    case "LOOKUP":
+  const renderInputValues = {
+    LOOKUP: () => {
       return newColumn ? (
         <CellRelationFormElementForNewColumn
           mainForm={mainForm}
-          relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
@@ -120,8 +118,7 @@ const CellElementGeneratorForRelation = ({
           data={data}
         />
       ) : (
-        <CellRelationFormElementForTableView
-          relOptions={relOptions}
+        <CellRelationFormElementNew
           tableView={tableView}
           disabled={isDisabled}
           isTableView={true}
@@ -140,28 +137,47 @@ const CellElementGeneratorForRelation = ({
           relationfields={relationfields}
           data={data}
         />
+        // <CellRelationFormElementForTableView
+        //   tableView={tableView}
+        //   disabled={isDisabled}
+        //   isTableView={true}
+        //   isFormEdit
+        //   isBlackBg={isBlackBg}
+        //   updateObject={updateObject}
+        //   isNewTableView={true}
+        //   control={control}
+        //   name={computedSlug}
+        //   field={field}
+        //   row={row}
+        //   placeholder={field.attributes?.placeholder}
+        //   setFormValue={setFormValue}
+        //   index={index}
+        //   defaultValue={defaultValue}
+        //   relationfields={relationfields}
+        //   data={data}
+        // />
       );
+    },
+    LOOKUPS: () => (
+      <CellManyToManyRelationElement
+        disabled={isDisabled}
+        isFormEdit
+        updateObject={updateObject}
+        isNewTableView={true}
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        field={field}
+        row={row}
+        placeholder={field.attributes?.placeholder}
+        setFormValue={setFormValue}
+        index={index}
+        defaultValue={defaultValue}
+      />
+    ),
+  };
 
-    case "LOOKUPS":
-      return (
-        <CellManyToManyRelationElement
-          relOptions={relOptions}
-          disabled={isDisabled}
-          isFormEdit
-          updateObject={updateObject}
-          isNewTableView={true}
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-        />
-      );
-  }
+  return renderInputValues[field?.type] ? renderInputValues[field?.type]() : "";
 };
 
 export default CellElementGeneratorForRelation;

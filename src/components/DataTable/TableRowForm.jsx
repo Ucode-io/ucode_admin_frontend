@@ -10,14 +10,10 @@ const TableRowForm = ({
   checkboxValue,
   watch = () => {},
   row,
-  onDeleteClick = () => {},
   formVisible,
-  remove,
   control,
   currentPage,
   rowIndex,
-  relatedTableSlug,
-  isRelationTable,
   columns,
   tableSettings,
   tableSlug,
@@ -107,48 +103,6 @@ const TableRowForm = ({
             </CTableCell>
           )
       )}
-      {/* <CTableCell
-        style={{
-          padding: 0,
-          position: tableSettings?.[pageName]?.find(
-            (item) => item?.id === column?.id
-          )?.isStiky
-            ? "sticky"
-            : "relative",
-          left: tableSettings?.[pageName]?.find(
-            (item) => item?.id === column?.id
-          )?.isStiky
-            ? calculateWidth(column?.id, index)
-            : "0",
-          backgroundColor: "#fff",
-          zIndex: tableSettings?.[pageName]?.find(
-            (item) => item?.id === column?.id
-          )?.isStiky
-            ? "1"
-            : "",
-          minWidth: "max-content",
-        }}
-      >
-        <PermissionWrapperV2
-          type="delete"
-          tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-        >
-          <RectangleIconButton
-            color="error"
-            onClick={() => {
-              onDeleteClick(row, rowIndex);
-              remove(rowIndex);
-              // navigate("/reloadRelations", {
-              //   state: {
-              //     redirectUrl: window.location.pathname,
-              //   },
-              // });
-            }}
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
-        </PermissionWrapperV2>
-      </CTableCell> */}
     </CTableRow>
   );
 };

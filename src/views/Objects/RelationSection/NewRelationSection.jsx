@@ -88,7 +88,7 @@ const NewRelationSection = ({
       return data?.type;
     }
   }, [data]);
-
+  console.log("selectedTabselectedTab", selectedTab);
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
   }, [relations, selectedTab]);

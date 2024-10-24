@@ -312,7 +312,7 @@ const FieldSettings = ({
       value: "min",
     },
   ];
-  console.log("selectedFieldselectedField", selectedField);
+
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>

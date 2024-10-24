@@ -26,7 +26,7 @@ const ExcelDownloadButton = ({
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
   const {filters} = useFilters(tableSlug, view?.id);
-
+  console.log("tableSlugtableSlug", tableSlug);
   const onClick = async () => {
     try {
       setLoader(true);
@@ -38,7 +38,7 @@ const ExcelDownloadButton = ({
             ...sort,
             ...filters,
             field_ids: computedVisibleFields,
-            [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
+            [`${tableSlug}_id`]: idFromParams,
             language: i18n?.language,
             search: searchText,
             view_fields: checkedColumns,
@@ -53,7 +53,7 @@ const ExcelDownloadButton = ({
       setLoader(false);
     }
   };
-
+  console.log("selectedTabselectedTab", selectedTab);
   return (
     <div className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>

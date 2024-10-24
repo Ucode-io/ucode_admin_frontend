@@ -45,9 +45,7 @@ const LayoutSidebar = ({appId}) => {
     (state) => state.main.settingsSidebarIsOpen
   );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const subMenuIsOpen = useSelector(
-    (state) => state.main.subMenuIsOpen
-  );
+  const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
 
   const projectId = store.getState().company.projectId;
 
@@ -66,7 +64,7 @@ const LayoutSidebar = ({appId}) => {
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  // const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+
   const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
@@ -74,7 +72,7 @@ const LayoutSidebar = ({appId}) => {
 
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
-  }
+  };
 
   const {data: menuById} = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",

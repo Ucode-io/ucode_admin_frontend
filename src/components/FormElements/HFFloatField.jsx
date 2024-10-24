@@ -45,11 +45,10 @@ const HFFloatField = ({
             autoComplete="off"
             allowNegative={true}
             fullWidth={fullWidth}
-            value={value}
+            value={value ?? ""}
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(" ", "");
-              console.log("valvalvalvalval", val);
               if (!valueWithoutSpaces) onChange("");
               else {
                 if (valueWithoutSpaces.at(-1) === ".")

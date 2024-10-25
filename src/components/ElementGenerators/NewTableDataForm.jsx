@@ -5,7 +5,6 @@ import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 
 export default function NewTableDataForm({
-  relOptions,
   tableView,
   tableSlug,
   fields,
@@ -45,7 +44,6 @@ export default function NewTableDataForm({
       {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
         <CellElementGeneratorForRelation
           key={field?.id}
-          relOptions={relOptions}
           isTableView={false}
           isNewRow={true}
           tableView={tableView}

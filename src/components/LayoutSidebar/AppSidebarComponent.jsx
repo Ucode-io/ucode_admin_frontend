@@ -13,7 +13,6 @@ import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
 import {useQueryClient} from "react-query";
-import FolderIcon from "@mui/icons-material/Folder";
 import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -130,7 +129,7 @@ const AppSidebar = ({
           className="parent-folder column-drag-handle awdaw"
           style={{
             background: activeMenu
-              ? menuStyle?.active_background ?? "#007AFF"
+              ? (menuStyle?.active_background ?? "#007AFF")
               : menuStyle?.background,
             cursor: "pointer",
             color:
@@ -199,7 +198,7 @@ const AppSidebar = ({
                       style={{
                         color: activeMenu
                           ? menuStyle?.active_text
-                          : menuStyle?.text ?? "#fff",
+                          : (menuStyle?.text ?? "#fff"),
                       }}
                     />
                   </Box>

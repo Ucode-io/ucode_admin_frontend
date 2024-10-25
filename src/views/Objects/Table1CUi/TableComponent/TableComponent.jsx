@@ -23,6 +23,7 @@ const TableComponent = ({
   searchText,
   control,
   refetch = () => {},
+  tab,
 }) => {
   const [openGroups, setOpenGroups] = useState({});
   const [folderIds, setFolderIds] = useState([]);

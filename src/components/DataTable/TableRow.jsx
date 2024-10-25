@@ -62,39 +62,39 @@ const TableRow = ({
 
   const parentRef = useRef(null);
 
-  if (formVisible)
-    return (
-      <TableRowForm
-        onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
-        remove={remove}
-        watch={watch}
-        onCheckboxChange={onCheckboxChange}
-        checkboxValue={checkboxValue}
-        row={row}
-        key={key}
-        formVisible={formVisible}
-        currentPage={currentPage}
-        limit={limit}
-        control={control}
-        setFormValue={setFormValue}
-        rowIndex={rowIndex}
-        columns={columns}
-        tableHeight={tableHeight}
-        tableSettings={tableSettings}
-        pageName={pageName}
-        calculateWidth={calculateWidth}
-        tableSlug={tableSlug}
-        relationFields={relationFields}
-        data={data}
-      />
-    );
+  // if (formVisible)
+  //   return (
+  //     <TableRowForm
+  //       onDeleteClick={onDeleteClick}
+  //       isTableView={isTableView}
+  //       remove={remove}
+  //       watch={watch}
+  //       onCheckboxChange={onCheckboxChange}
+  //       checkboxValue={checkboxValue}
+  //       row={row}
+  //       key={key}
+  //       formVisible={formVisible}
+  //       currentPage={currentPage}
+  //       limit={limit}
+  //       control={control}
+  //       setFormValue={setFormValue}
+  //       rowIndex={rowIndex}
+  //       columns={columns}
+  //       tableHeight={tableHeight}
+  //       tableSettings={tableSettings}
+  //       pageName={pageName}
+  //       calculateWidth={calculateWidth}
+  //       tableSlug={tableSlug}
+  //       relationFields={relationFields}
+  //       data={data}
+  //     />
+  //   );
 
   return (
     <>
       {!relationAction ? (
         <>
-          <CTableRow style={style} ref={parentRef}>
+          <CTableRow key={key} style={style} ref={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -315,7 +315,7 @@ const TableRow = ({
             (virtualColumn) =>
               virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
-                  key={virtualColumn.guid}
+                  key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
                     minWidth: "220px",

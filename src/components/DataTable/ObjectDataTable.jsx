@@ -38,7 +38,7 @@ const ObjectDataTable = ({
   openFieldSettings,
   sortedDatas,
   fields = [],
-  isRelationTable,
+  isRelationTable = false,
   disablePagination,
   count,
   currentPage = 1,
@@ -332,7 +332,7 @@ const ObjectDataTable = ({
           return (
             columns && (
               <TableRow
-                key={index}
+                key={isRelationTable ? virtualRowObject?.id : index}
                 tableView={tableView}
                 width={"80px"}
                 remove={remove}

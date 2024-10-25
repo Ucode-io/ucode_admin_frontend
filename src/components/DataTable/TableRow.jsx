@@ -94,7 +94,7 @@ const TableRow = ({
     <>
       {!relationAction ? (
         <>
-          <CTableRow style={style} ref={parentRef}>
+          <CTableRow key={key} style={style} ref={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -315,7 +315,7 @@ const TableRow = ({
             (virtualColumn) =>
               virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
-                  key={virtualColumn.guid}
+                  key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
                     minWidth: "220px",

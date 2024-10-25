@@ -337,10 +337,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  useEffect(() => {
-    setLocalValue(row?.[`${field?.slug}_data`]);
-  }, [row]);
-
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div

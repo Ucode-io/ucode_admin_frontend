@@ -14,6 +14,7 @@ const FilterAutoComplete = ({
   onChange,
   label,
   field,
+  setChosenField = () => {},
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
@@ -25,6 +26,7 @@ const FilterAutoComplete = ({
   }, [value, options]);
 
   const openMenu = (event) => {
+    setChosenField(field);
     setAnchorEl(event.currentTarget);
   };
 
@@ -85,17 +87,6 @@ const FilterAutoComplete = ({
         />
 
         <div className={styles.scrollBlock}>
-          {/*{computedValue?.map((option) => (*/}
-          {/*  <div*/}
-          {/*    onClick={() => rowClickHandler(option)}*/}
-          {/*    key={option.value}*/}
-          {/*    className={styles.option}*/}
-          {/*  >*/}
-          {/*    <Checkbox checked/>*/}
-          {/*    <p className={styles.label}>{option.label}</p>*/}
-          {/*  </div>*/}
-          {/*))}*/}
-
           <Divider />
 
           {options?.map((option) => (

@@ -344,18 +344,22 @@ const AutoCompleteElement = ({
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
-        onClick={(e) => {
-          e.preventDefault();
-        }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}>
+        style={{display: "flex", alignItems: "center"}}
+        onClick={() => {
+          refetch();
+        }}>
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relation", zIndex: 99}}
+            sx={{position: "relative", zIndex: 99999}}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
             onClick={(e) => {
               e.stopPropagation();
-              navigateToForm(tableSlug, "EDIT", localValue?.[0], {}, menuId);
+              navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
             }}>
             <LaunchIcon
               style={{
@@ -432,6 +436,9 @@ const AutoCompleteElement = ({
         options={computedOptions ?? []}
         value={localValue}
         menuPortalTarget={document.body}
+        onMenuOpen={(e) => {
+          refetch();
+        }}
         isClearable
         components={{
           ClearIndicator: () =>
@@ -450,9 +457,6 @@ const AutoCompleteElement = ({
             ),
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
-        }}
-        onFocus={() => {
-          refetch();
         }}
         onChange={(newValue, {action}) => {
           changeHandler(newValue);

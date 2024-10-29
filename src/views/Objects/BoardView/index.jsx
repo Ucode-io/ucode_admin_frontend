@@ -1,34 +1,31 @@
-import {useEffect, useId} from "react";
-import {useState} from "react";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {Badge, Box, Button} from "@mui/material";
+import {useEffect, useId, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
 import {applyDrag} from "../../../utils/applyDrag";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import ColumnVisible from "../ColumnVisible";
+import ShareModal from "../ShareModal/ShareModal";
 import FastFilter from "../components/FastFilter";
 import ViewTabSelector from "../components/ViewTypeSelector";
-import BoardColumn from "./BoardColumn";
-import styles from "./style.module.scss";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import {useTranslation} from "react-i18next";
-import constructorViewService from "../../../services/constructorViewService";
-import ColumnVisible from "../ColumnVisible";
-import {useForm} from "react-hook-form";
-import BoardGroupButton from "./BoardGroupBy";
-import ShareModal from "../ShareModal/ShareModal";
-import {Badge, Box, Button} from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {store} from "../../../store";
 import style from "../style.module.scss";
-import constructorTableService from "../../../services/constructorTableService";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import menuService from "../../../services/menuService";
+import BoardColumn from "./BoardColumn";
+import BoardGroupButton from "./BoardGroupBy";
+import styles from "./style.module.scss";
 
 const BoardView = ({
   view,
@@ -50,14 +47,12 @@ const BoardView = ({
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [filterCount, setFilterCount] = useState();
+  const [filterTab, setFilterTab] = useState(null);
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
   const {navigateToForm} = useTabRouter();
   const {filters} = useFilters(tableSlug, view.id);
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -73,18 +68,20 @@ const BoardView = ({
     isLoading: dataLoader,
     refetch,
   } = useQuery(
-    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters}],
+    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters, filterTab}],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
-        data: filters ?? {},
+        data: {
+          ...filters,
+        },
       });
     },
     {
-      select: ({data}) => data.response ?? [],
+      select: ({data}) => data?.response ?? [],
     }
   );
-  const updateView = (tabs) => {
-    console.log("tabstabstabs", tabs);
+
+  const updateView = () => {
     const computedData = {
       ...selectedView,
       attributes: {
@@ -238,7 +235,6 @@ const BoardView = ({
         />
       </div>
 
-      {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
       {loader ? (
         <PageFallback />
       ) : (

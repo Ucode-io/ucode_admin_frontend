@@ -33,8 +33,6 @@ export default function ColumnVisible({
     return columns;
   }, [columns, relationColumns, type]);
 
-  const watchedColumns = form.watch("columns");
-  const watchedGroupColumns = form.watch("attributes.group_by_columns");
   useEffect(() => {
     form.reset({
       columns:
@@ -65,51 +63,24 @@ export default function ColumnVisible({
       })
       .then((res) => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
         refetch();
       });
   };
 
   return (
     <div>
-      {/* <Badge badgeContent={watchedColumns?.filter((el) => el.is_checked)?.length} color="primary"> */}
       <Button
-        // style={{
-        //   display: "flex",
-        //   alignItems: "center",
-        //   gap: 5,
-        //   color: "#A8A8A8",
-        //   cursor: "pointer",
-        //   fontSize: "13px",
-        //   fontWeight: 500,
-        //   lineHeight: "16px",
-        //   letterSpacing: "0em",
-        //   textAlign: "left",
-        //   padding: "0 10px",
-        // }}
         variant={"text"}
         style={{
           gap: "5px",
           color: "#A8A8A8",
           borderColor: "#A8A8A8",
         }}
-        // style={{
-        //   gap: "5px",
-        //   color: "#A8A8A8",
-        //   cursor: "pointer",
-        //   fontSize: "13px",
-        //   fontWeight: 500,
-        //   lineHeight: "16px",
-        //   letterSpacing: "0em",
-        //   textAlign: "left",
-        //   padding: "0 10px",
-        //   width: width,
-        //   borderColor: "#A8A8A8",
-        // }}
         onClick={handleClick}>
         <AppsIcon color={"#A8A8A8"} />
         {text}
       </Button>
-      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}

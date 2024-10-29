@@ -1,6 +1,6 @@
-import { Box, Switch, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import {Box, Switch, Typography} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -38,9 +38,12 @@ const BoardGroupsTab = ({
   updateView,
   isLoading,
   updateLoading,
+  views,
+  sele,
+  selectedTabIndex,
 }) => {
   const selectedColumns = form?.watch("group_fields");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [updatedColumns, setUpdatedColumns] = useState();
   useEffect(() => {
@@ -70,7 +73,6 @@ const BoardGroupsTab = ({
     }
 
     if (selectedColumns?.length >= 2) return;
-
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
 
@@ -116,13 +118,11 @@ const BoardGroupsTab = ({
         maxHeight: 300,
         overflowY: "auto",
         padding: "10px 14px",
-      }}
-    >
+      }}>
       <CTable
         removableHeight={false}
         disablePagination
-        tableStyle={{ border: "none" }}
-      >
+        tableStyle={{border: "none"}}>
         <CTableBody dataLength={1}>
           {updatedColumns?.length ? (
             updatedColumns?.map((column) => (
@@ -130,22 +130,19 @@ const BoardGroupsTab = ({
                 key={column.id}
                 onClick={(val) => {
                   changeHandler(val, column.id);
-                }}
-              >
+                }}>
                 <CTableCell
                   style={{
                     padding: 0,
                     border: 0,
                     borderBottom: "1px solid #eee",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                    }}
-                  >
+                    }}>
                     <div>{columnIcons[column.type] ?? <LinkIcon />}</div>
                     <div>
                       {column?.attributes?.[`label_${i18n.language}`] ??
@@ -158,19 +155,18 @@ const BoardGroupsTab = ({
                     width: 20,
                     borderBottom: "1px solid #eee",
                     borderRight: 0,
-                  }}
-                >
+                  }}>
                   <Switch
                     size="small"
                     disabled={isLoading || updateLoading}
-                    checked={selectedColumns?.includes(column?.id)}
+                    checked={selectedView?.group_fields?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(val, column.id, column)}
                   />
                 </CTableCell>
               </CTableRow>
             ))
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

@@ -1,13 +1,12 @@
 import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
+import {applyDrag} from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
@@ -15,17 +14,18 @@ import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState();
+  const [open, setOpen] = useState(false);
   const [index, setIndex] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
+
   const [computedData, setComputedData] = useState(
     data.filter((el) => {
       if (Array.isArray(el[tab.slug])) return el[tab.slug].includes(tab.value);
       return el[tab.slug] === tab.value;
     })
   );
-  console.log("tabbbbbbbbb", tab);
+
   const {mutate} = useMutation(
     ({data, index}) => {
       return constructorObjectService.update(tableSlug, {
@@ -73,6 +73,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     setSelectedRow(el);
     setDateInfo({});
   };
+
   const navigateToCreatePage = (slug) => {
     setOpen(true);
     setDateInfo({[tab.slug]: tab.value});
@@ -109,6 +110,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
           onDrop={(e) => {
             onDrop(e);
           }}
+          className="container_drag" // Add className here
           dropPlaceholder={{className: "drag-row-drop-preview"}}>
           {computedData.map((el) => (
             <Draggable
@@ -134,18 +136,18 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
             </Draggable>
           ))}
         </Container>
+      </div>
 
-        <div className={`${styles.columnFooterBlock}`}>
-          <Button
-            variant="contain"
-            fullWidth
-            onClick={(e) => {
-              e.stopPropagation();
-              navigateToCreatePage();
-            }}>
-            <Add /> Add new
-          </Button>
-        </div>
+      <div className={`${styles.columnFooterBlock}`}>
+        <Button
+          variant="contain"
+          fullWidth
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToCreatePage();
+          }}>
+          <Add /> Add new
+        </Button>
       </div>
       <BoardModalDetailPage
         open={open}

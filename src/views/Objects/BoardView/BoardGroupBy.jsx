@@ -1,25 +1,24 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import BoardGroupsTab from "./BoardGroupsTab";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import constructorTableService from "../../../services/constructorTableService";
 
 export default function BoardGroupButton({
   selectedTabIndex,
   text = "Tab group",
-  queryGenerator,
-  groupField,
-  filters,
+  tabs,
 }) {
   const form = useForm();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -30,7 +29,7 @@ export default function BoardGroupButton({
   };
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -62,6 +61,7 @@ export default function BoardGroupButton({
   });
 
   const type = views?.[selectedTabIndex]?.type;
+  const selectedView = views?.[selectedTabIndex];
 
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -71,37 +71,23 @@ export default function BoardGroupButton({
     }
   }, [columns, relationColumns, type]);
 
-  useEffect(() => {
-    form.setValue("group_fields", views?.[selectedTabIndex]?.group_fields);
-  }, [selectedTabIndex, views, form]);
-
-  const [updateLoading, setUpdateLoading] = useState(false);
-
-  const { data: tabs, isLoading: tabsLoader } = useQuery(
-    queryGenerator(groupField, filters)
-  );
-
-  useEffect(() => {
-    if (tabs && anchorEl) {
-      updateView(tabs);
-    }
-  }, [tabs]);
-
   const updateView = (updatedTabs) => {
-    delete views?.[selectedTabIndex].attributes.tabs;
+    delete views?.[selectedTabIndex]?.attributes?.tabs;
     setUpdateLoading(true);
     constructorViewService
       .update(tableSlug, {
         ...views?.[selectedTabIndex],
-        group_fields: form.watch("group_fields"),
+        group_fields: !!form.watch("group_fields")
+          ? form.watch("group_fields")
+          : views?.[selectedTabIndex]?.group_fields,
         attributes: {
           tabs: updatedTabs,
-          ...views?.[selectedTabIndex].attributes,
+          ...views?.[selectedTabIndex]?.attributes,
         },
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
       })
       .finally(() => {
         setUpdateLoading(false);
@@ -134,22 +120,36 @@ export default function BoardGroupButton({
       });
   };
 
+  useEffect(() => {
+    if (tabs) {
+      updateView(tabs);
+    }
+  }, [tabs]);
+
   return (
     <div>
       <Button
-        variant={`${selectedColumns?.length > 0 ? "outlined" : "text"}`}
+        variant={`${selectedView?.group_fields?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
-          color: selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            selectedView?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
           borderColor:
-            selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+            selectedView?.group_fields?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <LayersOutlinedIcon color={"#A8A8A8"} />
         {text}
-        {selectedColumns?.length > 0 && <span>{selectedColumns?.length}</span>}
-        {selectedColumns?.length > 0 && (
+        {selectedView?.group_fields?.length > 0 && (
+          <span>
+            {selectedView?.group_fields?.length ?? selectedColumns?.length}
+          </span>
+        )}
+        {selectedView?.group_fields?.length > 0 && (
           <button
             style={{
               border: "none",
@@ -162,17 +162,20 @@ export default function BoardGroupButton({
               alignItems: "center",
               justifyContent: "center",
               color:
-                selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                selectedView?.group_fields?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
               disableAll();
-            }}
-          >
+            }}>
             <CloseRoundedIcon
               style={{
                 color:
-                  selectedColumns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                  selectedView?.group_fields?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
               }}
             />
           </button>
@@ -207,8 +210,7 @@ export default function BoardGroupButton({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         {isLoading ? (
           <CircularProgress />
         ) : (
@@ -217,8 +219,10 @@ export default function BoardGroupButton({
             isLoading={isLoading}
             updateLoading={updateLoading}
             updateView={updateView}
-            selectedView={views?.[selectedTabIndex]}
+            selectedView={selectedView}
             form={form}
+            views={views}
+            selectedTabIndex={selectedTabIndex}
           />
         )}
       </Menu>

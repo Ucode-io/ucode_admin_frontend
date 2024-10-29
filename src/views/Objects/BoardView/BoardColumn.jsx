@@ -11,20 +11,13 @@ import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 
-const BoardColumn = ({
-  tab,
-  data = [],
-  fieldsMap,
-  view = [],
-  loadMoreItems = () => {},
-}) => {
+const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
-  const wrapperRef = useRef();
 
   const [computedData, setComputedData] = useState(
     data.filter((el) => {
@@ -75,33 +68,12 @@ const BoardColumn = ({
     );
   }, [data]);
 
-  const handleScroll = () => {
-    if (!wrapperRef.current) return;
-
-    const {scrollTop, scrollHeight, clientHeight} = wrapperRef.current;
-    if (scrollTop + clientHeight >= scrollHeight) {
-      loadMoreItems(computedData?.length, tab);
-    }
-  };
-
-  useEffect(() => {
-    const wrapperEl = wrapperRef.current;
-    if (wrapperEl) {
-      wrapperEl.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (wrapperEl) {
-        wrapperEl.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
-
   const navigateToEditPage = (el) => {
     setOpen(true);
     setSelectedRow(el);
     setDateInfo({});
   };
+
   const navigateToCreatePage = (slug) => {
     setOpen(true);
     setDateInfo({[tab.slug]: tab.value});
@@ -126,63 +98,56 @@ const BoardColumn = ({
           </div>
         </div>
 
-        {/* Wrapping div to add scroll listener */}
-        <div
-          ref={wrapperRef}
+        <Container
           style={{
             height: "calc(100vh - 220px)",
             overflow: "auto",
             borderRadius: "6px",
             minHeight: "0",
-          }}>
-          <Container
-            groupName="subtask"
-            getChildPayload={(i) => computedData[i]}
-            onDrop={(e) => {
-              onDrop(e);
-            }}
-            dropPlaceholder={{className: "drag-row-drop-preview"}}>
-            {computedData.map((el) => (
-              <Draggable
+          }}
+          groupName="subtask"
+          getChildPayload={(i) => computedData[i]}
+          onDrop={(e) => {
+            onDrop(e);
+          }}
+          className="container_drag" // Add className here
+          dropPlaceholder={{className: "drag-row-drop-preview"}}>
+          {computedData.map((el) => (
+            <Draggable
+              key={el.guid}
+              index={index}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                marginBottom: "6px",
+                cursor: "pointer",
+              }}>
+              <div
+                className={styles.card}
                 key={el.guid}
-                index={index}
-                style={{
-                  background: "#fff",
-                  borderRadius: "12px",
-                  marginBottom: "6px",
-                  cursor: "pointer",
-                }}>
-                <div
-                  className={styles.card}
-                  key={el.guid}
-                  onClick={() => navigateToEditPage(el)}>
-                  {viewFields.map((field) => (
-                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
-                  ))}
-                  {viewFields.map((field) => (
-                    <BoardCardRowGenerator
-                      key={field.id}
-                      field={field}
-                      el={el}
-                    />
-                  ))}
-                </div>
-              </Draggable>
-            ))}
-          </Container>
-        </div>
+                onClick={() => navigateToEditPage(el)}>
+                {viewFields.map((field) => (
+                  <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                ))}
+                {viewFields.map((field) => (
+                  <BoardCardRowGenerator key={field.id} field={field} el={el} />
+                ))}
+              </div>
+            </Draggable>
+          ))}
+        </Container>
+      </div>
 
-        <div className={`${styles.columnFooterBlock}`}>
-          <Button
-            variant="contain"
-            fullWidth
-            onClick={(e) => {
-              e.stopPropagation();
-              navigateToCreatePage();
-            }}>
-            <Add /> Add new
-          </Button>
-        </div>
+      <div className={`${styles.columnFooterBlock}`}>
+        <Button
+          variant="contain"
+          fullWidth
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToCreatePage();
+          }}>
+          <Add /> Add new
+        </Button>
       </div>
       <BoardModalDetailPage
         open={open}

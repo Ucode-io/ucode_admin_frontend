@@ -77,7 +77,9 @@ export default function BoardGroupButton({
     constructorViewService
       .update(tableSlug, {
         ...views?.[selectedTabIndex],
-        group_fields: form.watch("group_fields"),
+        group_fields: !!form.watch("group_fields")
+          ? form.watch("group_fields")
+          : views?.[selectedTabIndex]?.group_fields,
         attributes: {
           tabs: updatedTabs,
           ...views?.[selectedTabIndex]?.attributes,

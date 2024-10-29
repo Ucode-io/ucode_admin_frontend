@@ -50,7 +50,9 @@ const BoardView = ({
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [filterCount, setFilterCount] = useState();
+  const [offset, setOffset] = useState(0);
+  const [filterTab, setFilterTab] = useState(null);
+  const [values, setValues] = useState([]);
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
@@ -62,6 +64,11 @@ const BoardView = ({
     navigate(url);
   };
 
+  const loadMoreItems = (offsetVal, filterTab) => {
+    setFilterTab(filterTab);
+    setOffset(offsetVal);
+  };
+
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
@@ -71,16 +78,25 @@ const BoardView = ({
     isLoading: dataLoader,
     refetch,
   } = useQuery(
-    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters}],
+    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters, filterTab}],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
-        data: filters ?? {},
+        data: {
+          ...filters,
+          limit: 10,
+          offset: offset,
+          [filterTab?.slug]: [filterTab?.value],
+        },
       });
     },
     {
-      select: ({data}) => data.response ?? [],
+      select: ({data}) => data?.response ?? [],
+      onSuccess: (res) => {
+        setValues((prevValues) => [...prevValues, ...res]);
+      },
     }
   );
+
   const updateView = () => {
     const computedData = {
       ...selectedView,
@@ -98,12 +114,7 @@ const BoardView = ({
   const groupField = fieldsMap[groupFieldId];
 
   const {data: tabs, isLoading: tabsLoader} = useQuery(
-    queryGenerator(groupField, filters),
-    {
-      onSuccess: () => {
-        console.log("TABS SUCCESS");
-      },
-    }
+    queryGenerator(groupField, filters)
   );
 
   const loader = dataLoader || tabsLoader;
@@ -240,7 +251,6 @@ const BoardView = ({
         />
       </div>
 
-      {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
       {loader ? (
         <PageFallback />
       ) : (
@@ -278,10 +288,11 @@ const BoardView = ({
                   <BoardColumn
                     key={tab.value}
                     tab={tab}
-                    data={data}
+                    data={values}
                     fieldsMap={fieldsMap}
                     view={view}
                     navigateToCreatePage={navigateToCreatePage}
+                    loadMoreItems={loadMoreItems}
                   />
                 </Draggable>
               ))}

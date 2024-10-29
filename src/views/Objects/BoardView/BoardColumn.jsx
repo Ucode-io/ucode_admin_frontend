@@ -1,24 +1,31 @@
 import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
+import {applyDrag} from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 
-const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
+const BoardColumn = ({
+  tab,
+  data = [],
+  fieldsMap,
+  view = [],
+  loadMoreItems = () => {},
+}) => {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState();
+  const [open, setOpen] = useState(false);
   const [index, setIndex] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
+  const wrapperRef = useRef();
+
   const [computedData, setComputedData] = useState(
     data.filter((el) => {
       if (Array.isArray(el[tab.slug])) return el[tab.slug].includes(tab.value);
@@ -68,6 +75,28 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     );
   }, [data]);
 
+  const handleScroll = () => {
+    if (!wrapperRef.current) return;
+
+    const {scrollTop, scrollHeight, clientHeight} = wrapperRef.current;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      loadMoreItems(computedData?.length, tab);
+    }
+  };
+
+  useEffect(() => {
+    const wrapperEl = wrapperRef.current;
+    if (wrapperEl) {
+      wrapperEl.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (wrapperEl) {
+        wrapperEl.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
   const navigateToEditPage = (el) => {
     setOpen(true);
     setSelectedRow(el);
@@ -97,43 +126,51 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
           </div>
         </div>
 
-        <Container
+        {/* Wrapping div to add scroll listener */}
+        <div
+          ref={wrapperRef}
           style={{
             height: "calc(100vh - 220px)",
             overflow: "auto",
             borderRadius: "6px",
             minHeight: "0",
-          }}
-          groupName="subtask"
-          getChildPayload={(i) => computedData[i]}
-          onDrop={(e) => {
-            onDrop(e);
-          }}
-          dropPlaceholder={{className: "drag-row-drop-preview"}}>
-          {computedData.map((el) => (
-            <Draggable
-              key={el.guid}
-              index={index}
-              style={{
-                background: "#fff",
-                borderRadius: "12px",
-                marginBottom: "6px",
-                cursor: "pointer",
-              }}>
-              <div
-                className={styles.card}
+          }}>
+          <Container
+            groupName="subtask"
+            getChildPayload={(i) => computedData[i]}
+            onDrop={(e) => {
+              onDrop(e);
+            }}
+            dropPlaceholder={{className: "drag-row-drop-preview"}}>
+            {computedData.map((el) => (
+              <Draggable
                 key={el.guid}
-                onClick={() => navigateToEditPage(el)}>
-                {viewFields.map((field) => (
-                  <BoardPhotoGenerator key={field.id} field={field} el={el} />
-                ))}
-                {viewFields.map((field) => (
-                  <BoardCardRowGenerator key={field.id} field={field} el={el} />
-                ))}
-              </div>
-            </Draggable>
-          ))}
-        </Container>
+                index={index}
+                style={{
+                  background: "#fff",
+                  borderRadius: "12px",
+                  marginBottom: "6px",
+                  cursor: "pointer",
+                }}>
+                <div
+                  className={styles.card}
+                  key={el.guid}
+                  onClick={() => navigateToEditPage(el)}>
+                  {viewFields.map((field) => (
+                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                  ))}
+                  {viewFields.map((field) => (
+                    <BoardCardRowGenerator
+                      key={field.id}
+                      field={field}
+                      el={el}
+                    />
+                  ))}
+                </div>
+              </Draggable>
+            ))}
+          </Container>
+        </div>
 
         <div className={`${styles.columnFooterBlock}`}>
           <Button

@@ -65,6 +65,7 @@ export default function ColumnVisible({
       })
       .then((res) => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
         refetch();
       });
   };

@@ -57,8 +57,6 @@ const BoardView = ({
   const {navigateToForm} = useTabRouter();
   const {filters} = useFilters(tableSlug, view.id);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
@@ -83,8 +81,7 @@ const BoardView = ({
       select: ({data}) => data.response ?? [],
     }
   );
-  const updateView = (tabs) => {
-    console.log("tabstabstabs", tabs);
+  const updateView = () => {
     const computedData = {
       ...selectedView,
       attributes: {
@@ -101,7 +98,12 @@ const BoardView = ({
   const groupField = fieldsMap[groupFieldId];
 
   const {data: tabs, isLoading: tabsLoader} = useQuery(
-    queryGenerator(groupField, filters)
+    queryGenerator(groupField, filters),
+    {
+      onSuccess: () => {
+        console.log("TABS SUCCESS");
+      },
+    }
   );
 
   const loader = dataLoader || tabsLoader;

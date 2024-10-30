@@ -1,13 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import HFTextFieldLogin from "../../../../components/FormElements/HFTextFieldLogin";
 import {Box, Button, InputAdornment} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import classes from "./style.module.scss";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import ExternalAuth from "./ExternalAuth";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function LoginTab({control, loading = false, setFormType = () => {}}) {
   const {t} = useTranslation();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <>
@@ -35,13 +38,33 @@ function LoginTab({control, loading = false, setFormType = () => {}}) {
           required
           control={control}
           name="password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           fullWidth
           placeholder={t("enter.password")}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <img src="/img/passcode-lock.svg" height={"23px"} alt="" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="start">
+                <div
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    alignContent: "center",
+                    alignItems: "center",
+                  }}
+                  onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <VisibilityOffIcon
+                      style={{width: "19px", height: "19px"}}
+                    />
+                  ) : (
+                    <img src="/img/eye.svg" height={"23px"} alt="" />
+                  )}
+                </div>
               </InputAdornment>
             ),
           }}

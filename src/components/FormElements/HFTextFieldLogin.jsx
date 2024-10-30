@@ -33,6 +33,7 @@ const HFTextFieldLogin = ({
   placeholder,
   endAdornment,
   field,
+  type = "text",
   inputHeight = "44px",
   watch,
   disabled_text = "This field is disabled for this role!",
@@ -79,6 +80,7 @@ const HFTextFieldLogin = ({
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
             error={error}
+            type={type}
             fullWidth={fullWidth}
             placeholder={placeholder}
             autoFocus={tabIndex === 1}

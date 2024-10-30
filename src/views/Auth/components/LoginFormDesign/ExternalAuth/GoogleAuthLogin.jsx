@@ -9,6 +9,7 @@ function GoogleAuthLogin({}) {
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
+      console.log("GOOGLE AUTH REPONSE", tokenResponse);
       setLoading(false);
       setData(tokenResponse);
     },

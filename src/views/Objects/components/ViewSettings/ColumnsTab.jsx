@@ -138,12 +138,6 @@ const ColumnsTab = ({
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (isMenu) {
-  //     updateView();
-  //   }
-  // }, [watchedColumns]);
-
   return (
     <div
       style={{

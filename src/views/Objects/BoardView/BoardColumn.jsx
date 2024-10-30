@@ -25,7 +25,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
       return el[tab.slug] === tab.value;
     })
   );
-  console.log("tabbbbbbbbb", tab);
+
   const {mutate} = useMutation(
     ({data, index}) => {
       return constructorObjectService.update(tableSlug, {

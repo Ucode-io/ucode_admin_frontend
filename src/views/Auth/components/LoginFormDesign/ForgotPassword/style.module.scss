@@ -1,0 +1,23 @@
+.otpBackBtn {
+  position: absolute;
+  left: -40px;
+  top: -150px;
+  z-index: 999;
+  width: 106px;
+  height: 44px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #344054;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.label {
+  color: #344054;
+  font-size: 14px;
+  margin-bottom: 6px;
+  margin-top: 24px;
+}

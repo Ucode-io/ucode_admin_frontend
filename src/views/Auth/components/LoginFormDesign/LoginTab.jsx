@@ -7,7 +7,12 @@ import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import ExternalAuth from "./ExternalAuth";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-function LoginTab({control, loading = false, setFormType = () => {}}) {
+function LoginTab({
+  control,
+  loading = false,
+  setFormType = () => {},
+  getCompany = () => {},
+}) {
   const {t} = useTranslation();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -96,7 +101,7 @@ function LoginTab({control, loading = false, setFormType = () => {}}) {
         {t("enter")}
       </PrimaryButton>
 
-      <ExternalAuth setFormType={setFormType} />
+      <ExternalAuth getCompany={getCompany} setFormType={setFormType} />
     </>
   );
 }

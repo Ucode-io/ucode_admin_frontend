@@ -474,6 +474,7 @@ const LoginFormDesign = ({
                       loading={loading}
                       setFormType={setFormType}
                       control={control}
+                      getCompany={getCompany}
                     />
                   </TabPanel>
                   <TabPanel>

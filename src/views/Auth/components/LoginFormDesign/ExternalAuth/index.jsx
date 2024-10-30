@@ -3,7 +3,7 @@ import React from "react";
 import GoogleAuthLogin from "./GoogleAuthLogin";
 import GithubAuthLogin from "./GithubAuthLogin";
 
-function ExternalAuth({setFormType = () => {}}) {
+function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
   return (
     <>
       <Box
@@ -29,7 +29,7 @@ function ExternalAuth({setFormType = () => {}}) {
 
       <Tooltip title="Will be available soon!">
         <Box>
-          <GoogleAuthLogin />
+          <GoogleAuthLogin getCompany={getCompany} />
         </Box>
       </Tooltip>
 

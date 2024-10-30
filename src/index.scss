@@ -639,3 +639,39 @@ u {
     color: #449424;
   }
 }
+
+.loginField {
+  border-radius: 8px;
+  .MuiInputBase-input {
+    height: 27px;
+    font-size: 16px;
+
+    &::placeholder {
+      font-size: 16px;
+      color: #667085;
+    }
+  }
+}
+
+.loginFieldRequired {
+  border-radius: 8px;
+  border: 1px solid red;
+  .MuiInputBase-input {
+    height: 27px;
+    font-size: 16px;
+
+    &::placeholder {
+      font-size: 16px;
+      color: #667085;
+    }
+  }
+}
+
+.phone_input {
+  input {
+    padding-left: 50px;
+  }
+  .PhoneInputCountry {
+    display: none;
+  }
+}

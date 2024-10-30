@@ -319,7 +319,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "80vh",
+            height: "85vh",
             overflow: "hidden",
           }}>
           <div
@@ -390,7 +390,7 @@ const LayoutSidebar = ({appId}) => {
             )}
           </div>
         </Box>
-        <MenuBox
+        {/* <MenuBox
           title={""}
           openFolderCreateModal={openFolderCreateModal}
           children={<AiChatMenu sidebarIsOpen={sidebarIsOpen} />}
@@ -405,7 +405,7 @@ const LayoutSidebar = ({appId}) => {
             cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}
-        />
+        /> */}
         <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}

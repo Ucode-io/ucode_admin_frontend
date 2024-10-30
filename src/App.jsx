@@ -12,28 +12,31 @@ import {QueryClientProvider} from "react-query";
 import queryClient from "./queries";
 import {ReactQueryDevtools} from "react-query/devtools";
 import {AliveScope} from "react-activation";
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 function App() {
   return (
     <Suspense fallback="Loading...">
       <div className="App">
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <Provider store={store}>
-            <PersistGate persistor={persistor}>
-              <MaterialUIProvider>
-                <AlertProvider>
-                  <GlobalFunctionsProvider />
-                  <BrowserRouter>
-                    <AliveScope>
-                      <Router />
-                    </AliveScope>
-                  </BrowserRouter>
-                </AlertProvider>
-              </MaterialUIProvider>
-            </PersistGate>
-          </Provider>
-        </QueryClientProvider>
+        <GoogleOAuthProvider clientId="471439990521-hfd3oreqct00ittfsmv4f2n07bab93bf.apps.googleusercontent.com">
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Provider store={store}>
+              <PersistGate persistor={persistor}>
+                <MaterialUIProvider>
+                  <AlertProvider>
+                    <GlobalFunctionsProvider />
+                    <BrowserRouter>
+                      <AliveScope>
+                        <Router />
+                      </AliveScope>
+                    </BrowserRouter>
+                  </AlertProvider>
+                </MaterialUIProvider>
+              </PersistGate>
+            </Provider>
+          </QueryClientProvider>
+        </GoogleOAuthProvider>
       </div>
     </Suspense>
   );

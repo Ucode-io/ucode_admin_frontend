@@ -86,8 +86,12 @@ import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFee
 import DetailPage1CFormPage from "../views/Objects/DetailPage1CFormPage";
 import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
 import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
+import LoginDesign from "../views/Auth/LoginDesign";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
+const AuthLayoutDesign = lazy(
+  () => import("../layouts/AuthLayout/AuthLayoutDesign")
+);
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"));
 const ClientType = lazy(() => import("../views/AuthMatrix/ClientType"));
@@ -187,9 +191,9 @@ const Router = () => {
       return (
         <Suspense fallback={<p> Loading...</p>}>
           <Routes>
-            <Route path="/" element={<AuthLayout />}>
+            <Route path="/" element={<AuthLayoutDesign />}>
               <Route index element={<Navigate to="/login " />} />
-              <Route path="login" element={<Login />} />
+              <Route path="login" element={<LoginDesign />} />
               <Route path="invite-user" element={<Invite />} />
               <Route path="registration" element={<Registration />} />
               <Route path="*" element={<Navigate to="/login" />} />

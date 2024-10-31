@@ -1,7 +1,7 @@
 import {Box} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-function Chatwoot({sidebarIsOpen}) {
+function ChatwootLogin() {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
 
   useEffect(() => {
@@ -42,20 +42,13 @@ function Chatwoot({sidebarIsOpen}) {
   return (
     <Box
       sx={{
-        width: "100%",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
         gap: "10px",
         padding: "0 5px",
       }}
       onClick={originalButtonFunction}>
       <img width={22} height={22} src="/img/chatwoot.svg" alt="AI" />
-      <Box sx={{fontSize: "13px", fontWeight: 600}}>
-        {sidebarIsOpen ? "Support" : ""}
-      </Box>
     </Box>
   );
 }
 
-export default Chatwoot;
+export default ChatwootLogin;

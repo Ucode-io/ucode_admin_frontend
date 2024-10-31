@@ -38,6 +38,8 @@ const LoginFormDesign = ({
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
   const [codeAppValue, setCodeAppValue] = useState({});
+  const [googleAuth, setGoogleAuth] = useState(null);
+
   const [open, setOpen] = useState(false);
 
   const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
@@ -182,6 +184,7 @@ const LoginFormDesign = ({
   };
 
   const getCompany = (values) => {
+    setGoogleAuth(values);
     const data = {
       password: values?.password ? values?.password : null,
       username: values?.username ? values?.password : null,
@@ -239,6 +242,8 @@ const LoginFormDesign = ({
   const computeConnections = (connections) => {
     const data = {
       ...getFormValue,
+      ...googleAuth,
+      type: googleAuth?.type ? googleAuth?.type : getFormValue?.type,
       sms_id: codeAppValue?.sms_id,
     };
     if (
@@ -252,6 +257,8 @@ const LoginFormDesign = ({
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
+        onSubmitDialog(data);
+      } else if (googleAuth?.type === "google" && googleAuth?.google_token) {
         onSubmitDialog(data);
       } else if (
         !getFormValue?.username ||
@@ -282,7 +289,13 @@ const LoginFormDesign = ({
   const onSubmitDialog = (values) => {
     const data = {
       ...values,
-      type: values?.phone ? "phone" : values?.email ? "email" : undefined,
+      type: values?.phone
+        ? "phone"
+        : values?.email
+          ? "email"
+          : values?.type === "google"
+            ? "google"
+            : undefined,
       sms_id: codeAppValue?.sms_id,
     };
     const computedProject = companies[0]?.projects

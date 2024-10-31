@@ -1,7 +1,7 @@
 import {Box} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-function ChatwootLogin() {
+function ChatwootLoginPage() {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
 
   useEffect(() => {
@@ -51,4 +51,4 @@ function ChatwootLogin() {
   );
 }
 
-export default ChatwootLogin;
+export default ChatwootLoginPage;

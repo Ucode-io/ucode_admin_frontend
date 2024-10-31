@@ -36,6 +36,8 @@ import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import {useSearchParams} from "react-router-dom";
 import AiChatMenu from "../ProfilePanel/AIChat";
+import Chatwoot from "../ProfilePanel/Chatwoot";
+import Documentation from "../ProfilePanel/Documentation";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -319,7 +321,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "80vh",
+            height: "69vh",
             overflow: "hidden",
           }}>
           <div
@@ -393,6 +395,43 @@ const LayoutSidebar = ({appId}) => {
         <MenuBox
           title={""}
           openFolderCreateModal={openFolderCreateModal}
+          children={
+            <Documentation
+              menuStyle={menuStyle}
+              sidebarIsOpen={sidebarIsOpen}
+            />
+          }
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+            height: "45px",
+            cursor: "pointer",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
+        <MenuBox
+          title={""}
+          openFolderCreateModal={openFolderCreateModal}
+          children={<Chatwoot sidebarIsOpen={sidebarIsOpen} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+            height: "45px",
+            cursor: "pointer",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
+        <MenuBox
+          title={""}
+          openFolderCreateModal={openFolderCreateModal}
           children={<AiChatMenu sidebarIsOpen={sidebarIsOpen} />}
           onClick={(e) => {
             e.stopPropagation();
@@ -401,7 +440,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
-            height: "40px",
+            height: "45px",
             cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}
@@ -426,7 +465,7 @@ const LayoutSidebar = ({appId}) => {
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
-            height: "60px",
+            height: "45px",
             cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}

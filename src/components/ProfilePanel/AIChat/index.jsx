@@ -103,10 +103,14 @@ function AiChatMenu({sidebarIsOpen}) {
         gap: "10px",
         padding: "0 5px",
       }}>
-      <img onClick={handleClick} width={30} src="/img/ai.png" alt="AI" />
-      <Box
+      <img
         onClick={handleClick}
-        sx={{fontSize: "13px", color: "#093979", fontWeight: 900}}>
+        width={22}
+        height={22}
+        src="/img/ai.png"
+        alt="AI"
+      />
+      <Box onClick={handleClick} sx={{fontSize: "13px", fontWeight: 600}}>
         {sidebarIsOpen ? "AI Chat" : ""}
       </Box>
 

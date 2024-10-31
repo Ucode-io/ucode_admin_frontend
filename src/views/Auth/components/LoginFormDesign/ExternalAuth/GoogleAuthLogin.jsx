@@ -3,14 +3,19 @@ import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import {useGoogleLogin} from "@react-oauth/google";
 import {Box, Tooltip} from "@mui/material";
 
-function GoogleAuthLogin({}) {
+function GoogleAuthLogin({getCompany = () => {}}) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
+      console.log("GOOGLE AUTH REPONSE", tokenResponse);
       setLoading(false);
       setData(tokenResponse);
+      getCompany({
+        type: "google",
+        google_token: tokenResponse?.access_token,
+      });
     },
     onError: (err) => {
       setLoading(false);
@@ -20,8 +25,8 @@ function GoogleAuthLogin({}) {
   return (
     <>
       <PrimaryButton
-        // disabled={loading}
-        disabled={true}
+        disabled={loading}
+        // disabled={true}
         onClick={() => {
           setLoading(true);
           login();

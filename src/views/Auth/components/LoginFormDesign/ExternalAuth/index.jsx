@@ -33,11 +33,11 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
         </Box>
       </Tooltip>
 
-      <Tooltip title="Will be available soon!">
-        <Box>
-          <GithubAuthLogin />
-        </Box>
-      </Tooltip>
+      {/* <Tooltip title="Will be available soon!"> */}
+      <Box>
+        <GithubAuthLogin />
+      </Box>
+      {/* </Tooltip> */}
 
       <Box
         sx={{

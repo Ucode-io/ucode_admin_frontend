@@ -58,8 +58,9 @@ const ObjectsFormPage = ({
   const menuId = searchParams.get("menuId");
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
-
+  console.log("idFromParamidFromParam", idFromParam);
   const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
+  const microPathCloseMonth = `/main/${idFromParam}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${idFromParam}`;
 
   const id = useMemo(() => {
     return (
@@ -352,6 +353,21 @@ const ObjectsFormPage = ({
                     navigate(microPath);
                   }}>
                   Пополнить баланс
+                </PrimaryButton>
+              )}
+
+            {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
+              tableSlug === "projects" && (
+                <PrimaryButton
+                  onClick={() => {
+                    localStorage.setItem("idFromParams", idFromParam);
+                    localStorage.setItem(
+                      "tableSlugFromParam",
+                      tableSlugFromParam
+                    );
+                    navigate(microPathCloseMonth);
+                  }}>
+                  Закрытия месяца
                 </PrimaryButton>
               )}
             <SecondaryButton

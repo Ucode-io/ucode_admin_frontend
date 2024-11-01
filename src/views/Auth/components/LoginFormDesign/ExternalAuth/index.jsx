@@ -2,6 +2,7 @@ import {Box, Tooltip} from "@mui/material";
 import React from "react";
 import GoogleAuthLogin from "./GoogleAuthLogin";
 import GithubAuthLogin from "./GithubAuthLogin";
+import ChatwootLogin from "./ChatwootLogin";
 
 function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
   return (
@@ -32,12 +33,12 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
           <GoogleAuthLogin getCompany={getCompany} />
         </Box>
       </Tooltip>
-
-      <Tooltip title="Will be available soon!">
+      <ChatwootLogin />
+      {/* <Tooltip title="Will be available soon!">
         <Box>
           <GithubAuthLogin />
         </Box>
-      </Tooltip>
+      </Tooltip> */}
 
       <Box
         sx={{

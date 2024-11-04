@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
@@ -11,33 +11,37 @@ import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import authService from "../../../../services/auth/authService";
 import userService from "../../../../services/auth/userService";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Box } from "@mui/material";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import {Box} from "@mui/material";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 
 const UsersForm = () => {
   const navigate = useNavigate();
   const isUserInfo = useSelector((state) => state?.auth?.userInfo);
+  const envId = useSelector((state) => state?.auth);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const role = useSelector((state) => state?.auth?.roleInfo);
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userTableSlug = useSelector((state) => state?.auth?.loginTableSlug);
   const projectId = useSelector((state) => state?.auth?.projectId);
-  const [inputType, setInputType] = useState(true)
-  const [passwordType, setPasswordType] = useState(true)
-  const dispatch = useDispatch()
-  const [inputMatch, setInputMatch] = useState(false)
-  const [getError, setGetError] = useState(false)
-
+  const [inputType, setInputType] = useState(true);
+  const [passwordType, setPasswordType] = useState(true);
+  const dispatch = useDispatch();
+  const [inputMatch, setInputMatch] = useState(false);
+  const [getError, setGetError] = useState(false);
 
   const update = (data) => {
     const oldPassword = data?.old_password;
-    const newPassword = data?.new_password
+    const newPassword = data?.new_password;
 
     const requestData = {
       ...data,
       guid: isUserInfo?.id,
+      user_id: isUserInfo?.id,
+      client_type_id: clientType?.id,
+      project_id: projectId,
+      environment_id: envId?.environmentId,
     };
 
     // if(newPassword || oldPassword) {
@@ -48,24 +52,30 @@ const UsersForm = () => {
 
     userService
       ?.updateV2({
-       ...requestData,
+        ...requestData,
       })
       .then((res) => {
-        if(newPassword || oldPassword) {
-          resetPasswordV2(oldPassword, newPassword)
+        if (newPassword || oldPassword) {
+          resetPasswordV2(
+            oldPassword,
+            newPassword,
+            clientType?.id,
+            projectId,
+            envId?.environmentId
+          );
         } else {
           delete requestData.confirm_password;
         }
-      })
+      });
   };
 
-  const { control, handleSubmit, reset, watch } = useForm({
+  const {control, handleSubmit, reset, watch} = useForm({
     defaultValues: {
       name: "",
       email: "",
       login: "",
       phone: "",
-      password: '',
+      password: "",
       client_type_id: clientType?.id ?? "",
       role_id: role?.id ?? "",
     },
@@ -83,39 +93,55 @@ const UsersForm = () => {
   //   })
   // }
 
-  const resetPasswordV2 = (oldPassword, newPassword) => {
-    authService.resetUserPasswordV2( {
-      password: newPassword,
-      old_password: oldPassword,
-      user_id: isUserId
-    }).then((res) => {
-      dispatch(showAlert("Password successfuly updated", "success"));
-    }).catch((err) => {
-      dispatch(showAlert("Something went wrong on changing password"))
-    })
-  }
+  const resetPasswordV2 = (
+    oldPassword,
+    newPassword,
+    clientTypeId,
+    projectId,
+    envId
+  ) => {
+    authService
+      .resetUserPasswordV2({
+        password: newPassword,
+        old_password: oldPassword,
+        user_id: isUserId,
+        client_type_id: clientTypeId,
+        project_id: projectId,
+        environment_id: envId,
+      })
+      .then((res) => {
+        dispatch(showAlert("Password successfuly updated", "success"));
+      })
+      .catch((err) => {
+        dispatch(showAlert("Something went wrong on changing password"));
+      });
+  };
 
   const onSubmit = (values) => {
-    if(values?.new_password && values?.old_password) {
-      if(values?.new_password !== values?.confirm_password) {
-        dispatch(showAlert("Confirm Password fields do not match"))
-        setInputMatch(true)
-      } else if(isUserInfo) {
-          update(values)
-          setInputMatch(false)
-          }
-    } else if(isUserInfo) {
-      update(values)
-      setInputMatch(false)
-    };
+    if (values?.new_password && values?.old_password) {
+      if (values?.new_password !== values?.confirm_password) {
+        dispatch(showAlert("Confirm Password fields do not match"));
+        setInputMatch(true);
+      } else if (isUserInfo) {
+        update(values);
+        setInputMatch(false);
+      }
+    } else if (isUserInfo) {
+      update(values);
+      setInputMatch(false);
+    }
   };
 
   useEffect(() => {
-    authService.getUserById(isUserId, { 'project-id': projectId, 'client-type-id': clientType?.id }).then((res) => {
-      reset(res);
-    });
+    authService
+      .getUserById(isUserId, {
+        "project-id": projectId,
+        "client-type-id": clientType?.id,
+      })
+      .then((res) => {
+        reset(res);
+      });
   }, []);
-
 
   return (
     <>
@@ -128,8 +154,7 @@ const UsersForm = () => {
               <CancelButton onClick={() => navigate(-1)} />
               <SaveButton type="submit" />
             </>
-          }
-        ></Header>
+          }></Header>
 
         <FormCard title="Main info" className="UsersForm p-2">
           <div>
@@ -174,7 +199,6 @@ const UsersForm = () => {
               />
             </FRow>
 
-
             <FRow label="Type">
               <HFTextField
                 placeholder="Type"
@@ -206,44 +230,48 @@ const UsersForm = () => {
               />
             </FRow>
 
-            <FRow style={{position: 'relative'}} label="New Password">
+            <FRow style={{position: "relative"}} label="New Password">
               <HFTextField
                 placeholder="New Password"
                 fullWidth
                 control={control}
                 name="new_password"
-                type={inputType ? 'password' : 'text'}
+                type={inputType ? "password" : "text"}
               />
 
-              <Box onClick={() => setInputType(!inputType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
-                {inputType ? (
-                  <VisibilityIcon/>
-                ) : (
-                  <VisibilityOffIcon/>
-                )}
+              <Box
+                onClick={() => setInputType(!inputType)}
+                sx={{
+                  position: "absolute",
+                  right: "15px",
+                  bottom: "5px",
+                  cursor: "pointer",
+                }}>
+                {inputType ? <VisibilityIcon /> : <VisibilityOffIcon />}
               </Box>
-
             </FRow>
 
-            <FRow style={{position: 'relative'}} label="Confirm password">
+            <FRow style={{position: "relative"}} label="Confirm password">
               <HFTextField
                 placeholder="confirm password"
                 fullWidth
                 control={control}
                 name="confirm_password"
-                type={passwordType ? 'password' : 'text'}
-                style={{ border: `1px solid ${inputMatch ? 'red' : '#eee'}`}}
+                type={passwordType ? "password" : "text"}
+                style={{border: `1px solid ${inputMatch ? "red" : "#eee"}`}}
               />
 
-              <Box onClick={() => setPasswordType(!passwordType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
-                {passwordType ? (
-                  <VisibilityIcon/>
-                ) : (
-                  <VisibilityOffIcon/>
-                )}
+              <Box
+                onClick={() => setPasswordType(!passwordType)}
+                sx={{
+                  position: "absolute",
+                  right: "15px",
+                  bottom: "5px",
+                  cursor: "pointer",
+                }}>
+                {passwordType ? <VisibilityIcon /> : <VisibilityOffIcon />}
               </Box>
             </FRow>
-
           </div>
         </FormCard>
       </form>

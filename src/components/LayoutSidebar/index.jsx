@@ -278,6 +278,8 @@ const LayoutSidebar = ({appId}) => {
 
             {!sidebarIsOpen && (
               <Button
+                data-cy="back-button"
+                className="back-button"
                 onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
                 style={{
                   position: "absolute",

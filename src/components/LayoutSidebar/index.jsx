@@ -311,7 +311,10 @@ const LayoutSidebar = ({appId}) => {
           </div>
 
           {sidebarIsOpen && (
-            <Button onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
+            <Button
+              data-cy="back-button"
+              className="back-button"
+              onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
               <KeyboardDoubleArrowLeftIcon />
             </Button>
           )}

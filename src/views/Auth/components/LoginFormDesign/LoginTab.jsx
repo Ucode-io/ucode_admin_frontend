@@ -95,6 +95,7 @@ function LoginTab({
       </Box>
 
       <PrimaryButton
+        data-cy="enter-button"
         size="large"
         style={{width: "100%", marginTop: "16px", borderRadius: "8px"}}
         loader={loading}>

@@ -168,6 +168,8 @@ const RecursiveBlock = ({
         <div className="parent-block column-drag-handle" key={element.id}>
           {permission ? (
             <Button
+              id="more-button"
+              data-cy="three-dots-button"
               key={element.id}
               style={activeStyle}
               className="nav-element"
@@ -227,6 +229,8 @@ const RecursiveBlock = ({
                         <Tooltip title="Settings" placement="top">
                           <Box className="extra_icon">
                             <BsThreeDots
+                              id="more-icon"
+                              data-cy={"three-dots"}
                               size={13}
                               onClick={(e) => {
                                 folderSettings(e);

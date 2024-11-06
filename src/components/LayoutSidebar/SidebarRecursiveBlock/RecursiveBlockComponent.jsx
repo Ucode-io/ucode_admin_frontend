@@ -222,15 +222,13 @@ const RecursiveBlock = ({
                     </p>
                   </Box>
                   {settingsButtonPermission && !userType ? (
-                    <Box className="icon_group">
+                    <Box id="moreicon" className="icon_group">
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (
                         <Tooltip title="Settings" placement="top">
-                          <Box className="extra_icon">
+                          <Box className="extra_icon" data-cy={"three-dots"}>
                             <BsThreeDots
-                              id="more-icon"
-                              data-cy={"three-dots"}
                               size={13}
                               onClick={(e) => {
                                 folderSettings(e);

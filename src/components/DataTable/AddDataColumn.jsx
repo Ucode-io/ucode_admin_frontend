@@ -142,6 +142,7 @@ const AddDataColumn = React.memo(
               }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton
+                  id="cancel-row"
                   color="error"
                   onClick={() => setAddNewRow(false)}>
                   <ClearIcon color="error" />
@@ -153,6 +154,7 @@ const AddDataColumn = React.memo(
                 />
               ) : (
                 <RectangleIconButton
+                  id="confirm-row"
                   color="success"
                   onClick={handleSubmit(onSubmit)}>
                   <DoneIcon color="success" />

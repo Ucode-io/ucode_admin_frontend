@@ -408,6 +408,7 @@ const ObjectDataTable = ({
             }}>
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
               <Button
+                id="add-row"
                 variant="text"
                 style={{
                   borderColor: "#F0F0F0",

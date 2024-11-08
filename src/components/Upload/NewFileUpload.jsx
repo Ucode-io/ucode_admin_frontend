@@ -3,13 +3,8 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {
-  Box,
-  Button,
-  Popover,
-  Typography
-} from "@mui/material";
-import React, { useRef, useState } from "react";
+import {Box, Button, Popover, Typography} from "@mui/material";
+import React, {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 
 export default function NewFileUpload({
@@ -74,6 +69,7 @@ export default function NewFileUpload({
         <>
           <Box className="uploadedFile">
             <Button
+              id="file_upload"
               aria-describedby={id}
               onClick={handleClick}
               sx={{
@@ -81,8 +77,7 @@ export default function NewFileUpload({
                 minWidth: "25px",
                 width: "25px",
                 height: "25px",
-              }}
-            >
+              }}>
               <AttachFileIcon
                 style={{
                   color: "#747474",
@@ -95,8 +90,7 @@ export default function NewFileUpload({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
+              }}>
               {value?.split?.("_")?.[1] ?? ""}
             </Typography>
           </Box>
@@ -109,16 +103,14 @@ export default function NewFileUpload({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <Button
                 href={value}
                 className=""
@@ -130,8 +122,7 @@ export default function NewFileUpload({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
-                }}
-              >
+                }}>
                 <OpenInFullIcon />
                 Show file
               </Button>
@@ -143,8 +134,7 @@ export default function NewFileUpload({
                   justifyContent: "flex-start",
                 }}
                 disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}
-              >
+                onClick={(e) => closeButtonHandler(e)}>
                 <DeleteIcon />
                 Remove file
               </Button>
@@ -159,8 +149,7 @@ export default function NewFileUpload({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
                 Change file
               </Button>
@@ -225,9 +214,8 @@ export default function NewFileUpload({
             minWidth: "25px",
             width: "25px",
             height: "25px",
-            paddingLeft: '15px'
-          }}
-        >
+            paddingLeft: "15px",
+          }}>
           <input
             type="file"
             className="hidden"
@@ -245,7 +233,6 @@ export default function NewFileUpload({
           />
         </Button>
       )}
-
     </div>
   );
 }

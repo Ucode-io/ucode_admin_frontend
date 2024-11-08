@@ -1,14 +1,14 @@
 import AddCircleOutlineIcon from "@mui/icons-material/Upload";
-import { useState } from "react";
-import { useRef } from "react";
+import {useState} from "react";
+import {useRef} from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
+import {CircularProgress, InputAdornment, Tooltip} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./style.scss";
 import fileService from "../../services/fileService";
-import { Lock } from "@mui/icons-material";
+import {Lock} from "@mui/icons-material";
 
-const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
+const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,10 @@ const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          <button className="close-btn" type="button" onClick={(e) => closeButtonHandler(e)}>
+          <button
+            className="close-btn"
+            type="button"
+            onClick={(e) => closeButtonHandler(e)}>
             <CancelIcon />
           </button>
           {/* <img src={value} className="img" alt="" /> */}
@@ -56,6 +59,7 @@ const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
       {!value && (
         <div
           className="add-block block"
+          id="video"
           onClick={() => inputRef.current.click()}
           style={
             disabled
@@ -63,22 +67,21 @@ const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
                   background: "#c0c0c039",
                 }
               : {
-                background: "inherit",
-                color: "inherit",
+                  background: "inherit",
+                  color: "inherit",
                 }
-          }
-        >
+          }>
           <div className="add-icon">
             {!loading ? (
               <>
                 {disabled ? (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
-                      <Lock style={{ fontSize: "20px" }} />
+                      <Lock style={{fontSize: "20px"}} />
                     </InputAdornment>
                   </Tooltip>
                 ) : (
-                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                  <AddCircleOutlineIcon style={{fontSize: "35px"}} />
                 )}
                 {/* <p>Max size: 4 MB</p> */}
               </>
@@ -87,7 +90,16 @@ const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
             )}
           </div>
 
-          <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
+          <input
+            id="video_add"
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
+            onChange={inputChangeHandler}
+            disabled={disabled}
+          />
         </div>
       )}
 

@@ -820,6 +820,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            id="increment_id"
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -842,6 +843,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            id="increment_number"
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}

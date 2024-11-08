@@ -601,6 +601,7 @@ function Form1CElementGenerator({
       return (
         <FieldLabel label={label} required={field.required}>
           <HCTextField
+            id="increment_id"
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}

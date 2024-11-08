@@ -420,6 +420,7 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, {action}) => {
           if (action !== "reset") {

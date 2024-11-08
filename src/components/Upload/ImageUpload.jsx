@@ -131,6 +131,7 @@ const ImageUpload = ({
       {value && (
         <>
           <div
+            id="photo"
             className="uploadedImage"
             aria-describedby={id}
             onClick={handleClick}>

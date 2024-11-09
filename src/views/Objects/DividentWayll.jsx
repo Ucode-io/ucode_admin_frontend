@@ -65,7 +65,7 @@ function DividentWayll() {
     const data = {
       ...values,
       end_date: formattedDate,
-      project_id: id,
+      projects_id: id,
     };
 
     request

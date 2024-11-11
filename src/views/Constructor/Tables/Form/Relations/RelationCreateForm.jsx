@@ -159,8 +159,7 @@ const RelationCreateForm = ({
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
       loader={isLoading}
-      bodyStyle={{padding: "0"}}
-    >
+      bodyStyle={{padding: "0"}}>
       <form onSubmit={handleSubmit(submitHandler)}>
         <FRow label="Table from" style={{padding: "16px"}}>
           <HFSelect
@@ -266,8 +265,7 @@ const RelationCreateForm = ({
                 onClick={() => {
                   setOpenSumCreate(false);
                 }}
-                style={{borderColor: "red"}}
-              >
+                style={{borderColor: "red"}}>
                 Отмена
               </button>
             )}

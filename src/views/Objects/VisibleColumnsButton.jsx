@@ -197,6 +197,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                   justifyContent: "flex-end",
                 }}>
                 <Switch
+                  id="all_switch"
                   size="small"
                   checked={visibleFields.length === allFields.length}
                   onChange={(e) => {

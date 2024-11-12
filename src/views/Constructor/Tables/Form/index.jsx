@@ -349,7 +349,7 @@ const ConstructorTablesFormPage = () => {
       if (keyExists) {
         createConstructorTable(computedData);
       } else {
-        dispatch(showAlert(`Table with ${data?.slug} already exist`));
+        dispatch(showAlert(`Table with key ${data?.slug} already exist`));
         console.log("Key check failed, cannot create table.");
       }
     }

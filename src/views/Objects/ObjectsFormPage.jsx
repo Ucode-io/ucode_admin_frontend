@@ -28,6 +28,7 @@ import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import {useMenuGetByIdQuery} from "../../services/menuService";
 import {generateID} from "../../utils/generateID";
+import DividentWayll from "./DividentWayll";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -358,17 +359,20 @@ const ObjectsFormPage = ({
 
             {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
               tableSlug === "projects" && (
-                <PrimaryButton
-                  onClick={() => {
-                    localStorage.setItem("idFromParams", idFromParam);
-                    localStorage.setItem(
-                      "tableSlugFromParam",
-                      tableSlugFromParam
-                    );
-                    navigate(microPathCloseMonth);
-                  }}>
-                  Закрытия месяца
-                </PrimaryButton>
+                <>
+                  <DividentWayll />
+                  <PrimaryButton
+                    onClick={() => {
+                      localStorage.setItem("idFromParams", idFromParam);
+                      localStorage.setItem(
+                        "tableSlugFromParam",
+                        tableSlugFromParam
+                      );
+                      navigate(microPathCloseMonth);
+                    }}>
+                    Закрытия месяца
+                  </PrimaryButton>
+                </>
               )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}

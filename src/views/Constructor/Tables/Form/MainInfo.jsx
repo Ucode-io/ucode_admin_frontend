@@ -17,10 +17,10 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import listToOptions from "../../../../utils/listToOptions";
 import style from "./main.module.scss";
 
-const MainInfo = ({control, watch}) => {
+const MainInfo = ({control, watch, exist}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
-
+  console.log("existexist", exist);
   const params = {
     language_setting: i18n?.language,
   };
@@ -85,24 +85,24 @@ const MainInfo = ({control, watch}) => {
     }
   }, [login]);
 
-  const computedFields = useMemo(() => {
-    const computedRelations = relations.map((relation) => {
-      const tableSlug = relation.id.split("#")[0];
-      const viewFields =
-        relation.attributes?.fields?.map(
-          (viewField) => `${tableSlug}.${viewField.slug}`
-        ) ?? [];
+  // const computedFields = useMemo(() => {
+  //   const computedRelations = relations.map((relation) => {
+  //     const tableSlug = relation.id.split("#")[0];
+  //     const viewFields =
+  //       relation.attributes?.fields?.map(
+  //         (viewField) => `${tableSlug}.${viewField.slug}`
+  //       ) ?? [];
 
-      const slug = viewFields.join("#");
+  //     const slug = viewFields.join("#");
 
-      return {
-        ...relation,
-        slug: slug,
-      };
-    });
+  //     return {
+  //       ...relation,
+  //       slug: slug,
+  //     };
+  //   });
 
-    return listToOptions([...fields, ...computedRelations], "label", "slug");
-  }, [fields]);
+  //   return listToOptions([...fields, ...computedRelations], "label", "slug");
+  // }, [fields]);
 
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
@@ -138,6 +138,7 @@ const MainInfo = ({control, watch}) => {
           <HFTextField
             control={control}
             name="slug"
+            exist={exist}
             fullWidth
             placeholder="KEY"
             required

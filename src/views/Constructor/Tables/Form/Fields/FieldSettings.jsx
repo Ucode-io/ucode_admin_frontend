@@ -613,6 +613,7 @@ const FieldSettings = ({
 
           <div className={styles.settingsFooter}>
             <PrimaryButton
+              id="field_save"
               size="large"
               className={styles.button}
               style={{width: "100%"}}

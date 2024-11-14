@@ -81,6 +81,7 @@ const FilterAutoComplete = ({
         onClose={closeMenu}
         classes={{list: styles.menu, paper: styles.paper}}>
         <SearchInput
+          id="filter_search_input"
           fullWidth
           onChange={inputChangeHandler}
           placeholder={label}
@@ -97,9 +98,9 @@ const FilterAutoComplete = ({
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox checked />
+                <Checkbox id="filter_checkbox" checked />
               ) : (
-                <Checkbox />
+                <Checkbox id="filter_checkbox" />
               )}
 
               <p className={styles.label}>{option.label}</p>

@@ -31,7 +31,7 @@ const HFCheckbox = ({
             color: isBlackBg ? "#fff" : "",
           }}>
           <Checkbox
-            id={`checkbox-${id} checkbox_${name}`}
+            id={`checkbox-${id} checkbox_${name} checkbox_field`}
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",
@@ -43,7 +43,7 @@ const HFCheckbox = ({
                 ? value === "true"
                   ? true
                   : false
-                : value ?? false
+                : (value ?? false)
             }
             autoFocus={tabIndex === 1}
             onChange={(_, val) => {

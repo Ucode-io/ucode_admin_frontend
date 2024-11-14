@@ -27,7 +27,7 @@ const CDateTimePicker = ({
   return (
     <div className="main_wrapper">
       <DatePicker
-        id={`date_time_${name}`}
+        id={`date_time_${name} time_picker`}
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           return (
@@ -39,7 +39,7 @@ const CDateTimePicker = ({
               {(InputProps) => (
                 <TextField
                   value={value}
-                  id={`date_time_${name}`}
+                  id={`date_time_${name} date_time`}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   size="medium"
@@ -97,7 +97,7 @@ const CDateTimePicker = ({
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
       <DatePicker
-        id={`date_time_${name}`}
+        id={`date_time_${name} date_time_picker`}
         disableDayPicker
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
@@ -109,7 +109,7 @@ const CDateTimePicker = ({
               disabled={disabled}>
               {(InputProps) => (
                 <TextField
-                  id={`date_time_${name}`}
+                  id={`date_time_${name} time_date`}
                   value={value}
                   portalTarget={document.body}
                   portal={document.body}

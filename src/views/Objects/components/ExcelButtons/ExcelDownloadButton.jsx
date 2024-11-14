@@ -26,7 +26,7 @@ const ExcelDownloadButton = ({
   const {download} = useDownloader();
   const [loader, setLoader] = useState(false);
   const {filters} = useFilters(tableSlug, view?.id);
-  console.log("tableSlugtableSlug", tableSlug);
+
   const onClick = async () => {
     try {
       setLoader(true);
@@ -53,9 +53,9 @@ const ExcelDownloadButton = ({
       setLoader(false);
     }
   };
-  console.log("selectedTabselectedTab", selectedTab);
+
   return (
-    <div className={style.excelUpload} onClick={onClick}>
+    <div id="excel_download" className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>
         {withText ? "Экспорт" : null}
         <Download />

@@ -32,6 +32,7 @@ const CTimePicker = ({
   };
   return (
     <DatePicker
+      id="time_picker_comp"
       portal={sectionModal ? false : document.body}
       render={(value, openCalendar, handleChange) => {
         return (
@@ -40,6 +41,7 @@ const CTimePicker = ({
             onClick={openCalendar}
             onChange={handleChange}
             size="small"
+            id="time_picker"
             fullWidth
             autoFocus={tabIndex === 1}
             autoComplete="off"

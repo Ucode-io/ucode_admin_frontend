@@ -128,6 +128,7 @@ function HFProgrammingField({
               position: "relative",
             }}>
             <AceEditor
+              id="program_field"
               style={{paddingTop: "20px"}}
               mode={progLanguage}
               theme="monokai"

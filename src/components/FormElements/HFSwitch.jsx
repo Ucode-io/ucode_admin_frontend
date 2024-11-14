@@ -36,7 +36,7 @@ const HFSwitch = ({
               color: isBlackBg ? "#fff" : "",
             }}>
             <Switch
-              id={`switch-${id} switch_${name}`}
+              id={`switch-${id} switch_${name} switch_field`}
               {...props}
               autoFocus={tabIndex === 1}
               inputProps={{tabIndex}}

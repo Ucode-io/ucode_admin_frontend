@@ -86,7 +86,11 @@ const HFTextField = ({
               borderRadius: "8px",
             }}
             name={name}
-            id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
+            id={
+              field?.slug
+                ? `${field?.slug}_${name} email_field`
+                : `${name} email_field`
+            }
             error={error}
             fullWidth={fullWidth}
             placeholder={placeholder}

@@ -181,12 +181,12 @@ const FiltersTab = ({
                 justifyContent: "flex-end",
               }}>
               <Switch
+                id={`${column?.attributes?.[`label_${i18n.language}`] || column.label}`}
                 size="small"
                 checked={views?.attributes?.quick_filters?.find(
                   (filtered) => filtered?.id === column.id
                 )}
                 onChange={(e, val) => {
-                  console.log("entered", column, onChange);
                   changeHandler(e.target.checked, column);
                   onChange(undefined, column?.path_slug ?? column.slug);
                 }}
@@ -230,6 +230,7 @@ const FiltersTab = ({
                 justifyContent: "flex-end",
               }}>
               <Switch
+                id={`${column?.attributes?.[`label_${i18n.language}`] || column.label}`}
                 size="small"
                 checked={false}
                 onChange={(e, val) => {

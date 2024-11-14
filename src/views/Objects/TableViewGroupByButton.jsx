@@ -121,6 +121,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
   return (
     <div>
       <Button
+        id="group"
         variant={`${isGroupBy ? "outlined" : "text"}`}
         style={{
           gap: "5px",
@@ -274,6 +275,10 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                         {column?.type === "LOOKUP" ||
                         column?.type === "LOOKUPS" ? (
                           <Switch
+                            id={`${
+                              column?.attributes?.[`label_${i18n.language}`] ||
+                              column?.label
+                            }`}
                             size="small"
                             checked={currentView?.attributes?.group_by_columns?.includes(
                               column?.relation_id
@@ -284,6 +289,10 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                           />
                         ) : (
                           <Switch
+                            id={`${
+                              column?.attributes?.[`label_${i18n.language}`] ||
+                              column?.label
+                            }`}
                             size="small"
                             checked={currentView?.attributes?.group_by_columns?.includes(
                               column?.id
@@ -345,6 +354,10 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                     }}>
                     {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                       <Switch
+                        id={`${
+                          column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.label
+                        }`}
                         size="small"
                         checked={currentView?.attributes?.group_by_columns?.includes(
                           column?.relation_id
@@ -355,6 +368,10 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
                       />
                     ) : (
                       <Switch
+                        id={`${
+                          column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.label
+                        }`}
                         size="small"
                         checked={currentView?.attributes?.group_by_columns?.includes(
                           column?.id

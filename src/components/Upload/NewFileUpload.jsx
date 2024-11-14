@@ -155,6 +155,7 @@ export default function NewFileUpload({
               </Button>
             </Box>
             <input
+              id="fileUpload_field"
               type="file"
               style={{
                 display: "none",

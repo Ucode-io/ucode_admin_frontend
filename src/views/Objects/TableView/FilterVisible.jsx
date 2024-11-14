@@ -81,6 +81,7 @@ export default function FilterVisible({
     <div>
       {permissions?.add_filter && (
         <Box
+          id="add_filter_btn"
           variant={"text"}
           className={styles.add_filter}
           sx={customStyles}

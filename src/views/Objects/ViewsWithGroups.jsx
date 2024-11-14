@@ -338,6 +338,7 @@ const ViewsWithGroups = ({
                   onClick={() => {
                     setFilterVisible((prev) => !prev);
                   }}
+                  id="filter_button"
                   badgeContent={filterCount}
                   color="primary">
                   <FilterAltOutlinedIcon color={"#A8A8A8"} />
@@ -345,6 +346,7 @@ const ViewsWithGroups = ({
 
                 <Divider orientation="vertical" flexItem />
                 <SearchInput
+                  id="search_input"
                   key={inputKey}
                   defaultValue={searchText}
                   placeholder={"Search"}
@@ -355,6 +357,7 @@ const ViewsWithGroups = ({
                 {(roleInfo === "DEFAULT ADMIN" ||
                   permissions?.search_button) && (
                   <button
+                    id="search_filters"
                     className={style.moreButton}
                     onClick={handleClickSearch}
                     style={{
@@ -478,6 +481,7 @@ const ViewsWithGroups = ({
                             <span>{el.label}</span>
 
                             <Switch
+                              id={el?.value}
                               size="small"
                               checked={tableHeight === el.value}
                               onChange={() => handleHeightControl(el.value)}
@@ -494,6 +498,7 @@ const ViewsWithGroups = ({
                 <Divider orientation="vertical" flexItem />
                 {permissions?.excel_menu && (
                   <Button
+                    id="more_settings"
                     onClick={handleClick}
                     variant="text"
                     style={{
@@ -556,6 +561,7 @@ const ViewsWithGroups = ({
                       checkedColumns={checkedColumns}
                     />
                     <div
+                      id="template"
                       className={style.template}
                       onClick={() => setSelectedTabIndex(views?.length)}>
                       <div

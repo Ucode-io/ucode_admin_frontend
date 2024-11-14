@@ -87,6 +87,7 @@ import DetailPage1CFormPage from "../views/Objects/DetailPage1CFormPage";
 import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
 import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
 import LoginDesign from "../views/Auth/LoginDesign";
+import WebsitePage from "../views/Constructor/WebsitePage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -304,6 +305,10 @@ const Router = () => {
             <Route path="create" element={<MicrofrontendForm />} />
             <Route path=":microfrontendId" element={<MicrofrontendForm />} />
             <Route path="github/create" element={<GithubMicrofrontendForm />} />
+          </Route>
+
+          <Route path=":appId/website">
+            <Route index element={<WebsitePage />} />
           </Route>
 
           <Route path=":appId/openfaas-functions">

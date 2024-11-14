@@ -66,7 +66,6 @@ const AppSidebar = ({
     } else if (element.type === "LINK") {
       const website_link = element?.attributes?.website_link;
       if (element?.attributes?.website_link) {
-        console.log("website_linkwebsite_link", website_link);
         navigate(`/main/${element?.id}/website`, {
           state: {
             url: website_link,

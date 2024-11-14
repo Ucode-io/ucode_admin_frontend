@@ -32,13 +32,6 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
     name: "attributes.params",
   });
 
-  const microfrontendOptions = useMemo(() => {
-    return microfrontend?.functions?.map((item, index) => ({
-      label: item.name,
-      value: item.id,
-    }));
-  }, [microfrontend]);
-
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
       updateType(data, selectedFolder);
@@ -75,9 +68,6 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       .catch((err) => {
         console.log(err);
       });
-  };
-  const deleteField = (index) => {
-    remove(index);
   };
 
   useEffect(() => {

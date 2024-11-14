@@ -2,10 +2,17 @@ import React from "react";
 import {useLocation, useParams} from "react-router-dom";
 
 function WebsitePage() {
-  const {location} = useLocation();
-  const test = useParams();
-  console.log("locationlocation", location, test);
-  return <div>WebsitePage</div>;
+  const {state} = useLocation();
+
+  return (
+    <>
+      <iframe
+        src={state?.url}
+        width={"100%"}
+        height={"100%"}
+        frameborder="0"></iframe>
+    </>
+  );
 }
 
 export default WebsitePage;

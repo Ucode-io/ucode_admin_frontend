@@ -37,6 +37,7 @@ import Relations from "./Relations";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import menuService from "../../../../services/menuService";
 import {disableCache} from "@iconify/react";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,8 @@ const ConstructorTablesFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const location = useLocation();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [exist, setExist] = useState(false);
 
   const mainForm = useForm({
     defaultValues: {
@@ -323,23 +326,39 @@ const ConstructorTablesFormPage = () => {
       .catch(() => setBtnLoader(false));
   };
 
-  const onSubmit = (data) => {
+  const getKeyCheck = async (id) => {
+    const response = await constructorTableService.getListKey(id);
+
+    if (response?.exists) {
+      setExist(true);
+      return false;
+    } else return true;
+  };
+
+  const onSubmit = async (data) => {
     const computedData = {
       ...data,
       id: data?.id,
       show_in_menu: true,
     };
-    // return;
-    if (id) updateConstructorTable(computedData);
-    else createConstructorTable(computedData);
+
+    if (data?.id) {
+      updateConstructorTable(computedData);
+    } else {
+      const keyExists = await getKeyCheck(data?.slug);
+      if (keyExists) {
+        createConstructorTable(computedData);
+      } else {
+        dispatch(showAlert(`Table with key ${data?.slug} already exist`));
+        console.log("Key check failed, cannot create table.");
+      }
+    }
   };
 
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
-  console.log("ididididididid", id);
-  const [selectedTab, setSelectedTab] = useState(0);
 
   if (loader) return <PageFallback />;
 
@@ -417,7 +436,12 @@ const ConstructorTablesFormPage = () => {
               backButtonLink={-1}
               sticky></HeaderSettings>
 
-            <MainInfo control={mainForm.control} watch={mainForm.watch} />
+            <MainInfo
+              control={mainForm.control}
+              watch={mainForm.watch}
+              exist={exist}
+              setExist={setExist}
+            />
           </>
         )}
       </div>

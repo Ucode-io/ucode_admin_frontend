@@ -25,6 +25,7 @@ const ButtonsMenu = ({
   setTableModal,
   setMicrofrontendModal,
   setLinkedTableModal,
+  setWebsiteModalLink,
 }) => {
   const navigate = useNavigate();
   const permissionButton =
@@ -124,6 +125,16 @@ const ButtonsMenu = ({
           <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
             title="Add microfrontend"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMicrofrontendModal(element);
+              handleCloseNotify();
+            }}
+          />
+
+          <MenuItemComponent
+            icon={<DeveloperBoardIcon size={13} />}
+            title="Add Website"
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -420,6 +431,17 @@ const ButtonsMenu = ({
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal({
+                id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+              });
+              handleCloseNotify();
+            }}
+          />
+          <MenuItemComponent
+            icon={<DeveloperBoardIcon size={13} />}
+            title="Add Website"
+            onClick={(e) => {
+              e.stopPropagation();
+              setWebsiteModalLink({
                 id: "c57eedc3-a954-4262-a0af-376c65b5a284",
               });
               handleCloseNotify();

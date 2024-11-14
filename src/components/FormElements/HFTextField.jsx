@@ -39,6 +39,7 @@ const HFTextField = ({
   disabled_text = "This field is disabled for this role!",
   setFormValue,
   customOnChange = () => {},
+  exist = false,
   ...props
 }) => {
   const location = useLocation();
@@ -81,6 +82,8 @@ const HFTextField = ({
               width: "100%",
               padding: "0px",
               margin: "0px",
+              border: exist ? "1px solid red" : "0px solid #000",
+              borderRadius: "8px",
             }}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}

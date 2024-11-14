@@ -38,6 +38,7 @@ import {useSearchParams} from "react-router-dom";
 import AiChatMenu from "../ProfilePanel/AIChat";
 import Chatwoot from "../ProfilePanel/Chatwoot";
 import Documentation from "../ProfilePanel/Documentation";
+import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,6 +61,7 @@ const LayoutSidebar = ({appId}) => {
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
+  const [websiteModal, setWebsiteModal] = useState(false);
   const [menuSettingModal, setMenuSettingModalOpen] = useState(false);
   const [templateModal, setTemplateModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState();
@@ -110,6 +112,15 @@ const LayoutSidebar = ({appId}) => {
       },
     },
   });
+
+  const closeWebsiteModal = () => {
+    setWebsiteModal(null);
+  };
+
+  const setWebsiteModalLink = (element) => {
+    setWebsiteModal(true);
+    setSelectedFolder(element);
+  };
 
   const setTableModal = (element) => {
     setTableModalOpen(true);
@@ -512,6 +523,14 @@ const LayoutSidebar = ({appId}) => {
             getMenuList={getMenuList}
           />
         )}
+
+        {websiteModal && (
+          <WebsiteModal
+            closeModal={closeWebsiteModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
         {folderModalType === "folder" && (
           <FolderModal
             closeModal={closeFolderModal}
@@ -555,6 +574,7 @@ const LayoutSidebar = ({appId}) => {
           setMicrofrontendModal={setMicrofrontendModal}
           deleteFolder={deleteFolder}
           getMenuList={getMenuList}
+          setWebsiteModalLink={setWebsiteModalLink}
         />
       ) : null}
       {templateModal && <TemplateModal closeModal={closeTemplateModal} />}

@@ -64,7 +64,14 @@ const AppSidebar = ({
         `/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`
       );
     } else if (element.type === "LINK") {
-      if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
+      const website_link = element?.attributes?.website_link;
+      if (element?.attributes?.website_link) {
+        navigate(`/main/${element?.id}/website`, {
+          state: {
+            url: website_link,
+          },
+        });
+      } else if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
         navigate(
           replaceValues(
             element?.attributes?.link,

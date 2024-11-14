@@ -234,6 +234,17 @@ const ButtonsMenu = ({
       )}
       {menuType === "LINK" && (
         <Box className="menu">
+          {/* {element?.data?.permission?.menu_settings || permissionButton ? (
+            <MenuItemComponent
+              icon={<DriveFileMoveIcon size={13} />}
+              title="Move table"
+              onClick={(e) => {
+                e.stopPropagation();
+                setWebsiteModalLink("folder", element);
+                handleCloseNotify();
+              }}
+            />
+          ) : null} */}
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<DriveFileMoveIcon size={13} />}
@@ -245,19 +256,17 @@ const ButtonsMenu = ({
               }}
             />
           ) : null}
-
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Edit table"
               onClick={(e) => {
                 e.stopPropagation();
-                setLinkedTableModal(element);
+                setWebsiteModalLink(element);
                 handleCloseNotify();
               }}
             />
           ) : null}
-
           <Divider
             style={{
               marginBottom: "4px",

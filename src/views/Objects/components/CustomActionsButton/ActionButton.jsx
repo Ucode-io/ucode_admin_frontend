@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {useState, useEffect} from "react";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 import request from "../../../../utils/request";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import useDownloader from "../../../../hooks/useDownloader";
 
-const ActionButton = ({ event, id, control, disable, getAllData }) => {
-  const { tableSlug } = useParams();
+const ActionButton = ({event, id, control, disable, getAllData}) => {
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState(false);
   const [disabled, setDisabled] = useState();
-  const { download } = useDownloader();
+  const {download} = useDownloader();
 
   function getLastUnderscorePart(url) {
     let fileName = url.split("/").pop();
@@ -34,12 +34,13 @@ const ActionButton = ({ event, id, control, disable, getAllData }) => {
     const data = {
       function_id: event.event_path,
       object_ids: [id],
+      table_slug: tableSlug,
     };
 
     setBtnLoader(true);
     request
       .post("/invoke_function", data, {
-        params: { use_no_limit: event?.attributes?.use_no_limit },
+        params: {use_no_limit: event?.attributes?.use_no_limit},
       })
       .then((res) => {
         dispatch(showAlert("Success", "success"));
@@ -57,7 +58,7 @@ const ActionButton = ({ event, id, control, disable, getAllData }) => {
               });
             } else {
               // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
-              getAllData()
+              getAllData();
             }
           } else if (url) {
             Object.entries(res?.data ?? {}).forEach(([key, value]) => {
@@ -83,7 +84,7 @@ const ActionButton = ({ event, id, control, disable, getAllData }) => {
               },
             });
           } else if (url?.includes("cdn")) {
-            download({ link: url, fileName: getLastUnderscorePart(url) });
+            download({link: url, fileName: getLastUnderscorePart(url)});
           } else {
             if (url.includes("http") || url.includes("https")) {
               window.open(url, "_blank");
@@ -112,8 +113,7 @@ const ActionButton = ({ event, id, control, disable, getAllData }) => {
     <PrimaryButton
       disabled={disabled}
       loader={btnLoader}
-      onClick={invokeFunction}
-    >
+      onClick={invokeFunction}>
       <IconGenerator icon={event.icon} /> {event.label}
     </PrimaryButton>
   );

@@ -130,6 +130,16 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
+
+          <MenuItemComponent
+            icon={<DeveloperBoardIcon size={13} />}
+            title="Add Website"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMicrofrontendModal(element);
+              handleCloseNotify();
+            }}
+          />
           <Divider
             style={{
               marginBottom: "4px",

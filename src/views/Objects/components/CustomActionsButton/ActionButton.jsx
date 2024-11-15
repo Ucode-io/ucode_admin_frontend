@@ -100,7 +100,7 @@ const ActionButton = ({event, id, control, disable, getAllData}) => {
     if (event?.disable === false || event?.disable === undefined) {
       setDisabled(false);
     } else if (event?.disable === true) {
-      const match = control[`${event.functions[0].path}_disable`];
+      const match = control[`${event?.functions?.[0]?.path}_disable`];
       setDisabled(match);
     }
   }, [control, event]);

@@ -7,9 +7,10 @@ import useTabRouter from "../../hooks/useTabRouter";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {paginationActions} from "../../store/pagination/pagination.slice";
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import CustomTableEvents from "../CustomTableEvents";
 
 const CPagination = ({
   setCurrentPage = () => {},
@@ -26,6 +27,8 @@ const CPagination = ({
   navigateToEditPage = () => {},
   selectedTab,
   isRelationTable,
+  getAllData = () => {},
+  control,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -125,6 +128,14 @@ const CPagination = ({
           gap: 10,
           marginLeft: "10px",
         }}>
+        {selectedObjectsForDelete?.length > 0 && !disablePagination && (
+          <CustomTableEvents
+            control={control}
+            getAllData={getAllData}
+            customEvents={[]}
+          />
+        )}
+
         {selectedObjectsForDelete?.length > 0 && !disablePagination ? (
           <RectangleIconButton color="error" onClick={multipleDelete}>
             <Button variant="outlined" color="error">

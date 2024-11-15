@@ -17,10 +17,10 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import listToOptions from "../../../../utils/listToOptions";
 import style from "./main.module.scss";
 
-const MainInfo = ({control, watch, exist}) => {
+const MainInfo = ({control, watch, exist, authData}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
-  console.log("existexist", exist);
+
   const params = {
     language_setting: i18n?.language,
   };
@@ -56,7 +56,7 @@ const MainInfo = ({control, watch, exist}) => {
     control,
     name: "attributes.auth_info",
   });
-
+  console.log("authInfoauthInfo", authInfo);
   const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
@@ -103,7 +103,7 @@ const MainInfo = ({control, watch, exist}) => {
 
   //   return listToOptions([...fields, ...computedRelations], "label", "slug");
   // }, [fields]);
-
+  console.log("authDataaaaa", authData?.login_strategy?.length);
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
       label:
@@ -173,105 +173,110 @@ const MainInfo = ({control, watch, exist}) => {
 
         {loginTable && (
           <Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="User type" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.client_type_id"
-                fullWidth
-                placeholder="client"
-                options={computedLoginFields}
-                required
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Roles" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.role_id"
-                fullWidth
-                placeholder="role"
-                options={computedLoginFields}
-                required
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Login" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.login"
-                fullWidth
-                placeholder="login"
-                options={computedLoginFields}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Password" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.password"
-                fullWidth
-                placeholder="password"
-                options={computedLoginFields}
-                required={loginRequired}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Почта" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.email"
-                fullWidth
-                placeholder="email"
-                options={computedLoginFields}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Телефон" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.phone"
-                fullWidth
-                placeholder="phone"
-                options={computedLoginFields}
-              />
-            </Box>
+            {authData?.login_strategy?.length === 1 && (
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="User type" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.client_type_id"
+                    fullWidth
+                    placeholder="client"
+                    options={computedLoginFields}
+                    required
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="Roles" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.role_id"
+                    fullWidth
+                    placeholder="role"
+                    options={computedLoginFields}
+                    required
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="Login" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.login"
+                    fullWidth
+                    placeholder="login"
+                    options={computedLoginFields}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="Password" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.password"
+                    fullWidth
+                    placeholder="password"
+                    options={computedLoginFields}
+                    required={loginRequired}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="Почта" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.email"
+                    fullWidth
+                    placeholder="email"
+                    options={computedLoginFields}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}>
+                  <FRow label="Телефон" />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.phone"
+                    fullWidth
+                    placeholder="phone"
+                    options={computedLoginFields}
+                  />
+                </Box>
+              </>
+            )}
+
             <Box
               sx={{
                 display: "flex",

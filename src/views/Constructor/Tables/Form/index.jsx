@@ -51,6 +51,7 @@ const ConstructorTablesFormPage = () => {
   const location = useLocation();
   const [selectedTab, setSelectedTab] = useState(0);
   const [exist, setExist] = useState(false);
+  const [authInfo, setAuthInfo] = useState(null);
 
   const mainForm = useForm({
     defaultValues: {
@@ -99,6 +100,7 @@ const ConstructorTablesFormPage = () => {
     queryParams: {
       enabled: !!id,
       onSuccess: (res) => {
+        setAuthInfo(res?.attributes?.auth_info);
         mainForm.reset(res);
         setLoader(false);
       },
@@ -387,7 +389,11 @@ const ConstructorTablesFormPage = () => {
               </HeaderSettings>
 
               <TabPanel>
-                <MainInfo control={mainForm.control} watch={mainForm.watch} />
+                <MainInfo
+                  authData={authInfo}
+                  control={mainForm.control}
+                  watch={mainForm.watch}
+                />
               </TabPanel>
 
               <TabPanel>

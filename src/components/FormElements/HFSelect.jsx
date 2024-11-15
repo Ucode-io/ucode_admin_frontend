@@ -108,6 +108,7 @@ const HFSelect = ({
                   ])
                 : options?.map((option) => (
                     <MenuItem
+                      id={`field_option_${option?.value}`}
                       onClick={(e) => getOnchangeField(option)}
                       key={option?.value}
                       value={option?.value}>

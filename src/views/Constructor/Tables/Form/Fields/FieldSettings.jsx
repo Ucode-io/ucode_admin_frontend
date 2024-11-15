@@ -545,6 +545,7 @@ const FieldSettings = ({
                       label="Hide Field From"
                       classname={styles.custom_label}>
                       <HFSelect
+                        id="hide_fields"
                         disabledHelperText
                         name="attributes.hide_path_field"
                         control={control}
@@ -557,6 +558,7 @@ const FieldSettings = ({
 
                     {selectedField?.type === "MULTISELECT" ? (
                       <HFMultipleSelect
+                        id="hide_multi_field"
                         options={computedMultiSelectOptions}
                         disabledHelperText
                         name="attributes.hide_path"
@@ -567,6 +569,7 @@ const FieldSettings = ({
                     ) : selectedField?.type === "LOOKUP" ? (
                       <HFRelationFieldSetting
                         disabledHelperText
+                        id="hide_relation_field"
                         name="attributes.hide_path"
                         control={control}
                         placeholder="Type"
@@ -577,6 +580,7 @@ const FieldSettings = ({
                       <>
                         <FRow label="Hide Value">
                           <HFNumberField
+                            id="hide_path_field"
                             type={"number"}
                             disabledHelperText
                             name="attributes.hide_path"
@@ -587,6 +591,7 @@ const FieldSettings = ({
                         </FRow>
                         <FRow label="Number range">
                           <HFSelect
+                            id="hide_type_field"
                             options={numberTypeOptions}
                             disabledHelperText
                             name="attributes.type"
@@ -598,6 +603,7 @@ const FieldSettings = ({
                       </>
                     ) : (
                       <HFTextField
+                        id="hide_field_path"
                         disabledHelperText
                         name="attributes.hide_path"
                         control={control}

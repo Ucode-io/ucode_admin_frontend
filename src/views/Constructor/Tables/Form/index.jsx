@@ -36,7 +36,6 @@ import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import menuService from "../../../../services/menuService";
-import {disableCache} from "@iconify/react";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 
 const ConstructorTablesFormPage = () => {
@@ -52,6 +51,8 @@ const ConstructorTablesFormPage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [exist, setExist] = useState(false);
   const [authInfo, setAuthInfo] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
 
   const mainForm = useForm({
     defaultValues: {
@@ -77,11 +78,6 @@ const ConstructorTablesFormPage = () => {
   const values = useWatch({
     control: mainForm?.control,
   });
-
-  // const list = useSelector((state) => state.constructorTable.list);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
@@ -259,68 +255,7 @@ const ConstructorTablesFormPage = () => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    // const computedLayouts = data.layouts.map((layout) => ({
-    //   ...layout,
-    //   summary_fields: layout?.summary_fields?.map((item) => {
-    //     return {
-    //       ...item,
-    //       field_name: item?.field_name ?? item?.title ?? item?.label,
-    //     };
-    //   }),
-    //   tabs: layout?.tabs?.map((tab) => {
-    //     if (
-    //       tab.type === "Many2Many" ||
-    //       tab.type === "Many2Dynamic" ||
-    //       tab.type === "Recursive" ||
-    //       tab.type === "Many2One" ||
-    //       tab.relation_type === "Many2Many" ||
-    //       tab.relation_type === "Many2Dynamic" ||
-    //       tab.relation_type === "Recursive" ||
-    //       tab.relation_type === "Many2One"
-    //     ) {
-    //       return {
-    //         order: tab?.order ?? 0,
-    //         label: tab.title ?? tab.label,
-    //         field_name: tab?.title ?? tab.label ?? tab?.field_name,
-    //         type: "relation",
-    //         layout_id: layout.id,
-    //         relation_id: tab.id,
-    //         relation: {
-    //           ...tab,
-    //         },
-    //       };
-    //     } else {
-    //       return {
-    //         ...tab,
-    //         sections: tab?.sections?.map((section, index) => ({
-    //           ...section,
-    //           order: index,
-    //           fields: section?.fields?.map((field, index) => ({
-    //             ...field,
-    //             order: index,
-    //             field_name: field?.title ?? field.label,
-    //           })),
-    //         })),
-    //       };
-    //     }
-    //   }),
-    // }));
-
-    // const updateLayoutData = layoutService.update(
-    //   {
-    //     layouts: computedLayouts,
-    //     table_id: id,
-    //     project_id: projectId,
-    //   },
-    //   slug
-    // );
-
-    Promise.all([
-      updateTableData,
-      // updateSectionData,
-      // updateViewRelationsData,
-      // updateLayoutData,
-    ])
+    Promise.all([updateTableData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -352,7 +287,6 @@ const ConstructorTablesFormPage = () => {
         createConstructorTable(computedData);
       } else {
         dispatch(showAlert(`Table with key ${data?.slug} already exist`));
-        console.log("Key check failed, cannot create table.");
       }
     }
   };

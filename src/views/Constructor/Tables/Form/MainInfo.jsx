@@ -14,12 +14,12 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import listToOptions from "../../../../utils/listToOptions";
 import style from "./main.module.scss";
 
 const MainInfo = ({control, watch, exist, authData}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list);
 
   const params = {
     language_setting: i18n?.language,
@@ -52,11 +52,6 @@ const MainInfo = ({control, watch, exist, authData}) => {
     name: "attributes.auth_info.login",
   });
 
-  const authInfo = useWatch({
-    control,
-    name: "attributes.auth_info",
-  });
-  console.log("authInfoauthInfo", authInfo);
   const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
@@ -85,25 +80,6 @@ const MainInfo = ({control, watch, exist, authData}) => {
     }
   }, [login]);
 
-  // const computedFields = useMemo(() => {
-  //   const computedRelations = relations.map((relation) => {
-  //     const tableSlug = relation.id.split("#")[0];
-  //     const viewFields =
-  //       relation.attributes?.fields?.map(
-  //         (viewField) => `${tableSlug}.${viewField.slug}`
-  //       ) ?? [];
-
-  //     const slug = viewFields.join("#");
-
-  //     return {
-  //       ...relation,
-  //       slug: slug,
-  //     };
-  //   });
-
-  //   return listToOptions([...fields, ...computedRelations], "label", "slug");
-  // }, [fields]);
-  console.log("authDataaaaa", authData?.login_strategy?.length);
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
       label:
@@ -115,8 +91,6 @@ const MainInfo = ({control, watch, exist, authData}) => {
       value: item?.slug ?? "",
     }));
   }, [computedTableFields]);
-
-  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div className="p-2">

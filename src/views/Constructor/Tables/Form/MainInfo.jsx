@@ -147,7 +147,7 @@ const MainInfo = ({control, watch, exist, authData}) => {
 
         {loginTable && (
           <Box>
-            {authData?.login_strategy?.length === 1 && (
+            {authData?.login_strategy?.length >= 1 && (
               <>
                 <Box
                   sx={{

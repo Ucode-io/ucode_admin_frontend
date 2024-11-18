@@ -512,6 +512,7 @@ export default function FieldCreateModal({
                   />
 
                   <span
+                    id={`math_plus`}
                     className={`math_${mathType?.label}`}
                     onClick={(e) => setMathEl(e.currentTarget)}>
                     {mathType?.value}
@@ -544,6 +545,7 @@ export default function FieldCreateModal({
                       {math.map((item) => {
                         return (
                           <span
+                            id={`math_${item?.label}`}
                             className={`math_${item?.label}`}
                             onClick={() => {
                               setValue("attributes.math", item);

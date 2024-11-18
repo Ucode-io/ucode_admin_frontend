@@ -14,6 +14,8 @@ const HFCheckbox = ({
   labelClassName,
   defaultValue = false,
   isShowLable = true,
+  newColumn = false,
+  field,
   ...props
 }) => {
   const id = useId();
@@ -31,7 +33,7 @@ const HFCheckbox = ({
             color: isBlackBg ? "#fff" : "",
           }}>
           <Checkbox
-            id={`checkbox-${id} checkbox_${name} checkbox_field`}
+            id={`checkBox_${newColumn ? "new" : field?.slug}`}
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",

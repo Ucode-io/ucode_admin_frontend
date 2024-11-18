@@ -209,6 +209,7 @@ export default function NewFileUpload({
         // </div>
 
         <Button
+          id="file_upload_btn"
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
@@ -218,6 +219,7 @@ export default function NewFileUpload({
             paddingLeft: "15px",
           }}>
           <input
+            id="file_upload"
             type="file"
             className="hidden"
             ref={inputRef}

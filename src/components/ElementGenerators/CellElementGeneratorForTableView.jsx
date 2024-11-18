@@ -478,6 +478,8 @@ const CellElementGeneratorForTableView = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          field={field}
+          newColumn={newColumn}
           disabled={isDisabled}
           isFormEdit
           updateObject={updateObject}
@@ -493,6 +495,7 @@ const CellElementGeneratorForTableView = ({
     case "SWITCH":
       return (
         <HFSwitch
+          newColumn={newColumn}
           disabled={isDisabled}
           isFormEdit
           field={field}

@@ -16,6 +16,7 @@ const HFSwitch = ({
   defaultValue = false,
   field,
   isShowLable = true,
+  newColumn,
   ...props
 }) => {
   const id = useId();
@@ -36,6 +37,7 @@ const HFSwitch = ({
               color: isBlackBg ? "#fff" : "",
             }}>
             <Switch
+              id={`switch_${newColumn ? "new" : field?.slug}`}
               {...props}
               autoFocus={tabIndex === 1}
               inputProps={{tabIndex}}

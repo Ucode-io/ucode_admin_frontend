@@ -228,6 +228,7 @@ const ImageUpload = ({
               </Box>
             </Box>
             <input
+              id="image_photo"
               type="file"
               style={{
                 display: "none",
@@ -319,6 +320,7 @@ const ImageUpload = ({
 
       {!value && (
         <Button
+          id="image_upload_btn"
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
@@ -327,6 +329,7 @@ const ImageUpload = ({
             height: "25px",
           }}>
           <input
+            id="img_upload"
             type="file"
             className="hidden"
             ref={inputRef}

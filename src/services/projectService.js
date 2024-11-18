@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
 
 const projectService = {
-  getList: (params) => request.get("/company-project", { params }),
-  getAllSetting: (params) => request.get(`/project/setting`, { params }),
+  getList: (params) => request.get("/company-project", {params}),
+  getAllSetting: (params) => request.get(`/project/setting`, {params}),
   getByID: (params, projectId) => {
     return request.get(`/company-project/${projectId}`, {
       params,
@@ -14,7 +14,7 @@ const projectService = {
   delete: (id) => request.delete(`/company-project/${id}`),
 };
 
-export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
+export const useProjectListQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(
     ["PROJECT", params],
     () => {
@@ -24,10 +24,7 @@ export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useProjectsAllSettingQuery = ({
-  params = {},
-  queryParams,
-} = {}) => {
+export const useProjectsAllSettingQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(
     ["ALL_SETTINGS", params],
     () => {
@@ -43,7 +40,7 @@ export const useProjectGetByIdQuery = ({
   queryParams,
 }) => {
   return useQuery(
-    ["PROJECT_GET_BY_ID", { ...params, projectId }],
+    ["PROJECT_GET_BY_ID", {...params, projectId}],
     () => {
       return projectService.getByID(params, projectId);
     },

@@ -213,7 +213,7 @@ const MatrixRolePage = () => {
           setTableSlugWithType((prev) => (value === "Yes" ? prev : null));
           if (value === "Yes") {
             constructorRelationService
-              .getList({ table_slug: tabSlug })
+              .getList({ table_slug: tabSlug }, tabSlug)
               .then((res) => {
                 setRelations(
                   res?.relations
@@ -385,8 +385,6 @@ const MatrixRolePage = () => {
     }
   }, [isCustomVisible, automaticFilters]);
 
-  console.log("autoFilterFields", autoFilterFields);
-
   const isAppPermissionYes = useCallback(
     (items, key) => {
       return recordPermissions
@@ -404,7 +402,7 @@ const MatrixRolePage = () => {
       />
       <div style={{ margin: "8px" }}>
         <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-          <FRow label="Название">
+          <FRow label="Name">
             <HFTextField name="name" control={roleForm.control} fullWidth />
           </FRow>
         </FormCard>
@@ -741,7 +739,7 @@ const MatrixRolePage = () => {
                                           })
                                     }
                                   >
-                                    Добавить новое условия
+                                    Add new condition
                                   </SecondaryButton>
                                   <PrimaryButton
                                     disabled={!autoFilterFields.length}
@@ -761,7 +759,6 @@ const MatrixRolePage = () => {
                   <CTableHeadCell
                     onClick={() => {
                       if (app?.children) {
-                        console.log("app , ", app);
                         handleOpen();
                         setTableSlug(app?.slug);
                       }
@@ -778,7 +775,6 @@ const MatrixRolePage = () => {
                   <CTableHeadCell
                     onClick={() => {
                       if (app?.children) {
-                        console.log("action permission , ", app);
                         actionOpen();
                         setTableSlug(app?.slug);
                       }

@@ -7,6 +7,7 @@ import DataTable from "../../../../../components/DataTable";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
+import constructorTableService from "../../../../../services/constructorTableService";
 
 const LayoutRelationTable = ({mainForm, index}) => {
   const relations = useWatch({
@@ -35,7 +36,7 @@ const LayoutRelationTable = ({mainForm, index}) => {
     ["GET_VIEW_RELATION_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return null;
-      return constructorObjectService.getList(
+      return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
           data: {limit: 0, offset: 0},

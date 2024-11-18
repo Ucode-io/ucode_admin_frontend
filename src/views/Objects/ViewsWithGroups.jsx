@@ -1,55 +1,53 @@
-import { Description, MoreVertOutlined } from "@mui/icons-material";
-import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
-import MultipleInsertButton from "./components/MultipleInsertForm";
-import CustomActionsButton from "./components/CustomActionsButton";
-import {
-  ArrowDropDownCircleOutlined,
-  Clear,
-  Edit,
-  Save,
-} from "@mui/icons-material";
-import { useFieldArray, useForm } from "react-hook-form";
-import AddIcon from "@mui/icons-material/Add";
-import HexagonIcon from "@mui/icons-material/Hexagon";
+import {Description, MoreVertOutlined} from "@mui/icons-material";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import { Button, CircularProgress, Divider, Menu, Switch } from "@mui/material";
-import { endOfMonth, startOfMonth } from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import { CheckIcon } from "../../assets/icons/icon";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  Backdrop,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Menu,
+  Switch,
+} from "@mui/material";
+import {endOfMonth, startOfMonth} from "date-fns";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
+import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
+import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import useTabRouter from "../../hooks/useTabRouter";
+import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
 import constructorObjectService from "../../services/constructorObjectService";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import ColumnVisible from "./ColumnVisible";
-import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "../../utils/indexedDb.jsx";
 import GroupByButton from "./GroupByButton";
-import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
+import Table1CUi from "./Table1CUi";
 import TableView from "./TableView";
+import GroupTableView from "./TableView/GroupTableView";
+import TableViewGroupByButton from "./TableViewGroupByButton";
 import TreeView from "./TreeView";
+import VisibleColumnsButton from "./VisibleColumnsButton";
 import ExcelButtons from "./components/ExcelButtons";
-import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import SortButton from "./SortButton";
-import GroupColumnVisible from "./GroupColumnVisible";
-import GroupTableView from "./TableView/GroupTableView";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 const ViewsWithGroups = ({
   views,
@@ -58,33 +56,48 @@ const ViewsWithGroups = ({
   view,
   fieldsMap,
   menuItem,
+  visibleRelationColumns,
+  visibleColumns,
 }) => {
-  const { t } = useTranslation();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
+  const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
-  const [shouldGet, setShouldGet] = useState(false);
-  const [heightControl, setHeightControl] = useState(false);
-  const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
-  const { navigateToForm } = useTabRouter();
-  const [dataLength, setDataLength] = useState(null);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
-  const [defaultViewTab, setDefaultViewTab] = useState(0);
   const [searchText, setSearchText] = useState("");
+
   const [checkedColumns, setCheckedColumns] = useState([]);
-  const [tab, setTab] = useState();
   const [sortedDatas, setSortedDatas] = useState([]);
+  const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
+  const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
+  const [inputKey, setInputKey] = useState(0);
+  const openHeightControl = Boolean(anchorElHeightControl);
+  const permissions = useSelector(
+    (state) => state.permissions.permissions?.[tableSlug]
+  );
+  const paginationCount = useSelector(
+    (state) => state?.pagination?.paginationCount
+  );
+
+  const paginiationCount = useMemo(() => {
+    const getObject = paginationCount.find((el) => el?.tableSlug === tableSlug);
+
+    return getObject?.pageCount ?? 1;
+  }, [paginationCount, tableSlug]);
+
+  const [currentPage, setCurrentPage] = useState(paginiationCount);
+
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -100,11 +113,6 @@ const ViewsWithGroups = ({
     setAnchorEl(null);
   };
 
-  const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
-  const openHeightControl = Boolean(anchorElHeightControl);
-  const handleClickHeightControl = (event) => {
-    setAnchorElHeightControl(event.currentTarget);
-  };
   const handleCloseHeightControl = () => {
     setAnchorElHeightControl(null);
   };
@@ -138,45 +146,17 @@ const ViewsWithGroups = ({
     reset,
     setValue: setFormValue,
     getValues,
+    formState: {errors},
   } = useForm({
     defaultValues: {
       multi: [],
     },
   });
 
-  const { fields, remove, append } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "multi",
   });
-
-  const getValue = useCallback((item, key) => {
-    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
-  }, []);
-
-  const { mutate: updateMultipleObject, isLoading } = useMutation(
-    (values) =>
-      constructorObjectService.updateMultipleObject(tableSlug, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-          })),
-        },
-      }),
-    {
-      onSuccess: () => {
-        setShouldGet((p) => !p);
-        setFormVisible(false);
-      },
-    }
-  );
-
-  const onSubmit = (data) => {
-    updateMultipleObject(data);
-  };
 
   const handleHeightControl = (val) => {
     dispatch(
@@ -184,54 +164,24 @@ const ViewsWithGroups = ({
         tableHeight: val,
       })
     );
-    setHeightControl(false);
   };
 
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug);
-  };
-
-  const navigateToCreatePageWithInvite = () => {
-    navigateToForm(tableSlug);
-    dispatch(menuActions.setInvite(true));
-  };
-
-  function dateIsValid(date) {
-    return date instanceof Date && !isNaN(date);
-  }
+  const {mutate: updateField, isLoading: updateLoading} =
+    useFieldSearchUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
+      },
+    });
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
-  useEffect(() => {
-    if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
-      setIsFinancialCalendarLoading(true);
-      constructorObjectService
-        .getFinancialAnalytics(tableSlug, {
-          data: {
-            start: dateFilters?.$gte,
-            end: dateFilters?.$lt,
-            view_id: view?.id,
-          },
-        })
-        .then((res) => {
-          setAnalyticsRes(res.data);
-        })
-        .finally(() => setIsFinancialCalendarLoading(false));
-    }
-  }, [dateFilters, tableSlug]);
-  console.log('menuItem', menuItem)
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
     navigate(url);
   };
-
-  // useEffect(() => {
-  //   setSelectedView(views?.[selectedTabIndex] ?? {});
-  // }, [views, selectedTabIndex]);
-
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -241,224 +191,333 @@ const ViewsWithGroups = ({
         el?.type === "PHONE" ||
         el?.type === "EMAIL" ||
         el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID"
+        el?.type === "INCREMENT_ID" ||
+        el?.type === "FORMULA_FRONTEND"
     );
   }, [view, fieldsMap]);
 
+  const computedVisibleFields = useMemo(() => {
+    const mappedObjects = [];
+    Object.values(fieldsMap)?.forEach((obj) => {
+      if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
+        if (view?.columns?.includes(obj.relation_id)) {
+          mappedObjects.push(obj);
+        }
+      } else {
+        if (view?.columns?.includes(obj.id)) {
+          mappedObjects.push(obj);
+        }
+      }
+    });
+
+    return mappedObjects.map((obj) => obj.id);
+  }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
+
+  const inputChangeHandler = useDebounce((val) => {
+    setCurrentPage(1);
+    setSearchText(val);
+    saveSearchTextToDB(tableSlug, val);
+  }, 300);
+
   const selectAll = () => {
-    setCheckedColumns(columnsForSearch.map((el) => el.slug));
+    setCheckedColumns(
+      columnsForSearch
+        .filter((item) => item.is_search === true)
+        .map((item) => item.slug)
+    );
+  };
+
+  const initDB = async () => {
+    const db = await openDB();
+    const savedSearch = await getSearchText(db, tableSlug);
+    if (savedSearch && savedSearch.searchText) {
+      setSearchText(savedSearch.searchText);
+      setInputKey(inputKey + 1);
+    }
+  };
+
+  const saveSearchTextToDB = async (tableSlug, searchText) => {
+    const db = await openDB();
+    await saveOrUpdateSearchText(db, tableSlug, searchText);
   };
 
   useEffect(() => {
-    selectAll();
-  }, []);
+    initDB();
+  }, [tableSlug]);
 
-  const {
-    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
-      visibleViews: [],
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-    isVisibleLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0 },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          visibleViews: data?.views ?? [],
-          visibleColumns: data?.fields ?? [],
-          visibleRelationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
+  useEffect(() => {
+    selectAll();
+  }, [view, fieldsMap]);
 
   return (
     <>
-      <FiltersBlock
-        extra={
-          <>
-            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-              <ShareModal />
-            </PermissionWrapperV2>
-
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
-              <LanguagesNavbar />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
-              <Button variant="outlined">
-                <HexagonIcon />
-              </Button>
-            </PermissionWrapperV2> */}
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button
-                variant="outlined"
-                onClick={navigateToSettingsPage}
-                style={{
-                  borderColor: "#A8A8A8",
-                  width: "35px",
-                  height: "35px",
-                  padding: "0px",
-                  minWidth: "35px",
-                }}
-              >
-                <SettingsIcon
-                  style={{
-                    color: "#A8A8A8",
-                  }}
-                />
-              </Button>
-            </PermissionWrapperV2>
-          </>
-        }
-      >
-        <ViewTabSelector
+      {view?.attributes?.table_1c_ui ? (
+        <Table1CUi
+          computedVisibleFields={computedVisibleFields}
+          menuItem={menuItem}
+          view={view}
+          fieldsMap={fieldsMap}
+          views={views}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
           settingsModalVisible={settingsModalVisible}
           setSettingsModalVisible={setSettingsModalVisible}
           isChanged={isChanged}
           setIsChanged={setIsChanged}
           selectedView={selectedView}
           setSelectedView={setSelectedView}
-          defaultViewTab={defaultViewTab}
-          setTab={setTab}
+          control={control}
+          tabs={tabs}
         />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
-      </FiltersBlock>
-
-      <div className={style.extraNavbar}>
-        <div className={style.extraWrapper}>
-          <div className={style.search}>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            <Divider orientation="vertical" flexItem />
-            <SearchInput
-              placeholder={"Search"}
-              onChange={(e) => setSearchText(e)}
-            />
-            <button
-              className={style.moreButton}
-              onClick={handleClickSearch}
-              style={{
-                paddingRight: "10px",
-              }}
-            >
-              <MoreHorizIcon />
-            </button>
-
-            <Menu
-              open={openSearch}
-              onClose={handleCloseSearch}
-              anchorEl={anchorElSearch}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    left: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <SearchParams
-                checkedColumns={checkedColumns}
-                setCheckedColumns={setCheckedColumns}
-                columns={columnsForSearch}
-              />
-            </Menu>
-          </div>
-
-          <div className={style.rightExtra}>
-            <FixColumnsTableView selectedTabIndex={selectedTabIndex} />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <GroupByButton selectedTabIndex={selectedTabIndex} />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <ColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <SortButton
-              selectedTabIndex={selectedTabIndex}
-              sortDatas={sortedDatas}
-              setSortedDatas={setSortedDatas}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            <GroupColumnVisible
-              selectedTabIndex={selectedTabIndex}
-              views={visibleViews}
-              columns={visibleColumns}
-              relationColumns={visibleRelationColumns}
-              isLoading={isVisibleLoading}
-              form={visibleForm}
-            />
-
-            {/* <Divider orientation="vertical" flexItem /> */}
-
-            {view.type === "TABLE" && (
+      ) : (
+        <Box>
+          {updateLoading && (
+            <Backdrop
+              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
+              open={true}>
+              <RingLoaderWithWrapper />
+            </Backdrop>
+          )}
+          <FiltersBlock
+            extra={
               <>
-                <Button
-                  // className={style.moreButton}
-                  variant="text"
-                  style={{
-                    gap: "5px",
-                    color: "#A8A8A8",
-                    borderColor: "#A8A8A8",
+                <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+                  <ShareModal />
+                </PermissionWrapperV2>
+
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Button
+                    variant="outlined"
+                    onClick={navigateToSettingsPage}
+                    style={{
+                      borderColor: "#A8A8A8",
+                      width: "35px",
+                      height: "35px",
+                      padding: "0px",
+                      minWidth: "35px",
+                    }}>
+                    <SettingsIcon
+                      style={{
+                        color: "#A8A8A8",
+                      }}
+                    />
+                  </Button>
+                </PermissionWrapperV2>
+              </>
+            }>
+            <ViewTabSelector
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+              views={views}
+              settingsModalVisible={settingsModalVisible}
+              setSettingsModalVisible={setSettingsModalVisible}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+              menuItem={menuItem}
+            />
+            {view?.type === "FINANCE CALENDAR" && (
+              <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+            )}
+          </FiltersBlock>
+
+          <div
+            className={style.extraNavbar}
+            style={{
+              minHeight: "42px",
+            }}>
+            <div className={style.extraWrapper}>
+              <div className={style.search}>
+                <Badge
+                  sx={{
+                    width: "35px",
+                    paddingLeft: "10px",
+                    cursor: "pointer",
                   }}
-                  onClick={handleClickHeightControl}
-                >
-                  <FormatLineSpacingIcon color="#A8A8A8" />
-                  Line Height
-                </Button>
+                  onClick={() => {
+                    setFilterVisible((prev) => !prev);
+                  }}
+                  id="filter_button"
+                  badgeContent={filterCount}
+                  color="primary">
+                  <FilterAltOutlinedIcon color={"#A8A8A8"} />
+                </Badge>
+
+                <Divider orientation="vertical" flexItem />
+                <SearchInput
+                  id="search_input"
+                  key={inputKey}
+                  defaultValue={searchText}
+                  placeholder={"Search"}
+                  onChange={(e) => {
+                    inputChangeHandler(e);
+                  }}
+                />
+                {(roleInfo === "DEFAULT ADMIN" ||
+                  permissions?.search_button) && (
+                  <button
+                    id="search_filters"
+                    className={style.moreButton}
+                    onClick={handleClickSearch}
+                    style={{
+                      paddingRight: "10px",
+                    }}>
+                    <MoreHorizIcon />
+                  </button>
+                )}
 
                 <Menu
-                  open={openHeightControl}
-                  onClose={handleCloseHeightControl}
-                  anchorEl={anchorElHeightControl}
+                  open={openSearch}
+                  onClose={handleCloseSearch}
+                  anchorEl={anchorElSearch}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                      "& .MuiAvatar-root": {
+                        // width: 100,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        left: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
+                      },
+                    },
+                  }}>
+                  <SearchParams
+                    checkedColumns={checkedColumns}
+                    setCheckedColumns={setCheckedColumns}
+                    columns={columnsForSearch}
+                    updateField={updateField}
+                  />
+                </Menu>
+              </div>
+
+              <div className={style.rightExtra}>
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
+                  <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
+                  <GroupByButton
+                    selectedTabIndex={selectedTabIndex}
+                    view={view}
+                    fieldsMap={fieldsMap}
+                    relationColumns={visibleRelationColumns}
+                  />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
+                  <VisibleColumnsButton
+                    currentView={view}
+                    fieldsMap={fieldsMap}
+                  />
+                )}
+                <Divider orientation="vertical" flexItem />
+                {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
+                  <TableViewGroupByButton
+                    currentView={view}
+                    fieldsMap={fieldsMap}
+                  />
+                )}
+                {view.type === "TABLE" && (
+                  <>
+                    <Menu
+                      open={openHeightControl}
+                      onClose={handleCloseHeightControl}
+                      anchorEl={anchorElHeightControl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      PaperProps={{
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          mt: 1.5,
+                          "& .MuiAvatar-root": {
+                            // width: 100,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&:before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      }}>
+                      <div className={style.menuBar}>
+                        {tableHeightOptions.map((el) => (
+                          <div
+                            className={style.template}
+                            onClick={() => handleHeightControl(el.value)}>
+                            <span>{el.label}</span>
+
+                            <Switch
+                              id={el?.value}
+                              size="small"
+                              checked={tableHeight === el.value}
+                              onChange={() => handleHeightControl(el.value)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </Menu>
+                  </>
+                )}
+                <Divider orientation="vertical" flexItem />
+                {permissions?.excel_menu && (
+                  <Button
+                    id="more_settings"
+                    onClick={handleClick}
+                    variant="text"
+                    style={{
+                      color: "#A8A8A8",
+                      borderColor: "#A8A8A8",
+                      minWidth: "auto",
+                    }}>
+                    <MoreVertOutlined
+                      style={{
+                        color: "#888",
+                      }}
+                    />
+                  </Button>
+                )}
+
+                <Menu
+                  open={open}
+                  onClose={handleClose}
+                  anchorEl={anchorEl}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
@@ -492,364 +551,181 @@ const ViewsWithGroups = ({
                         zIndex: 0,
                       },
                     },
-                  }}
-                >
-                  {/* <div className={style.menuBar}>
-                    {tableHeightOptions.map((el) => (
-                      <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-                        {el.label}
-                        {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-                      </div>
-                    ))}
-                  </div> */}
-
+                  }}>
                   <div className={style.menuBar}>
-                    {tableHeightOptions.map((el) => (
+                    <ExcelButtons
+                      computedVisibleFields={computedVisibleFields}
+                      fieldsMap={fieldsMap}
+                      view={view}
+                      searchText={searchText}
+                      checkedColumns={checkedColumns}
+                    />
+                    <div
+                      id="template"
+                      className={style.template}
+                      onClick={() => setSelectedTabIndex(views?.length)}>
                       <div
-                        className={style.template}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
-                        {/* <div
-                          className={`${style.element} ${
-                            selectedTabIndex === views?.length
-                              ? style.active
-                              : ""
-                          }`}
-                        >
-                          {tableHeight === el.value ? (
-                            <CheckIcon color="primary" />
-                          ) : null}
-                        </div> */}
-
-                        <span>{el.label}</span>
-
-                        <Switch
-                          size="small"
-                          checked={tableHeight === el.value}
-                          onChange={() => handleHeightControl(el.value)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
+                        className={`${style.element} ${
+                          selectedTabIndex === views?.length ? style.active : ""
+                        }`}>
+                        <Description
+                          className={style.icon}
+                          style={{color: "#6E8BB7"}}
                         />
                       </div>
-                    ))}
+                      <span>Template</span>
+                    </div>
                   </div>
                 </Menu>
-              </>
-
-              // <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
-              //   <div style={{ position: "relative" }}>
-              //     <span className={style.buttonSpan}>
-              //       <FormatLineSpacingIcon color="#A8A8A8" />
-              //       Line Height
-              //     </span>
-              //     {heightControl && (
-              //       <div className={style.heightControl}>
-              //         {tableHeightOptions.map((el) => (
-              //           <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-              //             {el.label}
-              //             {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-              //           </div>
-              //         ))}
-              //       </div>
-              //     )}
-              //   </div>
-              // </div>
-            )}
-
-            <button className={style.moreButton} onClick={handleClick}>
-              <MoreVertOutlined
-                style={{
-                  color: "#888",
-                }}
-              />
-            </button>
-
-            <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <div className={style.menuBar}>
-                <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                {/* <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)} style={{
-                  justifyContent: "flex-start",
-                  gap: "10px",
-                }}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
-                  </div>
-                  <span>{t("template")}</span>
-                </div> */}
               </div>
-            </Menu>
-          </div>
-        </div>
-      </div>
-
-      <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard type="withoutPadding">
-          {tabs?.length > 0 && (
-            <div className={style.tableCardHeader}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div className="title" style={{ marginRight: "20px" }}>
-                  <h3>{view.table_label}</h3>
-                </div>
-                <TabList style={{ border: "none" }}>
-                  {tabs?.map((tab) => (
-                    <Tab
-                      key={tab.value}
-                      selectedClassName={style.activeTab}
-                      className={`${style.disableTab} react-tabs__tab`}
-                    >
-                      {tab.label}
-                    </Tab>
-                  ))}
-                </TabList>
-              </div>
-
-              {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                {invite && (
-                  <Button
-                    variant="contained"
-                    onClick={navigateToCreatePageWithInvite}
-                  >
-                    Invite
-                  </Button>
-                )}
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                >
-                <Button variant="outlined" onClick={navigateToCreatePage}>
-                  <AddIcon style={{ color: "#007AFF" }} />
-                  Add object
-                </Button>
-                {formVisible ? (
-                  <>
-                    <RectangleIconButton
-                      color="success"
-                      size="small"
-                      onClick={handleSubmit(onSubmit)}
-                      loader={isLoading}
-                    >
-                      <Save color="success" />
-                    </RectangleIconButton>
-                    <RectangleIconButton
-                      color="error"
-                      type="exit"
-                      onClick={() => {
-                        setFormVisible(false);
-                        if (fields.length > dataLength) {
-                          remove(
-                            Array(fields.length - dataLength)
-                              .fill("*")
-                              .map((i, index) => fields.length - (index + 1))
-                          );
-                        }
-                      }}
-                    >
-                      <Clear color="error" />
-                    </RectangleIconButton>
-                  </>
-                ) : (
-                  // <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  //   <RectangleIconButton
-                  //     color="success"
-                  //     className=""
-                  //     size="small"
-                  //     onClick={() => {
-                  //       setFormVisible(true);
-                  //     }}
-                  //   >
-                  //     <Edit color="primary" />
-                  //   </RectangleIconButton>
-                  // </PermissionWrapperV2>
-                  ""
-                )}
-                <MultipleInsertButton
-                  view={view}
-                  fieldsMap={fieldsMap}
-                  tableSlug={tableSlug}
-                />
-                <CustomActionsButton
-                  selectedObjects={selectedObjects}
-                  setSelectedObjects={setSelectedObjects}
-                  tableSlug={tableSlug}
-                />
-              </PermissionWrapperV2>
-            </div> */}
             </div>
-          )}
-          {
-            <>
-              {!tabs?.length && (
+          </div>
+
+          <Tabs direction={"ltr"} defaultIndex={0}>
+            <TableCard type="withoutPadding">
+              {tabs?.length > 0 && (
+                <div className={style.tableCardHeader}>
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <div className="title" style={{marginRight: "20px"}}>
+                      <h3>{view.table_label}</h3>
+                    </div>
+                    <TabList style={{border: "none"}}>
+                      {tabs?.map((tab) => (
+                        <Tab
+                          key={tab.value}
+                          selectedClassName={style.activeTab}
+                          className={`${style.disableTab} react-tabs__tab`}>
+                          {tab.label}
+                        </Tab>
+                      ))}
+                    </TabList>
+                  </div>
+                </div>
+              )}
+              {
                 <>
-                  {view.type === "TABLE" && groupTable?.length ? (
-                    <GroupTableView
-                      setDataLength={setDataLength}
-                      selectedTabIndex={selectedTabIndex}
-                      shouldGet={shouldGet}
-                      reset={reset}
-                      sortedDatas={sortedDatas}
-                      menuItem={menuItem}
-                      fields={fields}
-                      setFormValue={setFormValue}
-                      control={control}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      checkedColumns={checkedColumns}
-                      view={view}
-                      setSortedDatas={setSortedDatas}
-                      fieldsMap={fieldsMap}
-                      searchText={searchText}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      selectedView={selectedView}
-                    />
+                  {!tabs?.length && (
+                    <>
+                      {view.type === "TABLE" && groupTable?.length ? (
+                        <GroupTableView
+                          selectedTabIndex={selectedTabIndex}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          menuItem={menuItem}
+                          fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
+                          checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
+                          searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
+                          selectedView={selectedView}
+                        />
+                      ) : null}
+                    </>
+                  )}
+                  {!groupTable?.length &&
+                    tabs?.map((tab) => (
+                      <TabPanel key={tab.value}>
+                        {view.type === "TREE" ? (
+                          <TreeView
+                            tableSlug={tableSlug}
+                            filters={filters}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            tab={tab}
+                          />
+                        ) : (
+                          <TableView
+                            isVertical
+                            setCurrentPage={setCurrentPage}
+                            currentPage={currentPage}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            filterVisible={filterVisible}
+                            control={control}
+                            getValues={getValues}
+                            setFormVisible={setFormVisible}
+                            formVisible={formVisible}
+                            filters={filters}
+                            setFilterVisible={setFilterVisible}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            setFormValue={setFormValue}
+                            setSortedDatas={setSortedDatas}
+                            tab={tab}
+                            selectedObjects={selectedObjects}
+                            setSelectedObjects={setSelectedObjects}
+                            menuItem={menuItem}
+                            selectedTabIndex={selectedTabIndex}
+                            reset={reset}
+                            sortedDatas={sortedDatas}
+                            fields={fields}
+                            checkedColumns={checkedColumns}
+                            searchText={searchText}
+                            selectedView={selectedView}
+                            currentView={view}
+                          />
+                        )}
+                      </TabPanel>
+                    ))}
+
+                  {!tabs?.length && !groupTable?.length ? (
+                    <>
+                      {view.type === "TREE" ? (
+                        <TreeView
+                          tableSlug={tableSlug}
+                          filters={filters}
+                          view={view}
+                          fieldsMap={fieldsMap}
+                        />
+                      ) : (
+                        <TableView
+                          visibleColumns={visibleColumns}
+                          setCurrentPage={setCurrentPage}
+                          currentPage={currentPage}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          currentView={view}
+                          filterVisible={filterVisible}
+                          setFilterVisible={setFilterVisible}
+                          getValues={getValues}
+                          selectedTabIndex={selectedTabIndex}
+                          isTableView={true}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          menuItem={menuItem}
+                          fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
+                          checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
+                          searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
+                          selectedView={selectedView}
+                        />
+                      )}
+                    </>
                   ) : null}
                 </>
-              )}
-              {!groupTable?.length &&
-                tabs?.map((tab) => (
-                  <TabPanel key={tab.value}>
-                    {view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                      />
-                    ) : view?.type === "FINANCE CALENDAR" ? (
-                      <FinancialCalendarView
-                        view={view}
-                        filters={filters}
-                        fieldsMap={fieldsMap}
-                        tab={tab}
-                        isLoading={isFinancialCalendarLoading}
-                        financeDate={analyticsRes?.response || []}
-                        financeTotal={analyticsRes?.total_amount || []}
-                        totalBalance={analyticsRes?.balance}
-                      />
-                    ) : (
-                      <TableView
-                        control={control}
-                        getValues={getValues}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        setFormValue={setFormValue}
-                        setSortedDatas={setSortedDatas}
-                        tab={tab}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        menuItem={menuItem}
-                        setDataLength={setDataLength}
-                        selectedTabIndex={selectedTabIndex}
-                        shouldGet={shouldGet}
-                        reset={reset}
-                        sortedDatas={sortedDatas}
-                        fields={fields}
-                        checkedColumns={checkedColumns}
-                        searchText={searchText}
-                        selectedView={selectedView}
-                      />
-                    )}
-                  </TabPanel>
-                ))}
-
-              {!tabs?.length && !groupTable?.length ? (
-                <>
-                  {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
-                  ) : view?.type === "FINANCE CALENDAR" ? (
-                    <FinancialCalendarView
-                      control={control}
-                      view={view}
-                      filters={filters}
-                      fieldsMap={fieldsMap}
-                      isLoading={isFinancialCalendarLoading}
-                      financeDate={analyticsRes?.response || []}
-                      financeTotal={analyticsRes?.total_amount || []}
-                      totalBalance={analyticsRes?.balance || []}
-                    />
-                  ) : (
-                    <TableView
-                      setDataLength={setDataLength}
-                      getValues={getValues}
-                      selectedTabIndex={selectedTabIndex}
-                      shouldGet={shouldGet}
-                      isTableView={true}
-                      reset={reset}
-                      sortedDatas={sortedDatas}
-                      menuItem={menuItem}
-                      fields={fields}
-                      setFormValue={setFormValue}
-                      control={control}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      checkedColumns={checkedColumns}
-                      view={view}
-                      setSortedDatas={setSortedDatas}
-                      fieldsMap={fieldsMap}
-                      searchText={searchText}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      selectedView={selectedView}
-                    />
-                  )}
-                </>
-              ) : null}
-            </>
-          }
-        </TableCard>
-      </Tabs>
+              }
+            </TableCard>
+          </Tabs>
+        </Box>
+      )}
     </>
   );
 };
@@ -861,7 +737,7 @@ const queryGenerator = (groupField, filters = {}) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -884,7 +760,7 @@ const queryGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.table_slug, filters: computedFilters },
+        {tableSlug: groupField.table_slug, filters: computedFilters},
       ],
       queryFn,
       select: (res) =>

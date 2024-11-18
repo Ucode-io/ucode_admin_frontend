@@ -1,7 +1,13 @@
 import React, { useMemo } from "react";
 import { withErrorBoundary } from "react-error-boundary";
 
-import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../../components/CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableRow,
+} from "../../../../components/CTable";
 import RecursiveHorizontalRow from "./RecursiveHorizontalRow";
 import { numberWithSpaces } from "../../../../utils/formatNumbers";
 import RecursiveVerticalRow from "./RecursiveVerticalRow";
@@ -69,11 +75,12 @@ function PivotTable(props) {
     [computedFields]
   );
 
-  // console.log("computedCalcFields => ", computedCalcFields);
-
   const includeSummary = useMemo(() => {
     return computedCalcFields?.some(
-      (i) => i.field_type === "NUMBER" || i.field_type === "FORMULA_FRONTEND" || i.field_type === "MONEY"
+      (i) =>
+        i.field_type === "NUMBER" ||
+        i.field_type === "FORMULA_FRONTEND" ||
+        i.field_type === "MONEY"
     );
   }, [computedCalcFields]);
 
@@ -84,12 +91,12 @@ function PivotTable(props) {
   const hasRelationRow = computedFields.rows_relation.length > 0;
 
   const notJoinedRows = useMemo(
-    () => computedFields.rows.filter((i) => !i.join).reduce((acc, cur) => [...acc, ...cur.table_field_settings], []),
+    () =>
+      computedFields.rows
+        .filter((i) => !i.join)
+        .reduce((acc, cur) => [...acc, ...cur.table_field_settings], []),
     [computedFields]
   );
-
-  // console.log("computedCalcFields", computedCalcFields);
-  // console.log("totalValues => ", totalValues);
 
   const colsSpanRowCol = Math.max(
     ...computedFields.rows.map((i) => i.table_field_settings.length),
@@ -110,16 +117,6 @@ function PivotTable(props) {
     return data;
   }, [computedRelationRows]);
 
-  // console.log("computedFields => ", computedFields);
-  // console.log("computedRelationRows", computedRelationRows);
-  console.log("computedRelationRowsFields", computedRelationRowsFields);
-  // console.log("colsSpanRowCol", colsSpanRowCol);
-  console.log("computedData", computedData);
-  // console.log("expandedRows", expandedRows);
-  // console.log("parentValue", parentValue);
-  // console.log("child lODAER", childLoader);
-  // console.log("columnsData", columnsData);
-
   const computedRows = useMemo(
     () =>
       [
@@ -136,7 +133,8 @@ function PivotTable(props) {
             {
               field_slug: "title",
               field_type: "SINGLE_LINE",
-              order_number: computedFields.rows.filter((field) => field.join).length + 1,
+              order_number:
+                computedFields.rows.filter((field) => field.join).length + 1,
             },
           ],
         },
@@ -154,8 +152,8 @@ function PivotTable(props) {
       disablePagination
       tableStyle={{
         height: `calc(100vh - 43px)`,
-        borderRadius: '0',
-        borderLeft: 'none'
+        borderRadius: "0",
+        borderLeft: "none",
       }}
     >
       <CTableHead>
@@ -183,11 +181,19 @@ function PivotTable(props) {
       <CTableBody
         columnsCount={
           computedCalcFields.length * (columnsData.length || 1) +
-          (computedFields.rows.reduce((acc, cur) => [...acc, ...cur.table_field_settings], []).length
-            ? computedFields.rows.reduce((acc, cur) => [...acc, ...cur.table_field_settings], []).length + 3
+          (computedFields.rows.reduce(
+            (acc, cur) => [...acc, ...cur.table_field_settings],
+            []
+          ).length
+            ? computedFields.rows.reduce(
+                (acc, cur) => [...acc, ...cur.table_field_settings],
+                []
+              ).length + 3
             : 0)
         }
-        loader={computedData.length ? isTemplateChanged : isRefetching || isLoading}
+        loader={
+          computedData.length ? isTemplateChanged : isRefetching || isLoading
+        }
         dataLength={computedData.length || columnsData.length}
       >
         {computedData.length > 0 ? (
@@ -256,8 +262,15 @@ function PivotTable(props) {
             {!columnsData.length &&
               Object.keys(columnValueData ?? {}).length > 0 &&
               computedCalcFields.map((calcCol) => (
-                <CTableCell key={calcCol.key} style={{ padding: "4px", fontWeight: 400 }}>
-                  {columnValueData[calcCol.table_slug]?.[0]?.[calcCol.field_slug]}
+                <CTableCell
+                  key={calcCol.key}
+                  style={{ padding: "4px", fontWeight: 400 }}
+                >
+                  {
+                    columnValueData[calcCol.table_slug]?.[0]?.[
+                      calcCol.field_slug
+                    ]
+                  }
                 </CTableCell>
               ))}
           </CTableRow>
@@ -284,7 +297,11 @@ function PivotTable(props) {
                     <CTableCell key={group.guid + "#" + calcCol.key} noWrap>
                       {numberWithSpaces(
                         computedData.reduce(
-                          (acc, cur) => acc + (cur?.[calcCol.table_slug]?.[group.guid]?.[calcCol.field_slug] ?? 0),
+                          (acc, cur) =>
+                            acc +
+                            (cur?.[calcCol.table_slug]?.[group.guid]?.[
+                              calcCol.field_slug
+                            ] ?? 0),
                           0
                         )
                       )}
@@ -294,7 +311,13 @@ function PivotTable(props) {
               : computedCalcFields.map((calcCol) => (
                   <CTableCell key={calcCol.key} noWrap>
                     {numberWithSpaces(
-                      computedData.reduce((acc, cur) => acc + (cur?.[calcCol.table_slug]?.[calcCol.field_slug] ?? 0), 0)
+                      computedData.reduce(
+                        (acc, cur) =>
+                          acc +
+                          (cur?.[calcCol.table_slug]?.[calcCol.field_slug] ??
+                            0),
+                        0
+                      )
                     )}
                   </CTableCell>
                 ))}

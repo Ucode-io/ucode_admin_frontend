@@ -12,11 +12,11 @@ const noteService = {
     }),
   create: (data) =>
     request.post("/note", data, {
-      params: { "project-id": data.project_id },
+      params: { "parent-id": data.parent_id },
     }),
   update: (data) =>
     request.put("/note", data, {
-      params: { "project-id": data.project_id },
+      params: { "parent-id": data.parent_id },
     }),
   delete: ({ id, projectId }) =>
     request.delete(`/note/${id}`, {

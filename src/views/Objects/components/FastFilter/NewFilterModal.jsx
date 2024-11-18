@@ -232,7 +232,7 @@ const NewFilterModal = ({anchorEl, handleClose, fieldsMap = {}, view}) => {
             }
           >
             <PlusIcon/>
-            Добавить
+            Add
           </div>
         </div>
       </Popover>

@@ -21,11 +21,23 @@ const SettingsBlock = ({
   selectedLayoutIndex,
 }) => {
   if (selectedField) {
-    return <FieldSettings field={selectedField} mainForm={mainForm} closeSettingsBlock={closeSettingsBlock} />;
+    return (
+      <FieldSettings
+        field={selectedField}
+        mainForm={mainForm}
+        closeSettingsBlock={closeSettingsBlock}
+      />
+    );
   }
 
   if (selectedRelation) {
-    return <RelationSettings closeSettingsBlock={closeSettingsBlock} relation={selectedRelation} getRelationFields={getRelationFields} />;
+    return (
+      <RelationSettings
+        closeSettingsBlock={closeSettingsBlock}
+        relation={selectedRelation}
+        getRelationFields={getRelationFields}
+      />
+    );
   }
 
   return (

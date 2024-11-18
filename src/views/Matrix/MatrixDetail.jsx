@@ -114,7 +114,7 @@ const MatrixDetail = () => {
                   fullWidth
                 />
               </FRow>
-              <FRow label="Название">
+              <FRow label="Name">
                 <HFTextField name="name" control={infoForm.control} fullWidth />
               </FRow>
               <FRow label="User type">

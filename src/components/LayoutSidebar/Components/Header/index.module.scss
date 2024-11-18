@@ -22,6 +22,24 @@
   }
 }
 
+.headerRightSide {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  padding: 5px 15px;
+  background: #ffff;
+  height: 100%;
+  border-top: 1px solid #D4DAE2;
+
+
+  .title {
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--heading-color);
+  }
+}
+
 .border {
   background: #e5e9eb;
   border-radius: 1px;

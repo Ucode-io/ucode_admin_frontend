@@ -1,19 +1,19 @@
-import { Close } from "@mui/icons-material";
-import { Autocomplete, TextField } from "@mui/material";
-import { useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
+import {pageToOffset} from "../../utils/pageToOffset";
+import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
-import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
-import request from "../../utils/request";
-import { useTranslation } from "react-i18next";
+import Select from "react-select";
+import {useSearchParams} from "react-router-dom";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -30,30 +30,29 @@ const ManyToManyRelationFormElement = ({
   checkRequiredField,
   ...props
 }) => {
+  const {i18n} = useTranslation();
+
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
-  const { i18n } = useTranslation();
+
+  const label =
+    field?.attributes[`title_${i18n?.language}`] ||
+    field?.attributes[`name_${i18n?.language}`] ||
+    field?.attributes[`label_to_${i18n?.language}`] ||
+    field?.attributes[`label_${i18n?.language}`] ||
+    field?.label ||
+    field.title;
 
   if (!isLayout)
     return (
-      <FRow
-        label={
-          field?.attributes[`title_${i18n?.language}`] ??
-          field?.attributes[`name${i18n?.language}`] ??
-          field?.attributes[`label${i18n?.language}`] ??
-          field?.label ??
-          field.title ??
-          " "
-        }
-        required={field.required}
-      >
+      <FRow label={label} required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={value}
               setValue={onChange}
@@ -74,17 +73,16 @@ const ManyToManyRelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={null}
-            render={({ field: { onChange, value }, fieldState: { error } }) =>
+            render={({field: {onChange, value}, fieldState: {error}}) =>
               field?.attributes?.cascadings?.length > 1 ? (
                 <CascadingSection
                   disabled={disabled}
@@ -111,8 +109,7 @@ const ManyToManyRelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -128,11 +125,14 @@ const AutoCompleteElement = ({
   disabled,
   disabledHelperText,
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  const [inputValue, setInputValue] = useState("");
 
-  console.log("AutoCompleteElement", field);
+  const [page, setPage] = useState(1);
+  const [allOptions, setAllOptions] = useState([]);
+  const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -154,8 +154,8 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: fromInvokeList } = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+  const {data: fromInvokeList} = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
@@ -165,16 +165,15 @@ const AutoCompleteElement = ({
           },
           data: {
             ...autoFiltersValue,
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
+            view_fields: [`name_langs_${i18n?.language}`],
             additional_request: {
               additional_field: "guid",
               additional_values: value,
             },
-            // additional_ids: value,
+
             search: debouncedValue,
             limit: 10,
+            offset: pageToOffset(page, 10),
           },
         }
       );
@@ -184,32 +183,61 @@ const AutoCompleteElement = ({
       select: (res) => {
         return res?.data?.response ?? [];
       },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data]);
+        } else {
+          setAllOptions(data);
+        }
+      },
     }
   );
 
-  const { data: fromObjectList } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+  const {data: fromObjectList} = useQuery(
+    [
+      "GET_OBJECT_LIST",
+      tableSlug,
+      autoFiltersValue,
+      debouncedValue,
+      page,
+      field?.attributes?.view_fields,
+    ],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [value],
+            },
+
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          // additional_ids: value,
-          search: debouncedValue,
-          limit: 10,
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         return res?.data?.response ?? [];
+      },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data]);
+        } else {
+          setAllOptions(data);
+        }
       },
     }
   );
@@ -219,115 +247,118 @@ const AutoCompleteElement = ({
   }, [fromInvokeList, fromObjectList]);
 
   const computedValue = useMemo(() => {
-    if (!value) return undefined;
+    if (!value) return [];
 
-    return value
-      ?.map((id) => {
-        const option = options?.find((el) => el?.guid === id);
+    if (Array.isArray(value)) {
+      const result = value
+        ?.map((id) => {
+          const option = allOptions?.find((el) => el?.guid === id);
 
-        if (!option) return null;
-        return {
-          ...option,
-          // label: getRelationFieldLabel(field, option)
-        };
-      })
-      ?.filter((el) => el);
-  }, [value, options]);
+          if (!option) return null;
+          return {
+            ...option,
+            // label: getRelationFieldLabel(field, option)
+          };
+        })
+        ?.filter((el) => el);
 
-  const getOptionLabel = (option) => {
-    // return ''
-    return getRelationFieldLabel(field, option);
-  };
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    } else {
+      const result = allOptions?.filter((el) => el?.guid === value);
+
+      return result?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      }));
+    }
+  }, [value, allOptions, i18n?.language, field?.attributes?.view_fields]);
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions.map(JSON.stringify))
+    ).map(JSON.parse);
+    return (
+      uniqueObjects?.map((item) => ({
+        label: getRelationFieldLabel(field, item),
+        value: item?.guid,
+      })) ?? []
+    );
+  }, [allOptions, options, i18n?.language]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
-
-    const val = value?.map((el) => el.guid);
+    const val = value?.map((el) => el.value);
 
     setValue(val ?? null);
-
-    // if (!field?.attributes?.autofill) return
-
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   setFormValue(field_to, val?.[field_from])
-    // })
   };
 
   const inputChangeHandler = useDebounce((val) => {
     setDebouncedValue(val);
   }, 300);
 
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      outline: "none",
+    }),
+    input: (provided) => ({
+      ...provided,
+      width: "100%",
+      width: "250px",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: state.isSelected ? "#fff" : provided.color,
+      cursor: "pointer",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div
         className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
-        Создать новый
+        onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
+        Create new
       </div>
 
-      <Autocomplete
-        disabled={disabled}
-        options={options ?? []}
+      <Select
+        options={computedOptions ?? []}
         value={computedValue}
-        onChange={(event, newValue) => {
-          changeHandler(newValue);
+        onChange={(value, options) => {
+          changeHandler(value, options);
         }}
-        noOptionsText={
-          <span
-            onClick={() => navigateToForm(tableSlug)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
-            Создать новый
-          </span>
-        }
-        inputValue={inputValue}
         onInputChange={(_, val) => {
-          setInputValue(val);
-          inputChangeHandler(val);
+          if (typeof val === "string") {
+            inputChangeHandler(val?.prevInputValue);
+          } else if (Boolean(val?.prevInputValue)) {
+            inputChangeHandler(val?.prevInputValue);
+          }
         }}
-        disablePortal
-        blurOnSelect
-        openOnFocus
-        clearOnBlur={!inputValue}
-        getOptionLabel={(option) => getRelationFieldLabel(field, option)}
-        multiple
-        isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => <TextField {...params} size="small" />}
-        renderTags={(values, getTagProps) => {
-          return (
-            <>
-              <div className={styles.valuesWrapper}>
-                {values?.map((el, index) => (
-                  <div
-                    key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
-                    <p className={styles.value}>
-                      {getOptionLabel(values[index])}
-                    </p>
-                    <IconGenerator
-                      icon="arrow-up-right-from-square.svg"
-                      style={{ marginLeft: "10px", cursor: "pointer" }}
-                      size={15}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    />
-
-                    <Close
-                      fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
-          );
+        components={{
+          DropdownIndicator: null,
         }}
+        onMenuScrollToBottom={loadMoreItems}
+        isMulti
+        closeMenuOnSelect={false}
+        styles={customStyles}
       />
     </div>
   );

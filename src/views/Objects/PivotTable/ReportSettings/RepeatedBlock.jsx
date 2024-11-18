@@ -12,6 +12,7 @@ import HFMultipleAutocomplete from "../../../../components/FormElements/HFMultip
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
 import styles from "./filters.module.scss";
+import { useParams } from "react-router-dom";
 
 export default function RepeatedBlock({ form, tables, keyName, getTables }) {
   const { fields: objectFields, append, remove } = useFieldArray({ control: form.control, name: keyName });
@@ -39,6 +40,7 @@ export default function RepeatedBlock({ form, tables, keyName, getTables }) {
 }
 
 function RowItem({ form, options, idx, keyName, remove, getTables }) {
+  const {tableSlug} = useParams();
   const { data: fields, isLoading } = useQuery(
     ["GET_TABLE_FIELDS", form.watch(`${keyName}.${idx}.slug`)],
     () => {
@@ -61,7 +63,7 @@ function RowItem({ form, options, idx, keyName, remove, getTables }) {
 
   const { data: relationTables } = useQuery(
     ["GET_RELATIONS_LIST", form.watch(`${keyName}.${idx}.slug`)],
-    () => constructorRelationService.getList({ table_slug: form.watch(`${keyName}.${idx}.slug`) }),
+    () => constructorRelationService.getList({ table_slug: form.watch(`${keyName}.${idx}.slug`) }, tableSlug),
     {
       enabled: !!form.watch(`${keyName}.${idx}.slug`),
       select: (res) =>

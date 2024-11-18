@@ -1,7 +1,7 @@
-import { Box, Checkbox } from "@mui/material";
-import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
+import {Box, Checkbox} from "@mui/material";
+import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
 
-const CustomPermissionRow = ({ watch, setValue }) => {
+const CustomPermissionRow = ({watch, setValue}) => {
   const handleChange = (e, type) => {
     setValue(`data.global_permission.${type}`, e.target.checked);
   };
@@ -11,7 +11,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Chat</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.chat")}
               onChange={(e) => handleChange(e, "chat")}
@@ -22,7 +22,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Menu button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.menu_button")}
               onChange={(e) => handleChange(e, "menu_button")}
@@ -33,7 +33,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Settings button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.settings_button")}
               onChange={(e) => handleChange(e, "settings_button")}
@@ -44,7 +44,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Projects button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.projects_button")}
               onChange={(e) => handleChange(e, "projects_button")}
@@ -55,7 +55,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Environments button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.environments_button")}
               onChange={(e) => handleChange(e, "environments_button")}
@@ -66,7 +66,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>API keys button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.api_keys_button")}
               onChange={(e) => handleChange(e, "api_keys_button")}
@@ -77,7 +77,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Redirects button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.redirects_button")}
               onChange={(e) => handleChange(e, "redirects_button")}
@@ -88,7 +88,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Menu setting button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.menu_setting_button")}
               onChange={(e) => handleChange(e, "menu_setting_button")}
@@ -99,7 +99,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Profile settings button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch(
                 "data.global_permission.profile_settings_button"
@@ -112,7 +112,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Project Button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.project_button")}
               onChange={(e) => handleChange(e, "project_button")}
@@ -123,7 +123,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Sms Button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.sms_button")}
               onChange={(e) => handleChange(e, "sms_button")}
@@ -134,7 +134,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
       <CTableHeadRow>
         <CTableCell>Version Button</CTableCell>
         <CTableCell>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box sx={{justifyContent: "center", display: "flex"}}>
             <Checkbox
               checked={watch("data.global_permission.version_button")}
               onChange={(e) => handleChange(e, "version_button")}

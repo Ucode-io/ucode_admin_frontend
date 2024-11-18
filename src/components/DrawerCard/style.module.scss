@@ -1,12 +1,8 @@
-
-
-
 .verticalDrawer {
   width: 440px;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  
 
 
   .header {
@@ -31,7 +27,7 @@
     padding: 16px;
     flex: 1;
     overflow: auto;
-  
+
   }
 
   .footer {
@@ -42,5 +38,5 @@
     }
   }
 
-  
+
 }

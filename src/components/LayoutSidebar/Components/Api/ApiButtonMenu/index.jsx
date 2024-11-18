@@ -24,7 +24,7 @@ const ApiButtonMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -35,6 +35,9 @@ const ApiButtonMenu = ({
               ml: -0.5,
               mr: 1,
             },
+            "& .MuiList-root": {
+              padding: 0,
+            },
           },
         }}
       >
@@ -43,7 +46,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<FaPlus size={13} />}
-                title="Добавить Api"
+                title="Add Api"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNavigate(element);
@@ -54,7 +57,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "EDIT");
@@ -65,7 +68,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element?.guid);

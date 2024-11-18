@@ -9,7 +9,7 @@ const DashboardSettings = () => {
   return (
     <div>
       <Header
-        title="Главная / Настройки"
+        title="Main / Settings"
         backButtonLink={`/analytics/dashboard/${id}`}
       />
 

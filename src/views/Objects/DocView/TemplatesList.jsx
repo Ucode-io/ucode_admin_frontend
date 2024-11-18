@@ -1,10 +1,13 @@
-import { Add } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
-import { useParams } from "react-router-dom";
+import {Add, Delete} from "@mui/icons-material";
+import {IconButton} from "@mui/material";
+import {useLocation, useParams} from "react-router-dom";
 import PageFallback from "../../../components/PageFallback";
 import SearchInput from "../../../components/SearchInput";
-import { generateID } from "../../../utils/generateID";
+import {generateID} from "../../../utils/generateID";
 import styles from "./style.module.scss";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import constructorObjectService from "../../../services/constructorObjectService";
+import {useQueryClient} from "react-query";
 
 const TemplatesList = ({
   templates,
@@ -17,8 +20,9 @@ const TemplatesList = ({
   setSelectedLinkedObject,
   isLoading,
 }) => {
-  const { tableSlug } = useParams();
-
+  const {tableSlug} = useParams();
+  const queryClient = useQueryClient();
+  const location = useLocation();
   const onCreateButtonClick = () => {
     const data = {
       id: generateID(),
@@ -31,6 +35,12 @@ const TemplatesList = ({
     setSelectedOutputTable("");
     setSelectedOutputObject("");
     // setSelectedLinkedObject("");
+  };
+
+  const onDelete = async (id) => {
+    await constructorObjectService.delete("template", id).then(() => {
+      queryClient.refetchQueries("GET_DOCUMENT_TEMPLATE_LIST");
+    });
   };
 
   return (
@@ -50,17 +60,28 @@ const TemplatesList = ({
         {isLoading ? (
           <PageFallback />
         ) : (
-          templates?.map((template) => (
-            <div
-              key={template.id}
-              className={`${styles.row} ${
-                selectedTemplate?.guid === template.guid ? styles.active : ""
-              }`}
-              onClick={() => setSelectedTemplate(template)}
-            >
-              {template.title}
-            </div>
-          ))
+          <div className={styles.templateList}>
+            {templates?.map((template) => (
+              <div
+                key={template.id}
+                className={`${styles.row} ${
+                  selectedTemplate?.guid === template.guid ? styles.active : ""
+                }`}
+                onClick={() => setSelectedTemplate(template)}>
+                {template.title ?? ""}
+
+                <div className={styles.deleteBtn}>
+                  {!location?.state?.isTableView && (
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() => onDelete(template?.guid)}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

@@ -48,7 +48,7 @@ const EltResources = ({ level = 1, menuStyle, menuItem }) => {
   const open = Boolean(anchorEl);
   const authStore = store.getState().auth;
 
-  const { data: { resources } = {} } = useResourceListQuery({
+  const { data: { resources } = {}, refetch } = useResourceListQuery({
     params: {
       project_id: company?.projectId,
     },
@@ -130,13 +130,7 @@ const EltResources = ({ level = 1, menuStyle, menuItem }) => {
     setChildBlockVisible((prev) => !prev);
   };
 
-  const rowClickHandler = (id, element) => {
-    setSelected(element);
-    element.type === "FOLDER" && navigate(`/main/${adminId}`);
-    if (element.resource_type) setResourceId(element.id);
-    if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
-    setOpenedFolders((prev) => [...prev, id]);
-  };
+ 
 
   const navigateToCreateForm = () => {
     navigate(`/project/${projectId}/resources/create`);

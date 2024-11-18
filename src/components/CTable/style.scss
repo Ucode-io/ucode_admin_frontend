@@ -17,6 +17,7 @@
       td {
         border-bottom: 1px solid #e5e9eb;
         border-right: 1px solid #e5e9eb;
+
         p,
         span {
           overflow: hidden;
@@ -60,16 +61,19 @@
   padding: 8px 16px;
   line-height: 12px;
 
+
   &.small {
     height: 30px;
     font-size: 12px;
     line-height: 16px;
   }
+
   &.medium {
     height: 40px;
     font-size: 14px;
     line-height: 18px;
   }
+
   &.large {
     height: 90px;
     font-size: 16px;
@@ -127,6 +131,7 @@ th {
   user-select: none;
   height: 80px !important;
 }
+
 .resizer:hover,
 .resizing {
   border-right: 2px solid blue;

@@ -1,18 +1,13 @@
+import styles from "./style.module.scss";
 
-import styles from "./style.module.scss"
+const Footer = ({ children, extra, style }) => {
+  return (
+    <div className={styles.footer} style={style}>
+      <div>{children}</div>
 
-
-const Footer = ({ children, extra }) => {
-  return ( <div className={styles.footer} >
-    <div>
-      {children}
+      <div className={styles.extra}>{extra}</div>
     </div>
+  );
+};
 
-    <div className={styles.extra} >
-      {extra}
-    </div>
-
-  </div> );
-}
- 
 export default Footer;

@@ -1,45 +1,48 @@
-import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, Dialog, InputAdornment } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { Box } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { connect, useDispatch } from "react-redux";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {AccountCircle, Lock} from "@mui/icons-material";
+import {Button, Dialog, InputAdornment} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {Box} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {connect, useDispatch} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import { firebaseCloudMessaging } from "../../../firebase/config";
+import {firebaseCloudMessaging} from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { loginAction } from "../../../store/auth/auth.thunk";
-import { companyActions } from "../../../store/company/company.slice";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {loginAction} from "../../../store/auth/auth.thunk";
+import {companyActions} from "../../../store/company/company.slice";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
+import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
+import HFNumberField from "../../../components/FormElements/HFNumberField";
+import HFInternationPhone from "../../../components/FormElements/HFInternationPhone";
+import {authActions} from "../../../store/auth/auth.slice";
 
-const LoginForm = ({ setIndex, index, setFormType, formType }) => {
-  const { t } = useTranslation();
+const LoginForm = ({setIndex, index, setFormType, formType}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [oneLogin, setOneLogin] = useState(false);
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [codeAppValue, setCodeAppValue] = useState({});
+  const [type, setType] = useState("");
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
+  const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -70,12 +73,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [], isLoading } = useQuery(
+  const {data: computedConnections = [], isLoading} = useQuery(
     [
       "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-      { "user-id": isUserId },
+      {"project-id": selectedProjectID},
+      {"environment-id": selectedEnvID},
+      {"user-id": isUserId},
     ],
     () => {
       return connectionServiceV2.getList(
@@ -84,7 +87,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        {"environment-id": selectedEnvID}
       );
     },
     {
@@ -97,10 +100,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     }
   );
 
+  //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
   }, [companies]);
 
+  //=======COMPUTE PROJECTS
   const computedProjects = useMemo(() => {
     const company = companies?.find(
       (company) => company.id === selectedCompanyID
@@ -108,37 +113,21 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
-  const { data: computedEnvironments } = useQuery(
-    ["GET_ENVIRONMENT_LIST", { "project-id": selectedProjectID }],
-    () => {
-      return environmentService.getList({ "project-id": selectedProjectID });
-    },
-    {
-      enabled: !!selectedProjectID,
-      select: (res) =>
-        res.data?.map((row) => ({
-          label: row.name,
-          value: row.environment_id,
-        })),
-    }
-  );
+  //=======COMPUTE ENVIRONMENTS
+  const computedEnvironments = useMemo(() => {
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
+    const companyProject = company?.projects?.find(
+      (el) => el?.id === selectedProjectID
+    );
 
-  const { data: computedRoles } = useRoleListQuery({
-    headers: { "environment-id": selectedEnvID },
-    params: {
-      "client-type-id": selectedClientTypeID,
-      "project-id": selectedProjectID,
-    },
-    queryParams: {
-      enabled: !!selectedClientTypeID,
-      select: (res) => {
-        return res?.data?.response?.map((row) => ({
-          label: row.name,
-          value: row.guid,
-        }));
-      },
-    },
-  });
+    return companyProject?.resource_environments?.map((item) => ({
+      label: item?.name,
+      value: item?.environment_id,
+      access_type: item?.access_type,
+    }));
+  }, [selectedEnvID, companies, selectedProjectID]);
 
   //======COMPUTE CLIENTTYPES
   const computedClientTypes = useMemo(() => {
@@ -165,37 +154,85 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     authService
       .register(data)
       .then((res) => {
-        setLoading(false);
         setIndex(0);
-        store.dispatch(showAlert("Успешно", "success"));
       })
-      .catch(() => setLoading(false));
-  };
-
-  const onSubmit = (values) => {
-    getCompany(values);
-  };
-
-  const getCompany = (values) => {
-    companyService
-      .getCompanyList({
-        password: values?.password,
-        username: values?.username,
-      })
-      .then((res) => {
-        setIsUserId(res?.user_id);
-        setCompanies(res?.companies);
-        computeCompanyElement(res?.companies);
-        setLoading(true);
-
-        if (index === 1) register(values);
-        setOneLogin(true);
-      })
-      .catch((err) => {
-        setOneLogin(false);
+      .catch(() => {
         setLoading(false);
       });
   };
+
+  const onSubmit = (values) => {
+    if (selectedTabIndex === 0) {
+      getCompany(values);
+    }
+    if (selectedTabIndex === 1) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "phone",
+        });
+      } else {
+        getSendCodeApp({...values, type: "PHONE"});
+      }
+    }
+    if (selectedTabIndex === 2) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "email",
+        });
+      } else {
+        getSendCodeApp({...values, type: "EMAIL"});
+      }
+    }
+  };
+
+  const getCompany = (values) => {
+    setType(values?.type);
+    const data = {
+      password: values?.password ? values?.password : null,
+      username: values?.username ? values?.password : null,
+      [values?.type]: values?.recipient,
+      ...values,
+    };
+    companyService
+      .getCompanyList(data)
+      .then((res) => {
+        if (res?.companies) {
+          setIsUserId(res?.user_id);
+          setCompanies(res?.companies);
+          computeCompanyElement(res?.companies);
+          localStorage.setItem("");
+          setLoading(true);
+        } else {
+          dispatch(showAlert("The company does not exist", "error"));
+          setLoading(false);
+        }
+
+        if (index === 1) register(values);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
+  };
+
+  const getSendCodeApp = (values) => {
+    authService
+      .sendCodeApp({
+        recipient: values?.recipient,
+        text: "You otp code is",
+        type: values?.type,
+      })
+      .then((res) => {
+        setCodeAppValue(res);
+      })
+      .catch((err) => {
+        console.log("eerrrrrrr", err);
+      });
+  };
+
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
       const tableKeys = Object.keys(getFormValue.tables);
@@ -208,6 +245,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
+    const data = {
+      ...getFormValue,
+      sms_id: codeAppValue?.sms_id,
+    };
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -219,7 +260,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
-        onSubmitDialog(getFormValue);
+        onSubmitDialog(data);
       } else if (
         !getFormValue?.username ||
         !getFormValue?.password ||
@@ -231,13 +272,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 0) {
-
-      if (     
+      if (
         getFormValue?.username &&
         getFormValue?.password &&
         getFormValue?.client_type &&
         getFormValue?.project_id &&
-        getFormValue?.environment_id && checkConnections) {
+        getFormValue?.environment_id &&
+        checkConnections
+      ) {
         onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();
@@ -246,8 +288,16 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmitDialog = (values) => {
+    const computedProject = companies[0]?.projects
+      ?.find((item) => item?.id === selectedProjectID)
+      ?.resource_environments?.map((el) => el?.environment_id);
+    const computedEnv = computedEnvironments?.find(
+      (item) => item?.value === selectedEnvID
+    );
+
     setLoading(true);
-    dispatch(loginAction(values));
+    dispatch(authActions.setStatus(computedEnv?.access_type));
+    dispatch(loginAction({...values, environment_ids: computedProject}));
   };
 
   const computeCompanyElement = (company) => {
@@ -353,15 +403,26 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     }
   }, [connectionCheck, getFormValue?.tables]);
 
+  const selectedProject = useMemo(() => {
+    const computedProject = companies[0]?.projects?.find(
+      (item) => item?.id === selectedProjectID
+    );
+
+    return computedProject?.resource_environments ?? [];
+  }, [selectedProjectID, companies]);
+
   return (
     <>
       {formType === "RESET_PASSWORD" ? (
         <RecoverPassword setFormType={setFormType} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-          <Tabs direction={"ltr"}>
+          <Tabs
+            selected={selectedTabIndex}
+            direction={"ltr"}
+            onSelect={(index) => setSelectedTabIndex(index)}>
             {formType === "LOGIN" ? (
-              <div style={{ padding: "0 20px" }}>
+              <div style={{padding: "0 20px"}}>
                 <TabList>
                   <Tab>{t("login")}</Tab>
                   <Tab>{t("phone")}</Tab>
@@ -370,47 +431,48 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
-                >
+                  style={{marginTop: "10px", height: `calc(100vh - 400px)`}}>
                   <TabPanel>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("login")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="username"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.login")}
-                        autoFocus
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <AccountCircle style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("password")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="password"
-                        type="password"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.password")}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
+                    <>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("login")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="username"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.login")}
+                          autoFocus
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <AccountCircle style={{fontSize: "30px"}} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("password")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="password"
+                          type="password"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.password")}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock style={{fontSize: "30px"}} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                    </>
 
                     {
                       <Button
@@ -420,94 +482,97 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                           formType === "RESET_PASSWORD"
                             ? setFormType("LOGIN")
                             : setFormType("RESET_PASSWORD");
-                        }}
-                      >
+                        }}>
                         Forgot password?
                       </Button>
                     }
                   </TabPanel>
-                  {/* <TabPanel>
-        <div className={classes.formRow}>
-          <p className={classes.label}>{t("login")}</p>
-          <Box className={classes.phone}>
-            <HFTextFieldWithMask
-              isFormEdit
-              control={control}
-              name={"phoneNumber"}
-              fullWidth
-              // mask={"(99) 999-99-99"}
-            />
-          </Box>
-        </div>
-      </TabPanel> */}
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Phone")}</p>
+                      {/* <HFTextField
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{ fontSize: "30px" }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      /> */}
+                      <HFInternationPhone
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
+                  </TabPanel>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Email")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        type="email"
+                        placeholder={t("enter.email")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{fontSize: "30px"}} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
+                  </TabPanel>
                 </div>
               </div>
             ) : (
-              <div style={{ padding: "0 20px" }}>
-                <div
-                  className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}
-                >
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("company")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="company_id"
-                      size="large"
-                      placeholder={t("enter.company")}
-                      options={computedCompanies}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("project")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="project_id"
-                      size="large"
-                      placeholder={t("enter.project")}
-                      options={computedProjects}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("environment")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="environment_id"
-                      size="large"
-                      placeholder={t("select.environment")}
-                      options={computedEnvironments}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("client_type")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="client_type"
-                      size="large"
-                      placeholder={t("enter.client_type")}
-                      options={computedClientTypes}
-                    />
-                  </div>
-                  {computedConnections.length
-                    ? computedConnections?.map((connection, idx) => (
-                        <DynamicFields
-                          key={connection?.guid}
-                          table={computedConnections}
-                          connection={connection}
-                          index={idx}
-                          control={control}
-                          setValue={setValue}
-                          watch={watch}
-                          companies={companies}
-                        />
-                      ))
-                    : null}
-                </div>
-              </div>
+              <RegisterFormPage setFormType={setFormType} formType={formType} />
             )}
           </Tabs>
           {formType !== "register" && (
@@ -530,8 +595,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                     formType === "register"
                       ? classes.registerBtnPage
                       : classes.registerBtn
-                  }`}
-                >
+                  }`}>
                   {t("Зарегистрироваться")}
                 </PrimaryButton>
               </div>
@@ -544,16 +608,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
+        aria-describedby="alert-dialog-description">
         <div
           style={{
             padding: "0 20px",
             width: "500px",
             maxHeight: `calc(100vh - 150px)`,
             minHeight: "200px",
-          }}
-        >
+          }}>
           <h2 className={classes.headerContent}>Multi Company</h2>
           <div className={classes.formArea}>
             {computedCompanies?.length !== 1 && (
@@ -629,19 +691,17 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           </div>
           <div className={classes.footerContent}>
             <Button
-              sx={{ marginRight: "10px" }}
+              sx={{marginRight: "10px"}}
               variant="contained"
               color="error"
-              onClick={handleClose}
-            >
+              onClick={handleClose}>
               Cancel
             </Button>
             <div className={classes.buttonsArea}>
               <PrimaryButton
                 onClick={handleSubmit(onSubmitDialog)}
                 size="small"
-                loader={loading}
-              >
+                loader={loading}>
                 {t("enter")}
               </PrimaryButton>
             </div>
@@ -652,14 +712,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{ marginTop: "20px" }}
+          style={{marginTop: "20px"}}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"
               ? setFormType("LOGIN")
               : setFormType("RESET_PASSWORD");
-          }}
-        >
+          }}>
           Back to login
         </SecondaryButton>
       )}

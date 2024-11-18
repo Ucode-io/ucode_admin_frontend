@@ -1,0 +1,50 @@
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .MuiTextField-root {
+    width: 200px;
+  }
+
+  .MuiIconButton-root {
+    margin-right: 1rem;
+  }
+
+  .MuiButton-containedPrimary {
+    margin-right: 1rem;
+  }
+}
+
+.tableCardHeader {
+  box-shadow: inset 0px -1px 0px #e5e9eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 54px;
+  width: 100%;
+  overflow-x: scroll;
+  padding: 0 16px;
+}
+
+.activeTab {
+  color: #449424 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500 !important;
+  line-height: normal;
+  white-space: nowrap;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 70%;
+    height: 4px;
+    border-radius: 2px 2px 0px 0px;
+    background: #449424;
+    transform: translateX(-50%);
+  }
+}

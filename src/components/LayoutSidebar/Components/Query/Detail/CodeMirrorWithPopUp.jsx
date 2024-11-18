@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { MdContentCopy } from "react-icons/md";
+import {useEffect, useState} from "react";
+import {MdContentCopy} from "react-icons/md";
 import styles from "../style.module.scss";
 import CodeMirror from "@uiw/react-codemirror";
 import OutsideClickHandler from "react-outside-click-handler";
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
 import getElementBetween from "../../../../../utils/getElementBetween";
 
-const CodeMirrorWithPopUp = ({ form, name }) => {
+const CodeMirrorWithPopUp = ({form, name}) => {
   let typeOfElement = typeof form.watch(name);
   const [focused, setFocused] = useState(false);
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
     if (typeof mirrorValue !== "string") {
       form.reset({
         ...form.getValues(),
-        body: { ...form.getValues("body"), body: "" },
+        body: {...form.getValues("body"), body: ""},
       });
     }
   }, []);
@@ -33,14 +33,12 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
       <div
         onBlur={() => {
           setFocused(false);
-        }}
-      >
+        }}>
         <Box
           width="100%"
           display="flex"
           alignItems="center"
-          position="relative"
-        >
+          position="relative">
           <CodeMirror
             value={typeof mirrorValue === "string" ? mirrorValue : ""}
             width="100%"
@@ -66,8 +64,7 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
                     variant="contained"
                     colorScheme="green"
                     size="xs"
-                    onClick={() => copyToClipboard()}
-                  >
+                    onClick={() => copyToClipboard()}>
                     <MdContentCopy />
                   </Button>
                 </div>

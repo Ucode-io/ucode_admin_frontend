@@ -1,30 +1,37 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {Box, Card, Modal, Typography} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
+import menuService from "../../services/menuService";
 
-const TableLinkModal = ({
-  closeModal,
-  loading,
-  selectedFolder,
-  getMenuList,
-}) => {
-  const { projectId } = useParams();
+const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
+  const {projectId} = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
-  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
-  console.log("menuItemLabel", menuItemLabel);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  const {control, handleSubmit, reset, watch} = useForm();
+
+  const tableOptions = useMemo(() => {
+    return tables?.tables?.map((item, index) => ({
+      label: item.label,
+      value: item.id,
+    }));
+  }, [tables]);
+
   const onSubmit = (data) => {
     if (selectedFolder.type === "TABLE") {
       updateType(data, selectedFolder);
@@ -32,20 +39,6 @@ const TableLinkModal = ({
       createType(data, selectedFolder);
     }
   };
-
-  const { control, handleSubmit, reset, watch } = useForm();
-
-  useEffect(() => {
-    if (selectedFolder.type === "TABLE")
-      menuSettingsService
-        .getById(selectedFolder.id, projectId)
-        .then((res) => {
-          reset(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-  }, [selectedFolder]);
 
   const createType = (data, selectedFolder) => {
     menuSettingsService
@@ -91,22 +84,39 @@ const TableLinkModal = ({
   };
 
   useEffect(() => {
-    getTables();
+    if (selectedFolder.type === "TABLE")
+      menuSettingsService
+        .getById(selectedFolder.id, projectId)
+        .then((res) => {
+          reset(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [selectedFolder]);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setMenuItem(res);
+        });
+    }
   }, []);
 
-  const tableOptions = useMemo(() => {
-    return tables?.tables?.map((item, index) => ({
-      label: item.label,
-      value: item.id,
-    }));
-  }, [tables]);
+  useEffect(() => {
+    getTables();
+  }, []);
 
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать table</Typography>
+            <Typography variant="h4">Attach to table</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -120,23 +130,12 @@ const TableLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {/* {languages?.map((item, index) => (
-                <HFTextField autoFocus required fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))} */}
 
               {languages?.map((language) => {
                 const languageFieldName = `attributes.label_${language?.slug}`;
                 const fieldValue = watch(languageFieldName);
 
                 return (
-                  // <HFTextField
-                  //   control={control}
-                  //   name={languageFieldName}
-                  //   fullWidth
-                  //   placeholder={`Название (${language?.slug})`}
-                  //   name={`attributes.label_${item?.slug}`}
-                  //   defaultValue={fieldValue || menuItemLabel}
-                  // />
                   <HFTextField
                     autoFocus
                     fullWidth
@@ -144,7 +143,7 @@ const TableLinkModal = ({
                     control={control}
                     required
                     name={`attributes.label_${language?.slug}`}
-                    defaultValue={fieldValue || menuItemLabel}
+                    defaultValue={fieldValue || menuItem?.label}
                   />
                 );
               })}
@@ -164,7 +163,7 @@ const TableLinkModal = ({
             </Box>
 
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" loading={loading} />
+              <SaveButton title="Add" type="submit" loading={loading} />
             </div>
           </form>
         </Card>

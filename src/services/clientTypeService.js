@@ -1,26 +1,26 @@
-import { useMutation, useQuery } from "react-query";
-import httpsRequestV2 from "../utils/httpsRequestV2";
+import {useMutation, useQuery} from "react-query";
+import requestAuthV2 from "../utils/requestAuthV2";
 
 const clientTypeService = {
   getList: (params, envId) =>
-    httpsRequestV2.get("/client-type", {
+    requestAuthV2.get("/client-type", {
       params,
     }),
   getById: (id, params) =>
-    httpsRequestV2.get(`/client-type/${id}`, {
+    requestAuthV2.get(`/client-type/${id}`, {
       params,
     }),
-  create: ({ data, params }) =>
-    httpsRequestV2.post("/client-type", data, {
+  create: ({data, params}) =>
+    requestAuthV2.post("/client-type", data, {
       params,
     }),
-  update: ({ data, params }) =>
-    httpsRequestV2.put("/client-type", data, {
+  update: ({data, params}) =>
+    requestAuthV2.put("/client-type", data, {
       params,
     }),
-  delete: ({ id, projectId }) =>
-    httpsRequestV2.delete(`/client-type/${id}`, {
-      params: { "project-id": projectId },
+  delete: ({id, projectId}) =>
+    requestAuthV2.delete(`/client-type/${id}`, {
+      params: {"project-id": projectId},
     }),
 };
 
@@ -30,7 +30,7 @@ export const useClientTypesListQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["CLIENT_TYPES", { ...params, envId }],
+    ["CLIENT_TYPES", {...params, envId}],
     () => {
       return clientTypeService.getList(params, envId);
     },
@@ -38,9 +38,9 @@ export const useClientTypesListQuery = ({
   );
 };
 
-export const useClientTypeByIdQuery = ({ id, params = {}, quryParams }) => {
+export const useClientTypeByIdQuery = ({id, params = {}, quryParams}) => {
   return useQuery(
-    ["CLIENT_TYPE_BY_ID", { id, ...params }],
+    ["CLIENT_TYPE_BY_ID", {id, ...params}],
     () => {
       return clientTypeService.getById(id, params);
     },
@@ -50,21 +50,18 @@ export const useClientTypeByIdQuery = ({ id, params = {}, quryParams }) => {
 
 export const useClientTypeCreateMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, params }) => clientTypeService.create({ data, params }),
+    ({data, params}) => clientTypeService.create({data, params}),
     mutationSettings
   );
 };
 
 export const useClientTypeUpdateMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, params }) => clientTypeService.update({ data, params }),
+    ({data, params}) => clientTypeService.update({data, params}),
     mutationSettings
   );
 };
 
 export const useClientTypeDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, projectId }) => clientTypeService.delete({ id, projectId }),
-    mutationSettings
-  );
+  return useMutation((id) => clientTypeService.delete(id), mutationSettings);
 };

@@ -44,7 +44,6 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
 
   const fileSend = (value) => {
     const url = `${cdnURL}telegram/${value}`;
-    console.log("url", url);
     setSendMessage(url);
     // exportToJsonService.uploadToJson({
     //   file_name: value,

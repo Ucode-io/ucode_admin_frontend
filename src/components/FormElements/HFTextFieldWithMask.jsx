@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 import "react-phone-number-input/style.css";
-import { Lock, Today } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -30,6 +29,7 @@ const HFTextFieldWithMask = ({
   tabIndex,
   placeholder,
   defaultValue,
+  fullWidth,
   ...props
 }) => {
   const classes = useStyles();
@@ -58,6 +58,7 @@ const HFTextFieldWithMask = ({
               size="small"
               name={name}
               error={error}
+              fullWidth={fullWidth}
               helperText={!disabledHelperText && error?.message}
               placeholder={placeholder}
               className={isFormEdit ? "custom_textfield" : ""}
@@ -86,15 +87,6 @@ const HFTextFieldWithMask = ({
             />
           )}
         </InputMask>
-        // <PhoneInput
-        //   placeholder="Enter phone number"
-        //   value={value}
-        //   onChange={onChange}
-        //   defaultCountry="UZ"
-        //   international
-        //   className={styles.phoneNumber}
-        //   name={name}
-        // />
       )}
     ></Controller>
   );

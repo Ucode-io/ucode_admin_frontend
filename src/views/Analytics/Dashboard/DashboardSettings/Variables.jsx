@@ -8,7 +8,7 @@ import styles from "./style.module.scss"
 const columns = [
   {
     id: 1,
-    label: "Название",
+    label: "Name",
     slug: "label",
   },
   {

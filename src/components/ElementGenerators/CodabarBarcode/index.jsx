@@ -144,7 +144,7 @@ const CodabarBarcode = ({
 
               <CodabarGeneratorBtn
                 onChange={onChange}
-                tableSlug={formTableSlug}
+                tableSlug={formTableSlug} 
                 field={field}
               />
             </>

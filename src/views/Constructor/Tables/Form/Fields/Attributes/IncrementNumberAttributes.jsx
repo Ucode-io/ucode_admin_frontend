@@ -6,9 +6,6 @@ import styles from "./style.module.scss";
 const IncrementNumberAttributes = ({ control }) => {
   return (
     <>
-      <div className={styles.settingsBlockHeader}>
-        <h2>Settings</h2>
-      </div>
       <div className="p-2">
         <FRow label="Prefix">
           <HFTextField name="attributes.prefix" control={control} fullWidth />

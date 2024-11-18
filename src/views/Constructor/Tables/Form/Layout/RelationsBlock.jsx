@@ -1,13 +1,13 @@
-import { Add } from "@mui/icons-material";
-import { Card } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Add} from "@mui/icons-material";
+import {Card} from "@mui/material";
+import {useMemo, useState} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
 
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import IconGenerator from "../../../../../components/IconPicker/IconGenerator";
-import { applyDrag } from "../../../../../utils/applyDrag";
+import {applyDrag} from "../../../../../utils/applyDrag";
 import RelationTable from "../../../components/RelationTable";
 import styles from "./style.module.scss";
 
@@ -22,7 +22,7 @@ const RelationsBlock = ({
   });
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
+  const {fields: viewRelations, ...viewRelationsFieldArray} = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
     keyName: "key",
@@ -50,8 +50,8 @@ const RelationsBlock = ({
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
           dropResult.payload.view_relation_type === "FILE"
-            ? { ...dropResult.payload, relation_id: dropResult.payload?.id }
-            : { relation_id: dropResult.payload?.id }
+            ? {...dropResult.payload, relation_id: dropResult.payload?.id}
+            : {relation_id: dropResult.payload?.id}
         );
       } else {
         // viewRelationsFieldArray.replace(result)
@@ -73,7 +73,7 @@ const RelationsBlock = ({
           <div className={styles.tabList}>
             <Container
               groupName="table_relation"
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              dropPlaceholder={{className: "drag-row-drop-preview"}}
               orientation="horizontal"
               onDrop={onDrop}
             >

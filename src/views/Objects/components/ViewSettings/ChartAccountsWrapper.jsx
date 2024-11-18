@@ -54,7 +54,7 @@ const ChartAccountsWrapper = ({ viewId, form }) => {
       <div className={style.footerButton}>
         <div className={styles.createButton} onClick={addChart}>
           <Add color="primary" />
-          <p>Добавить</p>
+          <p>Add</p>
         </div>
       </div>
     </div>

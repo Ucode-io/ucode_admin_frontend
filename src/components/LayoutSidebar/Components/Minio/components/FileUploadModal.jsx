@@ -1,27 +1,27 @@
-import { Box, Card, CircularProgress, Modal, Typography } from "@mui/material";
+import {Box, Card, CircularProgress, Modal, Typography} from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import FileUploadWithDrag from "../../../../Upload/FileUploadWithDrag";
 import fileService from "../../../../../services/fileService";
-import { useState } from "react";
-import { useQueryClient } from "react-query";
+import {useState} from "react";
+import {useQueryClient} from "react-query";
 const flex = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
 };
-const FileUploadModal = ({ closeModal, menuItem }) => {
+const FileUploadModal = ({closeModal, menuItem}) => {
   const queryClient = useQueryClient();
   const [loader, setLoader] = useState(false);
   const onUpload = (data) => {
     setLoader(true);
     fileService
-      .folderUpload(data, { folder_name: menuItem?.attributes?.path })
-      .then((res) => {
+      .folderUpload(data, {folder_name: menuItem?.attributes?.path})
+      .then(() => {
         setLoader(false);
         closeModal();
         queryClient.refetchQueries(["MINIO_OBJECT"]);
       })
-      .catch((err) => {})
+      .catch(() => {})
       .finally(() => setLoader(false));
   };
   return (

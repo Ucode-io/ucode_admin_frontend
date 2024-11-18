@@ -195,6 +195,11 @@ const NotificationSidebar = ({
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"bell.svg"} size={18} />
             Notifications
@@ -213,11 +218,6 @@ const NotificationSidebar = ({
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

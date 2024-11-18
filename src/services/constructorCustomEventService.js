@@ -1,11 +1,11 @@
-import request from "../utils/request";
-
+import requestV2 from "../utils/requestV2";
 
 const constructorCustomEventService = {
-  getList: (params) => request.get('/custom-event', { params }),
-  update: (data) => request.put('/custom-event', data),
-  create: (data) => request.post('/custom-event', data),
-  delete: (id, data) => request.delete(`/custom-event/${id}`, data),
+  getList: (params, tableSlug) => requestV2.get(`/collections/${tableSlug}/automation`, { params }),
+  getById: (id, tableSlug) => requestV2.get(`/collections/${tableSlug}/automation/${id}`),
+  update: (data, tableSlug) => requestV2.put(`/collections/${tableSlug}/automation`, data),
+  create: (data, tableSlug) => requestV2.post(`/collections/${tableSlug}/automation`, data),
+  delete: (id, data, tableSlug) => requestV2.delete(`/collections/${tableSlug}/automation/${id}`, data),
 }
 
 export default constructorCustomEventService;

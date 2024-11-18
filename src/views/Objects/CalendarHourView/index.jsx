@@ -264,7 +264,7 @@ const promiseGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4), {
+      constructorObjectService.getListV2(groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4), {
         data: computedFilters ?? {},
       });
 

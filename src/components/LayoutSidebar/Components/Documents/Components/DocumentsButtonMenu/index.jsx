@@ -5,6 +5,8 @@ import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import AddIcon from "@mui/icons-material/Add";
 import { Delete } from "@mui/icons-material";
+import { BsFillTrashFill } from "react-icons/bs";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const DocumentButtonMenu = ({
@@ -15,6 +17,7 @@ const DocumentButtonMenu = ({
   handleCloseNotify,
   deleteNoteFolder,
   deleteTemplateFolder,
+  openNoteFolderModal,
 }) => {
   const navigate = useNavigate();
   return (
@@ -26,7 +29,7 @@ const DocumentButtonMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -37,6 +40,9 @@ const DocumentButtonMenu = ({
               ml: -0.5,
               mr: 1,
             },
+            "& .MuiList-root": {
+              padding: 0,
+            },
           },
         }}
       >
@@ -44,7 +50,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Note"
+              title="Add Note"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/${element.id}/note/create`);
@@ -57,7 +63,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Template"
+              title="Add Template"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/template/${element.id}/create`);
@@ -70,10 +76,37 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<AddIcon size={13} />}
-              title="Добавить Note"
+              title="Add Wiki"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/${adminId}/docs/note/${element.id}/create`);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<CreateNewFolderIcon size={13} />}
+              title="Add folder"
+              onClick={(e) => {
+                e.stopPropagation();
+                openNoteFolderModal(element, "CREATE");
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Delete folder"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteNoteFolder(element?.id);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Edit folder"
+              onClick={(e) => {
+                e.stopPropagation();
+                openNoteFolderModal(element, "EDIT");
                 handleCloseNotify();
               }}
             />
@@ -84,7 +117,7 @@ const DocumentButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить Note"
+                title="Delete Note"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteNoteFolder({ id: element.id });
@@ -98,7 +131,7 @@ const DocumentButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<Delete size={13} />}
-              title="Удалить Template"
+              title="Delete Template"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteTemplateFolder({ id: element.id });

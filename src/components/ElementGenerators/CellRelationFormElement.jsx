@@ -1,22 +1,24 @@
-import { Autocomplete, Popover, TextField, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import { Box, Popover, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import Select, { components } from "react-select";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useLocation, useParams } from "react-router-dom";
-import useDebounce from "../../hooks/useDebounce";
-import CascadingElement from "./CascadingElement";
-import RelationGroupCascading from "./RelationGroupCascading";
+import { pageToOffset } from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
-import AddIcon from "@mui/icons-material/Add";
+import CascadingElement from "./CascadingElement";
+import RelationGroupCascading from "./RelationGroupCascading";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -32,7 +34,6 @@ const CellRelationFormElement = ({
   control,
   name,
   updateObject,
-  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -141,7 +142,14 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+  const [page, setPage] = useState(1);
   const { id } = useParams();
+  const [allOptions, setAllOptions] = useState([]);
+  const [localValue, setLocalValue] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
+  const { i18n } = useTranslation();
+
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -165,18 +173,6 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  // const getIds = useMemo(() => {
-  //   let val = [];
-  //   relationfields
-  //     ?.filter((item) => {
-  //       return item[field?.slug];
-  //     })
-  //     .map((item) => {
-  //       return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
-  //     });
-  //   return val;
-  // }, [relationfields, field]);
-
   const getIdsFromData = useMemo(() => {
     let val = [];
     data
@@ -190,62 +186,95 @@ const AutoCompleteElement = ({
   }, [data, field]);
 
   const { data: optionsFromFunctions } = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-          from_input: true,
-        },
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: 0,
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {
+            from_input: true,
+          },
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: pageToOffset(page, 10),
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+
+        return {
+          options,
+        };
+      },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
+      },
+    }
+  );
+
+  const { data: optionsFromLocale } = useQuery(
+    [
+      "GET_OBJECT_LIST",
+      tableSlug,
+      debouncedValue,
+      autoFiltersValue,
+      value,
+      page,
+    ],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [value],
+            },
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
+          },
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      enabled: !field?.attributes?.function_path,
+      select: (res) => {
+        const options = res?.data?.response ?? [];
 
         return {
           options,
           // slugOptions,
         };
       },
-    }
-  );
-
-  const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
-    () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [value],
-          },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-        },
-      });
-    },
-    {
-      enabled: !field?.attributes?.function_path,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
-        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
-        return {
-          options,
-          // slugOptions,
-        };
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
       },
     }
   );
@@ -256,23 +285,25 @@ const AutoCompleteElement = ({
     } else {
       return optionsFromLocale ?? [];
     }
-  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions,
+    optionsFromLocale,
+    field?.attributes?.function_path,
+  ]);
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(
+      new Set(allOptions?.map(JSON.stringify))
+    ).map(JSON.parse);
+    return uniqueObjects ?? [];
+  }, [allOptions]);
 
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  // const computedOptions = useMemo(() => {
-  //   let uniqueObjArray = [
-  //     ...new Map(options.map((item) => [item["title"], item])).values(),
-  // ]
-  // return uniqueObjArray
-  // }, [options])
-
   const changeHandler = (value) => {
-    const val = value?.[value?.length - 1];
-
+    const val = value;
     setValue(val?.guid ?? null);
     setInputValue("");
 
@@ -284,6 +315,19 @@ const AutoCompleteElement = ({
       setName.push(field_to);
       setFormValue(setName.join("."), get(val, field_from));
     });
+  };
+
+  const getValueData = async () => {
+    try {
+      const id = value;
+      const res = await constructorObjectService.getById(tableSlug, id);
+      const data = res?.data?.response;
+      if (data.prepayment_balance) {
+        setFormValue("prepayment_balance", data.prepayment_balance || 0);
+      }
+
+      setLocalValue(data ? [data] : null);
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -312,8 +356,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  const [open, setOpen] = useState(false);
-  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const handleOpen = () => {
     setOpen(true);
   };
@@ -339,19 +381,90 @@ const AutoCompleteElement = ({
 
   const openPopover = Boolean(anchorEl);
 
+  useEffect(() => {
+    if (value) getValueData();
+  }, [value]);
+
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+      color: isBlackBg ? "#fff" : "",
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      border: "none",
+      outline: "none",
+    }),
+    input: (provided) => ({
+      ...provided,
+      width: "100%",
+      border: "none",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      background: state.isSelected ? "#007AFF" : provided.background,
+      color: state.isSelected ? "#fff" : provided.color,
+      cursor: "pointer",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
+
+  const CustomSingleValue = (props) => (
+    <components.SingleValue {...props}>
+      <div
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+        className="select_icon"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        {props.children}
+        {!disabled && (
+          <Box
+            sx={{ position: "relation", zIndex: 99 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateToForm(tableSlug, "EDIT", localValue?.[0]);
+            }}
+          >
+            <LaunchIcon
+              style={{
+                fontSize: "18px",
+                marginLeft: "5px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            />
+          </Box>
+        )}
+      </div>
+    </components.SingleValue>
+  );
   return (
-    <div
-      className={styles.autocompleteWrapper}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        minWidth: "max-content",
-      }}
-    >
+    <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
-        <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
+        <span
+          onClick={() => openFormModal(tableSlug)}
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+        >
+          <AddIcon
+            aria-owns={openPopover ? "mouse-over-popover" : undefined}
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+          />
           <Popover
             id="mouse-over-popover"
             sx={{
@@ -375,75 +488,71 @@ const AutoCompleteElement = ({
         </span>
       )}
 
-      {tableSlugFromProps && <ModalDetailPage open={open} setOpen={setOpen} tableSlug={tableSlugFromProps} />}
+      {tableSlugFromProps && (
+        <ModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          tableSlug={tableSlugFromProps}
+        />
+      )}
 
-      <Autocomplete
+      <Select
         inputValue={inputValue}
-        onInputChange={(event, newInputValue, reason) => {
-          if (reason !== "reset") {
+        onInputChange={(newInputValue, { action }) => {
+          if (action !== "reset") {
             setInputValue(newInputValue);
             inputChangeHandler(newInputValue);
           }
         }}
-        disabled={disabled}
-        options={options?.options ?? []}
-        value={computedValue}
-        popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
-        onChange={(event, newValue) => {
+        isDisabled={disabled}
+        onMenuScrollToBottom={loadMoreItems}
+        options={computedOptions ?? []}
+        value={localValue}
+        menuPortalTarget={document.body}
+        isClearable
+        components={{
+          ClearIndicator: () =>
+            localValue?.length && (
+              <div
+                style={{
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLocalValue([]);
+                }}
+              >
+                <ClearIcon />
+              </div>
+            ),
+          SingleValue: CustomSingleValue,
+          DropdownIndicator: null,
+        }}
+        onChange={(newValue, { action }) => {
           changeHandler(newValue);
         }}
-        noOptionsText={
-          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-            Создать новый
+        noOptionsMessage={() => (
+          <span
+            onClick={() => navigateToForm(tableSlug)}
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
+            Create new
           </span>
-        }
-        blurOnSelect
-        style={{
-          width: "100%",
-        }}
-        openOnFocus
-        getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
-        multiple
+        )}
+        menuShouldScrollIntoView
+        styles={customStyles}
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
         }}
-        // isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => (
-          <TextField
-            className={`${isFormEdit ? "custom_textfield" : ""}`}
-            placeholder={!computedValue.length ? placeholder : ""}
-            {...params}
-            InputProps={{
-              ...params.InputProps,
-              classes: {
-                input: isBlackBg ? classes.input : "",
-              },
-              style: {
-                background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
-                color: isBlackBg ? "#fff" : "",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-              },
-            }}
-            size="small"
-          />
-        )}
-        renderTags={(value, index) => (
-          <>
-            <span>{getOptionLabel(value[0])}</span>
-            <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              size={15}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                navigateToForm(tableSlug, "EDIT", value[0]);
-              }}
-            />
-          </>
-        )}
+        getOptionLabel={(option) =>
+          `${getRelationFieldTabsLabel(field, option)}`
+        }
+        getOptionValue={(option) => option.value}
+        isOptionSelected={(option, value) =>
+          value.some((val) => val.value === value)
+        }
+        blurInputOnSelect
       />
     </div>
   );

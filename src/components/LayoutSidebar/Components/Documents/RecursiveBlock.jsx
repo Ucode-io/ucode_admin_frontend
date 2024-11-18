@@ -66,6 +66,11 @@ const DocumentsRecursive = ({
           }`}
           onClick={clickHandler}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div
             className="label"
             style={{
@@ -145,12 +150,6 @@ const DocumentsRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.type === "FOLDER" &&
-            (childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            ))}
         </Button>
       </div>
 

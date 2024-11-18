@@ -1,10 +1,10 @@
-import { Delete, PictureAsPdf, Print } from "@mui/icons-material";
-import { Card, CircularProgress } from "@mui/material";
-import { forwardRef, useMemo, useState } from "react";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import {Delete, PictureAsPdf, Print} from "@mui/icons-material";
+import {Card, CircularProgress} from "@mui/material";
+import {forwardRef, useMemo, useState} from "react";
+import {useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {useSelector} from "react-redux";
+import {useLocation, useParams} from "react-router-dom";
 import Footer from "../../../components/Footer";
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput";
 import usePaperSize from "../../../hooks/usePaperSize";
@@ -14,7 +14,7 @@ import DropdownButton from "../components/DropdownButton";
 import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem";
 import Redactor from "./Redactor";
 import styles from "./style.module.scss";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import Dialog from "@mui/material/Dialog";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
@@ -42,10 +42,11 @@ const RedactorBlock = forwardRef(
     },
     redactorRef
   ) => {
-    const { tableSlug, appId } = useParams();
-    const { control, handleSubmit, reset } = useForm();
+    const {tableSlug, appId} = useParams();
+    const {control, handleSubmit, reset} = useForm();
     const [btnLoader, setBtnLoader] = useState(false);
     const [open, setOpen] = useState(false);
+    const location = useLocation();
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -60,11 +61,8 @@ const RedactorBlock = forwardRef(
     const selectTableSlug = selectedLinkedObject
       ? selectedLinkedObject?.split("#")?.[1]
       : tableSlug;
-    const {
-      selectedPaperSize,
-      selectPaperIndexBySize,
-      selectPaperIndexByName,
-    } = usePaperSize(selectedPaperSizeIndex);
+    const {selectedPaperSize, selectPaperIndexBySize, selectPaperIndexByName} =
+      usePaperSize(selectedPaperSizeIndex);
 
     const getFilteredData = useMemo(() => {
       return templateFields
@@ -110,7 +108,7 @@ const RedactorBlock = forwardRef(
         }
 
         if (values.type !== "CREATE") {
-          await constructorObjectService.update("template", { data });
+          await constructorObjectService.update("template", {data});
           updateTemplate(data);
         } else {
           const res = await constructorObjectService.create("template", {
@@ -120,7 +118,7 @@ const RedactorBlock = forwardRef(
         }
 
         setSelectedTemplate(null);
-        queryClient.refetchQueries("GET_OBJECT_LIST", { selectTableSlug });
+        queryClient.refetchQueries("GET_OBJECT_LIST", {selectTableSlug});
       } catch (error) {
         console.log(error);
         setBtnLoader(false);
@@ -131,8 +129,7 @@ const RedactorBlock = forwardRef(
       <div
         className={`${styles.redactorBlock} ${
           tableViewIsActive ? styles.hidden : ""
-        }`}
-      >
+        }`}>
         <div
           className={styles.pageBlock}
           // style={{ width: selectedPaperSize.width + 'pt' }}
@@ -141,7 +138,7 @@ const RedactorBlock = forwardRef(
             <HFAutoWidthInput
               control={control}
               name="title"
-              inputStyle={{ fontSize: 20 }}
+              inputStyle={{fontSize: 20}}
             />
           </div>
 
@@ -161,37 +158,37 @@ const RedactorBlock = forwardRef(
         <Footer
           extra={
             <>
-              <div
-                onClick={() => handleClickOpen()}
-                className={styles.saveButton}
-              >
-                {btnLoader && <CircularProgress color="secondary" size={15} />}
-                Save
-              </div>
+              {!location?.state?.isTableView && (
+                <div
+                  onClick={() => handleClickOpen()}
+                  className={styles.saveButton}>
+                  {btnLoader && (
+                    <CircularProgress color="secondary" size={15} />
+                  )}
+                  Save
+                </div>
+              )}
               <Dialog
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
+                aria-describedby="alert-dialog-description">
                 <Card className={styles.card}>
                   <div className={styles.body}>
-                    Вы действительно хотите Сохранить?
+                    Are you really want to save?
                   </div>
 
                   <div className={styles.footer}>
                     <SecondaryButton
                       className={styles.button}
-                      onClick={handleClose}
-                    >
-                      Отменить
+                      onClick={handleClose}>
+                      Cancel
                     </SecondaryButton>
                     <PrimaryButton
                       className={styles.button}
                       color="error"
-                      onClick={handleSubmit(onSubmit)}
-                    >
-                      Да
+                      onClick={handleSubmit(onSubmit)}>
+                      Yes
                     </PrimaryButton>
                   </div>
                 </Card>
@@ -199,8 +196,7 @@ const RedactorBlock = forwardRef(
               <DropdownButton
                 onClick={exportToHTML}
                 loader={pdfLoader || htmlLoader}
-                text="Generate and edit"
-              >
+                text="Generate and edit">
                 <DropdownButtonItem onClick={exportToPDF}>
                   <PictureAsPdf />
                   Generate PDF

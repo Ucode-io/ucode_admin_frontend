@@ -27,7 +27,7 @@ const CellCheckboxNoSign = ({ formVisible, data }) => {
   const checkboxHandler = (_, value) => (value ? dispatch(selectedRowActions.addRowId(data.map((i) => i.guid))) : dispatch(selectedRowActions.clear()));
 
   return formVisible ? (
-    <CTableHeadCell onMouseEnter={() => checkboxVisibilityTrigger(true)} onMouseLeave={() => checkboxVisibilityTrigger(false)} style={{ padding: "2px 0", minWidth: "40px" }}>
+    <CTableHeadCell onMouseEnter={() => checkboxVisibilityTrigger(true)} onMouseLeave={() => checkboxVisibilityTrigger(false)} style={{ padding: "0px 4px", minWidth: "40px" }}>
       {showCheckbox || data.length === selectedRow.length ? (
         <Checkbox onChange={checkboxHandler} />
       ) : (
@@ -45,7 +45,7 @@ const CellCheckboxNoSign = ({ formVisible, data }) => {
       )}
     </CTableHeadCell>
   ) : (
-    <CTableHeadCell width={10} style={{ position: "sticky", left: "0", zIndex: 1, backgroundColor: "#F6F6F6" }}>
+    <CTableHeadCell width={10} style={{ padding: "4px 4px", position: "sticky", left: "0", zIndex: 1, backgroundColor: "#F6F6F6" }}>
       <span
         style={{
           color: "#747474",

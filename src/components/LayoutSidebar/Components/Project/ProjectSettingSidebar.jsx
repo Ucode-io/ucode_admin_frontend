@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useNavigate } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
+import {useNavigate} from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -23,7 +23,7 @@ const projectFolder = {
   },
 };
 
-const ProjectSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
+const ProjectSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,8 +62,7 @@ const ProjectSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"building.svg"} size={18} />
             Project settings

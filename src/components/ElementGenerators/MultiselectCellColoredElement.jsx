@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import {useMemo} from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 
 const MultiselectCellColoredElement = ({
@@ -33,10 +33,10 @@ const MultiselectCellColoredElement = ({
       className="flex align-center gap-1"
       style={{
         flexWrap: "wrap",
-        justifyContent: "center",
+        // justifyContent: "center",
         alignItems: "center",
-      }}
-    >
+        minWidth: "150px",
+      }}>
       {tags?.map((tag) => (
         <div
           style={{
@@ -48,14 +48,13 @@ const MultiselectCellColoredElement = ({
             display: "flex",
             ...style,
           }}
-          {...props}
-        >
+          {...props}>
           {hasIcon && (
             <IconGenerator
               icon={tag.icon}
               size={14}
               className="mr-1"
-              style={{ transform: "translateY(2px)" }}
+              style={{transform: "translateY(2px)"}}
             />
           )}
 

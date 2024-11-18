@@ -1,6 +1,6 @@
 import { FormHelperText } from "@mui/material";
 import { Controller } from "react-hook-form";
-import FileUpload from "../Upload/FileUpload.jsx";
+import NewFileUpload from "../Upload/NewFileUpload.jsx";
 
 const HFFileUpload = ({
   control,
@@ -15,6 +15,7 @@ const HFFileUpload = ({
   field,
   ...props
 }) => {
+
   return (
     <Controller
       control={control}
@@ -24,9 +25,9 @@ const HFFileUpload = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
-          <FileUpload
+          <NewFileUpload
             name={name}
             value={value}
             tabIndex={tabIndex}
@@ -36,7 +37,6 @@ const HFFileUpload = ({
               isNewTableView && updateObject();
             }}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (

@@ -1,28 +1,19 @@
-import { get } from "@ngard/tiny-get";
-import { format } from "date-fns";
-import { useMemo } from "react";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import {get} from "@ngard/tiny-get";
+import {format} from "date-fns";
+import {useMemo} from "react";
+import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../MultiselectCellColoredElement";
 import styles from "./style.module.scss";
 
-const BoardCardRowGenerator = ({ field, el }) => {
+const BoardCardRowGenerator = ({field, el}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
-    return getRelationFieldTableCellLabel(
-      field,
-      el,
-      field.slug + "_data"
-    );;
+    return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
   }, [field, el]);
 
   switch (field?.type) {
     case "PHOTO":
-      return (
-        <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
-          <img src={value} alt="board_image" className={styles.image} />
-        </div>
-      );
+      return <></>;
 
     case "MULTISELECT":
       return (
@@ -31,7 +22,7 @@ const BoardCardRowGenerator = ({ field, el }) => {
           <MultiselectCellColoredElement
             value={value}
             field={field}
-            style={{ padding: "2px 5px" }}
+            style={{padding: "2px 5px"}}
           />
         </div>
       );

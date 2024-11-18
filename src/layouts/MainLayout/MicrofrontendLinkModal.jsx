@@ -1,19 +1,19 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Card, Modal, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Box, Button, Card, Modal, Typography} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import { useMicrofrontendListQuery } from "../../services/microfrontendService";
+import {useMicrofrontendListQuery} from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
-import { store } from "../../store";
+import {store} from "../../store";
+import {useSelector} from "react-redux";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -22,7 +22,11 @@ const MicrofrontendLinkModal = ({
   getMenuList,
 }) => {
   const queryClient = useQueryClient();
-  const { control, handleSubmit, reset } = useForm();
+  const {control, handleSubmit, reset} = useForm();
+
+  const company = store.getState().company;
+  const languages = useSelector((state) => state.languages.list);
+  const {data: microfrontend} = useMicrofrontendListQuery();
 
   const {
     fields: values,
@@ -33,13 +37,19 @@ const MicrofrontendLinkModal = ({
     name: "attributes.params",
   });
 
+  const microfrontendOptions = useMemo(() => {
+    return microfrontend?.functions?.map((item, index) => ({
+      label: item.name,
+      value: item.id,
+    }));
+  }, [microfrontend]);
+
   const addField = () => {
     append({
       key: "",
       value: "",
     });
   };
-  const company = store.getState().company;
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
@@ -48,18 +58,6 @@ const MicrofrontendLinkModal = ({
       createType(data, selectedFolder);
     }
   };
-
-  useEffect(() => {
-    if (selectedFolder.type === "MICROFRONTEND")
-      menuSettingsService
-        .getById(selectedFolder.id, company.projectId)
-        .then((res) => {
-          reset(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-  }, []);
 
   const createType = (data, selectedFolder) => {
     menuSettingsService
@@ -95,16 +93,17 @@ const MicrofrontendLinkModal = ({
     remove(index);
   };
 
-  const { data: microfrontend } = useMicrofrontendListQuery();
-
-  const microfrontendOptions = useMemo(() => {
-    return microfrontend?.functions?.map((item, index) => ({
-      label: item.name,
-      value: item.id,
-    }));
-  }, [microfrontend]);
-
-  const languages = useSelector((state) => state.languages.list);
+  useEffect(() => {
+    if (selectedFolder.type === "MICROFRONTEND")
+      menuSettingsService
+        .getById(selectedFolder.id, company.projectId)
+        .then((res) => {
+          reset(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, []);
 
   return (
     <div>
@@ -162,8 +161,7 @@ const MicrofrontendLinkModal = ({
                 />
                 <RectangleIconButton
                   onClick={() => deleteField(index)}
-                  color="error"
-                >
+                  color="error">
                   <Delete color="error" />
                 </RectangleIconButton>
               </div>
@@ -172,12 +170,11 @@ const MicrofrontendLinkModal = ({
               className={styles.button}
               variant="contained"
               fullWidth
-              onClick={addField}
-            >
+              onClick={addField}>
               Add params
             </Button>
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" loading={loading} />
+              <SaveButton title="Add" type="submit" loading={loading} />
             </div>
           </form>
         </Card>

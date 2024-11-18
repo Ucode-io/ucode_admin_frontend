@@ -1,8 +1,8 @@
 import axios from "axios";
-import { store } from "../store/index";
-import { showAlert } from "../store/alert/alert.thunk";
+import {store} from "../store/index";
+import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import { authActions } from "../store/auth/auth.slice";
+import {authActions} from "../store/auth/auth.slice";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`;
 
 const httpsRequestV2 = axios.create({
@@ -13,18 +13,26 @@ const httpsRequestV2 = axios.create({
 // const errorHandler = (error, hooks) => {
 
 //   if(error.response?.data?.data) store.dispatch(showAlert(error.response.data.data))
-//   else store.dispatch(showAlert('___ERROR___'))
+//   else store.dispatch(showAlert('No connection to the server, try again'))
 
 //   return Promise.reject(error.response)
 // }
 
 const errorHandler = (error, hooks) => {
-  const token = store.getState().auth.token;
+  // const token = store.getState().auth.token;
   // const logoutParams = {
   //   access_token: token,
   // };
 
-  if (error?.response?.status === 401) {
+  const isOnline = store.getState().isOnline;
+
+  if (
+    error?.response?.status === 401 &&
+    error?.response?.data?.data ===
+      "rpc error: code = Unavailable desc = User not access environment"
+  ) {
+    store.dispatch(authActions.logout());
+  } else if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
 
     const params = {
@@ -51,6 +59,7 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
+          // isOnline?.isOnline &&
           store.dispatch(showAlert(error.response.data.data));
         }
       }
@@ -58,7 +67,9 @@ const errorHandler = (error, hooks) => {
         store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    } else store.dispatch(showAlert("___ERROR___"));
+    }
+    // isOnline?.isOnline &&
+    else store.dispatch(showAlert("No connection to the server, try again"));
 
     return Promise.reject(error.response);
   }
@@ -101,7 +112,11 @@ httpsRequestV2.interceptors.request.use(
   (error) => errorHandler(error)
 );
 
-httpsRequestV2.interceptors.response.use((response) => {
+httpsRequestV2.interceptors.response.use((response, request) => {
+  if(response?.config?.responseType === 'blob') {
+    return response.data
+  }
+
   customMessageHandler(response);
   return response.data.data;
 }, errorHandler);

@@ -1,15 +1,16 @@
-import {Autocomplete, TextField} from "@mui/material";
 import {get} from "@ngard/tiny-get";
-import {useEffect, useRef, useState} from "react";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
-
+import {useSelector} from "react-redux";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import Select from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
+import {pageToOffset} from "../../utils/pageToOffset";
+import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -17,13 +18,6 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import constructorFunctionService from "../../services/constructorFunctionService";
-import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
-import request from "../../utils/request";
-import {useSelector} from "react-redux";
-import Select from "react-select";
-import {useTranslation} from "react-i18next";
 
 const RelationFormElement = ({
   control,
@@ -42,6 +36,7 @@ const RelationFormElement = ({
   multipleInsertField,
   checkRequiredField,
   rules,
+  activeLang,
   errors,
   ...props
 }) => {
@@ -50,11 +45,19 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-  
+
   const computedLabel =
-    field?.attributes?.[`title_${i18n?.language}`] ??
-    field?.label ??
+    field?.attributes?.[`label_${i18n?.language}`] ||
+    field?.attributes?.[`title_${i18n?.language}`] ||
+    column?.attributes?.[`label_from_${i18n?.language}`] ||
+    field?.label ||
     field?.title;
+
+  const required = useMemo(() => {
+    if (window.location.pathname?.includes("settings")) {
+      return false;
+    } else return field?.required;
+  }, [window.location.pathname]);
 
   if (!isLayout)
     return (
@@ -64,8 +67,8 @@ const RelationFormElement = ({
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           rules={{
-            required: field?.required ? 'This field is required!' : '',
-            ...rules
+            required: required ? "This field is required!" : "",
+            ...rules,
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
@@ -81,6 +84,8 @@ const RelationFormElement = ({
               name={name}
               multipleInsertField={multipleInsertField}
               errors={errors}
+              required={required}
+              activeLang={activeLang}
             />
           )}
         />
@@ -91,13 +96,12 @@ const RelationFormElement = ({
     <Controller
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
-      defaultValue={field.label}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -125,13 +129,13 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  activeLang={activeLang}
                 />
               )
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -149,15 +153,15 @@ const AutoCompleteElement = ({
   name,
   multipleInsertField,
   setFormValue = () => {},
-  errors
+  errors,
+  required = false,
+  activeLang,
 }) => {
-
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const {id} = useParams();
+
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
-  const [firstValue, setFirstValue] = useState(false);
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -166,11 +170,22 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
+  const {i18n} = useTranslation();
+  const {state} = useLocation();
+  const languages = useSelector((state) => state.languages.list);
+  const isSettings = window.location.pathname?.includes("settings/constructor");
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const customStyles = {
     control: (provided) => ({
       ...provided,
-        border: `1px solid ${errors?.[field?.slug] ? 'red' : '#d4d2d2'}`,
+      border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
+      minWidth: "200px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 99999,
     }),
   };
 
@@ -186,6 +201,7 @@ const AutoCompleteElement = ({
   }, [field]);
 
   const autoFiltersFieldFroms = useMemo(() => {
+    setPage(1);
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
 
@@ -216,8 +232,8 @@ const AutoCompleteElement = ({
             table_slug: tableSlug,
             ...autoFiltersValue,
             search: debouncedValue,
-            limit: 10 * page,
-            offset: 0,
+            limit: 10,
+            offset: pageToOffset(page, 10),
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
@@ -237,6 +253,13 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
+      },
     }
   );
 
@@ -244,21 +267,28 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [computedIds],
+      return constructorObjectService.getListV2(
+        tableSlug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [computedIds ?? value],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10 * page,
         },
-      });
+        {
+          language_setting: i18n?.language,
+        }
+      );
     },
     {
-      enabled: !field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -268,37 +298,46 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
+      },
     }
   );
 
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
+      return optionsFromFunctions?.options ?? [];
     } else {
-      return optionsFromLocale ?? [];
+      return optionsFromLocale?.options ?? [];
     }
   }, [
-    optionsFromFunctions,
-    optionsFromLocale,
+    optionsFromFunctions?.options,
+    optionsFromLocale?.options,
     field?.attributes?.function_path,
   ]);
 
-
   const getValueData = async () => {
     try {
-      const id = value;
+      const id = state?.[`${tableSlug}_id`] || value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
-      if (data.prepayment_balance) {
+
+      if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
 
-      setLocalValue(data ? [data] : null);
-    } catch (error) {}
-  };
+      setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
+      if (window.location.pathname?.includes("create")) {
+        setFormValue(name, data?.guid);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const changeHandler = (value, key = "") => {
@@ -314,7 +353,6 @@ const AutoCompleteElement = ({
     } else {
       const val = value;
 
-
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
@@ -327,7 +365,7 @@ const AutoCompleteElement = ({
   };
 
   const setClientTypeValue = () => {
-    const value = options?.options?.find((item) => item?.guid === clientTypeID);
+    const value = options?.find((item) => item?.guid === clientTypeID);
 
     if (
       field?.attributes?.object_id_from_jwt &&
@@ -338,18 +376,10 @@ const AutoCompleteElement = ({
     }
   };
 
-  const setDefaultValue = () => {
-    if (options?.slugOptions && multipleInsertField) {
-      const val = options?.slugOptions?.find((item) => item?.guid === id);
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
-    }
-  };
-
   const computedValue = useMemo(() => {
-    const findedOption = options?.options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
+    const findedOption = options?.find((el) => el?.guid === value || state?.id);
+    return findedOption ? findedOption : [];
+  }, [options, value, state?.id]);
 
   useEffect(() => {
     let val;
@@ -375,37 +405,73 @@ const AutoCompleteElement = ({
         }, 1);
       }
     });
-  }, [computedValue, field]);
+  }, [computedValue, field, value]);
 
   useEffect(() => {
-    if (value) getValueData();
+    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
   }, [value]);
 
   useEffect(() => {
     setClientTypeValue();
   }, []);
 
+  useEffect(() => {
+    if (autoFiltersValue) {
+      setPage(1);
+    }
+  }, [autoFiltersValue]);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-      if (optionsFromFunctions?.options?.length > 5) {
-        setPage((prevPage) => prevPage + 1);
-      } else return false;
+      setPage((prevPage) => prevPage + 1);
     } else {
-      if (optionsFromLocale?.options?.length > 5) {
-        setPage((prevPage) => prevPage + 1);
-      } else return false;
+      setPage((prevPage) => prevPage + 1);
     }
   }
-  console.log('errors', errors)
+
+  const computedViewFields = useMemo(() => {
+    if (field?.attributes?.enable_multi_language) {
+      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
+      const computedLanguages = languages?.map((item) => item?.slug);
+
+      const activeLangView = viewFields?.filter((el) =>
+        el?.includes(activeLang ?? i18n?.language)
+      );
+
+      const filteredData = viewFields.filter((key) => {
+        return !computedLanguages.some((lang) => key.includes(lang));
+      });
+
+      return [...activeLangView, ...filteredData] ?? [];
+    } else {
+      return field?.attributes?.view_fields?.map((el) => el?.slug);
+    }
+  }, [field, activeLang, i18n?.language]);
+
+  useEffect(() => {
+    if (field?.attributes?.object_id_from_jwt === true) {
+      const foundOption = allOptions?.find((el) => el?.guid === isUserId);
+
+      if (foundOption) {
+        setLocalValue([foundOption]);
+      }
+    }
+  }, [allOptions?.length, field]);
+
+  useEffect(() => {
+    if (localValue?.length === 0 && computedValue?.guid) {
+      setLocalValue([computedValue]);
+      setValue(computedValue?.guid);
+    }
+  }, [state?.id, computedValue]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}
-        >
-          Создать новый
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
+          Create new
         </div>
       )}
       {field?.attributes?.cascadings?.length === 4 ? (
@@ -441,54 +507,70 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-       <>
-         <Select
-          isDisabled={
-            disabled ||
-            (field?.attributes?.object_id_from_jwt &&
-              field?.id?.split("#")?.[0] === "client_type") ||
-            (Boolean(field?.attributes?.is_user_id_default) &&
-              localValue?.length !== 0)
-          }
-          options={options?.options ?? []}
-          isClearable={true}
-          styles={customStyles}
-          value={localValue ?? []}
-          required={field?.required}
-          defaultValue={value ?? ""}
-          onChange={(e) => {
-            changeHandler(e);
-            // console.log('eeeeeeeeeeee', e.guid)
-            // setLocalValue(e.guid);
-          }}
-          onMenuScrollToBottom={loadMoreItems}
-          inputChangeHandler={(e) => inputChangeHandler(e)}
-          onInputChange={(e, newValue) => {
-            setInputValue(e ?? null);
-            inputChangeHandler(e);
-          }}
-          getOptionLabel={(option) =>
-            field?.attributes?.view_fields?.map((el) => `${option[el?.slug]} `)
-          }
-          getOptionValue={(option) => option?.guid}
-          components={{
-            DropdownIndicator: () => null,
-            MultiValue: ({data}) => (
-              <IconGenerator
-                icon="arrow-up-right-from-square.svg"
-                style={{marginLeft: "10px", cursor: "pointer"}}
-                size={15}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  navigateToForm(tableSlug, "EDIT", value);
-                }}
-              />
-            ),
-          }}
-        />
-        {errors?.[field?.slug] && <div style={{ color: 'red', fontSize:'10px', textAlign: 'center', marginTop: '5px' }}>{'This field is required!'}</div>}
-       </>
+        <>
+          <Select
+            isDisabled={
+              disabled ||
+              (field?.attributes?.object_id_from_jwt &&
+                field?.id?.split("#")?.[0] === "client_type") ||
+              (Boolean(field?.attributes?.is_user_id_default) &&
+                localValue?.length !== 0)
+            }
+            options={allOptions ?? []}
+            isClearable={true}
+            styles={customStyles}
+            value={localValue ?? []}
+            required={required}
+            defaultValue={value ?? ""}
+            onChange={(e) => {
+              changeHandler(e);
+            }}
+            onMenuScrollToBottom={loadMoreItems}
+            inputChangeHandler={(e) => inputChangeHandler(e)}
+            onInputChange={(e, newValue) => {
+              setInputValue(e ?? null);
+              inputChangeHandler(e);
+            }}
+            getOptionLabel={(option) =>
+              computedViewFields?.map((el) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
+                } else {
+                  return `${option[el]} `;
+                }
+              })
+            }
+            getOptionValue={(option) =>
+              option?.guid ?? option?.id ?? option?.client_type_id
+            }
+            components={{
+              DropdownIndicator: () => null,
+              MultiValue: ({data}) => (
+                <IconGenerator
+                  icon="arrow-up-right-from-square.svg"
+                  style={{marginLeft: "10px", cursor: "pointer"}}
+                  size={15}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    navigateToForm(tableSlug, "EDIT", value);
+                  }}
+                />
+              ),
+            }}
+          />
+          {errors?.[field?.slug] && (
+            <div
+              style={{
+                color: "red",
+                fontSize: "10px",
+                textAlign: "center",
+                marginTop: "5px",
+              }}>
+              {"This field is required!"}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

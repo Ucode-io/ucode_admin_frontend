@@ -1,5 +1,5 @@
-import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
+import {Controller, useWatch} from "react-hook-form";
+import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
 
 const HFFloatField = ({
@@ -10,7 +10,7 @@ const HFFloatField = ({
   isFormEdit = false,
   required = false,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isTransparent = false,
   fullWidth = false,
   withTrim = false,
@@ -32,12 +32,11 @@ const HFFloatField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const allowNegative = isFloat; // allow negatives only for float fields
-        const decimalSeparator = isFloat ? "." : undefined; // set the decimal separator only for float fields
-
+      render={({field: {onChange, value}, fieldState: {error}}) => {
+        const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
+            id="float-field"
             thousandsGroupStyle="thousand"
             thousandSeparator=" "
             decimalSeparator={decimalSeparator}
@@ -45,38 +44,44 @@ const HFFloatField = ({
             displayType="input"
             isNumericString={true}
             autoComplete="off"
-            allowNegative={allowNegative}
+            allowNegative={true}
             fullWidth={fullWidth}
-            value={value}
+            value={value ?? ""}
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(" ", "");
-
               if (!valueWithoutSpaces) onChange("");
               else {
-                if (valueWithoutSpaces.at(-1) === ".") onChange(parseFloat(valueWithoutSpaces));
-                else onChange(!isNaN(valueWithoutSpaces) ? parseFloat(valueWithoutSpaces) : valueWithoutSpaces);
+                if (valueWithoutSpaces.at(-1) === ".")
+                  onChange(parseFloat(valueWithoutSpaces));
+                else
+                  onChange(
+                    !isNaN(valueWithoutSpaces)
+                      ? parseFloat(valueWithoutSpaces)
+                      : valueWithoutSpaces
+                  );
               }
-              isNewTableView && updateObject()
+              isNewTableView && updateObject();
             }}
-            className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+            className={`${isFormEdit ? "custom_textfield" : ""} ${
+              styles.numberField
+            }`}
             name={name}
             readOnly={disabled}
             style={
               isTransparent
-                ? { background: "transparent", border: "none" }
+                ? {background: "transparent", border: "none"}
                 : disabled
-                ? { background: "#c0c0c039" }
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                  }
+                  ? {background: "#c0c0c039"}
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    }
             }
             {...props}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

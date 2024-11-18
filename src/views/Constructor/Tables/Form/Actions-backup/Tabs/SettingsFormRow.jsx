@@ -19,7 +19,7 @@ const SettingsFormRow = ({
   nestedFieldName,
   removeField,
 }) => {
-  const { slug: table_slug } = useParams();
+  const { tableSlug: table_slug } = useParams();
 
   const table_slug_param =
     nestedFieldName === "after"
@@ -179,7 +179,7 @@ const SettingsFormRow = ({
             }
           >
             <Add />
-            Добавить группу
+            Add group
           </SecondaryButton>
           <SecondaryButton
             type="button"
@@ -187,7 +187,7 @@ const SettingsFormRow = ({
             onClick={() => removeField(nestedIndex)}
           >
             <Delete />
-            Удалить
+            Delete
           </SecondaryButton>
         </div>
       </div>

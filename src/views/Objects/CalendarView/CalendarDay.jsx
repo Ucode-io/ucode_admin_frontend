@@ -1,17 +1,10 @@
 import styles from "./day.module.scss";
 import TimesColumn from "./TimesColumns";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import {useRef} from "react";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import CalendarDayColumn from "./CalendarDayColumn";
 
-const CalendarDay = ({
-  data,
-  fieldsMap,
-  datesList,
-  view,
-  tabs,
-  workingDays,
-}) => {
+const CalendarDay = ({data, fieldsMap, datesList, view, tabs, workingDays}) => {
   const parentRef = useRef(null);
 
   const virtualizer = useVirtualizer({
@@ -20,6 +13,7 @@ const CalendarDay = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
+
   return (
     <div className={styles.calendarday} ref={parentRef}>
       <TimesColumn view={view} data={data} />
@@ -29,8 +23,7 @@ const CalendarDay = ({
           width: "100vw",
           height: "100%",
           position: "relative",
-        }}
-      >
+        }}>
         {virtualizer.getVirtualItems().map((virtualColumn) => (
           <div
             key={virtualColumn.key}
@@ -43,8 +36,7 @@ const CalendarDay = ({
               left: 0,
               height: "100%",
               transform: `translateX(${virtualColumn.start}px)`,
-            }}
-          >
+            }}>
             <CalendarDayColumn
               date={datesList[virtualColumn.index]}
               data={data}

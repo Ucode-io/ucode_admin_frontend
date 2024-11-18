@@ -29,21 +29,24 @@ const InputWithValueOffer = ({
   const [focused, setFocused] = useState(false);
   const inputValue = useWatch({
     control: form.control,
-    name
-  })
-  const dispatch = useDispatch(); 
+    name,
+  });
+  const dispatch = useDispatch();
   const containsOnlyNumbers = (str) => {
     return /^[0-9]+$/.test(str);
   };
 
+  const queryVairables = form.watch("project_resource_id");
+
   const { data: { variables } = {} } = useVariableResourceListQuery({
+    id: queryVairables,
     params: {},
     queryParams: {
-      enabled: inputValue.trim() === '{{$$}}',
+      enabled: inputValue.trim() === "{{}}" && Boolean(queryVairables),
       onSuccess: (res) => {
-        console.log('res', res)
+        console.log("res", res);
       },
-    }
+    },
   });
 
   let typeOfElement = containsOnlyNumbers(form.watch(name));
@@ -57,22 +60,22 @@ const InputWithValueOffer = ({
     setValue(newValue);
   };
 
-  const getValueMatch = useMemo(() => {
-    if (!inputValue || !variables) return false;
-  
-    const variableNames = inputValue?.match(/{{\$\$(.*?)}}/g)?.map(match => match?.slice(4, -2));
-  
-    return variableNames?.every(variableName => variables?.some(item => item?.key === variableName));
-  }, [inputValue, variables]);
-  
+  // const getValueMatch = useMemo(() => {
+  //   if (!inputValue || !variables) return false;
 
+  //   const variableNames = inputValue
+  //     ?.match(/{{\$\$(.*?)}}/g)
+  //     ?.map((match) => match?.slice(4, -2));
+
+  //   return variableNames?.every((variableName) =>
+  //     variables?.some((item) => item?.key === variableName)
+  //   );
+  // }, [inputValue, variables]);
 
   const getVariableValue = (element) => {
-    form.setValue(name, `{{$$${element?.key}}}`)
-    getElementBetween(form)
-    setValue(newValue);
-  }
-  console.log('inputValue', inputValue)
+    form.setValue(name, `{{${element?.key}}}`);
+    getElementBetween(form);
+  };
   return (
     <div
       className={className || styles.container}
@@ -87,7 +90,7 @@ const InputWithValueOffer = ({
         alignItems="center"
         position="relative"
         className={styles.inputWithPopUp}
-        sx={{border: `1px solid  ${!inputValue || getValueMatch ? 'none' : 'red'}`, paddingLeft: '5px'}}
+        // sx={{border: `1px solid  ${!inputValue || getValueMatch ? 'none' : 'red'}`, paddingLeft: '5px'}}
       >
         <HFTextField
           control={form.control}
@@ -99,16 +102,18 @@ const InputWithValueOffer = ({
           onFocus={() => {
             setFocused(true);
           }}
-          
           placeholder={placeholder}
           customOnChange={(value) => {
+            detectVariables(value.target.value);
             enableGetElement && getElementBetween(form);
             customOnChange();
           }}
           onBlur={onBlur}
         />
 
-        {focused && inputValue.trim() !== '{{$$}}' ? (
+        {focused &&
+        inputValue.trim() !== "{{" &&
+        inputValue.trim() !== "{{}}" ? (
           <div className={styles.prompt}>
             <div className={styles.wrapper}>
               <div>
@@ -132,17 +137,21 @@ const InputWithValueOffer = ({
           ""
         )}
 
-        {variables?.length > 0 && inputValue.trim() === '{{$$}}' ? (
+        {(variables?.length > 0 && inputValue.trim() === "{{") ||
+        (inputValue.trim() === "{{}}" && Boolean(queryVairables)) ? (
           <div className={styles.prompt}>
             <div className={styles.variable_wrapper}>
               {variables?.map((element) => (
-                  <div onClick={(e) => {
-                    e.stopPropagation()
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
                     detectVariables(element);
-                    getVariableValue(element)
-                  }} className={styles.wrapper_item}>
-                    {element?.key}
-                  </div>
+                    getVariableValue(element);
+                  }}
+                  className={styles.wrapper_item}
+                >
+                  {element?.key}
+                </div>
               ))}
             </div>
           </div>

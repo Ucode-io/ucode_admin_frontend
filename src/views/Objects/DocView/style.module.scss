@@ -76,6 +76,9 @@
     .row {
       padding: 10px 20px;
       border-bottom: 1px solid #e5e9eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
       &:hover {
         background-color: #eef0f26c;
@@ -87,6 +90,13 @@
       }
     }
 
+    .deleteBtn {
+      margin-left: auto;
+    }
+    .templateList {
+      max-height: 480px;
+      overflow: scroll;
+    }
     .pageSizeRow {
       display: flex;
       align-items: center;

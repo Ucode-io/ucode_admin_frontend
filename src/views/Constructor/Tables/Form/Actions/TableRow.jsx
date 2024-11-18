@@ -41,7 +41,7 @@ function TableRow({
       return constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
-      });
+      }, slug);
     },
     {
       select: (res) => {

@@ -1,7 +1,7 @@
-import { TreeItem } from "@mui/lab";
 import "./style.module.scss";
 import { useState } from "react";
 import { useMenuListQuery } from "../../../../../services/menuService";
+import { TreeItem } from "@mui/x-tree-view";
 
 const FieldTreeView = ({ element, setCheck, check, folder }) => {
   const [child, setChild] = useState();

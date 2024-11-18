@@ -12,7 +12,7 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import styles from "./template.module.scss";
 import { useState } from "react";
-import { TreeItem, TreeView } from "@mui/lab";
+import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {

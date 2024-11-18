@@ -11,11 +11,14 @@ import CreateButton from "../../../../Buttons/CreateButton";
 import SaveButton from "../../../../Buttons/SaveButton";
 import { useDispatch } from "react-redux";
 import { showAlert } from "../../../../../store/alert/alert.thunk";
+import { store } from "../../../../../store";
 
 const QueryFolderCreateModal = ({ folder, closeModal, formType }) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const createType = formType === "CREATE";
+  const createType = formType === "CREATE";  
+  const company = store.getState().company;
+
 
   const { control, handleSubmit } = useForm({
     defaultValues: createType
@@ -45,7 +48,7 @@ const QueryFolderCreateModal = ({ folder, closeModal, formType }) => {
 
   const onSubmit = (values) => {
     if (!createType) update(values);
-    else create(values);
+    else create({...values, project_id:company.project_id });
   };
 
   return (

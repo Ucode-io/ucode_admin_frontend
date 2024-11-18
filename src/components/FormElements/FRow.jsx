@@ -7,13 +7,13 @@ const FRow = ({
   componentClassName = "",
   required = false,
   extra,
+  classname,
   ...props
 }) => {
   return (
     <div className={`FRow ${position}`} {...props}>
       <div className="desc">
-        <div className="label">
-          {" "}
+        <div className={`label ${classname}`}>
           {required && <span className="requiredStart">*</span>}{" "}
           {label && label + ":"}
         </div>

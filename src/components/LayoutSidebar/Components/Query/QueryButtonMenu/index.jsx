@@ -25,7 +25,7 @@ const QueryButtonMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -36,6 +36,9 @@ const QueryButtonMenu = ({
               ml: -0.5,
               mr: 1,
             },
+            "& .MuiList-root": {
+              padding: 0,
+            },
           },
         }}
       >
@@ -44,7 +47,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Добавить папку"
+                title="Add folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "CREATE");
@@ -55,7 +58,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<FaPlus size={13} />}
-                title="Добавить Query"
+                title="Add Query"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNavigate(element);
@@ -66,7 +69,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Изменить папку"
+                title="Edit folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   openFolderModal(element, "EDIT");
@@ -77,7 +80,7 @@ const QueryButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<Delete size={13} />}
-                title="Удалить папку"
+                title="Delete folder"
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element?.id);

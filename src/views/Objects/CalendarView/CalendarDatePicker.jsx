@@ -30,7 +30,6 @@ const CalendarDatePicker = ({
       disabled={disabled}
       ref={datePickerRef}
       render={(value, openCalendar, handleChange) => {
-        console.log("value", value);
         document.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
             e.preventDefault();

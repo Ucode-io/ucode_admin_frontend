@@ -21,6 +21,7 @@ const HFDateTimePickerWithout = ({
   placeholder = "",
   disabled,
   defaultValue,
+  sectionModal,
 }) => {
   const classes = useStyles();
   return (
@@ -31,6 +32,7 @@ const HFDateTimePickerWithout = ({
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
           <CDateTimePickerWithout
+            sectionModal={sectionModal}
             isFormEdit={isFormEdit}
             classes={classes}
             placeholder={placeholder}
@@ -43,8 +45,7 @@ const HFDateTimePickerWithout = ({
             disabled={disabled}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

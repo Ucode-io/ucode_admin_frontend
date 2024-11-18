@@ -1,11 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function useVerticalRowNavigate(level, expandedRows, findExpandRow) {
+export default function useVerticalRowNavigate(
+  level,
+  expandedRows,
+  findExpandRow
+) {
   const navigate = useNavigate();
   const { appId } = useParams();
 
   const navigateToEditPage = (row, field, aa) => {
-    console.log("ROW => ", row, field, aa);
     if (row.guid && row.slug_type !== "RELATION") {
       function getArray(row) {
         if (!row.child) {
@@ -21,7 +24,8 @@ export default function useVerticalRowNavigate(level, expandedRows, findExpandRo
       } else {
         if (expandedRows.length) {
           const foundExpandedRow =
-            findExpandRow([...row.parent_ids, row.guid].join("#")) ?? findExpandRow([...row.parent_ids].join("#"));
+            findExpandRow([...row.parent_ids, row.guid].join("#")) ??
+            findExpandRow([...row.parent_ids].join("#"));
 
           const makeState = {};
           getArray(foundExpandedRow)

@@ -206,6 +206,48 @@
       }
     }
   }
+
+  .OneCviewForm {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: calc(100vh - 400px);
+    overflow: auto;
+
+    .section {
+      border: 0;
+      border-radius: 0;
+
+      .sectionHeader {
+        padding: 16px 12px;
+        box-shadow: inset 0px -1px 0px #ebedee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .sectionTitle {
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 24px;
+        }
+      }
+
+      .sectionBody {
+        padding: 16px 12px;
+
+        .formRow {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          fieldset {
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
 }
 
 .section {
@@ -249,6 +291,21 @@
       align-items: center;
       padding: 8px 16px;
       margin: -1px -1px 0 0;
+      // flex: 1;
+    }
+  }
+
+  .row_filter {
+    display: flex;
+    background-color: #fff;
+    // align-items: center;
+
+    .cell {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      margin: -1px -1px 0 0;
+      border: none;
       // flex: 1;
     }
   }

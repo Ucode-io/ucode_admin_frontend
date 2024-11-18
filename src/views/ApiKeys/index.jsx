@@ -1,6 +1,6 @@
-import { Delete } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {Delete, Edit} from "@mui/icons-material";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -9,25 +9,28 @@ import {
   CTableHead,
   CTableRow,
 } from "../../components/CTable";
-import DeleteWrapperModal from "../../components/DeleteWrapperModal";
-import FiltersBlock from "../../components/FiltersBlock";
 import HeaderSettings from "../../components/HeaderSettings";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
-import UploadIcon from "@mui/icons-material/Upload";
 import exportToJsonService from "../../services/exportToJson";
 import useDownloader from "../../hooks/useDownloader";
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import apiKeyService from "../../services/apiKey.service";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import ActivityFeedPage from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity";
+import ActivityFeedTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/ActivityFeedTable";
+import EmptyDataComponent from "../../components/EmptyDataComponent";
+import {Box} from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const ApiKeyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { download } = useDownloader();
+  const {download} = useDownloader();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -51,26 +54,27 @@ const ApiKeyPage = () => {
     });
   };
 
-  const exportToJson = async (id) => {
-    await exportToJsonService
-      .postToJson({
-        app_id: id,
-      })
-      .then((res) => {
-        download({
-          link: "https://" + res?.link,
-          fileName: res?.link.split("/").pop(),
-        });
-      })
-      .catch((err) => {
-        console.log("exportToJson error", err);
-      });
-  };
+  // const exportToJson = async (id) => {
+  //   await exportToJsonService
+  //     .postToJson({
+  //       app_id: id,
+  //     })
+  //     .then((res) => {
+  //       download({
+  //         link: "https://" + res?.link,
+  //         fileName: res?.link.split("/").pop(),
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log("exportToJson error", err);
+  //     });
+  // };
+
   const getList = () => {
     const params = {
       client_type_id: clientTypeId,
       role_id: roleId,
-      'environment-id': envId
+      "environment-id": envId,
     };
     apiKeyService
       .getList(projectId, params)
@@ -104,55 +108,81 @@ const ApiKeyPage = () => {
     });
   };
 
+  const URLFILE = window.location.origin + "/apikeys.zip";
+  const downloadUrl = (url) => {
+    const filename = url.split("/").pop();
+    const aTag = document.createElement("a");
+
+    aTag.href = url;
+    aTag.setAttribute("download", filename);
+    document.body.appendChild(aTag);
+    aTag.click();
+    aTag.remove();
+  };
+
   return (
     <div>
-      {/* <FiltersBlock> */}
-        <div
-          className="p-1"
-          style={{
-            display: "flex",
-            columnGap: "16px",
-            alignItems: "center",
-          }}
-        >
-          <h2>Api Keys</h2>
-          <SearchInput />
-        </div>
-      {/* </FiltersBlock> */}
-
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          background: "#fff",
+          height: "56px",
+          borderBottom: "1px solid #eee",
+        }}>
+        <HeaderSettings title={"Api keys"} sticky line={false} />
+        <Box onClick={() => downloadUrl(URLFILE)} sx={{width: "300px"}}>
+          <a
+            target="_blank"
+            style={{display: "inline-flex", alignItems: "center"}}
+            href="apikeys.zip"
+            download>
+            <DownloadIcon style={{background: "#007af"}} />
+            Download api documentation
+          </a>
+        </Box>
+      </Box>
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable loader={false} disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
             <CTableCell>AppId</CTableCell>
-            <CTableCell>App secret </CTableCell>
+            <CTableCell>Monthly limit</CTableCell>
+            <CTableCell>RPS limit</CTableCell>
+            <CTableCell>Used count</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={4} dataLength={list.length}>
+          <CTableBody loader={false} columnsCount={4} dataLength={list.length}>
             {apiKeys?.map((element, index) => (
-              <CTableRow
-                key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
-              >
+              <CTableRow key={element.id}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
-                <CTableCell>{element?.app_secret}</CTableCell>
-                {/* <PermissionWrapperV2 tableSlug="app" type="delete">
-                  <PermissionWrapperApp permission={element.permission.delete}> */}
                 <CTableCell>
-                  <RectangleIconButton color="error" onClick={deleteTable}>
-                    <Delete color="error" />
-                  </RectangleIconButton>
+                  {numberWithSpaces(element?.monthly_request_limit)}
                 </CTableCell>
-                {/* </PermissionWrapperApp>
-                </PermissionWrapperV2> */}
+                <CTableCell>{numberWithSpaces(element?.rps_limit)}</CTableCell>
+                <CTableCell>{numberWithSpaces(element?.used_count)}</CTableCell>
+                <CTableCell>
+                  <div className="flex">
+                    <RectangleIconButton
+                      color="success"
+                      className="mr-1"
+                      size="small"
+                      onClick={() => navigateToEditForm(element.id)}>
+                      <Edit color="success" />
+                    </RectangleIconButton>
+                    <RectangleIconButton color="error" onClick={deleteTable}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </div>
+                </CTableCell>
               </CTableRow>
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={7} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

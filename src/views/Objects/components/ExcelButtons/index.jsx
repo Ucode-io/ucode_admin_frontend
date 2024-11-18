@@ -2,12 +2,23 @@ import ExcelDownloadButton from "./ExcelDownloadButton";
 import ExcelUploadButton from "./ExcelUploadButton";
 import style from "./style.module.scss";
 
-const ExcelButtons = ({ fieldsMap, view }) => {
+const ExcelButtons = ({
+  fieldsMap,
+  view,
+  computedVisibleFields,
+  searchText,
+  checkedColumns,
+}) => {
   return (
     <>
       <ExcelUploadButton fieldsMap={fieldsMap} />
 
-      <ExcelDownloadButton view={view} />
+      <ExcelDownloadButton
+        computedVisibleFields={computedVisibleFields}
+        view={view}
+        searchText={searchText}
+        checkedColumns={checkedColumns}
+      />
     </>
   );
 };

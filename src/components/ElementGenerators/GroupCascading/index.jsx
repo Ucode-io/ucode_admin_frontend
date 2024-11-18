@@ -78,7 +78,7 @@ const GroupCascading = ({
   const getAllData = async () => {
     setTableLoader(true);
     try {
-      const { data } = await constructorObjectService.getList(tab_slug, {
+      const { data } = await constructorObjectService.getListV2(tab_slug, {
         data: {...autoFiltersValue},
       });
       setData(data?.response ?? []);

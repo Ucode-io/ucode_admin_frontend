@@ -16,7 +16,7 @@ const DocListPage = () => {
     <div>
       <Header
         title="Входящие документы"
-        extra={<CreateButton title="Создать" />}
+        extra={<CreateButton title="Create" />}
       />
       <FiltersBlock>
         <SearchInput />

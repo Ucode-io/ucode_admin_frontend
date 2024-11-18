@@ -58,7 +58,6 @@ const QueryRequstForm = ({
     queryParams: {
       enabled: Boolean(tableId),
       onSuccess: (res) => {
-        console.log("dfdf");
         form.setValue(
           "body.query_mapping.request_map.field_match",
           res?.fields?.map((item) => {

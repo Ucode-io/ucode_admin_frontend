@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import {useState} from "react";
+import {useFieldArray} from "react-hook-form";
 import {
   CTable,
   CTableBody,
@@ -10,11 +10,11 @@ import {
 import TableCard from "../../../../components/TableCard";
 import Header from "../../../../components/Header";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
+import {Delete} from "@mui/icons-material";
+import {Box, Button} from "@mui/material";
 import RelationDrawer from "./DetailPage";
 
-const RelationsConfiguration = ({ control }) => {
+const RelationsConfiguration = ({control}) => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [selectedRelation, setSelectedRelation] = useState();
 
@@ -79,13 +79,11 @@ const RelationsConfiguration = ({ control }) => {
           <CTableBody
             // loader={isLoading}
             columnsCount={5}
-            dataLength={relations?.length}
-          >
+            dataLength={relations?.length}>
             {relations?.map((relation, index) => (
               <CTableRow
                 key={relation.id}
-                onClick={() => openEditDrawer(relation)}
-              >
+                onClick={() => openEditDrawer(relation)}>
                 <CTableCell textAlign="center">{index + 1}</CTableCell>
                 <CTableCell>{relation.table_from}</CTableCell>
                 <CTableCell>{relation.table_to}</CTableCell>
@@ -94,8 +92,7 @@ const RelationsConfiguration = ({ control }) => {
                   <RectangleIconButton
                     variant="outline"
                     colorScheme="red"
-                    onClick={() => deleteClickHandler(index)}
-                  >
+                    onClick={() => deleteClickHandler(index)}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

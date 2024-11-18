@@ -23,8 +23,6 @@ const MicrofrontendComponent = ({link, loginAction}) => {
     return comp;
   });
 
-  console.log(":LIIIII", link);
-
   return (
     <SafeComponent>
       <Suspense fallback={<RingLoaderWithWrapper style={{height: "100vh"}} />}>

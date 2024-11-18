@@ -1,15 +1,15 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
+import requestWithoutProjectId from "../utils/requestWithoutProjectId";
 
 const queryService = {
   getListFolder: (params, envId) =>
-    request.get("/query-folder", {
+    requestWithoutProjectId.get("/v1/query-folder", {
       params,
     }),
   createFolder: (data) => request.post("/query-folder", data, {}),
   updateFolder: (data) => request.put("/query-folder", data, {}),
   deleteFolder: (id) => request.delete(`/query-folder/${id}`, {}),
-
   getListQuery: (params) =>
     request.get("/query-request", {
       params,
@@ -17,25 +17,25 @@ const queryService = {
   updateQuery: (data) => request.put("/query-request", data, {}),
   createQuery: (data) =>
     request.post("/query-request", data, {
-      params: { "project-id": data.project_id },
+      params: {"project-id": data.project_id},
     }),
-  getSingleQuery: ({ id, params }) =>
+  getSingleQuery: ({id, params}) =>
     request.get(`/query-request/${id}`, {
       params,
     }),
   deleteQuery: (id) => request.delete(`/query-request/${id}`, {}),
   runQuery: (data) =>
     request.post("/query-request/run", data, {
-      params: { "project-id": data.project_id },
+      params: {"project-id": data.project_id},
     }),
 
-  getHistory: ({ queryId, projectId }) =>
+  getHistory: ({queryId, projectId}) =>
     request.get(`/query-request/${queryId}/history`, {
-      params: { "project-id": projectId },
+      params: {"project-id": projectId},
     }),
-  revertCommit: ({ queryId, data }) =>
+  revertCommit: ({queryId, data}) =>
     request.post(`/query-request/${queryId}/revert`, data, {}),
-  selectVersion: ({ envId, queryId, data }) =>
+  selectVersion: ({envId, queryId, data}) =>
     request.post(`/query-request/select-versions/${queryId}`, data, {}),
 };
 
@@ -47,7 +47,7 @@ export const useQueryFoldersListQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["QUERY_FOLDERS", { ...params, envId }],
+    ["QUERY_FOLDERS", {...params, envId}],
     () => {
       return queryService.getListFolder(params, envId);
     },
@@ -75,13 +75,9 @@ export const useQueryFolderDeleteMutation = (mutationSettings) => {
 
 /* *********************************** QUERIES *********************************** */
 
-export const useQueriesListQuery = ({
-  params = {},
-  envId,
-  queryParams,
-} = {}) => {
+export const useQueriesListQuery = ({params = {}, envId, queryParams} = {}) => {
   return useQuery(
-    ["QUERIES", { ...params, envId }],
+    ["QUERIES", {...params, envId}],
     () => {
       return queryService.getList(params, envId);
     },
@@ -96,9 +92,9 @@ export const useQueryByIdQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["QUERY_BY_ID", { ...params, id, envId }],
+    ["QUERY_BY_ID", {...params, id, envId}],
     () => {
-      return queryService.getSingleQuery({ id, params, envId });
+      return queryService.getSingleQuery({id, params, envId});
     },
     queryParams
   );
@@ -134,9 +130,9 @@ export const useQueryHistoryQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["QUERY_HISTORY", { queryId, projectId }],
+    ["QUERY_HISTORY", {queryId, projectId}],
     () => {
-      return queryService.getHistory({ queryId, projectId });
+      return queryService.getHistory({queryId, projectId});
     },
     queryParams
   );
@@ -144,15 +140,15 @@ export const useQueryHistoryQuery = ({
 
 export const useQueryRevertCommitMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, queryId }) => queryService.revertCommit({ data, queryId }),
+    ({data, queryId}) => queryService.revertCommit({data, queryId}),
     mutationSettings
   );
 };
 
 export const useQueryVersionSelectMutation = (mutationSettings) => {
   return useMutation(
-    ({ data, queryId, envId }) =>
-      queryService.selectVersion({ data, queryId, envId }),
+    ({data, queryId, envId}) =>
+      queryService.selectVersion({data, queryId, envId}),
     mutationSettings
   );
 };

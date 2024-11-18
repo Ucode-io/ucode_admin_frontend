@@ -77,7 +77,7 @@ const ChartAccounts = ({viewId, form, addChart, charts, index, removeChart}) => 
     constructorRelationService
       .getList({
         table_slug: tableSlug
-      })
+      }, tableSlug)
       .then((res) => {
         setRelations(res.relations)
       })

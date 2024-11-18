@@ -20,10 +20,10 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { listToNested } from "../../../../utils/listToNestedList";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
+import activeStyles from "../MenuUtils/activeStyles";
 import QueryFolderCreateModal from "./Modal/QueryFolderCreateModal";
 import QueryButtonMenu from "./QueryButtonMenu";
 import QueryRecursive from "./RecursiveBlock";
-import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const queryFolder = {
@@ -42,7 +42,7 @@ const queryFolder = {
   },
 };
 
-const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
+const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selected, setSelected] = useState({});
@@ -57,6 +57,8 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+  const menuItem = useSelector((state) => state.menu.menuItem);
+  const activeStyle = activeStyles({ menuItem, element: queryFolder, menuStyle, level });
 
   const [openedFolders, setOpenedFolders] = useState([]);
   const [folderModalType, setFolderModalType] = useState(null);
@@ -75,10 +77,15 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     navigate(`${location.pathname}/queries/create?folder_id=${folder?.id}`);
   };
 
-  // FOLDERS QUERY
 
   const { data: folders, isLoading: foldersLoading } =
-    useQueryFoldersListQuery();
+    useQueryFoldersListQuery({
+      queryParams: {
+        enabled: childBlockVisible
+      }
+    });
+
+
   const computedFolders = useMemo(() => {
     const list = [];
     folders?.folders?.forEach((folder) => {
@@ -108,7 +115,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     return list;
   }, [folders?.folders, menuItem, selected]);
 
-  // QUERY QUERIES
 
   const queryQueries = useMemo(() => {
     return openedFolders.map((folderId) => ({
@@ -177,14 +183,12 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
       },
     });
 
-  // --ROW CLICK HANDLER--
 
   const rowClickHandler = (id, element) => {
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
   };
 
-  // --RENDER--
 
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(queryFolder));
@@ -196,7 +200,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     navigate(`/main/${adminId}`);
   };
 
-  // --CREATE FOLDERS--
 
   const onSelect = (id, element) => {
     setSelected(element);
@@ -205,17 +208,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     navigate(`/main/${adminId}/queries/${id}`);
   };
 
-  const activeStyle = {
-    backgroundColor:
-      queryFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      queryFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-  };
   const iconStyle = {
     color:
       queryFolder?.id === menuItem?.id
@@ -231,7 +223,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ margin: "0 5px" }}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
@@ -240,6 +232,11 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"code.svg"} size={18} />
             {queryFolder.label}
@@ -257,11 +254,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

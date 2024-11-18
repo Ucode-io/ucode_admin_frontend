@@ -76,7 +76,7 @@ function CascadingSectionItem({
               [levelSlug]: item?.guid,
             };
       constructorObjectService
-        .getList(levelTableSlug, {
+        .getListV2(levelTableSlug, {
           data: data,
         })
         .then((res) => {
@@ -95,7 +95,7 @@ function CascadingSectionItem({
     ["GET_OBJECT_LIST", debouncedValue],
     () => {
       if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
           view_fields: fields.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),

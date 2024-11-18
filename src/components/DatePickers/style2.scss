@@ -92,7 +92,7 @@ rmdp-day.rmdp-today.highlight span {
     .rmdp-calendar {
       width: 100%;
 
-      .rmdp-day-picker>div {
+      .rmdp-day-picker > div {
         width: 100%;
       }
     }
@@ -100,15 +100,41 @@ rmdp-day.rmdp-today.highlight span {
 }
 
 .main_wrapper {
-  display: flex;
+  display: grid !important;
   align-items: center;
   justify-content: space-between;
+  grid-template-columns: 2fr 2fr 1fr;
+  max-width: 350px;
 
-  .rmdp-container:first-child {
-    width: 50%;
-  }
+  // .rmdp-container:first-child {
+  //   width: 33%;
+  // }
 
-  .rmdp-container:last-child {
-    width: 60%;
-  }
+  // .rmdp-container:nth-child(2) {
+  //   width: 33%;
+  // }
+
+  // .rmdp-container:last-child {
+  //   width: 60%;
+  // }
+}
+
+.main_wrapper_onec {
+  display: grid !important;
+  align-items: center;
+  justify-content: space-between;
+  grid-template-columns: 2fr 2fr 1fr;
+  max-width: 100%;
+
+  // .rmdp-container:first-child {
+  //   width: 33%;
+  // }
+
+  // .rmdp-container:nth-child(2) {
+  //   width: 33%;
+  // }
+
+  // .rmdp-container:last-child {
+  //   width: 60%;
+  // }
 }

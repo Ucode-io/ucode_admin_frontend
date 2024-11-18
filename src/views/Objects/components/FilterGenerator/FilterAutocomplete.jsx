@@ -14,6 +14,7 @@ const FilterAutoComplete = ({
   onChange,
   label,
   field,
+  setChosenField = () => {},
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
@@ -25,6 +26,7 @@ const FilterAutoComplete = ({
   }, [value, options]);
 
   const openMenu = (event) => {
+    setChosenField(field);
     setAnchorEl(event.currentTarget);
   };
 
@@ -48,7 +50,7 @@ const FilterAutoComplete = ({
 
   const onClearButtonClick = (e) => {
     e.stopPropagation();
-    onChange(null);
+    onChange(undefined);
   };
 
   return (
@@ -58,14 +60,13 @@ const FilterAutoComplete = ({
           {computedValue?.[0]?.label ?? (
             <span
               className={styles.placeholder}
-              style={{color: !value?.length ? "#909EAB" : "#000"}}
-            >
-              {value[0] ?? label}
+              style={{color: !value?.length ? "#909EAB" : "#000"}}>
+              {value[0] || label}
             </span>
           )}
         </div>
-        {computedValue?.length > 1 && `+${computedValue.length - 1}`}
-        {!!computedValue?.length && (
+        {value?.length > 1 && `+${value.length - 1}`}
+        {!!value?.length && (
           <IconButton onClick={onClearButtonClick}>
             <Close />
           </IconButton>
@@ -78,40 +79,28 @@ const FilterAutoComplete = ({
         open={menuVisible}
         TransitionComponent={Fade}
         onClose={closeMenu}
-        classes={{list: styles.menu, paper: styles.paper}}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}>
         <SearchInput
+          id="filter_search_input"
           fullWidth
           onChange={inputChangeHandler}
           placeholder={label}
         />
 
         <div className={styles.scrollBlock}>
-          {/*{computedValue?.map((option) => (*/}
-          {/*  <div*/}
-          {/*    onClick={() => rowClickHandler(option)}*/}
-          {/*    key={option.value}*/}
-          {/*    className={styles.option}*/}
-          {/*  >*/}
-          {/*    <Checkbox checked/>*/}
-          {/*    <p className={styles.label}>{option.label}</p>*/}
-          {/*  </div>*/}
-          {/*))}*/}
-
           <Divider />
 
           {options?.map((option) => (
             <div
               onClick={() => rowClickHandler(option)}
               key={option.value}
-              className={styles.option}
-            >
+              className={styles.option}>
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox checked />
+                <Checkbox id="filter_checkbox" checked />
               ) : (
-                <Checkbox />
+                <Checkbox id="filter_checkbox" />
               )}
 
               <p className={styles.label}>{option.label}</p>

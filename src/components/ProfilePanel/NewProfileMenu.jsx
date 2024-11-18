@@ -1,14 +1,11 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
-import KeyIcon from "@mui/icons-material/Key";
-import MoveUpIcon from "@mui/icons-material/MoveUp";
-import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { PlusIcon } from "../../assets/icons/icon";
+import {Box, Button, Divider, Menu, MenuItem, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {PlusIcon} from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
 import {
@@ -16,9 +13,9 @@ import {
   useEnvironmentListQuery,
   useProjectListQuery,
 } from "../../services/companyService";
-import { store } from "../../store";
-import { authActions } from "../../store/auth/auth.slice";
-import { companyActions } from "../../store/company/company.slice";
+import {store} from "../../store";
+import {authActions} from "../../store/auth/auth.slice";
+import {companyActions} from "../../store/company/company.slice";
 import UserAvatar from "../UserAvatar";
 import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
 import ProfileItem from "./ProfileItem";
@@ -26,15 +23,15 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import styles from "./newprofile.module.scss";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
-import { useTranslation } from "react-i18next";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {useTranslation} from "react-i18next";
+import {showAlert} from "../../store/alert/alert.thunk";
 
 const NewProfilePanel = ({
   handleMenuSettingModalOpen,
@@ -44,7 +41,7 @@ const NewProfilePanel = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const queryClient = useQueryClient();
   const company = store.getState().company;
   const auth = store.getState().auth;
@@ -57,19 +54,28 @@ const NewProfilePanel = ({
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
-  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const settings = location.pathname.includes("settings");
+  const {i18n} = useTranslation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
   const params = {
-    refresh_token: auth.refreshToken,
+    refresh_token: auth?.refreshToken,
     env_id: company.environmentId,
     project_id: company.projectId,
+    for_env: true,
   };
 
-  const handleClick = () => {
-    navigate(`/main/${appId}/api-key`);
-  };
+  const permissions = useSelector((state) => state.auth.globalPermissions);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+
+  const projectId = useSelector((state) => state.company.projectId);
+  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
 
   const handleEnvNavigate = () => {
     navigate(`/main/${appId}/environments`);
@@ -79,12 +85,6 @@ const NewProfilePanel = ({
   };
   const handleProjectNavigate = () => {
     navigate(`/main/${appId}/projects`);
-  };
-  const handleRedirectNavigate = () => {
-    navigate(`/main/${appId}/redirects`);
-  };
-  const handleSmsNavigate = () => {
-    navigate(`/main/${appId}/sms-otp`);
   };
 
   const closeMenu = (e) => {
@@ -132,10 +132,11 @@ const NewProfilePanel = ({
 
   const refreshTokenFunc = (env_id) => {
     authService
-      .updateToken(params)
+      .updateToken({...params, env_id: env_id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
+        dispatch(companyActions.setEnvironmentId(env_id));
       })
       .catch((err) => {
         console.log(err);
@@ -160,7 +161,7 @@ const NewProfilePanel = ({
     );
   }, [company.companies, company.environments]);
 
-  const { isLoading } = useCompanyListQuery({
+  const {isLoading} = useCompanyListQuery({
     params: {
       owner_id: auth.userId,
     },
@@ -172,7 +173,7 @@ const NewProfilePanel = ({
     },
   });
 
-  const { isLoading: projectLoading } = useProjectListQuery({
+  const {isLoading: projectLoading} = useProjectListQuery({
     params: {
       company_id: company.companyId,
     },
@@ -188,7 +189,7 @@ const NewProfilePanel = ({
     },
   });
 
-  const { isLoading: environmentLoading } = useEnvironmentListQuery({
+  const {isLoading: environmentLoading} = useEnvironmentListQuery({
     params: {
       project_id: company.projectId,
     },
@@ -205,12 +206,6 @@ const NewProfilePanel = ({
     },
   });
 
-  const permissions = useSelector((state) => state.auth.globalPermissions);
-  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-
-  const projectId = useSelector((state) => state.company.projectId);
-  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
-
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
       title: lang?.name,
@@ -218,13 +213,35 @@ const NewProfilePanel = ({
     }));
   }, [projectInfo]);
 
+  const getDefaultLanguage = () => {
+    const isLanguageExist = languages?.some(
+      (item) => defaultLanguage === item?.slug
+    );
+
+    if (languages?.length) {
+      if (languages?.length === 1) {
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        i18n.changeLanguage(languages?.[0]?.slug);
+      } else if (languages?.length > 1) {
+        if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        } else if (defaultLanguage && isLanguageExist) {
+          dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          i18n.changeLanguage(defaultLanguage);
+        } else {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (projectId) {
       dispatch(languagesActions.setLanguagesItems(languages));
     }
   }, [languages, projectId, dispatch]);
-
-  const { i18n } = useTranslation();
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -232,21 +249,10 @@ const NewProfilePanel = ({
     dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
   };
 
-  const defaultLanguage = useSelector(
-    (state) => state.languages.defaultLanguage
-  );
-
   useEffect(() => {
-    if (languages?.length) {
-      if (!defaultLanguage) {
-        i18n.changeLanguage(languages?.[0]?.slug);
-        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
-      }
-    }
-  }, [languages]);
+    getDefaultLanguage();
+  }, [languages?.length]);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const handleClickLanguages = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -277,8 +283,7 @@ const NewProfilePanel = ({
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,
-        }}
-      >
+        }}>
         <Box className={styles.leftblock}>
           <div className={styles.block}>
             <div className={styles.companyblock}>
@@ -295,8 +300,7 @@ const NewProfilePanel = ({
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
-                        }}
-                      >
+                        }}>
                         {item?.name?.charAt(0).toUpperCase()}
                       </p>
                     </Tooltip>
@@ -312,8 +316,7 @@ const NewProfilePanel = ({
                   className={styles.createbutton}
                   onClick={() => {
                     setCompanyModal(true);
-                  }}
-                >
+                  }}>
                   <PlusIcon fill={"#007AFF"} />
                 </p>
               )}
@@ -339,113 +342,46 @@ const NewProfilePanel = ({
             />
           </div>
           <Divider />
-          {/* <div className={styles.block}> */}
-          {permissions?.project_button && (
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.projectItem?.title || "No project"}
-                  className={styles.projectavatar}
-                  colorItem={company.projectItem}
-                  icon={
-                    <LayersIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openProjectList}
-            />
-          )}
-          {permissions?.environments_button && (
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.environmentItem?.name || "No environment"}
-                  className={styles.environmentavatar}
-                  colorItem={company.environmentItem}
-                  icon={
-                    <LocalOfferIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openEnvironmentList}
-            />
-          )}
-          {permissions?.version_button && (
-            <ProfileItem
-              children={
-                <LocalOfferIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={
-                company?.version?.version
-                  ? `Version - ${company?.version?.version}`
-                  : "Version"
-              }
-              onClick={(e) => {
-                openVersionModal();
-                closeMenu(e);
-              }}
-            />
-          )}
-          {/* </div> */}
-          {permissions?.version_button && <Divider />}
-          <div className={styles.block}>
-            {permissions?.api_keys_button && (
+          <Box className={styles.block}>
+            {permissions?.project_button && (
               <ProfileItem
                 children={
-                  <KeyIcon
-                    style={{
-                      color: "#747474",
-                    }}
+                  <ResourceList
+                    item={company.projectItem?.title || "No project"}
+                    className={styles.projectavatar}
+                    colorItem={company.projectItem}
+                    icon={
+                      <LayersIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
                   />
                 }
-                text={"Api Keys"}
-                onClick={handleClick}
+                onClick={openProjectList}
+              />
+            )}
+            {permissions?.environments_button && (
+              <ProfileItem
+                children={
+                  <ResourceList
+                    item={company.environmentItem?.name || "No environment"}
+                    className={styles.environmentavatar}
+                    colorItem={company.environmentItem}
+                    icon={
+                      <LocalOfferIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
+                  />
+                }
+                onClick={openEnvironmentList}
               />
             )}
 
-            {permissions?.redirects_button && (
-              <ProfileItem
-                children={
-                  <MoveUpIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Redirects"}
-                onClick={handleRedirectNavigate}
-              />
-            )}
-
-            {permissions?.sms_button && (
-              <ProfileItem
-                children={
-                  <SmsIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Sms Otp"}
-                onClick={handleSmsNavigate}
-              />
-            )}
-          </div>
-          {permissions?.sms_button && <Divider />}
-
-          <div className={styles.block}>
             <ProfileItem
               children={
                 <GTranslateIcon
@@ -465,8 +401,7 @@ const NewProfilePanel = ({
               onClose={handleClose}
               MenuListProps={{
                 "aria-labelledby": "basic-button",
-              }}
-            >
+              }}>
               {languages?.map((item) => (
                 <MenuItem
                   onClick={() => {
@@ -476,61 +411,44 @@ const NewProfilePanel = ({
                   style={{
                     backgroundColor:
                       item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
-                  }}
-                >
+                  }}>
                   {item?.title}
                 </MenuItem>
               ))}
             </Menu>
-          </div>
-
-          <Box
-            style={{
-              height: "240px",
-              display: "flex",
-            }}
-          >
-            <Box
-              className={styles.block}
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-              }}
-            >
-              <Box>
-                {defaultAdmin && (
-                  <ProfileItem
-                    children={
-                      <WidgetsIcon
-                        style={{
-                          color: "#747474",
-                        }}
-                      />
-                    }
-                    text={"Tamplate"}
-                    onClick={() => {
-                      handleTemplateModalOpen();
-                      closeMenu();
-                    }}
-                  />
-                )}
-                {permissions?.menu_setting_button && (
-                  <ProfileItem
-                    children={
-                      <SettingsIcon
-                        style={{
-                          color: "#747474",
-                        }}
-                      />
-                    }
-                    text={"Menu settings"}
-                    onClick={() => {
-                      handleMenuSettingModalOpen();
-                      closeMenu();
-                    }}
-                  />
-                )}
-              </Box>
+            <Box>
+              {defaultAdmin && (
+                <ProfileItem
+                  children={
+                    <WidgetsIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
+                  text={"Template"}
+                  onClick={() => {
+                    handleTemplateModalOpen();
+                    closeMenu();
+                  }}
+                />
+              )}
+              {permissions?.menu_setting_button && (
+                <ProfileItem
+                  children={
+                    <SettingsIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
+                  text={"Menu settings"}
+                  onClick={() => {
+                    handleMenuSettingModalOpen();
+                    closeMenu();
+                  }}
+                />
+              )}
             </Box>
           </Box>
         </Box>
@@ -559,15 +477,6 @@ const NewProfilePanel = ({
               />
             )}
 
-            {permissions?.project_settings_button && (
-              <ProfileItem
-                text={"Настройки"}
-                onClick={(e) => {
-                  closeMenu(e);
-                  navigate(`/main/${appId}/project-setting`);
-                }}
-              />
-            )}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
           </div>
         </Box>
@@ -587,7 +496,7 @@ const NewProfilePanel = ({
         environmentVisible={environmentVisible}
         environmentList={company.environments}
         setSelected={setSelected}
-        handleEnvNavigate={handleEnvNavigate}
+        refreshTokenFunc={refreshTokenFunc}
       />
       {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
 

@@ -1,16 +1,13 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import SortIcon from "@mui/icons-material/Sort";
-import { Autocomplete, Badge, Button, Menu, TextField } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
-import style from "./style.module.scss";
-import SortMenuRow from "./SortMenuRow";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import SortIcon from "@mui/icons-material/Sort";
+import { Button, Menu } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import SortMenuRow from "./SortMenuRow";
+import style from "./style.module.scss";
 
-export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
+export default function SortButton({ fieldsMap, setSortedDatas }) {
   const form = useForm({
     defaultValues: {
       sort: [
@@ -23,7 +20,6 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
   });
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -43,44 +39,6 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
     },
   ];
 
-  const {
-    data: { views, columns, relationColumns } = {
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
-
-  const type = views?.[selectedTabIndex]?.type;
-
-  const computedColumns = useMemo(() => {
-    if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns;
-    } else {
-      return [...columns, ...relationColumns];
-    }
-  }, [columns, relationColumns, type]);
-
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "sort",
@@ -97,32 +55,30 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
 
   return (
     <div>
-      {/* <Badge badgeContent={watchedSorts.filter(el => el.field !== "")?.length} color="primary"> */}
       <Button
-        // style={{
-        //   display: "flex",
-        //   alignItems: "center",
-        //   gap: 5,
-        //   color: "#A8A8A8",
-        //   cursor: "pointer",
-        //   fontSize: "13px",
-        //   fontWeight: 500,
-        //   lineHeight: "16px",
-        //   letterSpacing: "0em",
-        //   textAlign: "left",
-        //   padding: "0 10px",
-        // }}
-        variant={watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "outlined" : "text"}
+        variant={
+          watchedSorts.filter((el) => el.field !== "")?.length > 0
+            ? "outlined"
+            : "text"
+        }
         style={{
           gap: "5px",
-          color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-          borderColor: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          color:
+            watchedSorts.filter((el) => el.field !== "")?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
+          borderColor:
+            watchedSorts.filter((el) => el.field !== "")?.length > 0
+              ? "rgb(0, 122, 255)"
+              : "#A8A8A8",
         }}
         onClick={handleClick}
       >
         <SortIcon color={"#A8A8A8"} />
         Sort
-        {watchedSorts.filter((el) => el.field !== "")?.length > 0 && <span>{watchedSorts.filter((el) => el.field !== "")?.length}</span>}
+        {watchedSorts.filter((el) => el.field !== "")?.length > 0 && (
+          <span>{watchedSorts.filter((el) => el.field !== "")?.length}</span>
+        )}
         {watchedSorts.filter((el) => el.field !== "")?.length > 0 && (
           <button
             style={{
@@ -135,7 +91,10 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+              color:
+                watchedSorts.filter((el) => el.field !== "")?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -151,13 +110,15 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
           >
             <CloseRoundedIcon
               style={{
-                color: watchedSorts.filter((el) => el.field !== "")?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+                color:
+                  watchedSorts.filter((el) => el.field !== "")?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
               }}
             />
           </button>
         )}
       </Button>
-      {/* </Badge> */}
       <Menu
         open={open}
         onClose={handleClose}
@@ -219,7 +180,12 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
                   gap: "10px",
                 }}
               >
-                <SortMenuRow computedColumns={computedColumns} index={index} form={form} typeSorts={typeSorts} />
+                <SortMenuRow
+                  computedColumns={Object.values(fieldsMap)}
+                  index={index}
+                  form={form}
+                  typeSorts={typeSorts}
+                />
 
                 <Button onClick={() => remove(index)}>
                   <ClearIcon />

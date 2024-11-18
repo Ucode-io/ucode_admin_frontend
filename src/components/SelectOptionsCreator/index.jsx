@@ -1,6 +1,6 @@
-import { Add, Delete } from "@mui/icons-material";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { generateID } from "../../utils/generateID";
+import {Add, Delete} from "@mui/icons-material";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {generateID} from "../../utils/generateID";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import HFIconPicker from "../FormElements/HFIconPicker";
@@ -8,8 +8,8 @@ import HFTextField from "../FormElements/HFTextField";
 import styles from "./style.module.scss";
 import DeleteWrapperModal from "../DeleteWrapperModal";
 
-const SelectOptionsCreator = ({ control, name }) => {
-  const { fields, append, remove } = useFieldArray({
+const SelectOptionsCreator = ({control, name}) => {
+  const {fields, append, remove} = useFieldArray({
     control,
     name,
     keyName: "key",

@@ -23,6 +23,7 @@ import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFPassword from "../FormElements/HFPassword";
 import HFModalMap from "../FormElements/HFModalMap";
 import HFFileUpload from "../FormElements/HFFileUpload";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 
 const parser = new Parser();
 
@@ -41,7 +42,6 @@ const CellFormElementGenerator = ({
   data,
   ...props
 }) => {
-  console.log("field", field);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -60,14 +60,7 @@ const CellFormElementGenerator = ({
 
   const computedSlug = useMemo(() => {
     return `multi.${index}.${field.slug}`;
-    // if (field.enable_multilanguage) {
-
-    // } else {
-    //   return field?.slug;
-    // }
   }, [field.slug, index]);
-
-  console.log("computedSlug", computedSlug);
 
   const changedValue = useWatch({
     control,
@@ -115,382 +108,358 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-  switch (field.type) {
-    case "LOOKUP":
-      return (
-        <CellRelationFormElement
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-          relationfields={relationfields}
-          data={data}
-        />
-      );
 
-    case "LOOKUPS":
-      return (
-        <CellManyToManyRelationElement
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
-          setFormValue={setFormValue}
-          index={index}
-          defaultValue={defaultValue}
-        />
-      );
+  const renderComponents = {
+    LOOKUP: () => (
+      <CellRelationFormElement
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        field={field}
+        row={row}
+        placeholder={field.attributes?.placeholder}
+        setFormValue={setFormValue}
+        index={index}
+        defaultValue={defaultValue}
+        relationfields={relationfields}
+        data={data}
+      />
+    ),
+    LOOKUPS: () => (
+      <CellManyToManyRelationElement
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        field={field}
+        row={row}
+        placeholder={field.attributes?.placeholder}
+        setFormValue={setFormValue}
+        index={index}
+        defaultValue={defaultValue}
+      />
+    ),
+    SINGLE_LINE: () => (
+      <HFTextField
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        {...props}
+        defaultValue={defaultValue}
+      />
+    ),
+    PASSWORD: () => (
+      <HFPassword
+        isDisabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        fullWidth
+        field={field}
+        required={field.required}
+        type="password"
+        placeholder={field.attributes?.placeholder}
+        {...props}
+        defaultValue={defaultValue}
+      />
+    ),
+    SCAN_BARCODE: () => (
+      <InventoryBarCode
+        control={control}
+        name={computedSlug}
+        fullWidth
+        setFormValue={setFormValue}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        field={field}
+        disabled={isDisabled}
+        {...props}
+      />
+    ),
+    PHONE: () => (
+      <HFTextFieldWithMask
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        mask={"(99) 999-99-99"}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    FORMULA: () => (
+      <HFFormulaField
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        mask={"(99) 999-99-99"}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    FORMULA_FRONTEND: () => (
+      <CHFFormulaField
+        setFormValue={setFormValue}
+        control={control}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        name={computedSlug}
+        fieldsList={fields}
+        disabled={!isDisabled}
+        field={field}
+        index={index}
+        {...props}
+        defaultValue={defaultValue}
+      />
+    ),
+    PICK_LIST: () => (
+      <HFAutocomplete
+        disabled={isDisabled}
+        isBlackBg={isBlackBg}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        width="100%"
+        options={field?.attributes?.options}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    INTERNATION_PHONE: () => (
+      <HFInternationPhone
+        control={control}
+        name={computedSlug}
+        tabIndex={field?.tabIndex}
+        fullWidth
+        required={field?.required}
+        placeholder={field.attributes?.placeholder}
+        mask={"(99) 999-99-99"}
+        defaultValue={defaultValue}
+        disabled={isDisabled}
+        {...props}
+      />
+    ),
+    MULTISELECT: () => (
+      <HFMultipleAutocomplete
+        disabled={isDisabled}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        width="100%"
+        required={field.required}
+        setFormValue={setFormValue}
+        field={field}
+        placeholder={field.attributes?.placeholder}
+        isBlackBg={isBlackBg}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    MULTISELECT_V2: () => (
+      <HFMultipleAutocomplete
+        disabled={isDisabled}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        width="100%"
+        required={field.required}
+        field={field}
+        placeholder={field.attributes?.placeholder}
+        isBlackBg={isBlackBg}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    DATE: () => (
+      <HFDatePicker
+        control={control}
+        name={computedSlug}
+        fullWidth
+        width={"100%"}
+        mask={"99.99.9999"}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        disabled={isDisabled}
+        {...props}
+      />
+    ),
+    DATE_TIME: () => (
+      <HFDateTimePicker
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        showCopyBtn={false}
+        control={control}
+        name={computedSlug}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    TIME: () => (
+      <HFTimePicker
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    NUMBER: () => (
+      <HFNumberField
+        disabled={isDisabled}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        isBlackBg={isBlackBg}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    FLOAT: () => (
+      <HFFloatField
+        disabled={isDisabled}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        isBlackBg={isBlackBg}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    FLOAT_NOLIMIT: () => (
+      <HFFloatField
+        disabled={isDisabled}
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        isBlackBg={isBlackBg}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    CHECKBOX: () => (
+      <HFCheckbox
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        required={field.required}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    SWITCH: () => (
+      <HFSwitch
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        required={field.required}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    EMAIL: () => (
+      <HFTextField
+        disabled={isDisabled}
+        isFormEdit
+        isBlackBg={isBlackBg}
+        control={control}
+        name={computedSlug}
+        rules={{
+          pattern: {
+            value: /\S+@\S+\.\S+/,
+            message: "Incorrect email format",
+          },
+        }}
+        fullWidth
+        required={field.required}
+        placeholder={field.attributes?.placeholder}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    FILE: () => (
+      <HFFileUpload
+        control={control}
+        name={computedSlug}
+        tabIndex={field?.tabIndex}
+        required={field?.required}
+        defaultValue={defaultValue}
+        disabled={isDisabled}
+        {...props}
+      />
+    ),
+    ICON: () => (
+      <HFIconPicker
+        isFormEdit
+        control={control}
+        name={computedSlug}
+        required={field.required}
+        defaultValue={defaultValue}
+        {...props}
+      />
+    ),
+    MAP: () => (
+      <HFModalMap
+        control={control}
+        field={field}
+        defaultValue={defaultValue}
+        isFormEdit
+        name={computedSlug}
+        required={field?.required}
+      />
+    ),
+  };
 
-    case "SINGLE_LINE":
-      return (
-        <HFTextField
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          {...props}
-          defaultValue={defaultValue}
-        />
-      );
-    case "PASSWORD":
-      return (
-        <HFPassword
-          isDisabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          fullWidth
-          field={field}
-          required={field.required}
-          type="password"
-          placeholder={field.attributes?.placeholder}
-          {...props}
-          defaultValue={defaultValue}
-        />
-      );
-
-    case "SCAN_BARCODE":
-      return (
-        <InventoryBarCode
-          // relatedTable={relatedTable}
-          control={control}
-          name={computedSlug}
-          fullWidth
-          setFormValue={setFormValue}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          field={field}
-          disabled={isDisabled}
-          {...props}
-        />
-      );
-    case "PHONE":
-      return (
-        <HFTextFieldWithMask
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          mask={"(99) 999-99-99"}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "FORMULA":
-      return (
-        <HFFormulaField
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          mask={"(99) 999-99-99"}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-    case "FORMULA_FRONTEND":
-      return (
-        <CHFFormulaField
-          setFormValue={setFormValue}
-          control={control}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          name={computedSlug}
-          fieldsList={fields}
-          disabled={!isDisabled}
-          field={field}
-          index={index}
-          {...props}
-          defaultValue={defaultValue}
-        />
-      );
-
-    case "PICK_LIST":
-      return (
-        <HFAutocomplete
-          disabled={isDisabled}
-          isBlackBg={isBlackBg}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          width="100%"
-          options={field?.attributes?.options}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "MULTISELECT":
-      return (
-        <HFMultipleAutocomplete
-          disabled={isDisabled}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          width="100%"
-          required={field.required}
-          setFormValue={setFormValue}
-          field={field}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-    case "MULTISELECT_V2":
-      return (
-        <HFMultipleAutocomplete
-          disabled={isDisabled}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          width="100%"
-          required={field.required}
-          field={field}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "DATE":
-      return (
-        <HFDatePicker
-          control={control}
-          name={computedSlug}
-          fullWidth
-          width={"100%"}
-          mask={"99.99.9999"}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          {...props}
-        />
-      );
-
-    case "DATE_TIME":
-      return (
-        <HFDateTimePicker
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          showCopyBtn={false}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "TIME":
-      return (
-        <HFTimePicker
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "NUMBER":
-      return (
-        <HFNumberField
-          disabled={isDisabled}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-    case "FLOAT":
-      return (
-        <HFFloatField
-          disabled={isDisabled}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-    case "FLOAT_NOLIMIT":
-    case "MONEY":
-      return (
-        <HFFloatField
-          disabled={isDisabled}
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "CHECKBOX":
-      return (
-        <HFCheckbox
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "SWITCH":
-      return (
-        <HFSwitch
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "EMAIL":
-      return (
-        <HFTextField
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          rules={{
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Incorrect email format",
-            },
-          }}
-          fullWidth
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-
-    case "FILE":
-      return (
-        <HFFileUpload
-          control={control}
-          name={computedSlug}
-          tabIndex={field?.tabIndex}
-          required={field?.required}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          {...props}
-        />
-      );
-
-    case "ICON":
-      return (
-        <HFIconPicker
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
-    case "MAP":
-      return (
-        <HFModalMap
-          control={control}
-          field={field}
-          defaultValue={defaultValue}
-          isFormEdit
-          name={computedSlug}
-          required={field?.required}
-        />
-      );
-
-    default:
-      return (
-        <div style={{padding: "0 4px"}}>
-          <CellElementGenerator field={field} row={row} />
-        </div>
-      );
-  }
+  return renderComponents[field?.type] ? (
+    renderComponents[field?.type]
+  ) : (
+    <div style={{padding: "0 4px"}}>
+      <CellElementGenerator field={field} row={row} />
+    </div>
+  );
 };
 
 export default CellFormElementGenerator;

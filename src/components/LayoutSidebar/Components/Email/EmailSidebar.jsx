@@ -4,8 +4,8 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
-import { store } from "../../../../store";
 import { updateLevel } from "../../../../utils/level";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const emailFolder = {
@@ -65,6 +65,7 @@ const EmailSidebar = ({ level = 1, menuStyle, menuItem }) => {
             clickHandler(e);
           }}
         >
+          <KeyboardArrowRightIcon />
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"folder.svg"} size={18} />
             Email

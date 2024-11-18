@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useNavigate } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -12,7 +12,7 @@ const projectFolder = {
   type: "USER_FOLDER",
   icon: "code.svg",
   parent_id: adminId,
-  id: "09",
+  id: "09989",
   data: {
     permission: {
       read: true,
@@ -23,9 +23,11 @@ const projectFolder = {
   },
 };
 
-const MicrofrontendSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
+const MicrofrontendSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {appId} = useParams();
+  const location = useLocation();
 
   const activeStyle = {
     backgroundColor:
@@ -37,13 +39,14 @@ const MicrofrontendSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
+    borderRadius: "8px",
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const labelStyle = {
-    paddingLeft: '15px',
+    paddingLeft: "15px",
     color:
       projectFolder?.id === menuItem?.id
         ? menuStyle?.active_text
@@ -51,7 +54,8 @@ const MicrofrontendSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/settings/constructor/microfrontend`);
+    navigate(`/main/${appId}/microfrontend`);
+
     dispatch(menuActions.setMenuItem(projectFolder));
   };
 
@@ -63,8 +67,7 @@ const MicrofrontendSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
             {projectFolder?.label}

@@ -105,9 +105,9 @@ const ViewCreateModal = ({
       let res;
 
       if (initialValues.id) {
-        res = await constructorViewService.update(values);
+        res = await constructorViewService.update(tableSlug, values);
       } else {
-        res = await constructorViewService.create(values);
+        res = await constructorViewService.create(tableSlug, values);
 
         setViews((prev) => [...prev, res]);
       }

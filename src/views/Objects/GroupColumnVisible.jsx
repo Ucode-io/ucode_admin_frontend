@@ -1,10 +1,11 @@
 import AppsIcon from "@mui/icons-material/Apps";
-import { Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
+import {Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { useParams } from "react-router-dom";
 
 export default function GroupColumnVisible({
   selectedTabIndex,
@@ -17,6 +18,7 @@ export default function GroupColumnVisible({
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState(null);
+  const {tableSlug} = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,7 +33,7 @@ export default function GroupColumnVisible({
 
   useEffect(() => {
     setCheckedColumns(
-      watchedGroupColumns?.filter((item) => item.is_checked === true)
+      watchedGroupColumns?.filter((item) => item?.is_checked === true)
     );
   }, [watchedGroupColumns]);
 
@@ -65,7 +67,7 @@ export default function GroupColumnVisible({
 
   const disableAll = () => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
           group_by_columns: [],
@@ -80,6 +82,7 @@ export default function GroupColumnVisible({
         setCheckedColumns(null);
         form.reset({
           attributes: {
+            ...views?.[selectedTabIndex]?.attributes,
             group_by_columns: columns?.map((item) => {
               return {
                 ...item,
@@ -100,9 +103,10 @@ export default function GroupColumnVisible({
 
   const updateView = () => {
     constructorViewService
-      .update({
+      .update(tableSlug, {
         ...views?.[selectedTabIndex],
         attributes: {
+          ...views?.[selectedTabIndex]?.attributes,
           group_by_columns: watchedGroupColumns
             ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),
@@ -188,6 +192,14 @@ export default function GroupColumnVisible({
       <Menu
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         anchorEl={anchorEl}
         PaperProps={{
           elevation: 0,
@@ -204,7 +216,7 @@ export default function GroupColumnVisible({
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",

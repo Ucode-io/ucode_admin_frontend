@@ -1,32 +1,25 @@
-import {
-  AccountTree,
-  CalendarMonth,
-  Description,
-  Settings,
-  TableChart,
-} from "@mui/icons-material";
-import { Button, Modal, Popover } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
-import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import ViewSettings from "../ViewSettings";
-import style from "./style.module.scss";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ButtonsPopover from "../../../../components/ButtonsPopover";
-import constructorViewService from "../../../../services/constructorViewService";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Button, Modal, Popover} from "@mui/material";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import { store } from "../../../../store";
-import { applyDrag } from "../../../../utils/applyDrag";
-import { viewTypes } from "../../../../utils/constants/viewTypes";
+import constructorViewService from "../../../../services/constructorViewService";
+import {applyDrag} from "../../../../utils/applyDrag";
+import {viewTypes} from "../../../../utils/constants/viewTypes";
+import ViewSettings from "../ViewSettings";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
+import style from "./style.module.scss";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
+import {viewsActions} from "../../../../store/views/view.slice";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -40,18 +33,20 @@ const ViewTabSelector = ({
   setSelectedView,
   views = [],
   setTab,
+  menuItem,
 }) => {
-  const { t } = useTranslation();
-  const { tableSlug } = useParams();
+  const {t} = useTranslation();
+  const {tableSlug, appId} = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
-  // const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  // const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-  // const [selectedView, setSelectedView] = useState(null);
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
   const [typeNewView, setTypeNewView] = useState(null);
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+  const {i18n} = useTranslation();
+  const dispatch = useDispatch();
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -61,9 +56,6 @@ const ViewTabSelector = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   const openModal = (data) => {
     setIsChanged(false);
@@ -75,9 +67,8 @@ const ViewTabSelector = ({
     setSettingsModalVisible(false);
     if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
   };
-
   const deleteView = (id) => {
-    constructorViewService.delete(id).then(() => {
+    constructorViewService.delete(id, tableSlug).then(() => {
       navigate("/reload", {
         state: {
           redirectUrl: window.location.pathname,
@@ -85,9 +76,6 @@ const ViewTabSelector = ({
       });
     });
   };
-
-  const selectedTable = store.getState().menu.menuItem;
-  const permissions = useSelector((state) => state.auth.permissions);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(views, dropResult);
@@ -98,52 +86,53 @@ const ViewTabSelector = ({
       project_id: projectId,
       table_slug: tableSlug,
     };
-    constructorViewService.changeViewOrder(data).then(() => {
+    constructorViewService.changeViewOrder(data, tableSlug).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
 
-  const { i18n } = useTranslation();
-
   return (
     <>
-      <div className={style.selector} style={{ minWidth: "fit-content" }}>
+      <div className={style.selector} style={{minWidth: "fit-content"}}>
         <div className={style.leftSide}>
           <div className={style.button}>
-            <Button style={{ height: "100%" }} onClick={() => navigate(-1)}>
-              <ArrowBackIcon style={{ color: "#000" }} />
+            <Button
+              style={{height: "100%"}}
+              onClick={() => navigate(`/main/${menuItem?.parent_id}`)}>
+              <ArrowBackIcon style={{color: "#000"}} />
             </Button>
           </div>
 
           <div className={style.title}>
             <IconGenerator
               className={style.icon}
-              icon={
-                selectedTable?.isChild
-                  ? selectedTable?.icon
-                  : selectedTable?.icon
-              }
+              icon={menuItem?.isChild ? menuItem?.icon : menuItem?.icon}
             />
-            <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
+            <h3>{menuItem?.label ?? menuItem?.title}</h3>
           </div>
         </div>
         <div className={style.appTabs}>
           <Container
             lockAxis="x"
             onDrop={onDrop}
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            style={{ display: "flex", alignItems: "center" }}
+            dropPlaceholder={{className: "drag-row-drop-preview"}}
+            style={{display: "flex", alignItems: "center"}}
             getChildPayload={(i) => views[i]}
-            orientation="horizontal"
-          >
+            orientation="horizontal">
             {views.map((view, index) => (
               <Draggable key={view.id}>
                 <div
-                  onClick={() => setSelectedTabIndex(index)}
-                  className={`${style.element} ${
-                    selectedTabIndex === index ? style.active : ""
-                  }`}
-                >
+                  onClick={() => {
+                    dispatch(
+                      viewsActions.setViewTab({
+                        tableSlug: tableSlug,
+                        tabIndex: index,
+                      })
+                    );
+
+                    setSelectedTabIndex(index);
+                  }}
+                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && (
                     <TableChart className={style.icon} />
                   )}
@@ -174,6 +163,9 @@ const ViewTabSelector = ({
                   {view.type === "FINANCE CALENDAR" && (
                     <MonetizationOnIcon className={style.icon} />
                   )}
+                  {view.type === "TIMELINE" && (
+                    <ClearAllIcon className={style.icon} />
+                  )}
                   <span>
                     {(view?.attributes?.[`name_${i18n.language}`]
                       ? view?.attributes?.[`name_${i18n.language}`]
@@ -182,7 +174,6 @@ const ViewTabSelector = ({
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>
-                      {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
                       {selectedTabIndex === index && (
                         <MoreButtonViewType
                           onEditClick={() => openModal(view)}
@@ -196,19 +187,15 @@ const ViewTabSelector = ({
             ))}
           </Container>
         </div>
-        {/* <div className={style.element} onClick={openModal}>
-          <Settings className={style.icon} />
-        </div> */}
 
         <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
           <div
             className={style.element}
             aria-describedby={id}
             variant="contained"
-            onClick={handleClick}
-          >
-            <AddIcon className={style.icon} style={{ color: "#000" }} />
-            <strong style={{ color: "#000" }}>{t("add")}</strong>
+            onClick={handleClick}>
+            <AddIcon className={style.icon} style={{color: "#000"}} />
+            <strong style={{color: "#000"}}>{t("add")}</strong>
           </div>
         </PermissionWrapperV2>
 
@@ -220,31 +207,9 @@ const ViewTabSelector = ({
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
-          }}
-        >
-          {/* <div className={style.viewTypes}>
-            {computedViewTypes.map((type, index) => (
-              <button
-                onClick={() => {
-                  handleClose();
-                  openModal();
-                  setSelectedView("NEW");
-                  setTypeNewView(type.value);
-                }}
-              >
-                {type.value === "TABLE" && <TableChart className={style.icon} />}
-                {type.value === "CALENDAR" && <CalendarMonth className={style.icon} />}
-                {type.value === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-                {type.value === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-                {type.value === "TREE" && <AccountTree className={style.icon} />}
-                {type.value === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
-                {type.value === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-                {type.label}
-              </button>
-            ))}
-          </div> */}
-
+          }}>
           <ViewTypeList
+            views={views}
             computedViewTypes={computedViewTypes}
             handleClose={handleClose}
             openModal={openModal}
@@ -257,8 +222,7 @@ const ViewTabSelector = ({
       <Modal
         className={style.modal}
         open={settingsModalVisible}
-        onClose={closeModal}
-      >
+        onClose={closeModal}>
         <ViewSettings
           closeModal={closeModal}
           defaultViewTab={defaultViewTab}

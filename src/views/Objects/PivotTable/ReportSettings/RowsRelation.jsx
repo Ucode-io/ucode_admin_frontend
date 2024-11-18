@@ -18,6 +18,8 @@ import HFMultipleAutocomplete from "../../../../components/FormElements/HFMultip
 import constructorRelationService from "../../../../services/constructorRelationService";
 import styles from "./relation.module.scss";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
+import { use } from "i18next";
+import { useParams } from "react-router-dom";
 
 export default function RowsRelation({ form, tables, getTables }) {
   const { fields: objectFields, append, remove } = useFieldArray({ control: form.control, name: "rows_relation" });
@@ -113,8 +115,8 @@ function ObjectItem({ form, idx, objIdx, options, rmoveObj, getTables }) {
   );
 
   const relationTableSlug = form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`);
-
-  const { data: relationTables } = useQuery(["GET_RELATIONS_LIST", relationTableSlug], () => constructorRelationService.getList({ table_slug: relationTableSlug }), {
+const {tableSlug} = useParams();
+  const { data: relationTables } = useQuery(["GET_RELATIONS_LIST", relationTableSlug], () => constructorRelationService.getList({ table_slug: relationTableSlug }, tableSlug), {
     enabled: !!relationTableSlug,
     select: (res) =>
       res.relations?.map((r) => ({

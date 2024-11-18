@@ -1,10 +1,10 @@
 import styles from "../style.module.scss";
-import { MdContentCopy } from "react-icons/md";
-import { useState } from "react";
+import {MdContentCopy} from "react-icons/md";
+import {useState} from "react";
 import OutsideClickHandler from "react-outside-click-handler";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
-import { Box, Button } from "@mui/material";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
+import {Box, Button} from "@mui/material";
 import HFTextField from "../../../../FormElements/HFTextField";
 import getElementBetween from "../../../../../utils/getElementBetween";
 

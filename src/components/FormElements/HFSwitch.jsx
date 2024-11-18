@@ -1,6 +1,6 @@
-import { Switch } from "@mui/material";
-import { useId } from "react";
-import { Controller } from "react-hook-form";
+import {Switch} from "@mui/material";
+import {useId} from "react";
+import {Controller} from "react-hook-form";
 
 const HFSwitch = ({
   control,
@@ -9,23 +9,25 @@ const HFSwitch = ({
   disabledHelperText,
   tabIndex,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   isBlackBg,
   onChange = () => {},
   labelProps,
   defaultValue = false,
+  field,
+  isShowLable = true,
+  newColumn,
   ...props
 }) => {
   const id = useId();
-
   return (
     <Controller
       control={control}
       name={name}
       defaultValue={defaultValue}
       render={({
-        field: { onChange: formOnChange, value },
-        fieldState: { error },
+        field: {onChange: formOnChange, value},
+        fieldState: {error},
       }) => {
         return (
           <div
@@ -33,27 +35,27 @@ const HFSwitch = ({
             style={{
               background: isBlackBg ? "#2A2D34" : "",
               color: isBlackBg ? "#fff" : "",
-            }}
-          >
+            }}>
             <Switch
-              id={`switch-${id}`}
+              id={`switch_${newColumn ? "new" : field?.slug}`}
               {...props}
               autoFocus={tabIndex === 1}
-                inputProps={{ tabIndex }}
-              checked={value ?? false}
+              inputProps={{tabIndex}}
+              checked={value || false}
               onChange={(e, val) => {
                 formOnChange(val);
                 onChange(val);
-                isNewTableView && updateObject()
+                isNewTableView && updateObject();
               }}
             />
-            <label htmlFor={`switch-${id}`} {...labelProps}>
-              {label}
-            </label>
+            {isShowLable && (
+              <label htmlFor={`switch-${id}`} {...labelProps}>
+                {label}
+              </label>
+            )}
           </div>
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

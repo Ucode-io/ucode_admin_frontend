@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Barcode from "react-barcode";
 import styles from "./style.module.scss";
-import { Controller } from "react-hook-form";
-import { InputAdornment, TextField, Tooltip } from "@mui/material";
+import {Controller} from "react-hook-form";
+import {InputAdornment, TextField, Tooltip} from "@mui/material";
 import BarcodeGenerateButton from "./BarcodeGenerateButton";
 import PrintIcon from "@mui/icons-material/Print";
 import Dialog from "@mui/material/Dialog";
@@ -10,7 +10,7 @@ import FRow from "../FormElements/FRow";
 import ClearIcon from "@mui/icons-material/Clear";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import ReactToPrint from "react-to-print";
-import { Lock } from "@mui/icons-material";
+import {Lock} from "@mui/icons-material";
 const pageStyle = `
   @page {
     size: 30mm 20mm;
@@ -57,11 +57,12 @@ const BarcodeGenerator = ({
         rules={{
           required: required ? "This is required field" : false,
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <>
               <div className={styles.input_control}>
                 <TextField
+                  id="barcode"
                   size="small"
                   value={value}
                   type="number"
@@ -75,7 +76,7 @@ const BarcodeGenerator = ({
                   autoFocus={tabIndex === 1}
                   fullWidth={fullWidth}
                   InputProps={{
-                    inputProps: { tabIndex },
+                    inputProps: {tabIndex},
                     readOnly: disabled,
                     max: 13,
                     style: disabled
@@ -91,7 +92,7 @@ const BarcodeGenerator = ({
                     endAdornment: disabled && (
                       <Tooltip title="This field is disabled for this role!">
                         <InputAdornment position="start">
-                          <Lock style={{ fontSize: "20px" }} />
+                          <Lock style={{fontSize: "20px"}} />
                         </InputAdornment>
                       </Tooltip>
                     ),
@@ -153,8 +154,7 @@ const BarcodeGenerator = ({
               )}
             </>
           );
-        }}
-      ></Controller>
+        }}></Controller>
     </div>
   );
 };

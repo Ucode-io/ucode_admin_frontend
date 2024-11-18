@@ -5,7 +5,7 @@ import constructorObjectService from "../../services/constructorObjectService";
 const useObjectsQuery = ({ tableSlug, queryPayload = {}, queryParams = {}, data }) => {
   
   const query = useQuery(['GET_OBJECT_LIST_QUERY', tableSlug, queryPayload], () => {
-    return constructorObjectService.getList(tableSlug, {
+    return constructorObjectService.getListV2(tableSlug, {
       data: queryPayload,
     })
   }, {

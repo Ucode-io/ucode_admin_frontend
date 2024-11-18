@@ -9,9 +9,6 @@ const FunctionsDetail = () => {
   const [loader, setLoader] = useState(true);
 
   const { data: func, isLoading } = useFunctionByIdQuery({
-    params: {
-      "project-id": projectId,
-    },
     functionId,
     queryParams: {
       cacheTime: false,

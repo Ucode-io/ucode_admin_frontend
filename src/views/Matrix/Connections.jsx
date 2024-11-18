@@ -332,7 +332,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
             onClick={() => setIsCreating(true)}
           >
             <PlusIcon />
-            Добавить
+            Add
           </button>
         </div>
       </div>

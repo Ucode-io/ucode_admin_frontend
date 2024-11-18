@@ -1,20 +1,14 @@
-
 @use "/src/scss/colors";
 
-.wrapper {
-  border-bottom: 1px solid silver;
-}
 
 .block {
-  padding: 8px 16px;
-  border-radius: 6px;
 
   .row {
     display: flex;
     align-items: center;
     gap: 10px;
     min-height: 50px;
-    
+
 
     .input {
       background-color: #fff;
@@ -23,7 +17,7 @@
 }
 
 .createButton {
-  padding: 8px 16px;
+  padding-top: 8px;
   display: flex;
   align-items: center;
   cursor: pointer;

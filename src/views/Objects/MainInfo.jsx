@@ -39,8 +39,7 @@ const MainInfo = ({computedSections, control, setFormValue, relatedTable}) => {
               key={section.id}
               title={section.label}
               className={styles.formCard}
-              icon={section.icon}
-            >
+              icon={section.icon}>
               <div className={styles.formColumn}>
                 {section.fields?.map((field) => (
                   <FormElementGenerator

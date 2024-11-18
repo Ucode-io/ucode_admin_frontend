@@ -5,7 +5,6 @@ let webSocket;
 let chatSocket;
 
 function connectSocket(sendMessage, chat_id, platformType, userId) {
-  console.log("websocketURL", websocketURL);
   const authStore = store.getState().auth;
   const ws = new WebSocket(
     `${websocketURL}/ws/${chat_id}/${
@@ -28,20 +27,11 @@ function connectSocket(sendMessage, chat_id, platformType, userId) {
     //   message: i18nRender('connected.to.websocket')
     // })
     // subscribe to some channels
-    console.log("Connected");
     // ws.send("we have been connected to the web-socket :)");
     // ws.send("Hello, world!", {
-
     // });
     // ws.send(JSON.stringify(message));
   };
-
-  // ws.onmessage = function (e) {
-  //   console.log(e)
-  //   try {
-  //     console.log('MESSAGE: ', JSON.parse(e.data))
-  //   } catch (e) {}
-  // }
 
   ws.onclose = function (e) {
     console.log(`Socket is closed.`, e.reason);

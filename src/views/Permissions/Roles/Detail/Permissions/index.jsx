@@ -1,4 +1,4 @@
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 import TableCard from "../../../../../components/TableCard";
 import {
   CTable,
@@ -7,12 +7,16 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "../../../../../components/CTable";
-import { Box, Card, Checkbox } from "@mui/material";
-import { useEffect, useState } from "react";
+import {Box, Card, Checkbox} from "@mui/material";
+import {useEffect, useState} from "react";
 import TableRow from "./TableRow";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
+import styles from "../../../style.module.scss";
+import {permissions, recordPermission} from "./mock";
+import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
+import {GoInfo} from "react-icons/go";
 
 const Permissions = ({
   control,
@@ -23,6 +27,11 @@ const Permissions = ({
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
+  const [modalData, setModalData] = useState(null);
+
+  const closeModal = () => {
+    setModalData(null);
+  };
 
   const tables = useWatch({
     control,
@@ -33,7 +42,6 @@ const Permissions = ({
     control,
     name: "menus",
   });
-  console.log("allMenu", allMenu);
   const allReadTrue = tables?.tables?.every(
     (permission) => permission.record_permissions?.read === "Yes"
   );
@@ -55,18 +63,17 @@ const Permissions = ({
     allMenu?.forEach((item, index) => {
       obj[item.id] = item.permission;
     });
-    setCheckBoxValues(obj);
-  }, []);
+    setCheckBoxValues((prev) => ({...prev, ...obj}));
+  }, [allMenu]);
 
   return (
     <>
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
-        onSelect={setSelectedTab}
-      >
+        onSelect={setSelectedTab}>
         <div>
-          <Card style={{ boxShadow: "none" }}>
+          <Card style={{boxShadow: "none"}}>
             <TabList>
               <Tab>Table</Tab>
               <Tab>Menu</Tab>
@@ -79,31 +86,53 @@ const Permissions = ({
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
-                        <CTableCell rowSpan={2} w={200}>
-                          Объекты
+                        <CTableCell
+                          rowSpan={2}
+                          w={200}
+                          className={styles.sticky_header}>
+                          Objects
                         </CTableCell>
                         <CTableCell colSpan={5}>
                           <Box
-                            sx={{ justifyContent: "center", display: "flex" }}
-                          >
-                            Record permissions
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent="center"
+                            columnGap={"4px"}>
+                            Record permissions{" "}
+                            <GoInfo
+                              size={18}
+                              style={{cursor: "pointer"}}
+                              onClick={() => setModalData(recordPermission)}
+                            />
                           </Box>
                         </CTableCell>
-                        <CTableCell rowSpan={2}>Field permissions</CTableCell>
-                        <CTableCell rowSpan={2}>Action permissions</CTableCell>
-                        <CTableCell rowSpan={2}>Relation permission</CTableCell>
-                        <CTableCell rowSpan={2}>View permission</CTableCell>
-                        <CTableCell rowSpan={2}>Custom permission</CTableCell>
+                        {permissions.map((item) => (
+                          <CTableCell rowSpan={2}>
+                            <Box
+                              display={"flex"}
+                              alignItems={"center"}
+                              columnGap={"4px"}>
+                              {item.title}{" "}
+                              <GoInfo
+                                size={18}
+                                style={{cursor: "pointer"}}
+                                onClick={() =>
+                                  item?.content && setModalData(item)
+                                }
+                              />
+                            </Box>
+                          </CTableCell>
+                        ))}
                       </CTableHeadRow>
                       <CTableHeadRow>
                         <CTableCell>
-                          Чтение
+                          Reading
                           <Checkbox
                             checked={allReadTrue ? true : false}
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -115,13 +144,13 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Добавление
+                          Adding
                           <Checkbox
                             checked={allWriteTrue ? true : false}
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -133,13 +162,13 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Изменение
+                          Editing
                           <Checkbox
                             checked={allUpdateTrue ? true : false}
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -151,13 +180,13 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Удаление
+                          Deleting
                           <Checkbox
                             checked={allDeleteTrue ? true : false}
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -169,13 +198,13 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Публичный
+                          Public
                           <Checkbox
                             checked={allPublicTrue ? true : false}
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -191,8 +220,7 @@ const Permissions = ({
                     <CTableBody
                       //   loader={isLoading}
                       columnsCount={8}
-                      dataLength={tables?.tables?.length}
-                    >
+                      dataLength={tables?.tables?.length}>
                       {tables?.tables?.map((table, tableIndex) => (
                         <TableRow
                           key={table.id}
@@ -215,22 +243,20 @@ const Permissions = ({
                     <CTableHead>
                       <CTableHeadRow>
                         <CTableCell rowSpan={2} w={200}>
-                          Объекты
+                          Objects
                         </CTableCell>
                         <CTableCell colSpan={5} tex>
-                          <Box
-                            sx={{ justifyContent: "center", display: "flex" }}
-                          >
+                          <Box sx={{justifyContent: "center", display: "flex"}}>
                             Menu permissions
                           </Box>
                         </CTableCell>
                       </CTableHeadRow>
                       <CTableHeadRow>
-                        <CTableCell>Чтение</CTableCell>
-                        <CTableCell>Добавление</CTableCell>
-                        <CTableCell>Изменение</CTableCell>
-                        <CTableCell>Удаление</CTableCell>
-                        <CTableCell>Настройки</CTableCell>
+                        <CTableCell>Read</CTableCell>
+                        <CTableCell>Add</CTableCell>
+                        <CTableCell>Edit</CTableCell>
+                        <CTableCell>Delete</CTableCell>
+                        <CTableCell>Settings</CTableCell>
                       </CTableHeadRow>
                     </CTableHead>
                     <CTableBody columnsCount={6} dataLength={allMenu?.length}>
@@ -273,6 +299,9 @@ const Permissions = ({
           </Card>
         </div>
       </Tabs>
+      {modalData && (
+        <PermissionInfoModal modalData={modalData} closeModal={closeModal} />
+      )}
     </>
   );
 };

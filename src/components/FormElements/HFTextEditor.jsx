@@ -1,8 +1,10 @@
-import {lazy, Suspense} from "react";
+import React, {lazy, Suspense, useEffect} from "react";
 import {Controller, useWatch} from "react-hook-form";
-
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
+import FRowMultiLine from "./FRowMultiLine";
+import "./reactQuill.scss";
+import {Quill} from "react-quill";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -18,51 +20,91 @@ const HFTextEditor = ({
   withTrim = false,
   tabIndex,
   rules = {},
+  field,
+  label,
   ...props
 }) => {
   const value = useWatch({
     control,
     name,
   });
-  console.log("value", value);
+
+  useEffect(() => {
+    const Font = Quill.import("formats/font");
+    Font.whitelist = [
+      "sans-serif",
+      "lato",
+      "roboto",
+      "san-francisco",
+      "serif",
+      "monospace",
+    ];
+    Quill.register(Font, true);
+  }, []);
+
+  const modules = {
+    toolbar: {
+      container: [
+        [{header: "1"}, {header: "2"}],
+        [{list: "ordered"}, {list: "bullet"}],
+        ["bold", "italic", "underline"],
+        [{color: []}],
+        ["link", "image", "video"],
+        [
+          {
+            font: [
+              "sans-serif",
+              "lato",
+              "roboto",
+              "san-francisco",
+              "serif",
+              "monospace",
+            ],
+          },
+        ],
+      ],
+    },
+  };
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      defaultValue=""
-      rules={{
-        required: required ? "This is required field" : false,
-        ...rules,
-      }}
-      render={({field: {onChange, ref}, fieldState: {error}}) => (
-        <Suspense fallback={<RingLoaderWithWrapper />}>
-          <ReactQuill
-            theme="snow"
-            defaultValue={value}
-            onChange={(val) => {
-              onChange(val);
-              isNewTableView && updateObject();
-            }}
-            tabIndex={tabIndex}
-            autoFocus={false}
-            style={{backgroundColor: `${isTransparent ? "transparent" : ""}`}}
-          />
-        </Suspense>
-        // <TextField
-        //   size="small"
-        //   value={value}
-        //   onChange={(e) =>
-        //     onChange(withTrim ? e.target.value?.trim() : e.target.value)
-        //   }
-        //   name={name}
-        //   error={error}
-        //   fullWidth={fullWidth}
-        //   helperText={!disabledHelperText && error?.message}
-        //   {...props}
-        // />
-      )}
-    ></Controller>
+    <FRowMultiLine
+      label={label}
+      required={field?.required}
+      extraClassName={isNewTableView ? "tableView" : ""}>
+      <Controller
+        control={control}
+        name={name}
+        defaultValue=""
+        rules={{
+          required: required ? "This is required field" : false,
+          ...rules,
+        }}
+        render={({field: {onChange}, fieldState: {error}}) => (
+          <Suspense fallback={<RingLoaderWithWrapper />}>
+            <ReactQuill
+              id="multi-line"
+              theme="snow"
+              value={value}
+              modules={modules}
+              defaultValue={value}
+              onChange={(val) => {
+                onChange(val);
+                isNewTableView && updateObject();
+              }}
+              tabIndex={tabIndex}
+              autoFocus={false}
+              style={{
+                backgroundColor: isTransparent ? "transparent" : "",
+                minWidth: "200px",
+                width: "100%",
+                border: "1px solid #FFF",
+                fontFamily: "sans-serif",
+              }}
+            />
+          </Suspense>
+        )}
+      />
+    </FRowMultiLine>
   );
 };
 

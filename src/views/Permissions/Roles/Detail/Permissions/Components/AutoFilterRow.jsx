@@ -1,8 +1,9 @@
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import { Box, Switch, Tooltip } from "@mui/material";
+import {Box, Switch, Tooltip} from "@mui/material";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import FRow from "../../../../../../components/FormElements/FRow";
+import {useWatch} from "react-hook-form";
 
 const AutoFilterRow = ({
   control,
@@ -15,7 +16,6 @@ const AutoFilterRow = ({
   watch,
 }) => {
   const filterBasePath = `${basePath}.${index}`;
-
   return (
     <Box
       sx={{

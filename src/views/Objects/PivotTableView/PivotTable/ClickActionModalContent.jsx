@@ -12,17 +12,26 @@ import styles from "./styles.module.scss";
 import pivotService from "../../../../services/pivotService";
 
 export default function ClickActionModalContent(props) {
-  const { data, expandedRows, onTemplateChange, form, getValueRecursively, activeClickActionTabId, curClActRow } =
-    props;
+  const {
+    data,
+    expandedRows,
+    onTemplateChange,
+    form,
+    getValueRecursively,
+    activeClickActionTabId,
+    curClActRow,
+  } = props;
 
   const { appId } = useParams();
   const [fields, setFields] = useState([]);
 
   useEffect(() => {
     if (form.watch("report_setting_id"))
-      pivotService.getByIdReportSetting(form.watch("report_setting_id"), appId).then((res) => {
-        setFields(res);
-      });
+      pivotService
+        .getByIdReportSetting(form.watch("report_setting_id"), appId)
+        .then((res) => {
+          setFields(res);
+        });
   }, [form.watch("report_setting_id")]);
 
   return (
@@ -73,34 +82,41 @@ const RowItem = forwardRef((props, _) => {
     expandedRows,
     keyName = null,
     onTemplateChange,
-    activeClickActionTabId
+    activeClickActionTabId,
   } = props;
   const [isOpen, setIsOpen] = useState(true);
 
   const changeHandler = (field) => {
     const response = cloneDeep({ ...data }) ?? {};
 
-    // console.log("row", row);
-    // console.log("curClActRow", curClActRow);
-    // console.log("field", field);
-
     const addingFilterFields = () => {
       response[keyName].forEach((_, objIdx) => {
         if (response[keyName].find((obj) => obj.id === row.id)) {
-          if (response[keyName][objIdx].table_field_settings.some((i) => i.field_slug === field.field_slug)) {
-            response[keyName][objIdx].table_field_settings.forEach((loopField, fieldIdx) => {
-              if (field.field_slug === loopField.field_slug) {
-                response[keyName][objIdx].table_field_settings[fieldIdx].checked = true;
+          if (
+            response[keyName][objIdx].table_field_settings.some(
+              (i) => i.field_slug === field.field_slug
+            )
+          ) {
+            response[keyName][objIdx].table_field_settings.forEach(
+              (loopField, fieldIdx) => {
+                if (field.field_slug === loopField.field_slug) {
+                  response[keyName][objIdx].table_field_settings[
+                    fieldIdx
+                  ].checked = true;
+                }
               }
-            });
+            );
           } else {
-            response[keyName][objIdx].table_field_settings.push({ ...field, checked: true });
+            response[keyName][objIdx].table_field_settings.push({
+              ...field,
+              checked: true,
+            });
           }
         } else {
           response[keyName].push({
             ...row,
             order_number: response[keyName].length + 1,
-            table_field_settings: [{ ...field, checked: true }]
+            table_field_settings: [{ ...field, checked: true }],
           });
         }
       });
@@ -117,9 +133,9 @@ const RowItem = forwardRef((props, _) => {
             objects: [
               {
                 ...row,
-                table_field_settings: [{ ...field, checked: true }]
-              }
-            ]
+                table_field_settings: [{ ...field, checked: true }],
+              },
+            ],
           };
         });
       }
@@ -128,13 +144,17 @@ const RowItem = forwardRef((props, _) => {
         {
           label: row.parent_label,
           order_number: response.rows.length + 1,
-          objects: [{ ...row, table_field_settings: [{ ...field, checked: true }] }]
-        }
+          objects: [
+            { ...row, table_field_settings: [{ ...field, checked: true }] },
+          ],
+        },
       ];
     }
 
     if (!expandedRows.length) {
-      if (response.filters.some((f) => f.slug + "_id" === curClActRow.table_slug)) {
+      if (
+        response.filters.some((f) => f.slug + "_id" === curClActRow.table_slug)
+      ) {
         response.filters.forEach((f, fIdx) => {
           if (f.slug + "_id" === curClActRow.table_slug) {
             response.filters[fIdx] = { ...f, table_guids: [curClActRow.guid] };
@@ -155,73 +175,93 @@ const RowItem = forwardRef((props, _) => {
       if (
         expandedRows.find(
           (i) =>
-            getValueRecursively(i, i.is_relaiton_row ? i.relation_order_number : i.order_number) ===
-            [...curClActRow.parent_ids, curClActRow.guid].join("#")
+            getValueRecursively(
+              i,
+              i.is_relaiton_row ? i.relation_order_number : i.order_number
+            ) === [...curClActRow.parent_ids, curClActRow.guid].join("#")
         )
       ) {
         // expandRows length > 0 bo'lsa va topilsa
         const foundExpandedRow = expandedRows.find(
           (i) =>
-            getValueRecursively(i, i.is_relaiton_row ? i.relation_order_number : i.order_number) ===
-            [...curClActRow.parent_ids, curClActRow.guid].join("#")
+            getValueRecursively(
+              i,
+              i.is_relaiton_row ? i.relation_order_number : i.order_number
+            ) === [...curClActRow.parent_ids, curClActRow.guid].join("#")
         );
 
         const existedFilters = [];
 
         response.filters.forEach((f) => {
-          if (getArray(foundExpandedRow).some((fRow) => f.slug + "_id" === fRow.slug)) {
+          if (
+            getArray(foundExpandedRow).some(
+              (fRow) => f.slug + "_id" === fRow.slug
+            )
+          ) {
             existedFilters.push(f);
           }
         });
 
         existedFilters.forEach((f) => {
-          const computedRow = getArray(foundExpandedRow).find((fRow) => f.slug + "_id" === fRow.slug);
+          const computedRow = getArray(foundExpandedRow).find(
+            (fRow) => f.slug + "_id" === fRow.slug
+          );
           response.filters = response.filters.map((resF) =>
-            resF.slug === f.slug ? { ...resF, table_guids: [computedRow.real_value] } : resF
+            resF.slug === f.slug
+              ? { ...resF, table_guids: [computedRow.real_value] }
+              : resF
           );
         });
       } else {
-        // console.log("expandRows length > 0 bo'lsa va TOPILSA");
-        // expandRows length > 0 bo'lsa va topilmasa
-        // console.log("expandRows length > 0 bo'lsa va TOPILMASA");
-
         const foundExpandedRow = expandedRows.find(
           (i) =>
-            getValueRecursively(i, i.is_relaiton_row ? i.relation_order_number : i.order_number) ===
-            [...curClActRow.parent_ids].join("#")
+            getValueRecursively(
+              i,
+              i.is_relaiton_row ? i.relation_order_number : i.order_number
+            ) === [...curClActRow.parent_ids].join("#")
         );
 
         const existedFilters = [];
 
         response.filters.forEach((f) => {
-          if (getArray(foundExpandedRow).some((fRow) => f.slug + "_id" === fRow.slug)) {
+          if (
+            getArray(foundExpandedRow).some(
+              (fRow) => f.slug + "_id" === fRow.slug
+            )
+          ) {
             existedFilters.push(f);
           }
         });
 
         existedFilters.forEach((f) => {
-          const computedRow = getArray(foundExpandedRow).find((fRow) => f.slug + "_id" === fRow.slug);
+          const computedRow = getArray(foundExpandedRow).find(
+            (fRow) => f.slug + "_id" === fRow.slug
+          );
           response.filters = response.filters.map((resF) =>
-            resF.slug === f.slug ? { ...resF, table_guids: [computedRow.real_value] } : resF
+            resF.slug === f.slug
+              ? { ...resF, table_guids: [computedRow.real_value] }
+              : resF
           );
         });
         if (curClActRow.slug_type !== "RELATION") {
           response.filters.push({
             slug: curClActRow.table_slug.split("_id")[0],
-            table_guids: [curClActRow.guid]
+            table_guids: [curClActRow.guid],
           });
         }
       }
     }
-
-    // console.log("RESPONSE RESULT => ", response);
 
     onTemplateChange(activeClickActionTabId, response);
   };
   return (
     <div className={styles.clcActRow}>
       <div className={styles.clActRowItem}>
-        <RectangleIconButton size="small" className={styles.expandBtn} onClick={() => setIsOpen((p) => !p)}>
+        <RectangleIconButton
+          size="small"
+          className={styles.expandBtn}
+          onClick={() => setIsOpen((p) => !p)}
+        >
           {isOpen ? <RemoveIcon /> : <Add />}
         </RectangleIconButton>
         <span className={styles.rowLabel}>{row.label}</span>
@@ -235,7 +275,11 @@ const RowItem = forwardRef((props, _) => {
             onDoubleClick={() => changeHandler(field, keyName)}
           >
             <SearchIcon />
-            <span>{field.field_type.includes("LOOKUP") ? field?.table_to?.label : field.label}</span>
+            <span>
+              {field.field_type.includes("LOOKUP")
+                ? field?.table_to?.label
+                : field.label}
+            </span>
           </div>
         ))}
       </Collapse>

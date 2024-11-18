@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery";
 import ActionButton from "./ActionButton";
 
-const FormCustomActionButton = ({ tableSlug, id, control }) => {
+const FormCustomActionButton = ({ tableSlug, id, control, getAllData }) => {
   const { data: { custom_events: customEvents = [] } = {} } =
     useCustomActionsQuery({
       tableSlug,
@@ -26,6 +26,7 @@ const FormCustomActionButton = ({ tableSlug, id, control }) => {
             key={event.id}
             event={event}
             id={id}
+            getAllData={getAllData}
           />
         ) : (
           ""

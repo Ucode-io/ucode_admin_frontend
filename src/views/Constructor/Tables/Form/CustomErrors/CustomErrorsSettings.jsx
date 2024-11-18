@@ -46,7 +46,7 @@ const CustomErrorsSettings = ({
 
   const getErrorIdOptions = (search, id) => {
     constructorObjectService
-      .getList("object_builder.custom_error", {
+      .getListV2("object_builder.custom_error", {
         data: {
           limit: 10,
           search: search,
@@ -63,7 +63,7 @@ const CustomErrorsSettings = ({
   };
   const getLanguageOptions = (search, id) => {
     constructorObjectService
-      .getList("setting.languages", {
+      .getListV2("setting.languages", {
         data: {
           limit: 10,
           search: search,

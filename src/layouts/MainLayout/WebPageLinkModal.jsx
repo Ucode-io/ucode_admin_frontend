@@ -137,7 +137,7 @@ const WebPageLinkModal = ({
             </Box>
 
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" loading={loading} />
+              <SaveButton title="Add" type="submit" loading={loading} />
             </div>
           </form>
         </Card>

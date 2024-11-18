@@ -1,8 +1,8 @@
-import { Card, Modal, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Card, Modal, Typography} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
-import { store } from "../../../../../store";
+import {store} from "../../../../../store";
 import CreateButton from "../../../../Buttons/CreateButton";
 import SaveButton from "../../../../Buttons/SaveButton";
 import HFTextField from "../../../../FormElements/HFTextField";
@@ -10,46 +10,47 @@ import {
   useClientTypeCreateMutation,
   useClientTypeUpdateMutation,
 } from "../../../../../services/clientTypeService";
-import { useTablesListQuery } from "../../../../../services/tableService";
+import {useTablesListQuery} from "../../../../../services/tableService";
 import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
-import { useMemo } from "react";
+import {useMemo} from "react";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
 
-const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
+const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
   const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
 
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
       project_id: company.projectId,
       id: clientType.id,
       guid: clientType.guid,
       name: clientType.name ?? "",
+      default_page: clientType.default_page ?? "",
       self_recover: clientType.self_recover ?? false,
       self_register: clientType.self_register ?? false,
       table_slug: clientType.table_slug ?? "",
     },
   });
 
-  const { mutate: createClientType, isLoading: createLoading } =
+  const {mutate: createClientType, isLoading: createLoading} =
     useClientTypeCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
 
-  const { mutate: updateClientType, isLoading: updateLoading } =
+  const {mutate: updateClientType, isLoading: updateLoading} =
     useClientTypeUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
         closeModal();
       },
     });
 
-  const { data: projectTables } = useTablesListQuery({
+  const {data: projectTables} = useTablesListQuery({
     params: {
       is_login_table: true,
     },
@@ -70,14 +71,14 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
     const params = {
       "project-id": company.projectId,
     };
-    if (clientType.id) updateClientType({ data, params });
-    else createClientType({ params, data });
+    if (clientType.id) updateClientType({data, params});
+    else createClientType({params, data});
   };
 
   const tableOptions = useMemo(() => {
     return projectTables?.map((item) => ({
-      value: item.id,
-      label: item.name,
+      value: item.id ?? item?.value,
+      label: item.label,
     }));
   }, [projectTables]);
 
@@ -110,6 +111,15 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
                 required
               />
             </FRow>
+            <FRow label="Default page link">
+              <HFTextField
+                autoFocus
+                fullWidth
+                label="Default page link"
+                control={control}
+                name="default_page"
+              />
+            </FRow>
             <HFCheckbox
               label="Self recover"
               control={control}
@@ -126,7 +136,6 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
                 control={control}
                 placeholder="Table"
                 fullWidth
-                required
                 options={tableOptions}
               />
             </FRow>
@@ -134,10 +143,12 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
               {createType ? (
                 <CreateButton
                   type="submit"
+                  onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
+                  onClick={handleSubmit(onSubmit)}
                   type="submit"
                   loading={createLoading || updateLoading}
                 />

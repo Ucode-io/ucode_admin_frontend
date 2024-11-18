@@ -1,10 +1,10 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Button, Card, Modal, Typography } from "@mui/material";
+import {Box, Button, Card, Modal, Typography} from "@mui/material";
 import AutoFilterRow from "../AutoFilterRow";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { store } from "../../../../../../../store";
-import { useRelationsListQuery } from "../../../../../../../services/relationService";
-import { useObjectsListQuery } from "../../../../../../../services/constructorObjectService";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {store} from "../../../../../../../store";
+import {useRelationsListQuery} from "../../../../../../../services/relationService";
+import {useObjectsListQuery} from "../../../../../../../services/constructorObjectService";
 
 const AutoFilterModal = ({
   control,
@@ -45,7 +45,7 @@ const AutoFilterModal = ({
       object_field: "",
     });
 
-  const { data: relations } = useRelationsListQuery({
+  const {data: relations} = useRelationsListQuery({
     params: {
       table_slug: tableSlug,
       "project-id": projectId,
@@ -55,24 +55,24 @@ const AutoFilterModal = ({
         res.relations
           ?.filter(
             (relation) =>
-              relation.type === "Many2Many" ||
-              (relation.type === "Many2One" &&
-                relation.table_from.slug === tableSlug)
+              relation?.type === "Many2Many" ||
+              (relation?.type === "Many2One" &&
+                relation?.table_from?.slug === tableSlug)
           )
           .map((relation) => {
             const relatedTable =
-              relation.table_from.slug === tableSlug
-                ? relation.table_to
-                : relation.table_from;
+              relation?.table_from.slug === tableSlug
+                ? relation?.table_to
+                : relation?.table_from;
             return {
-              label: relatedTable.label,
-              value: relatedTable.slug,
+              label: relation?.title ?? relatedTable?.label,
+              value: `${relatedTable?.slug}#${relation?.id}`,
             };
           }),
     },
   });
 
-  const { data: connections } = useObjectsListQuery({
+  const {data: connections} = useObjectsListQuery({
     params: {
       envId: envId,
       "project-id": projectId,
@@ -84,7 +84,7 @@ const AutoFilterModal = ({
     queryParams: {
       select: (res) => {
         return [
-          { value: "user_id", label: "user" },
+          {value: "user_id", label: "user"},
           ...(res.data?.response?.map((connection) => ({
             value: `${connection.table_slug}_id`,
             label: connection.table_slug,
@@ -130,7 +130,7 @@ const AutoFilterModal = ({
             <div className="modal-header silver-bottom-border">
               <div></div>
               <Button variant="contained" onClick={closeModal}>
-              Save
+                Save
               </Button>
             </div>
           </Box>

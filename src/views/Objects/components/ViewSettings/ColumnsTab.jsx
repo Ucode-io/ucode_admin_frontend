@@ -1,10 +1,10 @@
-import { Box, Switch, Typography } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
+import {Box, Switch, Typography} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -27,18 +27,23 @@ import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import NfcIcon from "@mui/icons-material/Nfc";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import LinkIcon from "@mui/icons-material/Link";
 
-const ColumnsTab = ({ form, updateView, isMenu }) => {
-  const { i18n } = useTranslation();
-  const { fields: columns, move } = useFieldArray({
+const ColumnsTab = ({
+  form,
+  updateView,
+  isMenu,
+  views,
+  selectedTabIndex,
+  computedColumns,
+}) => {
+  const {i18n} = useTranslation();
+
+  const {fields: columns, move} = useFieldArray({
     control: form.control,
     name: "columns",
     keyName: "key",
   });
-
   const {
     fields: groupColumn,
     replace: replaceGroup,
@@ -53,6 +58,31 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     control: form.control,
     name: "columns",
   });
+
+  const computeColumns = (checkedColumnsIds = [], columns) => {
+    const selectedColumns =
+      checkedColumnsIds
+        ?.filter((id) => columns.find((el) => el.id === id))
+        ?.map((id) => ({
+          ...columns.find((el) => el.id === id),
+          is_checked: true,
+        })) ?? [];
+    const unselectedColumns =
+      columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+    return [...selectedColumns, ...unselectedColumns];
+  };
+
+  useEffect(() => {
+    if (views?.[selectedTabIndex]?.columns) {
+      form.reset({
+        ...form.getValues(),
+        columns: computeColumns(
+          views?.[selectedTabIndex]?.columns,
+          computedColumns
+        ),
+      });
+    }
+  }, [views, selectedTabIndex, computedColumns]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
@@ -108,12 +138,6 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isMenu) {
-      updateView();
-    }
-  }, [watchedColumns]);
-
   return (
     <div
       style={{
@@ -121,19 +145,16 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
         maxHeight: 300,
         overflowY: "auto",
         padding: "10px 14px",
-      }}
-    >
+      }}>
       <div className={styles.table}>
         <div
           className={styles.row}
           style={{
             borderBottom: "1px solid #eee",
-          }}
-        >
+          }}>
           <div
             className={styles.cell}
-            style={{ flex: 1, border: 0, paddingLeft: 0, paddingRight: 0 }}
-          >
+            style={{flex: 1, border: 0, paddingLeft: 0, paddingRight: 0}}>
             <b>All</b>
           </div>
           <div
@@ -145,11 +166,11 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
               paddingRight: 0,
               display: "flex",
               justifyContent: "flex-end",
-            }}
-          >
+            }}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
             <Switch
+              id="columns_all"
               size="small"
               checked={isAllChecked}
               onChange={onAllChecked}
@@ -158,8 +179,7 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
         </div>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        >
+          dropPlaceholder={{className: "drag-row-drop-preview"}}>
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
@@ -173,8 +193,7 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                     borderBottom: "1px solid #eee",
                     paddingLeft: 0,
                     paddingRight: 0,
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       width: 20,
@@ -183,12 +202,12 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                    }}
-                  >
+                    }}>
                     {columnIcons[column.type] ?? <LinkIcon />}
                   </div>
                   {column?.attributes?.[`label_${i18n.language}`] ??
-                    column.label}
+                    column?.attributes?.[`label_from_${i18n.language}`] ??
+                    column?.label}
                 </div>
                 <div
                   className={styles.cell}
@@ -200,9 +219,12 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                     paddingRight: 0,
                     display: "flex",
                     justifyContent: "flex-end",
-                  }}
-                >
+                  }}>
                   <Switch
+                    id={`column_switch_${
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.label
+                    }`}
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {

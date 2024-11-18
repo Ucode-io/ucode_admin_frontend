@@ -1,9 +1,12 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
 import requestAuth from "../utils/requestAuthV2";
+import requestV2 from "../utils/requestV2";
 
 const environmentService = {
   getList: (params) => requestAuth.get("/resource-environment", { params }),
+  getVersionHistoryList: (envId, params) => requestV2.get(`/version/history/${envId}`, { params }),
+  getVersionHistoryById: (envId, id, params) => requestV2.get(`/version/history/${envId}/${id}`, { params }),
   getEnvironments: (envId) => {
     return request.get(`/environment/${envId}`);
   },
@@ -42,6 +45,26 @@ export const useEnvironmentListQuery = ({ params = {}, queryParams } = {}) => {
     ["ENVIRONMENT", params],
     () => {
       return environmentService.getEnvironmentList(params);
+    },
+    queryParams
+  );
+};
+
+export const useVersionHistoryListQuery = ({ envId,params = {}, queryParams } = {}) => {
+  return useQuery(
+    ["VERSION_HISTORY", { envId, ...params }],
+    () => {
+      return environmentService.getVersionHistoryList(envId,params);
+    },
+    queryParams
+  );
+};
+
+export const useVersionHistoryByIdQuery = ({ envId, id, params = {}, queryParams } = {}) => {
+  return useQuery(
+    ["VERSION_HISTORY_BY_ID", { envId, id, ...params }],
+    () => {
+      return environmentService.getVersionHistoryById(envId, id, params);
     },
     queryParams
   );

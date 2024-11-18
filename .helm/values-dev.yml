@@ -91,7 +91,7 @@ ingress:
         - host: "dev-app.ucode.run"
           path: /
           servicePort: 80
-
+ 
 resources:
   {}
   #  limits:

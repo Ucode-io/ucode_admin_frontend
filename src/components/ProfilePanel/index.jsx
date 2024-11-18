@@ -83,7 +83,7 @@ const ProfilePanel = ({
           >
             {/* <AnalyticsIcon className={styles.dragIcon} /> */}
 
-            <p className={styles.itemText}>Аналитика</p>
+            <p className={styles.itemText}>Analytics</p>
           </div>
           <div
             className={styles.menuItem}
@@ -93,7 +93,7 @@ const ProfilePanel = ({
           >
             {/* <Settings className={styles.dragIcon} /> */}
 
-            <p className={styles.itemText}>Настройки</p>
+            <p className={styles.itemText}>Settings</p>
           </div>
 
           <div className={styles.menuItem} onClick={logoutClickHandler}>

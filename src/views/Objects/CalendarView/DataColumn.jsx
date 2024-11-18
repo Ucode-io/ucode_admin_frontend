@@ -1,35 +1,15 @@
 import { Add } from "@mui/icons-material";
-import {
-  addMinutes,
-  differenceInMinutes,
-  format,
-  parse,
-  setHours,
-  setMinutes,
-} from "date-fns";
-import { useEffect, useMemo } from "react";
-import {
-  Navigate,
-  useParams,
-  useSearchParams,
-  useNavigate,
-} from "react-router-dom";
-import constructorObjectService from "../../../services/constructorObjectService.js";
+import { addMinutes, differenceInMinutes, format, parse, setHours, setMinutes } from "date-fns";
+import { useMemo } from "react";
+import { useQueryClient } from "react-query";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useTimeList from "../../../hooks/useTimeList";
+import constructorObjectService from "../../../services/constructorObjectService.js";
 import DataCard from "./DataCard";
 import styles from "./style.module.scss";
-import { useQueryClient } from "react-query";
 
-const DataColumn = ({
-  date,
-  data,
-  categoriesTab,
-  parentTab,
-  fieldsMap,
-  view,
-  workingDays,
-}) => {
+const DataColumn = ({ date, data, categoriesTab, parentTab, fieldsMap, view, workingDays }) => {
   const { tableSlug } = useParams();
   const [searchParams] = useSearchParams();
   const queryGuid = searchParams.get("guid");
@@ -43,32 +23,16 @@ const DataColumn = ({
 
   const elements = useMemo(() => {
     if (!parentTab) return [];
-    return data?.filter(
-      (el) =>
-        el[parentTab.slug] === parentTab.value &&
-        el.calendar?.date === format(date, "dd.MM.yyyy")
-    );
+    return data?.filter((el) => el[parentTab.slug] === parentTab.value && el.calendar?.date === format(date, "dd.MM.yyyy"));
   }, [parentTab, data, date]);
 
   const elementsWithPosition = useMemo(() => {
     const calendarStartedTime = setMinutes(setHours(date, 6), 0);
 
     return elements?.map((el) => {
-      const startPosition =
-        Math.floor(
-          differenceInMinutes(
-            el.calendar?.elementFromTime,
-            calendarStartedTime
-          ) / timeInterval
-        ) * 40;
+      const startPosition = Math.floor(differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / timeInterval) * 40;
 
-      const height =
-        Math.ceil(
-          differenceInMinutes(
-            el.calendar?.elementToTime,
-            el.calendar?.elementFromTime
-          ) / timeInterval
-        ) * 40;
+      const height = Math.ceil(differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / timeInterval) * 40;
 
       return {
         ...el,
@@ -89,26 +53,15 @@ const DataColumn = ({
     if (!workingDays) return null;
     const workingDay = workingDays[format(date, "dd.MM.yyyy")];
 
-    const filteredWorkingDay = workingDay?.find(
-      (el) => el[parentTab?.slug] === parentTab?.value
-    );
+    const filteredWorkingDay = workingDay?.find((el) => el[parentTab?.slug] === parentTab?.value);
 
     const calendarStartedTime = setMinutes(setHours(date, 6), 0);
 
-    const startTime = parse(
-      filteredWorkingDay?.calendarFromTime,
-      "HH:mm",
-      date
-    );
+    const startTime = parse(filteredWorkingDay?.calendarFromTime, "HH:mm", date);
     const endTime = parse(filteredWorkingDay?.calendarToTime, "HH:mm", date);
 
-    const startIndex = Math.ceil(
-      differenceInMinutes(startTime, calendarStartedTime) / timeInterval
-    );
-    const endIndex =
-      Math.floor(
-        differenceInMinutes(endTime, calendarStartedTime) / timeInterval
-      ) - 1;
+    const startIndex = Math.ceil(differenceInMinutes(startTime, calendarStartedTime) / timeInterval);
+    const endIndex = Math.floor(differenceInMinutes(endTime, calendarStartedTime) / timeInterval) - 1;
 
     if (isNaN(startIndex) || isNaN(endIndex)) return null;
 
@@ -161,33 +114,18 @@ const DataColumn = ({
   return (
     <div className={styles.objectColumn}>
       {timeList.map((time, index) => (
-        <div
-          key={time}
-          className={styles.timeBlock}
-          style={{ overflow: "auto" }}
-        >
+        <div key={time} className={styles.timeBlock} style={{ overflow: "auto" }}>
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
-          <div
-            className={`${styles.addButton}`}
-            onClick={() => navigateToCreatePage(time)}
-          >
+          <div className={`${styles.addButton}`} onClick={() => navigateToCreatePage(time)}>
             <Add color="" />
-            {queryGuid ? "Выбрать" : "Создать"}
+            {queryGuid ? "Choose" : "Create"}
           </div>
         </div>
       ))}
 
       {elementsWithPosition?.map((el) => (
-        <DataCard
-          key={el.id}
-          date={date}
-          view={view}
-          fieldsMap={fieldsMap}
-          data={el}
-          viewFields={viewFields}
-          navigateToEditPage={navigateToEditPage}
-        />
+        <DataCard key={el.id} date={date} view={view} fieldsMap={fieldsMap} data={el} viewFields={viewFields} navigateToEditPage={navigateToEditPage} />
       ))}
     </div>
   );

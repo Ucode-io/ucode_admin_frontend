@@ -65,8 +65,8 @@ const EnvironmentPage = () => {
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Описание</CTableCell>
+            <CTableCell>Name</CTableCell>
+            <CTableCell>Description</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

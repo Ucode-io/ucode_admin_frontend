@@ -14,10 +14,7 @@ const noteFolderService = {
     request.put("/note-folder", data, {
       params: { "project-id": data.project_id },
     }),
-  delete: ({ id, projectId }) =>
-    request.delete(`/note-folder/${id}`, {
-      params: { "project-id": projectId },
-    }),
+  delete: (id) => request.delete(`/note-folder/${id}`),
 };
 
 export const useNoteFoldersListQuery = ({
@@ -49,8 +46,5 @@ export const useNoteFolderUpdateMutation = (mutationSettings) => {
 };
 
 export const useNoteFolderDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, projectId }) => noteFolderService.delete({ id, projectId }),
-    mutationSettings
-  );
+  return useMutation((id) => noteFolderService.delete(id), mutationSettings);
 };

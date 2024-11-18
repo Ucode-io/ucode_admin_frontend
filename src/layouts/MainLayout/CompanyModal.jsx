@@ -46,7 +46,7 @@ const CompanyModal = ({ closeModal }) => {
               />
             </Box>
             <div className="btns-row">
-              <SaveButton title="Добавить" type="submit" />
+              <SaveButton title="Add" type="submit" />
             </div>
           </form>
         </Card>

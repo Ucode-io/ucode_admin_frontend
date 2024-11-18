@@ -1,6 +1,6 @@
 import { Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
@@ -12,7 +12,6 @@ import PageFallback from "../../components/PageFallback";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import { useQuery, useQueryClient } from "react-query";
 import { store } from "../../store";
-
 import { showAlert } from "../../store/alert/alert.thunk";
 import {
   useUserCreateMutation,
@@ -23,13 +22,28 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
 import HFSwitch from "../../components/FormElements/HFSwitch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
+import menuService from "../../services/menuService";
 
 const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
   const [showPassword, setShowPassword] = useState(false);
-  const menuItem = store.getState().menu.menuItem;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+      .getByID({
+        menuId: searchParams.get("menuId"),
+      })
+      .then((res) => {
+        setMenuItem(res);
+      });
+    }
+  }, []);
+
   const invite = Boolean(menuItem?.table_slug);
 
   const navigate = useNavigate();

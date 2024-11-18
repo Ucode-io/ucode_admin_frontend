@@ -18,6 +18,7 @@ import AddDataColumn from "./AddDataColumn";
 import "./style.scss";
 
 const ObjectDataTable = ({
+  custom_events,
   dataCount,
   selectedTab,
   filterVisible,
@@ -229,6 +230,7 @@ const ObjectDataTable = ({
 
   return (
     <CTable
+      custom_events={custom_events}
       dataCount={count ?? dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}

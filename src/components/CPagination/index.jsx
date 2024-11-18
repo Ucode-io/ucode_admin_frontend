@@ -13,6 +13,7 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import CustomTableEvents from "../CustomTableEvents";
 
 const CPagination = ({
+  custom_events,
   setCurrentPage = () => {},
   view,
   paginationExtraButton,
@@ -132,7 +133,7 @@ const CPagination = ({
           <CustomTableEvents
             control={control}
             getAllData={getAllData}
-            customEvents={[]}
+            customEvents={custom_events}
           />
         )}
 

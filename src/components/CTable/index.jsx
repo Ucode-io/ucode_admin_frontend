@@ -6,6 +6,7 @@ import "./style.scss";
 import PageFallback from "../PageFallback";
 
 export const CTable = ({
+  custom_events,
   dataCount,
   children,
   count,
@@ -52,6 +53,7 @@ export const CTable = ({
 
       {!disablePagination && (
         <CPagination
+          custom_events={custom_events}
           dataCount={dataCount}
           filterVisible={filterVisible}
           count={count}

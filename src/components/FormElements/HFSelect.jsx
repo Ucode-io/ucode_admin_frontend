@@ -28,6 +28,7 @@ const HFSelect = ({
   optionType,
   defaultValue = "",
   rules = {},
+  id,
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -36,6 +37,8 @@ const HFSelect = ({
     setSelectedValue("");
     onChange("");
   };
+
+  const idSet = id ? `select_${id}` : `select_${name}`;
 
   return (
     <Controller
@@ -61,7 +64,7 @@ const HFSelect = ({
               error={error}
               inputProps={{placeholder}}
               fullWidth
-              id={`select_${name}`}
+              id={idSet}
               just
               following
               attributes

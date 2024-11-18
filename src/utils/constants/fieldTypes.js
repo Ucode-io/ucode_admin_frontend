@@ -671,18 +671,18 @@ export const math = [
     label: "plus",
     value: "+",
   },
-  {
-    label: "minus",
-    value: "-",
-  },
+  // {
+  //   label: "minus",
+  //   value: "-",
+  // },
   {
     label: "multiplication",
     value: "*",
   },
-  {
-    label: "division",
-    value: "/",
-  },
+  // {
+  //   label: "division",
+  //   value: "/",
+  // },
 ];
 
 export const relationFieldButtons = [

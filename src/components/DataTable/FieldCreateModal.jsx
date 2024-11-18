@@ -485,6 +485,7 @@ export default function FieldCreateModal({
                       name="attributes.formula"
                       control={control}
                       fullWidth
+                      id="formula_textarea"
                       required
                       placeholder="Formula"
                     />
@@ -505,6 +506,7 @@ export default function FieldCreateModal({
                     name="attributes.from_formula"
                     control={control}
                     fullWidth
+                    id="variable"
                     required
                     placeholder="Select variable"
                   />
@@ -518,6 +520,7 @@ export default function FieldCreateModal({
                     className={style.input}
                     disabledHelperText
                     options={fields}
+                    id="variable_second"
                     name="attributes.to_formula"
                     control={control}
                     fullWidth
@@ -562,7 +565,11 @@ export default function FieldCreateModal({
                   alignItems: "baseline",
                   columnGap: "5px",
                 }}>
-                <HFSwitch control={control} name="attributes.advanced_type" />
+                <HFSwitch
+                  id="advanced_switch"
+                  control={control}
+                  name="attributes.advanced_type"
+                />
                 Advanced Editor
               </Box>
             </>

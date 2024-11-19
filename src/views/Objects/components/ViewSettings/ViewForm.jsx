@@ -28,6 +28,7 @@ const ViewForm = ({
   columns,
   relationColumns,
   views,
+  viewData,
   setTab,
 }) => {
   const {tableSlug, appId} = useParams();
@@ -254,18 +255,20 @@ const ViewForm = ({
             <TabPanel>
               <div className={styles.section}>
                 <div className={styles.sectionBody}>
-                  <div className={styles.formRow}>
-                    <FRow label="Website Link">
-                      <Box style={{display: "flex", gap: "6px"}}>
-                        <HFTextField
-                          control={form.control}
-                          name={`attributes.web_link`}
-                          placeholder={`Website link`}
-                          fullWidth
-                        />
-                      </Box>
-                    </FRow>
-                  </div>
+                  {viewData?.type === "WEBSITE" && (
+                    <div className={styles.formRow}>
+                      <FRow label="Website Link">
+                        <Box style={{display: "flex", gap: "6px"}}>
+                          <HFTextField
+                            control={form.control}
+                            name={`attributes.web_link`}
+                            placeholder={`Website link`}
+                            fullWidth
+                          />
+                        </Box>
+                      </FRow>
+                    </div>
+                  )}
                   <div className={styles.formRow}>
                     <FRow label="Name">
                       <Box style={{display: "flex", gap: "6px"}}>

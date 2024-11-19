@@ -21,7 +21,7 @@
       else
         MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}."
       fi
-
+    - echo $MESSAGE
     # Send the message via Telegram
     - curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
           -d "chat_id=${TELEGRAM_CHAT_ID}" \

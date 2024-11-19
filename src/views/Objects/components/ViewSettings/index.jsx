@@ -83,6 +83,7 @@ const ViewSettings = ({
 
           {selectedView && (
             <ViewForm
+              viewData={viewData}
               initialValues={selectedView}
               typeNewView={typeNewView}
               closeForm={closeForm}

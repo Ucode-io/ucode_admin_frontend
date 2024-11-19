@@ -20,6 +20,8 @@ async function generateToken(data) {
 }
 
 const Editor = ({ onDownLoad, id: idFromProps, url }) => {
+  console.log('url ==>', url)
+
   const localId = useId()
   const [token, setToken] = useState(null);
 

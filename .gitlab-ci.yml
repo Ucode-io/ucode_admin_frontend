@@ -7,6 +7,12 @@ stages:
   - deploy
   - rollback
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - ~/.cache/Cypress/
+
 cypress-testing:
   stage: cypress-testing
   extends: .cypress_testing

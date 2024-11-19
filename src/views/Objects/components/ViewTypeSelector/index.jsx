@@ -20,6 +20,7 @@ import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {viewsActions} from "../../../../store/views/view.slice";
+import LanguageIcon from "@mui/icons-material/Language";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -167,7 +168,7 @@ const ViewTabSelector = ({
                     <ClearAllIcon className={style.icon} />
                   )}
                   {view.type === "WEBSITE" && (
-                    <ClearAllIcon className={style.icon} />
+                    <LanguageIcon className={style.icon} />
                   )}
                   <span>
                     {(view?.attributes?.[`name_${i18n.language}`]

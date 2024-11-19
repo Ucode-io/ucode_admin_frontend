@@ -3,7 +3,6 @@ include:
 
 stages:
   - cypress-testing
-  - notify
   - build
   - deploy
   - rollback
@@ -22,25 +21,6 @@ cypress-testing:
     REPOSITORY_URL: gitlab.udevs.io/ucode/ucode_cypress_test.git
     TEST_DIRECTORY: ucode_cypress_testing
   allow_failure: true 
-  only:
-    - staging
-
-notify:
-  stage: notify
-  script:
-  - |
-      - echo "Checking Cypress test result"
-      - echo $TEST_STATUS
-      - if [ "$TEST_STATUS" -eq 0 ]; then
-          MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}.";
-        else
-          MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}.";
-        fi
-      - echo "Notification message: $MESSAGE"
-      - curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d "chat_id=${TELEGRAM_CHAT_ID}" \
-            -d "text=${MESSAGE}"
-  when: always
   only:
     - staging
 

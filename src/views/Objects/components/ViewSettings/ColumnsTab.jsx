@@ -170,6 +170,7 @@ const ColumnsTab = ({
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
             <Switch
+              id="columns_all"
               size="small"
               checked={isAllChecked}
               onChange={onAllChecked}
@@ -220,6 +221,10 @@ const ColumnsTab = ({
                     justifyContent: "flex-end",
                   }}>
                   <Switch
+                    id={`column_switch_${
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.label
+                    }`}
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {

@@ -62,7 +62,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
         </p>
       </Box>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form style={{marginTop: "25px"}} onSubmit={handleSubmit(onSubmit)}>
         <Box className="" h="calc(100vh - 300px)" overflow="auto">
           <div className={classes.formRow}>
             <p className={classes.label}>{"Название компании*"}</p>

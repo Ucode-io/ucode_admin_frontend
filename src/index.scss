@@ -679,3 +679,16 @@ u {
 .woot-widget-bubble {
   display: none !important;
 }
+
+.webLinkInput {
+  border-radius: 8px;
+  .MuiInputBase-input {
+    height: 10px;
+    font-size: 16px;
+
+    &::placeholder {
+      font-size: 16px;
+      color: #667085;
+    }
+  }
+}

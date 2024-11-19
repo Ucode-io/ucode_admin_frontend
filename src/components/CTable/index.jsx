@@ -1,12 +1,12 @@
 import {Paper} from "@mui/material";
 import {forwardRef} from "react";
 import CPagination from "../CPagination";
-import EmptyDataComponent from "../EmptyDataComponent";
 import TableLoader from "../TableLoader/index";
 import "./style.scss";
 import PageFallback from "../PageFallback";
 
 export const CTable = ({
+  custom_events,
   dataCount,
   children,
   count,
@@ -32,6 +32,8 @@ export const CTable = ({
   filterVisible,
   navigateToEditPage,
   parentRef,
+  getAllData = () => {},
+  control,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -51,6 +53,7 @@ export const CTable = ({
 
       {!disablePagination && (
         <CPagination
+          custom_events={custom_events}
           dataCount={dataCount}
           filterVisible={filterVisible}
           count={count}
@@ -69,6 +72,8 @@ export const CTable = ({
           selectedTab={selectedTab}
           isRelationTable={isRelationTable}
           navigateToEditPage={navigateToEditPage}
+          getAllData={getAllData}
+          control={control}
         />
       )}
     </Paper>

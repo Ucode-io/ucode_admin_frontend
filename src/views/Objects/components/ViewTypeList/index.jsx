@@ -1,22 +1,27 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
-import { AccountTree, CalendarMonth, TableChart } from "@mui/icons-material";
+import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import { Button } from "@mui/material";
+import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import constructorViewService from "../../../../services/constructorViewService";
-import { useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import {useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {Controller, useForm} from "react-hook-form";
+import LanguageIcon from "@mui/icons-material/Language";
 
-export default function ViewTypeList({ computedViewTypes, views, handleClose, openModal, setSelectedView, setTypeNewView }) {
+export default function ViewTypeList({computedViewTypes, views, handleClose}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
-  const { i18n } = useTranslation();
-  const { tableSlug, appId } = useParams();
+  const {i18n} = useTranslation();
+  const {tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
+  const {control, watch} = useForm();
+  const [error, setError] = useState(false);
+
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
       case "TABLE":
@@ -34,6 +39,8 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
       case "FINANCE CALENDAR":
         return "/img/financeCalendarView.svg";
       case "TIMELINE":
+        return "/img/calendarHourView.svg";
+      case "WEBSITE":
         return "/img/calendarHourView.svg";
       default:
         return "/img/tableView.svg";
@@ -58,6 +65,8 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
         return "See your teams capacity, who is over or under and reassign tasks accordingly.";
       case "TIMELINE":
         return "Plan out your work over time. See overlaps, map your schedule out and see it all divided by groups.";
+      case "WEBSITE":
+        return "Website view allows you to display any website by simply placing your own link to showcase external content.";
       default:
         return "Easily manage, update, and organize your tasks with Table view.";
     }
@@ -112,16 +121,47 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
   }, [appId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
-    setBtnLoader(true);
-    constructorViewService
-      .create(tableSlug, newViewJSON)
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language]);
-      })
-      .finally(() => {
-        setBtnLoader(false);
-        handleClose();
-      });
+    if (selectedViewTab === "WEBSITE") {
+      if (watch("web_link")) {
+        setBtnLoader(true);
+        constructorViewService
+          .create(tableSlug, {
+            ...newViewJSON,
+            attributes: {
+              ...newViewJSON?.attributes,
+              web_link: watch("web_link"),
+            },
+          })
+          .then(() => {
+            queryClient.refetchQueries([
+              "GET_VIEWS_AND_FIELDS",
+              tableSlug,
+              i18n?.language,
+            ]);
+          })
+          .finally(() => {
+            setBtnLoader(false);
+            handleClose();
+          });
+      } else {
+        setError(true);
+      }
+    } else {
+      setBtnLoader(true);
+      constructorViewService
+        .create(tableSlug, newViewJSON)
+        .then(() => {
+          queryClient.refetchQueries([
+            "GET_VIEWS_AND_FIELDS",
+            tableSlug,
+            i18n?.language,
+          ]);
+        })
+        .finally(() => {
+          setBtnLoader(false);
+          handleClose();
+        });
+    }
   };
 
   return (
@@ -134,16 +174,30 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
               className={type.value === selectedViewTab ? style.active : ""}
               onClick={() => {
                 setSelectedViewTab(type.value);
-              }}
-            >
+              }}>
               {type.value === "TABLE" && <TableChart className={style.icon} />}
-              {type.value === "CALENDAR" && <CalendarMonth className={style.icon} />}
-              {type.value === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-              {type.value === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+              {type.value === "CALENDAR" && (
+                <CalendarMonth className={style.icon} />
+              )}
+              {type.value === "CALENDAR HOUR" && (
+                <IconGenerator className={style.icon} icon="chart-gantt.svg" />
+              )}
+              {type.value === "GANTT" && (
+                <IconGenerator className={style.icon} icon="chart-gantt.svg" />
+              )}
               {type.value === "TREE" && <AccountTree className={style.icon} />}
-              {type.value === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
-              {type.value === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-              {type.value === "TIMELINE" && <ClearAllIcon className={style.icon} />}
+              {type.value === "BOARD" && (
+                <IconGenerator className={style.icon} icon="brand_trello.svg" />
+              )}
+              {type.value === "FINANCE CALENDAR" && (
+                <MonetizationOnIcon className={style.icon} />
+              )}
+              {type.value === "TIMELINE" && (
+                <ClearAllIcon className={style.icon} />
+              )}
+              {type.value === "WEBSITE" && (
+                <LanguageIcon className={style.icon} />
+              )}
               {type.label}
             </Button>
           ))}
@@ -157,6 +211,35 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
           <div className={style.text}>
             <h3>{selectedViewTab}</h3>
             <p>{detectDescriptionView}</p>
+            {selectedViewTab === "WEBSITE" && (
+              <Controller
+                control={control}
+                name="web_link"
+                render={({field: {onChange, value}}) => {
+                  return (
+                    <TextField
+                      onChange={(e) => {
+                        onChange(e.target.value);
+                      }}
+                      value={value}
+                      placeholder="website link..."
+                      className="webLinkInput"
+                      sx={{padding: 0}}
+                      fullWidth
+                      name="web_link"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LanguageIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      error={error}
+                    />
+                  );
+                }}
+              />
+            )}
           </div>
 
           <div className={style.button}>
@@ -169,8 +252,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
                 // setSelectedView("NEW");
                 // setTypeNewView(selectedViewTab);
                 createView();
-              }}
-            >
+              }}>
               Create View {selectedViewTab}
             </LoadingButton>
           </div>
@@ -179,3 +261,22 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, op
     </div>
   );
 }
+
+{
+  /* <HFTextFieldLogin */
+}
+//   name="web_link"
+//   control={control}
+//   required
+//   fullWidth
+//   placeholder={"website link..."}
+//   autoFocus
+//   InputProps={{
+//     startAdornment: (
+//       <InputAdornment position="start">
+//         {/* <img src="/img/user-circle.svg" height={"23px"} alt="" /> */}
+//         <LanguageIcon />
+//       </InputAdornment>
+//     ),
+//   }}
+// />

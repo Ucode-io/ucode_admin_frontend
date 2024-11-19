@@ -196,7 +196,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
                 <ClearAllIcon className={style.icon} />
               )}
               {type.value === "WEBSITE" && (
-                <ClearAllIcon className={style.icon} />
+                <LanguageIcon className={style.icon} />
               )}
               {type.label}
             </Button>

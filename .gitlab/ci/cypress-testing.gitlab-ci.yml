@@ -11,6 +11,7 @@
     - echo "Running Cypress tests..."
     - bash run.sh
     - TEST_STATUS=1 # Capture the exit status of the Cypress tests
+    - echo "TEST_STATUS=$TEST_STATUS" > $CI_PROJECT_DIR/.test_status.env  # Save the status to a file
     - echo $TEST_STATUS
   after_script:
     - echo "Cypress test finished"

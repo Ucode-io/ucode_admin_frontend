@@ -10,22 +10,20 @@
     - cd ${WORKDIR} && git checkout ${GIT_BRANCH}
     - echo "Running Cypress tests..."
     - bash run.sh
-    - TEST_STATUS=1 # Capture the exit status of the Cypress tests
+    - TEST_STATUS=$? # Capture the exit status of the Cypress tests
     - echo "TEST_STATUS=$TEST_STATUS" > $CI_PROJECT_DIR/.test_status.env  # Save the status to a file
-    - echo $TEST_STATUS
   after_script:
     - echo "Cypress test finished"
     - echo "Loading test status..."
     - source $CI_PROJECT_DIR/.test_status.env  # Load the saved status
     - TEST_STATUS=$((TEST_STATUS))
-    - echo $TEST_STATUS
     - |
       if [ "$TEST_STATUS" -eq 0 ]; then
         MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Check details: ${CI_JOB_URL}"
       else
         MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}. Check details: ${CI_JOB_URL}"
       fi
-    - echo $MESSAGE
+      
     # Send the message via Telegram
     - |
       curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \

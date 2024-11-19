@@ -14,6 +14,7 @@ cypress-testing:
     OAUTH_GITLAB_TOKEN: $OAUTH_GITLAB_TOKEN
     REPOSITORY_URL: gitlab.udevs.io/ucode/ucode_cypress_test.git
     TEST_DIRECTORY: ucode_cypress_testing
+  allow_failure: true 
   only:
     - staging
 

@@ -29,6 +29,7 @@ notify_telegram:
   stage: notify
   script:
     - |
+      echo ${CI_JOB_STATUS}
       if [ "${CI_JOB_STATUS}" = "success" ]; then
         MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Details: ${CI_JOB_URL}"
       else
@@ -38,6 +39,8 @@ notify_telegram:
           -d "chat_id=${TELEGRAM_CHAT_ID}" \
           -d "text=${MESSAGE}"
   when: always
+  only:
+    - staging
 
 build-dev:
   stage: build

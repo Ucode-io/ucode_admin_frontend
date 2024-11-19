@@ -10,7 +10,6 @@
     - cd ${WORKDIR} && git checkout ${GIT_BRANCH}
     - echo "Running Cypress tests..."
     - bash run.sh
-    - exit 1
     - TEST_STATUS=1 # Capture the exit status of the Cypress tests
     - echo $TEST_STATUS
   after_script:

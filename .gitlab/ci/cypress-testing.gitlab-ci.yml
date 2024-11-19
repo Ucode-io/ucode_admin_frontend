@@ -17,7 +17,6 @@
     - echo "Cypress test finished"
     - echo "Loading test status..."
     - source $CI_PROJECT_DIR/.test_status.env  # Load the saved status
-    - echo "Cypress test status is: $TEST_STATUS"
     - TEST_STATUS=$((TEST_STATUS))
     - echo $TEST_STATUS
     - |

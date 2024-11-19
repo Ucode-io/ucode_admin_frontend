@@ -3,6 +3,7 @@ include:
 
 stages:
   - cypress-testing
+  - notify
   - build
   - deploy
   - rollback
@@ -23,6 +24,15 @@ cypress-testing:
   allow_failure: true 
   only:
     - staging
+
+notify_telegram:
+  stage: notify
+  script:
+    |
+    - curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d "chat_id=${TELEGRAM_CHAT_ID}" \
+        -d "text=Cypress testing failed ${CI_PROJECT_NAME}. View details: ${CI_JOB_URL}"
+  when: on_failure
 
 build-dev:
   stage: build

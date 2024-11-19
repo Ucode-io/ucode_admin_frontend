@@ -28,7 +28,7 @@ cypress-testing:
 notify:
   stage: notify
   script:
-    | 
+    |
     - echo "Checking Cypress test result"
     - if [ "$TEST_STATUS" -eq 0 ]; then
         MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}.";

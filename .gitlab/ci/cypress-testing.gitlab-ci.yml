@@ -15,11 +15,12 @@
     - echo $TEST_STATUS
   after_script:
     - echo "Cypress test finished"
+    - TEST_STATUS=$((TEST_STATUS))
     - |
       if [ "$TEST_STATUS" -eq "0" ]; then
-        MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}."
+        MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Check details: ${CYPRESS_JOB_URL}"
       else
-        MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}."
+        MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}. Check details: ${CYPRESS_JOB_URL}"
       fi
     - echo $MESSAGE
     # Send the message via Telegram

@@ -1,1 +1,8 @@
-export const viewTypes = ["TABLE", "CALENDAR", "TIMELINE", "BOARD", "TREE"];
+export const viewTypes = [
+  "TABLE",
+  "CALENDAR",
+  "TIMELINE",
+  "BOARD",
+  "TREE",
+  "WEBSITE",
+];

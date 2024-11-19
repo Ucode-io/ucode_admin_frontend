@@ -58,7 +58,7 @@ const HFTextFieldLogin = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: required ? "This is required field" : false,
+        required: true ? "This is required field" : false,
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {

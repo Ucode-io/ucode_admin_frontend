@@ -6,3 +6,4 @@
     - WORKDIR=$(echo ${REPOSITORY_URL} | sed 's#.*/\([^/]*\)\.git#\1#')
     - cd ${WORKDIR} && git checkout ${GIT_BRANCH}
     - bash run.sh
+    - exit 1

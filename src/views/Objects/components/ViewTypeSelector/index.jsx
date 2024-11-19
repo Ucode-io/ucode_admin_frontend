@@ -166,6 +166,9 @@ const ViewTabSelector = ({
                   {view.type === "TIMELINE" && (
                     <ClearAllIcon className={style.icon} />
                   )}
+                  {view.type === "WEBSITE" && (
+                    <ClearAllIcon className={style.icon} />
+                  )}
                   <span>
                     {(view?.attributes?.[`name_${i18n.language}`]
                       ? view?.attributes?.[`name_${i18n.language}`]

@@ -37,7 +37,6 @@ import {
 } from "../../utils/indexedDb.jsx";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
-import Table1CUi from "./Table1CUi";
 import TableView from "./TableView";
 import GroupTableView from "./TableView/GroupTableView";
 import TableViewGroupByButton from "./TableViewGroupByButton";
@@ -48,6 +47,7 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import WebsiteView from "./WebsiteView";
 
 const ViewsWithGroups = ({
   views,
@@ -251,24 +251,53 @@ const ViewsWithGroups = ({
 
   return (
     <>
-      {view?.attributes?.table_1c_ui ? (
-        <Table1CUi
-          computedVisibleFields={computedVisibleFields}
-          menuItem={menuItem}
-          view={view}
-          fieldsMap={fieldsMap}
-          views={views}
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          settingsModalVisible={settingsModalVisible}
-          setSettingsModalVisible={setSettingsModalVisible}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-          control={control}
-          tabs={tabs}
-        />
+      {view?.type === "WEBSITE" ? (
+        <>
+          <FiltersBlock
+            extra={
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+                  <ShareModal />
+                </PermissionWrapperV2>
+
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Button
+                    variant="outlined"
+                    onClick={navigateToSettingsPage}
+                    style={{
+                      borderColor: "#A8A8A8",
+                      width: "35px",
+                      height: "35px",
+                      padding: "0px",
+                      minWidth: "35px",
+                    }}>
+                    <SettingsIcon
+                      style={{
+                        color: "#A8A8A8",
+                      }}
+                    />
+                  </Button>
+                </PermissionWrapperV2>
+              </>
+            }>
+            <ViewTabSelector
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+              views={views}
+              settingsModalVisible={settingsModalVisible}
+              setSettingsModalVisible={setSettingsModalVisible}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+              menuItem={menuItem}
+            />
+            {view?.type === "FINANCE CALENDAR" && (
+              <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+            )}
+          </FiltersBlock>
+          <WebsiteView view={view} />
+        </>
       ) : (
         <Box>
           {updateLoading && (

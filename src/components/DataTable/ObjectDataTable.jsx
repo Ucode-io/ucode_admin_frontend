@@ -14,10 +14,11 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
-import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
+import "./style.scss";
 
 const ObjectDataTable = ({
+  custom_events,
   dataCount,
   selectedTab,
   filterVisible,
@@ -229,6 +230,7 @@ const ObjectDataTable = ({
 
   return (
     <CTable
+      custom_events={custom_events}
       dataCount={count ?? dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}
@@ -250,7 +252,9 @@ const ObjectDataTable = ({
       view={view}
       filterVisible={filterVisible}
       navigateToEditPage={navigateToEditPage}
-      parentRef={parentRef}>
+      parentRef={parentRef}
+      getAllData={getAllData}
+      control={control}>
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow

@@ -18,9 +18,9 @@
     - TEST_STATUS=$((TEST_STATUS))
     - |
       if [ "$TEST_STATUS" -eq "0" ]; then
-        MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Check details: ${CYPRESS_JOB_URL}"
+        MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Check details: ${CI_JOB_URL}"
       else
-        MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}. Check details: ${CYPRESS_JOB_URL}"
+        MESSAGE="Cypress tests failed in project: ${CI_PROJECT_NAME}. Check details: ${CI_JOB_URL}"
       fi
     - echo $MESSAGE
     # Send the message via Telegram

@@ -28,7 +28,7 @@ cypress-testing:
 notify:
   stage: notify
   script:
-    |
+  - |
       - echo "Checking Cypress test result"
       - echo $TEST_STATUS
       - if [ "$TEST_STATUS" -eq 0 ]; then

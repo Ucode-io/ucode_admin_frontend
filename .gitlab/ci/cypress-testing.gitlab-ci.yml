@@ -9,6 +9,7 @@
     - echo "Running Cypress tests..."
     - bash run.sh
     - TEST_STATUS=$?  # Capture the exit status of the Cypress tests
+    - echo $TEST_STATUS
   after_script:
     - echo "Cypress test finished"
     - |

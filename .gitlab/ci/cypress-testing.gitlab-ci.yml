@@ -15,6 +15,7 @@
   after_script:
     - echo "Cypress test finished"
     - TEST_STATUS=$((TEST_STATUS))
+    - echo $TEST_STATUS
     - |
       if [ "$TEST_STATUS" -eq 0 ]; then
         MESSAGE="Cypress tests succeeded in project: ${CI_PROJECT_NAME}. Check details: ${CI_JOB_URL}"

@@ -284,11 +284,12 @@ const TableView = ({
   }, [paginiation, limit, currentPage]);
 
   const {
-    data: {fiedlsarray, fieldView} = {
+    data: {fiedlsarray, fieldView, custom_events} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
       fiedlsarray: [],
+      custom_events: [],
     },
   } = useQuery({
     queryKey: [
@@ -305,9 +306,11 @@ const TableView = ({
     },
     enabled: Boolean(!tableSlug),
     select: (res) => {
+      console.log("resssssssssss", res);
       return {
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
+        custom_events: res?.data?.custom_events ?? [],
       };
     },
   });
@@ -570,6 +573,7 @@ const TableView = ({
         }}
         id="data-table">
         <ObjectDataTable
+          custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}
           filterVisible={filterVisible}

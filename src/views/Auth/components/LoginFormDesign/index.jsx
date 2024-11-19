@@ -349,10 +349,6 @@ const LoginFormDesign = ({
     }
   };
 
-  // useEffect(() => {
-  //   getFcmToken();
-  // }, []);
-
   useEffect(() => {
     getFcmToken();
     reset();

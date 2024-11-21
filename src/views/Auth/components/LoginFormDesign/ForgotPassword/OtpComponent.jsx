@@ -22,7 +22,7 @@ function OtpComponent({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Введите код
+          Enter code
         </h3>
         <p
           style={{
@@ -30,7 +30,7 @@ function OtpComponent({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Отправленный на почту
+          Sent to Email
         </p>
         <p>ucodedllc@uc.com</p>
       </Box>
@@ -60,7 +60,7 @@ function OtpComponent({
         />
       </Box>
       <Box sx={{textAlign: "center", marginTop: "24px"}}>
-        <p>Отправить код заново через 00:20</p>
+        <p>Sent code after 00:20</p>
         <PrimaryButton
           size="large"
           onClick={(e) => {
@@ -73,7 +73,7 @@ function OtpComponent({
             borderRadius: "8px",
           }}
           loader={loading}>
-          Подтвердить
+          Confirm
         </PrimaryButton>
       </Box>
     </Box>

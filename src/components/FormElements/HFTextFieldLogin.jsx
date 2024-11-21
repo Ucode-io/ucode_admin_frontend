@@ -27,7 +27,7 @@ const HFTextFieldLogin = ({
   withTrim = false,
   rules = {},
   defaultValue = "",
-  disabled,
+  disabled = false,
   tabIndex,
   checkRequiredField,
   placeholder,
@@ -104,7 +104,7 @@ const HFTextFieldLogin = ({
               style: disabled
                 ? {
                     background: "#c0c0c039",
-                    padding: "0px",
+                    padding: "0px !important",
                   }
                 : isNewTableView
                   ? {

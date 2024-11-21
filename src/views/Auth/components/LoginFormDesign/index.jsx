@@ -456,17 +456,17 @@ const LoginFormDesign = ({
                   <Tab
                     onClick={() => setFormType("LOGIN")}
                     style={{padding: "10px 8px 10px 8px"}}>
-                    {t("Логин")}
+                    {t("Login")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("phone")}
                     style={{padding: "10px 12px 10px 12px"}}>
-                    {t("Номер телефона")}
+                    {t("Phone number")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("email")}
                     style={{padding: "10px 12px 10px 12px"}}>
-                    {t("Почта")}
+                    {t("Email")}
                   </Tab>
                   {/* <Tab
                     onClick={() => setFormType("ESP")}

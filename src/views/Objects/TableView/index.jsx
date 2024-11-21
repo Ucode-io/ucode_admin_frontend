@@ -306,7 +306,6 @@ const TableView = ({
     },
     enabled: Boolean(!tableSlug),
     select: (res) => {
-      console.log("resssssssssss", res);
       return {
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],

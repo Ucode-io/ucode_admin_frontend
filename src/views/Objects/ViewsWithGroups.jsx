@@ -344,7 +344,7 @@ const ViewsWithGroups = ({
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
             )}
           </FiltersBlock>
-          <AgGridTableView />
+          <AgGridTableView view={view} />
         </>
       ) : (
         <Box>

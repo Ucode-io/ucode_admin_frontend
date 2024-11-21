@@ -692,3 +692,16 @@ u {
     }
   }
 }
+
+.ag-root-wrapper {
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.ag-theme-quartz {
+  --ag-borders: none;
+  --ag-row-border-style: solid;
+  --ag-row-border-width: 1px;
+  --ag-row-border-color: #eee;
+  --ag-cell-horizontal-border: solid #eee;
+}

@@ -141,7 +141,7 @@ function ForgotPassword({setFormType = () => {}}) {
   return (
     <>
       <Box className={styles.otpBackBtn} onClick={backToLogin}>
-        Ко входу
+        Login
       </Box>
       <form>
         {viewType === "login" ? (
@@ -158,7 +158,7 @@ function ForgotPassword({setFormType = () => {}}) {
                   color: "#101828",
                   marginBottom: "8px",
                 }}>
-                Забыли пароль?
+                Forgot password?
               </h3>
               <p
                 style={{
@@ -166,11 +166,11 @@ function ForgotPassword({setFormType = () => {}}) {
                   color: "#101828",
                   marginBottom: "8px",
                 }}>
-                Мы отправим вам код на почту
+                We sent confirmation code to your email
               </p>
             </Box>
             <Box sx={{marginTop: "24px"}}>
-              <p className={styles.label}>{t("Почтовый адрес*")}</p>
+              <p className={styles.label}>{t("Email*")}</p>
               <HFTextFieldLogin
                 required
                 control={control}
@@ -207,7 +207,7 @@ function ForgotPassword({setFormType = () => {}}) {
                   borderRadius: "8px",
                 }}
                 loader={loading}>
-                Отправить код
+                Send code
               </PrimaryButton>
             </Box>
           </Box>

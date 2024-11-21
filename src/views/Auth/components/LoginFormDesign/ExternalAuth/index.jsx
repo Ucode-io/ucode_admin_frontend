@@ -23,22 +23,17 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
             fontSize: "14px",
             color: "#475467",
           }}>
-          Или
+          Or
         </Box>
         <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
       </Box>
 
-      <Tooltip title="Will be available soon!">
+      <Tooltip title="Google Auth!">
         <Box>
           <GoogleAuthLogin getCompany={getCompany} />
         </Box>
       </Tooltip>
       <ChatwootLogin />
-      {/* <Tooltip title="Will be available soon!">
-        <Box>
-          <GithubAuthLogin />
-        </Box>
-      </Tooltip> */}
 
       <Box
         sx={{
@@ -48,11 +43,11 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
           marginTop: "24px",
           justifyContent: "center",
         }}>
-        <p>У вас нет аккаунта?</p>
+        <p>Don't you have an account?</p>
         <Box
           onClick={() => setFormType("REGISTER")}
           sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-          Создайте его
+          Create one
         </Box>
       </Box>
     </>

@@ -1,17 +1,21 @@
 import React, {useState} from "react";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import {useGoogleLogin} from "@react-oauth/google";
-import {Box, Tooltip} from "@mui/material";
 
-function GoogleAuthLogin({getCompany = () => {}}) {
+function GoogleAuthLogin({
+  getCompany = () => {},
+  text = "",
+  setValue = () => {},
+  watch = () => {},
+}) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      console.log("GOOGLE AUTH REPONSE", tokenResponse);
       setLoading(false);
       setData(tokenResponse);
+      setValue("googleToken", tokenResponse);
       getCompany({
         type: "google",
         google_token: tokenResponse?.access_token,
@@ -25,8 +29,7 @@ function GoogleAuthLogin({getCompany = () => {}}) {
   return (
     <>
       <PrimaryButton
-        disabled={loading}
-        // disabled={true}
+        disabled={loading || Boolean(watch("googleToken"))}
         onClick={() => {
           setLoading(true);
           login();
@@ -45,7 +48,7 @@ function GoogleAuthLogin({getCompany = () => {}}) {
         type={"button"}
         loading={loading}>
         <img src="/img/google.svg" alt="" />
-        Продолжить с Google
+        {text ? text : "Continue with Google"}
       </PrimaryButton>
     </>
   );

@@ -59,7 +59,7 @@ const HFPhoneLoginField = ({
             </Box>
             <PhoneInput
               disabled={disabled}
-              placeholder="Введите номер телефона"
+              placeholder={placeholder}
               value={
                 isString(value)
                   ? value?.includes("+")

@@ -1,3 +1,5 @@
+import {format} from "date-fns";
+
 const getColumnEditorParams = (item, columnDef) => {
   if (item?.type === "MULTISELECT" && item?.attributes?.options) {
     columnDef.cellEditor = "agSelectCellEditor";
@@ -10,12 +12,12 @@ const getColumnEditorParams = (item, columnDef) => {
     };
   } else if (item?.type === "DATE") {
     columnDef.valueFormatter = (params) => {
-      return new Date(params.value).toLocaleDateString("en-us", {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+      return format(new Date(params.value), "dd-mm-yyyy");
+    };
+
+    columnDef.cellEditor = "agDateCellEditor";
+    columnDef.cellEditorParams = {
+      format: "dd-MM-yyyy",
     };
   }
 

@@ -69,7 +69,8 @@ function AgGridTableView({view}) {
             minWidth: 250,
             filter: true,
             editable: true,
-            enableGrpupRow: true,
+            rowGroup: true,
+            enableRowGroup: true,
           };
           getColumnEditorParams(item, columnDef);
 
@@ -156,6 +157,9 @@ function AgGridTableView({view}) {
       enablePivot: true,
       enableValue: true,
       autoHeaderHeight: true,
+      filterParams: {
+        applyMiniFilterWhileTyping: true,
+      },
     };
   }, []);
 
@@ -182,6 +186,7 @@ function AgGridTableView({view}) {
         pagination={true}
         cellSelection={true}
         sideBar={true}
+        enableAdvancedFilter={true}
         defaultColDef={defaultColDef}
         rowGroupPanelShow={"always"}
         autoGroupColumnDef={autoGroupColumnDef}

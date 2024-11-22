@@ -699,12 +699,10 @@ u {
 }
 
 .ag-theme-quartz {
-  // --ag-borders: none;
   --ag-row-border-style: solid;
   --ag-row-border-width: 1px;
   --ag-row-border-color: #e5e9eb;
   --ag-cell-horizontal-border: solid #e5e9eb;
-  // --ag-selected-row-background-color: rgb(0, 255, 0, 0.1);
 
   --ag-range-selection-border-color: rgb(193, 0, 97);
   --ag-range-selection-border-style: dashed;
@@ -716,7 +714,7 @@ u {
 
   --ag-range-selection-highlight-color: rgb(60, 188, 0, 0.3);
 
-  --ag-header-height: 35px;
+  --ag-header-height: 45px;
 
   --ag-header-foreground-color: #262626;
   --ag-header-background-color: #fff;
@@ -732,4 +730,7 @@ u {
   --ag-font-size: 13px;
   --ag-font-weight: 300;
   --ag-font-family: "Inter", sans-serif;
+}
+
+.ag-advanced-filter-header {
 }

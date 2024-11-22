@@ -9,7 +9,7 @@ import {useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
-import {useFieldsListQuery} from "../../services/fieldService";
+
 import {useRelationGetByIdQuery} from "../../services/relationService";
 import {applyDrag} from "../../utils/applyDrag";
 import {
@@ -31,6 +31,7 @@ import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLa
 import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
+import {useFieldsListQuery} from "../../services/constructorFieldService";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -55,6 +56,7 @@ export default function FieldCreateModal({
   const fieldWatch = useWatch({
     control,
   });
+
   const [fields, setFields] = useState([]);
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);

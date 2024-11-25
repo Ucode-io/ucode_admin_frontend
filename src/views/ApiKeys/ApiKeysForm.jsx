@@ -1,8 +1,8 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
@@ -15,15 +15,16 @@ import PageFallback from "../../components/PageFallback";
 import apiKeyService from "../../services/apiKey.service";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
-import { store } from "../../store";
+import {store} from "../../store";
 import FiltersBlock from "../../components/FiltersBlock";
 import DateForm from "../../components/DateForm";
-import { endOfMonth, startOfMonth } from "date-fns";
+import {endOfMonth, startOfMonth} from "date-fns";
 import Select from "react-select";
-import { customStyles } from "../../components/Status";
+import {customStyles} from "../../components/Status";
+import HFSelect from "../../components/FormElements/HFSelect";
 
 const ApiKeysForm = () => {
-  const { appId, apiKeyId } = useParams();
+  const {appId, apiKeyId} = useParams();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [btnLoader, setBtnLoader] = useState();
@@ -31,13 +32,15 @@ const ApiKeysForm = () => {
   const [loader, setLoader] = useState(false);
   const [clientType, setClientType] = useState([]);
   const [histories, setHistories] = useState([]);
+  const [platformList, setPlatformList] = useState([]);
+  const location = useLocation();
+
   const [date, setDate] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),
   });
   const authStore = store.getState().auth;
   const [inputValue, setInputValue] = useState("");
-
 
   const mainForm = useForm({
     defaultValues: {
@@ -48,7 +51,7 @@ const ApiKeysForm = () => {
     },
   });
 
-  const apiKey = mainForm.getValues("app_id")
+  const apiKey = mainForm.getValues("app_id");
 
   const createApp = (data) => {
     setBtnLoader(true);
@@ -110,9 +113,20 @@ const ApiKeysForm = () => {
       });
   };
 
+  const getClientPlatformList = () => {
+    apiKeyService.getClientPlatform().then((res) =>
+      setPlatformList(
+        res?.client_platforms?.map((item) => ({
+          label: item?.name,
+          value: item?.id,
+        }))
+      )
+    );
+  };
 
   useEffect(() => {
     getClientTypeList();
+    getClientPlatformList();
   }, []);
 
   useEffect(() => {
@@ -127,7 +141,6 @@ const ApiKeysForm = () => {
     }
   }, [apiKeyId]);
 
-
   const onSubmit = (data) => {
     if (apiKeyId) updateApp(data);
     else createApp(data);
@@ -137,29 +150,30 @@ const ApiKeysForm = () => {
 
   return (
     <div>
-      <Tabs
-        selectedIndex={selectedTab} direction={"ltr"}
-      >
+      <Tabs selectedIndex={selectedTab} direction={"ltr"}>
         <HeaderSettings
-          title="Приложение"
+          title="Application"
           backButtonLink={-1}
-          subtitle={appId ? mainForm.watch("name") : "Новый"}
-        >
+          subtitle={appId ? mainForm.watch("name") : "Новый"}>
           <TabList>
             <Tab onClick={() => setSelectedTab(0)}>Api Key</Tab>
             <Tab onClick={() => setSelectedTab(1)}>Log</Tab>
           </TabList>
         </HeaderSettings>
         {selectedTab === 1 && (
-          <FiltersBlock style={{
-            justifyContent: "end"
-          }}>
+          <FiltersBlock
+            style={{
+              justifyContent: "end",
+            }}>
             <Select
               inputValue={inputValue}
-              onInputChange={(newInputValue, { action }) => {
+              onInputChange={(newInputValue, {action}) => {
                 setInputValue(newInputValue);
               }}
-              options={[{ label: "text", value: "re" }, { label: "jo", value: "re" }]}
+              options={[
+                {label: "text", value: "re"},
+                {label: "jo", value: "re"},
+              ]}
               menuPortalTarget={document.body}
               isClearable
               isSearchable
@@ -181,38 +195,54 @@ const ApiKeysForm = () => {
                 //     ),
                 DropdownIndicator: null,
               }}
-              onChange={(newValue, { action }) => {
-                console.log("newValue", newValue)
+              onChange={(newValue, {action}) => {
                 //   changeHandler(newValue);
               }}
               menuShouldScrollIntoView
               styles={customStyles}
-              onPaste={(e) => {
-                console.log("eeeeeee -", e.clipboardData.getData("Text"));
-              }}
+              onPaste={(e) => {}}
               isOptionSelected={(option, value) =>
                 value.some((val) => val.guid === value)
               }
               blurInputOnSelect
             />
-            <DateForm onChange={setDate} date={date} views={["month", "year"]} />
+            <DateForm
+              onChange={setDate}
+              date={date}
+              views={["month", "year"]}
+            />
           </FiltersBlock>
         )}
         <TabPanel>
           <form
             onSubmit={mainForm.handleSubmit(onSubmit)}
             className="p-2"
-            style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-          >
-            <FormCard title="Детали" maxWidth={500}>
+            style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
+            <FormCard title="Details" maxWidth={500}>
               <FRow
-                label={"Названия"}
+                label={"Name"}
                 componentClassName="flex gap-2 align-center"
-                required
-              >
+                required>
                 <HFTextField
                   disabledHelperText
                   name="name"
+                  control={mainForm.control}
+                  fullWidth
+                  required
+                />
+              </FRow>
+              <FRow
+                label={"Platform"}
+                componentClassName="flex gap-2 align-center"
+                required>
+                <HFSelect
+                  disabled={Boolean(
+                    location?.search?.includes("edit") ||
+                      location.search.includes("view")
+                  )}
+                  disabledHelperText
+                  name="client_platform_id"
+                  options={platformList}
                   control={mainForm.control}
                   fullWidth
                   required
@@ -223,8 +253,7 @@ const ApiKeysForm = () => {
                   <FRow
                     label={"App ID"}
                     componentClassName="flex gap-2 align-center"
-                    required
-                  >
+                    required>
                     <HFTextField
                       disabledHelperText
                       name="app_id"
@@ -237,8 +266,7 @@ const ApiKeysForm = () => {
                   <FRow
                     label="Monthly limit"
                     componentClassName="flex gap-2 align-center"
-                    required
-                  >
+                    required>
                     <HFTextField
                       disabledHelperText
                       name="monthly_request_limit"
@@ -251,8 +279,7 @@ const ApiKeysForm = () => {
                   <FRow
                     label="RPS limit"
                     componentClassName="flex gap-2 align-center"
-                    required
-                  >
+                    required>
                     <HFTextField
                       disabledHelperText
                       name="rps_limit"
@@ -265,8 +292,7 @@ const ApiKeysForm = () => {
                   <FRow
                     label="Used count"
                     componentClassName="flex gap-2 align-center"
-                    required
-                  >
+                    required>
                     <HFTextField
                       disabledHelperText
                       name="used_count"
@@ -278,7 +304,6 @@ const ApiKeysForm = () => {
                   </FRow>
                 </>
               )}
-
             </FormCard>
           </form>
           <Footer
@@ -288,18 +313,29 @@ const ApiKeysForm = () => {
                   Close
                 </SecondaryButton>
 
-                <PrimaryButton
-                  loader={btnLoader}
-                  onClick={mainForm.handleSubmit(onSubmit)}
-                >
-                  <Save /> Save
-                </PrimaryButton>
+                {Boolean(
+                  location?.search?.includes("edit") ||
+                    location?.pathname?.includes("create")
+                ) && (
+                  <PrimaryButton
+                    loader={btnLoader}
+                    onClick={mainForm.handleSubmit(onSubmit)}>
+                    <Save /> Save
+                  </PrimaryButton>
+                )}
               </>
             }
           />
         </TabPanel>
-        <TabPanel >
-          <ActivityFeedTable setHistories={setHistories} type="padding" requestType="API_KEY" apiKey={apiKey} actionByVisible={false} dateFilters={date} />
+        <TabPanel>
+          <ActivityFeedTable
+            setHistories={setHistories}
+            type="padding"
+            requestType="API_KEY"
+            apiKey={apiKey}
+            actionByVisible={false}
+            dateFilters={date}
+          />
         </TabPanel>
       </Tabs>
     </div>

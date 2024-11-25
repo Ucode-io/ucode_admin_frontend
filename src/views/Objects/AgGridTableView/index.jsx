@@ -29,7 +29,6 @@ ModuleRegistry.registerModules([
 
 function AgGridTableView({view}) {
   const {tableSlug} = useParams();
-  const [rowData, setRowData] = useState([]);
 
   const customActions = {
     field: "actions",
@@ -69,8 +68,6 @@ function AgGridTableView({view}) {
             minWidth: 250,
             filter: true,
             editable: true,
-            rowGroup: true,
-            enableRowGroup: true,
           };
           getColumnEditorParams(item, columnDef);
 
@@ -110,12 +107,6 @@ function AgGridTableView({view}) {
       };
     },
   });
-
-  useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
-  }, []);
 
   // const CompanyLogoRenderer = ({value}) => (
   //   <span
@@ -157,9 +148,6 @@ function AgGridTableView({view}) {
       enablePivot: true,
       enableValue: true,
       autoHeaderHeight: true,
-      filterParams: {
-        applyMiniFilterWhileTyping: true,
-      },
     };
   }, []);
 
@@ -186,7 +174,6 @@ function AgGridTableView({view}) {
         pagination={true}
         cellSelection={true}
         sideBar={true}
-        enableAdvancedFilter={true}
         defaultColDef={defaultColDef}
         rowGroupPanelShow={"always"}
         autoGroupColumnDef={autoGroupColumnDef}

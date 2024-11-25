@@ -145,8 +145,8 @@ function AgGridTableView({view}) {
     return {
       width: 100,
       enableRowGroup: true,
-      enablePivot: true,
-      enableValue: true,
+      // enablePivot: true,
+      // enableValue: true,
       autoHeaderHeight: true,
     };
   }, []);

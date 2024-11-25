@@ -35,7 +35,7 @@ const TokensTable = ({
   const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const projectId = useSelector((state) => state.auth.projectId);
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   const openDrawer = (id) => {
     setId(id);
@@ -64,13 +64,12 @@ const TokensTable = ({
     getList();
   }, []);
 
-  //   if (data?.lenght)
-  //     return (
-  //       <Backdrop sx={{zIndex: (theme) => theme.zIndex.drawer + 999}} open={true}>
-  //         <RingLoaderWithWrapper />
-  //       </Backdrop>
-  //     );
-  console.log("datadata", data);
+  if (data?.length === 0)
+    return (
+      <Backdrop sx={{zIndex: (theme) => theme.zIndex.drawer + 999}} open={true}>
+        <RingLoaderWithWrapper />
+      </Backdrop>
+    );
   return (
     <>
       <TableCard type={type}>

@@ -29,7 +29,6 @@ ModuleRegistry.registerModules([
 
 function AgGridTableView({view}) {
   const {tableSlug} = useParams();
-  const [rowData, setRowData] = useState([]);
 
   const customActions = {
     field: "actions",
@@ -69,8 +68,6 @@ function AgGridTableView({view}) {
             minWidth: 250,
             filter: true,
             editable: true,
-            rowGroup: true,
-            enableRowGroup: true,
           };
           getColumnEditorParams(item, columnDef);
 
@@ -111,55 +108,46 @@ function AgGridTableView({view}) {
     },
   });
 
-  useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
-  }, []);
-
-  const CompanyLogoRenderer = ({value}) => (
-    <span
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-      }}>
-      {value && (
-        <img
-          alt={`${value} Flag`}
-          src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`}
-          style={{
-            display: "block",
-            width: "25px",
-            height: "auto",
-            maxHeight: "50%",
-            marginRight: "12px",
-            filter: "brightness(1.1)",
-          }}
-        />
-      )}
-      <p
-        style={{
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-        }}>
-        {value}
-      </p>
-    </span>
-  );
+  // const CompanyLogoRenderer = ({value}) => (
+  //   <span
+  //     style={{
+  //       display: "flex",
+  //       height: "100%",
+  //       width: "100%",
+  //       alignItems: "center",
+  //     }}>
+  //     {value && (
+  //       <img
+  //         alt={`${value} Flag`}
+  //         src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`}
+  //         style={{
+  //           display: "block",
+  //           width: "25px",
+  //           height: "auto",
+  //           maxHeight: "50%",
+  //           marginRight: "12px",
+  //           filter: "brightness(1.1)",
+  //         }}
+  //       />
+  //     )}
+  //     <p
+  //       style={{
+  //         textOverflow: "ellipsis",
+  //         overflow: "hidden",
+  //         whiteSpace: "nowrap",
+  //       }}>
+  //       {value}
+  //     </p>
+  //   </span>
+  // );
 
   const defaultColDef = useMemo(() => {
     return {
       width: 100,
       enableRowGroup: true,
-      enablePivot: true,
-      enableValue: true,
+      // enablePivot: true,
+      // enableValue: true,
       autoHeaderHeight: true,
-      filterParams: {
-        applyMiniFilterWhileTyping: true,
-      },
     };
   }, []);
 
@@ -186,7 +174,6 @@ function AgGridTableView({view}) {
         pagination={true}
         cellSelection={true}
         sideBar={true}
-        enableAdvancedFilter={true}
         defaultColDef={defaultColDef}
         rowGroupPanelShow={"always"}
         autoGroupColumnDef={autoGroupColumnDef}

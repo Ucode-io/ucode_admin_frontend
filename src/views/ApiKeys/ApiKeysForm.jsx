@@ -22,6 +22,7 @@ import {endOfMonth, startOfMonth} from "date-fns";
 import Select from "react-select";
 import {customStyles} from "../../components/Status";
 import HFSelect from "../../components/FormElements/HFSelect";
+import TokensTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/TokensTable";
 
 const ApiKeysForm = () => {
   const {appId, apiKeyId} = useParams();
@@ -107,6 +108,7 @@ const ApiKeysForm = () => {
       .getById(authStore.projectId, apiKeyId)
       .then((res) => {
         mainForm.reset(res);
+        mainForm.setValue("client_platform_id", res?.client_platform?.id);
       })
       .catch((err) => {
         console.log("exportToJson error", err);
@@ -158,6 +160,7 @@ const ApiKeysForm = () => {
           <TabList>
             <Tab onClick={() => setSelectedTab(0)}>Api Key</Tab>
             <Tab onClick={() => setSelectedTab(1)}>Log</Tab>
+            <Tab onClick={() => setSelectedTab(2)}>Tokens</Tab>
           </TabList>
         </HeaderSettings>
         {selectedTab === 1 && (
@@ -236,6 +239,7 @@ const ApiKeysForm = () => {
                 componentClassName="flex gap-2 align-center"
                 required>
                 <HFSelect
+                  isClearable={Boolean(location?.pathname?.includes("create"))}
                   disabled={Boolean(
                     location?.search?.includes("edit") ||
                       location.search.includes("view")
@@ -329,6 +333,17 @@ const ApiKeysForm = () => {
         </TabPanel>
         <TabPanel>
           <ActivityFeedTable
+            setHistories={setHistories}
+            type="padding"
+            requestType="API_KEY"
+            apiKey={apiKey}
+            actionByVisible={false}
+            dateFilters={date}
+          />
+        </TabPanel>
+        <TabPanel>
+          <TokensTable
+            mainForm={mainForm}
             setHistories={setHistories}
             type="padding"
             requestType="API_KEY"

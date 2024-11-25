@@ -147,7 +147,7 @@ const ApiKeyPage = () => {
             <CTableCell>Name</CTableCell>
             <CTableCell>AppId</CTableCell>
             <CTableCell>Client ID</CTableCell>
-            <CTableCell>Platform ID</CTableCell>
+            <CTableCell>Platform name</CTableCell>
             <CTableCell>Monthly limit</CTableCell>
             <CTableCell>RPS limit</CTableCell>
             <CTableCell>Used count</CTableCell>
@@ -163,7 +163,7 @@ const ApiKeyPage = () => {
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
                 <CTableCell>{element?.client_id}</CTableCell>
-                <CTableCell>{element?.client_platform?.id}</CTableCell>
+                <CTableCell>{element?.client_platform?.name}</CTableCell>
                 <CTableCell>
                   {numberWithSpaces(element?.monthly_request_limit)}
                 </CTableCell>
@@ -193,7 +193,9 @@ const ApiKeyPage = () => {
                       </RectangleIconButton>
                     )}
                     {element?.disable ? null : (
-                      <RectangleIconButton color="error" onClick={deleteTable}>
+                      <RectangleIconButton
+                        color="error"
+                        onClick={() => deleteTable(element?.id)}>
                         <Delete color="error" />
                       </RectangleIconButton>
                     )}

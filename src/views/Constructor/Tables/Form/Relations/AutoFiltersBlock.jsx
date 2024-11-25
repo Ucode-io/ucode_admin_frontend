@@ -1,40 +1,46 @@
-import { Delete } from "@mui/icons-material";
-import { useFieldArray } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Delete} from "@mui/icons-material";
+import {useFieldArray} from "react-hook-form";
+import {useQuery} from "react-query";
 
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import constructorFieldService from "../../../../../services/constructorFieldService";
 import styles from "./style.module.scss";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
-import { Button } from "@mui/material";
+import {Button} from "@mui/material";
 
-const AutoFiltersBlock = ({ control, watch }) => {
-  const { fields, append, remove } = useFieldArray({
+const AutoFiltersBlock = ({control, watch}) => {
+  const {fields, append, remove} = useFieldArray({
     control,
     name: "auto_filters",
   });
 
-  const addNewAutoFilter = () => append({ field_from: "", field_to: "" });
+  const addNewAutoFilter = () => append({field_from: "", field_to: ""});
   const deleteAutoFilter = (index) => remove(index);
 
-  const { data: fieldFromList, isLoading: fieldFromListLoading } = useQuery(
+  const {data: fieldFromList, isLoading: fieldFromListLoading} = useQuery(
     ["GET_FIELDS_LIST", watch("table_from")],
     () =>
-      constructorFieldService.getList({
-        table_slug: watch("table_from"),
-      }),
+      constructorFieldService.getList(
+        {
+          tableSlug: watch("table_from"),
+        },
+        watch("table_from")
+      ),
     {
       enabled: !!watch("table_from"),
     }
   );
 
-  const { data: fieldsToList, isLoading: fieldToListLoading } = useQuery(
+  const {data: fieldsToList, isLoading: fieldToListLoading} = useQuery(
     ["GET_FIELDS_LIST", watch("table_to")],
     () =>
-      constructorFieldService.getList({
-        table_slug: watch("table_to"),
-      }),
+      constructorFieldService.getList(
+        {
+          tableSlug: watch("table_to"),
+        },
+        watch("table_to")
+      ),
     {
       enabled: !!watch("table_to"),
     }
@@ -77,14 +83,18 @@ const AutoFiltersBlock = ({ control, watch }) => {
           ))}
           <RectangleIconButton
             color="error"
-            onClick={() => deleteAutoFilter(index)}
-          >
+            onClick={() => deleteAutoFilter(index)}>
             <Delete color="error" />
           </RectangleIconButton>
         </div>
       ))}
-      <div className={styles.summaryButton} >
-        <Button onClick={addNewAutoFilter} variant="contained" style={{  fontSize: "14px" }}>Add</Button>
+      <div className={styles.summaryButton}>
+        <Button
+          onClick={addNewAutoFilter}
+          variant="contained"
+          style={{fontSize: "14px"}}>
+          Add
+        </Button>
       </div>
     </>
   );

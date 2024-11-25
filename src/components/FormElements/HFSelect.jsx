@@ -29,6 +29,7 @@ const HFSelect = ({
   defaultValue = "",
   rules = {},
   id,
+  isClearable = true,
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -127,14 +128,16 @@ const HFSelect = ({
             )}
             {(selectedValue || value || defaultValue) && (
               <Box sx={{position: "absolute", right: "20px", top: "3px"}}>
-                <IconButton
-                  onClick={() => {
-                    onFormChange("");
-                    handleClear();
-                  }}
-                  size="small">
-                  <ClearIcon />
-                </IconButton>
+                {isClearable && (
+                  <IconButton
+                    onClick={() => {
+                      onFormChange("");
+                      handleClear();
+                    }}
+                    size="small">
+                    <ClearIcon />
+                  </IconButton>
+                )}
               </Box>
             )}
           </FormControl>

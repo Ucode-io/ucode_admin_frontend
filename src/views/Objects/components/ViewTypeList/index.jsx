@@ -218,6 +218,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
                 render={({field: {onChange, value}}) => {
                   return (
                     <TextField
+                      id="website_link"
                       onChange={(e) => {
                         onChange(e.target.value);
                       }}

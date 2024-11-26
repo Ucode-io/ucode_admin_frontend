@@ -1,4 +1,3 @@
-import stringifyQueryParams from "@/utils/stringifyQueryParams";
 import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
@@ -8,7 +7,6 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-import GitHubLogin from "react-github-login";
 
 const headerStyle = {
   width: "100",
@@ -59,10 +57,6 @@ const Form = ({
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
     window.open(url, "_blank");
   };
-
-  const onSuccess = (response) =>
-    console.log("GITHUB LOGIN RESPONSE===>", response);
-  const onFailure = (response) => console.error(response);
 
   return (
     <Box
@@ -395,16 +389,6 @@ const Form = ({
             </Grid>
           </>
         )} */}
-
-        <Box id="githubLog">
-          <GitHubLogin
-            clientId={GITHUB_CLIENT_ID}
-            onSuccess={onSuccess}
-            onFailure={onFailure}
-            redirectUri={REDIRECT_URI}
-            buttonText="Продолжить с GitHub"
-          />
-        </Box>
       </Box>
 
       {resurceType === 4 && <VariableResources control={control} />}

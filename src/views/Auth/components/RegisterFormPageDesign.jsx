@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
-import {Box, InputAdornment} from "@mui/material";
+import {Box, InputAdornment, Tooltip} from "@mui/material";
 import {useRegisterCompanyMutation} from "../../../services/companyService";
 import classes from "../style.module.scss";
 import {useDispatch} from "react-redux";
@@ -10,11 +10,11 @@ import {useTranslation} from "react-i18next";
 
 import {useMutation} from "react-query";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
-import HFTextFieldWithMaskDesign from "../../../components/FormElements/HFTextFieldWithMaskDesign";
 import {useState} from "react";
+import GoogleAuthLogin from "./LoginFormDesign/ExternalAuth/GoogleAuthLogin";
 
 const RegisterFormPageDesign = ({setFormType = () => {}}) => {
-  const {control, handleSubmit} = useForm();
+  const {control, handleSubmit, setValue, watch} = useForm();
   const dispatch = useDispatch();
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   });
 
   const trimPhone = (element) => {
-    return element.replace(/[()\-\s]/g, "");
+    return element?.replace(/[()\-\s]/g, "");
   };
 
   const onSubmit = (values) => {
@@ -56,21 +56,21 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   return (
     <div className={classes.form}>
       <Box sx={{width: "100%", textAlign: "center"}}>
-        <h1 className={classes.titleDesign}>Регистрация</h1>
+        <h1 className={classes.titleDesign}>Registration</h1>
         <p className={classes.subtitleDesign}>
-          Заполните все данные, чтобы продолжить
+          Fill out all the information to proceed
         </p>
       </Box>
 
       <form style={{marginTop: "25px"}} onSubmit={handleSubmit(onSubmit)}>
         <Box className="" h="calc(100vh - 300px)" overflow="auto">
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Название компании*"}</p>
+            <p className={classes.label}>{"Company name*"}</p>
             <HFTextFieldLogin
               name="name"
               control={control}
               fullWidth
-              placeholder="Введите название компании"
+              placeholder="Enter company name"
               required
               InputProps={{
                 startAdornment: (
@@ -81,46 +81,34 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               }}
             />
           </div>
-          <div className={classes.formRow}>
-            <p className={classes.label}>{"Почтовый адрес*"}</p>
-            <HFTextFieldLogin
-              name="user_info.email"
-              control={control}
-              required
-              fullWidth
-              placeholder="Введите почтовый адрес"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <img src="/img/mail.svg" height={"23px"} alt="" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+          {!watch("googleToken") && (
+            <div className={classes.formRow}>
+              <p className={classes.label}>{"Email*"}</p>
+              <HFTextFieldLogin
+                name="user_info.email"
+                control={control}
+                required
+                fullWidth
+                placeholder="Enter email address"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <img src="/img/mail.svg" height={"23px"} alt="" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          )}
 
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Номер телефона*"}</p>
-            <HFTextFieldWithMaskDesign
-              name="user_info.phone"
-              control={control}
-              mask={"+\\9\\9\\8 (99) 999-99-99"}
-              maskChar={null}
-              required
-              placeholder="Введите номер телефона"
-              updateObject={updateObject}
-              className={classes.mask}
-              fullWidth
-            />
-          </div>
-          <div className={classes.formRow}>
-            <p className={classes.label}>{"Логин*"}</p>
+            <p className={classes.label}>{"Login*"}</p>
             <HFTextFieldLogin
               required
               name="user_info.login"
               control={control}
               fullWidth
-              placeholder="Придумайте логин"
+              placeholder="Create login"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -131,14 +119,14 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             />
           </div>
           <div className={classes.formRow}>
-            <p className={classes.label}>{"Пароль*"}</p>
+            <p className={classes.label}>{"Password*"}</p>
             <HFTextFieldLogin
               required
               name="user_info.password"
               control={control}
               fullWidth
               type={"password"}
-              placeholder="Придумайте пароль"
+              placeholder="Create password"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -151,13 +139,23 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
         </Box>
       </form>
 
+      <Tooltip title="Google Auth!">
+        <Box sx={{marginBottom: "25px"}}>
+          <GoogleAuthLogin
+            watch={watch}
+            setValue={setValue}
+            text="Register with Google"
+          />
+        </Box>
+      </Tooltip>
+
       <div className={classes.buttonsArea}>
         <PrimaryButton
           onClick={handleSubmit(onSubmit)}
           size="large"
           loader={loading}
           style={{borderRadius: "8px", fontSize: "16px", margin: "0 0"}}>
-          {t("Зарегистрироваться")}
+          {t("Registration")}
         </PrimaryButton>
       </div>
       <Box
@@ -168,11 +166,11 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
           marginTop: "16px",
           justifyContent: "center",
         }}>
-        <p>Уже есть аккаунт?</p>
+        <p>Already have an account?</p>
         <Box
           onClick={() => setFormType("LOGIN")}
           sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-          Войдите в него
+          Sign In
         </Box>
       </Box>
     </div>

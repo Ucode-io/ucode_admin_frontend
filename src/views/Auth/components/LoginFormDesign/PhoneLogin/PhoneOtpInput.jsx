@@ -43,7 +43,7 @@ function PhoneOtpInput({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Введите код
+          Enter code
         </h3>
         <p
           style={{
@@ -51,7 +51,7 @@ function PhoneOtpInput({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Отправленный на номер
+          Sent to phone number
         </p>
         <p
           style={{
@@ -93,7 +93,7 @@ function PhoneOtpInput({
             color: "#475467",
             cursor: "pointer",
           }}>
-          Отправить код заново
+          Sent again
         </p>
         <PrimaryButton
           size="large"
@@ -103,7 +103,7 @@ function PhoneOtpInput({
             borderRadius: "8px",
           }}
           loader={loading}>
-          Подтвердить
+          Confirm
         </PrimaryButton>
       </Box>
     </>

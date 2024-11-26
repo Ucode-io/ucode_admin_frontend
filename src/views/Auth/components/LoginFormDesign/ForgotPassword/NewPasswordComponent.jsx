@@ -25,14 +25,14 @@ function NewPasswordComponent({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Новый пароль
+          New password
         </h3>
         <p
           style={{
             fontSize: "14px",
             color: "#475467",
           }}>
-          Придумайте и подтвердите новый пароль
+          Create and confirm new password
         </p>
       </Box>
       <Box sx={{marginTop: "24px"}}>
@@ -44,7 +44,7 @@ function NewPasswordComponent({
             name="new_password"
             type="password"
             fullWidth
-            placeholder={t("Придумайте пароль")}
+            placeholder={t("Create password")}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -55,14 +55,14 @@ function NewPasswordComponent({
           />
         </div>
         <div className={styles.formRow}>
-          <p className={styles.label}>{t("Подтвердите пароль*")}</p>
+          <p className={styles.label}>{t("Confirm password*")}</p>
           <HFTextFieldLogin
             required
             control={control}
             name="confirm_password"
             type="password"
             fullWidth
-            placeholder={t("Введите пароль еще раз")}
+            placeholder={t("Enter password again")}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -86,7 +86,7 @@ function NewPasswordComponent({
             borderRadius: "8px",
           }}
           loader={loading}>
-          Подтвердить
+          Confirm
         </PrimaryButton>
       </Box>
     </Box>

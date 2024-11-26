@@ -21,6 +21,7 @@ import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {viewsActions} from "../../../../store/views/view.slice";
 import LanguageIcon from "@mui/icons-material/Language";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -169,6 +170,9 @@ const ViewTabSelector = ({
                   )}
                   {view.type === "WEBSITE" && (
                     <LanguageIcon className={style.icon} />
+                  )}
+                  {view.type === "TABLEV2" && (
+                    <FiberNewIcon className={style.icon} />
                   )}
                   <span>
                     {(view?.attributes?.[`name_${i18n.language}`]

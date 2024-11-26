@@ -12,6 +12,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
 
 export default function ViewTypeList({computedViewTypes, views, handleClose}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
@@ -42,6 +43,8 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
         return "/img/calendarHourView.svg";
       case "WEBSITE":
         return "/img/calendarHourView.svg";
+      case "TABLEV2":
+        return "/img/calendarHourView.svg";
       default:
         return "/img/tableView.svg";
     }
@@ -67,6 +70,8 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
         return "Plan out your work over time. See overlaps, map your schedule out and see it all divided by groups.";
       case "WEBSITE":
         return "Website view allows you to display any website by simply placing your own link to showcase external content.";
+      case "TABLEV2":
+        return "NEW MODIFIED TABLE, ONLY FOR TESTING NOW";
       default:
         return "Easily manage, update, and organize your tasks with Table view.";
     }
@@ -197,6 +202,9 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
               )}
               {type.value === "WEBSITE" && (
                 <LanguageIcon className={style.icon} />
+              )}
+              {type.value === "TABLEV2" && (
+                <FiberNewIcon className={style.icon} />
               )}
               {type.label}
             </Button>

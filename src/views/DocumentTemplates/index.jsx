@@ -201,7 +201,7 @@ const DocumentTemplates = () => {
               variant="outlined"
               className={styles.addTemplateButton}
               onClick={() => {
-                navigate(`${pathname}/create`);
+                navigate(`${pathname}/create?menuId=${searchParams.get('menuId')}&templateId=${searchParams.get('templateId')}&id=${searchParams.get('id')}`);
               }}
             >
               Создать шаблон
@@ -231,7 +231,7 @@ const DocumentTemplates = () => {
                       variant="outlined"
                       className={styles.addTemplateButton}
                       onClick={() => {
-                        navigate(`${pathname}/create`);
+                        navigate(`${pathname}/create?menuId=${searchParams.get('menuId')}&templateId=${searchParams.get('templateId')}&id=${searchParams.get('id')}`);
                       }}
                     >
                       Создать шаблон

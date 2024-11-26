@@ -48,6 +48,7 @@ import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import WebsiteView from "./WebsiteView";
+import AgGridTableView from "./AgGridTableView";
 
 const ViewsWithGroups = ({
   views,
@@ -297,6 +298,53 @@ const ViewsWithGroups = ({
             )}
           </FiltersBlock>
           <WebsiteView view={view} />
+        </>
+      ) : view?.type === "TABLEV2" ? (
+        <>
+          <FiltersBlock
+            extra={
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+                  <ShareModal />
+                </PermissionWrapperV2>
+
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Button
+                    variant="outlined"
+                    onClick={navigateToSettingsPage}
+                    style={{
+                      borderColor: "#A8A8A8",
+                      width: "35px",
+                      height: "35px",
+                      padding: "0px",
+                      minWidth: "35px",
+                    }}>
+                    <SettingsIcon
+                      style={{
+                        color: "#A8A8A8",
+                      }}
+                    />
+                  </Button>
+                </PermissionWrapperV2>
+              </>
+            }>
+            <ViewTabSelector
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+              views={views}
+              settingsModalVisible={settingsModalVisible}
+              setSettingsModalVisible={setSettingsModalVisible}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+              menuItem={menuItem}
+            />
+            {view?.type === "FINANCE CALENDAR" && (
+              <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+            )}
+          </FiltersBlock>
+          <AgGridTableView view={view} />
         </>
       ) : (
         <Box>

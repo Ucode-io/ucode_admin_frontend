@@ -7,6 +7,7 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
+import {useNavigate} from "react-router-dom";
 
 const headerStyle = {
   width: "100",
@@ -53,6 +54,12 @@ const Form = ({
 
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    // const queryParams = {
+    //   client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
+    //   redirect_uri: "https://github.com/login/oauth/authorize",
+    //   scope: "read:user,repo",
+    // };
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
     window.open(url, "_blank");
@@ -63,7 +70,7 @@ const Form = ({
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
+        <h2 variant="h6">Resource infosss</h2>
       </Box>
 
       <Box

@@ -25,7 +25,7 @@ const getColumnEditorParams = (item, columnDef) => {
     };
   } else if (item?.type === "LOOKUP") {
     columnDef.valueFormatter = (params) => {
-      return "+" + Number(params?.value).toLocaleString();
+      return "+";
     };
   }
 

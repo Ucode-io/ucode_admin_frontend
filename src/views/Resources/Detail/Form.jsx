@@ -1,4 +1,3 @@
-import stringifyQueryParams from "@/utils/stringifyQueryParams";
 import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
@@ -8,7 +7,6 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-import {useNavigate} from "react-router-dom";
 
 const headerStyle = {
   width: "100",
@@ -26,7 +24,7 @@ const Form = ({
   projectEnvironments,
   isEditPage,
 }) => {
-  const navigate = useNavigate();
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -50,6 +48,9 @@ const Form = ({
     name: "type",
   });
 
+  const GITHUB_CLIENT_ID = "Ov23liNemzMeOch68s4f";
+  const REDIRECT_URI = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -59,12 +60,8 @@ const Form = ({
     //   scope: "read:user,repo",
     // };
 
-    // const res = window.location.assign(
-    //   "https://github.com/login/oauth/authorize?" +
-    //     stringifyQueryParams(queryParams)
-    // );
-
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+    window.open(url, "_blank");
   };
 
   return (
@@ -278,20 +275,6 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                {/* <Box
-                  sx={{
-                    fontSize: "14px",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}>
-                  Type
-                </Box>
-                <HFSelect
-                  options={resources}
-                  control={control}
-                  required
-                  name="type"
-                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",
@@ -302,12 +285,29 @@ const Form = ({
                 </Box>
                 <HFTextField
                   control={control}
-                  required
+                  // required
                   name="integration_resource.username"
                   fullWidth
-                  disabled
+                  // disabled
                   inputProps={{
                     placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Token
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
                   }}
                 />
               </>
@@ -396,6 +396,7 @@ const Form = ({
           </>
         )} */}
       </Box>
+
       {resurceType === 4 && <VariableResources control={control} />}
 
       <Footer>

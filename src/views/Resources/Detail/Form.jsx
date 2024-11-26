@@ -25,7 +25,6 @@ const Form = ({
   projectEnvironments,
   isEditPage,
 }) => {
-  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -49,17 +48,9 @@ const Form = ({
     name: "type",
   });
 
-  const GITHUB_CLIENT_ID = "Ov23liNemzMeOch68s4f";
-  const REDIRECT_URI = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
-
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    // const queryParams = {
-    //   client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-    //   redirect_uri: "https://github.com/login/oauth/authorize",
-    //   scope: "read:user,repo",
-    // };
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
     window.open(url, "_blank");

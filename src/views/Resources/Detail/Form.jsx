@@ -8,6 +8,7 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
+import GitHubLogin from "react-github-login";
 
 const headerStyle = {
   width: "100",
@@ -25,6 +26,7 @@ const Form = ({
   projectEnvironments,
   isEditPage,
 }) => {
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -48,20 +50,19 @@ const Form = ({
     name: "type",
   });
 
+  const GITHUB_CLIENT_ID = "Ov23liNemzMeOch68s4f";
+  const REDIRECT_URI = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
 
-    const queryParams = {
-      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-      redirect_uri: window.location.href,
-      scope: "read:user,repo",
-    };
-
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?" +
-        stringifyQueryParams(queryParams)
-    );
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+    window.open(url, "_blank");
   };
+
+  const onSuccess = (response) =>
+    console.log("GITHUB LOGIN RESPONSE===>", response);
+  const onFailure = (response) => console.error(response);
 
   return (
     <Box
@@ -274,20 +275,6 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                {/* <Box
-                  sx={{
-                    fontSize: "14px",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}>
-                  Type
-                </Box>
-                <HFSelect
-                  options={resources}
-                  control={control}
-                  required
-                  name="type"
-                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",
@@ -298,12 +285,29 @@ const Form = ({
                 </Box>
                 <HFTextField
                   control={control}
-                  required
+                  // required
                   name="integration_resource.username"
                   fullWidth
-                  disabled
+                  // disabled
                   inputProps={{
                     placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Token
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
                   }}
                 />
               </>
@@ -391,7 +395,18 @@ const Form = ({
             </Grid>
           </>
         )} */}
+
+        <Box id="githubLog">
+          <GitHubLogin
+            clientId={GITHUB_CLIENT_ID}
+            onSuccess={onSuccess}
+            onFailure={onFailure}
+            redirectUri={REDIRECT_URI}
+            buttonText="Продолжить с GitHub"
+          />
+        </Box>
       </Box>
+
       {resurceType === 4 && <VariableResources control={control} />}
 
       <Footer>

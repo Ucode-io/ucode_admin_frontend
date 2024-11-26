@@ -7,11 +7,40 @@ import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {useQuery} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
+import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
+import {
+  ClipboardModule,
+  ColumnsToolPanelModule,
+  MenuModule,
+  RangeSelectionModule,
+  RowGroupingModule,
+} from "ag-grid-enterprise";
+import {Button} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import getColumnEditorParams from "./valueOptionGenerator";
+
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  ClipboardModule,
+  MenuModule,
+  RangeSelectionModule,
+  ColumnsToolPanelModule,
+  RowGroupingModule,
+]);
 
 function AgGridTableView({view}) {
   const {tableSlug} = useParams();
-  const [rowData, setRowData] = useState([]);
+  const {i18n} = useTranslation();
+  const customActions = {
+    field: "actions",
+    headerName: "Actions",
+    cellRenderer: <Button>Action</Button>,
+    cellRendererParams: {
+      onClick: () => {
+        console.log("ssssss");
+      },
+    },
+  };
 
   const {
     data: {fiedlsarray, fieldView, custom_events} = {
@@ -36,6 +65,8 @@ function AgGridTableView({view}) {
       return {
         fiedlsarray: res?.data?.fields?.map((item) => {
           const columnDef = {
+            headerName:
+              item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             field: item?.slug,
             minWidth: 250,
             filter: true,
@@ -44,7 +75,7 @@ function AgGridTableView({view}) {
           getColumnEditorParams(item, columnDef);
 
           return columnDef;
-        }),
+        }, customActions),
         fieldView: res?.data?.views ?? [],
         custom_events: res?.data?.custom_events ?? [],
       };
@@ -80,51 +111,28 @@ function AgGridTableView({view}) {
     },
   });
 
-  useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
+  const defaultColDef = useMemo(() => {
+    return {
+      width: 100,
+      enableRowGroup: true,
+      // enablePivot: true,
+      // enableValue: true,
+      autoHeaderHeight: true,
+    };
   }, []);
 
-  const CompanyLogoRenderer = ({value}) => (
-    <span
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-      }}>
-      {value && (
-        <img
-          alt={`${value} Flag`}
-          src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`}
-          style={{
-            display: "block",
-            width: "25px",
-            height: "auto",
-            maxHeight: "50%",
-            marginRight: "12px",
-            filter: "brightness(1.1)",
-          }}
-        />
-      )}
-      <p
-        style={{
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-        }}>
-        {value}
-      </p>
-    </span>
-  );
+  const autoGroupColumnDef = useMemo(() => {
+    return {
+      minWidth: 200,
+    };
+  }, []);
 
   const rowSelection = useMemo(() => {
     return {
       mode: "multiRow",
     };
   }, []);
-
+  console.log("tableDatatableData", tableData);
   const paginationPageSize = 500;
   const paginationPageSizeSelector = [200, 500, 1000];
 
@@ -134,9 +142,17 @@ function AgGridTableView({view}) {
         columnDefs={fiedlsarray}
         rowData={tableData}
         pagination={true}
+        cellSelection={true}
+        sideBar={true}
+        defaultColDef={defaultColDef}
+        rowGroupPanelShow={"always"}
+        autoGroupColumnDef={autoGroupColumnDef}
         paginationPageSize={paginationPageSize}
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
+        onCellValueChanged={(event) =>
+          console.log(`New Cell Value: ${event.value}`, event)
+        }
       />
     </div>
   );

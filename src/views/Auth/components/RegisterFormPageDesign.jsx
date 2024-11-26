@@ -39,7 +39,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   });
 
   const trimPhone = (element) => {
-    return element.replace(/[()\-\s]/g, "");
+    return element?.replace(/[()\-\s]/g, "");
   };
 
   const onSubmit = (values) => {

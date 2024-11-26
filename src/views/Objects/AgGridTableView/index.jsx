@@ -7,7 +7,6 @@ import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {useQuery} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
-import getColumnEditorParams from "./valueOptionGenerator";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
 import {
   ClipboardModule,
@@ -18,6 +17,7 @@ import {
 } from "ag-grid-enterprise";
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import getColumnEditorParams from "./valueOptionGenerator";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -132,7 +132,7 @@ function AgGridTableView({view}) {
       mode: "multiRow",
     };
   }, []);
-
+  console.log("tableDatatableData", tableData);
   const paginationPageSize = 500;
   const paginationPageSizeSelector = [200, 500, 1000];
 

@@ -1,6 +1,13 @@
 import {format} from "date-fns";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import {useQuery} from "react-query";
+import constructorObjectService from "../../../services/constructorObjectService";
+import {useTranslation} from "react-i18next";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
+  const {i18n} = useTranslation();
+
   if (item?.type === "MULTISELECT" && item?.attributes?.options) {
     columnDef.cellEditor = "agSelectCellEditor";
     columnDef.cellEditorParams = {
@@ -24,8 +31,23 @@ const getColumnEditorParams = (item, columnDef) => {
       format: "dd-MM-yyyy",
     };
   } else if (item?.type === "LOOKUP") {
+    if (item?.type === "LOOKUP") {
+      columnDef.cellEditorParams = {
+        field: item,
+        getRelationFieldTabsLabel,
+      };
+    }
+
     columnDef.valueFormatter = (params) => {
-      return "+";
+      const slugData = params?.data?.[`${item.slug}_data`];
+      if (!slugData) return "";
+      return getRelationFieldTabsLabel(item, slugData);
+    };
+
+    columnDef.filterValueGetter = (params) => {
+      const slugData = params?.data?.[`${item.slug}_data`];
+      if (!slugData) return "";
+      return getRelationFieldTabsLabel(item, slugData);
     };
   }
 

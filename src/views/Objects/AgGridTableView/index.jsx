@@ -43,6 +43,35 @@ function AgGridTableView({view}) {
   };
 
   const {
+    data: {tableData} = {
+      tableData: [],
+    },
+    refetch,
+    isLoading: tableLoader,
+  } = useQuery({
+    queryKey: [
+      "GET_OBJECTS_LIST",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return constructorObjectService.getListV2(tableSlug, {
+        data: {
+          limit: 20,
+          offset: 0,
+        },
+      });
+    },
+    enabled: !!tableSlug,
+    select: (res) => {
+      return {
+        tableData: res.data?.response ?? [],
+      };
+    },
+  });
+
+  const {
     data: {fiedlsarray, fieldView, custom_events} = {
       pageCount: 1,
       fiedlsarray: [],
@@ -82,41 +111,10 @@ function AgGridTableView({view}) {
     },
   });
 
-  const {
-    data: {tableData} = {
-      tableData: [],
-    },
-    refetch,
-    isLoading: tableLoader,
-  } = useQuery({
-    queryKey: [
-      "GET_OBJECTS_LIST",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          limit: 20,
-          offset: 0,
-        },
-      });
-    },
-    enabled: !!tableSlug,
-    select: (res) => {
-      return {
-        tableData: res.data?.response ?? [],
-      };
-    },
-  });
-
   const defaultColDef = useMemo(() => {
     return {
       width: 100,
       enableRowGroup: true,
-      // enablePivot: true,
-      // enableValue: true,
       autoHeaderHeight: true,
     };
   }, []);
@@ -132,7 +130,7 @@ function AgGridTableView({view}) {
       mode: "multiRow",
     };
   }, []);
-  console.log("tableDatatableData", tableData);
+
   const paginationPageSize = 500;
   const paginationPageSizeSelector = [200, 500, 1000];
 

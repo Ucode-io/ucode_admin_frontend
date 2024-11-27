@@ -25,7 +25,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   const {mutateAsync: registerCompany, isLoading} = useRegisterCompanyMutation({
     onSuccess: () => {
       dispatch(showAlert("Registration was successful", "success"));
-      navigate(-1);
+      // navigate(-1);
       setLoading(false);
       setFormType("LOGIN");
     },

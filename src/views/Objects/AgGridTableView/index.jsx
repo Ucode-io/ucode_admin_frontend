@@ -132,7 +132,7 @@ function AgGridTableView({view}) {
       mode: "multiRow",
     };
   }, []);
-  console.log("tableDatatableData", tableData);
+
   const paginationPageSize = 500;
   const paginationPageSizeSelector = [200, 500, 1000];
 

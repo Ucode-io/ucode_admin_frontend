@@ -270,6 +270,32 @@ const ResourceDetail = () => {
       },
     };
 
+    const computedValues2Github = {
+      ...values,
+      type: values?.resource_type,
+      company_id: company?.companyId,
+      project_id: projectId,
+      resource_id: resourceId,
+      user_id: authStore.userId,
+      is_configured: true,
+      settings: {
+        github: {
+          username: values?.integration_resource?.username,
+          token: values?.token,
+        },
+      },
+      id:
+        selectedEnvironment?.[0].resource_environment_id ??
+        variables?.environment_id,
+
+      integration_resource: {
+        username: values.integration_resource?.username,
+        token:
+          searchParams.get("access_token") ??
+          values.integration_resource?.token,
+      },
+    };
+
     const computedValuesClickHouse = {
       ...values,
       client_type_id: authStore?.clientType?.id,
@@ -306,8 +332,10 @@ const ResourceDetail = () => {
           dispatch(showAlert(err, "error"));
         });
     } else {
-      if (values?.resource_type === 4 || values?.resource_type === 5) {
+      if (values?.resource_type === 4) {
         createResourceV2(computedValues2);
+      } else if (values?.resource_type === 5) {
+        createResourceV2(computedValues2Github);
       } else if (values?.resource_type === 2) {
         createResourceV1(computedValuesClickHouse);
       } else if (!isEditPage) createResourceV2(computedValues2);
@@ -420,6 +448,7 @@ const ResourceDetail = () => {
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+              watch={watch}
             />
           ) : resourceType === "CLICK_HOUSE" ? (
             <ClickHouseForm
@@ -438,6 +467,8 @@ const ResourceDetail = () => {
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+              watch={watch}
+              setValue={setValue}
             />
           )}
 

@@ -18,6 +18,7 @@ import {
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import getColumnEditorParams from "./valueOptionGenerator";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -98,8 +99,11 @@ function AgGridTableView({view}) {
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             field: item?.slug,
             minWidth: 250,
-            filter: true,
-            editable: true,
+            filter: item?.type !== "PASSWORD" ? true : false,
+            editable: Boolean(
+              item?.disabled ||
+                !!item?.attributes?.field_permission?.edit_permission
+            ),
           };
           getColumnEditorParams(item, columnDef);
 
@@ -148,6 +152,9 @@ function AgGridTableView({view}) {
         paginationPageSize={paginationPageSize}
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
+        frameworkComponents={{
+          LookupCellEditor,
+        }}
         onCellValueChanged={(event) =>
           console.log(`New Cell Value: ${event.value}`, event)
         }

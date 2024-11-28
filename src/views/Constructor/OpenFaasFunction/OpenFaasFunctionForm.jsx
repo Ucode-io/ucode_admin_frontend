@@ -105,7 +105,7 @@ export default function OpenFaasFunctionForm() {
     token: selectedResource?.settings?.github?.token,
     queryParams: {
       enabled: !!selectedResource?.settings?.github?.username && !!selectedRepo,
-      select: (res) => listToOptions(res?.data, "name", "name"),
+      select: (res) => listToOptions(res, "name", "name"),
     },
   });
 

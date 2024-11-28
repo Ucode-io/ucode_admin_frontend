@@ -5,6 +5,9 @@ import requestV2 from "../utils/requestV2";
 
 const githubService = {
   login: (data) => httpsRequest.post("/v2/github/login", data),
+  githubUsername: (params) => httpsRequest.get("/github/user", {params}),
+  githubRepositories: (params) => httpsRequest.get("/github/repos", {params}),
+  githubBranches: (params) => httpsRequest.get("/github/branches", {params}),
   getUser: ({token}) =>
     axios.get("https://api.github.com/user", {
       headers: {Authorization: `Bearer ${token}`},
@@ -42,7 +45,7 @@ export const useGithubRepositoriesQuery = ({
   return useQuery(
     ["GITHUB_REPOSITORIES", {username, token}],
     () => {
-      return githubService.getRepos({username, token});
+      return githubService.githubRepositories({username, token});
     },
     queryParams
   );
@@ -57,7 +60,7 @@ export const useGithubBranchesQuery = ({
   return useQuery(
     ["GITHUB_BRANCHES", {username, repo, token}],
     () => {
-      return githubService.getBranches({username, repo, token});
+      return githubService.githubBranches({username, repo, token});
     },
     queryParams
   );

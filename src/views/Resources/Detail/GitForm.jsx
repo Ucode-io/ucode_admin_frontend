@@ -1,10 +1,11 @@
 import {Box, Button, Stack} from "@mui/material";
-import React from "react";
+import React, {useEffect} from "react";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import {resources} from "../../../utils/resourceConstants";
 import {useWatch} from "react-hook-form";
+import githubService from "../../../services/githubService";
 
 const headerStyle = {
   width: "100",
@@ -77,7 +78,25 @@ const GitForm = ({
             <HFTextField
               control={control}
               required
-              name="username"
+              name="settings.github.username"
+              fullWidth
+              disabled
+              inputProps={{
+                placeholder: "Github username",
+              }}
+            />
+            <Box
+              sx={{
+                fontSize: "14px",
+                marginTop: "10px",
+                marginBottom: "15px",
+              }}>
+              Token
+            </Box>
+            <HFTextField
+              control={control}
+              required
+              name="settings.github.token"
               fullWidth
               disabled
               inputProps={{

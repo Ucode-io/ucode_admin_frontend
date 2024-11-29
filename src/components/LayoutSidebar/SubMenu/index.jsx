@@ -271,12 +271,12 @@ const SubMenu = ({
                       level={2}
                     />
                   )}
-                  {selectedApp?.id === adminId && (
+                  {/* {selectedApp?.id === adminId && (
                     <QuerySidebar
                       menuStyle={menuStyle}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                     />
-                  )}
+                  )} */}
                   {selectedApp?.id === adminId && (
                     <ActivityFeedButton
                       menuStyle={menuStyle}

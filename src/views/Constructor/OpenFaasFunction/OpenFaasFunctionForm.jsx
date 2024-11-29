@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useResourceListQueryV2 } from "../../../services/resourceService";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {useResourceListQueryV2} from "../../../services/resourceService";
 import listToOptions from "../../../utils/listToOptions";
 import microfrontendService, {
   useMicrofrontendCreateWebhookMutation,
 } from "../../../services/microfrontendService";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import PageFallback from "../../../components/PageFallback";
 import HeaderSettings from "../../../components/HeaderSettings";
 import FormCard from "../../../components/FormCard";
@@ -16,20 +16,19 @@ import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import { Save } from "@mui/icons-material";
+import {Save} from "@mui/icons-material";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import {
   useGithubBranchesQuery,
   useGithubRepositoriesQuery,
 } from "@/services/githubService";
 import Footer from "../../../components/Footer";
-import { useFunctionV1CreateMutation } from "../../../services/constructorFunctionService";
 import functionService, {
   useFunctionByIdQuery,
   useFunctionCreateMutation,
   useFunctionUpdateMutation,
 } from "../../../services/functionService";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 
 // const frameworkOptions = [
 //   {
@@ -47,7 +46,7 @@ import { useQueryClient } from "react-query";
 // ];
 
 export default function OpenFaasFunctionForm() {
-  const { functionId, appId } = useParams();
+  const {functionId, appId} = useParams();
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
@@ -69,19 +68,19 @@ export default function OpenFaasFunctionForm() {
   const resourceId = mainForm.watch("resource_id");
   const selectedRepo = mainForm.watch("repo_name");
 
-  const { data: resources } = useResourceListQueryV2({
+  const {data: resources} = useResourceListQueryV2({
     params: {
       type: "GITHUB",
     },
     queryParams: {
-      select: (res) => res.integration_resources,
+      select: (res) => res?.resources,
     },
   });
 
   const resourceOptions = useMemo(() => {
     return [
-      { value: "ucode_gitlab", label: "Ucode GitLab" },
-      ...listToOptions(resources, "username", "id", " (GitHub)"),
+      {value: "ucode_gitlab", label: "Ucode GitLab"},
+      ...listToOptions(resources, "name", "id", "(GitHub)"),
     ];
   }, [resources]);
 
@@ -91,26 +90,26 @@ export default function OpenFaasFunctionForm() {
     return resources?.find((resource) => resource.id === resourceId);
   }, [resources, resourceId]);
 
-  const { data: repositories } = useGithubRepositoriesQuery({
-    username: selectedResource?.username,
-    token: selectedResource?.token,
+  const {data: repositories} = useGithubRepositoriesQuery({
+    username: selectedResource?.settings?.github?.username,
+    token: selectedResource?.settings?.github?.token,
     queryParams: {
-      enabled: !!selectedResource?.username,
-      select: (res) => listToOptions(res?.data, "name", "name"),
+      enabled: !!selectedResource?.settings?.github?.username,
+      select: (res) => listToOptions(res, "name", "full_name"),
     },
   });
 
-  const { data: branches } = useGithubBranchesQuery({
-    username: selectedResource?.username,
+  const {data: branches} = useGithubBranchesQuery({
+    username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
-    token: selectedResource?.token,
+    token: selectedResource?.settings?.github?.token,
     queryParams: {
-      enabled: !!selectedResource?.username && !!selectedRepo,
-      select: (res) => listToOptions(res?.data, "name", "name"),
+      enabled: !!selectedResource?.settings?.github?.username && !!selectedRepo,
+      select: (res) => listToOptions(res, "name", "name"),
     },
   });
 
-  const { mutate: createWebHook, isLoading: createWebHookIsLoading } =
+  const {mutate: createWebHook, isLoading: createWebHookIsLoading} =
     useMicrofrontendCreateWebhookMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -118,7 +117,7 @@ export default function OpenFaasFunctionForm() {
       },
     });
 
-  const { mutate: createFunction, isLoading: createFunctionIsLoading } =
+  const {mutate: createFunction, isLoading: createFunctionIsLoading} =
     useFunctionCreateMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -126,7 +125,7 @@ export default function OpenFaasFunctionForm() {
       },
     });
 
-  const { mutate: updateFunction, isLoading: updateFunctionIsLoading } =
+  const {mutate: updateFunction, isLoading: updateFunctionIsLoading} =
     useFunctionUpdateMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully updated", "success"));
@@ -134,12 +133,12 @@ export default function OpenFaasFunctionForm() {
       },
     });
 
-  const { isLoading } = useFunctionByIdQuery({
+  const {isLoading} = useFunctionByIdQuery({
     functionId,
     queryParams: {
       enabled: Boolean(functionId),
       onSuccess: (res) => {
-        mainForm.reset({ ...res, resource_id: res.resource });
+        mainForm.reset({...res, resource_id: res.resource});
       },
     },
   });
@@ -164,20 +163,19 @@ export default function OpenFaasFunctionForm() {
       <HeaderSettings
         title="Open faas функция"
         backButtonLink={-1}
-        subtitle={functionId ? mainForm.watch("name") : "Новый"}
-      ></HeaderSettings>
+        subtitle={
+          functionId ? mainForm.watch("name") : "Новый"
+        }></HeaderSettings>
 
       <form
         onSubmit={mainForm.handleSubmit(onSubmit)}
         className="p-2"
-        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-      >
+        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
         <FormCard title="Детали" maxWidth={500}>
           <FRow
             label={"Ресурс"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFSelect
               disabledHelperText
               name="resource_id"
@@ -217,8 +215,7 @@ export default function OpenFaasFunctionForm() {
             <FRow
               label={"Ссылка"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="path"
@@ -232,8 +229,7 @@ export default function OpenFaasFunctionForm() {
           <FRow
             label={"Названия"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFTextField
               disabledHelperText
               name="name"
@@ -261,8 +257,7 @@ export default function OpenFaasFunctionForm() {
           <>
             <SecondaryButton
               onClick={() => navigate(microfrontendListPageLink)}
-              color="error"
-            >
+              color="error">
               Close
             </SecondaryButton>
             <PermissionWrapperV2 tableSlug="app" type="update">
@@ -273,8 +268,7 @@ export default function OpenFaasFunctionForm() {
                   createFunctionIsLoading ||
                   updateFunctionIsLoading
                 }
-                onClick={mainForm.handleSubmit(onSubmit)}
-              >
+                onClick={mainForm.handleSubmit(onSubmit)}>
                 <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>

@@ -1,6 +1,5 @@
-import stringifyQueryParams from "@/utils/stringifyQueryParams";
 import {Box, Button, Grid, Stack, Typography} from "@mui/material";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -9,6 +8,9 @@ import VariableResources from "../../../components/LayoutSidebar/Components/Reso
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
 import {useNavigate} from "react-router-dom";
+import githubService from "../../../services/githubService";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 const headerStyle = {
   width: "100",
@@ -25,8 +27,11 @@ const Form = ({
   setSelectedEnvironment,
   projectEnvironments,
   isEditPage,
+  watch = () => {},
+  setValue = () => {},
 }) => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -53,26 +58,36 @@ const Form = ({
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    // const queryParams = {
-    //   client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-    //   redirect_uri: "https://github.com/login/oauth/authorize",
-    //   scope: "read:user,repo",
-    // };
 
-    // const res = window.location.assign(
-    //   "https://github.com/login/oauth/authorize?" +
-    //     stringifyQueryParams(queryParams)
-    // );
-
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
+    window.open(url, "_blank");
   };
+
+  useEffect(() => {
+    const params = {
+      token: watch("token"),
+    };
+
+    githubService
+      .githubUsername(params)
+      .then((res) => {
+        if (!res?.login) {
+          dispatch(showAlert("No username found", "error"));
+          setValue("integration_resource.username", res?.login);
+        } else setValue("integration_resource.username", res?.login);
+      })
+      .catch((err) => {
+        setValue("integration_resource.username", "");
+        console.log("errrrrr", err);
+      });
+  }, [watch("token")]);
 
   return (
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
-        <h2 variant="h6">Resource infosss</h2>
+        <h2 variant="h6">Resource info</h2>
       </Box>
 
       <Box
@@ -278,20 +293,6 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                {/* <Box
-                  sx={{
-                    fontSize: "14px",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}>
-                  Type
-                </Box>
-                <HFSelect
-                  options={resources}
-                  control={control}
-                  required
-                  name="type"
-                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",
@@ -308,6 +309,23 @@ const Form = ({
                   disabled
                   inputProps={{
                     placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Token
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
                   }}
                 />
               </>
@@ -396,6 +414,7 @@ const Form = ({
           </>
         )} */}
       </Box>
+
       {resurceType === 4 && <VariableResources control={control} />}
 
       <Footer>

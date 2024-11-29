@@ -156,6 +156,12 @@ export default function OpenFaasFunctionForm() {
     }
   };
 
+  useEffect(() => {
+    if (selectedRepo) {
+      mainForm.setValue("name", selectedRepo);
+    }
+  }, [selectedRepo]);
+
   if (isLoading) return <PageFallback />;
 
   return (

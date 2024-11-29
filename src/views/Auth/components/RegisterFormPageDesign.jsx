@@ -1,5 +1,4 @@
 import {useForm} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
 import {Box, InputAdornment, Tooltip} from "@mui/material";
 import {useRegisterCompanyMutation} from "../../../services/companyService";
 import classes from "../style.module.scss";
@@ -17,7 +16,6 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   const {control, handleSubmit, setValue, watch} = useForm();
   const dispatch = useDispatch();
   const {t} = useTranslation();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const {mutate: updateObject} = useMutation(() => console.log(""));
@@ -38,17 +36,12 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
     },
   });
 
-  const trimPhone = (element) => {
-    return element?.replace(/[()\-\s]/g, "");
-  };
-
   const onSubmit = (values) => {
     setLoading(true);
     registerCompany({
       ...values,
       user_info: {
         ...values.user_info,
-        phone: trimPhone(values.user_info.phone),
       },
     });
   };

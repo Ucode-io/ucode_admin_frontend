@@ -1,12 +1,47 @@
 import React, {useEffect, useState} from "react";
 import Select, {components} from "react-select";
 
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+    color: isBlackBg ? "#fff" : "",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    border: "0px solid #fff",
+    outline: "none",
+  }),
+  input: (provided) => ({
+    ...provided,
+    width: "100%",
+    border: "none",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    display: "flex",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    background: state.isSelected ? "#007AFF" : provided.background,
+    color: state.isSelected ? "#fff" : provided.color,
+    cursor: "pointer",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+};
+
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState(props?.value || "");
   console.log("propsprops", props);
   return (
     <Select
+      customStyles={customStyles}
+      value={props?.value}
+      style={{border: "0px solid #000"}}
       // inputValue={inputValue}
       // onInputChange={(newInputValue, {action}) => {
       //   if (action !== "reset") {

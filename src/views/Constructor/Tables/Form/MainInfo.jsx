@@ -16,7 +16,7 @@ import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import style from "./main.module.scss";
 
-const MainInfo = ({control, watch, exist, authData}) => {
+const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const languages = useSelector((state) => state.languages.list);

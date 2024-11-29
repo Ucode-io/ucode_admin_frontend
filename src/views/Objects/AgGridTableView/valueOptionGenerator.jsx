@@ -36,7 +36,7 @@ const getColumnEditorParams = (item, columnDef) => {
       format: "dd-MM-yyyy",
     };
   } else if (item?.type === "LOOKUP") {
-    // columnDef.cellRenderer = LookupCellEditor;
+    columnDef.cellRenderer = LookupCellEditor;
     columnDef.cellEditor = "agRichSelectCellEditor";
 
     columnDef.cellEditorParams = {

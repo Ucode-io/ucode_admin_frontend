@@ -245,6 +245,7 @@ const ConstructorTablesFormPage = () => {
       .then((res) => {
         createType(res);
         if (location?.state?.create_table) {
+          getData();
           navigate(-1);
         }
       })

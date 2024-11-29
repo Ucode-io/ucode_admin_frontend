@@ -5,5 +5,5 @@ export const viewTypes = [
   "BOARD",
   "TREE",
   "WEBSITE",
-  "TABLEV2",
+  "GRID",
 ];

@@ -43,7 +43,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
         return "/img/calendarHourView.svg";
       case "WEBSITE":
         return "/img/calendarHourView.svg";
-      case "TABLEV2":
+      case "GRID":
         return "/img/calendarHourView.svg";
       default:
         return "/img/tableView.svg";
@@ -203,9 +203,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
               {type.value === "WEBSITE" && (
                 <LanguageIcon className={style.icon} />
               )}
-              {type.value === "TABLEV2" && (
-                <FiberNewIcon className={style.icon} />
-              )}
+              {type.value === "GRID" && <FiberNewIcon className={style.icon} />}
               {type.label}
             </Button>
           ))}

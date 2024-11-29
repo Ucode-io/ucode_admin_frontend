@@ -24,7 +24,7 @@ const getColumnEditorParams = (item, columnDef) => {
     columnDef.valueFormatter = (params) => {
       if (Boolean(params?.value)) {
         return "+" + Number(params?.value).toLocaleString();
-      } else return "--- -- --- -- --";
+      } else return "";
     };
   } else if (item?.type === "DATE") {
     columnDef.valueFormatter = (params) => {
@@ -36,13 +36,13 @@ const getColumnEditorParams = (item, columnDef) => {
       format: "dd-MM-yyyy",
     };
   } else if (item?.type === "LOOKUP") {
-    columnDef.cellEditorFramework = LookupCellEditor;
-    columnDef.cellEditorParams = {
-      field: item,
-      getRelationFieldTabsLabel,
-    };
+    // columnDef.cellRenderer = LookupCellEditor;
+    columnDef.cellEditor = "agRichSelectCellEditor";
 
-    columnDef.cellEditor = "agSelectCellEditor";
+    columnDef.cellEditorParams = {
+      values: ["AliceBlue", "AntiqueWhite", "Aqua"],
+      allowTyping: true,
+    };
 
     columnDef.valueFormatter = (params) => {
       const slugData = params?.data?.[`${item?.slug}_data`];

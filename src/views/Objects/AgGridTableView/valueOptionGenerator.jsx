@@ -37,12 +37,15 @@ const getColumnEditorParams = (item, columnDef) => {
     };
   } else if (item?.type === "LOOKUP") {
     columnDef.cellRenderer = LookupCellEditor;
-    columnDef.cellEditor = "agRichSelectCellEditor";
-
-    columnDef.cellEditorParams = {
-      values: ["AliceBlue", "AntiqueWhite", "Aqua"],
-      allowTyping: true,
+    columnDef.cellRendererParams = {
+      field: item,
     };
+    // columnDef.cellEditor = "agRichSelectCellEditor";
+
+    // columnDef.cellEditorParams = {
+    //   values: ["AliceBlue", "AntiqueWhite", "Aqua"],
+    //   allowTyping: true,
+    // };
 
     columnDef.valueFormatter = (params) => {
       const slugData = params?.data?.[`${item?.slug}_data`];

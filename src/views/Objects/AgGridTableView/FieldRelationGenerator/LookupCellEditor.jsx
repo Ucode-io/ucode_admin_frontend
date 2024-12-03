@@ -1,21 +1,27 @@
-import React, {useEffect, useState} from "react";
-import Select, {components} from "react-select";
+import React, {useMemo, useState} from "react";
+import Select from "react-select";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
+import {useQuery} from "react-query";
+import {useTranslation} from "react-i18next";
 
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
-    background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
-    color: isBlackBg ? "#fff" : "",
+    // background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+    color: "#fff",
     width: "100%",
     display: "flex",
     alignItems: "center",
     border: "0px solid #fff",
     outline: "none",
+    height: "100%",
   }),
   input: (provided) => ({
     ...provided,
     width: "100%",
     border: "none",
+    height: "40px",
   }),
   placeholder: (provided) => ({
     ...provided,
@@ -35,65 +41,85 @@ const customStyles = {
 
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(props?.value || "");
-  console.log("propsprops", props);
+  const {i18n} = useTranslation();
+  const {field, api, data} = props;
+  const [localValue, setLocalValue] = useState(
+    data?.[`${field?.slug}_data`] ?? null
+  );
+
+  const {data: optionsFromLocale, refetch} = useQuery(
+    // ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    ["GET_OBJECT_LIST", field?.table_slug],
+    () => {
+      if (!field?.table_slug) return null;
+      return constructorObjectService.getListV2(
+        field?.table_slug,
+        {
+          data: {
+            // ...autoFiltersValue,
+            // additional_request: {
+            //   additional_field: "guid",
+            //   additional_values: [value],
+            // },
+            view_fields: field?.view_fields?.map((f) => f.slug),
+            // search: debouncedValue.trim(),
+            limit: 10,
+            offset: 0,
+            // offset: pageToOffset(page, 10),
+            with_relations: false,
+          },
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      // enabled: !field?.attributes?.function_path && Boolean(page > 1),
+      // (!field?.attributes?.function_path && Boolean(debouncedValue)),
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+
+        return {
+          options,
+        };
+      },
+      onSuccess: (data) => {
+        // if (Object.keys(autoFiltersValue)?.length) {
+        //   setOptions(data?.options);
+        // } else if (data?.options?.length) {
+        setOptions((prevOptions) => [
+          ...(prevOptions ?? []),
+          ...(data.options ?? []),
+        ]);
+        // }
+      },
+    }
+  );
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(new Set(options?.map(JSON.stringify))).map(
+      JSON.parse
+    );
+    return uniqueObjects ?? [];
+  }, [options]);
+
+  const handleChange = (selectedOption) => {
+    setLocalValue(selectedOption);
+  };
+
   return (
     <Select
-      customStyles={customStyles}
-      value={props?.value}
-      style={{border: "0px solid #000"}}
-      // inputValue={inputValue}
-      // onInputChange={(newInputValue, {action}) => {
-      //   if (action !== "reset") {
-      //     setInputValue(newInputValue);
-      //     inputChangeHandler(newInputValue);
-      //   }
-      // }}
-      // isDisabled={disabled || autofilterDisable}
-      // onMenuScrollToBottom={loadMoreItems}
-      // options={computedOptions ?? []}
-      // value={localValue}
-      // menuPortalTarget={document.body}
-      // onMenuOpen={(e) => {
-      //   refetch();
-      // }}
-      isClearable
-      // components={{
-      //   ClearIndicator: () =>
-      //     localValue?.length && (
-      //       <div
-      //         style={{
-      //           marginRight: "10px",
-      //           cursor: "pointer",
-      //         }}
-      //         onClick={(e) => {
-      //           e.stopPropagation();
-      //           setLocalValue([]);
-      //         }}>
-      //         <ClearIcon />
-      //       </div>
-      //     ),
-      //   SingleValue: CustomSingleValue,
-      //   DropdownIndicator: null,
-      // }}
-      // onChange={(newValue, {action}) => {
-      //   changeHandler(newValue);
-      // }}
-      // noOptionsMessage={() => (
-      //   <span
-      //     onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-      //     style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
-      //     Create new
-      //   </span>
-      // )}
-      // menuShouldScrollIntoView
-      // styles={customStyles}
-      // getOptionLabel={(option) => `${getRelationFieldTabsLabel(field, option)}`}
-      // getOptionValue={(option) => option.value}
-      // isOptionSelected={(option, value) =>
-      //   value.some((val) => val.guid === value)
-      // }
-      blurInputOnSelect
+      id="aggrid_select"
+      menuPortalTarget={document.body}
+      styles={customStyles}
+      value={localValue}
+      options={computedOptions}
+      getOptionLabel={(option) => `${getRelationFieldTabsLabel(field, option)}`}
+      onChange={handleChange}
+      isOptionSelected={(option, value) =>
+        value.some((val) => val.guid === value)
+      }
     />
   );
 };

@@ -134,8 +134,8 @@ function AgGridTableView({view}) {
     };
   }, []);
 
-  const paginationPageSize = 500;
-  const paginationPageSizeSelector = [200, 500, 1000];
+  const paginationPageSize = 10;
+  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
@@ -144,7 +144,7 @@ function AgGridTableView({view}) {
         rowData={tableData}
         pagination={true}
         cellSelection={true}
-        sideBar={true}
+        sideBar={false}
         defaultColDef={defaultColDef}
         rowGroupPanelShow={"always"}
         autoGroupColumnDef={autoGroupColumnDef}

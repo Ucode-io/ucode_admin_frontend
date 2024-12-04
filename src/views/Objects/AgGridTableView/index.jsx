@@ -1,11 +1,11 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo} from "react";
 import styles from "./style.module.scss";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
 import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
 import {
@@ -30,7 +30,6 @@ ModuleRegistry.registerModules([
 
 function AgGridTableView({view, reset = () => {}}) {
   const {tableSlug} = useParams();
-  const queryClient = useQueryClient();
   const {i18n} = useTranslation();
   const customActions = {
     field: "actions",
@@ -50,12 +49,7 @@ function AgGridTableView({view, reset = () => {}}) {
     refetch,
     isLoading: tableLoader,
   } = useQuery({
-    queryKey: [
-      "GET_OBJECTS_LIST_DATA",
-      {
-        tableSlug,
-      },
-    ],
+    queryKey: ["GET_OBJECTS_LIST_DATA"],
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -79,12 +73,7 @@ function AgGridTableView({view, reset = () => {}}) {
       custom_events: [],
     },
   } = useQuery({
-    queryKey: [
-      "GET_TABLE_INFO",
-      {
-        tableSlug,
-      },
-    ],
+    queryKey: ["GET_TABLE_INFO"],
     queryFn: () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -139,13 +128,9 @@ function AgGridTableView({view, reset = () => {}}) {
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
   const {mutate: updateObject} = useMutation((data) =>
-    constructorObjectService
-      .update(tableSlug, {
-        data: {...data},
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_DATA"]);
-      })
+    constructorObjectService.update(tableSlug, {
+      data: {...data},
+    })
   );
 
   const onCellValueChange = (event) => {
@@ -162,7 +147,7 @@ function AgGridTableView({view, reset = () => {}}) {
         multi: tableData.map((i) => i),
       });
     }
-  }, [tableData, reset]);
+  }, []);
 
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
@@ -178,10 +163,9 @@ function AgGridTableView({view, reset = () => {}}) {
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
         cellSelection={true}
-        onCellValueChanged={(event) =>
-          // console.log(`New Cell Value: ${event.value}`, event)
-          onCellValueChange(event)
-        }
+        onCellValueChanged={(event) => {
+          onCellValueChange(event);
+        }}
       />
     </div>
   );

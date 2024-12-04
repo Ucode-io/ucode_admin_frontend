@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
@@ -75,6 +75,7 @@ const LookupCellEditor = (props) => {
     {
       // enabled: !field?.attributes?.function_path && Boolean(page > 1),
       // (!field?.attributes?.function_path && Boolean(debouncedValue)),
+      enabled: Boolean(!options?.length),
       select: (res) => {
         const options = res?.data?.response ?? [];
 

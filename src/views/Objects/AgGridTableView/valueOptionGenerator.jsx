@@ -1,65 +1,96 @@
 import {format} from "date-fns";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
+import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
+import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
+import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
-  if (item?.type === "MULTISELECT" && item?.attributes?.options) {
-    columnDef.cellEditor = "agSelectCellEditor";
-    columnDef.cellEditorParams = {
-      values: item?.attributes?.options.map((option) => option?.label),
-    };
-  } else if (item?.type === "NUMBER") {
-    columnDef.valueFormatter = (params) => {
-      return params?.value?.toLocaleString();
-    };
-  } else if (item?.type === "PASSWORD") {
-    columnDef.cellEditorParams = {
-      inputType: "password",
-    };
-  } else if (item?.type === "NUMBER") {
-    columnDef.valueFormatter = (params) => {
-      return params?.value?.toLocaleString();
-    };
-  } else if (item?.type === "INTERNATION_PHONE") {
-    columnDef.valueFormatter = (params) => {
-      if (Boolean(params?.value)) {
-        return "+" + Number(params?.value).toLocaleString();
-      } else return "";
-    };
-  } else if (item?.type === "DATE") {
-    columnDef.valueFormatter = (params) => {
-      return params?.value && format(new Date(params?.value), "dd-mm-yyyy");
-    };
+  switch (item?.type) {
+    case "MULTISELECT":
+      columnDef.cellEditor = "agSelectCellEditor";
+      columnDef.cellEditorParams = {
+        values: item?.attributes?.options.map((option) => option?.label),
+      };
+      break;
 
-    columnDef.cellEditor = "agDateCellEditor";
-    columnDef.cellEditorParams = {
-      format: "dd-MM-yyyy",
-    };
-  } else if (item?.type === "LOOKUP") {
-    columnDef.cellRenderer = LookupCellEditor;
-    columnDef.cellRendererParams = {
-      field: item,
-    };
-    // columnDef.cellEditor = "agRichSelectCellEditor";
+    case "NUMBER":
+      columnDef.valueFormatter = (params) => {
+        return params?.value?.toLocaleString();
+      };
 
-    // columnDef.cellEditorParams = {
-    //   values: ["AliceBlue", "AntiqueWhite", "Aqua"],
-    //   allowTyping: true,
-    // };
+      break;
 
-    columnDef.valueFormatter = (params) => {
-      const slugData = params?.data?.[`${item?.slug}_data`];
-      if (!slugData) return "";
-      return getRelationFieldTabsLabel(item, slugData);
-    };
+    case "MULTI_LINE":
+      (columnDef.cellRenderer = MultiLineCellEditor),
+        (columnDef.cellEditorParams = {
+          maxLength: 50,
+        });
 
-    columnDef.filterValueGetter = (params) => {
-      const slugData = params?.data?.[`${item?.slug}_data`];
-      if (!slugData) return "";
-      return getRelationFieldTabsLabel(item, slugData);
-    };
+      break;
+
+    case "PASSWORD":
+      columnDef.cellRenderer = PasswordCellEditor;
+
+      break;
+
+    case "NUMBER":
+      columnDef.valueFormatter = (params) => {
+        return params?.value?.toLocaleString();
+      };
+
+      break;
+
+    case "INTERNATION_PHONE":
+      (columnDef.cellRenderer = PhoneCellEditor),
+        (columnDef.valueFormatter = (params) => {
+          if (Boolean(params?.value)) {
+            return "+" + Number(params?.value).toLocaleString();
+          } else return "";
+        });
+
+      break;
+
+    case "DATE":
+      columnDef.valueFormatter = (params) => {
+        return params?.value && format(new Date(params?.value), "dd-mm-yyyy");
+      };
+
+      columnDef.cellEditor = "agDateCellEditor";
+      columnDef.cellEditorParams = {
+        format: "dd-MM-yyyy",
+      };
+
+      break;
+
+    case "LOOKUP":
+      columnDef.cellEditor = "agRichSelectCellEditor";
+      columnDef.cellRenderer = LookupCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      columnDef.filterValueGetter = (params) => {
+        const slugData = params?.data?.[`${item?.slug}_data`];
+        if (!slugData) return "";
+        return getRelationFieldTabsLabel(item, slugData);
+      };
+
+      // columnDef.cellEditorParams = {
+      //   values: ["AliceBlue", "AntiqueWhite", "Aqua"],
+      //   allowTyping: true,
+      // };
+
+      // columnDef.valueFormatter = (params) => {
+      //   const slugData = params?.data?.[`${item?.slug}_data`];
+      //   if (!slugData) return "";
+      //   return getRelationFieldTabsLabel(item, slugData);
+      // };
+
+      break;
+
+    default:
+      return {};
   }
-
-  return {};
 };
 export default getColumnEditorParams;

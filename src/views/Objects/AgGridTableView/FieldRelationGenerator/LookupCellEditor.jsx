@@ -42,7 +42,7 @@ const customStyles = {
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {i18n} = useTranslation();
-  const {field, api, data} = props;
+  const {field, api, data, setValue} = props;
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
@@ -105,6 +105,7 @@ const LookupCellEditor = (props) => {
   }, [options]);
 
   const handleChange = (selectedOption) => {
+    setValue(selectedOption?.guid);
     setLocalValue(selectedOption);
   };
 

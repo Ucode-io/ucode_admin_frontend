@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
 import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
 import {
@@ -28,8 +28,9 @@ ModuleRegistry.registerModules([
   RowGroupingModule,
 ]);
 
-function AgGridTableView({view}) {
+function AgGridTableView({view, reset = () => {}}) {
   const {tableSlug} = useParams();
+  const queryClient = useQueryClient();
   const {i18n} = useTranslation();
   const customActions = {
     field: "actions",
@@ -50,7 +51,7 @@ function AgGridTableView({view}) {
     isLoading: tableLoader,
   } = useQuery({
     queryKey: [
-      "GET_OBJECTS_LIST",
+      "GET_OBJECTS_LIST_DATA",
       {
         tableSlug,
       },
@@ -137,13 +138,38 @@ function AgGridTableView({view}) {
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
+  const {mutate: updateObject} = useMutation((data) =>
+    constructorObjectService
+      .update(tableSlug, {
+        data: {...data},
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_DATA"]);
+      })
+  );
+
+  const onCellValueChange = (event) => {
+    const {data} = event;
+
+    if (data) {
+      updateObject(data);
+    }
+  };
+
+  useEffect(() => {
+    if (tableData?.length > 0) {
+      reset({
+        multi: tableData.map((i) => i),
+      });
+    }
+  }, [tableData, reset]);
+
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
       <AgGridReact
         columnDefs={fiedlsarray}
         rowData={tableData}
         pagination={true}
-        cellSelection={true}
         sideBar={false}
         defaultColDef={defaultColDef}
         rowGroupPanelShow={"always"}
@@ -151,8 +177,10 @@ function AgGridTableView({view}) {
         paginationPageSize={paginationPageSize}
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
+        cellSelection={true}
         onCellValueChanged={(event) =>
-          console.log(`New Cell Value: ${event.value}`, event)
+          // console.log(`New Cell Value: ${event.value}`, event)
+          onCellValueChange(event)
         }
       />
     </div>

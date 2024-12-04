@@ -41,6 +41,10 @@ const getColumnEditorParams = (item, columnDef) => {
 
       break;
 
+    case "CHECKBOX":
+      columnDef.cellRenderer = "agCheckboxCellRenderer";
+      break;
+
     case "INTERNATION_PHONE":
       (columnDef.cellRenderer = PhoneCellEditor),
         (columnDef.valueFormatter = (params) => {

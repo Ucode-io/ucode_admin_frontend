@@ -43,9 +43,7 @@ const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {i18n} = useTranslation();
   const {field, api, data, setValue} = props;
-  const [localValue, setLocalValue] = useState(
-    data?.[`${field?.slug}_data`] ?? null
-  );
+  const [localValue, setLocalValue] = useState(data?.[`${field?.slug}_data`]);
 
   const {data: optionsFromLocale, refetch} = useQuery(
     // ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],

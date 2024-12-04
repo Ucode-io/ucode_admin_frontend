@@ -1,7 +1,7 @@
-import { Delete } from "@mui/icons-material";
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Delete} from "@mui/icons-material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
 import FRow from "../../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
@@ -12,12 +12,12 @@ import styles from "./style.module.scss";
 import HFTextField from "../../../../../../components/FormElements/HFTextField";
 
 const formulaTypes = [
-  { label: "Сумма", value: "SUMM" },
-  { label: "Максимум", value: "MAX" },
-  { label: "Среднее", value: "AVG" },
+  {label: "Сумма", value: "SUMM"},
+  {label: "Максимум", value: "MAX"},
+  {label: "Среднее", value: "AVG"},
 ];
 
-const FormulaAttributes = ({ control, mainForm }) => {
+const FormulaAttributes = ({control, mainForm}) => {
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -65,7 +65,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
       };
     });
   }, [tableRelations]);
-  const { data: fields } = useQuery(
+  const {data: fields} = useQuery(
     ["GET_TABLE_FIELDS", selectedTableslug],
     () => {
       if (!selectedTableslug) return [];
@@ -73,11 +73,11 @@ const FormulaAttributes = ({ control, mainForm }) => {
         {
           table_slug: selectedTableslug,
         },
-        { tableSlug: selectedTableslug }
+        selectedTableslug
       );
     },
     {
-      select: ({ fields }) =>
+      select: ({fields}) =>
         listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",

@@ -43,14 +43,12 @@ function AgGridTableView({view, reset = () => {}}) {
   };
 
   const {
-    data: {tableData} = {
-      tableData: [],
-    },
+    data: {tableData} = {tableData: []},
     refetch,
     isLoading: tableLoader,
-  } = useQuery({
-    queryKey: ["GET_OBJECTS_LIST_DATA"],
-    queryFn: () => {
+  } = useQuery(
+    ["GET_OBJECTS_LIST_DATA"],
+    () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           limit: 20,
@@ -58,13 +56,15 @@ function AgGridTableView({view, reset = () => {}}) {
         },
       });
     },
-    enabled: !!tableSlug,
-    select: (res) => {
-      return {
-        tableData: res.data?.response ?? [],
-      };
-    },
-  });
+    {
+      enabled: !!tableSlug,
+      select: (res) => {
+        return {
+          tableData: res.data?.response ?? [],
+        };
+      },
+    }
+  );
 
   const {
     data: {fiedlsarray, fieldView, custom_events} = {

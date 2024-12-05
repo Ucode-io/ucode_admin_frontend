@@ -43,58 +43,41 @@ const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {i18n} = useTranslation();
   const {field, api, data, setValue} = props;
-  const [localValue, setLocalValue] = useState(data?.[`${field?.slug}_data`]);
+  const [localValue, setLocalValue] = useState();
 
   const {data: optionsFromLocale, refetch} = useQuery(
-    // ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     ["GET_OBJECT_LIST", field?.table_slug],
     () => {
       if (!field?.table_slug) return null;
-      return constructorObjectService.getListV2(
-        field?.table_slug,
-        {
-          data: {
-            // ...autoFiltersValue,
-            // additional_request: {
-            //   additional_field: "guid",
-            //   additional_values: [value],
-            // },
-            view_fields: field?.view_fields?.map((f) => f.slug),
-            // search: debouncedValue.trim(),
-            limit: 10,
-            offset: 0,
-            // offset: pageToOffset(page, 10),
-            with_relations: false,
-          },
+      return constructorObjectService.getListV2(field?.table_slug, {
+        data: {
+          view_fields: field?.view_fields?.map((f) => f.slug),
+          limit: 10,
+          offset: 0,
+          with_relations: false,
         },
-        {
-          language_setting: i18n?.language,
-        }
-      );
+      });
     },
     {
-      // enabled: !field?.attributes?.function_path && Boolean(page > 1),
-      // (!field?.attributes?.function_path && Boolean(debouncedValue)),
-      enabled: Boolean(!options?.length),
+      enabled: false,
       select: (res) => {
         const options = res?.data?.response ?? [];
-
         return {
           options,
         };
       },
       onSuccess: (data) => {
-        // if (Object.keys(autoFiltersValue)?.length) {
-        //   setOptions(data?.options);
-        // } else if (data?.options?.length) {
         setOptions((prevOptions) => [
           ...(prevOptions ?? []),
           ...(data.options ?? []),
         ]);
-        // }
       },
     }
   );
+
+  useEffect(() => {
+    setLocalValue(data);
+  }, [data]);
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(new Set(options?.map(JSON.stringify))).map(

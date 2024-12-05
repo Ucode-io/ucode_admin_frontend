@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import Select from "react-select";
+import Select, {components} from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import {useQuery} from "react-query";
@@ -8,7 +8,6 @@ import {useTranslation} from "react-i18next";
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
-    // background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
     color: "#fff",
     width: "100%",
     display: "flex",
@@ -43,7 +42,10 @@ const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {i18n} = useTranslation();
   const {field, api, data, setValue} = props;
-  const [localValue, setLocalValue] = useState();
+  const [localValue, setLocalValue] = useState(
+    data?.[`${field?.slug}_data`] ?? null
+  );
+  const [inputValue, setInputValue] = useState(null);
 
   const {data: optionsFromLocale, refetch} = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug],
@@ -75,10 +77,6 @@ const LookupCellEditor = (props) => {
     }
   );
 
-  useEffect(() => {
-    setLocalValue(data);
-  }, [data]);
-
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(new Set(options?.map(JSON.stringify))).map(
       JSON.parse
@@ -87,16 +85,19 @@ const LookupCellEditor = (props) => {
   }, [options]);
 
   const handleChange = (selectedOption) => {
+    setInputValue(selectedOption);
     setValue(selectedOption?.guid);
-    setLocalValue(selectedOption);
   };
 
   return (
     <Select
+      onMenuOpen={(e) => {
+        refetch();
+      }}
       id="aggrid_select"
       menuPortalTarget={document.body}
       styles={customStyles}
-      value={localValue}
+      value={inputValue ?? localValue}
       options={computedOptions}
       getOptionLabel={(option) => `${getRelationFieldTabsLabel(field, option)}`}
       onChange={handleChange}

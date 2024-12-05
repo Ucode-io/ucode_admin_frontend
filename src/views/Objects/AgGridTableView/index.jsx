@@ -1,5 +1,4 @@
-import React, {useEffect, useMemo} from "react";
-import styles from "./style.module.scss";
+import React, {useMemo} from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
@@ -47,7 +46,7 @@ function AgGridTableView({view, reset = () => {}}) {
     refetch,
     isLoading: tableLoader,
   } = useQuery(
-    ["GET_OBJECTS_LIST_DATA"],
+    ["GET_OBJECTS_LIST_DATA", tableSlug, view],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -73,7 +72,7 @@ function AgGridTableView({view, reset = () => {}}) {
       custom_events: [],
     },
   } = useQuery({
-    queryKey: ["GET_TABLE_INFO"],
+    queryKey: ["GET_TABLE_INFO", tableSlug],
     queryFn: () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -133,25 +132,17 @@ function AgGridTableView({view, reset = () => {}}) {
     })
   );
 
-  const onCellValueChange = (event) => {
-    const {data} = event;
+  const onCellValueChanged = (event) => {
+    const updatedRowData = event?.data;
 
-    if (data) {
-      updateObject(data);
-    }
+    // Save the updated data to the backend
+    updateObject(updatedRowData);
   };
-
-  useEffect(() => {
-    if (tableData?.length > 0) {
-      reset({
-        multi: tableData.map((i) => i),
-      });
-    }
-  }, []);
 
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
       <AgGridReact
+        onStoreRefreshed={false}
         columnDefs={fiedlsarray}
         rowData={tableData}
         pagination={true}
@@ -163,9 +154,8 @@ function AgGridTableView({view, reset = () => {}}) {
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
         cellSelection={true}
-        onCellValueChanged={(event) => {
-          onCellValueChange(event);
-        }}
+        onCellValueChanged={onCellValueChanged}
+        suppressRefresh={true}
       />
     </div>
   );

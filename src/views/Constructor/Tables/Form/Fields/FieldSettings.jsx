@@ -246,10 +246,13 @@ const FieldSettings = ({
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
-      return constructorFieldService.getList({
-        table_slug: selectedAutofillSlug,
-        with_one_relation: true,
-      });
+      return constructorFieldService.getList(
+        {
+          table_slug: selectedAutofillSlug,
+          with_one_relation: true,
+        },
+        selectedAutofillSlug
+      );
     },
     {
       select: (res) => {

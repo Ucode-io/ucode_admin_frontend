@@ -1,16 +1,16 @@
-import { useEffect, useMemo } from "react"
-import { useForm, useWatch } from "react-hook-form"
-import HFSelect from "../../../../../components/FormElements/HFSelect"
-import DrawerCard from "../../../../../components/DrawerCard"
-import FRow from "../../../../../components/FormElements/FRow"
-import { useParams } from "react-router-dom"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import { fieldTypes } from "../../../../../utils/constants/fieldTypes"
-import { Divider } from "@mui/material"
-import Attributes from "./Attributes"
-import { useQuery } from "react-query"
-import constructorFieldService from "../../../../../services/constructorFieldService"
-import listToOptions from "../../../../../utils/listToOptions"
+import {useEffect, useMemo} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import HFSelect from "../../../../../components/FormElements/HFSelect";
+import DrawerCard from "../../../../../components/DrawerCard";
+import FRow from "../../../../../components/FormElements/FRow";
+import {useParams} from "react-router-dom";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import {fieldTypes} from "../../../../../utils/constants/fieldTypes";
+import {Divider} from "@mui/material";
+import Attributes from "./Attributes";
+import {useQuery} from "react-query";
+import constructorFieldService from "../../../../../services/constructorFieldService";
+import listToOptions from "../../../../../utils/listToOptions";
 
 const FieldCreateForm = ({
   onSubmit,
@@ -20,50 +20,58 @@ const FieldCreateForm = ({
   isLoading = false,
   mainForm,
 }) => {
-  const { id } = useParams()
-  const { handleSubmit, control, reset, watch, getValues } = useForm()
+  const {id} = useParams();
+  const {handleSubmit, control, reset, watch, getValues} = useForm();
 
   const submitHandler = (values) => {
-    onSubmit(values)
-  }
-  
+    onSubmit(values);
+  };
+
   const selectedAutofillTableSlug = useWatch({
     control,
-    name: 'autofill_table'
-  })
+    name: "autofill_table",
+  });
 
   const layoutRelations = useWatch({
     control: mainForm.control,
     name: "layoutRelations",
-  })
-
+  });
 
   const computedRelationTables = useMemo(() => {
-    return layoutRelations?.map(table => ({
-      value: table.id?.split('#')?.[0],
+    return layoutRelations?.map((table) => ({
+      value: table.id?.split("#")?.[0],
       label: table.label,
-    }))
-  }, [layoutRelations])
+    }));
+  }, [layoutRelations]);
 
+  const {data: computedRelationFields} = useQuery(
+    ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
+    () => {
+      if (!selectedAutofillTableSlug) return [];
+      return constructorFieldService.getList({
+        table_slug: selectedAutofillTableSlug,
+      });
+    },
+    {
+      select: ({fields}) =>
+        listToOptions(
+          fields?.filter((field) => field.type !== "LOOKUP"),
+          "label",
+          "slug"
+        ),
+    }
+  );
 
-  const { data: computedRelationFields } = useQuery(['GET_TABLE_FIELDS', selectedAutofillTableSlug], () => {
-    if (!selectedAutofillTableSlug) return []
-    return constructorFieldService.getList({ table_slug: selectedAutofillTableSlug })
-  }, {
-    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
-  })
-  
   // const { data } = useQuery(['GET_TABLES_LIST'], () => {
   //   return constructorTableService.getList()
   // }, { select: (res) => res?.data ?? [] })
-  
 
   const computedFieldTypes = useMemo(() => {
     return fieldTypes.map((type) => ({
       value: type,
       label: type,
-    }))
-  }, [])
+    }));
+  }, []);
 
   useEffect(() => {
     if (initialValues !== "CREATE")
@@ -77,7 +85,7 @@ const FieldCreateForm = ({
         table_id: id,
         type: "",
         ...initialValues,
-      })
+      });
     else
       reset({
         attributes: {},
@@ -88,8 +96,8 @@ const FieldCreateForm = ({
         slug: "",
         table_id: id,
         type: "",
-      })
-  }, [open])
+      });
+  }, [open]);
 
   return (
     <DrawerCard
@@ -97,9 +105,7 @@ const FieldCreateForm = ({
       onClose={closeDrawer}
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
-      loader={isLoading}
-      
-    >
+      loader={isLoading}>
       <form onSubmit={handleSubmit(submitHandler)}>
         <FRow label="Field Label" required>
           <HFTextField
@@ -136,32 +142,32 @@ const FieldCreateForm = ({
           />
         </FRow>
 
-        <Divider style={{ margin: "20px 0" }} />
+        <Divider style={{margin: "20px 0"}} />
 
         <Attributes control={control} watch={watch} mainForm={mainForm} />
 
         <>
-        <Divider style={{ margin: "20px 0" }} />
+          <Divider style={{margin: "20px 0"}} />
 
-        <FRow label="Autofill table">
-          <HFSelect
-            disabledHelperText
-            name="autofill_table"
-            control={control}
-            options={computedRelationTables}
-            placeholder="Type"
-          />
-        </FRow>
+          <FRow label="Autofill table">
+            <HFSelect
+              disabledHelperText
+              name="autofill_table"
+              control={control}
+              options={computedRelationTables}
+              placeholder="Type"
+            />
+          </FRow>
 
-        <FRow label="Autofill field">
-          <HFSelect
-            disabledHelperText
-            name="autofill_field"
-            control={control}
-            options={computedRelationFields}
-            placeholder="Type"
-          />
-        </FRow>
+          <FRow label="Autofill field">
+            <HFSelect
+              disabledHelperText
+              name="autofill_field"
+              control={control}
+              options={computedRelationFields}
+              placeholder="Type"
+            />
+          </FRow>
         </>
 
         {/* <FRow label="Fields">
@@ -174,7 +180,7 @@ const FieldCreateForm = ({
         </FRow> */}
       </form>
     </DrawerCard>
-  )
-}
+  );
+};
 
-export default FieldCreateForm
+export default FieldCreateForm;

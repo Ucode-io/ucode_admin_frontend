@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useState, useEffect, useCallback} from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
@@ -30,6 +30,7 @@ ModuleRegistry.registerModules([
 function AgGridTableView({view, reset = () => {}}) {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
+  const [rowData, setRowData] = useState([]);
   const customActions = {
     field: "actions",
     headerName: "Actions",
@@ -61,6 +62,9 @@ function AgGridTableView({view, reset = () => {}}) {
         return {
           tableData: res.data?.response ?? [],
         };
+      },
+      onSuccess: (data) => {
+        setRowData(data?.tableData);
       },
     }
   );
@@ -132,19 +136,11 @@ function AgGridTableView({view, reset = () => {}}) {
     })
   );
 
-  const onCellValueChanged = (event) => {
-    const updatedRowData = event?.data;
-
-    // Save the updated data to the backend
-    updateObject(updatedRowData);
-  };
-
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
       <AgGridReact
-        onStoreRefreshed={false}
         columnDefs={fiedlsarray}
-        rowData={tableData}
+        rowData={rowData}
         pagination={true}
         sideBar={false}
         defaultColDef={defaultColDef}
@@ -154,7 +150,7 @@ function AgGridTableView({view, reset = () => {}}) {
         paginationPageSizeSelector={paginationPageSizeSelector}
         rowSelection={rowSelection}
         cellSelection={true}
-        onCellValueChanged={onCellValueChanged}
+        onCellValueChanged={(e) => updateObject(e?.data)}
         suppressRefresh={true}
       />
     </div>

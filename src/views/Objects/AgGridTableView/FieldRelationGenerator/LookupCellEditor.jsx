@@ -41,7 +41,7 @@ const customStyles = {
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {i18n} = useTranslation();
-  const {field, api, data, setValue} = props;
+  const {field, api, data, setValue, value} = props;
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
@@ -91,9 +91,6 @@ const LookupCellEditor = (props) => {
 
   return (
     <Select
-      onMenuOpen={(e) => {
-        refetch();
-      }}
       id="aggrid_select"
       menuPortalTarget={document.body}
       styles={customStyles}
@@ -104,6 +101,9 @@ const LookupCellEditor = (props) => {
       isOptionSelected={(option, value) =>
         value.some((val) => val.guid === value)
       }
+      onMenuOpen={(e) => {
+        refetch();
+      }}
     />
   );
 };

@@ -4,8 +4,10 @@ import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
 import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
+import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
+  console.log("itemitemitemitemitem", item);
   switch (item?.type) {
     case "MULTISELECT":
       columnDef.cellEditor = "agSelectCellEditor";
@@ -45,6 +47,10 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.cellRenderer = "agCheckboxCellRenderer";
       break;
 
+    case "FORMULA_FRONTEND":
+      columnDef.cellRenderer = FrontendFormulaCellEditor;
+      break;
+
     case "INTERNATION_PHONE":
       (columnDef.cellRenderer = PhoneCellEditor),
         (columnDef.valueFormatter = (params) => {
@@ -79,17 +85,6 @@ const getColumnEditorParams = (item, columnDef) => {
         if (!slugData) return "";
         return getRelationFieldTabsLabel(item, slugData);
       };
-
-      // columnDef.cellEditorParams = {
-      //   values: ["AliceBlue", "AntiqueWhite", "Aqua"],
-      //   allowTyping: true,
-      // };
-
-      // columnDef.valueFormatter = (params) => {
-      //   const slugData = params?.data?.[`${item?.slug}_data`];
-      //   if (!slugData) return "";
-      //   return getRelationFieldTabsLabel(item, slugData);
-      // };
 
       break;
 

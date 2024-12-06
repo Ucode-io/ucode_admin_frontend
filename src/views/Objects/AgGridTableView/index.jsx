@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect, useCallback} from "react";
+import React, {useMemo, useState} from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
@@ -27,10 +27,13 @@ ModuleRegistry.registerModules([
   RowGroupingModule,
 ]);
 
-function AgGridTableView({view, reset = () => {}}) {
+function AgGridTableView({view}) {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [rowData, setRowData] = useState([]);
+  const paginationPageSize = 10;
+  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
+
   const customActions = {
     field: "actions",
     headerName: "Actions",
@@ -42,32 +45,29 @@ function AgGridTableView({view, reset = () => {}}) {
     },
   };
 
-  const {
-    data: {tableData} = {tableData: []},
-    refetch,
-    isLoading: tableLoader,
-  } = useQuery(
-    ["GET_OBJECTS_LIST_DATA", tableSlug, view],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          limit: 20,
-          offset: 0,
+  const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
+    useQuery(
+      ["GET_OBJECTS_LIST_DATA", tableSlug, view],
+      () => {
+        return constructorObjectService.getListV2(tableSlug, {
+          data: {
+            limit: 20,
+            offset: 0,
+          },
+        });
+      },
+      {
+        enabled: !!tableSlug,
+        select: (res) => {
+          return {
+            tableData: res.data?.response ?? [],
+          };
         },
-      });
-    },
-    {
-      enabled: !!tableSlug,
-      select: (res) => {
-        return {
-          tableData: res.data?.response ?? [],
-        };
-      },
-      onSuccess: (data) => {
-        setRowData(data?.tableData);
-      },
-    }
-  );
+        onSuccess: (data) => {
+          setRowData(data?.tableData);
+        },
+      }
+    );
 
   const {
     data: {fiedlsarray, fieldView, custom_events} = {
@@ -107,6 +107,12 @@ function AgGridTableView({view, reset = () => {}}) {
     },
   });
 
+  const {mutate: updateObject} = useMutation((data) =>
+    constructorObjectService.update(tableSlug, {
+      data: {...data},
+    })
+  );
+
   const defaultColDef = useMemo(() => {
     return {
       width: 100,
@@ -127,31 +133,22 @@ function AgGridTableView({view, reset = () => {}}) {
     };
   }, []);
 
-  const paginationPageSize = 10;
-  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
-
-  const {mutate: updateObject} = useMutation((data) =>
-    constructorObjectService.update(tableSlug, {
-      data: {...data},
-    })
-  );
-
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
       <AgGridReact
-        columnDefs={fiedlsarray}
+        sideBar={false}
         rowData={rowData}
         pagination={true}
-        sideBar={false}
-        defaultColDef={defaultColDef}
+        cellSelection={true}
+        suppressRefresh={true}
+        columnDefs={fiedlsarray}
+        rowSelection={rowSelection}
         rowGroupPanelShow={"always"}
+        defaultColDef={defaultColDef}
         autoGroupColumnDef={autoGroupColumnDef}
         paginationPageSize={paginationPageSize}
-        paginationPageSizeSelector={paginationPageSizeSelector}
-        rowSelection={rowSelection}
-        cellSelection={true}
         onCellValueChanged={(e) => updateObject(e?.data)}
-        suppressRefresh={true}
+        paginationPageSizeSelector={paginationPageSizeSelector}
       />
     </div>
   );

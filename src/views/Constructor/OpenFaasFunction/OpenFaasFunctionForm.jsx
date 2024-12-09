@@ -193,6 +193,30 @@ export default function OpenFaasFunctionForm() {
             />
           </FRow>
 
+          <FRow
+            label={"Function type"}
+            componentClassName="flex gap-2 align-center"
+            required>
+            <HFSelect
+              disabledHelperText
+              name="type"
+              control={mainForm.control}
+              fullWidth
+              options={[
+                {
+                  label: "Knative",
+                  value: "KNATIVE",
+                },
+                {
+                  label: "Openfaas",
+                  value: "FUNCTION",
+                },
+              ]}
+              required
+              disabled={functionId}
+            />
+          </FRow>
+
           {resourceId !== "ucode_gitlab" && (
             <>
               <FRow label="Репозиторий" required>

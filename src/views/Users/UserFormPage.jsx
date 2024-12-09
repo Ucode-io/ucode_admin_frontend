@@ -202,7 +202,8 @@ const ClientUserForm = () => {
           <FRow
             label={"Phone"}
             componentClassName="flex gap-2 align-center"
-            required>
+            // required
+          >
             <HFTextField
               disabledHelperText
               name="phone"

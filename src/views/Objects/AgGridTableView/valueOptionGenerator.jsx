@@ -5,9 +5,9 @@ import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
+import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
-  console.log("itemitemitemitemitem", item);
   switch (item?.type) {
     case "MULTISELECT":
       columnDef.cellEditor = "agSelectCellEditor";
@@ -49,6 +49,10 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "FORMULA_FRONTEND":
       columnDef.cellRenderer = FrontendFormulaCellEditor;
+      break;
+
+    case "FORMULA":
+      columnDef.cellRenderer = FormulaCellEditor;
       break;
 
     case "INTERNATION_PHONE":

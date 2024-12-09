@@ -1,10 +1,10 @@
 import CustomTabs from "../../components/CustomTabs";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import FormCard from "../../components/FormCard";
 import styles from "./styles.module.scss";
 import HFTextField from "../../components/FormElements/HFTextField";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import FRow from "../../components/FormElements/FRow";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import constructorTableService from "../../services/constructorTableService";
@@ -13,11 +13,11 @@ import Logins from "./Logins";
 import Connections from "./Connections";
 import MatrixRoles from "./MatrixRoles";
 import HeaderSettings from "../../components/HeaderSettings";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 const MatrixDetail = () => {
   const [tabIndex, setTabIndex] = useState(1);
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
   const tabs = [
     {
       id: 1,
@@ -142,7 +142,7 @@ const MatrixDetail = () => {
           />
         </div>
       ) : (
-        <div style={{ margin: "8px" }}>
+        <div style={{margin: "8px"}}>
           <MatrixRoles infoForm={infoForm} />
         </div>
       )}

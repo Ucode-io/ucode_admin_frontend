@@ -66,20 +66,7 @@ const getColumnEditorParams = (item, columnDef) => {
 
       break;
 
-    // case "DATE":
-    //   columnDef.valueFormatter = (params) => {
-    //     return params?.value && format(new Date(params?.value), "dd-mm-yyyy");
-    //   };
-
-    //   columnDef.cellEditor = "agDateCellEditor";
-    //   columnDef.cellEditorParams = {
-    //     format: "dd-MM-yyyy",
-    //   };
-
-    //   break;
-
     case "DATE":
-      // columnDef.cellEditor = "agDateCellEditor";
       columnDef.cellRenderer = DateCellEditor;
       columnDef.cellRendererParams = {
         field: item,

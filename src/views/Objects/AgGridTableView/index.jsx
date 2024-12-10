@@ -141,7 +141,7 @@ function AgGridTableView({view}) {
         rowData={rowData}
         pagination={true}
         cellSelection={true}
-        // suppressRefresh={true}
+        suppressRefresh={true}
         columnDefs={fiedlsarray}
         rowSelection={rowSelection}
         rowGroupPanelShow={"always"}

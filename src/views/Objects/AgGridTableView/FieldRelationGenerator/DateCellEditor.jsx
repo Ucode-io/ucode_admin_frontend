@@ -21,7 +21,7 @@ const DateCellEditor = (props) => {
         mask={"99.99.9999"}
         value={value}
         onChange={(val) => {
-          const isoDate = val.toISOString();
+          const isoDate = val?.toISOString();
 
           setValue(isoDate);
         }}

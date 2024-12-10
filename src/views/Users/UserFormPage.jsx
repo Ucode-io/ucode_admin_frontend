@@ -31,6 +31,7 @@ const ClientUserForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
+  const [roleId, setRoleId] = useState(null);
 
   useEffect(() => {
     if (searchParams.get("menuId")) {
@@ -80,20 +81,39 @@ const ClientUserForm = () => {
         })),
     }
   );
+
   const {data: computedRoles = []} = useQuery(
-    ["GET_ROLES_TYPE", mainForm.watch("client_type_id")],
+    [
+      "GET_ROLES_TYPE",
+      mainForm.watch("client_type_id"),
+      mainForm.watch("status"),
+    ],
     () => {
       return roleServiceV2.getList({
         "client-type-id": mainForm.watch("client_type_id"),
+        status:
+          mainForm.watch("status") === "ACTIVE"
+            ? true
+            : mainForm.watch("status") === "INACTIVE"
+              ? false
+              : undefined,
       });
     },
     {
-      enabled: !!mainForm.watch("client_type_id"),
+      enabled:
+        !!mainForm.watch("client_type_id") ||
+        mainForm.watch("status") !== "BLOCKED",
       select: (res) =>
         res.data.response?.map((row) => ({
           label: row.name,
           value: row.guid,
         })),
+
+      onSuccess: (data) => {
+        if (mainForm.watch("staut") === "ACTIVE") {
+          setRoleId(data);
+        }
+      },
     }
   );
 
@@ -119,7 +139,7 @@ const ClientUserForm = () => {
     if (userId) updateProject({...data, active: data.active ? 1 : 0});
     else createProject({...data, active: data.active ? 1 : 0, invite: invite});
   };
-
+  console.log("roleIdroleIdroleId", roleId);
   if (updateLoading) return <PageFallback />;
 
   return (
@@ -234,9 +254,11 @@ const ClientUserForm = () => {
           >
             <HFSelect
               isClearable={false}
-              disabled
+              disabled={mainForm.watch("status") !== "ACTIVE"}
               name="role_id"
-              options={computedRoles}
+              options={
+                mainForm.watch("status") === "INACTIVE" ? roleId : computedRoles
+              }
               control={mainForm.control}
               fullWidth
               // required

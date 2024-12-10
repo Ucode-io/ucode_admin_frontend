@@ -218,7 +218,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path && Boolean(debouncedValue),
+      enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -237,7 +237,9 @@ const AutoCompleteElement = ({
     if (Array.isArray(value)) {
       return value
         ?.map((id) => {
-          const option = allOptions?.find((el) => el?.guid === id);
+          const option = optionsFromLocale?.options?.find(
+            (el) => el?.guid === id
+          );
 
           if (!option) return null;
           return {
@@ -246,7 +248,9 @@ const AutoCompleteElement = ({
         })
         .filter((el) => el !== null);
     } else {
-      const option = allOptions?.find((el) => el?.guid === value);
+      const option = optionsFromLocale?.options?.find(
+        (el) => el?.guid === value
+      );
 
       if (!option) return [];
 
@@ -256,7 +260,7 @@ const AutoCompleteElement = ({
         },
       ];
     }
-  }, [allOptions, value]);
+  }, [optionsFromLocale?.options, value]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
@@ -265,21 +269,21 @@ const AutoCompleteElement = ({
     setValue(val ?? null);
   };
 
-  useEffect(() => {
-    const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
-    );
+  // useEffect(() => {
+  //   const matchingOption = relOptions?.find(
+  //     (item) => item?.table_slug === field?.table_slug
+  //   );
 
-    if (matchingOption) {
-      setAllOptions(matchingOption.response);
-    }
-  }, [relOptions, field]);
-
+  //   if (matchingOption) {
+  //     setAllOptions(matchingOption.response);
+  //   }
+  // }, [relOptions, field]);
+  console.log("optionsFromLocale", optionsFromLocale);
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={allOptions ?? []}
+        options={optionsFromLocale?.options ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (

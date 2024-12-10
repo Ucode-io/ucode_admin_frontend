@@ -61,7 +61,7 @@ const Form = ({
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
-        <h2 variant="h6">Resource infosss</h2>
+        <h2 variant="h6">Resource infos</h2>
       </Box>
 
       <Box

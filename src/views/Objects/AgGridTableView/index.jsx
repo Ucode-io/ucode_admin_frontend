@@ -17,6 +17,7 @@ import {
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import getColumnEditorParams from "./valueOptionGenerator";
+import DataCellEditor from "./FieldRelationGenerator/DateCellEditor";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -92,10 +93,10 @@ function AgGridTableView({view}) {
             field: item?.slug,
             minWidth: 250,
             filter: item?.type !== "PASSWORD" ? true : false,
-            editable: Boolean(
-              item?.disabled ||
-                !!item?.attributes?.field_permission?.edit_permission
-            ),
+            // editable: Boolean(
+            //   item?.disabled ||
+            //     !!item?.attributes?.field_permission?.edit_permission
+            // ),
           };
           getColumnEditorParams(item, columnDef);
 
@@ -140,14 +141,19 @@ function AgGridTableView({view}) {
         rowData={rowData}
         pagination={true}
         cellSelection={true}
-        suppressRefresh={true}
+        // suppressRefresh={true}
         columnDefs={fiedlsarray}
         rowSelection={rowSelection}
         rowGroupPanelShow={"always"}
         defaultColDef={defaultColDef}
         autoGroupColumnDef={autoGroupColumnDef}
         paginationPageSize={paginationPageSize}
-        onCellValueChanged={(e) => updateObject(e?.data)}
+        onCellValueChanged={(e) => {
+          updateObject(e?.data);
+        }}
+        frameworkComponents={{
+          customDateEditor: DataCellEditor,
+        }}
         paginationPageSizeSelector={paginationPageSizeSelector}
       />
     </div>

@@ -14,36 +14,36 @@ import {useState} from "react";
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  const {field, setValue} = props;
+  const {field, setValue, value} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
-  //   const formula = field?.attributes?.formula ?? "";
+  const formula = field?.attributes?.formula ?? "";
   //   const values = useWatch({
   //     control,
   //   });
 
-  //   const updateValue = () => {
-  //     let computedFormula = formula;
-  //     const fieldsListSorted = fieldsList
-  //       ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-  //       : [];
-  //     fieldsListSorted?.forEach((field) => {
-  //       let value = values[field.slug] ?? 0;
+  const updateValue = () => {
+    let computedFormula = formula;
+    const fieldsListSorted = fieldsList
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+      : [];
+    fieldsListSorted?.forEach((field) => {
+      // let value = values[field.slug] ?? 0;
 
-  //       if (typeof value === "string") value = `'${value}'`;
-  //       if (typeof value === "object") value = `"${value}"`;
-  //       if (typeof value === "boolean")
-  //         value = JSON.stringify(value).toUpperCase();
-  //       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-  //     });
+      if (typeof value === "string") value = `'${value}'`;
+      if (typeof value === "object") value = `"${value}"`;
+      if (typeof value === "boolean")
+        value = JSON.stringify(value).toUpperCase();
+      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+    });
 
-  //     const {error, result} = parser.parse(computedFormula);
+    const {error, result} = parser.parse(computedFormula);
 
-  //     let newValue = error ?? result;
-  //     const prevValue = values[name];
-  //     if (newValue !== prevValue) setFormValue(name, newValue);
-  //   };
+    // let newValue = error ?? result;
+    // const prevValue = values[name];
+    // if (newValue !== prevValue) s(name, newValue);
+  };
 
-  //   useDebouncedWatch(updateValue, [values], 300);
+  // useDebouncedWatch(updateValue, [values], 300);
 
   //   useEffect(() => {
   //     updateValue();
@@ -70,24 +70,24 @@ const FormulaCellEditor = (props) => {
           );
         isNewTableView && updateObject();
       }}
-      error={error}
-      sx={
-        isTableView
-          ? {
-              "& .MuiOutlinedInput-notchedOutline": {
-                border: "0",
-              },
-            }
-          : ""
-      }
+      // error={error}
+      // sx={
+      //   isTableView
+      //     ? {
+      //         "& .MuiOutlinedInput-notchedOutline": {
+      //           border: "0",
+      //         },
+      //       }
+      //     : ""
+      // }
       fullWidth
-      disabled={disabled}
-      autoFocus={tabIndex === 1}
-      helperText={!disabledHelperText && error?.message}
+      // disabled={disabled}
+      // autoFocus={tabIndex === 1}
+      // helperText={!disabledHelperText && error?.message}
       InputProps={{
-        inputProps: {tabIndex},
-        readOnly: disabled,
-        style: disabled
+        // inputProps: {tabIndex},
+        readOnly: field?.disabled,
+        style: field?.disabled
           ? {
               background: "inherit",
               paddingRight: "0",
@@ -112,7 +112,7 @@ const FormulaCellEditor = (props) => {
                   <FunctionsIcon />
                 </IconButton>
               </Tooltip>
-              {disabled && (
+              {field?.disabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{fontSize: "20px"}} />

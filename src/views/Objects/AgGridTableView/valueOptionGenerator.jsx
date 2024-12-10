@@ -6,6 +6,7 @@ import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
 import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -65,14 +66,23 @@ const getColumnEditorParams = (item, columnDef) => {
 
       break;
 
-    case "DATE":
-      columnDef.valueFormatter = (params) => {
-        return params?.value && format(new Date(params?.value), "dd-mm-yyyy");
-      };
+    // case "DATE":
+    //   columnDef.valueFormatter = (params) => {
+    //     return params?.value && format(new Date(params?.value), "dd-mm-yyyy");
+    //   };
 
-      columnDef.cellEditor = "agDateCellEditor";
-      columnDef.cellEditorParams = {
-        format: "dd-MM-yyyy",
+    //   columnDef.cellEditor = "agDateCellEditor";
+    //   columnDef.cellEditorParams = {
+    //     format: "dd-MM-yyyy",
+    //   };
+
+    //   break;
+
+    case "DATE":
+      // columnDef.cellEditor = "agDateCellEditor";
+      columnDef.cellRenderer = DateCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
       };
 
       break;

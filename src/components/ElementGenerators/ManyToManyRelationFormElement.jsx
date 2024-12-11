@@ -135,6 +135,7 @@ const AutoCompleteElement = ({
   const menuId = searchParams.get("menuId");
 
   const autoFilters = field?.attributes?.auto_filters;
+  const fieldSlug = field?.slug?.split("_")?.[0];
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -204,7 +205,7 @@ const AutoCompleteElement = ({
     ],
     () => {
       return constructorObjectService.getListV2(
-        tableSlug,
+        fieldSlug,
         {
           data: {
             ...autoFiltersValue,

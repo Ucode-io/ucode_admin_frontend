@@ -7,6 +7,9 @@ import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaC
 import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
 import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
 import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
+import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
+import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
+import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -76,6 +79,30 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "DATE_TIME":
       columnDef.cellRenderer = DateTimeCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      break;
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      columnDef.cellRenderer = HFDateTimePickerWithoutCell;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      break;
+
+    case "TIME":
+      columnDef.cellRenderer = HFTimePickerCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      break;
+
+    case "SWITCH":
+      columnDef.cellRenderer = HFSwitchCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

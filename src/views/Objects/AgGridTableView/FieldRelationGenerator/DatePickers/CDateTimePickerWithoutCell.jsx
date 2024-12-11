@@ -8,26 +8,38 @@ import InputMask from "react-input-mask";
 import {locale} from "./Plugins/locale";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 // import CopyToClipboard from "../CopyToClipboard";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {format, parse} from "date-fns";
+import {useMemo} from "react";
 
-const CDateTimePicker = ({
+const CDateTimePickerWithoutCell = ({
   value,
-  placeholder = "",
+  placeholder,
   isBlackBg = false,
-  isNewTableView = false,
   classes = {},
   onChange = () => {},
   isFormEdit = false,
-  isTransparent = false,
   tabIndex = 0,
   mask = "",
   showCopyBtn = true,
   disabled = false,
   sectionModal = false,
 }) => {
+  const onChangeHandler = (val) => {
+    onChange(val ? format(new Date(val), "dd.MM.yyyy HH:mm") : "");
+  };
+
+  const computedValue = useMemo(() => {
+    if (!value) return "";
+
+    if (value.includes("Z")) return new Date(value);
+
+    return parse(value, "dd.MM.yyyy HH:mm", new Date());
+  }, [value]);
+
   return (
     <div className="main_wrapper">
       <DatePicker
-        id={`date_time_${name}`}
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           return (
@@ -39,23 +51,19 @@ const CDateTimePicker = ({
               {(InputProps) => (
                 <TextField
                   value={value}
-                  // id={`date_time_${name}`}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   size="medium"
-                  // placeholder={placeholder.split("#")[0]}
+                  //   placeholder={placeholder.split("#")[0]}
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
-                      borderTopRightRadius: 0,
-                      borderBottomRightRadius: 0,
                     },
-                    "& .MuiInputBase-input": {
-                      paddingTop: isNewTableView ? 0 : "10px",
-                      paddingBottom: isNewTableView ? 0 : "10px",
-                      padding: "8.5px 8px",
+                    "& input": {
+                      padding: "5px !important",
+                      height: "28px",
                     },
-                    width: "100%",
+                    maxWidth: "150px",
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -68,20 +76,14 @@ const CDateTimePicker = ({
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent
+                    style: disabled
                       ? {
-                          background: "transparent",
+                          background: "#c0c0c039",
                         }
-                      : disabled
-                        ? {
-                            background: "#c0c0c039",
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                          }
-                        : {
-                            background: isBlackBg ? "#2A2D34" : "",
-                            color: isBlackBg ? "#fff" : "",
-                          },
+                      : {
+                          background: isBlackBg ? "#2A2D34" : "",
+                          color: isBlackBg ? "#fff" : "",
+                        },
                   }}
                 />
               )}
@@ -91,15 +93,12 @@ const CDateTimePicker = ({
         plugins={[weekends()]}
         weekStartDayIndex={1}
         locale={locale}
-        portalTarget={sectionModal ? false : document.body}
         format="DD.MM.YYYY"
-        value={new Date(value) || ""}
-        onChange={(val) => onChange(val ? new Date(val) : "")}
+        value={computedValue || ""}
+        onChange={onChangeHandler}
       />
       <DatePicker
-        id={`date_time_${name}`}
         disableDayPicker
-        portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           return (
             <InputMask
@@ -109,50 +108,38 @@ const CDateTimePicker = ({
               disabled={disabled}>
               {(InputProps) => (
                 <TextField
-                  id={`date_time_${name}`}
                   value={value}
-                  portalTarget={document.body}
-                  portal={document.body}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   // size="small"
                   autoComplete="off"
-                  placeholder={placeholder.split("#")[1]}
+                  //   placeholder={placeholder.split("#")[1]}
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
                   style={{border: "none"}}
                   fullWidth
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
                     },
-                    "& .MuiInputBase-input": {
-                      paddingTop: isNewTableView ? 0 : "10px",
-                      paddingBottom: isNewTableView ? 0 : "10px",
-                      padding: "8.5px 4px",
+                    "& input": {
+                      padding: "5px !important",
+                      height: "28px",
                     },
-                    width: "100%",
+                    maxWidth: "150px",
                   }}
                   InputProps={{
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: isTransparent
+                    style: disabled
                       ? {
-                          background: "transparent",
+                          background: "#c0c0c039",
                         }
-                      : disabled
-                        ? {
-                            background: "#c0c0c039",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                          }
-                        : {
-                            background: isBlackBg ? "#2A2D34" : "",
-                            color: isBlackBg ? "#fff" : "",
-                          },
+                      : {
+                          background: isBlackBg ? "#2A2D34" : "",
+                          color: isBlackBg ? "#fff" : "",
+                        },
                     endAdornment: (
                       <InputAdornment position="end">
                         <Box sx={{display: "flex", alignItems: "center"}}>
@@ -177,15 +164,19 @@ const CDateTimePicker = ({
           );
         }}
         plugins={[<TimePicker hideSeconds />]}
+        portal
         format="HH:mm"
-        value={new Date(value) || ""}
-        onChange={(val) => onChange(val ? new Date(val) : "")}
+        value={computedValue || ""}
+        onChange={onChangeHandler}
       />
       {/* {showCopyBtn && (
-        <CopyToClipboard copyText={value} style={{marginLeft: 8}} />
+        <CopyToClipboard
+          copyText={value}
+          style={{marginLeft: 8, height: "38px"}}
+        />
       )} */}
     </div>
   );
 };
 
-export default CDateTimePicker;
+export default CDateTimePickerWithoutCell;

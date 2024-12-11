@@ -37,10 +37,10 @@ const ManyToManyRelationFormElement = ({
   }, [field.id]);
 
   const label =
+    field?.attributes[`label_${i18n?.language}`] ||
     field?.attributes[`title_${i18n?.language}`] ||
     field?.attributes[`name_${i18n?.language}`] ||
     field?.attributes[`label_to_${i18n?.language}`] ||
-    field?.attributes[`label_${i18n?.language}`] ||
     field?.label ||
     field.title;
 
@@ -193,6 +193,12 @@ const AutoCompleteElement = ({
     }
   );
 
+  function splitAndReturnRest(string) {
+    const splitStr = string?.split("_");
+    splitStr.pop();
+    return splitStr.join("_");
+  }
+
   const {data: fromObjectList} = useQuery(
     [
       "GET_OBJECT_LIST",
@@ -204,7 +210,7 @@ const AutoCompleteElement = ({
     ],
     () => {
       return constructorObjectService.getListV2(
-        tableSlug,
+        splitAndReturnRest(field?.slug),
         {
           data: {
             ...autoFiltersValue,

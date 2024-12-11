@@ -37,10 +37,10 @@ const ManyToManyRelationFormElement = ({
   }, [field.id]);
 
   const label =
+    field?.attributes[`label_${i18n?.language}`] ||
     field?.attributes[`title_${i18n?.language}`] ||
     field?.attributes[`name_${i18n?.language}`] ||
     field?.attributes[`label_to_${i18n?.language}`] ||
-    field?.attributes[`label_${i18n?.language}`] ||
     field?.label ||
     field.title;
 
@@ -330,7 +330,7 @@ const AutoCompleteElement = ({
       zIndex: 9999,
     }),
   };
-
+  console.log("computedOptionscomputedOptions", computedOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       <div

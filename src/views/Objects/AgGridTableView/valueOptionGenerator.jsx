@@ -1,4 +1,3 @@
-import {format} from "date-fns";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
 import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
@@ -7,6 +6,7 @@ import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
 import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
 import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
+import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -68,6 +68,14 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "DATE":
       columnDef.cellRenderer = DateCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      break;
+
+    case "DATE_TIME":
+      columnDef.cellRenderer = DateTimeCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

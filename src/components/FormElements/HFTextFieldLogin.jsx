@@ -79,10 +79,11 @@ const HFTextFieldLogin = ({
             }}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
-            error={error}
+            error={!!error}
             type={type}
             fullWidth={fullWidth}
             placeholder={placeholder}
+            helperText={error?.message}
             autoFocus={tabIndex === 1}
             InputProps={{
               endAdornment: error && (
@@ -116,7 +117,6 @@ const HFTextFieldLogin = ({
                   : {},
             }}
             className="loginField"
-            // {...props}
           />
         );
       }}

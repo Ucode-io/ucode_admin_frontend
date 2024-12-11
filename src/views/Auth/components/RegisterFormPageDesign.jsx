@@ -11,6 +11,14 @@ import {useMutation} from "react-query";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import {useState} from "react";
 import GoogleAuthLogin from "./LoginFormDesign/ExternalAuth/GoogleAuthLogin";
+import HFTextFieldPassword from "../../../components/FormElements/HFTextFieldPassword";
+
+const loginRules = {
+  minLength: {
+    value: 6,
+    message: "Login must be at least 6 characters long",
+  },
+};
 
 const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   const {control, handleSubmit, setValue, watch} = useForm();
@@ -102,6 +110,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               control={control}
               fullWidth
               placeholder="Create login"
+              rules={loginRules}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -113,7 +122,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
           </div>
           <div className={classes.formRow}>
             <p className={classes.label}>{"Password*"}</p>
-            <HFTextFieldLogin
+            <HFTextFieldPassword
               required
               name="user_info.password"
               control={control}

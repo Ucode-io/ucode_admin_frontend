@@ -7,7 +7,7 @@ import InputMask from "react-input-mask";
 // import "./style2.scss";
 import {locale} from "./Plugins/locale";
 import "react-multi-date-picker/styles/layouts/mobile.css";
-import CopyToClipboard from "../CopyToClipboard";
+// import CopyToClipboard from "../CopyToClipboard";
 
 const CDateTimePicker = ({
   value,

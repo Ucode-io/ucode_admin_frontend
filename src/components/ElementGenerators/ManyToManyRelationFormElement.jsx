@@ -135,7 +135,6 @@ const AutoCompleteElement = ({
   const menuId = searchParams.get("menuId");
 
   const autoFilters = field?.attributes?.auto_filters;
-  const fieldSlug = field?.slug?.split("_")?.[0];
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -194,6 +193,12 @@ const AutoCompleteElement = ({
     }
   );
 
+  function splitAndReturnRest(string) {
+    const splitStr = string?.split("_");
+    splitStr.pop();
+    return splitStr.join("_");
+  }
+
   const {data: fromObjectList} = useQuery(
     [
       "GET_OBJECT_LIST",
@@ -205,7 +210,7 @@ const AutoCompleteElement = ({
     ],
     () => {
       return constructorObjectService.getListV2(
-        fieldSlug,
+        splitAndReturnRest(field?.slug),
         {
           data: {
             ...autoFiltersValue,
@@ -331,7 +336,7 @@ const AutoCompleteElement = ({
       zIndex: 9999,
     }),
   };
-  console.log("computedOptionscomputedOptions", computedOptions);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div

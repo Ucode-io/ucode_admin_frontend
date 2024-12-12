@@ -13,6 +13,7 @@ import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
 import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
 import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
+import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -146,6 +147,13 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "FILE":
       columnDef.cellRenderer = HFFileUploadCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "VIDEO":
+      columnDef.cellRenderer = HFVideoUploadCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

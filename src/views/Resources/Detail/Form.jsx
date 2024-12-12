@@ -7,7 +7,7 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-import {useNavigate} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import githubService from "../../../services/githubService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
@@ -32,6 +32,8 @@ const Form = ({
 }) => {
   const dispatch = useDispatch();
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("access_token");
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -57,30 +59,41 @@ const Form = ({
 
   const onResourceTypeChange = (value) => {
     if (value !== 5) return;
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
-    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`;
-    window.open(url, "_blank");
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    const redirectUri = import.meta.env.VITE_BASE_URL;
+
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+    window.location.href = url;
   };
 
   useEffect(() => {
     const params = {
-      token: watch("token"),
+      token: token,
     };
 
-    githubService
-      .githubUsername(params)
-      .then((res) => {
-        if (!res?.login) {
-          dispatch(showAlert("No username found", "error"));
-          setValue("integration_resource.username", res?.login);
-        } else setValue("integration_resource.username", res?.login);
-      })
-      .catch((err) => {
-        setValue("integration_resource.username", "");
-        console.log("errrrrr", err);
-      });
-  }, [watch("token")]);
+    if (token) {
+      githubService
+        .githubUsername(params)
+        .then((res) => {
+          if (!res?.login) {
+            dispatch(showAlert("No username found", "error"));
+            setValue("integration_resource.username", res?.login);
+          } else setValue("integration_resource.username", res?.login);
+        })
+        .catch((err) => {
+          setValue("integration_resource.username", "");
+          console.log("errrrrr", err);
+        });
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      setValue("token", token);
+    }
+  }, [token]);
 
   return (
     <Box
@@ -322,6 +335,7 @@ const Form = ({
                 <HFTextField
                   control={control}
                   required
+                  disabled={Boolean(token)}
                   name="token"
                   fullWidth
                   inputProps={{

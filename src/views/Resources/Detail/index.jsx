@@ -219,16 +219,16 @@ const ResourceDetail = () => {
       }
     );
 
-  useGithubUserQuery({
-    token: searchParams.get("access_token"),
-    enabled:
-      !!searchParams.get("access_token") && !resourceType == "CLICK_HOUSE",
-    queryParams: {
-      select: (res) => res?.data?.login,
-      onSuccess: (username) =>
-        setValue("integration_resource.username", username),
-    },
-  });
+  // useGithubUserQuery({
+  //   token: searchParams.get("access_token"),
+  //   enabled:
+  //     !!searchParams.get("access_token") && !resourceType == "CLICK_HOUSE",
+  //   queryParams: {
+  //     select: (res) => res?.data?.login,
+  //     onSuccess: (username) =>
+  //       setValue("integration_resource.username", username),
+  //   },
+  // });
 
   const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
     useGithubLoginMutation({
@@ -245,7 +245,7 @@ const ResourceDetail = () => {
     if (code) {
       githubLogin({code});
     }
-  }, []);
+  }, [searchParams.get("code")]);
 
   const resource_type = watch("resource_type");
 

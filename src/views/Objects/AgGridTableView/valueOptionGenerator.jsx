@@ -10,16 +10,12 @@ import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
 import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
+import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
+import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
+import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
-    case "MULTISELECT":
-      columnDef.cellEditor = "agSelectCellEditor";
-      columnDef.cellEditorParams = {
-        values: item?.attributes?.options.map((option) => option?.label),
-      };
-      break;
-
     case "NUMBER":
       columnDef.valueFormatter = (params) => {
         return params?.value?.toLocaleString();
@@ -51,6 +47,14 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.cellRenderer = "agCheckboxCellRenderer";
       break;
 
+    case "SWITCH":
+      columnDef.cellRenderer = HFSwitchCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+
+      break;
+
     case "FORMULA_FRONTEND":
       columnDef.cellRenderer = FrontendFormulaCellEditor;
       break;
@@ -69,6 +73,7 @@ const getColumnEditorParams = (item, columnDef) => {
 
       break;
 
+    // DATE FIELDS:
     case "DATE":
       columnDef.cellRenderer = DateCellEditor;
       columnDef.cellRendererParams = {
@@ -101,14 +106,7 @@ const getColumnEditorParams = (item, columnDef) => {
 
       break;
 
-    case "SWITCH":
-      columnDef.cellRenderer = HFSwitchCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
+    // WITH OPTIONS RELATION & MULTISELECT:
     case "LOOKUP":
       columnDef.cellEditor = "agRichSelectCellEditor";
       columnDef.cellRenderer = LookupCellEditor;
@@ -122,6 +120,35 @@ const getColumnEditorParams = (item, columnDef) => {
         return getRelationFieldTabsLabel(item, slugData);
       };
 
+      break;
+
+    case "MULTISELECT":
+      columnDef.cellEditor = "agSelectCellEditor";
+      columnDef.cellEditorParams = {
+        values: item?.attributes?.options.map((option) => option?.label),
+      };
+      break;
+
+    // FILE & PHOTO FIELDS
+    case "PHOTO":
+      columnDef.cellRenderer = HFPhotoUploadCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "MULTI_IMAGE":
+      columnDef.cellRenderer = HFMultiImageCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "FILE":
+      columnDef.cellRenderer = HFFileUploadCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
       break;
 
     default:

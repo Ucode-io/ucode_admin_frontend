@@ -4,7 +4,7 @@ import axios from "axios";
 import requestV2 from "../utils/requestV2";
 
 const githubService = {
-  login: (data) => httpsRequest.post("/v2/github/login", data),
+  login: (params) => httpsRequest.get("/github/login", {params}),
   githubUsername: (params) => httpsRequest.get("/github/user", {params}),
   githubRepositories: (params) => httpsRequest.get("/github/repos", {params}),
   githubBranches: (params) => httpsRequest.get("/github/branches", {params}),

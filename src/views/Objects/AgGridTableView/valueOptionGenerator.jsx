@@ -16,6 +16,7 @@ import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEdi
 import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
 import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
+import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -170,6 +171,13 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "POLYGON":
       columnDef.cellRenderer = PolygonFieldTableCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "QR":
+      columnDef.cellRenderer = HFQrFieldComponentCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

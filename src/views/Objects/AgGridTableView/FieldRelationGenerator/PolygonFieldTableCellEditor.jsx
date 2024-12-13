@@ -23,7 +23,6 @@ function PolygonFieldTableCellEditor(props) {
   const handleClose = () => setOpen(false);
 
   const updatePolygon = () => {
-    // Boolean(!newColumn && isNewTableView) && updateObject();
     handleClose();
   };
 
@@ -73,7 +72,7 @@ function PolygonFieldTableCellEditor(props) {
               sx={{width: "150px"}}
               variant="contained"
               onClick={updatePolygon}>
-              Savess
+              Save
             </Button>
           </Box>
         </Box>

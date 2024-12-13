@@ -266,6 +266,7 @@ export default function OpenFaasFunctionForm() {
               control={mainForm.control}
               fullWidth
               required
+              disabled={true}
             />
           </FRow>
           {resourceId === "ucode_gitlab" && (

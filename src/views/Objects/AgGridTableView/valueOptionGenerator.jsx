@@ -14,6 +14,8 @@ import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellE
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
 import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
 import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
+import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
+import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -154,6 +156,20 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "VIDEO":
       columnDef.cellRenderer = HFVideoUploadCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "MAP":
+      columnDef.cellRenderer = HFModalMapCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "POLYGON":
+      columnDef.cellRenderer = PolygonFieldTableCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

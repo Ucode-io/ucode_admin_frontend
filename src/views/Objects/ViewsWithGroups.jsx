@@ -249,7 +249,7 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
-
+  console.log("viewviewviewview", view);
   return (
     <>
       {view?.type === "WEBSITE" ? (
@@ -299,7 +299,7 @@ const ViewsWithGroups = ({
           </FiltersBlock>
           <WebsiteView view={view} />
         </>
-      ) : view?.type === "TABLEV2" ? (
+      ) : view?.type === "GRID" ? (
         <>
           <FiltersBlock
             extra={

@@ -24,6 +24,10 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => {
         return params?.value?.toLocaleString();
       };
+      console.log("columnDef===>", columnDef);
+      if (columnDef?.pinned) {
+        console.log("columnDef", columnDef);
+      }
 
       break;
 

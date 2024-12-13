@@ -18,6 +18,7 @@ import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import getColumnEditorParams from "./valueOptionGenerator";
 import DataCellEditor from "./FieldRelationGenerator/DateCellEditor";
+import constructorViewService from "../../../services/constructorViewService";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -44,6 +45,17 @@ function AgGridTableView({view}) {
         console.log("ssssss");
       },
     },
+  };
+
+  const updateView = (pinnedField) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+        },
+      })
+      .then(() => {});
   };
 
   const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
@@ -93,6 +105,9 @@ function AgGridTableView({view}) {
             field: item?.slug,
             minWidth: 250,
             filter: item?.type !== "PASSWORD" ? true : false,
+            view: view,
+            updateView: updateView,
+
             // editable: Boolean(
             //   item?.disabled ||
             //     !!item?.attributes?.field_permission?.edit_permission
@@ -150,6 +165,9 @@ function AgGridTableView({view}) {
         paginationPageSize={paginationPageSize}
         onCellValueChanged={(e) => {
           updateObject(e?.data);
+        }}
+        onColumnPinned={(e) => {
+          console.log("pinneeeeeed", e);
         }}
         frameworkComponents={{
           customDateEditor: DataCellEditor,

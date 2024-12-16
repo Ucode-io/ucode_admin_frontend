@@ -266,7 +266,9 @@ export default function OpenFaasFunctionForm() {
               control={mainForm.control}
               fullWidth
               required
-              disabled={true}
+              disabled={
+                mainForm.watch("resource_id") === "ucode_gitlab" ? false : true
+              }
             />
           </FRow>
           {resourceId === "ucode_gitlab" && (

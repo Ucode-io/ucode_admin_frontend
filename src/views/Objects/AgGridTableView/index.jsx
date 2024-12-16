@@ -31,14 +31,13 @@ ModuleRegistry.registerModules([
 function AgGridTableView({view}) {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
-  const [rowData, setRowData] = useState([]);
   const queryClient = useQueryClient();
-  const [pinFields, setPinFields] = useState(
-    view?.attributes?.pinnedFields || {}
-  );
+  const [pinFields, setPinFields] = useState(view?.attributes?.pinnedFields);
+
+  const [rowData, setRowData] = useState([]);
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
-  console.log("pinFieldspinFields", pinFields);
+
   const customActions = {
     field: "actions",
     headerName: "Actions",
@@ -51,31 +50,25 @@ function AgGridTableView({view}) {
   };
 
   const updateView = (pinnedField) => {
-    setPinFields((prev) => {
-      const newPinnedFields = {...prev};
-
+    setPinFields((prevState) => {
+      const newPinnedFields = {...prevState};
       const fieldId = Object.keys(pinnedField)[0];
       const pinnedValue = pinnedField[fieldId]?.pinned;
 
-      // If pinned is null, remove that field from pinnedFields
-      if (pinnedValue === null) {
+      if (pinnedValue === null || pinnedValue === "") {
         delete newPinnedFields[fieldId];
-      } else {
-        newPinnedFields[fieldId] = {pinned: pinnedValue};
-      }
+      } else newPinnedFields[fieldId] = {pinned: pinnedValue};
 
-      // Step 2: update the DB (or server) with the new pinned fields
       constructorViewService
         .update(tableSlug, {
           ...view,
           attributes: {
-            ...view?.attributes,
+            ...view.attributes,
             pinnedFields: newPinnedFields,
           },
         })
         .then(() => {
-          // Optionally refetch data or do something else
-          // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
         });
 
       return newPinnedFields;
@@ -85,24 +78,14 @@ function AgGridTableView({view}) {
   const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
     useQuery(
       ["GET_OBJECTS_LIST_DATA", tableSlug, view],
-      () => {
-        return constructorObjectService.getListV2(tableSlug, {
-          data: {
-            limit: 20,
-            offset: 0,
-          },
-        });
-      },
+      () =>
+        constructorObjectService.getListV2(tableSlug, {
+          data: {limit: 20, offset: 0},
+        }),
       {
         enabled: !!tableSlug,
-        select: (res) => {
-          return {
-            tableData: res.data?.response ?? [],
-          };
-        },
-        onSuccess: (data) => {
-          setRowData(data?.tableData);
-        },
+        select: (res) => ({tableData: res.data?.response ?? []}),
+        onSuccess: (data) => setRowData(data.tableData),
       }
     );
 
@@ -114,34 +97,29 @@ function AgGridTableView({view}) {
     },
   } = useQuery({
     queryKey: ["GET_TABLE_INFO", tableSlug, view],
-    queryFn: () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {},
-      });
-    },
-    enabled: Boolean(!!tableSlug),
+    queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
+    enabled: Boolean(tableSlug),
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields?.map((item) => {
+          const pinnedStatus = pinFields?.[item?.id]?.pinned ?? "";
           const columnDef = {
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             field: item?.slug,
             minWidth: 250,
-            filter: item?.type !== "PASSWORD" ? true : false,
-            view: view,
+            filter: item?.type !== "PASSWORD",
+            view,
             columnID: item?.id,
-            pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
-
+            pinned: pinnedStatus,
             editable: Boolean(
               item?.disabled ||
                 !!item?.attributes?.field_permission?.edit_permission
             ),
           };
           getColumnEditorParams(item, columnDef);
-
           return columnDef;
-        }, customActions),
+        }),
         fieldView: res?.data?.views ?? [],
         custom_events: res?.data?.custom_events ?? [],
       };
@@ -149,39 +127,28 @@ function AgGridTableView({view}) {
   });
 
   const {mutate: updateObject} = useMutation((data) =>
-    constructorObjectService.update(tableSlug, {
-      data: {...data},
-    })
+    constructorObjectService.update(tableSlug, {data: {...data}})
   );
 
-  const defaultColDef = useMemo(() => {
-    return {
+  const defaultColDef = useMemo(
+    () => ({
       width: 100,
       enableRowGroup: true,
       autoHeaderHeight: true,
-    };
-  }, []);
+    }),
+    []
+  );
 
-  const autoGroupColumnDef = useMemo(() => {
-    return {
-      minWidth: 200,
-    };
-  }, []);
+  const autoGroupColumnDef = useMemo(() => ({minWidth: 200}), []);
 
-  const rowSelection = useMemo(() => {
-    return {
-      mode: "multiRow",
-    };
-  }, []);
+  const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
 
   const onColumnPinned = (event) => {
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
 
     updateView({
-      [fieldId]: {
-        pinned,
-      },
+      [fieldId]: {pinned},
     });
   };
 
@@ -199,11 +166,9 @@ function AgGridTableView({view}) {
         defaultColDef={defaultColDef}
         autoGroupColumnDef={autoGroupColumnDef}
         paginationPageSize={paginationPageSize}
-        onCellValueChanged={(e) => {
-          updateObject(e?.data);
-        }}
-        onColumnPinned={onColumnPinned}
         paginationPageSizeSelector={paginationPageSizeSelector}
+        onCellValueChanged={(e) => updateObject(e.data)}
+        onColumnPinned={onColumnPinned}
       />
     </div>
   );

@@ -118,7 +118,6 @@ const LayoutSidebar = ({appId}) => {
   };
 
   const setWebsiteModalLink = (element) => {
-    console.log("elementttttt", element);
     setWebsiteModal(true);
     setSelectedFolder(element);
   };

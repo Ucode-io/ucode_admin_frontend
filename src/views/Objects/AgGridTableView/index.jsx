@@ -4,9 +4,13 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
 import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {useMutation, useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
+import {Button} from "@mui/material";
+import {useTranslation} from "react-i18next";
+import getColumnEditorParams from "./valueOptionGenerator";
+import constructorViewService from "../../../services/constructorViewService";
 import {
   ClipboardModule,
   ColumnsToolPanelModule,
@@ -14,11 +18,6 @@ import {
   RangeSelectionModule,
   RowGroupingModule,
 } from "ag-grid-enterprise";
-import {Button} from "@mui/material";
-import {useTranslation} from "react-i18next";
-import getColumnEditorParams from "./valueOptionGenerator";
-import DataCellEditor from "./FieldRelationGenerator/DateCellEditor";
-import constructorViewService from "../../../services/constructorViewService";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -33,9 +32,13 @@ function AgGridTableView({view}) {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [rowData, setRowData] = useState([]);
+  const queryClient = useQueryClient();
+  const [pinFields, setPinFields] = useState(
+    view?.attributes?.pinnedFields || {}
+  );
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
-
+  console.log("pinFieldspinFields", pinFields);
   const customActions = {
     field: "actions",
     headerName: "Actions",
@@ -48,14 +51,35 @@ function AgGridTableView({view}) {
   };
 
   const updateView = (pinnedField) => {
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        attributes: {
-          ...view?.attributes,
-        },
-      })
-      .then(() => {});
+    setPinFields((prev) => {
+      const newPinnedFields = {...prev};
+
+      const fieldId = Object.keys(pinnedField)[0];
+      const pinnedValue = pinnedField[fieldId]?.pinned;
+
+      // If pinned is null, remove that field from pinnedFields
+      if (pinnedValue === null) {
+        delete newPinnedFields[fieldId];
+      } else {
+        newPinnedFields[fieldId] = {pinned: pinnedValue};
+      }
+
+      // Step 2: update the DB (or server) with the new pinned fields
+      constructorViewService
+        .update(tableSlug, {
+          ...view,
+          attributes: {
+            ...view?.attributes,
+            pinnedFields: newPinnedFields,
+          },
+        })
+        .then(() => {
+          // Optionally refetch data or do something else
+          // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        });
+
+      return newPinnedFields;
+    });
   };
 
   const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
@@ -89,7 +113,7 @@ function AgGridTableView({view}) {
       custom_events: [],
     },
   } = useQuery({
-    queryKey: ["GET_TABLE_INFO", tableSlug],
+    queryKey: ["GET_TABLE_INFO", tableSlug, view],
     queryFn: () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -106,12 +130,13 @@ function AgGridTableView({view}) {
             minWidth: 250,
             filter: item?.type !== "PASSWORD" ? true : false,
             view: view,
-            updateView: updateView,
+            columnID: item?.id,
+            pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
 
-            // editable: Boolean(
-            //   item?.disabled ||
-            //     !!item?.attributes?.field_permission?.edit_permission
-            // ),
+            editable: Boolean(
+              item?.disabled ||
+                !!item?.attributes?.field_permission?.edit_permission
+            ),
           };
           getColumnEditorParams(item, columnDef);
 
@@ -149,6 +174,17 @@ function AgGridTableView({view}) {
     };
   }, []);
 
+  const onColumnPinned = (event) => {
+    const {column, pinned} = event;
+    const fieldId = column?.colDef?.columnID;
+
+    updateView({
+      [fieldId]: {
+        pinned,
+      },
+    });
+  };
+
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>
       <AgGridReact
@@ -166,12 +202,7 @@ function AgGridTableView({view}) {
         onCellValueChanged={(e) => {
           updateObject(e?.data);
         }}
-        onColumnPinned={(e) => {
-          console.log("pinneeeeeed", e);
-        }}
-        frameworkComponents={{
-          customDateEditor: DataCellEditor,
-        }}
+        onColumnPinned={onColumnPinned}
         paginationPageSizeSelector={paginationPageSizeSelector}
       />
     </div>

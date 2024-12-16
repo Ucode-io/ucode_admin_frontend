@@ -249,7 +249,7 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
-  console.log("viewviewviewview", view);
+
   return (
     <>
       {view?.type === "WEBSITE" ? (

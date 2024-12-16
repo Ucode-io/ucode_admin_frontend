@@ -24,10 +24,6 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => {
         return params?.value?.toLocaleString();
       };
-      console.log("columnDef===>", columnDef);
-      if (columnDef?.pinned) {
-        console.log("columnDef", columnDef);
-      }
 
       break;
 
@@ -41,13 +37,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "PASSWORD":
       columnDef.cellRenderer = PasswordCellEditor;
-
-      break;
-
-    case "NUMBER":
-      columnDef.valueFormatter = (params) => {
-        return params?.value?.toLocaleString();
-      };
 
       break;
 

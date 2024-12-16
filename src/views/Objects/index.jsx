@@ -90,7 +90,7 @@ const ObjectsPage = () => {
     },
     isLoading,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
+    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
       return constructorTableService.getTableInfo(
         tableSlug,
@@ -154,7 +154,7 @@ const ObjectsPage = () => {
       },
     },
   });
-
+  console.log("viewsWithGroupd", views);
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
   return (

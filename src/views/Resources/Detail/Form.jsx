@@ -61,11 +61,13 @@ const Form = ({
     if (value !== 5) return;
 
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+    // const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+    const redirectUri =
+      "http://localhost:7777/main/c57eedc3-a954-4262-a0af-376c65b5a280/resources/create";
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
 
-    window.location.href = url;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridReact} from "ag-grid-react";
@@ -33,7 +33,6 @@ function AgGridTableView({view}) {
   const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const [pinFields, setPinFields] = useState(view?.attributes?.pinnedFields);
-
   const [rowData, setRowData] = useState([]);
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
@@ -49,29 +48,19 @@ function AgGridTableView({view}) {
     },
   };
 
+  const pinFieldsRef = useRef({});
+
   const updateView = (pinnedField) => {
-    setPinFields((prevState) => {
-      const newPinnedFields = {...prevState};
-      const fieldId = Object.keys(pinnedField)[0];
-      const pinnedValue = pinnedField[fieldId]?.pinned;
+    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
-      if (pinnedValue === null || pinnedValue === "") {
-        delete newPinnedFields[fieldId];
-      } else newPinnedFields[fieldId] = {pinned: pinnedValue};
+    const newPinnedFields = pinFieldsRef.current;
 
-      constructorViewService
-        .update(tableSlug, {
-          ...view,
-          attributes: {
-            ...view.attributes,
-            pinnedFields: newPinnedFields,
-          },
-        })
-        .then(() => {
-          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        });
-
-      return newPinnedFields;
+    constructorViewService.update(tableSlug, {
+      ...view,
+      attributes: {
+        ...view.attributes,
+        pinnedFields: newPinnedFields,
+      },
     });
   };
 
@@ -102,7 +91,8 @@ function AgGridTableView({view}) {
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields?.map((item) => {
-          const pinnedStatus = pinFields?.[item?.id]?.pinned ?? "";
+          const pinnedStatus =
+            view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "";
           const columnDef = {
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
@@ -151,6 +141,10 @@ function AgGridTableView({view}) {
       [fieldId]: {pinned},
     });
   };
+
+  useEffect(() => {
+    pinFieldsRef.current = view?.attributes?.pinnedFields;
+  }, [view?.attributes?.pinnedFields]);
 
   return (
     <div className="ag-theme-quartz" style={{height: "calc(100vh - 50px)"}}>

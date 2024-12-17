@@ -69,11 +69,11 @@ const LayoutSidebar = ({appId}) => {
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
 
-  const [menu, setMenu] = useState({event: "", type: ""});
+  const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-
+  console.log("menumenu", menu);
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
@@ -94,8 +94,8 @@ const LayoutSidebar = ({appId}) => {
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
-  const handleOpenNotify = (event, type) => {
-    setMenu({event: event?.currentTarget, type: type});
+  const handleOpenNotify = (event, type, root) => {
+    setMenu({event: event?.currentTarget, type: type, root: root});
   };
   const handleCloseNotify = () => {
     setMenu(null);
@@ -118,7 +118,6 @@ const LayoutSidebar = ({appId}) => {
   };
 
   const setWebsiteModalLink = (element) => {
-    console.log("elementttttt", element);
     setWebsiteModal(true);
     setSelectedFolder(element);
   };
@@ -395,7 +394,7 @@ const LayoutSidebar = ({appId}) => {
                       />
                     }
                     onClick={(e) => {
-                      handleOpenNotify(e, "CREATE");
+                      handleOpenNotify(e, "CREATE", true);
                     }}
                     sidebarIsOpen={sidebarIsOpen}
                     style={{
@@ -574,7 +573,7 @@ const LayoutSidebar = ({appId}) => {
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}
-          appId={appId || "c57eedc3-a954-4262-a0af-376c65b5a284"}
+          appId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : appId}
           setTableModal={setTableModal}
           setLinkedTableModal={setLinkedTableModal}
           setMicrofrontendModal={setMicrofrontendModal}

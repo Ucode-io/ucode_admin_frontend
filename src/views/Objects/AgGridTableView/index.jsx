@@ -1,12 +1,27 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import {AgGridReact} from "ag-grid-react";
-import {useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {useMutation, useQuery, useQueryClient} from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
+import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+import "ag-grid-community/styles/ag-grid.css";
+import {AgGridReact} from "ag-grid-react";
+import {useParams} from "react-router-dom";
+import {
+  ClipboardModule,
+  ColumnsToolPanelModule,
+  MenuModule,
+  RangeSelectionModule,
+} from "ag-grid-enterprise";
+
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  ClipboardModule,
+  MenuModule,
+  RangeSelectionModule,
+  ColumnsToolPanelModule,
+]);
 
 function AgGridTableView({view}) {
   const {tableSlug} = useParams();
@@ -15,18 +30,6 @@ function AgGridTableView({view}) {
   const pinFieldsRef = useRef({});
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
-
-  const updateView = (pinnedField) => {
-    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
-
-    constructorViewService.update(tableSlug, {
-      ...view,
-      attributes: {
-        ...view.attributes,
-        pinnedFields: pinFieldsRef.current,
-      },
-    });
-  };
 
   const {mutate: updateObject} = useMutation((data) =>
     constructorObjectService.update(tableSlug, {data: {...data}})
@@ -77,6 +80,18 @@ function AgGridTableView({view}) {
 
   const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
 
+  const updateView = (pinnedField) => {
+    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
+
+    constructorViewService.update(tableSlug, {
+      ...view,
+      attributes: {
+        ...view.attributes,
+        pinnedFields: pinFieldsRef.current,
+      },
+    });
+  };
+
   const onColumnPinned = (event) => {
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
@@ -88,13 +103,6 @@ function AgGridTableView({view}) {
 
   useEffect(() => {
     pinFieldsRef.current = view?.attributes?.pinnedFields;
-  }, [view?.attributes?.pinnedFields]);
-
-  useEffect(() => {
-    pinFieldsRef.current = {
-      ...view?.attributes?.pinnedFields,
-      ...pinFieldsRef.current,
-    };
   }, [view?.attributes?.pinnedFields]);
 
   return (

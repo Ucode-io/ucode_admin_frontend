@@ -19,6 +19,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -41,6 +42,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   const createType = (data, selectedFolder) => {
+    setIsLoading(true);
     menuSettingsService
       .create({
         ...data,
@@ -56,7 +58,8 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const updateType = (data, selectedFolder) => {
@@ -70,7 +73,8 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const getTables = (search) => {
@@ -163,7 +167,12 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
             </Box>
 
             <div className="btns-row">
-              <SaveButton title="Add" type="submit" loading={loading} />
+              <SaveButton
+                disabled={isLoading}
+                title="Add"
+                type="submit"
+                loading={isLoading}
+              />
             </div>
           </form>
         </Card>

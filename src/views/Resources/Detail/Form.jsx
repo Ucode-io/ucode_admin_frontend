@@ -65,7 +65,7 @@ const Form = ({
 
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
 
-    window.location.href = url;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   useEffect(() => {

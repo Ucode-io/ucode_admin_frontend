@@ -26,10 +26,21 @@ ModuleRegistry.registerModules([
   ColumnsToolPanelModule,
 ]);
 
-function AgGridTableView({view, views, fieldsMap, selectedTabIndex}) {
+function AgGridTableView({
+  view,
+  views,
+  fieldsMap,
+  selectedTabIndex,
+  computedVisibleFields,
+  checkedColumns,
+  columnsForSearch,
+  setCheckedColumns,
+  updateField,
+}) {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [rowData, setRowData] = useState([]);
+  const [filterVisible, setFilterVisible] = useState(false);
   const pinFieldsRef = useRef({});
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
@@ -136,6 +147,12 @@ function AgGridTableView({view, views, fieldsMap, selectedTabIndex}) {
         views={views}
         fieldsMap={fieldsMap}
         selectedTabIndex={selectedTabIndex}
+        setFilterVisible={setFilterVisible}
+        computedVisibleFields={computedVisibleFields}
+        checkedColumns={checkedColumns}
+        setCheckedColumns={setCheckedColumns}
+        updateField={updateField}
+        columnsForSearch={columnsForSearch}
       />
       <div className="ag-theme-quartz" style={{height: "calc(100vh - 94px)"}}>
         <AgGridReact

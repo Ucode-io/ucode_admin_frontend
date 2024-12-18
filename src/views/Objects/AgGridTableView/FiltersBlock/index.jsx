@@ -1,19 +1,31 @@
 import React, {useState} from "react";
 import style from "./style.module.scss";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SearchInput from "../../../../components/SearchInput";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import useDebounce from "../../../../hooks/useDebounce";
+import ExcelButtons from "../../components/ExcelButtons";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {Badge, Button, Divider, Menu} from "@mui/material";
-import useDebounce from "../../../../hooks/useDebounce";
-import {useSelector} from "react-redux";
+import SearchInput from "../../../../components/SearchInput";
 import VisibleColumnsButton from "../../VisibleColumnsButton";
 import {Description, MoreVertOutlined} from "@mui/icons-material";
-import ExcelButtons from "../../components/ExcelButtons";
-import {useParams} from "react-router-dom";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import SearchParams from "../../components/ViewSettings/SearchParams";
 
-function FiltersBlock({view, views, fieldsMap, selectedTabIndex}) {
+function FiltersBlock({
+  view,
+  views,
+  fieldsMap,
+  checkedColumns,
+  columnsForSearch,
+  selectedTabIndex,
+  computedVisibleFields,
+  setFilterVisible = () => {},
+  setSelectedTabIndex = () => {},
+  setCheckedColumns,
+  updateField,
+}) {
   const {tableSlug} = useParams();
-  const [filterVisible, setFilterVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [inputKey, setInputKey] = useState(0);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
@@ -118,12 +130,12 @@ function FiltersBlock({view, views, fieldsMap, selectedTabIndex}) {
                 },
               },
             }}>
-            {/* <SearchParams
+            <SearchParams
               checkedColumns={checkedColumns}
               setCheckedColumns={setCheckedColumns}
               columns={columnsForSearch}
               updateField={updateField}
-            /> */}
+            />
           </Menu>
         </div>
 
@@ -201,11 +213,11 @@ function FiltersBlock({view, views, fieldsMap, selectedTabIndex}) {
             }}>
             <div className={style.menuBar}>
               <ExcelButtons
-                // computedVisibleFields={computedVisibleFields}
+                computedVisibleFields={computedVisibleFields}
                 fieldsMap={fieldsMap}
                 view={view}
                 searchText={searchText}
-                // checkedColumns={checkedColumns}
+                checkedColumns={checkedColumns}
               />
               <div
                 className={style.template}

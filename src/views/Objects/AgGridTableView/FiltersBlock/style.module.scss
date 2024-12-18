@@ -85,3 +85,18 @@
   letter-spacing: 0em;
   text-align: left;
 }
+
+.menuBar {
+  padding: 12px 0 5px 0;
+  width: 180px;
+}
+
+.template {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 5px 10px;
+  cursor: pointer;
+}

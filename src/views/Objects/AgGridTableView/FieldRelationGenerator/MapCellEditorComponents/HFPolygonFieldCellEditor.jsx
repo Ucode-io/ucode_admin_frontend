@@ -10,15 +10,7 @@ const HFPolygonFieldCellEditor = ({
   onChange = () => {},
   value,
 }) => {
-  const defaultCoordinates = [
-    [
-      [41.484740867397754, 69.08126065235255],
-      [41.17211942202323, 68.93294522266504],
-      [41.36159279733358, 69.87456706671256],
-      [41.61767430525668, 69.63836101202504],
-      [41.484740867397754, 69.08126065235255],
-    ],
-  ];
+  const defaultCoordinates = [[]];
 
   const [selectedCoordinates, setSelectedCoordinates] = useState({
     lat: parseFloat(field?.attributes?.lat || "41.2995"),
@@ -26,7 +18,7 @@ const HFPolygonFieldCellEditor = ({
   });
 
   const [polygonCoordinates, setPolygonCoordinates] = useState(
-    isJSONParsable(value) && JSON.parse(value).length > 0
+    isJSONParsable(value) && JSON.parse(value)?.length > 0
       ? JSON.parse(value)
       : defaultCoordinates
   );

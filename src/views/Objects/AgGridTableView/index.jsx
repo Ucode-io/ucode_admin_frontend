@@ -17,6 +17,10 @@ import {
 } from "ag-grid-enterprise";
 import {useTranslation} from "react-i18next";
 import FiltersBlock from "./FiltersBlock";
+import {Box} from "@mui/material";
+import FastFilter from "../components/FastFilter";
+import style from "./style.module.scss";
+import useFilters from "../../../hooks/useFilters";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -36,21 +40,25 @@ function AgGridTableView({
   columnsForSearch,
   setCheckedColumns,
   updateField,
+  visibleColumns,
+  visibleRelationColumns,
+  visibleForm,
 }) {
   const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const [rowData, setRowData] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(true);
   const pinFieldsRef = useRef({});
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const paginationPageSize = 10;
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
   const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
     useQuery(
-      ["GET_OBJECTS_LIST_DATA", tableSlug],
+      ["GET_OBJECTS_LIST_DATA", tableSlug, filters],
       () =>
         constructorObjectService.getListV2(tableSlug, {
-          data: {limit: 20, offset: 0},
+          data: {limit: 20, offset: 0, ...filters},
         }),
       {
         enabled: !!tableSlug,
@@ -111,6 +119,25 @@ function AgGridTableView({
 
   const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
 
+  const getFilteredFilterFields = useMemo(() => {
+    const filteredFieldsView =
+      views &&
+      views?.find((item) => {
+        return item?.type === "TABLE" && item?.attributes?.quick_filters;
+      });
+
+    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+      (el) => {
+        return el?.field_id;
+      }
+    );
+    const filteredFields = fiedlsarray?.filter((item) => {
+      return quickFilters?.includes(item?.columnID);
+    });
+
+    return filteredFields;
+  }, [views, fiedlsarray]);
+
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
@@ -154,24 +181,52 @@ function AgGridTableView({
         updateField={updateField}
         columnsForSearch={columnsForSearch}
       />
-      <div className="ag-theme-quartz" style={{height: "calc(100vh - 94px)"}}>
-        <AgGridReact
-          AgGridReact
-          sideBar={false}
-          rowData={rowData}
-          pagination={true}
-          cellSelection={true}
-          suppressRefresh={true}
-          columnDefs={columns}
-          rowSelection={rowSelection}
-          rowGroupPanelShow={"never"}
-          defaultColDef={defaultColDef}
-          autoGroupColumnDef={autoGroupColumnDef}
-          paginationPageSize={paginationPageSize}
-          paginationPageSizeSelector={paginationPageSizeSelector}
-          onCellValueChanged={(e) => updateObject(e.data)}
-          onColumnPinned={onColumnPinned}
-        />
+      <div className={style.gridTable}>
+        <div className={filterVisible ? style.wrapperVisible : style.wrapper}>
+          {
+            <Box className={style.block}>
+              <p>{t("filters")}</p>
+              <FastFilter
+                view={view}
+                fieldsMap={fieldsMap}
+                getFilteredFilterFields={getFilteredFilterFields}
+                isVertical
+                selectedTabIndex={selectedTabIndex}
+                visibleColumns={visibleColumns}
+                visibleRelationColumns={visibleRelationColumns}
+                visibleForm={visibleForm}
+                setFilterVisible={setFilterVisible}
+              />
+            </Box>
+          }
+        </div>
+        <div
+          className="ag-theme-quartz"
+          style={{
+            height: "calc(100vh - 94px)",
+            display: "flex",
+            width: "100%",
+          }}>
+          <Box sx={{width: "100%"}}>
+            <AgGridReact
+              AgGridReact
+              sideBar={false}
+              rowData={rowData}
+              pagination={true}
+              cellSelection={true}
+              suppressRefresh={true}
+              columnDefs={columns}
+              rowSelection={rowSelection}
+              rowGroupPanelShow={"never"}
+              defaultColDef={defaultColDef}
+              autoGroupColumnDef={autoGroupColumnDef}
+              paginationPageSize={paginationPageSize}
+              paginationPageSizeSelector={paginationPageSizeSelector}
+              onCellValueChanged={(e) => updateObject(e.data)}
+              onColumnPinned={onColumnPinned}
+            />
+          </Box>
+        </div>
       </div>
     </>
   );

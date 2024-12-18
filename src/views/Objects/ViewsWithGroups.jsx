@@ -196,7 +196,7 @@ const ViewsWithGroups = ({
         el?.type === "FORMULA_FRONTEND"
     );
   }, [view, fieldsMap]);
-  console.log("columnsForSearch", columnsForSearch);
+
   const computedVisibleFields = useMemo(() => {
     const mappedObjects = [];
     Object.values(fieldsMap)?.forEach((obj) => {
@@ -354,6 +354,9 @@ const ViewsWithGroups = ({
             setCheckedColumns={setCheckedColumns}
             columnsForSearch={columnsForSearch}
             updateField={updateField}
+            visibleColumns={visibleColumns}
+            visibleRelationColumns={visibleRelationColumns}
+            visibleForm={visibleForm}
           />
         </>
       ) : (

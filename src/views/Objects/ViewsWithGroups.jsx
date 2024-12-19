@@ -300,7 +300,7 @@ const ViewsWithGroups = ({
           <WebsiteView view={view} />
         </>
       ) : view?.type === "GRID" ? (
-        <>
+        <Box>
           <FiltersBlock
             extra={
               <>
@@ -358,7 +358,7 @@ const ViewsWithGroups = ({
             visibleRelationColumns={visibleRelationColumns}
             visibleForm={visibleForm}
           />
-        </>
+        </Box>
       ) : (
         <Box>
           {updateLoading && (

@@ -11,6 +11,9 @@ import VisibleColumnsButton from "../../VisibleColumnsButton";
 import {Description, MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SearchParams from "../../components/ViewSettings/SearchParams";
+import {useQuery} from "react-query";
+import GroupByButton from "../../GroupByButton";
+import TableViewGroupByButton from "../../TableViewGroupByButton";
 
 function FiltersBlock({
   view,
@@ -24,6 +27,8 @@ function FiltersBlock({
   setSelectedTabIndex = () => {},
   setCheckedColumns,
   updateField,
+  filters,
+  visibleRelationColumns,
 }) {
   const {tableSlug} = useParams();
   const [searchText, setSearchText] = useState("");
@@ -140,22 +145,22 @@ function FiltersBlock({
         </div>
 
         <div className={style.rightExtra}>
-          {/* {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
+          {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
             <GroupByButton
               selectedTabIndex={selectedTabIndex}
               view={view}
               fieldsMap={fieldsMap}
               relationColumns={visibleRelationColumns}
             />
-          )} */}
-          {/* <Divider orientation="vertical" flexItem /> */}
+          )}
+          <Divider orientation="vertical" flexItem />
           {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
             <VisibleColumnsButton currentView={view} fieldsMap={fieldsMap} />
           )}
-          {/* <Divider orientation="vertical" flexItem />
+          <Divider orientation="vertical" flexItem />
           {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
             <TableViewGroupByButton currentView={view} fieldsMap={fieldsMap} />
-          )} */}
+          )}
           {permissions?.excel_menu && (
             <Button
               onClick={handleClick}

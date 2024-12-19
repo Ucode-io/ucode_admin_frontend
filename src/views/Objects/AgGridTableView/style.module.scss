@@ -156,7 +156,7 @@
 }
 .gridTable {
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 250px);
   display: flex;
   flex-direction: row;
 }
@@ -165,7 +165,7 @@
   padding: 8px 8px;
   display: flex;
   background-color: #fff;
-  height: 100vh;
+  // height: 100vh;
   width: 250px;
   border-right: 1px solid #eee;
   transition: 0.3s;
@@ -186,11 +186,11 @@
 }
 
 .wrapperVisible {
-  display: flex;
   background-color: #fff;
-  height: 100vh;
+  height: calc(100vh - 450px);
   width: 0px;
   transition: 0.3s;
+  opacity: 0;
 
   .filters {
     .block {
@@ -213,5 +213,30 @@
   transition: ease-in 0.1s all;
   &:hover {
     color: #2d6ce5;
+  }
+}
+
+.tabGroupBtn {
+  margin: 0 5px;
+  border: none !important;
+  color: #262626;
+  border-radius: 0 !important;
+  &:hover {
+    background: #fff;
+    border: none;
+  }
+}
+
+.tabGroupBtnActive {
+  margin: 0 5px;
+  border-radius: 0 !important;
+  color: #2d6ce5;
+  border: none;
+  border-bottom: 3px solid #2d6ce5;
+
+  &:hover {
+    background: #fff;
+    border: none;
+    border-bottom: 3px solid #2d6ce5;
   }
 }

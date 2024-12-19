@@ -54,37 +54,39 @@ function AgGridTableView({
   const paginationPageSizeSelector = [10, 20, 30, 40, 50];
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+  const [loading, setLoading] = useState(true);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
   const [groupTab, setGroupTab] = useState(null);
 
-  const {data: {tableData} = {tableData: []}, isLoading: tableLoader} =
-    useQuery(
-      [
-        "GET_OBJECTS_LIST_DATA",
-        {tableSlug, filters: {...filters, [groupTab?.slug]: groupTab?.value}},
-      ],
-      () =>
-        constructorObjectService.getListV2(tableSlug, {
-          data: {
-            limit: 20,
-            offset: 0,
-            ...filters,
-            [groupTab?.slug]: groupTab
-              ? Object.values(fieldsMap).find(
-                  (el) => el.slug === groupTab?.slug
-                )?.type === "MULTISELECT"
-                ? [`${groupTab?.value}`]
-                : groupTab?.value
-              : "",
-          },
-        }),
-      {
-        enabled: !!tableSlug,
-        onSuccess: (data) => setRowData(data?.data?.response ?? []),
-      }
-    );
-
+  const {data: {tableData} = {tableData: []}, isLoading} = useQuery(
+    [
+      "GET_OBJECTS_LIST_DATA",
+      {tableSlug, filters: {...filters, [groupTab?.slug]: groupTab?.value}},
+    ],
+    () =>
+      constructorObjectService.getListV2(tableSlug, {
+        data: {
+          limit: 20,
+          offset: 0,
+          ...filters,
+          [groupTab?.slug]: groupTab
+            ? Object.values(fieldsMap).find((el) => el.slug === groupTab?.slug)
+                ?.type === "MULTISELECT"
+              ? [`${groupTab?.value}`]
+              : groupTab?.value
+            : "",
+        },
+      }),
+    {
+      enabled: !!tableSlug,
+      onSuccess: (data) => {
+        setLoading(false);
+        setRowData(data?.data?.response ?? []);
+      },
+    }
+  );
+  console.log("isLoadingisLoading", isLoading);
   const {
     data: {fiedlsarray} = {
       pageCount: 1,
@@ -130,7 +132,11 @@ function AgGridTableView({
   }, [fiedlsarray, view]);
 
   const defaultColDef = useMemo(
-    () => ({width: 200, autoHeaderHeight: true}),
+    () => ({
+      width: 200,
+      autoHeaderHeight: true,
+      suppressServerSideFullWidthLoadingRow: true,
+    }),
     []
   );
 
@@ -247,7 +253,10 @@ function AgGridTableView({
                 }}>
                 {tabs?.map((item) => (
                   <Button
-                    onClick={() => setGroupTab(item)}
+                    onClick={() => {
+                      setLoading(true);
+                      setGroupTab(item);
+                    }}
                     variant="outlined"
                     className={
                       groupTab?.value === item?.value
@@ -268,7 +277,9 @@ function AgGridTableView({
               suppressRefresh={true}
               columnDefs={columns}
               rowSelection={rowSelection}
+              suppressServerSideFullWidthLoadingRow={true}
               // rowGroupPanelShow={"never"}
+              loading={loading}
               defaultColDef={defaultColDef}
               autoGroupColumnDef={autoGroupColumnDef}
               paginationPageSize={paginationPageSize}

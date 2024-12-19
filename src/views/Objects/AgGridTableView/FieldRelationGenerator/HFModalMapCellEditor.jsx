@@ -7,7 +7,7 @@ import HFMapFieldCellEditor from "./MapCellEditorComponents/HFMapFieldCellEditor
 function HFModalMapCellEditor(props) {
   const [open, setOpen] = useState(false);
   const {value, setValue, field, isTransparent = false} = props;
-  console.log("propspropsprops", props);
+
   const handleOpen = () => {
     setOpen(true);
   };

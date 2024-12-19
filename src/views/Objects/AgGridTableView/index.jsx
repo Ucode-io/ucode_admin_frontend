@@ -86,7 +86,7 @@ function AgGridTableView({
       },
     }
   );
-  console.log("isLoadingisLoading", isLoading);
+
   const {
     data: {fiedlsarray} = {
       pageCount: 1,
@@ -125,9 +125,14 @@ function AgGridTableView({
 
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
-      return fiedlsarray?.filter((item) =>
-        view?.columns?.includes(item?.columnID)
-      );
+      return fiedlsarray
+        ?.filter((item) => view?.columns?.includes(item?.columnID))
+        .map((el) => ({
+          ...el,
+          rowGroup: view?.attributes?.group_by_columns?.includes(el?.columnID)
+            ? true
+            : false,
+        }));
     }
   }, [fiedlsarray, view]);
 
@@ -141,7 +146,6 @@ function AgGridTableView({
   );
 
   const autoGroupColumnDef = useMemo(() => ({minWidth: 230}), []);
-
   const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
 
   const getFilteredFilterFields = useMemo(() => {
@@ -278,7 +282,6 @@ function AgGridTableView({
               columnDefs={columns}
               rowSelection={rowSelection}
               suppressServerSideFullWidthLoadingRow={true}
-              // rowGroupPanelShow={"never"}
               loading={loading}
               defaultColDef={defaultColDef}
               autoGroupColumnDef={autoGroupColumnDef}

@@ -154,7 +154,7 @@ const ObjectsPage = () => {
       },
     },
   });
-  console.log("viewsWithGroupd", views);
+
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
   return (

@@ -29,9 +29,11 @@ function FiltersBlock({
   updateField,
   filters,
   visibleRelationColumns,
+  searchText,
+  setSearchText = () => {},
 }) {
   const {tableSlug} = useParams();
-  const [searchText, setSearchText] = useState("");
+
   const [inputKey, setInputKey] = useState(0);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);

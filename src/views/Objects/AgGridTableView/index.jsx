@@ -55,6 +55,20 @@ function AgGridTableView({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
+
+  const detectStringType = (inputString) => {
+    if (/^\d+$/.test(inputString)) {
+      return "number";
+    } else {
+      return "string";
+    }
+  };
+
+  const tableSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
   const [groupTab, setGroupTab] = useState(null);
@@ -62,13 +76,18 @@ function AgGridTableView({
   const {data: {tableData} = {tableData: []}, isLoading} = useQuery(
     [
       "GET_OBJECTS_LIST_DATA",
-      {tableSlug, filters: {...filters, [groupTab?.slug]: groupTab?.value}},
+      {
+        tableSlug,
+        filters: {...filters, [groupTab?.slug]: groupTab?.value, searchText},
+      },
     ],
     () =>
       constructorObjectService.getListV2(tableSlug, {
         data: {
           limit: 20,
           offset: 0,
+          view_fields: checkedColumns,
+          search: tableSearch,
           ...filters,
           [groupTab?.slug]: groupTab
             ? Object.values(fieldsMap).find((el) => el.slug === groupTab?.slug)
@@ -219,6 +238,8 @@ function AgGridTableView({
         columnsForSearch={columnsForSearch}
         filters={filters}
         visibleRelationColumns={visibleRelationColumns}
+        searchText={searchText}
+        setSearchText={setSearchText}
       />
       <div className={style.gridTable}>
         <div className={!filterVisible ? style.wrapperVisible : style.wrapper}>

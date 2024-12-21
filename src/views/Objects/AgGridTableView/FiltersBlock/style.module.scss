@@ -1,0 +1,102 @@
+.extraNavbar {
+  background-color: #fff;
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+
+  .extraWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .search {
+      border-right: 1px solid #eee;
+      display: flex;
+      align-items: center;
+
+      .count {
+        padding: 0 20px;
+
+        span {
+          color: #a8a8a8;
+          font-size: 13px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
+
+      fieldset {
+        border: none;
+      }
+    }
+
+    .rightExtra {
+      display: flex;
+      gap: 5px;
+
+      .lineControl {
+        border-right: 1px solid #eee;
+        padding: 0;
+        padding-right: 10px;
+
+        .buttonSpan {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #a8a8a8;
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 16px;
+          letter-spacing: 0em;
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+.gridTable {
+  display: none;
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 0;
+  cursor: pointer;
+  padding-left: 5px;
+  color: #a8a8a8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.menuBar {
+  padding: 12px 0 5px 0;
+  width: 180px;
+}
+
+.template {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 5px 10px;
+  cursor: pointer;
+}

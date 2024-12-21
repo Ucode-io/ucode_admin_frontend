@@ -171,7 +171,7 @@ const ViewTabSelector = ({
                   {view.type === "WEBSITE" && (
                     <LanguageIcon className={style.icon} />
                   )}
-                  {view.type === "TABLEV2" && (
+                  {view.type === "GRID" && (
                     <FiberNewIcon className={style.icon} />
                   )}
                   <span>

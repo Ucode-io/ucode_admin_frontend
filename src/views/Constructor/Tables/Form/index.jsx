@@ -383,6 +383,7 @@ const ConstructorTablesFormPage = () => {
               watch={mainForm.watch}
               exist={exist}
               setExist={setExist}
+              getData={getData}
             />
           </>
         )}

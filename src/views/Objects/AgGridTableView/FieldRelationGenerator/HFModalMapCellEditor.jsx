@@ -1,26 +1,12 @@
 import React, {useState} from "react";
-import {Box, Button, Dialog, TextField, makeStyles} from "@mui/material";
-import HFMapField from "./HFMapField";
-import {useWatch} from "react-hook-form";
+import {Box, Button, Dialog, TextField} from "@mui/material";
 import styles from "./style.module.scss";
-import {generateLink} from "../../utils/generateYandexLink";
+import {generateLink} from "../../../../utils/generateYandexLink";
+import HFMapFieldCellEditor from "./MapCellEditorComponents/HFMapFieldCellEditor";
 
-function HFModalMap({
-  control,
-  field,
-  defaultValue,
-  updateObject,
-  isNewTableView = false,
-  isTransparent = false,
-  isFormEdit,
-  name,
-  required,
-}) {
+function HFModalMapCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const value = useWatch({
-    control,
-    name,
-  });
+  const {value, setValue, field, isTransparent = false} = props;
 
   const handleOpen = () => {
     setOpen(true);
@@ -39,7 +25,7 @@ function HFModalMap({
             ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
             : ""
         }
-        defaultValue={defaultValue}
+        defaultValue={"defaultValue"}
         variant="standard"
         width="small"
         onClick={() => handleOpen()}
@@ -62,15 +48,14 @@ function HFModalMap({
 
       <Dialog open={open} onClose={handleClose}>
         <div className={styles.mapField}>
-          <HFMapField
-            updateObject={updateObject}
-            isNewTableView={isNewTableView}
+          <HFMapFieldCellEditor
+            onChange={setValue}
+            value={value}
+            isNewTableView={false}
             field={field}
             width={"500px"}
             height={"400px"}
-            control={control}
-            name={name}
-            defaultValue={defaultValue}
+            defaultValue={"defaultValue"}
           />
 
           <Box>
@@ -90,4 +75,4 @@ function HFModalMap({
   );
 }
 
-export default HFModalMap;
+export default HFModalMapCellEditor;

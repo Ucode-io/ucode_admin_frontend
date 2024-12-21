@@ -312,6 +312,23 @@ div {
   }
 }
 
+.aggrid_field {
+  width: 100%;
+  height: 100%;
+  padding-right: 0 !important;
+
+  input {
+    min-width: 160px;
+    max-width: 100%;
+    height: 38px !important;
+    padding: 0 !important;
+  }
+
+  div fieldset {
+    border: none;
+  }
+}
+
 .calendar_textfield {
   padding-right: 0 !important;
   padding-left: 0 !important;
@@ -691,4 +708,49 @@ u {
       color: #667085;
     }
   }
+}
+
+.ag-root-wrapper {
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.ag-theme-quartz {
+  --ag-row-border-style: solid;
+  --ag-row-border-width: 1px;
+  --ag-row-border-color: #e5e9eb;
+  --ag-cell-horizontal-border: solid #e5e9eb;
+
+  --ag-range-selection-border-color: #3b8ddf;
+  --ag-range-selection-border-style: solid;
+  --ag-range-selection-background-color: #d7eafd;
+
+  --ag-range-selection-background-color-2: rgb(255, 0, 128, 0.19);
+  --ag-range-selection-background-color-3: rgb(255, 0, 128, 0.27);
+  --ag-range-selection-background-color-4: rgb(255, 0, 128, 0.34);
+
+  --ag-range-selection-highlight-color: rgb(60, 188, 0, 0.3);
+
+  --ag-header-height: 45px;
+
+  --ag-header-foreground-color: #262626;
+  --ag-header-background-color: #fff;
+}
+
+.ag-theme-quartz {
+  --ag-grid-size: 8px;
+}
+
+.ag-theme-quartz {
+  // --ag-foreground-color: colors.$grey;
+
+  --ag-font-size: 13px;
+  --ag-font-weight: 300;
+  --ag-font-family: "Inter", sans-serif;
+}
+
+.ag-advanced-filter-header {
+}
+.custom_field {
+  border: none;
 }

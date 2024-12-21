@@ -48,6 +48,7 @@ import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import WebsiteView from "./WebsiteView";
+import AgGridTableView from "./AgGridTableView";
 
 const ViewsWithGroups = ({
   views,

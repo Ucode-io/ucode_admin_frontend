@@ -294,7 +294,6 @@ function AgGridTableView({
               </Box>
             )}
             <AgGridReact
-              AgGridReact
               sideBar={false}
               rowData={rowData}
               pagination={true}

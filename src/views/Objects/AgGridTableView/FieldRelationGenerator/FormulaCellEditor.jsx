@@ -14,7 +14,7 @@ import {useState} from "react";
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  const {field, setValue, value} = props;
+  let {field, setValue, value} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const formula = field?.attributes?.formula ?? "";
   //   const values = useWatch({

@@ -754,3 +754,39 @@ u {
 .custom_field {
   border: none;
 }
+
+.indexClass {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .editButton {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    .indexValue {
+      display: none;
+    }
+
+    .editButton {
+      display: block;
+    }
+  }
+}
+
+.actionBtn {
+  padding: 5px 10px 10px 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  div {
+    width: 32px;
+    height: 32px;
+  }
+}

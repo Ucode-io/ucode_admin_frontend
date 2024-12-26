@@ -4,8 +4,6 @@ import constructorViewService from "../../../services/constructorViewService";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import getColumnEditorParams from "./valueOptionGenerator";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import "ag-grid-community/styles/ag-grid.css";
 import {AgGridReact} from "ag-grid-react";
 import {useParams} from "react-router-dom";
 import {useQuery} from "react-query";
@@ -21,6 +19,13 @@ import {Box, Button} from "@mui/material";
 import FastFilter from "../components/FastFilter";
 import style from "./style.module.scss";
 import useFilters from "../../../hooks/useFilters";
+import ActionButtons from "./ActionButtons";
+import {generateGUID} from "../../../utils/generateID";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import AggridDefaultComponents from "./Functions/AggridDefaultComponents";
+import RowIndexField from "./RowIndexField";
+import AggridFooter from "./AggridFooter";
+import HeaderComponent from "./HeaderComponent";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -43,6 +48,7 @@ function AgGridTableView({
   visibleColumns,
   visibleRelationColumns,
   visibleForm,
+  menuItem,
 }) {
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
@@ -50,20 +56,17 @@ function AgGridTableView({
   const [filterVisible, setFilterVisible] = useState(false);
   const pinFieldsRef = useRef({});
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
-  const paginationPageSize = 10;
-  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
+  const [groupTab, setGroupTab] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const {defaultColDef, autoGroupColumnDef, rowSelection} =
+    AggridDefaultComponents();
 
-  const detectStringType = (inputString) => {
-    if (/^\d+$/.test(inputString)) {
-      return "number";
-    } else {
-      return "string";
-    }
-  };
+  const paginationPageSize = 10;
+  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
   const tableSearch =
     detectStringType(searchText) === "number"
@@ -71,9 +74,8 @@ function AgGridTableView({
       : searchText;
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
-  const [groupTab, setGroupTab] = useState(null);
 
-  const {data: {tableData} = {tableData: []}, isLoading} = useQuery(
+  const {isLoading, refetch} = useQuery(
     [
       "GET_OBJECTS_LIST_DATA",
       {
@@ -106,6 +108,47 @@ function AgGridTableView({
     }
   );
 
+  const deleteHandler = (row) => {
+    constructorObjectService.delete(tableSlug, row.guid).then(() => {
+      refetch();
+    });
+  };
+
+  const deleteColumn = {
+    headerName: "Actions",
+    field: "button",
+    pinned: "right",
+    width: 120,
+    suppressSizeToFit: true,
+    sortable: false,
+    filter: false,
+    editable: false,
+    suppressMenu: true,
+    type: "ACTIONS",
+    view: view,
+    menuItem: menuItem,
+    cellRenderer: ActionButtons,
+    deleteFunction: deleteHandler,
+    cellClass: "actionBtn",
+    // headerComponent: HeaderComponent,
+  };
+
+  const indexColumn = {
+    headerName: "",
+    field: "button",
+    valueGetter: "node.rowIndex + 1",
+    width: 80,
+    suppressSizeToFit: true,
+    sortable: false,
+    filter: false,
+    editable: false,
+    pinned: "left",
+    view: view,
+    menuItem: menuItem,
+    cellRenderer: RowIndexField,
+    cellClass: "indexClass",
+  };
+
   const {
     data: {fiedlsarray} = {
       pageCount: 1,
@@ -117,8 +160,9 @@ function AgGridTableView({
     queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
+      const primaryFields = [...res?.data?.fields, deleteColumn];
       return {
-        fiedlsarray: res?.data?.fields?.map((item) => {
+        fiedlsarray: primaryFields?.map((item) => {
           const pinnedStatus =
             view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "";
           const columnDef = {
@@ -128,12 +172,13 @@ function AgGridTableView({
             minWidth: 250,
             filter: item?.type !== "PASSWORD",
             view,
-            columnID: item?.id,
+            columnID: item?.id || generateGUID(),
             pinned: pinnedStatus,
-            editable: Boolean(
-              item?.disabled ||
-                !!item?.attributes?.field_permission?.edit_permission
-            ),
+            editable: true,
+            // editable: Boolean(
+            //   item?.disabled ||
+            //     !!item?.attributes?.field_permission?.edit_permission
+            // ),
           };
           getColumnEditorParams(item, columnDef);
           return columnDef;
@@ -144,28 +189,20 @@ function AgGridTableView({
 
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
-      return fiedlsarray
-        ?.filter((item) => view?.columns?.includes(item?.columnID))
-        .map((el) => ({
-          ...el,
-          rowGroup: view?.attributes?.group_by_columns?.includes(el?.columnID)
-            ? true
-            : false,
-        }));
+      return [
+        indexColumn,
+        ...fiedlsarray
+          ?.filter((item) => view?.columns?.includes(item?.columnID))
+          .map((el, index) => ({
+            ...el,
+            rowGroup: view?.attributes?.group_by_columns?.includes(el?.columnID)
+              ? true
+              : false,
+          })),
+        deleteColumn,
+      ];
     }
   }, [fiedlsarray, view]);
-
-  const defaultColDef = useMemo(
-    () => ({
-      width: 200,
-      autoHeaderHeight: true,
-      suppressServerSideFullWidthLoadingRow: true,
-    }),
-    []
-  );
-
-  const autoGroupColumnDef = useMemo(() => ({minWidth: 230}), []);
-  const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
 
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
@@ -224,7 +261,7 @@ function AgGridTableView({
   }, [tabs?.length]);
 
   return (
-    <>
+    <Box sx={{height: "calc(100vh - 50px)"}}>
       <FiltersBlock
         view={view}
         views={views}
@@ -241,6 +278,7 @@ function AgGridTableView({
         searchText={searchText}
         setSearchText={setSearchText}
       />
+
       <div className={style.gridTable}>
         <div className={!filterVisible ? style.wrapperVisible : style.wrapper}>
           {
@@ -297,7 +335,6 @@ function AgGridTableView({
               AgGridReact
               sideBar={false}
               rowData={rowData}
-              pagination={true}
               cellSelection={true}
               suppressRefresh={true}
               columnDefs={columns}
@@ -307,58 +344,23 @@ function AgGridTableView({
               defaultColDef={defaultColDef}
               autoGroupColumnDef={autoGroupColumnDef}
               paginationPageSize={paginationPageSize}
-              paginationPageSizeSelector={paginationPageSizeSelector}
               onCellValueChanged={(e) => updateObject(e.data)}
               onColumnPinned={onColumnPinned}
+              onSelectionChanged={(e) =>
+                setSelectedRows(e.api.getSelectedRows())
+              }
             />
           </Box>
         </div>
       </div>
-    </>
+      <AggridFooter
+        view={view}
+        rowData={rowData}
+        selectedRows={selectedRows}
+        refetch={refetch}
+      />
+    </Box>
   );
 }
-
-const queryGenerator = (groupField, filters = {}) => {
-  if (!groupField)
-    return {
-      queryFn: () => {},
-    };
-
-  const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
-
-  if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
-    return {
-      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
-      queryFn: () =>
-        groupField?.attributes?.options?.map((el) => ({
-          label: el?.label ?? el.value,
-          value: el?.value,
-          slug: groupField?.slug,
-        })),
-    };
-  }
-
-  if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
-    const queryFn = () =>
-      constructorObjectService.getListV2(groupField.table_slug, {
-        data: computedFilters ?? {},
-      });
-
-    return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
-      ],
-      queryFn,
-      select: (res) =>
-        res?.data?.response?.map((el) => ({
-          label: getRelationFieldTabsLabel(groupField, el),
-          value: el.guid,
-          slug: groupField?.slug,
-        })),
-    };
-  }
-};
 
 export default AgGridTableView;

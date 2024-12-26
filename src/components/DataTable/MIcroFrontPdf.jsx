@@ -6,7 +6,7 @@ export default function MicroFrontPdf({row, handleClose = () => {}, view}) {
   const {appId, tableSlug} = useParams();
 
   const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+    return urlTemplate?.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
       return data[variable] || "";
     });
   };

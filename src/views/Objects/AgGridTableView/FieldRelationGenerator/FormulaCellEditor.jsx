@@ -17,9 +17,6 @@ const FormulaCellEditor = (props) => {
   let {field, setValue, value} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const formula = field?.attributes?.formula ?? "";
-  //   const values = useWatch({
-  //     control,
-  //   });
 
   const updateValue = () => {
     let computedFormula = formula;

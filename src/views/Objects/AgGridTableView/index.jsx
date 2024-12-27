@@ -103,7 +103,7 @@ function AgGridTableView({
       constructorObjectService.getListV2(tableSlug, {
         data: {
           limit: limit,
-          offset: Boolean(searchText) ? 0 : limitPage,
+          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
           view_fields: checkedColumns,
           search: tableSearch,
           ...filters,
@@ -132,16 +132,20 @@ function AgGridTableView({
   };
 
   const addRow = () => {
+    setLoading(true);
     const emptyRow = {};
     constructorObjectService
       .create(tableSlug, {
         data: {},
       })
       .then((res) => {
+        const newRow = {...emptyRow, id: res?.data?.id};
         gridApi.current.api.applyTransaction({
-          add: [emptyRow],
+          add: [newRow],
+          addIndex: 0,
         });
         refetch();
+        setLoading(false);
       });
   };
 
@@ -166,7 +170,11 @@ function AgGridTableView({
   const indexColumn = {
     headerName: "№",
     field: "button",
-    valueGetter: "node.rowIndex + 1",
+    valueGetter: (params) => {
+      return (
+        (Boolean(limitPage > 0) ? limitPage : 0) + params.node.rowIndex + 1
+      );
+    },
     width: 80,
     suppressSizeToFit: true,
     suppressMenu: true,
@@ -292,7 +300,7 @@ function AgGridTableView({
   }, [tabs?.length]);
 
   return (
-    <Box sx={{height: "calc(100vh - 50px)"}}>
+    <Box sx={{height: "calc(100vh - 50px)", overflow: "scroll"}}>
       <FiltersBlock
         view={view}
         views={views}
@@ -393,6 +401,7 @@ function AgGridTableView({
         setLimit={setLimit}
         limit={limit}
         count={count}
+        setLoading={setLoading}
       />
     </Box>
   );

@@ -15,6 +15,7 @@ function AggridFooter({
   refetch = () => {},
   setOffset = () => {},
   setLimit = () => {},
+  setLoading = () => {},
   limit = 10,
   count,
 }) {
@@ -63,6 +64,7 @@ function AggridFooter({
         <div className="pagination">
           <Pagination
             onChange={(e, val) => {
+              setLoading(true);
               setOffset(val);
             }}
             count={Math.ceil(count / limit)}

@@ -62,10 +62,10 @@ const CDatePickerCellEditor = ({
         ref={datePickerRef}
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
-          document.addEventListener("keydown", (e) => {
+          document?.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              datePickerRef.current.closeCalendar();
+              datePickerRef?.current?.closeCalendar();
             }
           });
           return (

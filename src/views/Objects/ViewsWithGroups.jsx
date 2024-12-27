@@ -357,6 +357,7 @@ const ViewsWithGroups = ({
             visibleColumns={visibleColumns}
             visibleRelationColumns={visibleRelationColumns}
             visibleForm={visibleForm}
+            menuItem={menuItem}
           />
         </Box>
       ) : (

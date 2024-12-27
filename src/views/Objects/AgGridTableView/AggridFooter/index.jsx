@@ -7,6 +7,18 @@ import AddIcon from "@mui/icons-material/Add";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import useTabRouter from "../../../../hooks/useTabRouter";
+import CSelect from "../../../../components/CSelect";
+
+const options = [
+  {value: "all", label: "All"},
+  {value: 10, label: 10},
+  {value: 15, label: 15},
+  {value: 20, label: 20},
+  {value: 25, label: 25},
+  {value: 30, label: 30},
+  {value: 35, label: 35},
+  {value: 40, label: 40},
+];
 
 function AggridFooter({
   view,
@@ -38,8 +50,26 @@ function AggridFooter({
 
   return (
     <div className={style.footer}>
-      <div className="">
+      <div className={style.limitCount}>
         <div>Count: {count ?? 0}</div>
+        {limit && (
+          <div className={style.limitSide}>
+            <CSelect
+              options={options}
+              disabledHelperText
+              size="small"
+              value={limit}
+              onChange={(e) => {
+                setOffset(0);
+                setLoading(true);
+                setLimit(e.target.value);
+              }}
+              inputProps={{style: {borderRadius: 50}}}
+              endAdornment={null}
+              sx={null}
+            />
+          </div>
+        )}
       </div>
       <div className={style.footerActions}>
         <div className={style.footerBtns}>

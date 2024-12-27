@@ -72,8 +72,6 @@ function AgGridTableView({
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
 
-  const paginationPageSize = 10;
-
   const tableSearch =
     detectStringType(searchText) === "number"
       ? parseInt(searchText)
@@ -381,7 +379,6 @@ function AgGridTableView({
               loading={loading}
               defaultColDef={defaultColDef}
               autoGroupColumnDef={autoGroupColumnDef}
-              paginationPageSize={paginationPageSize}
               onCellValueChanged={(e) => updateObject(e.data)}
               onColumnPinned={onColumnPinned}
               onSelectionChanged={(e) =>

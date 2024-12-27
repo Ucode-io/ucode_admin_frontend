@@ -274,6 +274,8 @@
   border-top: 1px solid #eee;
 
   .footerActions {
+    display: flex;
+    align-items: center;
     .footerBtns {
       display: flex;
       gap: 10px;

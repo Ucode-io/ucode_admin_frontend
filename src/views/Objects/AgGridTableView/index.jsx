@@ -27,6 +27,7 @@ import AggridDefaultComponents from "./Functions/AggridDefaultComponents";
 import RowIndexField from "./RowIndexField";
 import AggridFooter from "./AggridFooter";
 import IndexHeaderComponent from "./IndexHeaderComponent";
+import {pageToOffset} from "../../../utils/pageToOffset";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -65,7 +66,8 @@ function AgGridTableView({
   const [searchText, setSearchText] = useState("");
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [newRow, setNewRow] = useState(null);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
 
@@ -189,12 +191,14 @@ function AgGridTableView({
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             field: item?.slug,
+            flex: 1,
             minWidth: 250,
             filter: item?.type !== "PASSWORD",
             view,
             columnID: item?.id || generateGUID(),
             pinned: pinnedStatus,
             editable: true,
+            cellClass: "customFields",
           };
           getColumnEditorParams(item, columnDef);
           return columnDef;
@@ -238,6 +242,12 @@ function AgGridTableView({
 
     return filteredFields;
   }, [views, fiedlsarray]);
+
+  const limitPage = useMemo(() => {
+    return pageToOffset(offset, limit);
+  }, [limit, offset]);
+
+  console.log("limitPagelimitPage", limitPage);
 
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
@@ -365,20 +375,6 @@ function AgGridTableView({
                 setSelectedRows(e.api.getSelectedRows())
               }
             />
-            {/* <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: 2,
-                position: "absolute",
-                top: "80px",
-              }}>
-              <Button
-                onClick={() => handleRowAction("approve")}
-                variant="contained">
-                Add New Row
-              </Button>
-            </Box> */}
           </Box>
         </div>
       </div>
@@ -388,6 +384,9 @@ function AgGridTableView({
         rowData={rowData}
         selectedRows={selectedRows}
         refetch={refetch}
+        setOffset={setOffset}
+        setLimit={setLimit}
+        limit={limit}
       />
     </Box>
   );

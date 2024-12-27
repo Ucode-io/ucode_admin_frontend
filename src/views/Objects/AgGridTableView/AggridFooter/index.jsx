@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../style.module.scss";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import {Button} from "@mui/material";
+import {Button, Pagination} from "@mui/material";
 import {useParams, useSearchParams} from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
@@ -13,6 +13,9 @@ function AggridFooter({
   rowData = [],
   selectedRows = [],
   refetch = () => {},
+  setOffset = () => {},
+  setLimit = () => {},
+  limit = 10,
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -56,7 +59,15 @@ function AggridFooter({
             </Button>
           </PermissionWrapperV2>
         </div>
-        <div className="pagination"></div>
+        <div className="pagination">
+          <Pagination
+            onChange={(e, val) => {
+              setOffset(val);
+            }}
+            count={5}
+            color="primary"
+          />
+        </div>
       </div>
     </div>
   );

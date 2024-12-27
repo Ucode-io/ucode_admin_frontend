@@ -12,6 +12,7 @@ import {
   ColumnsToolPanelModule,
   MenuModule,
   RangeSelectionModule,
+  ServerSideRowModelModule,
 } from "ag-grid-enterprise";
 import {useTranslation} from "react-i18next";
 import FiltersBlock from "./FiltersBlock";
@@ -25,7 +26,7 @@ import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 import AggridDefaultComponents from "./Functions/AggridDefaultComponents";
 import RowIndexField from "./RowIndexField";
 import AggridFooter from "./AggridFooter";
-import HeaderComponent from "./HeaderComponent";
+import IndexHeaderComponent from "./IndexHeaderComponent";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -33,6 +34,7 @@ ModuleRegistry.registerModules([
   MenuModule,
   RangeSelectionModule,
   ColumnsToolPanelModule,
+  ServerSideRowModelModule,
 ]);
 
 function AgGridTableView({
@@ -50,6 +52,7 @@ function AgGridTableView({
   visibleForm,
   menuItem,
 }) {
+  const gridApi = useRef(null);
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
   const [rowData, setRowData] = useState([]);
@@ -62,6 +65,7 @@ function AgGridTableView({
   const [searchText, setSearchText] = useState("");
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [newRow, setNewRow] = useState(null);
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
 
@@ -114,6 +118,20 @@ function AgGridTableView({
     });
   };
 
+  const addRow = () => {
+    const emptyRow = {};
+    constructorObjectService
+      .create(tableSlug, {
+        data: {},
+      })
+      .then((res) => {
+        gridApi.current.api.applyTransaction({
+          add: [emptyRow],
+        });
+        refetch();
+      });
+  };
+
   const deleteColumn = {
     headerName: "Actions",
     field: "button",
@@ -130,23 +148,25 @@ function AgGridTableView({
     cellRenderer: ActionButtons,
     deleteFunction: deleteHandler,
     cellClass: "actionBtn",
-    // headerComponent: HeaderComponent,
   };
 
   const indexColumn = {
-    headerName: "",
+    headerName: "№",
     field: "button",
     valueGetter: "node.rowIndex + 1",
     width: 80,
     suppressSizeToFit: true,
+    suppressMenu: true,
     sortable: false,
     filter: false,
     editable: false,
     pinned: "left",
     view: view,
     menuItem: menuItem,
+    addRow: addRow,
     cellRenderer: RowIndexField,
     cellClass: "indexClass",
+    headerComponent: IndexHeaderComponent,
   };
 
   const {
@@ -175,10 +195,6 @@ function AgGridTableView({
             columnID: item?.id || generateGUID(),
             pinned: pinnedStatus,
             editable: true,
-            // editable: Boolean(
-            //   item?.disabled ||
-            //     !!item?.attributes?.field_permission?.edit_permission
-            // ),
           };
           getColumnEditorParams(item, columnDef);
           return columnDef;
@@ -332,8 +348,7 @@ function AgGridTableView({
               </Box>
             )}
             <AgGridReact
-              AgGridReact
-              sideBar={false}
+              ref={gridApi}
               rowData={rowData}
               cellSelection={true}
               suppressRefresh={true}
@@ -350,9 +365,24 @@ function AgGridTableView({
                 setSelectedRows(e.api.getSelectedRows())
               }
             />
+            {/* <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 2,
+                position: "absolute",
+                top: "80px",
+              }}>
+              <Button
+                onClick={() => handleRowAction("approve")}
+                variant="contained">
+                Add New Row
+              </Button>
+            </Box> */}
           </Box>
         </div>
       </div>
+
       <AggridFooter
         view={view}
         rowData={rowData}

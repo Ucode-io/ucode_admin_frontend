@@ -155,6 +155,7 @@
   }
 }
 .gridTable {
+  position: relative;
   width: 100%;
   height: calc(100vh - 300px);
   display: flex;
@@ -278,4 +279,18 @@
       gap: 10px;
     }
   }
+}
+
+.addRowBtn {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

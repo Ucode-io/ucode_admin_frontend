@@ -30,7 +30,6 @@ function HeaderComponent(props) {
     mode: "all",
   });
 
-  console.log("propspropspropsprops", column);
   const {tableSlug} = useParams();
 
   const openFieldSettings = () => {

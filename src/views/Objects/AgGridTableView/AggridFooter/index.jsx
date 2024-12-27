@@ -16,6 +16,7 @@ function AggridFooter({
   setOffset = () => {},
   setLimit = () => {},
   limit = 10,
+  count,
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -37,7 +38,7 @@ function AggridFooter({
   return (
     <div className={style.footer}>
       <div className="">
-        <div>Count: {rowData?.length ?? 0}</div>
+        <div>Count: {count ?? 0}</div>
       </div>
       <div className={style.footerActions}>
         <div className={style.footerBtns}>
@@ -64,7 +65,7 @@ function AggridFooter({
             onChange={(e, val) => {
               setOffset(val);
             }}
-            count={5}
+            count={Math.ceil(count / limit)}
             color="primary"
           />
         </div>

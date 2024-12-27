@@ -68,16 +68,20 @@ function AgGridTableView({
   const [selectedRows, setSelectedRows] = useState([]);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [count, setCount] = useState(0);
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
 
   const paginationPageSize = 10;
-  const paginationPageSizeSelector = [10, 20, 30, 40, 50];
 
   const tableSearch =
     detectStringType(searchText) === "number"
       ? parseInt(searchText)
       : searchText;
+
+  const limitPage = useMemo(() => {
+    return pageToOffset(offset, limit);
+  }, [limit, offset]);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -86,14 +90,20 @@ function AgGridTableView({
       "GET_OBJECTS_LIST_DATA",
       {
         tableSlug,
-        filters: {...filters, [groupTab?.slug]: groupTab?.value, searchText},
+        filters: {
+          ...filters,
+          [groupTab?.slug]: groupTab?.value,
+          searchText,
+          offset,
+          limit,
+        },
       },
     ],
     () =>
       constructorObjectService.getListV2(tableSlug, {
         data: {
-          limit: 20,
-          offset: 0,
+          limit: limit,
+          offset: Boolean(searchText) ? 0 : limitPage,
           view_fields: checkedColumns,
           search: tableSearch,
           ...filters,
@@ -108,6 +118,7 @@ function AgGridTableView({
     {
       enabled: !!tableSlug,
       onSuccess: (data) => {
+        setCount(data?.data?.count);
         setLoading(false);
         setRowData(data?.data?.response ?? []);
       },
@@ -242,12 +253,6 @@ function AgGridTableView({
 
     return filteredFields;
   }, [views, fiedlsarray]);
-
-  const limitPage = useMemo(() => {
-    return pageToOffset(offset, limit);
-  }, [limit, offset]);
-
-  console.log("limitPagelimitPage", limitPage);
 
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
@@ -387,6 +392,7 @@ function AgGridTableView({
         setOffset={setOffset}
         setLimit={setLimit}
         limit={limit}
+        count={count}
       />
     </Box>
   );

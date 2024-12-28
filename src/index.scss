@@ -710,39 +710,6 @@ u {
   }
 }
 
-.ag-root-wrapper {
-  border-radius: 0 !important;
-  border: none !important;
-}
-
-.ag-cell {
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ag-header-cell {
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid #eee;
-
-  .ag-labeled {
-    margin: 0 auto !important;
-  }
-
-  .ag-checkbox {
-    position: absolute;
-  }
-}
-
-.ag-selection-checkbox {
-  margin: 0 auto !important;
-  text-align: center !important;
-}
-
 .ag-theme-quartz {
   --ag-row-border-style: solid;
   --ag-row-border-width: 1px;

@@ -29,6 +29,10 @@ import AggridFooter from "./AggridFooter";
 import IndexHeaderComponent from "./IndexHeaderComponent";
 import {pageToOffset} from "../../../utils/pageToOffset";
 
+import {themeQuartz} from "ag-grid-community";
+
+const myTheme = themeQuartz.withParams({});
+
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   ClipboardModule,
@@ -174,6 +178,7 @@ function AgGridTableView({
       );
     },
     width: 80,
+    height: 40,
     suppressSizeToFit: true,
     suppressMenu: true,
     sortable: false,
@@ -381,6 +386,7 @@ function AgGridTableView({
               autoGroupColumnDef={autoGroupColumnDef}
               onCellValueChanged={(e) => updateObject(e.data)}
               onColumnPinned={onColumnPinned}
+              theme={myTheme}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

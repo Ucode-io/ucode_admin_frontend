@@ -31,7 +31,9 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 
 import {themeQuartz} from "ag-grid-community";
 
-const myTheme = themeQuartz.withParams({});
+const myTheme = themeQuartz.withParams({
+  columnBorder: true,
+});
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -63,7 +65,6 @@ function AgGridTableView({
   const [rowData, setRowData] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
   const pinFieldsRef = useRef({});
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const [loading, setLoading] = useState(true);
@@ -75,6 +76,7 @@ function AgGridTableView({
   const [count, setCount] = useState(0);
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
 
   const tableSearch =
     detectStringType(searchText) === "number"
@@ -124,6 +126,9 @@ function AgGridTableView({
         setLoading(false);
         setRowData(data?.data?.response ?? []);
       },
+      onError: () => {
+        setLoading(false);
+      },
     }
   );
 
@@ -148,7 +153,8 @@ function AgGridTableView({
         });
         refetch();
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   };
 
   const deleteColumn = {

@@ -172,7 +172,9 @@ function AgGridTableView({
     menuItem: menuItem,
     cellRenderer: ActionButtons,
     deleteFunction: deleteHandler,
-    cellClass: "actionBtn",
+    cellClass: Boolean(view?.columns?.length)
+      ? "actionBtn"
+      : "actionBtnNoBorder",
   };
 
   const indexColumn = {

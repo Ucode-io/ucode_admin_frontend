@@ -13,8 +13,6 @@ import queryClient from "./queries";
 import {ReactQueryDevtools} from "react-query/devtools";
 import {AliveScope} from "react-activation";
 import {GoogleOAuthProvider} from "@react-oauth/google";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-enterprise";
 import {LicenseManager} from "ag-grid-enterprise";
 

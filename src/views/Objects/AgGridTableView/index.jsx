@@ -384,9 +384,10 @@ function AgGridTableView({
             <AgGridReact
               ref={gridApi}
               rowData={rowData}
-              cellSelection={true}
+              cellSelection={{handle: {mode: "range"}}}
               suppressRefresh={true}
               columnDefs={columns}
+              enableClipboard={true}
               rowSelection={rowSelection}
               suppressServerSideFullWidthLoadingRow={true}
               loading={loading}

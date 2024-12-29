@@ -23,7 +23,10 @@ import useFilters from "../../../hooks/useFilters";
 import ActionButtons from "./ActionButtons";
 import {generateGUID} from "../../../utils/generateID";
 import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import AggridDefaultComponents from "./Functions/AggridDefaultComponents";
+import AggridDefaultComponents, {
+  ActionsColumn,
+  IndexColumn,
+} from "./Functions/AggridDefaultComponents";
 import RowIndexField from "./RowIndexField";
 import AggridFooter from "./AggridFooter";
 import IndexHeaderComponent from "./IndexHeaderComponent";
@@ -60,22 +63,23 @@ function AgGridTableView({
   menuItem,
 }) {
   const gridApi = useRef(null);
+  const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
+  const [count, setCount] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
   const [rowData, setRowData] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(false);
-  const pinFieldsRef = useRef({});
-  const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMap[groupFieldId];
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [limit, setLimit] = useState(10);
-  const [offset, setOffset] = useState(0);
-  const [count, setCount] = useState(0);
+  const [filterVisible, setFilterVisible] = useState(false);
+
   const {defaultColDef, autoGroupColumnDef, rowSelection} =
     AggridDefaultComponents();
+  const groupFieldId = view?.group_fields?.[0];
+  const groupField = fieldsMap[groupFieldId];
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
 
   const tableSearch =
@@ -157,50 +161,6 @@ function AgGridTableView({
       .catch(() => setLoading(false));
   };
 
-  const deleteColumn = {
-    headerName: "Actions",
-    field: "button",
-    pinned: "right",
-    width: 120,
-    suppressSizeToFit: true,
-    sortable: false,
-    filter: false,
-    editable: false,
-    suppressMenu: true,
-    type: "ACTIONS",
-    view: view,
-    menuItem: menuItem,
-    cellRenderer: ActionButtons,
-    deleteFunction: deleteHandler,
-    cellClass: Boolean(view?.columns?.length)
-      ? "actionBtn"
-      : "actionBtnNoBorder",
-  };
-
-  const indexColumn = {
-    headerName: "№",
-    field: "button",
-    valueGetter: (params) => {
-      return (
-        (Boolean(limitPage > 0) ? limitPage : 0) + params.node.rowIndex + 1
-      );
-    },
-    width: 80,
-    height: 40,
-    suppressSizeToFit: true,
-    suppressMenu: true,
-    sortable: false,
-    filter: false,
-    editable: false,
-    pinned: "left",
-    view: view,
-    menuItem: menuItem,
-    addRow: addRow,
-    cellRenderer: RowIndexField,
-    cellClass: "indexClass",
-    headerComponent: IndexHeaderComponent,
-  };
-
   const {
     data: {fiedlsarray} = {
       pageCount: 1,
@@ -212,9 +172,8 @@ function AgGridTableView({
     queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
-      const primaryFields = [...res?.data?.fields, deleteColumn];
       return {
-        fiedlsarray: primaryFields?.map((item) => {
+        fiedlsarray: res?.data?.fields?.map((item) => {
           const pinnedStatus =
             view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "";
           const columnDef = {
@@ -240,7 +199,21 @@ function AgGridTableView({
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
       return [
-        indexColumn,
+        {
+          ...IndexColumn,
+          menuItem: menuItem,
+          view: view,
+          addRow: addRow,
+          cellRenderer: RowIndexField,
+          headerComponent: IndexHeaderComponent,
+          valueGetter: (params) => {
+            return (
+              (Boolean(limitPage > 0) ? limitPage : 0) +
+              params.node.rowIndex +
+              1
+            );
+          },
+        },
         ...fiedlsarray
           ?.filter((item) => view?.columns?.includes(item?.columnID))
           .map((el, index) => ({
@@ -249,7 +222,16 @@ function AgGridTableView({
               ? true
               : false,
           })),
-        deleteColumn,
+        {
+          ...ActionsColumn,
+          view: view,
+          menuItem: menuItem,
+          cellRenderer: ActionButtons,
+          deleteFunction: deleteHandler,
+          cellClass: Boolean(view?.columns?.length)
+            ? "actionBtn"
+            : "actionBtnNoBorder",
+        },
       ];
     }
   }, [fiedlsarray, view]);

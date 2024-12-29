@@ -26,32 +26,32 @@ function AggridDefaultComponents() {
 export default AggridDefaultComponents;
 
 export const IndexColumn = {
-  headerName: "№",
-  field: "button",
   width: 80,
   height: 40,
-  suppressSizeToFit: true,
-  suppressMenu: true,
-  sortable: false,
   filter: false,
-  editable: false,
   pinned: "left",
+  headerName: "№",
+  field: "button",
+  editable: false,
+  sortable: false,
+  suppressMenu: true,
   cellClass: "indexClass",
+  suppressSizeToFit: true,
   cellRenderer: RowIndexField,
   headerComponent: IndexHeaderComponent,
 };
 
 export const ActionsColumn = {
-  headerName: "Actions",
+  width: 120,
+  filter: false,
+  sortable: false,
+  editable: false,
   field: "button",
   pinned: "right",
-  width: 120,
-  suppressSizeToFit: true,
-  sortable: false,
-  filter: false,
-  editable: false,
-  suppressMenu: true,
   type: "ACTIONS",
+  suppressMenu: true,
+  headerName: "Actions",
+  suppressSizeToFit: true,
   cellRenderer: ActionButtons,
 };
 

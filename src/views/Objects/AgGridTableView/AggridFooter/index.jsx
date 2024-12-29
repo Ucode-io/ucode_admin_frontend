@@ -1,13 +1,13 @@
 import React from "react";
 import style from "../style.module.scss";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import {Button, Pagination} from "@mui/material";
-import {useParams, useSearchParams} from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
+import {Button, Pagination} from "@mui/material";
+import CSelect from "../../../../components/CSelect";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import {useParams, useSearchParams} from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import useTabRouter from "../../../../hooks/useTabRouter";
-import CSelect from "../../../../components/CSelect";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const options = [
   {value: "all", label: "All"},
@@ -21,15 +21,13 @@ const options = [
 ];
 
 function AggridFooter({
-  view,
-  rowData = [],
+  count,
+  limit = 10,
   selectedRows = [],
   refetch = () => {},
   setOffset = () => {},
   setLimit = () => {},
   setLoading = () => {},
-  limit = 10,
-  count,
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -55,18 +53,18 @@ function AggridFooter({
         {limit && (
           <div className={style.limitSide}>
             <CSelect
-              options={options}
-              disabledHelperText
+              sx={null}
               size="small"
               value={limit}
+              options={options}
+              disabledHelperText
+              endAdornment={null}
               onChange={(e) => {
                 setOffset(0);
                 setLoading(true);
                 setLimit(e.target.value);
               }}
               inputProps={{style: {borderRadius: 50}}}
-              endAdornment={null}
-              sx={null}
             />
           </div>
         )}

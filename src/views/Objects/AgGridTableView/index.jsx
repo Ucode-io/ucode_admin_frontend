@@ -19,15 +19,15 @@ import constructorViewService from "../../../services/constructorViewService";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {
-  ClipboardModule,
-  ColumnsToolPanelModule,
   MenuModule,
+  ClipboardModule,
   RangeSelectionModule,
+  ColumnsToolPanelModule,
   ServerSideRowModelModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
-  ActionsColumn,
   IndexColumn,
+  ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
 
 const myTheme = themeQuartz.withParams({

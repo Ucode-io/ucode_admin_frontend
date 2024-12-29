@@ -2,49 +2,45 @@ import React, {useState} from "react";
 import style from "./style.module.scss";
 import {useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
+import GroupByButton from "../../GroupByButton";
 import useDebounce from "../../../../hooks/useDebounce";
 import ExcelButtons from "../../components/ExcelButtons";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {Badge, Button, Divider, Menu} from "@mui/material";
 import SearchInput from "../../../../components/SearchInput";
 import VisibleColumnsButton from "../../VisibleColumnsButton";
-import {Description, MoreVertOutlined} from "@mui/icons-material";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SearchParams from "../../components/ViewSettings/SearchParams";
-import {useQuery} from "react-query";
-import GroupByButton from "../../GroupByButton";
 import TableViewGroupByButton from "../../TableViewGroupByButton";
+import {Description, MoreVertOutlined} from "@mui/icons-material";
+import SearchParams from "../../components/ViewSettings/SearchParams";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 function FiltersBlock({
   view,
   views,
   fieldsMap,
+  searchText,
   checkedColumns,
   columnsForSearch,
   selectedTabIndex,
+  setCheckedColumns,
   computedVisibleFields,
+  visibleRelationColumns,
+  updateField = () => {},
+  setSearchText = () => {},
   setFilterVisible = () => {},
   setSelectedTabIndex = () => {},
-  setCheckedColumns,
-  updateField,
-  filters,
-  visibleRelationColumns,
-  searchText,
-  setSearchText = () => {},
 }) {
-  const {tableSlug} = useParams();
-
-  const [inputKey, setInputKey] = useState(0);
-  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
-  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const {tableSlug} = useParams();
+  const [anchorElSearch, setAnchorElSearch] = useState(null);
+  const openSearch = Boolean(anchorElSearch);
+  const [inputKey, setInputKey] = useState(0);
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
-
-  const [anchorElSearch, setAnchorElSearch] = useState(null);
-  const openSearch = Boolean(anchorElSearch);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
 
   const inputChangeHandler = useDebounce((val) => {
     setSearchText(val);
@@ -138,10 +134,10 @@ function FiltersBlock({
               },
             }}>
             <SearchParams
+              updateField={updateField}
+              columns={columnsForSearch}
               checkedColumns={checkedColumns}
               setCheckedColumns={setCheckedColumns}
-              columns={columnsForSearch}
-              updateField={updateField}
             />
           </Menu>
         </div>
@@ -149,9 +145,9 @@ function FiltersBlock({
         <div className={style.rightExtra}>
           {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
             <GroupByButton
-              selectedTabIndex={selectedTabIndex}
               view={view}
               fieldsMap={fieldsMap}
+              selectedTabIndex={selectedTabIndex}
               relationColumns={visibleRelationColumns}
             />
           )}
@@ -182,8 +178,8 @@ function FiltersBlock({
 
           <Menu
             open={open}
-            onClose={handleClose}
             anchorEl={anchorEl}
+            onClose={handleClose}
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "right",
@@ -220,11 +216,11 @@ function FiltersBlock({
             }}>
             <div className={style.menuBar}>
               <ExcelButtons
-                computedVisibleFields={computedVisibleFields}
-                fieldsMap={fieldsMap}
                 view={view}
+                fieldsMap={fieldsMap}
                 searchText={searchText}
                 checkedColumns={checkedColumns}
+                computedVisibleFields={computedVisibleFields}
               />
               <div
                 className={style.template}

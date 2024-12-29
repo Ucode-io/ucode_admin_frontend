@@ -1,18 +1,19 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import style from "./style.module.scss";
+import {Tooltip} from "@mui/material";
 
 function IndexHeaderComponent(props) {
   const {column} = props;
   return (
-    <div>
+    <Tooltip title="Add new row button">
       <button
         className={style.addRowBtn}
         onClick={() => column?.colDef?.addRow()}>
         {/* Add row */}
         <AddIcon />
       </button>
-    </div>
+    </Tooltip>
   );
 }
 

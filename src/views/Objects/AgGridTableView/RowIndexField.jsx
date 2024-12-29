@@ -1,4 +1,4 @@
-import {Box, Button} from "@mui/material";
+import {Box, Button, Tooltip} from "@mui/material";
 import React from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -44,16 +44,18 @@ function RowIndexField(props) {
 
   return (
     <Box sx={{display: "flex"}}>
-      <Button
-        onClick={() => {
-          navigateToDetailPage(data);
-        }}
-        className="editButton"
-        style={{
-          minWidth: "max-content",
-        }}>
-        <OpenInFullIcon />
-      </Button>
+      <Tooltip title="Open the row in detail">
+        <Button
+          onClick={() => {
+            navigateToDetailPage(data);
+          }}
+          className="editButton"
+          style={{
+            minWidth: "max-content",
+          }}>
+          <OpenInFullIcon />
+        </Button>
+      </Tooltip>
 
       <Box className="indexValue">{value}</Box>
     </Box>

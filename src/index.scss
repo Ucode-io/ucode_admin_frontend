@@ -710,6 +710,10 @@ u {
   }
 }
 
+.ag-root-wrapper {
+  border: none !important;
+}
+
 .ag-theme-quartz {
   --ag-row-border-style: solid;
   --ag-row-border-width: 1px;
@@ -747,7 +751,6 @@ u {
 }
 
 .indexClass {
-  position: relative;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -771,6 +774,20 @@ u {
 }
 
 .actionBtn {
+  padding: 5px 10px 10px 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  // border: none !important;
+
+  div {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.actionBtnNoBorder {
   padding: 5px 10px 10px 10px !important;
   display: flex;
   align-items: center;

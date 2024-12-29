@@ -1,4 +1,8 @@
 import {useMemo} from "react";
+import ActionButtons from "../ActionButtons";
+import RowIndexField from "../RowIndexField";
+import IndexHeaderComponent from "../IndexHeaderComponent";
+import constructorObjectService from "../../../../services/constructorObjectService";
 
 function AggridDefaultComponents() {
   const defaultColDef = useMemo(
@@ -33,6 +37,8 @@ export const IndexColumn = {
   editable: false,
   pinned: "left",
   cellClass: "indexClass",
+  cellRenderer: RowIndexField,
+  headerComponent: IndexHeaderComponent,
 };
 
 export const ActionsColumn = {
@@ -46,4 +52,9 @@ export const ActionsColumn = {
   editable: false,
   suppressMenu: true,
   type: "ACTIONS",
+  cellRenderer: ActionButtons,
+};
+
+export const updateObject = (tableSlug = "", data) => {
+  constructorObjectService.update(tableSlug, {data: {...data}});
 };

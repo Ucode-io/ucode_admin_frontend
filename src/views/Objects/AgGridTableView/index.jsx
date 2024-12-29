@@ -50,17 +50,17 @@ ModuleRegistry.registerModules([
 function AgGridTableView({
   view,
   views,
+  menuItem,
   fieldsMap,
-  selectedTabIndex,
-  computedVisibleFields,
+  updateField,
+  visibleForm,
+  visibleColumns,
   checkedColumns,
+  selectedTabIndex,
   columnsForSearch,
   setCheckedColumns,
-  updateField,
-  visibleColumns,
+  computedVisibleFields,
   visibleRelationColumns,
-  visibleForm,
-  menuItem,
 }) {
   const gridApi = useRef(null);
   const pinFieldsRef = useRef({});
@@ -110,25 +110,25 @@ function AgGridTableView({
     () =>
       constructorObjectService.getListV2(tableSlug, {
         data: {
-          limit: limit,
-          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
-          view_fields: checkedColumns,
-          search: tableSearch,
           ...filters,
+          limit: limit,
+          search: tableSearch,
+          view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
             ? Object.values(fieldsMap).find((el) => el.slug === groupTab?.slug)
                 ?.type === "MULTISELECT"
               ? [`${groupTab?.value}`]
               : groupTab?.value
             : "",
+          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
         },
       }),
     {
       enabled: !!tableSlug,
       onSuccess: (data) => {
         setCount(data?.data?.count);
-        setLoading(false);
         setRowData(data?.data?.response ?? []);
+        setLoading(false);
       },
       onError: () => {
         setLoading(false);
@@ -204,8 +204,6 @@ function AgGridTableView({
           menuItem: menuItem,
           view: view,
           addRow: addRow,
-          cellRenderer: RowIndexField,
-          headerComponent: IndexHeaderComponent,
           valueGetter: (params) => {
             return (
               (Boolean(limitPage > 0) ? limitPage : 0) +
@@ -226,7 +224,6 @@ function AgGridTableView({
           ...ActionsColumn,
           view: view,
           menuItem: menuItem,
-          cellRenderer: ActionButtons,
           deleteFunction: deleteHandler,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"

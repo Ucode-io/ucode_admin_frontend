@@ -60,3 +60,27 @@ export const ActionsColumn = {
 export const updateObject = (tableSlug = "", data) => {
   constructorObjectService.update(tableSlug, {data: {...data}});
 };
+
+const addRow = (
+  tableSlug = "",
+  gridApi,
+  setLoading = () => {},
+  refetch = () => {}
+) => {
+  setLoading(true);
+  const emptyRow = {};
+  constructorObjectService
+    .create(tableSlug, {
+      data: {},
+    })
+    .then((res) => {
+      const newRow = {...emptyRow, id: res?.data?.id};
+      gridApi.current.api.applyTransaction({
+        add: [newRow],
+        addIndex: 0,
+      });
+      refetch();
+      setLoading(false);
+    })
+    .catch(() => setLoading(false));
+};

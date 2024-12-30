@@ -132,31 +132,6 @@ function AgGridTableView({
     }
   );
 
-  const deleteHandler = (row) => {
-    constructorObjectService.delete(tableSlug, row.guid).then(() => {
-      refetch();
-    });
-  };
-
-  const addRow = () => {
-    setLoading(true);
-    const emptyRow = {};
-    constructorObjectService
-      .create(tableSlug, {
-        data: {},
-      })
-      .then((res) => {
-        const newRow = {...emptyRow, id: res?.data?.id};
-        gridApi.current.api.applyTransaction({
-          add: [newRow],
-          addIndex: 0,
-        });
-        refetch();
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  };
-
   const {
     data: {fiedlsarray} = {
       pageCount: 1,
@@ -247,6 +222,25 @@ function AgGridTableView({
     return filteredFields;
   }, [views, fiedlsarray]);
 
+  function addRow() {
+    setLoading(true);
+    const emptyRow = {};
+    constructorObjectService
+      .create(tableSlug, {
+        data: {},
+      })
+      .then((res) => {
+        const newRow = {...emptyRow, id: res?.data?.id};
+        gridApi.current.api.applyTransaction({
+          add: [newRow],
+          addIndex: 0,
+        });
+        refetch();
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }
+
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
@@ -262,6 +256,12 @@ function AgGridTableView({
   const updateObject = (data) => {
     constructorObjectService.update(tableSlug, {data: {...data}});
   };
+
+  function deleteHandler(row) {
+    constructorObjectService.delete(tableSlug, row.guid).then(() => {
+      refetch();
+    });
+  }
 
   const onColumnPinned = (event) => {
     const {column, pinned} = event;

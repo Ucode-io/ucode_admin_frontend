@@ -217,6 +217,7 @@ function AgGridTableView({
         {
           ...ActionsColumn,
           view: view,
+          selectedTabIndex: selectedTabIndex,
           menuItem: menuItem,
           deleteFunction: deleteHandler,
           cellClass: Boolean(view?.columns?.length)

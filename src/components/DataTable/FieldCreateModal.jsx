@@ -114,22 +114,22 @@ export default function FieldCreateModal({
     }
   };
 
-  const {isLoading: fieldLoading} = useFieldsListQuery({
-    params: {
-      table_id: menuItem?.table_id,
-      tableSlug: tableSlug,
-    },
-    queryParams: {
-      enabled: Boolean(menuItem?.table_id),
-      onSuccess: (res) => {
-        setFields(
-          res?.fields?.map((item) => {
-            return {value: item.slug, label: item.label};
-          })
-        );
-      },
-    },
-  });
+  // const {isLoading: fieldLoading} = useFieldsListQuery({
+  //   params: {
+  //     table_id: menuItem?.table_id,
+  //     tableSlug: tableSlug,
+  //   },
+  //   queryParams: {
+  //     enabled: Boolean(menuItem?.table_id),
+  //     onSuccess: (res) => {
+  //       setFields(
+  //         res?.fields?.map((item) => {
+  //           return {value: item.slug, label: item.label};
+  //         })
+  //       );
+  //     },
+  //   },
+  // });
 
   const params = {
     language_setting: i18n?.language,

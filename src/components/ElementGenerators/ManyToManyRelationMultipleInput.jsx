@@ -134,7 +134,6 @@ const AutoCompleteElement = memo(
     disabledHelperText,
     name,
   }) => {
-    console.log("nameeeeeeeeeeee", name);
     const {navigateToForm} = useTabRouter();
     const [debouncedValue, setDebouncedValue] = useState("");
     const newForm = useForm();

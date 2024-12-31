@@ -1,31 +1,31 @@
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { useApiEndpointGetByIdQuery } from "../../../../../services/apiEndpointService";
-import { useApiCategoryGetByIdQuery } from "../../../../../services/apiCategoryService";
+import {useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useNavigate, useParams} from "react-router-dom";
+import {useApiEndpointGetByIdQuery} from "../../../../../services/apiEndpointService";
+import {useApiCategoryGetByIdQuery} from "../../../../../services/apiCategoryService";
 import axios from "axios";
 import strFromObj from "../../../../../utils/generateUrl";
 import listToObject from "../../../../../utils/generateParams";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
-import { Box, Button, Select } from "@mui/material";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
+import {Box, Button, Select} from "@mui/material";
 import styles from "../style.module.scss";
 import BackButton from "../../../../BackButton";
 import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWithWrapper";
 import DetailQueryBox from "./DetailQueryBox";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import { ArrowDown, CopyIcon } from "../../../../../assets/icons/icon";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {ArrowDown, CopyIcon} from "../../../../../assets/icons/icon";
 import CodeMirror from "@uiw/react-codemirror";
 import HFSelect from "../../../../FormElements/HFSelect";
 import CSelect from "../../../../CSelect";
 
 const ApiEndpointDetail = () => {
-  const { endpointId, categoryId, projectId } = useParams();
+  const {endpointId, categoryId, projectId} = useParams();
   const [response, setResponse] = useState();
   const [tabIndex, setTabIndex] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { control, setValue, getValues, reset, watch } = useForm({
+  const {control, setValue, getValues, reset, watch} = useForm({
     defaultValues: {
       base_url: "https:api.admin.ucode.io/",
       authentification: true,
@@ -46,7 +46,7 @@ const ApiEndpointDetail = () => {
     return arr;
   }, [watch("attributes.result")]);
 
-  const { isLoading } = useApiEndpointGetByIdQuery({
+  const {isLoading} = useApiEndpointGetByIdQuery({
     fieldId: endpointId,
     projectId,
     queryParams: {
@@ -57,7 +57,7 @@ const ApiEndpointDetail = () => {
       },
     },
   });
-  const { isLoading: formLoading } = useApiCategoryGetByIdQuery({
+  const {isLoading: formLoading} = useApiCategoryGetByIdQuery({
     fieldId: categoryId,
     projectId,
     queryParams: {
@@ -83,7 +83,6 @@ const ApiEndpointDetail = () => {
         dispatch(showAlert("Успешно", "success"));
       })
       .catch((err) => {
-        console.log("err", err);
         setResponse(err.message);
         dispatch(showAlert("Ошибка", "error"));
       });
@@ -97,8 +96,7 @@ const ApiEndpointDetail = () => {
         height: "100vh",
         overflow: "auto",
         background: "#fff",
-      }}
-    >
+      }}>
       <Box flex={0.6}>
         <div className={styles.detail}>
           <h3 className={styles.title}>
@@ -156,15 +154,13 @@ const ApiEndpointDetail = () => {
             <Tabs
               selectedIndex={tabIndex}
               onSelect={(index) => setTabIndex(index)}
-              className={styles.tabs}
-            >
+              className={styles.tabs}>
               <TabList>
                 {languages?.map((field) => (
                   <Tab
                     selectedClassName={styles.active}
                     className={styles.tab}
-                    key={field.id}
-                  >
+                    key={field.id}>
                     {field.lang}
                   </Tab>
                 ))}
@@ -187,8 +183,7 @@ const ApiEndpointDetail = () => {
                       <CopyIcon />
                       <Button
                         variant="contained"
-                        onClick={() => Request(method, url)}
-                      >
+                        onClick={() => Request(method, url)}>
                         Try it
                       </Button>
                     </div>

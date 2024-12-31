@@ -1,9 +1,8 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Tabs} from "react-tabs";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
@@ -12,11 +11,11 @@ import FRow from "../../components/FormElements/FRow";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import PageFallback from "../../components/PageFallback";
-import { store } from "../../store";
 import smsOtpService from "../../services/auth/smsOtpService";
+import {store} from "../../store";
 
 const SmsFormPage = () => {
-  const { appId, apiKeyId, redirectId } = useParams();
+  const {appId, apiKeyId, redirectId} = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useSearchParams();
   const [btnLoader, setBtnLoader] = useState();
@@ -33,7 +32,7 @@ const SmsFormPage = () => {
       "project-id": authStore.projectId,
     };
     smsOtpService
-      .create({ ...data, number_of_otp: parseInt(data?.number_of_otp) }, params)
+      .create({...data, number_of_otp: parseInt(data?.number_of_otp)}, params)
       .then(() => {
         navigate(-1);
         // getRoleList();
@@ -67,12 +66,6 @@ const SmsFormPage = () => {
       });
   };
 
-  // useEffect(() => {
-  //   if (mainForm.watch("client_type_id")) {
-  //     getRoleList();
-  //   }
-  // }, [mainForm.watch("client_type_id")]);
-
   useEffect(() => {
     if (redirectId) {
       getById();
@@ -90,27 +83,23 @@ const SmsFormPage = () => {
     <div>
       <Tabs
         selectedIndex={Number(search.get("tab") ?? 0)}
-        onSelect={(index) => setSearch({ tab: index })}
+        onSelect={(index) => setSearch({tab: index})}
         direction={"ltr"}
-        style={{ height: "100vh", position: "relative" }}
-      >
+        style={{height: "100vh", position: "relative"}}>
         <HeaderSettings
           title="Sms Otp"
           backButtonLink={-1}
-          subtitle={appId ? mainForm.watch("name") : "Новый"}
-        ></HeaderSettings>
+          subtitle={appId ? mainForm.watch("name") : "Новый"}></HeaderSettings>
 
         <form
           onSubmit={mainForm.handleSubmit(onSubmit)}
           className="p-2"
-          style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-        >
+          style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
           <FormCard title="Детали" maxWidth={500}>
             <FRow
               label={"Login"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="login"
@@ -122,8 +111,7 @@ const SmsFormPage = () => {
             <FRow
               label={"Default Otp"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="default_otp"
@@ -135,8 +123,7 @@ const SmsFormPage = () => {
             <FRow
               label={"Number Of Otp"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="number_of_otp"
@@ -149,8 +136,7 @@ const SmsFormPage = () => {
             <FRow
               label={"Password"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="password"
@@ -171,8 +157,7 @@ const SmsFormPage = () => {
 
               <PrimaryButton
                 loader={btnLoader}
-                onClick={mainForm.handleSubmit(onSubmit)}
-              >
+                onClick={mainForm.handleSubmit(onSubmit)}>
                 <Save /> Save
               </PrimaryButton>
             </>

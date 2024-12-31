@@ -24,11 +24,9 @@ const MainLayout = ({setFavicon, favicon}) => {
 
   useEffect(() => {
     const handleOnline = () => {
-      console.log("GGGG ONLINE");
       dispatch(isOnlineReducerAction.setisOnline(true));
     };
     const handleOffline = () => {
-      console.log("GGGG OFFLINE");
       dispatch(isOnlineReducerAction.setisOnline(false));
     };
 

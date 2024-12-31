@@ -1,11 +1,10 @@
-import { Editor } from "@tinymce/tinymce-react";
-import { useState } from "react";
+import {Editor} from "@tinymce/tinymce-react";
+import {useState} from "react";
 
-const Redactor = ({ value, onChange }) => {
+const Redactor = ({value, onChange}) => {
   const [initialValue, setInitialValue] = useState(value);
 
   const handleEditorChange = (e) => {
-    console.log("Content was updated:", e.target.getContent());
     onChange(e.target.getContent());
   };
 
@@ -24,7 +23,7 @@ const Redactor = ({ value, onChange }) => {
       var json;
 
       if (xhr.status === 403) {
-        failure("HTTP Error: " + xhr.status, { remove: true });
+        failure("HTTP Error: " + xhr.status, {remove: true});
         return;
       }
 

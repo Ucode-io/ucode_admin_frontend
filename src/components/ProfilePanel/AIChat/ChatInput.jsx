@@ -65,7 +65,6 @@ function ChatInput({
                 cursor: inputValue?.length ? "pointer" : "not-allowed",
               }}
               onClick={() => {
-                console.log("ssssssss");
                 handleSendClick();
               }}>
               <img src="/img/gptSendIcon.svg" alt="" />

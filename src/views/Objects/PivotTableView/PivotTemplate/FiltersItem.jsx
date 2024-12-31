@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import React, {useState} from "react";
+import {useQuery} from "react-query";
 
 import constructorObjectService from "../../../../services/constructorObjectService";
 import HFMultipleAutocomplete from "../../../../components/FormElements/HFMultipleAutocomplete";
 import FRow from "../../../../components/FormElements/FRow";
 import useDebounce from "../../../../hooks/useDebounce";
 import styles from "./styles.module.scss";
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 
 export default function FiltersItem(props) {
-  const { form, rowName, title, dataList } = props;
+  const {form, rowName, title, dataList} = props;
 
   return (
     <div className={`${styles.wrapper} ${styles.filters}`}>
@@ -19,7 +19,13 @@ export default function FiltersItem(props) {
       <div className={styles.items}>
         <div className="p-1">
           {dataList?.filters?.map((row, idx) => (
-            <Item key={row.id} row={row} idx={idx} form={form} rowName={rowName} />
+            <Item
+              key={row.id}
+              row={row}
+              idx={idx}
+              form={form}
+              rowName={rowName}
+            />
           ))}
         </div>
       </div>
@@ -28,20 +34,24 @@ export default function FiltersItem(props) {
 }
 
 function Item(props) {
-  const { row, form, idx } = props;
+  const {row, form, idx} = props;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const tableGuids = useWatch({ control: form.control, name: `filters.${idx}.table_guids` });
-  const mainTableSlug = useWatch({ control: form.control, name: "main_table_slug" });
+  const tableGuids = useWatch({
+    control: form.control,
+    name: `filters.${idx}.table_guids`,
+  });
+  const mainTableSlug = useWatch({
+    control: form.control,
+    name: "main_table_slug",
+  });
 
-  // console.log("table guid => ", row.field_id, tableGuids);
-
-  const { data } = useQuery(
+  const {data} = useQuery(
     ["GET_OBJECT_LIST", row.slug, debouncedValue, tableGuids],
     () =>
       constructorObjectService.groupByList(
         mainTableSlug,
         row.slug,
-        { data: { additional_values: tableGuids } },
+        {data: {additional_values: tableGuids}},
         {
           limit: 10,
           project: row.field_id,
@@ -70,7 +80,7 @@ function Item(props) {
           onInputChange={inputChangeHandler}
           defaultValue={[]}
           control={form.control}
-          field={{ attributes: { options: data, is_multiselect: true } }}
+          field={{attributes: {options: data, is_multiselect: true}}}
           width="100%"
           name={`filters.${idx}.table_guids`}
         />

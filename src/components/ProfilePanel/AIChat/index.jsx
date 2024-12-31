@@ -39,7 +39,6 @@ function AiChatMenu({sidebarIsOpen}) {
           setInputValue("");
         })
         .catch((err) => {
-          console.log("Error:", err?.data?.data);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             {errorText: err?.data?.data, sender: "chat"},

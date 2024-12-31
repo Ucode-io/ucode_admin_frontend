@@ -29,6 +29,7 @@ import AggridDefaultComponents, {
   IndexColumn,
   ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
+import CustomLoadingOverlay from "./CustomLoadingOverlay";
 
 const myTheme = themeQuartz.withParams({
   columnBorder: true,
@@ -75,7 +76,7 @@ function AgGridTableView({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
-  const {defaultColDef, autoGroupColumnDef, rowSelection} =
+  const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents();
 
   const tableSearch =
@@ -361,14 +362,17 @@ function AgGridTableView({
               rowData={rowData}
               loading={loading}
               columnDefs={columns}
+              // showOpenedGroup={true}
               suppressRefresh={true}
               enableClipboard={true}
               rowSelection={rowSelection}
               defaultColDef={defaultColDef}
+              cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
+              groupDisplayType={"singleColumn"}
               autoGroupColumnDef={autoGroupColumnDef}
-              cellSelection={{handle: {mode: "range"}}}
               suppressServerSideFullWidthLoadingRow={true}
+              loadingOverlayComponent={CustomLoadingOverlay}
               onCellValueChanged={(e) => updateObject(e.data)}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())

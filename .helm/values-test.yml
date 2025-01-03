@@ -85,16 +85,15 @@ ingress:
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-
       type: web
       hosts:
         - host: "app.ucode.run"
           path: /
           servicePort: 80
-      # tls:
-      #   - secretName: ucode-star
-      #     hosts:
-      #       - "test.wiki.ucode.run"
+      tls:
+        - secretName: ucode-star
+          hosts:
+            - "app.ucode.run"
 
 resources:
   {}

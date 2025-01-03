@@ -29,6 +29,9 @@ import functionService, {
   useFunctionUpdateMutation,
 } from "../../../services/functionService";
 import {useQueryClient} from "react-query";
+import {Box} from "@mui/material";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import KnativeLogs from "./KnativeLogs";
 
 // const frameworkOptions = [
 //   {
@@ -64,6 +67,8 @@ export default function OpenFaasFunctionForm() {
       type: "FUNCTION",
     },
   });
+
+  const knativeForm = useForm({});
 
   const resourceId = mainForm.watch("resource_id");
   const selectedRepo = mainForm.watch("repo_name");
@@ -138,6 +143,8 @@ export default function OpenFaasFunctionForm() {
     queryParams: {
       enabled: Boolean(functionId),
       onSuccess: (res) => {
+        knativeForm.setValue("type", res?.type);
+        knativeForm.setValue("path", res?.path);
         mainForm.reset({...res, resource_id: res.resource});
       },
     },
@@ -163,151 +170,192 @@ export default function OpenFaasFunctionForm() {
   }, [selectedRepo]);
 
   if (isLoading) return <PageFallback />;
-
+  console.log("resourceOptions", resourceOptions);
   return (
     <div>
-      <HeaderSettings
-        title="Open faas функция"
-        backButtonLink={-1}
-        subtitle={
-          functionId ? mainForm.watch("name") : "Новый"
-        }></HeaderSettings>
+      <Tabs>
+        <HeaderSettings
+          title="Open faas функция"
+          backButtonLink={-1}
+          subtitle={functionId ? mainForm.watch("name") : "Новый"}>
+          <TabList>
+            <Tab>Details</Tab>
+            <Tab>Logs</Tab>
+          </TabList>
+        </HeaderSettings>
 
-      <form
-        onSubmit={mainForm.handleSubmit(onSubmit)}
-        className="p-2"
-        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
-        <FormCard title="Детали" maxWidth={500}>
-          <FRow
-            label={"Ресурс"}
-            componentClassName="flex gap-2 align-center"
-            required>
-            <HFSelect
-              disabledHelperText
-              name="resource_id"
-              control={mainForm.control}
-              fullWidth
-              options={resourceOptions}
-              required
-              disabled={functionId}
-            />
-          </FRow>
-
-          <FRow
-            label={"Function type"}
-            componentClassName="flex gap-2 align-center"
-            required>
-            <HFSelect
-              disabledHelperText
-              name="type"
-              control={mainForm.control}
-              fullWidth
-              options={[
-                {
-                  label: "Knative",
-                  value: "KNATIVE",
-                },
-                {
-                  label: "Openfaas",
-                  value: "FUNCTION",
-                },
-              ]}
-              required
-              disabled={functionId}
-            />
-          </FRow>
-
-          {resourceId !== "ucode_gitlab" && (
-            <>
-              <FRow label="Репозиторий" required>
+        <TabPanel>
+          <form
+            onSubmit={mainForm.handleSubmit(onSubmit)}
+            className="p-2"
+            style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
+            <FormCard title="Детали" maxWidth={500}>
+              <FRow
+                label={"Ресурс"}
+                componentClassName="flex gap-2 align-center"
+                required>
                 <HFSelect
-                  name="repo_name"
+                  disabledHelperText
+                  name="resource_id"
                   control={mainForm.control}
-                  options={repositories ?? []}
+                  fullWidth
+                  options={resourceOptions}
                   required
                   disabled={functionId}
                 />
               </FRow>
 
-              <FRow label="Ветка" required>
+              <FRow
+                label={"Function type"}
+                componentClassName="flex gap-2 align-center"
+                required>
                 <HFSelect
-                  name="branch"
+                  disabledHelperText
+                  name="type"
                   control={mainForm.control}
-                  options={branches}
+                  fullWidth
+                  options={[
+                    {
+                      label: "Knative",
+                      value: "KNATIVE",
+                    },
+                    {
+                      label: "Openfaas",
+                      value: "FUNCTION",
+                    },
+                  ]}
                   required
                   disabled={functionId}
                 />
               </FRow>
-            </>
-          )}
 
-          {resourceId === "ucode_gitlab" && (
-            <FRow
-              label={"Ссылка"}
-              componentClassName="flex gap-2 align-center"
-              required>
-              <HFTextField
-                disabledHelperText
-                name="path"
-                control={mainForm.control}
-                fullWidth
-                required
-                disabled={functionId}
-              />
-            </FRow>
-          )}
-          <FRow
-            label={"Названия"}
-            componentClassName="flex gap-2 align-center"
-            required>
-            <HFTextField
-              disabledHelperText
-              name="name"
-              control={mainForm.control}
-              fullWidth
-              required
-              disabled={
-                mainForm.watch("resource_id") === "ucode_gitlab" ? false : true
-              }
-            />
-          </FRow>
-          {resourceId === "ucode_gitlab" && (
-            <FRow label="Описания">
-              <HFTextField
-                name="description"
-                control={mainForm.control}
-                multiline
-                rows={4}
-                fullWidth
-              />
-            </FRow>
-          )}
-        </FormCard>
-      </form>
+              {resourceId !== "ucode_gitlab" && (
+                <>
+                  <FRow label="Репозиторий" required>
+                    <HFSelect
+                      name="repo_name"
+                      control={mainForm.control}
+                      options={repositories ?? []}
+                      required
+                      disabled={functionId}
+                    />
+                  </FRow>
 
-      <Footer
-        extra={
-          <>
-            <SecondaryButton
-              onClick={() => navigate(microfrontendListPageLink)}
-              color="error">
-              Close
-            </SecondaryButton>
-            <PermissionWrapperV2 tableSlug="app" type="update">
-              <PrimaryButton
-                loader={
-                  btnLoader ||
-                  createWebHookIsLoading ||
-                  createFunctionIsLoading ||
-                  updateFunctionIsLoading
-                }
-                onClick={mainForm.handleSubmit(onSubmit)}>
-                <Save /> Save
-              </PrimaryButton>
-            </PermissionWrapperV2>
-          </>
-        }
-      />
+                  <FRow label="Ветка" required>
+                    <HFSelect
+                      name="branch"
+                      control={mainForm.control}
+                      options={branches}
+                      required
+                      disabled={functionId}
+                    />
+                  </FRow>
+                </>
+              )}
+
+              {resourceId === "ucode_gitlab" && (
+                <FRow
+                  label={"Ссылка"}
+                  componentClassName="flex gap-2 align-center"
+                  required>
+                  <HFTextField
+                    disabledHelperText
+                    name="path"
+                    control={mainForm.control}
+                    fullWidth
+                    required
+                    disabled={functionId}
+                  />
+                </FRow>
+              )}
+              <FRow
+                label={"Названия"}
+                componentClassName="flex gap-2 align-center"
+                required>
+                <HFTextField
+                  disabledHelperText
+                  name="name"
+                  control={mainForm.control}
+                  fullWidth
+                  required
+                  disabled={
+                    mainForm.watch("resource_id") === "ucode_gitlab"
+                      ? false
+                      : true
+                  }
+                />
+              </FRow>
+              {resourceId === "ucode_gitlab" && (
+                <FRow label="Описания">
+                  <HFTextField
+                    name="description"
+                    control={mainForm.control}
+                    multiline
+                    rows={4}
+                    fullWidth
+                  />
+                </FRow>
+              )}
+            </FormCard>
+          </form>
+          <Footer
+            extra={
+              <>
+                <SecondaryButton
+                  onClick={() => navigate(microfrontendListPageLink)}
+                  color="error">
+                  Close
+                </SecondaryButton>
+                <PermissionWrapperV2 tableSlug="app" type="update">
+                  <PrimaryButton
+                    loader={
+                      btnLoader ||
+                      createWebHookIsLoading ||
+                      createFunctionIsLoading ||
+                      updateFunctionIsLoading
+                    }
+                    onClick={mainForm.handleSubmit(onSubmit)}>
+                    <Save /> Save
+                  </PrimaryButton>
+                </PermissionWrapperV2>
+              </>
+            }
+          />
+        </TabPanel>
+
+        <TabPanel>
+          <Box
+            sx={{
+              height: "calc(100vh - 112px)",
+              background: "#fff",
+            }}>
+            <KnativeLogs knativeForm={knativeForm} />
+          </Box>
+          <Footer
+            extra={
+              <>
+                <SecondaryButton
+                  onClick={() => navigate(microfrontendListPageLink)}
+                  color="error">
+                  Close
+                </SecondaryButton>
+                <PermissionWrapperV2 tableSlug="app" type="update">
+                  <PrimaryButton
+                    loader={
+                      btnLoader ||
+                      createWebHookIsLoading ||
+                      createFunctionIsLoading ||
+                      updateFunctionIsLoading
+                    }
+                    onClick={mainForm.handleSubmit(onSubmit)}>
+                    <Save /> Save
+                  </PrimaryButton>
+                </PermissionWrapperV2>
+              </>
+            }
+          />
+        </TabPanel>
+      </Tabs>
     </div>
   );
 }

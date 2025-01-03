@@ -85,15 +85,18 @@ ingress:
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
         nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        acme.cert-manager.io/http01-edit-in-place: "true"
       type: web
       hosts:
         - host: "app.ucode.run"
           path: /
           servicePort: 80
-      # tls:
-      #   - secretName: ucode-star
-      #     hosts:
-      #       - "app.ucode.run"
+      tls:
+      - secretName: ucode-admin-frotend-test-tls
+        hosts:
+          - "app.ucode.run"
+
 
 resources:
   {}

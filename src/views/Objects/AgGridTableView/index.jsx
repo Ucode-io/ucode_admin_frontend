@@ -155,6 +155,8 @@ function AgGridTableView({
             cellClass: "customFields",
             filter: item?.type !== "PASSWORD",
             columnID: item?.id || generateGUID(),
+            require: true,
+            required: true,
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",

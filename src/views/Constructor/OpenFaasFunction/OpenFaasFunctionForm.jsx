@@ -361,6 +361,7 @@ export default function OpenFaasFunctionForm() {
             }}>
             <form onSubmit={knativeForm.handleSubmit(onSubmitKnative)}>
               <KnativeLogs
+                onSubmitKnative={onSubmitKnative}
                 logsList={logsList}
                 loader={loader}
                 knativeForm={knativeForm}

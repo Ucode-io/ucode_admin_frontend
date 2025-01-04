@@ -1,45 +1,15 @@
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import {Box, Button, CircularProgress} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
-import functionService from "../../../services/functionService";
-import {useQuery} from "react-query";
 
-function KnativeLogs({knativeForm, loader, logsList}) {
-  const data = [
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.701Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"42ab0799-deff-4f8c-bf3f-64bf9665d304\\" environment_id:\\"768fdf6e-f88d-459b-86ad-9e4e7808148e\\" service_type:FUNCTION_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.166Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.156Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.149Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    "invalid UUID length: 0",
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.701Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"42ab0799-deff-4f8c-bf3f-64bf9665d304\\" environment_id:\\"768fdf6e-f88d-459b-86ad-9e4e7808148e\\" service_type:FUNCTION_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.166Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.156Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.149Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    "invalid UUID length: 0",
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.701Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"42ab0799-deff-4f8c-bf3f-64bf9665d304\\" environment_id:\\"768fdf6e-f88d-459b-86ad-9e4e7808148e\\" service_type:FUNCTION_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.166Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.156Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    '2025-01-03T09:09:44.149Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"342fba37-fc7d-4b6f-b02f-57b21beb0218\\" environment_id:\\"559e2057-95b3-4d0c-acda-d055a7edfbc0\\" service_type:BUILDER_SERVICE"}',
-    "invalid UUID length: 0",
-    "invalid UUID length: 0",
-  ];
-
+function KnativeLogs({
+  knativeForm,
+  loader,
+  logsList,
+  onSubmitKnative = () => {},
+}) {
   const [functionList, setFunctionList] = useState([
     {label: knativeForm.watch("path"), value: knativeForm.watch("path")},
   ]);
@@ -78,37 +48,17 @@ function KnativeLogs({knativeForm, loader, logsList}) {
         ? "knative-fn"
         : "";
 
-  const startDateTimeStap = (time = 0) => {
-    const date = new Date();
-    const timestamp = date.getTime();
-
-    return (timestamp - time) * 1_000_000;
-  };
-
-  //==========OPTIONS REQUEST===========
-  // const {data: options} = useQuery(
-  //   ["GET_FUNCTION_LIST"],
-  //   () => {
-  //     return functionService.getFunctionList({
-  //       namespace: knativeForm.watch("type"),
-  //       start: startDateTimeStap(knativeForm.watch("time_frame")),
-  //       end: startDateTimeStap(),
-  //     });
-  //   },
-  //   {
-  //     enabled: knativeForm.watch("type") === "knative-fn",
-  //     select: (res) => {
-  //       const uniqueOptions = new Map();
-  //       res?.data?.forEach((el) => {
-  //         const key = el?.app + ".";
-  //         if (!uniqueOptions.has(key)) {
-  //           uniqueOptions.set(key, {label: key, value: el?.app});
-  //         }
-  //       });
-  //       return Array.from(uniqueOptions.values());
-  //     },
-  //   }
-  // );
+  useEffect(() => {
+    if (
+      Boolean(
+        knativeForm.watch("type") &&
+          knativeForm.watch("path") &&
+          knativeForm.watch("time_frame")
+      )
+    ) {
+      onSubmitKnative();
+    }
+  }, []);
 
   return (
     <Box

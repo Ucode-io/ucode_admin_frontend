@@ -203,6 +203,8 @@ function AgGridTableView({
     }
   }, [fiedlsarray, view]);
 
+  console.log("columnscolumns", columns);
+
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
       views &&

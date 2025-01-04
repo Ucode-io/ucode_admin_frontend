@@ -34,7 +34,7 @@ function AggridDefaultComponents() {
 export default AggridDefaultComponents;
 
 export const IndexColumn = {
-  width: 80,
+  width: 50,
   height: 40,
   filter: false,
   pinned: "left",

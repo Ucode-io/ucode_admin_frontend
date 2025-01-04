@@ -153,7 +153,6 @@ function AgGridTableView({
             editable: true,
             field: item?.slug,
             cellClass: "customFields",
-            filter: item?.type !== "PASSWORD",
             columnID: item?.id || generateGUID(),
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
@@ -245,13 +244,17 @@ function AgGridTableView({
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
-    constructorViewService.update(tableSlug, {
-      ...view,
-      attributes: {
-        ...view.attributes,
-        pinnedFields: pinFieldsRef.current,
-      },
-    });
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        attributes: {
+          ...view.attributes,
+          pinnedFields: pinFieldsRef.current,
+        },
+      })
+      .then(() => {
+        setLoading(false);
+      });
   };
 
   const updateObject = (data) => {
@@ -265,6 +268,7 @@ function AgGridTableView({
   }
 
   const onColumnPinned = (event) => {
+    setLoading(true);
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
 
@@ -336,7 +340,7 @@ function AgGridTableView({
               <Box
                 sx={{
                   display: "flex",
-                  padding: "15px",
+                  padding: "10px 0 0 20px",
                   borderBottom: "1px solid #eee",
                 }}>
                 {tabs?.map((item) => (
@@ -366,7 +370,9 @@ function AgGridTableView({
               // showOpenedGroup={true}
               suppressRefresh={true}
               enableClipboard={true}
+              undoRedoCellEditing={true}
               rowSelection={rowSelection}
+              undoRedoCellEditingLimit={5}
               defaultColDef={defaultColDef}
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}

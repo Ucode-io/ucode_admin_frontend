@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
@@ -29,21 +29,6 @@ import functionService, {
   useFunctionUpdateMutation,
 } from "../../../services/functionService";
 import {useQueryClient} from "react-query";
-
-// const frameworkOptions = [
-//   {
-//     label: "React",
-//     value: "REACT",
-//   },
-//   {
-//     label: "Vue",
-//     value: "VUE",
-//   },
-//   {
-//     label: "Angular",
-//     value: "ANGULAR",
-//   },
-// ];
 
 export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
@@ -80,7 +65,7 @@ export default function OpenFaasFunctionForm() {
   const resourceOptions = useMemo(() => {
     return [
       {value: "ucode_gitlab", label: "Ucode GitLab"},
-      ...listToOptions(resources, "name", "id", "(GitHub)"),
+      ...listToOptions(resources, "username", "id", " (GitHub)"),
     ];
   }, [resources]);
 
@@ -91,8 +76,8 @@ export default function OpenFaasFunctionForm() {
   }, [resources, resourceId]);
 
   const {data: repositories} = useGithubRepositoriesQuery({
-    username: selectedResource?.settings?.github?.username,
-    token: selectedResource?.settings?.github?.token,
+    username: selectedResource?.username,
+    token: selectedResource?.token,
     queryParams: {
       enabled: !!selectedResource?.settings?.github?.username,
       select: (res) => listToOptions(res, "name", "name"),
@@ -100,7 +85,7 @@ export default function OpenFaasFunctionForm() {
   });
 
   const {data: branches} = useGithubBranchesQuery({
-    username: selectedResource?.settings?.github?.username,
+    username: selectedResource?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
     queryParams: {

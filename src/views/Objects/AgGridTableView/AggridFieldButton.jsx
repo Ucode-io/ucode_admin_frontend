@@ -16,6 +16,7 @@ import {
 } from "../../../services/relationService";
 import {transliterate} from "../../../utils/textTranslater";
 import style from "./style.module.scss";
+import {generateGUID} from "../../../utils/generateID";
 
 export default function AggridFieldButton({
   view,

@@ -1,8 +1,8 @@
 import {Box, Button} from "@mui/material";
 import React from "react";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import HFTextField from "../../../components/FormElements/HFTextField";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 function KnativeLogs({knativeForm}) {
   const data = [
@@ -65,10 +65,12 @@ function KnativeLogs({knativeForm}) {
     },
   ];
 
-  console.log("knativeFormknativeForm", knativeForm.watch("type"));
-
   const type =
-    knativeForm.watch("type") === "FUNCTION" ? "openfass-fn" : "knative-fn";
+    knativeForm.watch("type") === "FUNCTION"
+      ? "openfass-fn"
+      : knativeForm?.watch("type") === "KNATIVE"
+        ? "knative-fn"
+        : "";
 
   return (
     <Box
@@ -99,14 +101,14 @@ function KnativeLogs({knativeForm}) {
               <HFTextField
                 disabled={true}
                 name={"namespace"}
-                value="namespace"
+                defaultValue="namespace"
                 control={knativeForm.control}
               />
             </Box>
             <Box width={"20%"}>
               <HFTextField
                 name={"type"}
-                value={type ?? ""}
+                defaultValue={type ?? ""}
                 disabled={true}
                 control={knativeForm.control}
               />
@@ -114,7 +116,7 @@ function KnativeLogs({knativeForm}) {
             <Box width={"20%"}>
               <HFTextField
                 name={"app"}
-                value="app"
+                defaultValue="app"
                 disabled={true}
                 control={knativeForm.control}
               />
@@ -141,7 +143,17 @@ function KnativeLogs({knativeForm}) {
               control={knativeForm.control}
             />
 
-            <Button width={"50%"} sx={{width: "120px"}} variant="contained">
+            <Button
+              type="submit"
+              sx={{
+                width: "120px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-even",
+                gap: "5px",
+              }}
+              variant="contained">
+              <AutorenewIcon style={{color: "#fff"}} />
               Show logs
             </Button>
           </Box>

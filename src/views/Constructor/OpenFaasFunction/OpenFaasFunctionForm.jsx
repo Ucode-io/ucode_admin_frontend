@@ -163,6 +163,10 @@ export default function OpenFaasFunctionForm() {
     }
   };
 
+  const onSubmitKnative = (data) => {
+    console.log("dataaaaaaaaaaa", data);
+  };
+
   useEffect(() => {
     if (selectedRepo) {
       mainForm.setValue("name", selectedRepo);
@@ -170,7 +174,7 @@ export default function OpenFaasFunctionForm() {
   }, [selectedRepo]);
 
   if (isLoading) return <PageFallback />;
-  console.log("resourceOptions", resourceOptions);
+
   return (
     <div>
       <Tabs>
@@ -329,7 +333,9 @@ export default function OpenFaasFunctionForm() {
               height: "calc(100vh - 112px)",
               background: "#fff",
             }}>
-            <KnativeLogs knativeForm={knativeForm} />
+            <form onSubmit={knativeForm.handleSubmit(onSubmitKnative)}>
+              <KnativeLogs knativeForm={knativeForm} />
+            </form>
           </Box>
           <Footer
             extra={

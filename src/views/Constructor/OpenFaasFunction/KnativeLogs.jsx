@@ -1,10 +1,12 @@
-import {Box, Button} from "@mui/material";
-import React from "react";
+import {Box, Button, CircularProgress} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import functionService from "../../../services/functionService";
+import {useQuery} from "react-query";
 
-function KnativeLogs({knativeForm}) {
+function KnativeLogs({knativeForm, loader, logsList}) {
   const data = [
     "invalid UUID length: 0",
     '2025-01-03T09:09:44.701Z INFO (debug.ucode_go_company_service) --GetSingle-- (service/service_resource.go:70) {"req": "project_id:\\"42ab0799-deff-4f8c-bf3f-64bf9665d304\\" environment_id:\\"768fdf6e-f88d-459b-86ad-9e4e7808148e\\" service_type:FUNCTION_SERVICE"}',
@@ -38,30 +40,34 @@ function KnativeLogs({knativeForm}) {
     "invalid UUID length: 0",
   ];
 
+  const [functionList, setFunctionList] = useState([
+    {label: knativeForm.watch("path"), value: knativeForm.watch("path")},
+  ]);
+
   const timeData = [
     {
       label: "5 minutes",
-      value: 5 * 60 * 1000,
+      value: 300000,
     },
     {
       label: "15 minutes",
-      value: 15 * 60 * 1000,
+      value: 900000,
     },
     {
       label: "30 minutes",
-      value: 30 * 60 * 1000,
+      value: 1800000,
     },
     {
       label: "1 hour",
-      value: 60 * 60 * 1000,
+      value: 3600000,
     },
     {
-      label: "6 minutes",
-      value: 6 * 60 * 1000,
+      label: "6 hours",
+      value: 21600000,
     },
     {
-      label: "12 minutes",
-      value: 12 * 60 * 1000,
+      label: "12 hours",
+      value: 43200000,
     },
   ];
 
@@ -71,6 +77,38 @@ function KnativeLogs({knativeForm}) {
       : knativeForm?.watch("type") === "KNATIVE"
         ? "knative-fn"
         : "";
+
+  const startDateTimeStap = (time = 0) => {
+    const date = new Date();
+    const timestamp = date.getTime();
+
+    return (timestamp - time) * 1_000_000;
+  };
+
+  //==========OPTIONS REQUEST===========
+  // const {data: options} = useQuery(
+  //   ["GET_FUNCTION_LIST"],
+  //   () => {
+  //     return functionService.getFunctionList({
+  //       namespace: knativeForm.watch("type"),
+  //       start: startDateTimeStap(knativeForm.watch("time_frame")),
+  //       end: startDateTimeStap(),
+  //     });
+  //   },
+  //   {
+  //     enabled: knativeForm.watch("type") === "knative-fn",
+  //     select: (res) => {
+  //       const uniqueOptions = new Map();
+  //       res?.data?.forEach((el) => {
+  //         const key = el?.app + ".";
+  //         if (!uniqueOptions.has(key)) {
+  //           uniqueOptions.set(key, {label: key, value: el?.app});
+  //         }
+  //       });
+  //       return Array.from(uniqueOptions.values());
+  //     },
+  //   }
+  // );
 
   return (
     <Box
@@ -108,7 +146,7 @@ function KnativeLogs({knativeForm}) {
             <Box width={"20%"}>
               <HFTextField
                 name={"type"}
-                defaultValue={type ?? ""}
+                defaultValue={type}
                 disabled={true}
                 control={knativeForm.control}
               />
@@ -121,11 +159,13 @@ function KnativeLogs({knativeForm}) {
                 control={knativeForm.control}
               />
             </Box>
-            <Box width={"20%"}>
-              <HFSelect
+            <Box width={"35%"}>
+              <HFTextField
+                disabled={true}
+                style={{padding: "0 50px 0 0px"}}
                 name={"path"}
-                options={[]}
-                value={knativeForm.watch("path")}
+                // options={options}
+                defaultValue={knativeForm.watch("path")}
                 control={knativeForm.control}
               />
             </Box>
@@ -138,12 +178,14 @@ function KnativeLogs({knativeForm}) {
             }}>
             <HFSelect
               width="50%"
-              name={"namespace"}
+              name={"time_frame"}
               options={timeData}
               control={knativeForm.control}
+              defaultValue={3600000}
             />
 
             <Button
+              disabled={loader}
               type="submit"
               sx={{
                 width: "120px",
@@ -153,8 +195,14 @@ function KnativeLogs({knativeForm}) {
                 gap: "5px",
               }}
               variant="contained">
-              <AutorenewIcon style={{color: "#fff"}} />
-              Show logs
+              {loader ? (
+                <CircularProgress style={{color: "#fff"}} size={20} />
+              ) : (
+                <>
+                  <AutorenewIcon style={{color: "#fff"}} />
+                  Show logs
+                </>
+              )}
             </Button>
           </Box>
         </Box>
@@ -174,7 +222,7 @@ function KnativeLogs({knativeForm}) {
             textOverflow: "ellipsis",
             display: "block",
           }}>
-          {/* {data?.map((el) => (
+          {logsList?.map((el) => (
             <Box
               sx={{
                 display: "flex",
@@ -184,7 +232,7 @@ function KnativeLogs({knativeForm}) {
               }}>
               {el}
             </Box>
-          ))} */}
+          ))}
         </Box>
       </Box>
     </Box>

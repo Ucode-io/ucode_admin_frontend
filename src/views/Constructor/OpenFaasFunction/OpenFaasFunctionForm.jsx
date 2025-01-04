@@ -52,9 +52,9 @@ export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState();
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
+  const [logsList, setLogsList] = useState(null);
 
   const microfrontendListPageLink = `/main/${appId}/openfaas-functions`;
 
@@ -143,7 +143,14 @@ export default function OpenFaasFunctionForm() {
     queryParams: {
       enabled: Boolean(functionId),
       onSuccess: (res) => {
-        knativeForm.setValue("type", res?.type);
+        knativeForm.setValue(
+          "type",
+          res?.type === "FUNCTION"
+            ? "openfass-fn"
+            : res?.type === "KNATIVE"
+              ? "knative-fn"
+              : ""
+        );
         knativeForm.setValue("path", res?.path);
         mainForm.reset({...res, resource_id: res.resource});
       },
@@ -163,8 +170,27 @@ export default function OpenFaasFunctionForm() {
     }
   };
 
+  const startDateTimeStap = (time = 0) => {
+    const date = new Date();
+    const timestamp = date.getTime();
+
+    return timestamp - time;
+  };
+
   const onSubmitKnative = (data) => {
-    console.log("dataaaaaaaaaaa", data);
+    setLoader(true);
+    functionService
+      .getFunctionLogs({
+        From: startDateTimeStap(data?.time_frame).toString(),
+        To: startDateTimeStap().toString(),
+        Namespace: data?.type,
+        Function: data?.path,
+      })
+      .then((res) => {
+        setLogsList(res);
+        setLoader(false);
+      })
+      .catch((err) => setLoader(false));
   };
 
   useEffect(() => {
@@ -334,7 +360,11 @@ export default function OpenFaasFunctionForm() {
               background: "#fff",
             }}>
             <form onSubmit={knativeForm.handleSubmit(onSubmitKnative)}>
-              <KnativeLogs knativeForm={knativeForm} />
+              <KnativeLogs
+                logsList={logsList}
+                loader={loader}
+                knativeForm={knativeForm}
+              />
             </form>
           </Box>
           <Footer

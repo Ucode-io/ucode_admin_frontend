@@ -759,6 +759,7 @@ u {
   .editButton {
     display: none;
     width: 100%;
+    height: 30px !important;
     height: 100%;
   }
 
@@ -769,6 +770,7 @@ u {
 
     .editButton {
       display: block;
+      background: none !important;
     }
   }
 }

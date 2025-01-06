@@ -37,7 +37,7 @@ function PasswordCellEditor(props) {
           },
         }}
         onChange={(e) => inputChangeHandler(e.target.value)}
-        className={"aggrid_field"}
+        className={"custom_textfield_new"}
       />
     </>
   );

@@ -6,14 +6,6 @@ import styles from "./style.module.scss";
 import useDebounce from "../../../../hooks/useDebounce";
 import {isString} from "lodash-es";
 
-const useStyles = makeStyles((theme) => ({
-  input: {
-    "&::placeholder": {
-      color: "#fff",
-    },
-  },
-}));
-
 const PhoneCellEditor = (props) => {
   const {setValue, value} = props;
 

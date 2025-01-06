@@ -1,12 +1,6 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import {
-  Box,
-  FormHelperText,
-  InputAdornment,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
 import {Lock, Today} from "@mui/icons-material";
 import InputMask from "react-input-mask";
 import {useRef} from "react";
@@ -22,11 +16,9 @@ const CDatePickerCellEditor = ({
   value,
   onChange = () => {},
   placeholder = "",
-  isTransparent = false,
   isBlackBg = false,
   mask,
   required = false,
-  isFormEdit = false,
 }) => {
   const datePickerRef = useRef();
   return (
@@ -96,17 +88,6 @@ const CDatePickerCellEditor = ({
         value={new Date(value) || ""}
         onChange={(val) => onChange(new Date(val) || "")}
       />
-      {/* {error?.message && (
-        <FormHelperText
-          sx={{
-            position: "absolute",
-            bottom: newColumn ? "-10px" : "-20px",
-            left: "10px",
-          }}
-          error>
-          {error?.message}
-        </FormHelperText>
-      )} */}
     </Box>
   );
 };

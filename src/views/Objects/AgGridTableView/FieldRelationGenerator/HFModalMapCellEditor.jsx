@@ -44,6 +44,7 @@ function HFModalMapCellEditor(props) {
           },
           disableUnderline: true,
         }}
+        className="custom_textfield_new"
       />
 
       <Dialog open={open} onClose={handleClose}>

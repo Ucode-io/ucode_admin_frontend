@@ -81,11 +81,11 @@ const VideoUploadCellEditor = ({
                 {disabled ? (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "20px"}} />
+                      <Lock style={{fontSize: "25px"}} />
                     </InputAdornment>
                   </Tooltip>
                 ) : (
-                  <DownloadingIcon style={{fontSize: "35px"}} />
+                  <DownloadingIcon style={{fontSize: "25px"}} />
                 )}
                 {/* <p>Max size: 4 MB</p> */}
               </>
@@ -96,7 +96,7 @@ const VideoUploadCellEditor = ({
 
           <input
             type="file"
-            className="hidden"
+            className="hidden-element"
             ref={inputRef}
             tabIndex={tabIndex}
             autoFocus={tabIndex === 1}

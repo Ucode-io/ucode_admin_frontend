@@ -244,16 +244,11 @@ div {
 }
 
 .hidden-element {
-  display: none;
+  display: none !important;
 }
 
 .pageWithStickyFooter {
   min-height: calc(100vh - 56px);
-}
-
-.monaco-editor {
-  // padding-top: 15px;
-  // padding-bottom: 15px;
 }
 
 .drag-cards-drop-preview {
@@ -363,23 +358,6 @@ div {
   div fieldset {
     border: none;
     border-radius: none !important;
-  }
-}
-
-.aggrid_field {
-  width: 100%;
-  height: 100%;
-  padding-right: 0 !important;
-
-  input {
-    min-width: 160px;
-    max-width: 100%;
-    height: 38px !important;
-    padding: 0 !important;
-  }
-
-  div fieldset {
-    border: none;
   }
 }
 
@@ -835,7 +813,6 @@ u {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  // border: none !important;
 
   div {
     width: 32px;
@@ -860,4 +837,9 @@ u {
   display: flex;
   align-items: center;
   justify-content: flex-start !important;
+}
+
+#aggrid_select {
+  width: 100% !important;
+  border: none !important;
 }

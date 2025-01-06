@@ -60,7 +60,7 @@ const FrontendFormulaCellEditor = (props) => {
           </InputAdornment>
         ),
       }}
-      className="custom_field"
+      className="custom_textfield_new"
     />
   );
 };

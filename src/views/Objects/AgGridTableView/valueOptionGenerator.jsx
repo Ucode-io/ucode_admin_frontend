@@ -61,6 +61,7 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "INTERNATION_PHONE":
+    case "PHONE":
       (columnDef.cellRenderer = PhoneCellEditor),
         (columnDef.valueFormatter = (params) => {
           if (Boolean(params?.value)) {
@@ -105,7 +106,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     // WITH OPTIONS RELATION & MULTISELECT:
     case "LOOKUP":
-      columnDef.cellEditor = "agRichSelectCellEditor";
       columnDef.cellRenderer = LookupCellEditor;
       columnDef.cellRendererParams = {
         field: item,

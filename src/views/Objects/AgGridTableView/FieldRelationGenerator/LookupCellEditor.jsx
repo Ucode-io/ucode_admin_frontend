@@ -1,40 +1,25 @@
-import React, {useEffect, useMemo, useState} from "react";
-import Select, {components} from "react-select";
+import React, {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
-import {useQuery} from "react-query";
-import {useTranslation} from "react-i18next";
 
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
     color: "#fff",
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
     border: "0px solid #fff",
     outline: "none",
-    height: "100%",
   }),
   input: (provided) => ({
     ...provided,
     width: "100%",
     border: "none",
-    height: "40px",
   }),
   placeholder: (provided) => ({
     ...provided,
     display: "flex",
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    background: state.isSelected ? "#007AFF" : provided.background,
-    color: state.isSelected ? "#fff" : provided.color,
-    cursor: "pointer",
-  }),
-  menu: (provided) => ({
-    ...provided,
-    zIndex: 9999,
   }),
 };
 
@@ -91,6 +76,7 @@ const LookupCellEditor = (props) => {
 
   return (
     <Select
+      placeholder="Select"
       id="aggrid_select"
       menuPortalTarget={document.body}
       styles={customStyles}

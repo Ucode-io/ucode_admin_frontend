@@ -153,7 +153,10 @@ function AgGridTableView({
             editable: true,
             field: item?.slug,
             cellClass: "customFields",
-            columnID: item?.id || generateGUID(),
+            columnID:
+              item?.type === "LOOKUP"
+                ? item?.relation_id
+                : item?.id || generateGUID(),
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
@@ -253,8 +256,9 @@ function AgGridTableView({
         },
       })
       .then(() => {
-        setLoading(false);
-      });
+        // setLoading(false);
+      })
+      .catch((err) => setLoading(true));
   };
 
   const updateObject = (data) => {
@@ -268,7 +272,6 @@ function AgGridTableView({
   }
 
   const onColumnPinned = (event) => {
-    setLoading(true);
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
 

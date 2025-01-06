@@ -1,18 +1,15 @@
 import DatePicker from "react-multi-date-picker";
-import TimePickerPlugin from "./Plugins/TimePickerPlugin";
 import "react-multi-date-picker/styles/layouts/mobile.css";
-// import "./style2.scss";
-import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
-import {DateRange, Lock, Today} from "@mui/icons-material";
+import TimePickerPlugin from "./Plugins/TimePickerPlugin";
+import {Lock} from "@mui/icons-material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
 
 const CTimePickerEditor = ({
   value,
   onChange = () => {},
   classes = {},
   isBlackBg = false,
-  isTransparent = false,
-  isFormEdit = false,
   tabIndex = 0,
   disabled = false,
   sectionModal = false,
@@ -48,18 +45,6 @@ const CTimePickerEditor = ({
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
-              style: isTransparent
-                ? {
-                    background: "transparent",
-                  }
-                : disabled
-                  ? {
-                      background: "#c0c0c039",
-                    }
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "",
-                      color: isBlackBg ? "#fff" : "",
-                    },
               endAdornment: (
                 <InputAdornment position="end">
                   <Box sx={{display: "flex", alignItems: "center"}}>
@@ -78,7 +63,7 @@ const CTimePickerEditor = ({
                 </InputAdornment>
               ),
             }}
-            className={`${isFormEdit ? "custom_textfield" : ""}`}
+            className={"custom_textfield_new"}
           />
         );
       }}

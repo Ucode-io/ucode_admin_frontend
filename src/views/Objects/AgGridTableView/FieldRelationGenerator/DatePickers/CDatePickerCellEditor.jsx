@@ -30,32 +30,7 @@ const CDatePickerCellEditor = ({
 }) => {
   const datePickerRef = useRef();
   return (
-    <Box
-      style={
-        isTransparent
-          ? {
-              background: "transparent",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              position: "relative",
-            }
-          : disabled
-            ? {
-                background: "#DEDEDE",
-                display: "flex",
-                alignItems: "center",
-                borderRadius: "4px",
-                position: "relative",
-              }
-            : {
-                background: isBlackBg ? "#2A2D34" : "",
-                color: isBlackBg ? "#fff" : "",
-                display: "flex",
-                alignItems: "center",
-                position: "relative",
-              }
-      }>
+    <Box sx={{width: "100%", height: "100%"}}>
       <DatePicker
         disabled={disabled}
         required={required}
@@ -105,7 +80,7 @@ const CDatePickerCellEditor = ({
                       </InputAdornment>
                     ),
                   }}
-                  className={isFormEdit ? "custom_textfield" : ""}
+                  className={"custom_textfield_new"}
                 />
               )}
             </InputMask>

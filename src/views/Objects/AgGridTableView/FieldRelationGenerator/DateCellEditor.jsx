@@ -17,7 +17,6 @@ const DateCellEditor = (props) => {
     <div className={"className"}>
       <CDatePickerCellEditor
         classes={classes}
-        // placeholder={placeholder}
         mask={"99.99.9999"}
         value={value}
         onChange={(val) => {

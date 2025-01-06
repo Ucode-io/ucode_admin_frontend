@@ -4,21 +4,16 @@ import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import {DateRange, Lock} from "@mui/icons-material";
 import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
 import InputMask from "react-input-mask";
-// import "./style2.scss";
 import {locale} from "./Plugins/locale";
 import "react-multi-date-picker/styles/layouts/mobile.css";
-// import CopyToClipboard from "../CopyToClipboard";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import {format, parse} from "date-fns";
 import {useMemo} from "react";
 
 const CDateTimePickerWithoutCell = ({
   value,
-  placeholder,
   isBlackBg = false,
   classes = {},
   onChange = () => {},
-  isFormEdit = false,
   tabIndex = 0,
   mask = "",
   showCopyBtn = true,
@@ -38,7 +33,7 @@ const CDateTimePickerWithoutCell = ({
   }, [value]);
 
   return (
-    <div className="main_wrapper">
+    <div>
       <DatePicker
         portal={sectionModal ? false : document.body}
         render={(value, openCalendar, handleChange) => {
@@ -54,19 +49,8 @@ const CDateTimePickerWithoutCell = ({
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   size="medium"
-                  //   placeholder={placeholder.split("#")[0]}
-                  sx={{
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderRight: 0,
-                    },
-                    "& input": {
-                      padding: "5px !important",
-                      height: "28px",
-                    },
-                    maxWidth: "150px",
-                  }}
                   fullWidth
-                  className={`${isFormEdit ? "custom_textfield" : ""}`}
+                  className={"custom_textfield_date"}
                   autoComplete="off"
                   autoFocus={tabIndex === 1}
                   InputProps={{
@@ -76,14 +60,6 @@ const CDateTimePickerWithoutCell = ({
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
                   }}
                 />
               )}
@@ -111,35 +87,16 @@ const CDateTimePickerWithoutCell = ({
                   value={value}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
-                  // size="small"
                   autoComplete="off"
-                  //   placeholder={placeholder.split("#")[1]}
-                  className={`${isFormEdit ? "custom_textfield" : ""}`}
+                  className={"custom_textfield_time"}
                   style={{border: "none"}}
                   fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderLeft: 0,
-                    },
-                    "& input": {
-                      padding: "5px !important",
-                      height: "28px",
-                    },
-                    maxWidth: "150px",
-                  }}
                   InputProps={{
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
+
                     endAdornment: (
                       <InputAdornment position="end">
                         <Box sx={{display: "flex", alignItems: "center"}}>

@@ -22,9 +22,7 @@ const DateTimeCellEditor = (props) => {
         mask={"99.99.9999"}
         value={value}
         onChange={(val) => {
-          console.log("vallllllllllllll", val);
           const isoDate = val?.toISOString();
-
           setValue(isoDate);
         }}
         disabled={field?.disabled}

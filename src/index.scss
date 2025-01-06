@@ -312,6 +312,60 @@ div {
   }
 }
 
+.custom_textfield_new {
+  position: absolute;
+  padding-right: 0 !important;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  input {
+    height: 40px;
+    padding: 0 15px 0 15px;
+  }
+  div fieldset {
+    border: none;
+    border-radius: none !important;
+  }
+}
+
+.custom_textfield_date {
+  position: absolute;
+  padding-right: 0 !important;
+  width: 50%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  input {
+    height: 40px;
+    padding: 0 15px 0 15px;
+  }
+  div fieldset {
+    border: none;
+    border-radius: none !important;
+  }
+}
+
+.custom_textfield_time {
+  position: absolute;
+  padding-right: 0 !important;
+  width: 50%;
+  height: 100%;
+  top: 0;
+  left: 50%;
+
+  input {
+    height: 40px;
+    padding: 0 15px 0 15px;
+  }
+  div fieldset {
+    border: none;
+    border-radius: none !important;
+  }
+}
+
 .aggrid_field {
   width: 100%;
   height: 100%;

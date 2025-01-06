@@ -44,18 +44,18 @@ function RowIndexField(props) {
 
   return (
     <Box sx={{display: "flex"}}>
-      <Tooltip title="Open the row in detail">
-        <Button
-          onClick={() => {
-            navigateToDetailPage(data);
-          }}
-          className="editButton"
-          style={{
-            minWidth: "max-content",
-          }}>
-          <OpenInFullIcon />
-        </Button>
-      </Tooltip>
+      {/* <Tooltip title="Open the row in detail"> */}
+      <Button
+        onClick={() => {
+          navigateToDetailPage(data);
+        }}
+        className="editButton"
+        style={{
+          minWidth: "max-content",
+        }}>
+        <OpenInFullIcon />
+      </Button>
+      {/* </Tooltip> */}
 
       <Box className="indexValue">{value}</Box>
     </Box>

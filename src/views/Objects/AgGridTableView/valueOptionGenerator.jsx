@@ -17,6 +17,7 @@ import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellE
 import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
+import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -120,9 +121,13 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "MULTISELECT":
-      columnDef.cellEditor = "agSelectCellEditor";
-      columnDef.cellEditorParams = {
-        values: item?.attributes?.options.map((option) => option?.label),
+      (columnDef.cellRenderer = HFAggridMultiselect),
+        // (columnDef.cellEditor = "agSelectCellEditor");
+        (columnDef.cellEditorParams = {
+          values: item?.attributes?.options.map((option) => option?.label),
+        });
+      columnDef.cellRendererParams = {
+        field: item,
       };
       break;
 

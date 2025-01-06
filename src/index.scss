@@ -843,3 +843,26 @@ u {
   width: 100% !important;
   border: none !important;
 }
+
+.multiselectAggrid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  div fieldset {
+    border: none;
+    height: 41px;
+    overflow: hidden;
+  }
+}
+
+.round {
+  border-radius: 8px;
+}
+
+#multiSelectForm {
+  .css-jdh8wj-MuiAutocomplete-root
+    .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+    height: 100%;
+  }
+}

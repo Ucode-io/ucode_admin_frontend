@@ -369,9 +369,9 @@ function AgGridTableView({
               rowData={rowData}
               loading={loading}
               columnDefs={columns}
-              // showOpenedGroup={true}
               suppressRefresh={true}
               enableClipboard={true}
+              // showOpenedGroup={true}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}

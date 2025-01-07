@@ -1,4 +1,4 @@
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import style from "./style.module.scss";
 import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
@@ -63,6 +63,7 @@ function AgGridTableView({
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
+  const queryClient = useQueryClient();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -153,6 +154,7 @@ function AgGridTableView({
             editable: true,
             field: item?.slug,
             cellClass: "customFields",
+            gridApi: gridApi,
             columnID:
               item?.type === "LOOKUP"
                 ? item?.relation_id
@@ -243,7 +245,6 @@ function AgGridTableView({
       })
       .catch(() => setLoading(false));
   }
-
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
@@ -382,7 +383,10 @@ function AgGridTableView({
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              onCellValueChanged={(e) => updateObject(e.data)}
+              onCellValueChanged={(e) => {
+                console.log("e.dataaaaaaaaa", e);
+                updateObject(e.data);
+              }}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

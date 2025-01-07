@@ -1,23 +1,23 @@
-import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
-import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
-import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
-import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
-import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
-import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
-import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
 import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
+import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
+import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
-import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
-import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
-import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
+import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
+import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
+import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
 import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
 import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
-import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
+import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
+import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
+import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
-import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -55,10 +55,21 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "FORMULA_FRONTEND":
       columnDef.cellRenderer = FrontendFormulaCellEditor;
+      (columnDef.valueGetter = (params) => {
+        return params.getValue("Number_1");
+      }),
+        (columnDef.cellRendererParams = {
+          field: item,
+          formula: item?.attributes?.formula,
+        });
       break;
 
     case "FORMULA":
       columnDef.cellRenderer = FormulaCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+        formula: item?.attributes?.formula,
+      };
       break;
 
     case "INTERNATION_PHONE":
@@ -122,7 +133,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "MULTISELECT":
       (columnDef.cellRenderer = HFAggridMultiselect),
-        // (columnDef.cellEditor = "agSelectCellEditor");
         (columnDef.cellEditorParams = {
           values: item?.attributes?.options.map((option) => option?.label),
         });

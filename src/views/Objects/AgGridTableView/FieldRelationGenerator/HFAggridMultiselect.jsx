@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HFAggridMultiselect = (props) => {
-  const {value, setValue = () => {}, field, width = "100%"} = props;
+  const {value, setValue, field, width = "100%"} = props;
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
   const hasColor = field.attributes?.has_color;
@@ -60,14 +60,10 @@ const HFAggridMultiselect = (props) => {
         classes={classes}
         options={options}
         width={width}
-        //   label={"label"}
-        // tabIndex={tabIndex}
         required={field?.required}
         hasColor={hasColor}
         hasIcon={hasIcon}
-        onFormChange={(el) => {
-          setValue(el);
-        }}
+        onFormChange={setValue}
         isMultiSelect={isMultiSelect}
         disabled={field?.disabled}
         field={field}

@@ -7,7 +7,7 @@ import useDebounce from "../../../../hooks/useDebounce";
 import {isString} from "lodash-es";
 
 const PhoneCellEditor = (props) => {
-  const {setValue, value} = props;
+  const {setValue = () => {}, value = ""} = props;
 
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
 
@@ -17,7 +17,7 @@ const PhoneCellEditor = (props) => {
         disabled={false}
         placeholder="Enter phone number"
         value={
-          isString(value) ? (value?.includes("+") ? value : `+${value}`) : ""
+          isString(value) ? (value?.includes("+") ? value : `${value}`) : ""
         }
         id={`phone_input`}
         onChange={(newValue) => {
@@ -28,9 +28,6 @@ const PhoneCellEditor = (props) => {
         className={styles.inputTable}
         limitMaxLength={true}
         isValidPhoneNumber
-        renderInput={(inputProps) => (
-          <input {...inputProps} data-valid={inputProps.isValidPhoneNumber} />
-        )}
       />
     </Box>
   );

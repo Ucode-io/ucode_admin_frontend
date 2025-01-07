@@ -55,13 +55,34 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "FORMULA_FRONTEND":
       columnDef.cellRenderer = FrontendFormulaCellEditor;
-      (columnDef.valueGetter = (params) => {
-        return params.getValue("Number_1");
-      }),
-        (columnDef.cellRendererParams = {
-          field: item,
-          formula: item?.attributes?.formula,
-        });
+      columnDef.valueGetter = (params) => {
+        const formula = item?.attributes?.formula;
+        if (!formula) return 0;
+
+        let computedFormula = formula;
+        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+
+        if (matches) {
+          matches.forEach((slug) => {
+            const value = params.data[slug] ?? 0;
+            computedFormula = computedFormula.replace(
+              new RegExp(`\\b${slug}\\b`, "g"),
+              value
+            );
+          });
+        }
+
+        try {
+          return eval(computedFormula);
+        } catch (error) {
+          console.error("Error evaluating formula:", error);
+          return "ERROR";
+        }
+      };
+      columnDef.cellRendererParams = {
+        field: item,
+        formula: item?.attributes?.formula,
+      };
       break;
 
     case "FORMULA":

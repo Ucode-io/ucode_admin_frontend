@@ -48,7 +48,7 @@ const FrontendFormulaCellEditor = (props) => {
 
   useEffect(() => {
     evaluateFormula();
-  }, [data?.Number_1, data?.Number_2, evaluateFormula]);
+  }, [Object.values(data)?.map((el) => el), evaluateFormula]);
 
   return (
     <TextField

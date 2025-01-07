@@ -372,7 +372,7 @@ function AgGridTableView({
               columnDefs={columns}
               suppressRefresh={true}
               enableClipboard={true}
-              // showOpenedGroup={true}
+              showOpenedGroup={true}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}
@@ -384,7 +384,6 @@ function AgGridTableView({
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
               onCellValueChanged={(e) => {
-                console.log("e.dataaaaaaaaa", e);
                 updateObject(e.data);
               }}
               onSelectionChanged={(e) =>

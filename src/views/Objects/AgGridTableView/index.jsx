@@ -1,4 +1,4 @@
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import style from "./style.module.scss";
 import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
@@ -63,7 +63,6 @@ function AgGridTableView({
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
-  const queryClient = useQueryClient();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -147,7 +146,6 @@ function AgGridTableView({
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields?.map((item) => {
-          console.log("itemmmmmmmm", item);
           const columnDef = {
             view,
             flex: 1,
@@ -261,9 +259,6 @@ function AgGridTableView({
           pinnedFields: pinFieldsRef.current,
         },
       })
-      .then(() => {
-        // setLoading(false);
-      })
       .catch((err) => setLoading(true));
   };
 
@@ -371,7 +366,7 @@ function AgGridTableView({
             )}
             <AgGridReact
               ref={gridApi}
-              rowBuffer={10}
+              rowBuffer={40}
               theme={myTheme}
               cacheBlockSize={100}
               rowData={rowData}
@@ -380,6 +375,7 @@ function AgGridTableView({
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
+              paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}

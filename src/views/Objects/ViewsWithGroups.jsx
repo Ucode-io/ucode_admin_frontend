@@ -27,14 +27,14 @@ import TableCard from "../../components/TableCard";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
-import constructorObjectService from "../../services/constructorObjectService";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import {
   getSearchText,
   openDB,
   saveOrUpdateSearchText,
 } from "../../utils/indexedDb.jsx";
+import {queryGenerator} from "../../utils/queryGenerator";
+import AgGridTableView from "./AgGridTableView";
 import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
 import TableView from "./TableView";
@@ -42,13 +42,12 @@ import GroupTableView from "./TableView/GroupTableView";
 import TableViewGroupByButton from "./TableViewGroupByButton";
 import TreeView from "./TreeView";
 import VisibleColumnsButton from "./VisibleColumnsButton";
+import WebsiteView from "./WebsiteView";
 import ExcelButtons from "./components/ExcelButtons";
 import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import WebsiteView from "./WebsiteView";
-import AgGridTableView from "./AgGridTableView";
 
 const ViewsWithGroups = ({
   views,
@@ -819,49 +818,6 @@ const ViewsWithGroups = ({
       )}
     </>
   );
-};
-
-const queryGenerator = (groupField, filters = {}) => {
-  if (!groupField)
-    return {
-      queryFn: () => {},
-    };
-
-  const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
-
-  if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
-    return {
-      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
-      queryFn: () =>
-        groupField?.attributes?.options?.map((el) => ({
-          label: el?.label ?? el.value,
-          value: el?.value,
-          slug: groupField?.slug,
-        })),
-    };
-  }
-
-  if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
-    const queryFn = () =>
-      constructorObjectService.getListV2(groupField.table_slug, {
-        data: computedFilters ?? {},
-      });
-
-    return {
-      queryKey: [
-        "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
-      ],
-      queryFn,
-      select: (res) =>
-        res?.data?.response?.map((el) => ({
-          label: getRelationFieldTabsLabel(groupField, el),
-          value: el.guid,
-          slug: groupField?.slug,
-        })),
-    };
-  }
 };
 
 export default ViewsWithGroups;

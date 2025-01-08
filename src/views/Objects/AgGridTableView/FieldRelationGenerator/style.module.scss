@@ -60,6 +60,10 @@
 
 .addIcon {
   cursor: pointer;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tag {
@@ -92,6 +96,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+  border-radius: 4px !important;
+  overflow: hidden;
 }
 
 .dialog {
@@ -303,5 +309,20 @@
   }
   .PhoneInputCountry {
     display: none;
+  }
+}
+
+.aggridMultiSelect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  div {
+    // border: 1px solid red !important;
+    border-radius: 0px;
+    // position: absolute;
+    // width: 100%;
+    // top: 0;
+    // left: 0;
   }
 }

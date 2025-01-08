@@ -32,7 +32,6 @@ function PolygonFieldTableCellEditor(props) {
         sx={{
           display: "flex",
           alignItems: "center",
-          padding: "0 20px",
         }}
         onClick={handleOpen}>
         <span>Polygon</span>

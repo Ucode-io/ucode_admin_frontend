@@ -393,43 +393,79 @@ export default function FieldCreateModal({
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
-                        <FRow
-                          label={`Option ${index + 1}`}
-                          className={style.option}>
-                          <span
-                            className={style.startAdornment}
-                            style={{
-                              background: watch(
-                                `attributes.options.${index}.color`
-                              ),
-                            }}></span>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                          }}>
+                          <FRow
+                            label={`Option ${index + 1}`}
+                            className={style.option}>
+                            <span
+                              className={style.startAdornment}
+                              style={{
+                                background: watch(
+                                  `attributes.options.${index}.color`
+                                ),
+                              }}></span>
 
-                          <HFTextField
-                            disabledHelperText
-                            name={`attributes.options.${index}.label`}
-                            control={control}
-                            fullWidth
-                            required
-                            placeholder="Type..."
-                            className={style.input}
-                            endAdornment={
-                              <Box className={style.adornment}>
-                                <p onClick={(e) => handleOpenColor(e, index)}>
-                                  Add color
-                                </p>
-                                <CloseIcon
-                                  onClick={() => dropdownRemove(index)}
-                                />
-                              </Box>
-                            }
-                            customOnChange={(e) => {
-                              setValue(
-                                `attributes.options.${index}.value`,
-                                e.target.value.replace(/ /g, "_")
-                              );
-                            }}
-                          />
-                        </FRow>
+                            <HFTextField
+                              disabledHelperText
+                              name={`attributes.options.${index}.label`}
+                              control={control}
+                              fullWidth
+                              required
+                              placeholder="Type..."
+                              className={style.input}
+                              endAdornment={
+                                <Box className={style.adornment}>
+                                  <p onClick={(e) => handleOpenColor(e, index)}>
+                                    Add color
+                                  </p>
+                                  <CloseIcon
+                                    onClick={() => dropdownRemove(index)}
+                                  />
+                                </Box>
+                              }
+                              // customOnChange={(e) => {
+                              //   setValue(
+                              //     `attributes.options.${index}.value`,
+                              //     e.target.value.replace(/ /g, "_")
+                              //   );
+                              // }}
+                            />
+                          </FRow>
+                          <FRow
+                            label={`Value ${index + 1}`}
+                            className={style.option}>
+                            <HFTextField
+                              disabledHelperText
+                              name={`attributes.options.${index}.value`}
+                              control={control}
+                              fullWidth
+                              required
+                              placeholder="Type..."
+                              className={style.input}
+                              endAdornment={
+                                <Box className={style.adornment}>
+                                  {/* <p onClick={(e) => handleOpenColor(e, index)}>
+                                    Add color
+                                  </p> */}
+                                  <CloseIcon
+                                    onClick={() => dropdownRemove(index)}
+                                  />
+                                </Box>
+                              }
+                              // customOnChange={(e) => {
+                              //   setValue(
+                              //     `attributes.options.${index}.value`,
+                              //     e.target.value.replace(/ /g, "_")
+                              //   );
+                              // }}
+                            />
+                          </FRow>
+                        </Box>
                       </Box>
                       <Popover
                         open={openColor}

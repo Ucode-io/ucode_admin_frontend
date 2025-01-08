@@ -17,6 +17,7 @@ import {
 import {transliterate} from "../../../utils/textTranslater";
 import style from "./style.module.scss";
 import {generateGUID} from "../../../utils/generateID";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 export default function AggridFieldButton({
   view,

@@ -14,7 +14,6 @@ import {
 import {useRef, useState} from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
-// import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import fileService from "../../../../../services/fileService";
@@ -37,7 +36,6 @@ const ImageUploadCellEditor = ({
   onChange = () => {},
   className = "",
   disabled = false,
-  isNewTableView = false,
   tabIndex = 0,
   field = {},
 }) => {
@@ -133,7 +131,14 @@ const ImageUploadCellEditor = ({
             className="uploadedImage"
             aria-describedby={id}
             onClick={handleClick}>
-            <div className="img">
+            <div
+              style={{
+                width: "35px",
+                height: "35px",
+                borderRadius: "50%",
+                overflow: "hidden",
+              }}
+              className="img">
               <img
                 src={value}
                 style={{

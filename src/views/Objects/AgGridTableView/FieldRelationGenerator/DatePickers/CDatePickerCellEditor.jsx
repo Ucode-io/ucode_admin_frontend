@@ -1,12 +1,6 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import {
-  Box,
-  FormHelperText,
-  InputAdornment,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
 import {Lock, Today} from "@mui/icons-material";
 import InputMask from "react-input-mask";
 import {useRef} from "react";
@@ -22,40 +16,13 @@ const CDatePickerCellEditor = ({
   value,
   onChange = () => {},
   placeholder = "",
-  isTransparent = false,
   isBlackBg = false,
   mask,
   required = false,
-  isFormEdit = false,
 }) => {
   const datePickerRef = useRef();
   return (
-    <Box
-      style={
-        isTransparent
-          ? {
-              background: "transparent",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              position: "relative",
-            }
-          : disabled
-            ? {
-                background: "#DEDEDE",
-                display: "flex",
-                alignItems: "center",
-                borderRadius: "4px",
-                position: "relative",
-              }
-            : {
-                background: isBlackBg ? "#2A2D34" : "",
-                color: isBlackBg ? "#fff" : "",
-                display: "flex",
-                alignItems: "center",
-                position: "relative",
-              }
-      }>
+    <Box sx={{width: "100%", height: "100%"}}>
       <DatePicker
         disabled={disabled}
         required={required}
@@ -105,7 +72,7 @@ const CDatePickerCellEditor = ({
                       </InputAdornment>
                     ),
                   }}
-                  className={isFormEdit ? "custom_textfield" : ""}
+                  className={"custom_textfield_new"}
                 />
               )}
             </InputMask>
@@ -121,17 +88,6 @@ const CDatePickerCellEditor = ({
         value={new Date(value) || ""}
         onChange={(val) => onChange(new Date(val) || "")}
       />
-      {/* {error?.message && (
-        <FormHelperText
-          sx={{
-            position: "absolute",
-            bottom: newColumn ? "-10px" : "-20px",
-            left: "10px",
-          }}
-          error>
-          {error?.message}
-        </FormHelperText>
-      )} */}
     </Box>
   );
 };

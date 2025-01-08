@@ -71,7 +71,7 @@ const CDatePicker = ({
           document.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              datePickerRef.current.closeCalendar();
+              datePickerRef?.current?.closeCalendar();
             }
           });
           return (

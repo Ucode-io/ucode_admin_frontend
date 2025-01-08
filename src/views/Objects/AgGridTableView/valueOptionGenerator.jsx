@@ -1,20 +1,21 @@
-import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
-import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
-import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
-import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
-import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
-import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
-import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
 import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
+import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
+import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
-import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
-import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
-import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
+import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
+import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
+import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
 import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
 import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
-import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
+import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
+import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
+import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
 
@@ -54,13 +55,46 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "FORMULA_FRONTEND":
       columnDef.cellRenderer = FrontendFormulaCellEditor;
+      columnDef.valueGetter = (params) => {
+        const formula = item?.attributes?.formula;
+        if (!formula) return 0;
+
+        let computedFormula = formula;
+        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+
+        if (matches) {
+          matches.forEach((slug) => {
+            const value = params?.data?.[slug] ?? 0;
+            computedFormula = computedFormula?.replace(
+              new RegExp(`\\b${slug}\\b`, "g"),
+              value
+            );
+          });
+        }
+
+        try {
+          return eval(computedFormula);
+        } catch (error) {
+          console.error("Error evaluating formula:", error);
+          return "ERROR";
+        }
+      };
+      columnDef.cellRendererParams = {
+        field: item,
+        formula: item?.attributes?.formula,
+      };
       break;
 
     case "FORMULA":
       columnDef.cellRenderer = FormulaCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+        formula: item?.attributes?.formula,
+      };
       break;
 
     case "INTERNATION_PHONE":
+    case "PHONE":
       (columnDef.cellRenderer = PhoneCellEditor),
         (columnDef.valueFormatter = (params) => {
           if (Boolean(params?.value)) {
@@ -105,7 +139,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     // WITH OPTIONS RELATION & MULTISELECT:
     case "LOOKUP":
-      columnDef.cellEditor = "agRichSelectCellEditor";
       columnDef.cellRenderer = LookupCellEditor;
       columnDef.cellRendererParams = {
         field: item,
@@ -120,9 +153,12 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "MULTISELECT":
-      columnDef.cellEditor = "agSelectCellEditor";
-      columnDef.cellEditorParams = {
-        values: item?.attributes?.options.map((option) => option?.label),
+      (columnDef.cellRenderer = HFAggridMultiselect),
+        (columnDef.cellEditorParams = {
+          values: item?.attributes?.options.map((option) => option?.label),
+        });
+      columnDef.cellRendererParams = {
+        field: item,
       };
       break;
 

@@ -1,5 +1,4 @@
 import {makeStyles} from "@mui/styles";
-import {Controller} from "react-hook-form";
 import CDateTimePicker from "./DatePickers/CDateTimePicker";
 
 const useStyles = makeStyles((theme) => ({
@@ -18,13 +17,10 @@ const DateTimeCellEditor = (props) => {
     <div className={"className"}>
       <CDateTimePicker
         classes={classes}
-        // placeholder={placeholder}
         mask={"99.99.9999"}
         value={value}
         onChange={(val) => {
-          console.log("vallllllllllllll", val);
           const isoDate = val?.toISOString();
-
           setValue(isoDate);
         }}
         disabled={field?.disabled}

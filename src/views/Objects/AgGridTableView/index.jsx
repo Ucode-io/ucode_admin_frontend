@@ -1,4 +1,4 @@
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import style from "./style.module.scss";
 import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
@@ -63,6 +63,7 @@ function AgGridTableView({
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
+  const queryClient = useQueryClient();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -152,8 +153,13 @@ function AgGridTableView({
             minWidth: 250,
             editable: true,
             field: item?.slug,
-            cellClass: "customFields",
-            columnID: item?.id || generateGUID(),
+            cellClass:
+              item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
+            gridApi: gridApi,
+            columnID:
+              item?.type === "LOOKUP"
+                ? item?.relation_id
+                : item?.id || generateGUID(),
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
             pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
@@ -203,8 +209,6 @@ function AgGridTableView({
     }
   }, [fiedlsarray, view]);
 
-  console.log("columnscolumns", columns);
-
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
       views &&
@@ -242,7 +246,6 @@ function AgGridTableView({
       })
       .catch(() => setLoading(false));
   }
-
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
@@ -255,8 +258,9 @@ function AgGridTableView({
         },
       })
       .then(() => {
-        setLoading(false);
-      });
+        // setLoading(false);
+      })
+      .catch((err) => setLoading(true));
   };
 
   const updateObject = (data) => {
@@ -270,7 +274,6 @@ function AgGridTableView({
   }
 
   const onColumnPinned = (event) => {
-    setLoading(true);
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
 
@@ -369,9 +372,9 @@ function AgGridTableView({
               rowData={rowData}
               loading={loading}
               columnDefs={columns}
-              // showOpenedGroup={true}
               suppressRefresh={true}
               enableClipboard={true}
+              showOpenedGroup={true}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}
@@ -382,7 +385,9 @@ function AgGridTableView({
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              onCellValueChanged={(e) => updateObject(e.data)}
+              onCellValueChanged={(e) => {
+                updateObject(e.data);
+              }}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

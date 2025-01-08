@@ -125,6 +125,7 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
           sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
           className={style.checkbox}>
           <HFCheckbox
+            id="login_table_check"
             control={control}
             name="is_login_table"
             required
@@ -260,6 +261,7 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
               }}>
               <FRow label="Login strategy" />
               <HFMultipleSelect
+                id="login_strategy"
                 control={control}
                 name="attributes.auth_info.login_strategy"
                 fullWidth

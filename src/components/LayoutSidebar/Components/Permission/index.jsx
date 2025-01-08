@@ -1,11 +1,11 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,7 +15,7 @@ import activeStyles from "../MenuUtils/activeStyles";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
-  label: "Permissions",
+  label: "Permissionss",
   type: "USER_FOLDER",
   icon: "lock.svg",
   parent_id: adminId,
@@ -30,11 +30,7 @@ const permissionFolder = {
   },
 };
 
-const Permissions = ({
-  level = 1,
-  menuStyle,
-  setElement,
-}) => {
+const Permissions = ({level = 1, menuStyle, setElement}) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
@@ -42,7 +38,12 @@ const Permissions = ({
   const [userFolderModalType, setUserFolderModalType] = useState(null);
   const closeUserFolderModal = () => setSelectedUserFolder(null);
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const activeStyle = activeStyles({ menuItem, element: permissionFolder, menuStyle, level });
+  const activeStyle = activeStyles({
+    menuItem,
+    element: permissionFolder,
+    menuStyle,
+    level,
+  });
 
   const openUserFolderModal = (folder, type) => {
     setSelectedUserFolder(folder);
@@ -63,7 +64,7 @@ const Permissions = ({
         : menuStyle?.text,
   };
 
-  const { isLoading } = useQuery(
+  const {isLoading} = useQuery(
     ["GET_CLIENT_TYPE_PERMISSION", permissionFolder],
     () => {
       return clientTypeServiceV2.getList();
@@ -96,15 +97,15 @@ const Permissions = ({
   };
 
   return (
-    <Box sx={{ margin: "0 5px" }}>
+    <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">
         <Button
+          id="permissin_btn"
           style={activeStyle}
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
+          }}>
           <div className="label" style={labelStyle}>
             {childBlockVisible ? (
               <KeyboardArrowDownIcon />
@@ -116,15 +117,14 @@ const Permissions = ({
           </div>
           <Box className="icon_group">
             <Tooltip title="Create folder" placement="top">
-              <Box className="extra_icon">
-                <AddIcon
-                  size={13}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openUserFolderModal({}, "CREATE");
-                  }}
-                  style={iconStyle}
-                />
+              <Box
+                id="plusIconAdd"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openUserFolderModal({}, "CREATE");
+                }}
+                className="extra_icon">
+                <AddIcon size={13} style={iconStyle} />
               </Box>
             </Tooltip>
           </Box>

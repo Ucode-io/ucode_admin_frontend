@@ -142,7 +142,7 @@ const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
             <div className="btns-row">
               {createType ? (
                 <CreateButton
-                  id="createFolder"
+                  id="createClientType"
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}

@@ -235,22 +235,27 @@ function AgGridTableView({
   }, [views, fiedlsarray]);
 
   function addRow() {
-    setLoading(true);
+    // setLoading(true);
     const emptyRow = {};
-    constructorObjectService
-      .create(tableSlug, {
-        data: {},
-      })
-      .then((res) => {
-        const newRow = {...emptyRow, id: res?.data?.id};
-        gridApi.current.api.applyTransaction({
-          add: [newRow],
-          addIndex: 0,
-        });
-        refetch();
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const newRow = {...emptyRow};
+    gridApi.current.api.applyTransaction({
+      add: [newRow],
+      addIndex: 0,
+    });
+    // constructorObjectService
+    //   .create(tableSlug, {
+    //     data: {},
+    //   })
+    //   .then((res) => {
+    //     const newRow = {...emptyRow, id: res?.data?.id};
+    //     gridApi.current.api.applyTransaction({
+    //       add: [newRow],
+    //       addIndex: 0,
+    //     });
+    //     // refetch();
+    //     // setLoading(false);
+    //   });
+    // .catch(() => setLoading(false));
   }
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};

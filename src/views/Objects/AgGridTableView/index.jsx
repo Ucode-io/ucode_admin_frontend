@@ -156,7 +156,8 @@ function AgGridTableView({
             //   requiredField: () => item?.required,
             // },
             cellClassRules: {
-              "required-field": (params) => !params?.value,
+              "required-field": (params) =>
+                Boolean(item?.required && !params?.value),
             },
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",

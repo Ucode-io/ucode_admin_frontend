@@ -14,10 +14,9 @@ const HFCheckbox = ({
   labelClassName,
   defaultValue = false,
   isShowLable = true,
+  id = "",
   ...props
 }) => {
-  const id = useId();
-
   return (
     <Controller
       control={control}
@@ -31,7 +30,7 @@ const HFCheckbox = ({
             color: isBlackBg ? "#fff" : "",
           }}>
           <Checkbox
-            id={`checkbox-${id} checkbox_${name}`}
+            id={`checkbox${id} checkbox${name}`}
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",
@@ -43,7 +42,7 @@ const HFCheckbox = ({
                 ? value === "true"
                   ? true
                   : false
-                : value ?? false
+                : (value ?? false)
             }
             autoFocus={tabIndex === 1}
             onChange={(_, val) => {

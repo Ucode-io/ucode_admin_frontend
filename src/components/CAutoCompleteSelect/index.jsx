@@ -1,11 +1,6 @@
-import { Lock } from "@mui/icons-material";
-import {
-  Autocomplete,
-  InputAdornment,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import { useMemo } from "react";
+import {Lock} from "@mui/icons-material";
+import {Autocomplete, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {useMemo} from "react";
 
 const CAutoCompleteSelect = ({
   options,
@@ -23,6 +18,7 @@ const CAutoCompleteSelect = ({
   return (
     <div>
       <Autocomplete
+        id="table_choose"
         multiple={multiple}
         // disablePortal
         options={options}

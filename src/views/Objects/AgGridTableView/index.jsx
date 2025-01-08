@@ -147,12 +147,16 @@ function AgGridTableView({
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields?.map((item) => {
+          console.log("itemmmmmmmm", item);
           const columnDef = {
             view,
             flex: 1,
             minWidth: 250,
             editable: true,
             field: item?.slug,
+            cellClassRules: {
+              requiredField: () => item?.required,
+            },
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
             gridApi: gridApi,
@@ -367,7 +371,9 @@ function AgGridTableView({
             )}
             <AgGridReact
               ref={gridApi}
+              rowBuffer={10}
               theme={myTheme}
+              cacheBlockSize={100}
               rowData={rowData}
               loading={loading}
               columnDefs={columns}

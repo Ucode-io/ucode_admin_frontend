@@ -152,8 +152,11 @@ function AgGridTableView({
             minWidth: 250,
             editable: true,
             field: item?.slug,
+            // cellClassRules: {
+            //   requiredField: () => item?.required,
+            // },
             cellClassRules: {
-              requiredField: () => item?.required,
+              "required-field": (params) => !params?.value,
             },
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",

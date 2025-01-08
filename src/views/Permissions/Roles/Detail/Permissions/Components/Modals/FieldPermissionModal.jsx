@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Checkbox, Modal, Typography } from "@mui/material";
-import { useFieldArray } from "react-hook-form";
+import {Box, Card, Checkbox, Modal, Typography} from "@mui/material";
+import {useFieldArray} from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -20,11 +20,11 @@ const FieldPermissions = ({
 }) => {
   const basePath = `data.tables.${tableIndex}.field_permissions`;
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: basePath,
   });
-
+  console.log("fieldsfieldsfields", fields);
   const updateView = (val) => {
     const computedValue = fields?.map((el) => ({
       ...el,
@@ -67,8 +67,7 @@ const FieldPermissions = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}
-              >
+                }}>
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
@@ -99,7 +98,7 @@ const FieldPermissions = ({
                       <CTableCell>{fieldIndex + 1}</CTableCell>
                       <CTableCell>{field.label}</CTableCell>
                       <CTableCell>
-                        <Box sx={{ justifyContent: "center", display: "flex" }}>
+                        <Box sx={{justifyContent: "center", display: "flex"}}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.view_permission`}
                             control={control}
@@ -107,7 +106,7 @@ const FieldPermissions = ({
                         </Box>
                       </CTableCell>
                       <CTableCell>
-                        <Box sx={{ justifyContent: "center", display: "flex" }}>
+                        <Box sx={{justifyContent: "center", display: "flex"}}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.edit_permission`}
                             control={control}

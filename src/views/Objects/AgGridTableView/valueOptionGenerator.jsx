@@ -64,8 +64,8 @@ const getColumnEditorParams = (item, columnDef) => {
 
         if (matches) {
           matches.forEach((slug) => {
-            const value = params.data[slug] ?? 0;
-            computedFormula = computedFormula.replace(
+            const value = params?.data?.[slug] ?? 0;
+            computedFormula = computedFormula?.replace(
               new RegExp(`\\b${slug}\\b`, "g"),
               value
             );

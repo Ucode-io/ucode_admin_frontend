@@ -1,5 +1,4 @@
 import React, {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -25,7 +24,6 @@ const customStyles = {
 
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
-  const {i18n} = useTranslation();
   const {field, api, data, setValue, value} = props;
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null

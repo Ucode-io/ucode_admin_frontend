@@ -839,6 +839,14 @@ u {
   justify-content: flex-start !important;
 }
 
+.customFieldsRelation {
+  text-align: justify !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+}
+
 #aggrid_select {
   width: 100% !important;
   border: none !important;

@@ -153,7 +153,8 @@ function AgGridTableView({
             minWidth: 250,
             editable: true,
             field: item?.slug,
-            cellClass: "customFields",
+            cellClass:
+              item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
             gridApi: gridApi,
             columnID:
               item?.type === "LOOKUP"

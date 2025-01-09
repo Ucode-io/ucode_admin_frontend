@@ -60,6 +60,9 @@ export const ActionsColumn = {
   suppressMenu: true,
   headerName: "Actions",
   suppressSizeToFit: true,
+  suppressMovable: true,
+  suppressPaste: true,
+  editable: false,
   cellRenderer: ActionButtons,
   headerComponent: FieldCreateHeaderComponent,
 };

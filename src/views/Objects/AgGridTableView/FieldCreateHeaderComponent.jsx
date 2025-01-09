@@ -19,7 +19,7 @@ function FieldCreateHeaderComponent(props) {
   const [drawerStateField, setDrawerStateField] = useState(null);
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const queryClient = useQueryClient();
-
+  console.log("propspropsprops", props);
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,

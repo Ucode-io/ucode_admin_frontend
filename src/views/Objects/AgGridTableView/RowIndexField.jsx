@@ -7,6 +7,8 @@ import {mergeStringAndState} from "../../../utils/jsonPath";
 
 function RowIndexField(props) {
   const {value, data, colDef} = props;
+
+  console.log("propsprops", props);
   const {tableSlug, appId} = useParams();
 
   const {navigateToForm} = useTabRouter();

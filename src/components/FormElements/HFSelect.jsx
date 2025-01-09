@@ -31,6 +31,7 @@ const HFSelect = ({
   isClearable = true,
   ...props
 }) => {
+  console.log("defaultValuedefaultValue", defaultValue);
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
 
   const handleClear = () => {
@@ -57,6 +58,7 @@ const HFSelect = ({
             <Select
               value={value || selectedValue}
               label={label}
+              defaultValue={selectedValue}
               size="small"
               className="hf-select"
               error={error}

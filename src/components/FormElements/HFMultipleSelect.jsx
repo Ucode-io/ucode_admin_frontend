@@ -34,13 +34,12 @@ const HFMultipleSelect = ({
   placeholder,
   required = false,
   rules = {},
+  id = "",
   ...props
 }) => {
   const optionsMap = useMemo(() => {
     return listToMap(options, "value");
   }, [options]);
-
-  const id = useId();
 
   return (
     <Controller
@@ -57,8 +56,8 @@ const HFMultipleSelect = ({
           <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
-              labelId={`multiselect-${id}-label`}
-              id={`multiselect-${id}`}
+              labelId={`multiselect${id}`}
+              id={`multiselect${id}`}
               multiple
               displayEmpty
               value={Array.isArray(value) ? value : []}

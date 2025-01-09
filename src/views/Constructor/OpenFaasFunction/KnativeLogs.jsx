@@ -56,7 +56,7 @@ function KnativeLogs({
           knativeForm.watch("time_frame")
       )
     ) {
-      onSubmitKnative();
+      onSubmitKnative(knativeForm.getValues());
     }
   }, []);
 

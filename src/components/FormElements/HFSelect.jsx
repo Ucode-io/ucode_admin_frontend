@@ -31,7 +31,6 @@ const HFSelect = ({
   isClearable = true,
   ...props
 }) => {
-  console.log("defaultValuedefaultValue", defaultValue);
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
 
   const handleClear = () => {

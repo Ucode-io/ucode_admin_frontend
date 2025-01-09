@@ -393,7 +393,7 @@ function AgGridTableView({
             )}
             <AgGridReact
               ref={gridApi}
-              rowBuffer={10}
+              rowBuffer={8}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
@@ -401,6 +401,7 @@ function AgGridTableView({
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
+              rowModelType="clientSide"
               paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
@@ -409,6 +410,7 @@ function AgGridTableView({
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
               groupDisplayType={"singleColumn"}
+              suppressColumnVirtualisation={false}
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}

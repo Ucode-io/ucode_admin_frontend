@@ -79,28 +79,32 @@ const HFMultipleSelect = ({
                 }
 
                 return (
-                  <Box sx={{display: "flex", flexWrap: "wrap", gap: 0.5}}>
-                    {selected?.map((value) => (
-                      <div key={value} className={styles.tag}>
-                        {optionsMap[value]?.label ?? value}
-                      </div>
-                    ))}
-                  </Box>
+                  <span className={styles.placeholder}>{placeholder}</span>
                 );
-              }}
-              MenuProps={MenuProps}>
-              {options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              }
 
-            {error?.message && (
-              <FormHelperText error>{error?.message}</FormHelperText>
-            )}
-          </FormControl>
-        )
+              return (
+                <Box sx={{display: "flex", flexWrap: "wrap", gap: 0.5}}>
+                  {selected?.map((value) => (
+                    <div key={value} className={styles.tag}>
+                      {optionsMap[value]?.label ?? value}
+                    </div>
+                  ))}
+                </Box>
+              );
+            }}
+            MenuProps={MenuProps}>
+            {options.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {error?.message && (
+            <FormHelperText error>{error?.message}</FormHelperText>
+          )}
+        </FormControl>
       )}></Controller>
   );
 };

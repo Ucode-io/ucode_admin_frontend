@@ -808,7 +808,7 @@ u {
 }
 
 .actionBtn {
-  padding: 5px 10px 10px 10px !important;
+  padding: 10px 10px 10px 10px !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -817,6 +817,10 @@ u {
   div {
     width: 32px;
     height: 32px;
+  }
+
+  .ag-fill-handle {
+    display: none !important;
   }
 }
 
@@ -874,4 +878,9 @@ u {
     .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
     height: 100%;
   }
+}
+
+.required-field {
+  outline: 1px solid red;
+  outline-offset: -1px;
 }

@@ -1,4 +1,4 @@
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import style from "./style.module.scss";
 import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
@@ -63,14 +63,13 @@ function AgGridTableView({
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
   const {i18n, t} = useTranslation();
-  const queryClient = useQueryClient();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState("");
   const [groupTab, setGroupTab] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
 
@@ -153,6 +152,13 @@ function AgGridTableView({
             minWidth: 250,
             editable: true,
             field: item?.slug,
+            // cellClassRules: {
+            //   requiredField: () => item?.required,
+            // },
+            cellClassRules: {
+              "required-field": (params) =>
+                Boolean(item?.required && !params?.value),
+            },
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
             gridApi: gridApi,
@@ -179,6 +185,7 @@ function AgGridTableView({
           menuItem: menuItem,
           view: view,
           addRow: addRow,
+          appendNewRow: appendNewRow,
           valueGetter: (params) => {
             return (
               (Boolean(limitPage > 0) ? limitPage : 0) +
@@ -200,6 +207,8 @@ function AgGridTableView({
           view: view,
           selectedTabIndex: selectedTabIndex,
           menuItem: menuItem,
+          removeRow: removeRow,
+          addRow: addRow,
           deleteFunction: deleteHandler,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
@@ -228,24 +237,47 @@ function AgGridTableView({
     return filteredFields;
   }, [views, fiedlsarray]);
 
-  function addRow() {
+  function addRow(data) {
     setLoading(true);
-    const emptyRow = {};
     constructorObjectService
       .create(tableSlug, {
-        data: {},
+        data: data,
       })
       .then((res) => {
-        const newRow = {...emptyRow, id: res?.data?.id};
-        gridApi.current.api.applyTransaction({
-          add: [newRow],
-          addIndex: 0,
-        });
+        delete data?.new_field;
         refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }
+
+  function appendNewRow() {
+    const emptyRow = {
+      new_field: true,
+    };
+
+    const newRow = {...emptyRow, guid: generateGUID()};
+    gridApi.current.api.applyTransaction({
+      add: [newRow],
+      addIndex: 0,
+    });
+  }
+
+  function removeRow(guid) {
+    const allRows = [];
+    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
+
+    const rowToRemove = allRows.find((row) => row.guid === guid);
+
+    if (rowToRemove) {
+      gridApi.current.api.applyTransaction({
+        remove: [rowToRemove],
+      });
+    } else {
+      console.error("Row not found for removal");
+    }
+  }
+
   const updateView = (pinnedField) => {
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
@@ -257,14 +289,13 @@ function AgGridTableView({
           pinnedFields: pinFieldsRef.current,
         },
       })
-      .then(() => {
-        // setLoading(false);
-      })
       .catch((err) => setLoading(true));
   };
 
   const updateObject = (data) => {
-    constructorObjectService.update(tableSlug, {data: {...data}});
+    if (!data?.new_field) {
+      constructorObjectService.update(tableSlug, {data: {...data}});
+    }
   };
 
   function deleteHandler(row) {
@@ -368,6 +399,7 @@ function AgGridTableView({
             <AgGridReact
               sideBar={false}
               ref={gridApi}
+              rowBuffer={10}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
@@ -375,6 +407,7 @@ function AgGridTableView({
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
+              paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}
@@ -385,9 +418,7 @@ function AgGridTableView({
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              onCellValueChanged={(e) => {
-                updateObject(e.data);
-              }}
+              onCellValueChanged={(e) => updateObject(e.data)}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

@@ -20,6 +20,7 @@ const MainInfo = ({
   isMultiLanguage,
   errors,
   watch,
+  getValues,
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -138,6 +139,7 @@ const MainInfo = ({
                           activeLang={activeLang}
                           errors={errors}
                           watch={watch}
+                          getValues={getValues}
                         />
                       </Box>
                     ))}

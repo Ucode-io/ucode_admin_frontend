@@ -1,28 +1,27 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
+import {Parser} from "hot-formula-parser";
+import {useTranslation} from "react-i18next";
+import {useEffect, useMemo, useState} from "react";
+import CellRelationFormElementNew from "./CellRelationFormElementNew";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
-import CellRelationFormElementNew from "./CellRelationFormElementNew";
 
 const parser = new Parser();
 
 const CellElementGeneratorForRelation = ({
-  tableView,
-  field,
-  isBlackBg = false,
   row,
-  relationfields,
-  updateObject,
-  control,
-  setFormValue,
-  index,
   data,
-  isTableView = false,
+  index,
+  field,
+  control,
+  mainForm,
+  tableView,
+  relationfields,
   isNewRow = false,
   newColumn = false,
-  mainForm,
+  isBlackBg = false,
+  updateObject = () => {},
+  setFormValue = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -98,81 +97,62 @@ const CellElementGeneratorForRelation = ({
     LOOKUP: () => {
       return newColumn ? (
         <CellRelationFormElementForNewColumn
+          isFormEdit
+          row={row}
+          data={data}
+          field={field}
+          index={index}
+          control={control}
+          name={computedSlug}
           mainForm={mainForm}
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
-          isFormEdit
           isBlackBg={isBlackBg}
-          updateObject={updateObject}
           isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
+          updateObject={updateObject}
           setFormValue={setFormValue}
-          index={index}
           defaultValue={defaultValue}
           relationfields={relationfields}
-          data={data}
+          placeholder={field.attributes?.placeholder}
         />
       ) : (
         <CellRelationFormElementNew
+          row={row}
+          isFormEdit
+          data={data}
+          index={index}
+          field={field}
+          control={control}
+          isTableView={true}
+          name={computedSlug}
           tableView={tableView}
           disabled={isDisabled}
-          isTableView={true}
-          isFormEdit
           isBlackBg={isBlackBg}
-          updateObject={updateObject}
           isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
-          index={index}
+          updateObject={updateObject}
           defaultValue={defaultValue}
           relationfields={relationfields}
-          data={data}
+          placeholder={field.attributes?.placeholder}
         />
-        // <CellRelationFormElementForTableView
-        //   tableView={tableView}
-        //   disabled={isDisabled}
-        //   isTableView={true}
-        //   isFormEdit
-        //   isBlackBg={isBlackBg}
-        //   updateObject={updateObject}
-        //   isNewTableView={true}
-        //   control={control}
-        //   name={computedSlug}
-        //   field={field}
-        //   row={row}
-        //   placeholder={field.attributes?.placeholder}
-        //   setFormValue={setFormValue}
-        //   index={index}
-        //   defaultValue={defaultValue}
-        //   relationfields={relationfields}
-        //   data={data}
-        // />
       );
     },
     LOOKUPS: () => (
       <CellManyToManyRelationElement
-        disabled={isDisabled}
+        row={row}
         isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
+        field={field}
+        index={index}
         control={control}
         name={computedSlug}
-        field={field}
-        row={row}
-        placeholder={field.attributes?.placeholder}
+        disabled={isDisabled}
+        isNewTableView={true}
+        isBlackBg={isBlackBg}
         setFormValue={setFormValue}
-        index={index}
         defaultValue={defaultValue}
+        updateObject={updateObject}
+        placeholder={field.attributes?.placeholder}
       />
     ),
   };

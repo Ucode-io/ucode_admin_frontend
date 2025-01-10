@@ -26,6 +26,7 @@ export const fieldTypes = [
   "PRIMARY_KEY",
   "QR",
   "POLYGON",
+  "LINK",
 ];
 
 export const fieldTypesOptions = [
@@ -213,9 +214,24 @@ export const fieldTypesOptions = [
       //   value: "FLOAT_NOLIMIT",
       // },
       {
+        icon: "person-running.svg",
+        label: "Person",
+        value: "PERSON",
+      },
+      {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
         value: "INCREMENT_ID",
+      },
+      {
+        icon: "link.svg",
+        label: "Link",
+        value: "LINK",
+      },
+      {
+        icon: "mobile-button.svg",
+        label: "button",
+        value: "BUTTON",
       },
       {
         icon: "code.svg",

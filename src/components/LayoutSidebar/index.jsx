@@ -73,7 +73,7 @@ const LayoutSidebar = ({appId}) => {
   const openSidebarMenu = Boolean(menu?.event);
   const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-  console.log("menumenu", menu);
+
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
   };

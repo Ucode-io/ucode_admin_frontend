@@ -243,3 +243,12 @@
     display: none;
   }
 }
+
+.linkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}

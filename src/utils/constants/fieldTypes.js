@@ -224,6 +224,11 @@ export const fieldTypesOptions = [
         value: "LINK",
       },
       {
+        icon: "mobile-button.svg",
+        label: "button",
+        value: "BUTTON",
+      },
+      {
         icon: "code.svg",
         label: "Programming language",
         value: "PROGRAMMING_LANGUAGE",

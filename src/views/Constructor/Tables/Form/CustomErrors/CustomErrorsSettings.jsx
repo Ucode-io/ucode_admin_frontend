@@ -1,20 +1,20 @@
-import { Close } from "@mui/icons-material";
-import { Divider, IconButton } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import {Close} from "@mui/icons-material";
+import {Divider, IconButton} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import styles from "./style.module.scss";
-import { store } from "../../../../../store";
+import {store} from "../../../../../store";
 import actionTypes from "./mock/ActionTypes";
 import {
   useCustomErrorCreateMutation,
   useCustomErrorUpdateMutation,
 } from "../../../../../services/customErrorMessageService";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import HFTextArea from "../../../../../components/FormElements/HFTextArea";
 import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
 import constructorObjectService from "../../../../../services/constructorObjectService";
@@ -29,11 +29,11 @@ const CustomErrorsSettings = ({
 }) => {
   const authStore = store.getState().auth;
   const queryClient = useQueryClient();
-  const { id } = useParams();
+  const {id} = useParams();
   const [errorIds, setErrorIds] = useState(null);
   const [languages, setLanguages] = useState(null);
 
-  const { handleSubmit, control, reset, watch } = useForm({
+  const {handleSubmit, control, reset, watch} = useForm({
     defaultValues: {
       project_id: authStore.projectId,
       table_id: id,
@@ -93,7 +93,7 @@ const CustomErrorsSettings = ({
     }));
   }, [errorIds]);
 
-  const { mutate: create, isLoading: createLoading } =
+  const {mutate: create, isLoading: createLoading} =
     useCustomErrorCreateMutation({
       onSuccess: () => {
         closeSettingsBlock(null);
@@ -101,7 +101,7 @@ const CustomErrorsSettings = ({
       },
     });
 
-  const { mutate: update, isLoading: updateLoading } =
+  const {mutate: update, isLoading: updateLoading} =
     useCustomErrorUpdateMutation({
       onSuccess: () => {
         closeSettingsBlock(null);
@@ -142,11 +142,10 @@ const CustomErrorsSettings = ({
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{ height }}>
+      <div className={styles.settingsBlockBody} style={{height}}>
         <form
           onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
+          className={styles.fieldSettingsForm}>
           <div className="p-2">
             <FRow label="Code" required>
               <HFNumberField
@@ -220,10 +219,9 @@ const CustomErrorsSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
-              loader={createLoading || updateLoading}
-            >
+              loader={createLoading || updateLoading}>
               Save
             </PrimaryButton>
           </div>

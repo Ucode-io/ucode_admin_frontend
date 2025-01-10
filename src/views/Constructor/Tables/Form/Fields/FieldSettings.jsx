@@ -42,6 +42,7 @@ import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
+import ButtonFieldComponents from "./ButtonFieldComponents";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -400,8 +401,12 @@ const FieldSettings = ({
                     />
                   </FRow>
 
-                  {fieldType !== "LINK" && (
-                    <DefaultValueBlock control={control} />
+                  {fieldType !== "LINK" ||
+                    (fieldType !== "BUTTON" && (
+                      <DefaultValueBlock control={control} />
+                    ))}
+                  {fieldType === "BUTTON" && (
+                    <ButtonFieldComponents control={control} />
                   )}
 
                   {(fieldType === "FILE" ||

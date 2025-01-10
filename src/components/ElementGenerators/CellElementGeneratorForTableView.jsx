@@ -33,6 +33,7 @@ import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
 import ProgrammingLan from "./ProgrammingLan";
 import HFLinkField from "../FormElements/HFLinkField";
+import HFButtonField from "../FormElements/HFButtonField";
 
 const parser = new Parser();
 
@@ -50,6 +51,7 @@ const CellElementGeneratorForTableView = ({
   isTableView = false,
   isNewRow = false,
   newColumn = false,
+  getValues = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -176,14 +178,12 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
-          rules={{
-            pattern: {
-              value: new RegExp(field?.attributes?.validation),
-              message: field?.attributes?.validation_message,
-            },
-          }}
         />
       );
+
+    case "BUTTON":
+      return <HFButtonField field={field} row={row} isTableView={true} />;
+
     case "PASSWORD":
       return (
         <HFPassword

@@ -36,6 +36,7 @@ import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
+import HFButtonField from "../FormElements/HFButtonField";
 
 const parser = new Parser();
 
@@ -52,6 +53,7 @@ const FormElementGenerator = ({
   valueGenerator,
   isMultiLanguage,
   checkRequired = true,
+  getValues = () => {},
   checkPermission = true,
   setFormValue = () => {},
   ...props
@@ -337,6 +339,10 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+
+    case "BUTTON":
+      return <HFButtonField field={field} getValues={getValues} />;
+
     case "LINK":
       return (
         <FRow label={label} required={field.required}>

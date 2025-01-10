@@ -400,7 +400,9 @@ const FieldSettings = ({
                     />
                   </FRow>
 
-                  <DefaultValueBlock control={control} />
+                  {fieldType !== "LINK" && (
+                    <DefaultValueBlock control={control} />
+                  )}
 
                   {(fieldType === "FILE" ||
                     fieldType === "VIDEO" ||

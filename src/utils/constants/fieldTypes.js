@@ -26,6 +26,7 @@ export const fieldTypes = [
   "PRIMARY_KEY",
   "QR",
   "POLYGON",
+  "LINK",
 ];
 
 export const fieldTypesOptions = [
@@ -216,6 +217,11 @@ export const fieldTypesOptions = [
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
         value: "INCREMENT_ID",
+      },
+      {
+        icon: "link.svg",
+        label: "Link",
+        value: "LINK",
       },
       {
         icon: "code.svg",

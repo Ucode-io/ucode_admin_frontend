@@ -32,6 +32,7 @@ import CodeCellFormElement from "./JsonCellElement";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
 import ProgrammingLan from "./ProgrammingLan";
+import HFLinkField from "../FormElements/HFLinkField";
 
 const parser = new Parser();
 
@@ -141,6 +142,30 @@ const CellElementGeneratorForTableView = ({
         <HFTextField
           disabled={isDisabled}
           isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          field={field}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          rules={{
+            pattern: {
+              value: new RegExp(field?.attributes?.validation),
+              message: field?.attributes?.validation_message,
+            },
+          }}
+        />
+      );
+
+    case "LINK":
+      return (
+        <HFLinkField
+          isFormEdit
+          disabled={isDisabled}
           updateObject={updateObject}
           isNewTableView={true}
           isBlackBg={isBlackBg}

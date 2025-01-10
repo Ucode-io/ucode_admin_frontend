@@ -125,13 +125,13 @@ const HFLinkField = ({
                     className={styles.linkBtn}
                     onClick={() => navigateToNewPage(value)}
                     sx={{cursor: "pointer"}}>
-                    <LaunchIcon style={{fontSize: "20px", color: "#007Aff"}} />
+                    <LaunchIcon style={{fontSize: "20px"}} />
                   </button>
                 </InputAdornment>
               ),
             }}
             helperText={!disabledHelperText && error?.message}
-            className={isFormEdit ? "custom_textfield" : ""}
+            className={isFormEdit ? "customLinkField" : ""}
             {...props}
           />
         );

@@ -214,6 +214,11 @@ export const fieldTypesOptions = [
       //   value: "FLOAT_NOLIMIT",
       // },
       {
+        icon: "person-running.svg",
+        label: "Person",
+        value: "PERSON",
+      },
+      {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
         value: "INCREMENT_ID",

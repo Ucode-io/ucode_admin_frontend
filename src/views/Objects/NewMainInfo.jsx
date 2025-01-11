@@ -103,15 +103,52 @@ const MainInfo = ({
           )}
 
           <div className={styles.newMainInfoSections}>
-            {computedSections.map((section) => (
-              <NewFormCard
-                key={section.id}
-                title={
-                  section?.attributes?.[`label_${i18n.language}`] ??
-                  section.label
-                }
-                className={styles.formCard}
-                icon={section.icon}>
+            {computedSections.map((section) =>
+              section?.label ? (
+                <NewFormCard
+                  key={section.id}
+                  title={
+                    section?.attributes?.[`label_${i18n.language}`] ||
+                    section.label
+                  }
+                  className={styles.formCard}
+                  icon={section.icon}>
+                  <div
+                    className={styles.newformColumn}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                    }}>
+                    {section?.fields
+                      ?.filter((element) =>
+                        filterFields(element, control, watch)
+                      )
+                      .map((field) => (
+                        <Box
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            minWidth: "250px",
+                          }}>
+                          <FormElementGenerator
+                            key={field.id}
+                            isMultiLanguage={isMultiLanguage}
+                            field={field}
+                            control={control}
+                            setFormValue={setFormValue}
+                            fieldsList={fieldsList}
+                            formTableSlug={tableSlug}
+                            relatedTable={relatedTable}
+                            activeLang={activeLang}
+                            errors={errors}
+                            watch={watch}
+                            getValues={getValues}
+                          />
+                        </Box>
+                      ))}
+                  </div>
+                </NewFormCard>
+              ) : (
                 <div
                   className={styles.newformColumn}
                   style={{
@@ -144,8 +181,8 @@ const MainInfo = ({
                       </Box>
                     ))}
                 </div>
-              </NewFormCard>
-            ))}
+              )
+            )}
           </div>
         </div>
       ) : (

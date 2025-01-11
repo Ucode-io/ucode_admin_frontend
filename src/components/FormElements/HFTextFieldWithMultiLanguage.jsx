@@ -19,7 +19,7 @@ export default function HFTextFieldWithMultiLanguage({
   disabled,
   tabIndex,
   checkRequiredField,
-  placeholder,
+  placeholder = "",
   languages,
   endAdornment,
   field,

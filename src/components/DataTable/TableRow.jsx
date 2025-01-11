@@ -9,7 +9,6 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   relOptions,

@@ -12,6 +12,7 @@ const TableDataForm = ({
   view,
   index,
   field,
+  watch,
   isWrap,
   fields,
   control,
@@ -78,6 +79,7 @@ const TableDataForm = ({
           data={data}
           field={field}
           index={index}
+          watch={watch}
           key={field?.id}
           fields={fields}
           control={control}

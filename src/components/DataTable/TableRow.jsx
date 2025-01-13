@@ -23,9 +23,7 @@ const TableRow = ({
   calculateWidthFixedColumn,
   onDeleteClick,
   mainForm,
-  checkboxValue,
   getValues,
-  onCheckboxChange,
   currentPage,
   view,
   columns,
@@ -34,11 +32,9 @@ const TableRow = ({
   tableHeight,
   tableSettings,
   pageName,
-  calculateWidth,
   watch,
   setFormValue,
   tableSlug,
-  formVisible,
   remove,
   limit = 10,
   relationAction,
@@ -58,36 +54,7 @@ const TableRow = ({
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
   };
-
   const parentRef = useRef(null);
-
-  // if (formVisible)
-  //   return (
-  //     <TableRowForm
-  //       onDeleteClick={onDeleteClick}
-  //       isTableView={isTableView}
-  //       remove={remove}
-  //       watch={watch}
-  //       onCheckboxChange={onCheckboxChange}
-  //       checkboxValue={checkboxValue}
-  //       row={row}
-  //       key={key}
-  //       formVisible={formVisible}
-  //       currentPage={currentPage}
-  //       limit={limit}
-  //       control={control}
-  //       setFormValue={setFormValue}
-  //       rowIndex={rowIndex}
-  //       columns={columns}
-  //       tableHeight={tableHeight}
-  //       tableSettings={tableSettings}
-  //       pageName={pageName}
-  //       calculateWidth={calculateWidth}
-  //       tableSlug={tableSlug}
-  //       relationFields={relationFields}
-  //       data={data}
-  //     />
-  //   );
 
   return (
     <>
@@ -215,6 +182,7 @@ const TableRow = ({
                         width={width}
                         isTableView={isTableView}
                         view={view}
+                        watch={watch}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -371,6 +339,7 @@ const TableRow = ({
                       width={width}
                       isTableView={isTableView}
                       view={view}
+                      watch={watch}
                     />
                   ) : (
                     <CellElementGenerator field={virtualColumn} row={row} />
@@ -521,6 +490,7 @@ const TableRow = ({
                 onRowClick={onRowClick}
                 width={width}
                 view={view}
+                watch={watch}
               />
             </CTableCell>
           ))}

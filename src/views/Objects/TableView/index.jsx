@@ -59,6 +59,7 @@ const TableView = ({
   menuItem,
   setFormValue,
   currentView,
+  watch,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -613,6 +614,7 @@ const TableView = ({
           onRowClick={navigateToEditPage}
           onDeleteClick={deleteHandler}
           tableSlug={tableSlug}
+          watch={watch}
           view={view}
           tableStyle={{
             borderRadius: 0,

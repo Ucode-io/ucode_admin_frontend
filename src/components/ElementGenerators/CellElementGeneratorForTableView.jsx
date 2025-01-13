@@ -36,6 +36,7 @@ import HFLinkField from "../FormElements/HFLinkField";
 import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
 import HFStatusField from "../FormElements/HFStatusField";
+import HFMoneyField from "../FormElements/HFMoneyField";
 
 const parser = new Parser();
 
@@ -187,6 +188,21 @@ const CellElementGeneratorForTableView = ({
 
     case "BUTTON":
       return <HFButtonField field={field} row={row} isTableView={true} />;
+
+    case "MONEY":
+      return (
+        <HFMoneyField
+          fullWidth
+          row={row}
+          field={field}
+          control={control}
+          isTableView={true}
+          name={computedSlug}
+          disabled={isDisabled}
+          required={field.required}
+          updateObject={updateObject}
+        />
+      );
 
     case "STATUS":
       return (

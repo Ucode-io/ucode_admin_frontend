@@ -45,6 +45,7 @@ const CellElementGeneratorForTableView = ({
   data,
   field,
   index,
+  watch,
   fields,
   control,
   isWrapField,
@@ -197,6 +198,7 @@ const CellElementGeneratorForTableView = ({
           field={field}
           control={control}
           isTableView={true}
+          watch={watch}
           name={computedSlug}
           disabled={isDisabled}
           required={field.required}

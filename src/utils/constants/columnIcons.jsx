@@ -37,6 +37,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import TitleIcon from "@mui/icons-material/Title";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -122,6 +123,8 @@ export const columnIcons = (type) => {
       return <AddBoxIcon />;
     case "PERSON":
       return <AccountCircleIcon />;
+    case "TEXT":
+      return <TitleIcon />;
     case "LINK":
       return <LinkIcon />;
     case "INCREMENT_NUMBER":

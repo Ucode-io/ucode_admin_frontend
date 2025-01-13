@@ -8,28 +8,23 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import useDebounce from "../../hooks/useDebounce";
 import {useSelector} from "react-redux";
 
-const useStyles = makeStyles(() => ({
-  input: {
-    padding: "0px",
-    "&::placeholder": {
-      color: "#fff",
-    },
-  },
-}));
-
 function HFMoneyField({
   name,
+  watch,
   control,
-  updateObject = () => {},
   disabled = false,
   isBlackBg = false,
   isTransparent = false,
+  updateObject = () => {},
 }) {
-  const values = useWatch({control, name});
+  const value = watch(name);
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [valueArray, setValueArray] = useState([values?.[0], values?.[1]]);
-  console.log("valuesvalues", values);
+  const [valueArray, setValueArray] = useState([
+    value?.[0],
+    value?.[1] || "USD",
+  ]);
+
   const open = Boolean(anchorEl);
   const currencies = useSelector((state) => state?.auth?.currencies).map(
     (item) => ({label: item?.code})
@@ -67,7 +62,7 @@ function HFMoneyField({
               onValueChange={(values) => {
                 const newValue = values.value;
                 setValueArray([newValue, valueArray[1]]);
-                onChange([newValue, values[1]]);
+                onChange([newValue, value[1]]);
                 inputChangeHandler();
               }}
               style={
@@ -97,7 +92,7 @@ function HFMoneyField({
               className={styles.moneyBtn}
               onClick={handleMenuClick}
               style={{cursor: "pointer", paddingLeft: "5px"}}>
-              <div>{values?.[1] || valueArray[1]}</div>
+              <div>{value?.[1]}</div>
               <ArrowDropDownIcon style={{fontSize: "20px"}} />
             </button>
             <Menu
@@ -112,7 +107,7 @@ function HFMoneyField({
                 <MenuItem
                   onClick={() => {
                     handleMenuClose(el?.label);
-                    onChange([valueArray?.[0], el?.label]);
+                    onChange([value?.[0], el?.label]);
                     updateObject();
                   }}>
                   {el?.label}

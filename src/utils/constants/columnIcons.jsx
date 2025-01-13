@@ -33,6 +33,10 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import CreateIcon from "@mui/icons-material/Create";
 import TextIncreaseIcon from "@mui/icons-material/TextIncrease";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 export const columnIcons = (type) => {
   switch (type) {
@@ -110,6 +114,16 @@ export const columnIcons = (type) => {
       return <ContactPageIcon />;
     case "MANUAL_STRING":
       return <CreateIcon />;
+    case "MONEY":
+      return <AttachMoneyIcon />;
+    case "STATUS":
+      return <FormatListNumberedIcon />;
+    case "BUTTON":
+      return <AddBoxIcon />;
+    case "PERSON":
+      return <AccountCircleIcon />;
+    case "LINK":
+      return <LinkIcon />;
     case "INCREMENT_NUMBER":
       return <TextIncreaseIcon />;
     default:

@@ -5,6 +5,7 @@ import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import styles from "./style.module.scss";
 import DeleteIcon from "@mui/icons-material/Delete";
+import HFColorPicker from "../../../../../components/FormElements/HFColorPicker";
 
 function StatusFieldSettings({control}) {
   const toDoFieldArray = useFieldArray({
@@ -53,6 +54,10 @@ function StatusFieldSettings({control}) {
             marginBottom: "0.5rem",
             padding: "8px",
           }}>
+          <HFColorPicker
+            name={`attributes.${name}.options[${index}].color`}
+            control={control}
+          />
           <HFTextField
             name={`attributes.${name}.options[${index}].label`}
             control={control}

@@ -13,21 +13,56 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
           return (
             <Select
               className={styles.statusSelect}
-              sx={{height: "41px", border: "none"}}
+              sx={{
+                height: "41px",
+                border: "none",
+                "& .MuiSelect-select": {
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px",
+                  borderRadius: "4px",
+                },
+              }}
               value={value || ""}
               onChange={(e) => {
                 onChange(e.target.value);
                 updateObject();
               }}
-              fullWidth>
+              fullWidth
+              renderValue={(selected) => {
+                const selectedOption =
+                  field?.attributes?.todo?.options?.find(
+                    (el) => el.label === selected
+                  ) ||
+                  field?.attributes?.progress?.options?.find(
+                    (el) => el.label === selected
+                  ) ||
+                  field?.attributes?.complete?.options?.find(
+                    (el) => el.label === selected
+                  );
+
+                return (
+                  <Box
+                    sx={{
+                      background: selectedOption
+                        ? `${selectedOption.color}30`
+                        : "transparent",
+                      color: selectedOption?.color || "#000",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                    }}>
+                    {selected}
+                  </Box>
+                );
+              }}>
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
               {field?.attributes?.todo?.options?.map((el) => (
                 <MenuItem
                   style={{
-                    background: el?.label === value ? "#007aff" : "#eee",
-                    color: el?.label === value ? "#fff" : "#000",
+                    background: `${el?.color}30`,
+                    color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
                   key={el?.label}
@@ -42,8 +77,8 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
               {field?.attributes?.progress?.options?.map((el) => (
                 <MenuItem
                   style={{
-                    background: el?.label === value ? "#007aff" : "#eee",
-                    color: el?.label === value ? "#fff" : "#000",
+                    background: `${el?.color}30`,
+                    color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
                   key={el?.label}
@@ -58,8 +93,8 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
               {field?.attributes?.complete?.options?.map((el) => (
                 <MenuItem
                   style={{
-                    background: el?.label === value ? "#007aff" : "#eee",
-                    color: el?.label === value ? "#fff" : "#000",
+                    background: `${el?.color}30`,
+                    color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
                   key={el?.label}

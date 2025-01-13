@@ -253,6 +253,15 @@
   cursor: pointer;
 }
 
+.moneyBtn {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+}
+
 .selectGroup {
   font-size: 12px;
   font-weight: 400;

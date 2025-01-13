@@ -117,26 +117,19 @@ const AutoCompleteElement = ({
           item?.value === value;
         });
       }
-    else return [localOptions?.find((option) => option.value === value[0])];
+    else return [localOptions?.find((option) => option.value === value)];
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {
     setLocalOptions((prev) => [...prev, newOption]);
     changeHandler(null, [...computedValue, newOption]);
   };
-
+  console.log("isMultiSelectisMultiSelect", isMultiSelect);
   const changeHandler = (_, values) => {
-    if (values[values?.length - 1]?.value === "NEW") {
-      handleOpen(values[values?.length - 1]?.inputValue);
-      return;
-    }
+    console.log("valuesvalues", values);
 
-    if (!values?.length) {
-      onFormChange([]);
-      return;
-    }
     if (isMultiSelect) onFormChange(values?.map((el) => el.value));
-    else onFormChange([values[values?.length - 1]?.value] ?? []);
+    else onFormChange(values[values?.length - 1]?.value ?? []);
   };
 
   return (

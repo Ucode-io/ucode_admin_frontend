@@ -3,87 +3,83 @@ import {useFieldArray} from "react-hook-form";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import {Box, Button} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import styles from "./style.module.scss";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function StatusFieldSettings({control}) {
   const toDoFieldArray = useFieldArray({
     control,
-    name: "attributes.blocks[0].options",
+    name: "attributes.todo.options",
   });
 
   const inProgressFieldArray = useFieldArray({
     control,
-    name: "attributes.blocks[1].options",
+    name: "attributes.progress.options",
   });
 
   const completeFieldArray = useFieldArray({
     control,
-    name: "attributes.blocks[2].options",
+    name: "attributes.complete.options",
   });
 
-  const renderOptions = (fieldArray, blockName) => (
+  const renderOptions = (fieldArray, name, blockName) => (
     <div>
       <Box
         sx={{
           padding: "8px",
+          borderTop: "1px solid #eee",
           borderBottom: "1px solid #eee",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
         }}>
-        <Box sx={{fontSize: "14px"}}>{blockName}</Box>
-        <button style={{width: "40px"}} variant="outlined">
-          <AddIcon />
+        <Box sx={{fontSize: "12px"}}>{blockName}</Box>
+        <button
+          type="button"
+          onClick={() => fieldArray.append({})}
+          className={styles.addOptionBtn}
+          variant="outlined">
+          <AddIcon style={{color: "#999", fontSize: "24px"}} />
         </button>
       </Box>
+
       {fieldArray.fields.map((field, index) => (
         <div
-          key={field.id}
+          key={field?.id}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",
             marginBottom: "0.5rem",
+            padding: "8px",
           }}>
           <HFTextField
-            name={`blocks[${fieldArray.name === "blocks[0].options" ? 0 : fieldArray.name === "blocks[1].options" ? 1 : 2}].options[${index}].label`}
+            name={`attributes.${name}.options[${index}].label`}
             control={control}
+            placeholder="Label"
+            defaultValue={field.key}
           />
-          <button
+
+          <Button
+            variant="outlined"
+            color="error"
             type="button"
-            onClick={() => fieldArray.remove(index)}
-            style={{
-              background: "#ff5c5c",
-              color: "white",
-              border: "none",
-              padding: "0.5rem",
-              cursor: "pointer",
-            }}>
-            Delete
-          </button>
+            onClick={() => fieldArray.remove(index)}>
+            <DeleteIcon />
+          </Button>
         </div>
       ))}
-      {/* <button
-        type="button"
-        onClick={() => fieldArray.append({label: "New Option"})}
-        style={{
-          padding: "0.5rem",
-          background: "#5cb85c",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}>
-        Add Option
-      </button> */}
     </div>
   );
 
   return (
-    <Box>
+    <Box sx={{border: "1px solid #eee", borderRadius: "4px"}}>
       <Box>
-        <Box>{renderOptions(toDoFieldArray, "To-do")}</Box>
-
-        <Box>{renderOptions(inProgressFieldArray, "In Progress")}</Box>
-
-        <Box> {renderOptions(completeFieldArray, "Complete")}</Box>
+        <Box>{renderOptions(toDoFieldArray, "todo", "To-do")}</Box>
+        <Box>
+          {renderOptions(inProgressFieldArray, "progress", "In Progress")}
+        </Box>
+        <Box>{renderOptions(completeFieldArray, "complete", "Complete")}</Box>
       </Box>
     </Box>
   );

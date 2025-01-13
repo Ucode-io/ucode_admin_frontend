@@ -21,6 +21,7 @@ import RegisterFormPageDesign from "../RegisterFormPageDesign";
 import LoginCompaniesList from "./LoginCompaniesList";
 import EspLogin from "./EspLogin";
 import ForgotPassword from "./ForgotPassword";
+import {firebaseCloudMessaging} from "../../../../firebase/config";
 
 const LoginFormDesign = ({
   setIndex,

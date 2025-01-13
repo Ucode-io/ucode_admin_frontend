@@ -35,6 +35,7 @@ import ProgrammingLan from "./ProgrammingLan";
 import HFLinkField from "../FormElements/HFLinkField";
 import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
+import HFStatusField from "../FormElements/HFStatusField";
 
 const parser = new Parser();
 
@@ -186,6 +187,18 @@ const CellElementGeneratorForTableView = ({
 
     case "BUTTON":
       return <HFButtonField field={field} row={row} isTableView={true} />;
+
+    case "STATUS":
+      return (
+        <HFStatusField
+          field={field}
+          row={row}
+          isTableView={true}
+          control={control}
+          name={computedSlug}
+          updateObject={updateObject}
+        />
+      );
 
     case "PASSWORD":
       return (

@@ -152,9 +152,6 @@ function AgGridTableView({
             minWidth: 250,
             editable: true,
             field: item?.slug,
-            // cellClassRules: {
-            //   requiredField: () => item?.required,
-            // },
             cellClassRules: {
               "required-field": (params) =>
                 Boolean(item?.required && !params?.value),
@@ -266,7 +263,6 @@ function AgGridTableView({
   function removeRow(guid) {
     const allRows = [];
     gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-
     const rowToRemove = allRows.find((row) => row.guid === guid);
 
     if (rowToRemove) {
@@ -307,7 +303,6 @@ function AgGridTableView({
   const onColumnPinned = (event) => {
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
-
     updateView({
       [fieldId]: {pinned},
     });
@@ -399,7 +394,7 @@ function AgGridTableView({
             <AgGridReact
               sideBar={false}
               ref={gridApi}
-              rowBuffer={10}
+              rowBuffer={8}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
@@ -407,6 +402,7 @@ function AgGridTableView({
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
+              rowModelType="clientSide"
               paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
@@ -415,6 +411,7 @@ function AgGridTableView({
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
               groupDisplayType={"singleColumn"}
+              suppressColumnVirtualisation={false}
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}

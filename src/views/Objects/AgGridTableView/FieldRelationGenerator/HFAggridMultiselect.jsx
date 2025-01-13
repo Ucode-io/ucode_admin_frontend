@@ -1,32 +1,31 @@
-import {Close, Lock} from "@mui/icons-material";
-import {
-  Autocomplete,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  TextField,
-  Dialog,
-  createFilterOptions,
-  Tooltip,
-  InputAdornment,
-  Box,
-} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useMemo} from "react";
-import {Controller, useForm, useWatch} from "react-hook-form";
-import AddIcon from "@mui/icons-material/Add";
 import {makeStyles} from "@mui/styles";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import {useParams} from "react-router-dom";
+import {useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
 import styles from "./style.module.scss";
-import constructorFieldService from "../../../../services/constructorFieldService";
-import HFColorPicker from "../../../../components/FormElements/HFColorPicker";
-import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
-import HFTextField from "../../../../components/FormElements/HFTextField";
+import {useParams} from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import {Close, Lock} from "@mui/icons-material";
+import {generateGUID} from "../../../../utils/generateID";
 import FRow from "../../../../components/FormElements/FRow";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
-import {generateGUID} from "../../../../utils/generateID";
+import HFTextField from "../../../../components/FormElements/HFTextField";
+import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
+import HFColorPicker from "../../../../components/FormElements/HFColorPicker";
+import constructorFieldService from "../../../../services/constructorFieldService";
+import {
+  Box,
+  Dialog,
+  Tooltip,
+  TextField,
+  InputLabel,
+  FormControl,
+  Autocomplete,
+  FormHelperText,
+  InputAdornment,
+  createFilterOptions,
+} from "@mui/material";
 
 const filter = createFilterOptions();
 
@@ -39,8 +38,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HFAggridMultiselect = (props) => {
-  const {value, setValue, field, width = "100%"} = props;
   const classes = useStyles();
+  const {value, setValue, field, width = "100%"} = props;
   const options = field.attributes?.options ?? [];
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
@@ -57,17 +56,17 @@ const HFAggridMultiselect = (props) => {
       }}>
       <AutoCompleteElement
         value={value}
+        width={width}
+        field={field}
         classes={classes}
         options={options}
-        width={width}
-        required={field?.required}
-        hasColor={hasColor}
         hasIcon={hasIcon}
-        onFormChange={setValue}
-        isMultiSelect={isMultiSelect}
-        disabled={field?.disabled}
-        field={field}
+        hasColor={hasColor}
         className="hf-select"
+        onFormChange={setValue}
+        required={field?.required}
+        disabled={field?.disabled}
+        isMultiSelect={isMultiSelect}
       />
     </Box>
   );
@@ -75,22 +74,20 @@ const HFAggridMultiselect = (props) => {
 
 const AutoCompleteElement = ({
   value,
+  field,
   options,
+  hasIcon,
+  hasColor,
   width = 0,
   label = "",
-  hasColor,
-  // tabIndex,
-  hasIcon,
-  classes = {},
-  placeholder = "",
-  onFormChange = () => {},
-  disabledHelperText = "",
-  isFormEdit = false,
   error = {},
+  classes = {},
   isMultiSelect,
   disabled = false,
-  field,
+  placeholder = "",
   isBlackBg = false,
+  disabledHelperText = "",
+  onFormChange = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
@@ -120,33 +117,20 @@ const AutoCompleteElement = ({
           item?.value === value;
         });
       }
-    else return [localOptions?.find((option) => option.value === value[0])];
+    else return [localOptions?.find((option) => option.value === value)];
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {
     setLocalOptions((prev) => [...prev, newOption]);
     changeHandler(null, [...computedValue, newOption]);
   };
-
+  console.log("isMultiSelectisMultiSelect", isMultiSelect);
   const changeHandler = (_, values) => {
-    if (values[values?.length - 1]?.value === "NEW") {
-      handleOpen(values[values?.length - 1]?.inputValue);
-      return;
-    }
+    console.log("valuesvalues", values);
 
-    if (!values?.length) {
-      onFormChange([]);
-      return;
-    }
     if (isMultiSelect) onFormChange(values?.map((el) => el.value));
-    else onFormChange([values[values?.length - 1]?.value] ?? []);
+    else onFormChange(values[values?.length - 1]?.value ?? []);
   };
-
-  // useEffect(() => {
-  //   if (value) {
-  //     onFormChange(value);
-  //   }
-  // }, []);
 
   return (
     <FormControl
@@ -252,15 +236,12 @@ const AutoCompleteElement = ({
         <FormHelperText error>{error?.message}</FormHelperText>
       )}
 
-      {/* {Boolean(!value?.length && required) && (
-        <FormHelperText error>{"This field is required"}</FormHelperText>
-      )} */}
       <Dialog open={!!dialogState} onClose={handleClose}>
         <AddOptionBlock
-          dialogState={dialogState}
-          addNewOption={addNewOption}
-          handleClose={handleClose}
           field={field}
+          dialogState={dialogState}
+          handleClose={handleClose}
+          addNewOption={addNewOption}
         />
       </Dialog>
     </FormControl>

@@ -312,6 +312,15 @@ div {
   }
 }
 
+.customLinkField {
+  padding-right: 0 !important;
+  color: #007aff;
+
+  div fieldset {
+    border: none;
+  }
+}
+
 .calendar_textfield {
   padding-right: 0 !important;
   padding-left: 0 !important;

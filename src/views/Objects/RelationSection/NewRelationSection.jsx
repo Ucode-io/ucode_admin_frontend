@@ -37,7 +37,7 @@ const NewRelationSection = ({
   setLimit,
   relatedTable,
   control,
-  getValues,
+  getValues = () => {},
   reset,
   setFormValue,
   watch,
@@ -422,6 +422,7 @@ const NewRelationSection = ({
                       selectedIndex={selectedIndex}
                       errors={errors}
                       watch={watch}
+                      getValues={getValues}
                     />
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection

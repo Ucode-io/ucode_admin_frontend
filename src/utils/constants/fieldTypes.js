@@ -26,6 +26,11 @@ export const fieldTypes = [
   "PRIMARY_KEY",
   "QR",
   "POLYGON",
+  "LINK",
+  "BUTTON",
+  "TEXT",
+  "STATUS",
+  "MONEY",
 ];
 
 export const fieldTypesOptions = [
@@ -212,6 +217,31 @@ export const fieldTypesOptions = [
       //   label: "FLOAT_NOLIMIT",
       //   value: "FLOAT_NOLIMIT",
       // },
+      {
+        icon: "person-running.svg",
+        label: "Person",
+        value: "PERSON",
+      },
+      {
+        icon: "text-height.svg",
+        label: "Text",
+        value: "TEXT",
+      },
+      {
+        icon: "brand_xbox.svg",
+        label: "Status",
+        value: "STATUS",
+      },
+      {
+        icon: "link.svg",
+        label: "Link",
+        value: "LINK",
+      },
+      {
+        icon: "mobile-button.svg",
+        label: "Button",
+        value: "BUTTON",
+      },
       {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",

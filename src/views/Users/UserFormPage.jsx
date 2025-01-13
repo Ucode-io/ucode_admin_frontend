@@ -21,10 +21,11 @@ import {
 import HFSelect from "../../components/FormElements/HFSelect";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
-import HFSwitch from "../../components/FormElements/HFSwitch";
 import {useEffect, useState} from "react";
 import {IconButton, InputAdornment} from "@mui/material";
 import menuService from "../../services/menuService";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import UserSessionsLogs from "./UserSessionsLogs";
 
 const ClientUserForm = () => {
   const {userId, userMenuId} = useParams();
@@ -139,174 +140,188 @@ const ClientUserForm = () => {
     if (userId) updateProject({...data, active: data.active ? 1 : 0});
     else createProject({...data, active: data.active ? 1 : 0, invite: invite});
   };
-  console.log("roleIdroleIdroleId", roleId);
+
   if (updateLoading) return <PageFallback />;
 
   return (
     <div>
-      <HeaderSettings
-        title="Projects"
-        backButtonLink={-1}
-        subtitle={userId ? mainForm.watch("name") : "Новый"}></HeaderSettings>
-      <form
-        onSubmit={mainForm.handleSubmit(onSubmit)}
-        className="p-2"
-        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
-        <FormCard title="Детали" maxWidth={500}>
-          <FRow
-            label={"Name"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFTextField
-              disabledHelperText
-              name="name"
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"Email"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFTextField
-              disabledHelperText
-              name="email"
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"Login"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFTextField
-              disabledHelperText
-              name="login"
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"Password"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFTextField
-              disabledHelperText
-              name="password"
-              control={mainForm.control}
-              type={showPassword ? "text" : "password"}
-              fullWidth
-              // required
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    color="primary"
-                    onClick={() => {
-                      setShowPassword((prev) => !prev);
-                    }}
-                    edge="end">
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FRow>
-          <FRow
-            label={"Phone"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFTextField
-              disabledHelperText
-              name="phone"
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"User type"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFSelect
-              isClearable={false}
-              disabled
-              name="client_type_id"
-              options={computedClientTypes}
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"Role"}
-            componentClassName="flex gap-2 align-center"
-            // required
-          >
-            <HFSelect
-              isClearable={false}
-              disabled={mainForm.watch("status") !== "ACTIVE"}
-              name="role_id"
-              options={
-                mainForm.watch("status") === "INACTIVE" ? roleId : computedRoles
-              }
-              control={mainForm.control}
-              fullWidth
-              // required
-            />
-          </FRow>
-          <FRow
-            label={"Status"}
-            style={{marginTop: "10px"}}
-            componentClassName="flex gap-2 align-center">
-            <HFSelect
-              isClearable={false}
-              name="status"
-              options={[
-                {
-                  label: "Active",
-                  value: "ACTIVE",
-                },
-                {
-                  label: "Inactive",
-                  value: "INACTIVE",
-                },
-                {
-                  label: "Blocked",
-                  value: "BLOCKED",
-                },
-              ]}
-              control={mainForm.control}
-              fullWidth
-            />
-          </FRow>
-        </FormCard>
-      </form>
-      <Footer
-        extra={
-          <>
-            <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Close
-            </SecondaryButton>
-            <PermissionWrapperV2 tabelSlug="app" type="update">
-              <PrimaryButton
-                loader={createLoading}
-                onClick={mainForm.handleSubmit(onSubmit)}>
-                <Save /> Save
-              </PrimaryButton>
-            </PermissionWrapperV2>
-          </>
-        }
-      />
+      <Tabs>
+        <HeaderSettings
+          title="Projects"
+          backButtonLink={-1}
+          subtitle={userId ? mainForm.watch("name") : "Новый"}>
+          <TabList>
+            <Tab>User Info</Tab>
+            <Tab>User Sessions</Tab>
+          </TabList>
+        </HeaderSettings>
+        <TabPanel>
+          <form
+            onSubmit={mainForm.handleSubmit(onSubmit)}
+            className="p-2"
+            style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
+            <FormCard title="Details" maxWidth={500}>
+              <FRow
+                label={"Name"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFTextField
+                  disabledHelperText
+                  name="name"
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"Email"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFTextField
+                  disabledHelperText
+                  name="email"
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"Login"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFTextField
+                  disabledHelperText
+                  name="login"
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"Password"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFTextField
+                  disabledHelperText
+                  name="password"
+                  control={mainForm.control}
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
+                  // required
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        color="primary"
+                        onClick={() => {
+                          setShowPassword((prev) => !prev);
+                        }}
+                        edge="end">
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FRow>
+              <FRow
+                label={"Phone"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFTextField
+                  disabledHelperText
+                  name="phone"
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"User type"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFSelect
+                  isClearable={false}
+                  disabled
+                  name="client_type_id"
+                  options={computedClientTypes}
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"Role"}
+                componentClassName="flex gap-2 align-center"
+                // required
+              >
+                <HFSelect
+                  isClearable={false}
+                  disabled={mainForm.watch("status") !== "ACTIVE"}
+                  name="role_id"
+                  options={
+                    mainForm.watch("status") === "INACTIVE"
+                      ? roleId
+                      : computedRoles
+                  }
+                  control={mainForm.control}
+                  fullWidth
+                  // required
+                />
+              </FRow>
+              <FRow
+                label={"Status"}
+                style={{marginTop: "10px"}}
+                componentClassName="flex gap-2 align-center">
+                <HFSelect
+                  isClearable={false}
+                  name="status"
+                  options={[
+                    {
+                      label: "Active",
+                      value: "ACTIVE",
+                    },
+                    {
+                      label: "Inactive",
+                      value: "INACTIVE",
+                    },
+                    {
+                      label: "Blocked",
+                      value: "BLOCKED",
+                    },
+                  ]}
+                  control={mainForm.control}
+                  fullWidth
+                />
+              </FRow>
+            </FormCard>
+          </form>
+          <Footer
+            extra={
+              <>
+                <SecondaryButton onClick={() => navigate(-1)} color="error">
+                  Close
+                </SecondaryButton>
+                <PermissionWrapperV2 tabelSlug="app" type="update">
+                  <PrimaryButton
+                    loader={createLoading}
+                    onClick={mainForm.handleSubmit(onSubmit)}>
+                    <Save /> Save
+                  </PrimaryButton>
+                </PermissionWrapperV2>
+              </>
+            }
+          />
+        </TabPanel>
+        <TabPanel>
+          <UserSessionsLogs />
+        </TabPanel>
+      </Tabs>
     </div>
   );
 };

@@ -37,6 +37,7 @@ import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 import HFButtonField from "../FormElements/HFButtonField";
+import HFTextComponent from "../FormElements/HFTextComponent";
 
 const parser = new Parser();
 
@@ -342,6 +343,9 @@ const FormElementGenerator = ({
 
     case "BUTTON":
       return <HFButtonField field={field} getValues={getValues} />;
+
+    case "TEXT":
+      return <HFTextComponent field={field} />;
 
     case "LINK":
       return (

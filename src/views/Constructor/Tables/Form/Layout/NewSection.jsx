@@ -101,14 +101,14 @@ const NewSection = ({
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
   };
-  console.log("sectionFieldsWatch", sectionFieldsWatch);
+
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
         <div
           className={styles.newsectionCardHeaderLeftSide}
           style={{display: "flex", flexDirection: "column"}}>
-          {languages.map((language) => (
+          {/* {languages.map((language) => (
             <HFTextField
               placeholder={`Section ${language.slug}`}
               required={index === 0}
@@ -119,7 +119,7 @@ const NewSection = ({
               style={{width: 170}}
               id={`section_lan_${i18n?.language}`}
             />
-          ))}
+          ))} */}
           <button onClick={handleClick} className={styles.countBtn}>
             <MoreVertIcon />
           </button>

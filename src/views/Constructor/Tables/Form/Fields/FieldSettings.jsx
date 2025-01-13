@@ -43,6 +43,7 @@ import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import ButtonFieldComponents from "./ButtonFieldComponents";
+import StatusFieldSettings from "./StatusFieldSettings";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -158,8 +159,10 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: field?.attributes?.[`label_${i18n?.language}`],
-      // Object.values(field?.attributes).find((item) => item),
+      label:
+        fieldType === "TEXT"
+          ? field?.label
+          : field?.attributes?.[`label_${i18n?.language}`],
       show_label: true,
     };
     if (id || menuItem?.table_id) {
@@ -375,19 +378,40 @@ const FieldSettings = ({
                       className={styles.input}
                     />
                   </FRow>
-                  <FRow label="Name" classname={styles.custom_label} required>
-                    <Box style={{display: "flex", gap: "6px"}}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label"
-                        fullWidth
-                        placeholder="Name"
-                        defaultValue={tableName}
-                        languages={languages}
-                        id={"field_label"}
-                      />
-                    </Box>
-                  </FRow>
+                  {fieldType !== "TEXT" && (
+                    <FRow label="Name" classname={styles.custom_label} required>
+                      <Box style={{display: "flex", gap: "6px"}}>
+                        <HFTextFieldWithMultiLanguage
+                          control={control}
+                          name="attributes.label"
+                          fullWidth
+                          placeholder="Name"
+                          defaultValue={tableName}
+                          languages={languages}
+                          id={"field_label"}
+                        />
+                      </Box>
+                    </FRow>
+                  )}
+
+                  {fieldType === "TEXT" && (
+                    <FRow
+                      label="Value"
+                      classname={styles.custom_label}
+                      required>
+                      <Box style={{display: "flex", gap: "6px"}}>
+                        <HFTextField
+                          control={control}
+                          name="label"
+                          fullWidth
+                          placeholder="Value"
+                          defaultValue={tableName}
+                          languages={languages}
+                          id={"field_label"}
+                        />
+                      </Box>
+                    </FRow>
+                  )}
                   <FRow label="Key" required classname={styles.custom_label}>
                     <HFTextField
                       className={styles.input}
@@ -408,6 +432,10 @@ const FieldSettings = ({
                     ))}
                   {fieldType === "BUTTON" && (
                     <ButtonFieldComponents control={control} />
+                  )}
+
+                  {fieldType === "STATUS" && (
+                    <StatusFieldSettings control={control} />
                   )}
 
                   {(fieldType === "FILE" ||

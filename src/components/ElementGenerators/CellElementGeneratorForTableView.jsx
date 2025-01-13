@@ -34,24 +34,25 @@ import PolygonFieldTable from "./PolygonFieldTable";
 import ProgrammingLan from "./ProgrammingLan";
 import HFLinkField from "../FormElements/HFLinkField";
 import HFButtonField from "../FormElements/HFButtonField";
+import HFTextComponent from "../FormElements/HFTextComponent";
+import HFStatusField from "../FormElements/HFStatusField";
 
 const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
-  field,
-  fields,
-  isBlackBg = false,
   row,
-  isWrapField,
-  updateObject,
-  control,
-  setFormValue,
-  index,
   data,
-  isTableView = false,
+  field,
+  index,
+  fields,
+  control,
+  isWrapField,
   isNewRow = false,
   newColumn = false,
-  getValues = () => {},
+  isBlackBg = false,
+  isTableView = false,
+  setFormValue = () => {},
+  updateObject = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -181,8 +182,23 @@ const CellElementGeneratorForTableView = ({
         />
       );
 
+    case "TEXT":
+      return <HFTextComponent isTableView={true} field={field} />;
+
     case "BUTTON":
       return <HFButtonField field={field} row={row} isTableView={true} />;
+
+    case "STATUS":
+      return (
+        <HFStatusField
+          field={field}
+          row={row}
+          isTableView={true}
+          control={control}
+          name={computedSlug}
+          updateObject={updateObject}
+        />
+      );
 
     case "PASSWORD":
       return (

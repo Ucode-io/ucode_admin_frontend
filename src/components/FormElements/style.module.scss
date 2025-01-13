@@ -252,3 +252,34 @@
   border: none;
   cursor: pointer;
 }
+
+.selectGroup {
+  font-size: 12px;
+  font-weight: 400;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+.optionField {
+  font-size: 12.8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin: 0 0 6px 0;
+  text-align: center;
+  background: #eee;
+  width: fit-content;
+  margin-left: 15px;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.statusSelect {
+  fieldset {
+    display: none !important;
+  }
+}

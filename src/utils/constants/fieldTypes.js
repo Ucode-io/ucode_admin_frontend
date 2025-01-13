@@ -27,6 +27,10 @@ export const fieldTypes = [
   "QR",
   "POLYGON",
   "LINK",
+  "BUTTON",
+  "TEXT",
+  "STATUS",
+  "MONEY",
 ];
 
 export const fieldTypesOptions = [
@@ -219,9 +223,19 @@ export const fieldTypesOptions = [
         value: "PERSON",
       },
       {
-        icon: "arrow-up-9-1.svg",
-        label: "Increment ID",
-        value: "INCREMENT_ID",
+        icon: "text-height.svg",
+        label: "Text",
+        value: "TEXT",
+      },
+      {
+        icon: "money-bill-1-wave.svg",
+        label: "Money",
+        value: "MONEY",
+      },
+      {
+        icon: "brand_xbox.svg",
+        label: "Status",
+        value: "STATUS",
       },
       {
         icon: "link.svg",
@@ -230,8 +244,13 @@ export const fieldTypesOptions = [
       },
       {
         icon: "mobile-button.svg",
-        label: "button",
+        label: "Button",
         value: "BUTTON",
+      },
+      {
+        icon: "arrow-up-9-1.svg",
+        label: "Increment ID",
+        value: "INCREMENT_ID",
       },
       {
         icon: "code.svg",

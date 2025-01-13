@@ -20,7 +20,6 @@
     font-size: 16px;
     line-height: 24px;
   }
-
 }
 
 .formrow {
@@ -31,7 +30,6 @@
 }
 
 .input {
-
   fieldset {
     border-radius: 6px;
   }
@@ -46,7 +44,7 @@
   color: #2a2e34;
   padding: 4px 8px 4px 0;
   border-radius: 6px;
-  transition: .3s;
+  transition: 0.3s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -61,7 +59,7 @@
   width: 550px;
   min-width: 550px;
   background-color: #fff;
-  border-left: 1px solid #E5E9EB;
+  border-left: 1px solid #e5e9eb;
   display: flex;
 
   .additional {
@@ -74,7 +72,7 @@
     .active {
       justify-content: start;
       color: #fff;
-      background: #007AFF;
+      background: #007aff;
     }
 
     .inactive {
@@ -83,7 +81,7 @@
 
       &:hover {
         color: #656f7d;
-        background: #F5F6FA;
+        background: #f5f6fa;
       }
     }
   }
@@ -98,7 +96,7 @@
     justify-content: space-between;
     height: 48px;
     padding: 0 16px;
-    border-top: 1px solid #E5E9EB;
+    border-top: 1px solid #e5e9eb;
   }
 
   .settingsBlockBody {
@@ -115,10 +113,16 @@
 }
 
 .selectedTab {
-  background-color: #007AFF;
+  background-color: #007aff;
   color: #fff;
 
   svg {
     color: #fff;
   }
+}
+
+.addOptionBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
 }

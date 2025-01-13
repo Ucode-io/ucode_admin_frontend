@@ -70,7 +70,7 @@ export default function OpenFaasFunctionForm() {
   const resourceOptions = useMemo(() => {
     return [
       {value: "ucode_gitlab", label: "Ucode GitLab"},
-      ...listToOptions(resources, "username", "id", " (GitHub)"),
+      ...listToOptions(resources, "name", "id", "(GitHub)"),
     ];
   }, [resources]);
 
@@ -81,8 +81,8 @@ export default function OpenFaasFunctionForm() {
   }, [resources, resourceId]);
 
   const {data: repositories} = useGithubRepositoriesQuery({
-    username: selectedResource?.username,
-    token: selectedResource?.token,
+    username: selectedResource?.settings?.github?.username,
+    token: selectedResource?.settings?.github?.token,
     queryParams: {
       enabled: !!selectedResource?.settings?.github?.username,
       select: (res) => listToOptions(res, "name", "name"),
@@ -90,7 +90,7 @@ export default function OpenFaasFunctionForm() {
   });
 
   const {data: branches} = useGithubBranchesQuery({
-    username: selectedResource?.username,
+    username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
     queryParams: {

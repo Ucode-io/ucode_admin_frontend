@@ -228,6 +228,11 @@ export const fieldTypesOptions = [
         value: "TEXT",
       },
       {
+        icon: "money-bill-1-wave.svg",
+        label: "Money",
+        value: "MONEY",
+      },
+      {
         icon: "brand_xbox.svg",
         label: "Status",
         value: "STATUS",

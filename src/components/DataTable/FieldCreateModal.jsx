@@ -45,7 +45,6 @@ export default function FieldCreateModal({
   setFieldOptionAnchor,
   target,
   reset,
-  menuItem,
   fieldData,
   handleOpenFieldDrawer,
 }) {

@@ -15,6 +15,7 @@ export const loginAction = createAsyncThunk(
           ...res,
           project_id: data.project_id,
           environment_ids: data?.environment_ids,
+          currencies: data?.currencies,
         })
       );
       dispatch(companyActions.setCompanyId(res?.user?.company_id));

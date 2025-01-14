@@ -35,6 +35,8 @@ import ProgrammingLan from "./ProgrammingLan";
 import HFLinkField from "../FormElements/HFLinkField";
 import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
+import HFStatusField from "../FormElements/HFStatusField";
+import HFMoneyField from "../FormElements/HFMoneyField";
 
 const parser = new Parser();
 
@@ -43,6 +45,7 @@ const CellElementGeneratorForTableView = ({
   data,
   field,
   index,
+  watch,
   fields,
   control,
   isWrapField,
@@ -186,6 +189,34 @@ const CellElementGeneratorForTableView = ({
 
     case "BUTTON":
       return <HFButtonField field={field} row={row} isTableView={true} />;
+
+    case "MONEY":
+      return (
+        <HFMoneyField
+          fullWidth
+          row={row}
+          field={field}
+          control={control}
+          isTableView={true}
+          watch={watch}
+          name={computedSlug}
+          disabled={isDisabled}
+          required={field.required}
+          updateObject={updateObject}
+        />
+      );
+
+    case "STATUS":
+      return (
+        <HFStatusField
+          field={field}
+          row={row}
+          isTableView={true}
+          control={control}
+          name={computedSlug}
+          updateObject={updateObject}
+        />
+      );
 
     case "PASSWORD":
       return (

@@ -47,6 +47,16 @@ export const fieldTypesOptions = [
         label: "Multi line",
         value: "MULTI_LINE",
       },
+      {
+        icon: "text-height.svg",
+        label: "Text",
+        value: "TEXT",
+      },
+      {
+        icon: "link.svg",
+        label: "Link",
+        value: "LINK",
+      },
     ],
   },
   {
@@ -87,6 +97,11 @@ export const fieldTypesOptions = [
         label: "Float",
         value: "FLOAT",
       },
+      {
+        icon: "dollar-sign.svg",
+        label: "Money",
+        value: "MONEY",
+      },
     ],
   },
   {
@@ -115,6 +130,11 @@ export const fieldTypesOptions = [
         icon: "list-check.svg",
         label: "Multi select",
         value: "MULTISELECT",
+      },
+      {
+        icon: "list-ol.svg",
+        label: "Status",
+        value: "STATUS",
       },
       // {
       //   icon: "list-check.svg",
@@ -218,27 +238,12 @@ export const fieldTypesOptions = [
       //   value: "FLOAT_NOLIMIT",
       // },
       {
-        icon: "person-running.svg",
+        icon: "circle-user.svg",
         label: "Person",
         value: "PERSON",
       },
       {
-        icon: "text-height.svg",
-        label: "Text",
-        value: "TEXT",
-      },
-      {
-        icon: "brand_xbox.svg",
-        label: "Status",
-        value: "STATUS",
-      },
-      {
-        icon: "link.svg",
-        label: "Link",
-        value: "LINK",
-      },
-      {
-        icon: "mobile-button.svg",
+        icon: "regular_square-caret-down.svg",
         label: "Button",
         value: "BUTTON",
       },

@@ -147,6 +147,7 @@ const ViewsWithGroups = ({
     setValue: setFormValue,
     getValues,
     formState: {errors},
+    watch,
   } = useForm({
     defaultValues: {
       multi: [],
@@ -743,6 +744,7 @@ const ViewsWithGroups = ({
                             searchText={searchText}
                             selectedView={selectedView}
                             currentView={view}
+                            watch={watch}
                           />
                         )}
                       </TabPanel>
@@ -787,6 +789,7 @@ const ViewsWithGroups = ({
                           selectedObjects={selectedObjects}
                           setSelectedObjects={setSelectedObjects}
                           selectedView={selectedView}
+                          watch={watch}
                         />
                       )}
                     </>

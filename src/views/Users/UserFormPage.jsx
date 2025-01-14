@@ -65,6 +65,7 @@ const ClientUserForm = () => {
     queryParams: {
       enabled: Boolean(userId),
       onSuccess: (res) => {
+        console.log("ressssssssss", res);
         mainForm.reset(res);
       },
     },
@@ -102,7 +103,7 @@ const ClientUserForm = () => {
     },
     {
       enabled:
-        !!mainForm.watch("client_type_id") ||
+        !!mainForm.watch("client_type_id") &&
         mainForm.watch("status") !== "BLOCKED",
       select: (res) =>
         res.data.response?.map((row) => ({

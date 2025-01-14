@@ -305,9 +305,18 @@ const LoginFormDesign = ({
     const computedEnv = computedEnvironments?.find(
       (item) => item?.value === selectedEnvID
     );
+    const currencies = companies[0]?.projects?.find(
+      (item) => item?.id === selectedProjectID
+    )?.currencies;
 
     dispatch(authActions.setStatus(computedEnv?.access_type));
-    dispatch(loginAction({...data, environment_ids: computedProject}));
+    dispatch(
+      loginAction({
+        ...data,
+        environment_ids: computedProject,
+        currencies: currencies,
+      })
+    );
   };
 
   const computeCompanyElement = (company) => {

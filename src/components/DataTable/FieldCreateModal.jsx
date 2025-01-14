@@ -32,6 +32,7 @@ import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
+import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -333,6 +334,7 @@ export default function FieldCreateModal({
                 fullWidth
                 required
                 onChange={(e) => {
+                  console.log("eeeeeeeeeeee", e);
                   if (e === "NUMBER") {
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
@@ -500,15 +502,21 @@ export default function FieldCreateModal({
                     </Draggable>
                   ))}
                 </Container>
-                <Button
-                  onClick={() => {
-                    dropdownAppend({
-                      label: "",
-                      value: "",
-                    });
-                  }}>
-                  +Add option
-                </Button>
+                {watch("type") === "MULTISELECT" && (
+                  <Button
+                    onClick={() => {
+                      dropdownAppend({
+                        label: "",
+                        value: "",
+                      });
+                    }}>
+                    +Add option
+                  </Button>
+                )}
+
+                {watch("type") === "STATUS" && (
+                  <StatusFieldSettings control={control} />
+                )}
               </Box>
             )}
           </div>

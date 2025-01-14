@@ -342,6 +342,11 @@ export const numberFieldFormats = [
     value: "FLOAT",
     icon: "minus.svg",
   },
+  {
+    label: "Money",
+    value: "MONEY",
+    icon: "minus.svg",
+  },
 ];
 
 export const barcodeFieldFormats = [
@@ -365,6 +370,16 @@ export const textFieldFormats = [
   {
     label: "Text Area",
     value: "MULTI_LINE",
+    icon: "minus.svg",
+  },
+  {
+    label: "Text Input",
+    value: "TEXT",
+    icon: "minus.svg",
+  },
+  {
+    label: "Link",
+    value: "LINK",
     icon: "minus.svg",
   },
 ];
@@ -421,6 +436,32 @@ export const codeFieldFormats = [
     label: "Programming Language",
     value: "PROGRAMMING_LANGUAGE",
     icon: "computer.svg",
+  },
+];
+
+export const toggleButtonFormats = [
+  {
+    label: "Checkbox",
+    value: "CHECKBOX",
+    icon: "square-check.svg",
+  },
+  {
+    label: "Switch",
+    value: "SWITCH",
+    icon: "toggle-on.svg",
+  },
+];
+
+export const dropDownFormats = [
+  {
+    label: "Multiselect",
+    value: "MULTISELECT",
+    icon: "square-caret-down.svg",
+  },
+  {
+    label: "Status",
+    value: "STATUS",
+    icon: "toggle-on.svg",
   },
 ];
 export const mapFieldFormats = [
@@ -501,15 +542,11 @@ export const newFieldTypes = [
     value: "MULTISELECT",
     icon: "square-caret-down.svg",
   },
+
   {
-    label: "Checkbox",
-    value: "CHECKBOX",
-    icon: "square-check.svg",
-  },
-  {
-    label: "Switch",
+    label: "Toggle Buttons",
     value: "SWITCH",
-    icon: "toggle-on.svg",
+    icon: "square-caret-down.svg",
   },
   {
     label: "Formula",
@@ -522,6 +559,11 @@ export const newFieldTypes = [
     icon: "link-simple.svg",
   },
   {
+    label: "Person",
+    value: "PERSON",
+    icon: "link-simple.svg",
+  },
+  {
     label: "File",
     value: "FILE",
     icon: "file.svg",
@@ -531,19 +573,19 @@ export const newFieldTypes = [
     value: "MAP",
     icon: "map-pin.svg",
   },
-  {
-    label: "Primary key",
-    value: "PRIMARY_KEY",
-    icon: "map-pin.svg",
-  },
-  {
-    label: "Code",
-    value: "CODE",
-    icon: "map-pin.svg",
-  },
+  // {
+  //   label: "Primary key",
+  //   value: "PRIMARY_KEY",
+  //   icon: "map-pin.svg",
+  // },
+  // {
+  //   label: "Code",
+  //   value: "CODE",
+  //   icon: "map-pin.svg",
+  // },
   {
     label: "Phone",
-    value: "PHONE",
+    value: "INTERNATION_PHONE",
     icon: "phone.svg",
   },
   {
@@ -551,26 +593,27 @@ export const newFieldTypes = [
     value: "EMAIL",
     icon: "envelope.svg",
   },
-  {
-    label: "Increment",
-    value: "INCREMENT",
-    icon: "envelope.svg",
-  },
+
   {
     label: "Password",
     value: "PASSWORD",
     icon: "lock.svg",
   },
-  {
-    label: "Color",
-    value: "COLOR",
-    icon: "colon-sign.svg",
-  },
-  {
-    label: "Barcode",
-    value: "BARCODE",
-    icon: "barcode.svg",
-  },
+  // {
+  //   label: "Increment",
+  //   value: "INCREMENT",
+  //   icon: "envelope.svg",
+  // },
+  // {
+  //   label: "Color",
+  //   value: "COLOR",
+  //   icon: "colon-sign.svg",
+  // },
+  // {
+  //   label: "Barcode",
+  //   value: "BARCODE",
+  //   icon: "barcode.svg",
+  // },
 ];
 
 export const fieldFormats = [
@@ -595,16 +638,6 @@ export const fieldFormats = [
     icon: "square-caret-down.svg",
   },
   {
-    label: "Checkbox",
-    value: "CHECKBOX",
-    icon: "square-check.svg",
-  },
-  {
-    label: "Switch",
-    value: "SWITCH",
-    icon: "toggle-on.svg",
-  },
-  {
     label: "Formula",
     value: "FORMULA_FRONTEND",
     icon: "plus-minus.svg",
@@ -626,7 +659,7 @@ export const fieldFormats = [
   },
   {
     label: "Phone",
-    value: "PHONE",
+    value: "INTERNATION_PHONE",
     icon: "phone.svg",
   },
   {
@@ -778,10 +811,11 @@ export const formatIncludes = [
   "CODE",
   "MAP",
   "POLYGON",
-  "CODE",
   "JSON",
   "RANDOM_TEXT",
   "PRIMARY_KEY",
+  "SWITCH",
+  "MULTISELECT",
 ];
 
 export const FormatOptionType = (item) => {
@@ -818,6 +852,11 @@ export const FormatOptionType = (item) => {
       return barcodeFieldFormats;
     case "PRIMARY_KEY":
       return PrimaryKeyFieldFormats;
+    case "SWITCH":
+      return toggleButtonFormats;
+    case "MULTISELECT":
+      return dropDownFormats;
+
     default:
       return textFieldFormats;
   }

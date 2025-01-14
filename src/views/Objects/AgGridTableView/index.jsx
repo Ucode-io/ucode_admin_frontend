@@ -21,7 +21,6 @@ import constructorObjectService from "../../../services/constructorObjectService
 import {
   MenuModule,
   ClipboardModule,
-  RangeSelectionModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
 } from "ag-grid-enterprise";
@@ -38,7 +37,6 @@ const myTheme = themeQuartz.withParams({
 ModuleRegistry.registerModules([
   MenuModule,
   ClipboardModule,
-  RangeSelectionModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   ClientSideRowModelModule,

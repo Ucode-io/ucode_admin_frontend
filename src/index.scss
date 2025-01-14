@@ -778,108 +778,141 @@ u {
   --ag-font-family: "Inter", sans-serif;
 }
 
-.custom_field {
-  border: none;
-}
+.ag-cell {
+  // padding: 5px !important;
+  // display: flex;
+  // align-items: center;
 
-.indexClass {
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .editButton {
-    display: none;
+  .rowIndex {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
     width: 100%;
-    height: 30px !important;
-    height: 100%;
-  }
-
-  &:hover {
-    .indexValue {
-      display: none;
-    }
 
     .editButton {
-      display: block;
-      background: none !important;
+      display: none;
+      width: 100%;
+      height: 30px !important;
+      height: 100%;
+    }
+
+    &:hover {
+      .indexValue {
+        display: none;
+      }
+
+      .editButton {
+        display: block;
+        background: none !important;
+      }
     }
   }
-}
 
-.actionBtn {
-  padding: 10px 10px 10px 10px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  div {
-    width: 32px;
-    height: 32px;
-  }
-
-  .ag-fill-handle {
-    display: none !important;
-  }
-}
-
-.actionBtnNoBorder {
-  padding: 5px 10px 10px 10px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  div {
-    width: 32px;
-    height: 32px;
-  }
-}
-.customFields {
-  text-align: justify !important;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start !important;
-}
-
-.customFieldsRelation {
-  text-align: justify !important;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start !important;
-  padding: 0 !important;
-}
-
-#aggrid_select {
-  width: 100% !important;
-  border: none !important;
-}
-
-.multiselectAggrid {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-
-  div fieldset {
+  .custom_field {
     border: none;
-    height: 41px;
-    overflow: hidden;
   }
-}
 
-.round {
-  border-radius: 8px;
-}
+  .indexClass {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-#multiSelectForm {
-  .css-jdh8wj-MuiAutocomplete-root
-    .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+    .editButton {
+      display: none;
+      width: 100%;
+      height: 30px !important;
+      height: 100%;
+    }
+
+    &:hover {
+      .indexValue {
+        display: none;
+      }
+
+      .editButton {
+        display: block;
+        background: none !important;
+      }
+    }
+  }
+
+  .actionBtn {
+    padding: 10px 10px 10px 10px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    div {
+      width: 32px;
+      height: 32px;
+    }
+
+    .ag-fill-handle {
+      display: none !important;
+    }
+  }
+
+  .actionBtnNoBorder {
+    padding: 5px 10px 10px 10px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    div {
+      width: 32px;
+      height: 32px;
+    }
+  }
+  .customFields {
+    text-align: justify !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start !important;
+  }
+
+  .customFieldsRelation {
+    text-align: justify !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+  }
+
+  #aggrid_select {
+    width: 100% !important;
+    border: none !important;
+  }
+
+  .multiselectAggrid {
+    position: absolute;
+    width: 100%;
     height: 100%;
-  }
-}
 
-.required-field {
-  outline: 1px solid red;
-  outline-offset: -1px;
+    div fieldset {
+      border: none;
+      height: 41px;
+      overflow: hidden;
+    }
+  }
+
+  .round {
+    border-radius: 8px;
+  }
+
+  #multiSelectForm {
+    .css-jdh8wj-MuiAutocomplete-root
+      .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+      height: 100%;
+    }
+  }
+
+  .required-field {
+    outline: 1px solid red;
+    outline-offset: -1px;
+  }
 }

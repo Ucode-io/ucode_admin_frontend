@@ -6,6 +6,7 @@ import GeneratePdfFromTable from "../../../components/DataTable/GeneratePdfFromT
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
+import {Box} from "@mui/material";
 
 function ActionButtons(props) {
   const {colDef, data} = props;
@@ -14,7 +15,7 @@ function ActionButtons(props) {
   return (
     <>
       {data?.new_field ? (
-        <>
+        <Box>
           <RectangleIconButton
             style={{border: "1px solid #7777"}}
             color="error"
@@ -29,9 +30,17 @@ function ActionButtons(props) {
             }}>
             <DoneIcon color="success" />
           </RectangleIconButton>
-        </>
+        </Box>
       ) : (
-        <>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "40px",
+            gap: "8px",
+            padding: "8px 0 0 0",
+          }}>
           <RectangleIconButton
             style={{border: "1px solid #7777"}}
             color="error"
@@ -41,7 +50,7 @@ function ActionButtons(props) {
           <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
             <GeneratePdfFromTable view={colDef?.view} row={data} />
           </PermissionWrapperV2>
-        </>
+        </Box>
       )}
     </>
   );

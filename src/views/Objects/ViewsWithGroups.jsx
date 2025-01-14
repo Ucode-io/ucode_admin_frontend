@@ -48,7 +48,6 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import WebsiteView from "./WebsiteView";
 
 const ViewsWithGroups = ({
   views,

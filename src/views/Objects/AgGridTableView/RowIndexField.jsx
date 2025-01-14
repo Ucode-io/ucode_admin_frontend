@@ -45,7 +45,7 @@ function RowIndexField(props) {
   };
 
   return (
-    <Box sx={{display: "flex"}}>
+    <Box className="rowIndex">
       {/* <Tooltip title="Open the row in detail"> */}
       <Button
         onClick={() => {

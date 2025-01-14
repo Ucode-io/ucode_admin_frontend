@@ -333,6 +333,7 @@ export default function FieldCreateModal({
                 fullWidth
                 required
                 onChange={(e) => {
+                  console.log("eeeeeeeeeeee", e);
                   if (e === "NUMBER") {
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
@@ -500,17 +501,21 @@ export default function FieldCreateModal({
                     </Draggable>
                   ))}
                 </Container>
-                <Button
-                  onClick={() => {
-                    dropdownAppend({
-                      label: "",
-                      value: "",
-                    });
-                  }}>
-                  +Add option
-                </Button>
+                {watch("type") === "MULTISELECT" && (
+                  <Button
+                    onClick={() => {
+                      dropdownAppend({
+                        label: "",
+                        value: "",
+                      });
+                    }}>
+                    +Add option
+                  </Button>
+                )}
 
-                <StatusFieldSettings control={control} />
+                {watch("type") === "STATUS" && (
+                  <StatusFieldSettings control={control} />
+                )}
               </Box>
             )}
           </div>

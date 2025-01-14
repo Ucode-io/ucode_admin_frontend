@@ -342,6 +342,11 @@ export const numberFieldFormats = [
     value: "FLOAT",
     icon: "minus.svg",
   },
+  {
+    label: "Money",
+    value: "MONEY",
+    icon: "minus.svg",
+  },
 ];
 
 export const barcodeFieldFormats = [
@@ -551,6 +556,11 @@ export const newFieldTypes = [
   {
     label: "Relation",
     value: "RELATION",
+    icon: "link-simple.svg",
+  },
+  {
+    label: "Person",
+    value: "PERSON",
     icon: "link-simple.svg",
   },
   {

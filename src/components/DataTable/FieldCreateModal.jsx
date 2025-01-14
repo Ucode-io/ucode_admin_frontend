@@ -32,6 +32,7 @@ import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
+import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 
 export default function FieldCreateModal({
   anchorEl,
@@ -509,6 +510,8 @@ export default function FieldCreateModal({
                   }}>
                   +Add option
                 </Button>
+
+                <StatusFieldSettings control={control} />
               </Box>
             )}
           </div>

@@ -339,7 +339,7 @@ const AutoCompleteElement = ({
       setFormValue(setName.join("."), get(val, field_from));
     });
   };
-  console.log("fieldddddddddd", field, allOptions, value);
+
   const getValueData = async () => {
     const id = value;
     const data = allOptions?.find((item) => item?.guid === id);

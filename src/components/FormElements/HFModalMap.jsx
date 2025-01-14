@@ -56,7 +56,7 @@ function HFModalMap({
           classes: {
             notchedoutline: {},
           },
-          disableUnderline: true, // this removes the default underline
+          disableUnderline: true,
         }}
       />
 

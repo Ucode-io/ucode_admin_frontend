@@ -67,9 +67,7 @@ const HFPolygonField = ({
 
   const draw = (ref) => {
     ref?.editor?.startDrawing();
-    ref?.editor?.events?.add("vertexadd", (event) => {
-      console.log(event);
-    });
+    ref?.editor?.events?.add("vertexadd", (event) => {});
   };
 
   const mapState = {
@@ -99,7 +97,7 @@ const HFPolygonField = ({
             <YMaps
               query={{
                 load: "package.full",
-                apikey: "5e5a73bd-6e0a-40f1-ba8e-f0b98d95e75f",
+                apikey: "d7bd7a10-4ccd-47c6-8c61-eef0036c98cb",
               }}>
               <Map
                 width={width !== 0 ? width : "265px"}

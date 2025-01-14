@@ -1,11 +1,8 @@
-import {BackupTable, ImportExport} from "@mui/icons-material";
 import printJS from "print-js";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
+import {useEffect, useRef, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useDebounce from "../../../hooks/useDebounce";
@@ -18,15 +15,15 @@ import {
 } from "../../../utils/SizeConverters";
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector";
 
+import {useTranslation} from "react-i18next";
+import constructorTableService from "../../../services/constructorTableService";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import DocRelationsSection from "./DocRelationsSection";
 import DocSettingsBlock from "./DocSettingsBlock";
-import {contentStyles} from "./editorContentStyles";
 import RedactorBlock from "./RedactorBlock";
-import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
-import {useTranslation} from "react-i18next";
-import constructorTableService from "../../../services/constructorTableService";
+import {contentStyles} from "./editorContentStyles";
+import styles from "./style.module.scss";
 
 const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   const redactorRef = useRef();
@@ -306,7 +303,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
       });
 
       const computedHTML = `${meta} ${html} `;
-      console.log(computedHTML);
+
       printJS({
         printable: computedHTML,
         type: "raw-html",

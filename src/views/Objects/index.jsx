@@ -90,7 +90,7 @@ const ObjectsPage = () => {
     },
     isLoading,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
+    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
       return constructorTableService.getTableInfo(
         tableSlug,

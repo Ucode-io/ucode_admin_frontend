@@ -60,9 +60,7 @@ const ActivityFeedHeader = ({histories, setDateFilters, dateFilters}) => {
           }}
           menuShouldScrollIntoView
           styles={customStyles}
-          onPaste={(e) => {
-            console.log("eeeeeee -", e.clipboardData.getData("Text"));
-          }}
+          // onPaste={(e) => {}}
           isOptionSelected={(option, value) =>
             value.some((val) => val.guid === value)
           }

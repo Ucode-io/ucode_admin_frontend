@@ -1,6 +1,6 @@
-import { Delete } from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {Delete} from "@mui/icons-material";
+import React, {useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -17,8 +17,8 @@ import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
 import constructorFunctionService from "../../../services/constructorFunctionService";
 import StatusPipeline from "../Microfrontend/StatusPipeline";
-import { useQueryClient } from "react-query";
-import { useFunctionDeleteMutation } from "../../../services/functionService";
+import {useQueryClient} from "react-query";
+import {useFunctionDeleteMutation} from "../../../services/functionService";
 
 export default function OpenFaasFunctionPage() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function OpenFaasFunctionPage() {
     });
   };
 
-  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
+  const {mutate: deleteFunction, isLoading: deleteFunctionLoading} =
     useFunctionDeleteMutation({
       onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
     });
@@ -79,8 +79,7 @@ export default function OpenFaasFunctionPage() {
             border: "none",
           }}
           disablePagination
-          removableHeight={140}
-        >
+          removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
@@ -91,13 +90,11 @@ export default function OpenFaasFunctionPage() {
           <CTableBody
             loader={loader}
             columnsCount={4}
-            dataLength={list?.functions?.length}
-          >
+            dataLength={list?.functions?.length}>
             {list?.functions?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
-              >
+                onClick={() => navigateToEditForm(element.id)}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>
@@ -107,8 +104,7 @@ export default function OpenFaasFunctionPage() {
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
-                    onClick={() => deleteFunction(element.id)}
-                  >
+                    onClick={() => deleteFunction(element.id)}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

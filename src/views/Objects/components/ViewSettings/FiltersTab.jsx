@@ -186,7 +186,6 @@ const FiltersTab = ({
                   (filtered) => filtered?.id === column.id
                 )}
                 onChange={(e, val) => {
-                  console.log("entered", column, onChange);
                   changeHandler(e.target.checked, column);
                   onChange(undefined, column?.path_slug ?? column.slug);
                 }}

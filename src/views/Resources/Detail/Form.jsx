@@ -316,10 +316,10 @@ const Form = ({
                 </Box>
                 <HFTextField
                   control={control}
-                  required
+                  // required
                   name="integration_resource.username"
                   fullWidth
-                  disabled
+                  // disabled
                   inputProps={{
                     placeholder: "Github username",
                   }}

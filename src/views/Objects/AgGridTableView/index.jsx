@@ -14,10 +14,6 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 import getColumnEditorParams from "./valueOptionGenerator";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 import {
   MenuModule,
   ClipboardModule,
@@ -29,10 +25,10 @@ import AggridDefaultComponents, {
   ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
-
-const myTheme = themeQuartz.withParams({
-  columnBorder: true,
-});
+import constructorViewService from "../../../services/constructorViewService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorObjectService from "../../../services/constructorObjectService";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -42,21 +38,27 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
 ]);
 
-function AgGridTableView({
-  view,
-  views,
-  menuItem,
-  fieldsMap,
-  updateField,
-  visibleForm,
-  visibleColumns,
-  checkedColumns,
-  selectedTabIndex,
-  columnsForSearch,
-  setCheckedColumns,
-  computedVisibleFields,
-  visibleRelationColumns,
-}) {
+const myTheme = themeQuartz.withParams({
+  columnBorder: true,
+});
+
+function AgGridTableView(props) {
+  const {
+    view,
+    views,
+    menuItem,
+    fieldsMap,
+    updateField,
+    visibleForm,
+    visibleColumns,
+    checkedColumns,
+    selectedTabIndex,
+    columnsForSearch,
+    setCheckedColumns,
+    computedVisibleFields,
+    visibleRelationColumns,
+  } = props;
+
   const gridApi = useRef(null);
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
@@ -82,9 +84,7 @@ function AgGridTableView({
       ? parseInt(searchText)
       : searchText;
 
-  const limitPage = useMemo(() => {
-    return pageToOffset(offset, limit);
-  }, [limit, offset]);
+  const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -106,7 +106,7 @@ function AgGridTableView({
       constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit: limit,
+          limit,
           search: tableSearch,
           view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
@@ -177,10 +177,10 @@ function AgGridTableView({
       return [
         {
           ...IndexColumn,
-          menuItem: menuItem,
-          view: view,
-          addRow: addRow,
-          appendNewRow: appendNewRow,
+          menuItem,
+          view,
+          addRow,
+          appendNewRow,
           valueGetter: (params) => {
             return (
               (Boolean(limitPage > 0) ? limitPage : 0) +
@@ -191,7 +191,7 @@ function AgGridTableView({
         },
         ...fiedlsarray
           ?.filter((item) => view?.columns?.includes(item?.columnID))
-          .map((el, index) => ({
+          .map((el) => ({
             ...el,
             rowGroup: view?.attributes?.group_by_columns?.includes(el?.columnID)
               ? true
@@ -199,11 +199,11 @@ function AgGridTableView({
           })),
         {
           ...ActionsColumn,
-          view: view,
-          selectedTabIndex: selectedTabIndex,
-          menuItem: menuItem,
-          removeRow: removeRow,
-          addRow: addRow,
+          view,
+          selectedTabIndex,
+          menuItem,
+          removeRow,
+          addRow,
           deleteFunction: deleteHandler,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
@@ -212,7 +212,6 @@ function AgGridTableView({
       ];
     }
   }, [fiedlsarray, view]);
-
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
       views &&
@@ -339,24 +338,23 @@ function AgGridTableView({
 
       <div className={style.gridTable}>
         <div className={!filterVisible ? style.wrapperVisible : style.wrapper}>
-          {
-            <Box className={style.block}>
-              <p>{t("filters")}</p>
-              <FastFilter
-                isVertical
-                view={view}
-                fieldsMap={fieldsMap}
-                isVisibleLoading={true}
-                visibleForm={visibleForm}
-                visibleColumns={visibleColumns}
-                setFilterVisible={setFilterVisible}
-                selectedTabIndex={selectedTabIndex}
-                visibleRelationColumns={visibleRelationColumns}
-                getFilteredFilterFields={getFilteredFilterFields}
-              />
-            </Box>
-          }
+          <Box className={style.block}>
+            <p>{t("filters")}</p>
+            <FastFilter
+              isVertical
+              view={view}
+              fieldsMap={fieldsMap}
+              isVisibleLoading={true}
+              visibleForm={visibleForm}
+              visibleColumns={visibleColumns}
+              setFilterVisible={setFilterVisible}
+              selectedTabIndex={selectedTabIndex}
+              visibleRelationColumns={visibleRelationColumns}
+              getFilteredFilterFields={getFilteredFilterFields}
+            />
+          </Box>
         </div>
+
         <div
           className="ag-theme-quartz"
           style={{
@@ -374,6 +372,7 @@ function AgGridTableView({
                 }}>
                 {tabs?.map((item) => (
                   <Button
+                    key={item.value}
                     onClick={() => {
                       setLoading(true);
                       setGroupTab(item);
@@ -389,6 +388,7 @@ function AgGridTableView({
                 ))}
               </Box>
             )}
+
             <AgGridReact
               ref={gridApi}
               rowBuffer={8}
@@ -407,7 +407,7 @@ function AgGridTableView({
               defaultColDef={defaultColDef}
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
-              groupDisplayType={"singleColumn"}
+              groupDisplayType="singleColumn"
               suppressColumnVirtualisation={false}
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}

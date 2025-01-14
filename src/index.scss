@@ -779,17 +779,17 @@ u {
 }
 
 .ag-cell {
-  // padding: 5px !important;
-  // display: flex;
-  // align-items: center;
+  padding: 0px 5px !important;
 
   .rowIndex {
-    padding: 10px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    width: 100%;
 
     .editButton {
       display: none;
@@ -814,30 +814,30 @@ u {
     border: none;
   }
 
-  .indexClass {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  // .indexClass {
+  //   padding: 10px;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
 
-    .editButton {
-      display: none;
-      width: 100%;
-      height: 30px !important;
-      height: 100%;
-    }
+  //   .editButton {
+  //     display: none;
+  //     width: 100%;
+  //     height: 30px !important;
+  //     height: 100%;
+  //   }
 
-    &:hover {
-      .indexValue {
-        display: none;
-      }
+  //   &:hover {
+  //     .indexValue {
+  //       display: none;
+  //     }
 
-      .editButton {
-        display: block;
-        background: none !important;
-      }
-    }
-  }
+  //     .editButton {
+  //       display: block;
+  //       background: none !important;
+  //     }
+  //   }
+  // }
 
   .actionBtn {
     padding: 10px 10px 10px 10px !important;

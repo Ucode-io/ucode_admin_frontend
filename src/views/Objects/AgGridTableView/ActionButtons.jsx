@@ -15,14 +15,22 @@ function ActionButtons(props) {
   return (
     <>
       {data?.new_field ? (
-        <Box>
+        <Box
+          className="sssss"
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "41px",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+          }}>
           <RectangleIconButton
-            style={{border: "1px solid #7777"}}
-            color="error"
-            onClick={() => colDef.removeRow(data?.guid)}>
+            onClick={() => {
+              colDef.removeRow(data?.guid);
+            }}>
             <CloseIcon color="error" />
           </RectangleIconButton>
-
           <RectangleIconButton
             color="success"
             onClick={() => {

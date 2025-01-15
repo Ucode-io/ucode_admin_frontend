@@ -18,9 +18,19 @@ import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaC
 import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
+import HFTextInputField from "./HFTextInputField";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
+    case "SINGLE_LINE":
+      columnDef.cellRenderer = HFTextInputField;
+      columnDef.cellEditor = "agTextCellEditor";
+      columnDef.cellEditorParams = {
+        maxLength: 255,
+        field: item,
+      };
+      columnDef.valueFormatter = (params) => params.value || "";
+      break;
     case "NUMBER":
       columnDef.valueFormatter = (params) => {
         return params?.value?.toLocaleString();

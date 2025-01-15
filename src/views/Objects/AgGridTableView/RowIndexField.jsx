@@ -7,8 +7,6 @@ import {mergeStringAndState} from "../../../utils/jsonPath";
 
 function RowIndexField(props) {
   const {value, data, colDef} = props;
-
-  console.log("propsprops", props);
   const {tableSlug, appId} = useParams();
 
   const {navigateToForm} = useTabRouter();
@@ -46,7 +44,6 @@ function RowIndexField(props) {
 
   return (
     <Box className="rowIndex">
-      {/* <Tooltip title="Open the row in detail"> */}
       <Button
         onClick={() => {
           navigateToDetailPage(data);
@@ -57,8 +54,6 @@ function RowIndexField(props) {
         }}>
         <OpenInFullIcon />
       </Button>
-      {/* </Tooltip> */}
-
       <Box className="indexValue">{value}</Box>
     </Box>
   );

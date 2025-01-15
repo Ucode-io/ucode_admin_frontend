@@ -3,34 +3,50 @@ import {useQuery} from "react-query";
 import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
+import {Box} from "@mui/material";
 
 const customStyles = {
-  control: (provided, state) => ({
+  control: (provided) => ({
     ...provided,
-    color: "#fff",
-    border: "0px solid #fff",
+    height: "100%",
+    minHeight: "40px",
+    boxSizing: "border-box",
+    width: "100%",
+    border: "none",
     outline: "none",
+  }),
+  container: (provided) => ({
+    ...provided,
+    height: "100%",
+    width: "100%",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999,
   }),
   input: (provided) => ({
     ...provided,
-    width: "100%",
-    border: "none",
+    margin: 0,
+    padding: 0,
+    height: "100%",
+    outline: "none",
   }),
   placeholder: (provided) => ({
     ...provided,
-    display: "flex",
+    fontSize: "14px",
+    color: "#888",
   }),
 };
 
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
-  const {field, api, data, setValue, value} = props;
+  const {field, setValue, data} = props;
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
   const [inputValue, setInputValue] = useState(null);
 
-  const {data: optionsFromLocale, refetch} = useQuery(
+  const {refetch} = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug],
     () => {
       if (!field?.table_slug) return null;
@@ -45,23 +61,18 @@ const LookupCellEditor = (props) => {
     },
     {
       enabled: false,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
-        return {
-          options,
-        };
-      },
-      onSuccess: (data) => {
+      select: (res) => res?.data?.response ?? [],
+      onSuccess: (fetchedOptions) => {
         setOptions((prevOptions) => [
           ...(prevOptions ?? []),
-          ...(data.options ?? []),
+          ...(fetchedOptions ?? []),
         ]);
       },
     }
   );
 
   const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(new Set(options?.map(JSON.stringify))).map(
+    const uniqueObjects = Array.from(new Set(options.map(JSON.stringify))).map(
       JSON.parse
     );
     return uniqueObjects ?? [];
@@ -70,25 +81,34 @@ const LookupCellEditor = (props) => {
   const handleChange = (selectedOption) => {
     setInputValue(selectedOption);
     setValue(selectedOption?.guid);
+    setLocalValue(selectedOption);
+    setValue(selectedOption?.guid || null);
   };
 
   return (
-    <Select
-      placeholder="Select"
-      id="aggrid_select"
-      menuPortalTarget={document.body}
-      styles={customStyles}
-      value={inputValue ?? localValue}
-      options={computedOptions}
-      getOptionLabel={(option) => `${getRelationFieldTabsLabel(field, option)}`}
-      onChange={handleChange}
-      isOptionSelected={(option, value) =>
-        value.some((val) => val.guid === value)
-      }
-      onMenuOpen={(e) => {
-        refetch();
-      }}
-    />
+    <Box
+      sx={{
+        position: "relative",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+      }}>
+      <Select
+        isClearable={true}
+        placeholder="Select"
+        menuPortalTarget={document.body}
+        styles={customStyles}
+        value={inputValue ?? localValue}
+        options={computedOptions}
+        getOptionLabel={(option) =>
+          `${getRelationFieldTabsLabel(field, option)}`
+        }
+        onChange={handleChange}
+        onMenuOpen={() => {
+          refetch();
+        }}
+      />
+    </Box>
   );
 };
 

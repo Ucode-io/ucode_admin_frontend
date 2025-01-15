@@ -1,7 +1,6 @@
-import AddCircleOutlineIcon from "@mui/icons-material/Upload";
 import {useState} from "react";
 import {useRef} from "react";
-import {CircularProgress, InputAdornment, Tooltip} from "@mui/material";
+import {Box, CircularProgress, InputAdornment, Tooltip} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {Lock} from "@mui/icons-material";
 import fileService from "../../../../../services/fileService";
@@ -11,7 +10,6 @@ import DownloadingIcon from "@mui/icons-material/Downloading";
 const VideoUploadCellEditor = ({
   value,
   onChange = () => {},
-  className = "",
   disabled = false,
   tabIndex = 0,
 }) => {
@@ -48,7 +46,17 @@ const VideoUploadCellEditor = ({
   };
 
   return (
-    <div className={styles.Gallery}>
+    <Box
+      className={styles.Gallery}
+      sx={{
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        left: 0,
+        top: 0,
+        alignItems: "center",
+        paddingLeft: "10px",
+      }}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
           <button
@@ -105,7 +113,7 @@ const VideoUploadCellEditor = ({
           />
         </div>
       )}
-    </div>
+    </Box>
   );
 };
 

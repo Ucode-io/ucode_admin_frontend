@@ -1,6 +1,5 @@
 import {Box, Button, Modal} from "@mui/material";
 import React, {useRef, useState} from "react";
-import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "../style.module.scss";
 import UploadIcon from "@mui/icons-material/Upload";
@@ -27,7 +26,6 @@ function MultiImageUploadCellEditor({
   field = {},
   tabIndex = 0,
   onChange = () => {},
-  isTableView = true,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const inputRef = useRef(null);
@@ -78,132 +76,69 @@ function MultiImageUploadCellEditor({
     <>
       {value && value?.length > 0 ? (
         <>
-          {isTableView ? (
-            <Box
-              onClick={handleClick}
-              sx={{
-                width: "100%",
-                height: "36px",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}>
-              <Box
-                sx={{
-                  height: "25px",
-                  width: "27px",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  padding: "0 0 0 0",
-                }}>
-                <img
-                  style={{width: "100%", height: "100%", objectFit: "cover"}}
-                  src={value?.[0]}
-                />
-              </Box>
-              <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
-                {parseImgPhoto(value?.[0])}
-              </Box>
-            </Box>
-          ) : (
+          <Box
+            onClick={handleClick}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}>
             <Box
               sx={{
-                border: "1px dashed #ddd",
-                borderRadius: "5px",
-                width: "100px",
-                height: "120px",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                justifyContent: "center",
-                cursor: "pointer",
-                position: "relative",
+                height: "25px",
+                width: "27px",
+                borderRadius: "4px",
+                overflow: "hidden",
+                padding: "0 0 0 0",
               }}>
               <img
-                style={{width: "100%", height: "100%", border: "none"}}
+                style={{width: "100%", height: "100%", objectFit: "cover"}}
                 src={value?.[0]}
-                type="text"
               />
-
-              <Box
-                onClick={handleClick}
-                sx={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  background: "rgba(0, 0, 0, 0.3)",
-                  right: "0",
-                  top: "0",
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  fontSize: "16px",
-                  color: "#fff",
-                }}>
-                {value?.length > 1 ? `${value?.length}+` : value?.length}
-              </Box>
             </Box>
-          )}
+            <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
+              {parseImgPhoto(value?.[0])}
+            </Box>
+          </Box>
         </>
       ) : (
         <>
-          {isTableView ? (
+          <Box
+            onClick={handleClick}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+              paddingLeft: "10px",
+            }}>
             <Box
-              onClick={handleClick}
               sx={{
-                width: "100%",
-                display: "flex",
-
-                cursor: "pointer",
-              }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  color: "#777",
-                  fontSize: "10px",
-                  gap: "5px",
-                }}>
-                <UploadFileIcon
-                  style={{
-                    width: "25px",
-                    height: "25px",
-                    color: "rgb(116, 116, 116)",
-                  }}
-                />
-              </Box>
-            </Box>
-          ) : (
-            <Box
-              onClick={handleClick}
-              sx={{
-                border: "1px dashed #ddd",
-                borderRadius: "5px",
-                width: "100px",
-                height: "120px",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
-                justifyContent: "center",
-                cursor: "pointer",
+                color: "#777",
+                fontSize: "10px",
+                gap: "5px",
               }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  color: "#777",
-                  fontSize: "10px",
-                  gap: "5px",
-                }}>
-                <AddIcon style={{width: "24px", height: "24px"}} />
-
-                <span>Add Photo</span>
-              </Box>
+              <UploadFileIcon
+                style={{
+                  width: "25px",
+                  height: "25px",
+                  color: "rgb(116, 116, 116)",
+                }}
+              />
             </Box>
-          )}
+          </Box>
         </>
       )}
 

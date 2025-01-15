@@ -325,6 +325,34 @@ div {
   }
 }
 
+.customMoneyField {
+  width: 100%;
+  height: 100%;
+  border: none !important;
+  height: 41px;
+  padding: 0 0 0 5px;
+}
+
+.custom_number_field {
+  position: absolute;
+  padding-right: 0 !important;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border: none;
+  padding-left: 10px;
+
+  input {
+    height: 40px;
+    padding: 0 15px 0 15px;
+  }
+  div fieldset {
+    border: none;
+    border-radius: none !important;
+  }
+}
+
 .custom_textfield_date {
   position: absolute;
   padding-right: 0 !important;
@@ -779,17 +807,17 @@ u {
 }
 
 .ag-cell {
-  // padding: 5px !important;
-  // display: flex;
-  // align-items: center;
+  padding: 0px 5px !important;
 
   .rowIndex {
-    padding: 10px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    width: 100%;
 
     .editButton {
       display: none;
@@ -812,31 +840,6 @@ u {
 
   .custom_field {
     border: none;
-  }
-
-  .indexClass {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .editButton {
-      display: none;
-      width: 100%;
-      height: 30px !important;
-      height: 100%;
-    }
-
-    &:hover {
-      .indexValue {
-        display: none;
-      }
-
-      .editButton {
-        display: block;
-        background: none !important;
-      }
-    }
   }
 
   .actionBtn {
@@ -883,11 +886,6 @@ u {
     padding: 0 !important;
   }
 
-  #aggrid_select {
-    width: 100% !important;
-    border: none !important;
-  }
-
   .multiselectAggrid {
     position: absolute;
     width: 100%;
@@ -914,5 +912,18 @@ u {
   .required-field {
     outline: 1px solid red;
     outline-offset: -1px;
+  }
+
+  .ag-cell-wrapper {
+    .ag-selection-checkbox {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }

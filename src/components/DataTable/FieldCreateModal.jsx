@@ -48,7 +48,6 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
 }) {
-  const queryClient = useQueryClient();
   const format = useWatch({
     control,
     name: "attributes.format",

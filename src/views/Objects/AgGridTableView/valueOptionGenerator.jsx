@@ -18,13 +18,51 @@ import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaC
 import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
+import HFTextInputField from "./HFTextInputField";
+import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
+import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
+import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
-    case "NUMBER":
-      columnDef.valueFormatter = (params) => {
-        return params?.value?.toLocaleString();
+    case "SINGLE_LINE":
+      columnDef.cellRenderer = HFTextInputField;
+      columnDef.cellEditor = "agTextCellEditor";
+      columnDef.cellEditorParams = {
+        maxLength: 255,
+        field: item,
       };
+      columnDef.valueFormatter = (params) => params.value || "";
+      break;
+    case "NUMBER":
+      (columnDef.cellRenderer = HFNumberFieldCell),
+        (columnDef.valueFormatter = (params) => {
+          return params?.value?.toLocaleString();
+        });
+
+      break;
+
+    case "TEXT":
+      (columnDef.cellRenderer = HFTextComponent),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
+
+      break;
+
+    case "LINK":
+      (columnDef.cellRenderer = HFTextComponent),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
+
+      break;
+
+    case "MONEY":
+      (columnDef.cellRenderer = HFMoneyFieldEditor),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
 
       break;
 

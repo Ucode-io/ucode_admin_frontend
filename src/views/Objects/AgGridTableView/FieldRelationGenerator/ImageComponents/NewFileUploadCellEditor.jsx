@@ -64,7 +64,18 @@ export default function NewFileUploadCellEditor({
   const id = open ? "simple-popover" : undefined;
 
   return (
-    <div className={`Gallery ${className}`}>
+    <Box
+      className={`Gallery ${className}`}
+      sx={{
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        top: 0,
+        left: 0,
+        paddingLeft: "10px",
+        display: "flex",
+        alignItems: "center",
+      }}>
       {value && (
         <>
           <Box className="uploadedFile">
@@ -170,42 +181,6 @@ export default function NewFileUploadCellEditor({
       )}
 
       {!value && (
-        // <div
-        //   className="add-block block"
-        //   onClick={() => inputRef.current.click()}
-        //   style={
-        //     disabled
-        //       ? {
-        //           background: "#c0c0c039",
-        //         }
-        //       : {
-        //           background: "inherit",
-        //           color: "inherit",
-        //         }
-        //   }
-        // >
-        //   <div className="add-icon">
-        //     {!loading ? (
-        //       <>
-        //         {disabled ? (
-        //           <Tooltip title="This field is disabled for this role!">
-        //             <InputAdornment position="start">
-        //               <Lock style={{ fontSize: "20px" }} />
-        //             </InputAdornment>
-        //           </Tooltip>
-        //         ) : (
-        //           <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-        //         )}
-        //         {/* <p>Max size: 4 MB</p> */}
-        //       </>
-        //     ) : (
-        //       <CircularProgress />
-        //     )}
-        //   </div>
-
-        //   <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
-        // </div>
-
         <Button
           onClick={() => inputRef.current.click()}
           sx={{
@@ -213,7 +188,6 @@ export default function NewFileUploadCellEditor({
             minWidth: "25px",
             width: "25px",
             height: "25px",
-            paddingLeft: "15px",
           }}>
           <input
             type="file"
@@ -232,6 +206,6 @@ export default function NewFileUploadCellEditor({
           />
         </Button>
       )}
-    </div>
+    </Box>
   );
 }

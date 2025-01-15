@@ -19,6 +19,8 @@ import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePick
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
 import HFTextInputField from "./HFTextInputField";
+import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
+import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -32,9 +34,26 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => params.value || "";
       break;
     case "NUMBER":
-      columnDef.valueFormatter = (params) => {
-        return params?.value?.toLocaleString();
-      };
+      (columnDef.cellRenderer = HFNumberFieldCell),
+        (columnDef.valueFormatter = (params) => {
+          return params?.value?.toLocaleString();
+        });
+
+      break;
+
+    case "TEXT":
+      (columnDef.cellRenderer = HFTextComponent),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
+
+      break;
+
+    case "LINK":
+      (columnDef.cellRenderer = HFTextComponent),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
 
       break;
 

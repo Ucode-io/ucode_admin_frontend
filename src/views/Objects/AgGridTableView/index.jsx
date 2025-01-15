@@ -14,7 +14,11 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import getColumnEditorParams from "./valueOptionGenerator";
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {ClientSideRowModelModule, ModuleRegistry} from "ag-grid-community";
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  RowSelectionModule,
+} from "ag-grid-community";
 import {
   MenuModule,
   ClipboardModule,
@@ -36,6 +40,7 @@ ModuleRegistry.registerModules([
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   ClientSideRowModelModule,
+  RowSelectionModule,
 ]);
 
 const myTheme = themeQuartz.withParams({

@@ -108,6 +108,7 @@ const AddDataColumn = React.memo(
               onRowClick={onRowClick}
               width={width}
               index={index}
+              watch={mainForm?.watch}
             />
           </CTableCell>
         ))}

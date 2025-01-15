@@ -217,6 +217,7 @@ function AgGridTableView(props) {
       ];
     }
   }, [fiedlsarray, view]);
+
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
       views &&
@@ -417,7 +418,10 @@ function AgGridTableView(props) {
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              onCellValueChanged={(e) => updateObject(e.data)}
+              onCellValueChanged={(e) => {
+                console.log("eeeeeeeeeeeee", e);
+                updateObject(e.data);
+              }}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

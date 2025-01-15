@@ -325,6 +325,15 @@ div {
   }
 }
 
+.customLinkField {
+  padding-right: 0 !important;
+  color: #007aff;
+
+  div fieldset {
+    border: none;
+  }
+}
+
 .customMoneyField {
   width: 100%;
   height: 100%;

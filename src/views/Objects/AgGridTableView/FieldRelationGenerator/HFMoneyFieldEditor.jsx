@@ -6,8 +6,14 @@ import {useSelector} from "react-redux";
 import styles from "./style.module.scss";
 
 function HFMoneyFieldEditor(props) {
-  const {value, setValue} = props;
-
+  const {
+    value,
+    setValue,
+    isTransparent = false,
+    disabled = false,
+    isBlackBg = false,
+    error = {},
+  } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [valueArray, setValueArray] = useState([
     value?.[0],
@@ -44,8 +50,7 @@ function HFMoneyFieldEditor(props) {
         onValueChange={(values) => {
           const newValue = values.value;
           setValueArray([newValue, valueArray[1]]);
-          onChange([newValue, value[1]]);
-          inputChangeHandler();
+          setValue([newValue, value[1]]);
         }}
         style={
           isTransparent
@@ -73,7 +78,7 @@ function HFMoneyFieldEditor(props) {
         className={styles.moneyBtn}
         onClick={handleMenuClick}
         style={{cursor: "pointer", paddingLeft: "5px"}}>
-        <div>{value?.[1]}</div>
+        <div>{valueArray?.[1]}</div>
         <ArrowDropDownIcon style={{fontSize: "20px"}} />
       </button>
       <Menu
@@ -88,8 +93,7 @@ function HFMoneyFieldEditor(props) {
           <MenuItem
             onClick={() => {
               handleMenuClose(el?.label);
-              onChange([value?.[0], el?.label]);
-              updateObject();
+              setValue([value?.[0], el?.label]);
             }}>
             {el?.label}
           </MenuItem>

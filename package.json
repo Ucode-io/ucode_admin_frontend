@@ -72,6 +72,7 @@
     "@uiw/react-codemirror": "^4.21.21",
     "@uiw/react-textarea-code-editor": "^2.0.3",
     "ace-builds": "^1.32.8",
+    "add": "^2.0.6",
     "ag-charts-enterprise": "^10.3.3",
     "ag-grid-community": "^33.0.3",
     "ag-grid-enterprise": "^33.0.3",
@@ -159,7 +160,7 @@
     "react-quill": "^2.0.0",
     "react-redux": "^7.2.6",
     "react-resize-detector": "^7.1.2",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "6.3.0",
     "react-select": "^5.7.4",
     "react-select-async-paginate": "^0.7.3",
     "react-simple-code-editor": "^0.11.2",
@@ -183,7 +184,8 @@
     "styled-components": "^6.0.7",
     "tus-js-client": "^3.0.1",
     "use-onclickoutside": "^0.4.1",
-    "wkhtmltopdf": "^0.4.0"
+    "wkhtmltopdf": "^0.4.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@originjs/vite-plugin-federation": "1.1.7",

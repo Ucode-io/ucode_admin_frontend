@@ -395,7 +395,6 @@ function AgGridTableView(props) {
             )}
 
             <AgGridReact
-              sideBar={false}
               ref={gridApi}
               rowBuffer={8}
               theme={myTheme}
@@ -418,7 +417,9 @@ function AgGridTableView(props) {
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              onCellValueChanged={(e) => updateObject(e.data)}
+              onCellValueChanged={(e) => {
+                updateObject(e.data);
+              }}
               onSelectionChanged={(e) =>
                 setSelectedRows(e.api.getSelectedRows())
               }

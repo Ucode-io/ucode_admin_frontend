@@ -327,3 +327,21 @@
     // left: 0;
   }
 }
+
+.moneyBtn {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+}
+
+.linkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}

@@ -192,13 +192,17 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "MULTISELECT":
-      (columnDef.cellRenderer = HFAggridMultiselect),
-        (columnDef.cellEditorParams = {
-          values: item?.attributes?.options.map((option) => option?.label),
-        });
-      columnDef.cellRendererParams = {
+      columnDef.cellRenderer = HFAggridMultiselect;
+      columnDef.cellEditor = HFAggridMultiselect;
+      columnDef.cellEditorParams = {
+        values: item?.attributes?.options.map((option) => option?.label),
         field: item,
       };
+
+      columnDef.valueGetter = (params) => {
+        return params.data[params.colDef.field] || [];
+      };
+
       break;
 
     // FILE & PHOTO FIELDS

@@ -59,8 +59,10 @@ function HFMoneyField({
               autoComplete="off"
               className="customMoneyField"
               value={value?.[0] || 0}
-              onValueChange={(values) => {
-                const newValue = values.value;
+              onChange={(event) => {
+                const newValue = event.target.value;
+
+                console.log("newValuenewValue", newValue, valueArray);
                 setValueArray([newValue, valueArray[1]]);
                 onChange([newValue, value[1]]);
                 inputChangeHandler();

@@ -26,7 +26,7 @@ function HFMoneyField({
   ]);
 
   const open = Boolean(anchorEl);
-  const currencies = useSelector((state) => state?.auth?.currencies).map(
+  const currencies = useSelector((state) => state?.auth?.currencies)?.map(
     (item) => ({label: item?.code})
   );
 
@@ -113,20 +113,6 @@ function HFMoneyField({
                   {el?.label}
                 </MenuItem>
               ))}
-              {/* <MenuItem
-                onClick={() => {
-                  handleMenuClose("EU");
-                  updateObject();
-                }}>
-                EU
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleMenuClose("UI");
-                  updateObject();
-                }}>
-                UI
-              </MenuItem> */}
             </Menu>
           </Box>
         );

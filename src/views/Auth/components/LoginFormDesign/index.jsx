@@ -55,10 +55,10 @@ const LoginFormDesign = ({
     setValue("password", "");
   };
 
-  const getFcmToken = async () => {
-    const token = await firebaseCloudMessaging.init();
-    localStorage.setItem("fcmToken", token);
-  };
+  // const getFcmToken = async () => {
+  //   const token = await firebaseCloudMessaging.init();
+  //   localStorage.setItem("fcmToken", token);
+  // };
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
@@ -358,10 +358,10 @@ const LoginFormDesign = ({
     }
   };
 
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
+  // useEffect(() => {
+  //   getFcmToken();
+  //   reset();
+  // }, [index]);
 
   useEffect(() => {
     if (computedConnections?.length > 0) {

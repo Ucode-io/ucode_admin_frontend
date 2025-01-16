@@ -61,8 +61,6 @@ function HFMoneyField({
               value={value?.[0] || 0}
               onChange={(event) => {
                 const newValue = event.target.value;
-
-                console.log("newValuenewValue", newValue, valueArray);
                 setValueArray([newValue, valueArray[1]]);
                 onChange([newValue, value[1]]);
                 inputChangeHandler();

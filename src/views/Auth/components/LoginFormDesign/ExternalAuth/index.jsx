@@ -1,10 +1,12 @@
 import {Box, Tooltip} from "@mui/material";
 import React from "react";
 import GoogleAuthLogin from "./GoogleAuthLogin";
-import GithubAuthLogin from "./GithubAuthLogin";
 import ChatwootLogin from "./ChatwootLogin";
+import {useNavigate} from "react-router-dom";
 
 function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
+  const navigate = useNavigate();
+
   return (
     <>
       <Box
@@ -45,7 +47,7 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
         }}>
         <p>Don't you have an account?</p>
         <Box
-          onClick={() => setFormType("REGISTER")}
+          onClick={() => navigate("/registration")}
           sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
           Create one
         </Box>

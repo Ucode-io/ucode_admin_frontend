@@ -260,6 +260,11 @@
   border: none;
   cursor: pointer;
   height: 40px;
+  border-left: 1px solid #eee;
+
+  div {
+    width: 25px;
+  }
 }
 
 .selectGroup {

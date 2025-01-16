@@ -71,7 +71,6 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
-          // name={`multi.${index}.${field.slug}`}
         />
       ) : (
         <CellElementGeneratorForTableView
@@ -92,7 +91,6 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
-          // name={`multi.${index}.${field.slug}`}
         />
       )}
     </Box>

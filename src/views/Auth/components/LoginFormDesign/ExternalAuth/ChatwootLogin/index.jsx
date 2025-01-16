@@ -6,39 +6,68 @@ function ChatwootLogin() {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
 
   useEffect(() => {
+    let observer;
+
     const handleOriginalButtonClick = () => {
-      window.$chatwoot.toggle();
+      if (window.$chatwoot) {
+        window.$chatwoot.toggle();
+      }
     };
-    const originalButton = document.querySelector(".woot-elements--left");
 
-    const closeButton = document.createElement("button");
-    closeButton.style.position = "absolute";
-    closeButton.style.top = "20px";
-    closeButton.style.right = "20px";
-    closeButton.style.zIndex = "9999";
-    closeButton.style.background = "none";
-    closeButton.style.border = "none";
-    closeButton.style.cursor = "pointer";
-    originalButton.appendChild(closeButton);
+    const initializeCloseButton = () => {
+      const originalButton = document.querySelector(".woot-elements--left");
 
-    const closeButtonImage = document.createElement("img");
-    closeButtonImage.src = "/img/close.svg";
-    closeButtonImage.alt = "Close Chat";
-    closeButtonImage.style.width = "20px";
-    closeButtonImage.style.height = "20px";
+      if (!originalButton) {
+        console.error("Chatwoot button not found.");
+        return;
+      }
 
-    closeButton.appendChild(closeButtonImage);
+      const closeButton = document.createElement("button");
+      closeButton.style.position = "absolute";
+      closeButton.style.top = "20px";
+      closeButton.style.right = "20px";
+      closeButton.style.zIndex = "9999";
+      closeButton.style.background = "none";
+      closeButton.style.border = "none";
+      closeButton.style.cursor = "pointer";
 
-    if (originalButton) {
+      const closeButtonImage = document.createElement("img");
+      closeButtonImage.src = "/img/close.svg";
+      closeButtonImage.alt = "Close Chat";
+      closeButtonImage.style.width = "20px";
+      closeButtonImage.style.height = "20px";
+
+      closeButton.appendChild(closeButtonImage);
+      originalButton.appendChild(closeButton);
+
       originalButton.addEventListener("click", handleOriginalButtonClick);
       setOriginalButtonFunction(() => handleOriginalButtonClick);
-    }
+    };
+
+    // Observe DOM changes to wait for Chatwoot to initialize
+    observer = new MutationObserver(() => {
+      const originalButton = document.querySelector(".woot-elements--left");
+      if (originalButton) {
+        initializeCloseButton();
+        observer.disconnect(); // Stop observing once the button is found
+      }
+    });
+
+    // Start observing the body for Chatwoot widget initialization
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
     return () => {
+      if (observer) observer.disconnect();
+      const originalButton = document.querySelector(".woot-elements--left");
       if (originalButton) {
         originalButton.removeEventListener("click", handleOriginalButtonClick);
       }
     };
   }, []);
+
   return (
     <>
       <PrimaryButton
@@ -63,7 +92,6 @@ function ChatwootLogin() {
             }}
             href="tel:+998998650109"
             style={{fontSize: "14px", color: "#344054"}}>
-            {" "}
             +998 99-865-01-09
           </a>
           <ChatwootLoginPage />

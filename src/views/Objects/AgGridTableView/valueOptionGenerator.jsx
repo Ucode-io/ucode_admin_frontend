@@ -23,6 +23,7 @@ import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
 import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
 import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
+import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -66,6 +67,14 @@ const getColumnEditorParams = (item, columnDef) => {
     //     });
 
     //   break;
+
+    case "STATUS":
+      (columnDef.cellRenderer = HFStatusFieldEditor),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
+
+      break;
 
     case "MULTI_LINE":
       (columnDef.cellRenderer = MultiLineCellEditor),
@@ -192,13 +201,17 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "MULTISELECT":
-      (columnDef.cellRenderer = HFAggridMultiselect),
-        (columnDef.cellEditorParams = {
-          values: item?.attributes?.options.map((option) => option?.label),
-        });
-      columnDef.cellRendererParams = {
+      columnDef.cellRenderer = HFAggridMultiselect;
+      columnDef.cellEditor = HFAggridMultiselect;
+      columnDef.cellEditorParams = {
+        values: item?.attributes?.options.map((option) => option?.label),
         field: item,
       };
+
+      columnDef.valueGetter = (params) => {
+        return params.data[params.colDef.field] || [];
+      };
+
       break;
 
     // FILE & PHOTO FIELDS

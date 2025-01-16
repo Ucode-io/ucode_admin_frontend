@@ -419,7 +419,6 @@ function AgGridTableView(props) {
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
               onCellValueChanged={(e) => {
-                console.log("eeeeeeeeeeeee", e);
                 updateObject(e.data);
               }}
               onSelectionChanged={(e) =>

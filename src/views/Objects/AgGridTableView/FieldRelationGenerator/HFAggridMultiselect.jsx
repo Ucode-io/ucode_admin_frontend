@@ -39,11 +39,13 @@ const useStyles = makeStyles((theme) => ({
 
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
-  const {value, setValue, field, width = "100%"} = props;
-  const options = field.attributes?.options ?? [];
-  const hasColor = field.attributes?.has_color;
-  const hasIcon = field.attributes?.has_icon;
-  const isMultiSelect = field.attributes?.is_multiselect;
+
+  const {value, setValue, field, width = "100%", colDef} = props;
+  const options = colDef?.cellEditorParams?.field?.attributes?.options;
+  const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
+  const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
+  const isMultiSelect =
+    colDef?.cellEditorParams?.field.attributes?.is_multiselect;
 
   return (
     <Box
@@ -93,14 +95,11 @@ const AutoCompleteElement = ({
   const {appId} = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
-  const handleOpen = (inputValue) => {
-    setDialogState(inputValue);
-  };
 
   const handleClose = () => {
     setDialogState(null);
   };
-  const [localOptions, setLocalOptions] = useState(options ?? []);
+  const [localOptions, setLocalOptions] = useState(options || []);
 
   const computedValue = useMemo(() => {
     if (!value?.length) return [];
@@ -117,19 +116,16 @@ const AutoCompleteElement = ({
           item?.value === value;
         });
       }
-    else return [localOptions?.find((option) => option.value === value)];
+    else return [localOptions?.find((option) => option.value === value?.[0])];
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {
     setLocalOptions((prev) => [...prev, newOption]);
     changeHandler(null, [...computedValue, newOption]);
   };
-  console.log("isMultiSelectisMultiSelect", isMultiSelect);
   const changeHandler = (_, values) => {
-    console.log("valuesvalues", values);
-
     if (isMultiSelect) onFormChange(values?.map((el) => el.value));
-    else onFormChange(values[values?.length - 1]?.value ?? []);
+    else onFormChange([values[values?.length - 1]?.value] || []);
   };
 
   return (

@@ -187,9 +187,9 @@ const LoginFormDesign = ({
   const getCompany = (values) => {
     setGoogleAuth(values);
     const data = {
-      password: values?.password ? values?.password : null,
-      username: values?.username ? values?.password : null,
-      [values?.type]: values?.recipient,
+      password: values?.password ? values?.password : "",
+      username: values?.username ? values?.password : "",
+      [values?.type]: values?.recipient || "",
       ...values,
     };
     setLoading(true);
@@ -197,9 +197,9 @@ const LoginFormDesign = ({
       .getCompanyList(data)
       .then((res) => {
         if (res?.companies) {
-          setIsUserId(res?.user_id);
-          setCompanies(res?.companies);
-          computeCompanyElement(res?.companies);
+          setIsUserId(res?.user_id ?? "");
+          setCompanies(res?.companies ?? {});
+          computeCompanyElement(res?.companies ?? "");
           localStorage.setItem("");
         } else {
           dispatch(showAlert("The company does not exist", "error"));
@@ -208,7 +208,6 @@ const LoginFormDesign = ({
         if (index === 1) register(values);
       })
       .catch((err) => {
-        console.log("errrrrrrrrrr", err);
         setLoading(false);
       });
   };

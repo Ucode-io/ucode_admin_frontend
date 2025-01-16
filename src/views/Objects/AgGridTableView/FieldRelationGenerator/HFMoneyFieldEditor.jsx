@@ -47,7 +47,7 @@ function HFMoneyFieldEditor(props) {
         autoComplete="off"
         className="customMoneyField"
         value={value?.[0] || 0}
-        onValueChange={(values) => {
+        onChange={(values) => {
           const newValue = values.value;
           setValueArray([newValue, valueArray[1]]);
           setValue([newValue, value[1]]);

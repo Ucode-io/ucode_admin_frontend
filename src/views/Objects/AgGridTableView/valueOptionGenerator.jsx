@@ -23,6 +23,7 @@ import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
 import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
 import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
+import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -61,6 +62,14 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "MONEY":
       (columnDef.cellRenderer = HFMoneyFieldEditor),
+        (columnDef.cellRendererParams = {
+          field: item,
+        });
+
+      break;
+
+    case "STATUS":
+      (columnDef.cellRenderer = HFStatusFieldEditor),
         (columnDef.cellRendererParams = {
           field: item,
         });

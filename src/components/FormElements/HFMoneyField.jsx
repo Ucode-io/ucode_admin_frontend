@@ -26,7 +26,7 @@ function HFMoneyField({
   ]);
 
   const open = Boolean(anchorEl);
-  const currencies = useSelector((state) => state?.auth?.currencies).map(
+  const currencies = useSelector((state) => state?.auth?.currencies)?.map(
     (item) => ({label: item?.code})
   );
 
@@ -60,7 +60,7 @@ function HFMoneyField({
               className="customMoneyField"
               value={value?.[0] || 0}
               onChange={(values) => {
-                const newValue = values.value;
+                const newValue = values.target.value;
                 setValueArray([newValue, valueArray[1]]);
                 onChange([newValue, value[1]]);
                 inputChangeHandler();
@@ -113,20 +113,6 @@ function HFMoneyField({
                   {el?.label}
                 </MenuItem>
               ))}
-              {/* <MenuItem
-                onClick={() => {
-                  handleMenuClose("EU");
-                  updateObject();
-                }}>
-                EU
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleMenuClose("UI");
-                  updateObject();
-                }}>
-                UI
-              </MenuItem> */}
             </Menu>
           </Box>
         );

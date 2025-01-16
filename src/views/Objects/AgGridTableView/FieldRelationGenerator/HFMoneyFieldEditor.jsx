@@ -21,7 +21,7 @@ function HFMoneyFieldEditor(props) {
   ]);
 
   const open = Boolean(anchorEl);
-  const currencies = useSelector((state) => state?.auth?.currencies).map(
+  const currencies = useSelector((state) => state?.auth?.currencies)?.map(
     (item) => ({label: item?.code})
   );
 

@@ -40,7 +40,7 @@ const customStyles = {
 
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
-  const {field, setValue, data} = props;
+  const {field, setValue, data, value} = props;
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
@@ -100,6 +100,7 @@ const LookupCellEditor = (props) => {
         styles={customStyles}
         value={inputValue ?? localValue}
         options={computedOptions}
+        getOptionValue={(option) => option?.guid === value}
         getOptionLabel={(option) =>
           `${getRelationFieldTabsLabel(field, option)}`
         }

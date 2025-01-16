@@ -71,6 +71,7 @@ import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
 import UsersList from "../views/Users/UsersList";
 import WebPage from "../views/WebPage";
+import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -179,7 +180,7 @@ const Router = () => {
               <Route index element={<Navigate to="/login " />} />
               <Route path="login" element={<LoginDesign />} />
               <Route path="invite-user" element={<Invite />} />
-              <Route path="registration" element={<Registration />} />
+              <Route path="registration" element={<RegisterFormPageDesign />} />
               <Route path="*" element={<Navigate to="/login" />} />
             </Route>
             <Route path="*" element={<Navigate to="/login" />} />

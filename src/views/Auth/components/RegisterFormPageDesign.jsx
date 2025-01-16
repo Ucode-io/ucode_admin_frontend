@@ -1,16 +1,15 @@
+import {useState} from "react";
 import {useForm} from "react-hook-form";
-import {Box, InputAdornment, Tooltip} from "@mui/material";
-import {useRegisterCompanyMutation} from "../../../services/companyService";
-import classes from "../style.module.scss";
 import {useDispatch} from "react-redux";
+import {useMutation} from "react-query";
+import classes from "../style.module.scss";
+import {useTranslation} from "react-i18next";
+import {Box, InputAdornment, Tooltip} from "@mui/material";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
-import {useTranslation} from "react-i18next";
-
-import {useMutation} from "react-query";
-import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
-import {useState} from "react";
+import {useRegisterCompanyMutation} from "../../../services/companyService";
 import GoogleAuthLogin from "./LoginFormDesign/ExternalAuth/GoogleAuthLogin";
+import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import HFTextFieldPassword from "../../../components/FormElements/HFTextFieldPassword";
 
 const loginRules = {
@@ -21,10 +20,10 @@ const loginRules = {
 };
 
 const RegisterFormPageDesign = ({setFormType = () => {}}) => {
-  const {control, handleSubmit, setValue, watch} = useForm();
   const dispatch = useDispatch();
   const {t} = useTranslation();
   const [loading, setLoading] = useState(false);
+  const {control, handleSubmit, setValue, watch} = useForm();
 
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
@@ -142,7 +141,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
       </form>
 
       <Tooltip title="Google Auth!">
-        <Box sx={{marginBottom: "25px"}}>
+        <Box sx={{marginBottom: "15px"}}>
           <GoogleAuthLogin
             watch={watch}
             setValue={setValue}
@@ -150,6 +149,27 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
           />
         </Box>
       </Tooltip>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          justifyContent: "space-between",
+          margin: "0 0 15px 0",
+        }}>
+        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
+        <Box
+          sx={{
+            width: "20%",
+            textAlign: "center",
+            fontSize: "14px",
+            color: "#475467",
+          }}>
+          Or
+        </Box>
+        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
+      </Box>
 
       <div className={classes.buttonsArea}>
         <PrimaryButton

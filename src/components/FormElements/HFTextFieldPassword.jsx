@@ -77,7 +77,7 @@ const HFTextFieldPassword = ({
           }}
           name={name}
           error={!!error}
-          helperText={error?.message}
+          // helperText={error?.message}
           type="password"
           fullWidth={fullWidth}
           placeholder={placeholder}

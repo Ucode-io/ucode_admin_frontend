@@ -83,7 +83,7 @@ const HFTextFieldLogin = ({
             type={type}
             fullWidth={fullWidth}
             placeholder={placeholder}
-            helperText={error?.message}
+            // helperText={error?.message}
             autoFocus={tabIndex === 1}
             InputProps={{
               endAdornment: error && (

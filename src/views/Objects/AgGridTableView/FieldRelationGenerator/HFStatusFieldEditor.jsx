@@ -2,7 +2,7 @@ import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import React from "react";
 import styles from "./style.module.scss";
 
-function HFStatusFieldEditor({value, setValue} = props) {
+function HFStatusFieldEditor({value, setValue, colDef} = props) {
   return (
     <Box>
       <Select
@@ -25,13 +25,13 @@ function HFStatusFieldEditor({value, setValue} = props) {
         fullWidth
         renderValue={(selected) => {
           const selectedOption =
-            field?.attributes?.todo?.options?.find(
+            colDef?.cellRendererParams?.field?.attributes?.todo?.options?.find(
               (el) => el.label === selected
             ) ||
-            field?.attributes?.progress?.options?.find(
+            colDef?.cellRendererParams?.field?.attributes?.progress?.options?.find(
               (el) => el.label === selected
             ) ||
-            field?.attributes?.complete?.options?.find(
+            colDef?.cellRendererParams?.field?.attributes?.complete?.options?.find(
               (el) => el.label === selected
             );
 
@@ -50,48 +50,54 @@ function HFStatusFieldEditor({value, setValue} = props) {
           );
         }}>
         <ListSubheader className={styles.selectGroup}>To do</ListSubheader>
-        {field?.attributes?.todo?.options?.map((el) => (
-          <MenuItem
-            style={{
-              background: `${el?.color}30`,
-              color: el?.color ? el?.color : "#000",
-            }}
-            className={styles.optionField}
-            key={el?.label}
-            value={el?.label}>
-            {el?.label}
-          </MenuItem>
-        ))}
+        {colDef?.cellRendererParams?.field?.attributes?.todo?.options?.map(
+          (el) => (
+            <MenuItem
+              style={{
+                background: `${el?.color}30`,
+                color: el?.color ? el?.color : "#000",
+              }}
+              className={styles.optionField}
+              key={el?.label}
+              value={el?.label}>
+              {el?.label}
+            </MenuItem>
+          )
+        )}
 
         <ListSubheader className={styles.selectGroup}>
           In Progress
         </ListSubheader>
-        {field?.attributes?.progress?.options?.map((el) => (
-          <MenuItem
-            style={{
-              background: `${el?.color}30`,
-              color: el?.color ? el?.color : "#000",
-            }}
-            className={styles.optionField}
-            key={el?.label}
-            value={el?.label}>
-            {el?.label}
-          </MenuItem>
-        ))}
+        {colDef?.cellRendererParams?.field?.attributes?.progress?.options?.map(
+          (el) => (
+            <MenuItem
+              style={{
+                background: `${el?.color}30`,
+                color: el?.color ? el?.color : "#000",
+              }}
+              className={styles.optionField}
+              key={el?.label}
+              value={el?.label}>
+              {el?.label}
+            </MenuItem>
+          )
+        )}
 
         <ListSubheader className={styles.selectGroup}>Complete</ListSubheader>
-        {field?.attributes?.complete?.options?.map((el) => (
-          <MenuItem
-            style={{
-              background: `${el?.color}30`,
-              color: el?.color ? el?.color : "#000",
-            }}
-            className={styles.optionField}
-            key={el?.label}
-            value={el?.label}>
-            {el?.label}
-          </MenuItem>
-        ))}
+        {colDef?.cellRendererParams?.field?.attributes?.complete?.options?.map(
+          (el) => (
+            <MenuItem
+              style={{
+                background: `${el?.color}30`,
+                color: el?.color ? el?.color : "#000",
+              }}
+              className={styles.optionField}
+              key={el?.label}
+              value={el?.label}>
+              {el?.label}
+            </MenuItem>
+          )
+        )}
       </Select>
     </Box>
   );

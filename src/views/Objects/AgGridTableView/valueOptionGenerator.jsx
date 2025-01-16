@@ -36,37 +36,37 @@ const getColumnEditorParams = (item, columnDef) => {
       };
       columnDef.valueFormatter = (params) => params.value || "";
       break;
-    case "NUMBER":
-      (columnDef.cellRenderer = HFNumberFieldCell),
-        (columnDef.valueFormatter = (params) => {
-          return params?.value?.toLocaleString();
-        });
+    // case "NUMBER":
+    //   (columnDef.cellRenderer = HFNumberFieldCell),
+    //     (columnDef.valueFormatter = (params) => {
+    //       return params?.value?.toLocaleString();
+    //     });
 
-      break;
+    //   break;
 
-    case "TEXT":
-      (columnDef.cellRenderer = HFTextComponent),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
+    // case "TEXT":
+    //   (columnDef.cellRenderer = HFTextComponent),
+    //     (columnDef.cellRendererParams = {
+    //       field: item,
+    //     });
 
-      break;
+    //   break;
 
-    case "LINK":
-      (columnDef.cellRenderer = HFLinkFieldEditor),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
+    // case "LINK":
+    //   (columnDef.cellRenderer = HFLinkFieldEditor),
+    //     (columnDef.cellRendererParams = {
+    //       field: item,
+    //     });
 
-      break;
+    //   break;
 
-    case "MONEY":
-      (columnDef.cellRenderer = HFMoneyFieldEditor),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
+    // case "MONEY":
+    //   (columnDef.cellRenderer = HFMoneyFieldEditor),
+    //     (columnDef.cellRendererParams = {
+    //       field: item,
+    //     });
 
-      break;
+    //   break;
 
     case "STATUS":
       (columnDef.cellRenderer = HFStatusFieldEditor),

@@ -197,9 +197,9 @@ const LoginFormDesign = ({
       .getCompanyList(data)
       .then((res) => {
         if (res?.companies) {
-          setIsUserId(res?.user_id);
-          setCompanies(res?.companies);
-          computeCompanyElement(res?.companies);
+          setIsUserId(res?.user_id ?? "");
+          setCompanies(res?.companies ?? {});
+          computeCompanyElement(res?.companies ?? "");
           localStorage.setItem("");
         } else {
           dispatch(showAlert("The company does not exist", "error"));

@@ -11,6 +11,7 @@ import {useRegisterCompanyMutation} from "../../../services/companyService";
 import GoogleAuthLogin from "./LoginFormDesign/ExternalAuth/GoogleAuthLogin";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import HFTextFieldPassword from "../../../components/FormElements/HFTextFieldPassword";
+import {useNavigate} from "react-router-dom";
 
 const loginRules = {
   minLength: {
@@ -20,8 +21,9 @@ const loginRules = {
 };
 
 const RegisterFormPageDesign = ({setFormType = () => {}}) => {
-  const dispatch = useDispatch();
   const {t} = useTranslation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const {control, handleSubmit, setValue, watch} = useForm();
 
@@ -30,9 +32,8 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   const {mutateAsync: registerCompany, isLoading} = useRegisterCompanyMutation({
     onSuccess: () => {
       dispatch(showAlert("Registration was successful", "success"));
-      // navigate(-1);
       setLoading(false);
-      setFormType("LOGIN");
+      navigate("/login");
     },
     onError: (err) => {
       setLoading(false);
@@ -54,147 +55,132 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   };
 
   return (
-    <div className={classes.form}>
-      <Box sx={{width: "100%", textAlign: "center"}}>
-        <h1 className={classes.titleDesign}>Registration</h1>
-        <p className={classes.subtitleDesign}>
-          Fill out all the information to proceed
-        </p>
-      </Box>
+    <div className={classes.outlet}>
+      <div className={classes.form}>
+        <Box sx={{width: "100%", textAlign: "center"}}>
+          <h1 className={classes.titleDesign}>Registration</h1>
+          <p className={classes.subtitleDesign}>
+            Fill out all the information to proceed
+          </p>
+        </Box>
 
-      <form style={{marginTop: "25px"}} onSubmit={handleSubmit(onSubmit)}>
-        <Box className="" h="calc(100vh - 300px)" overflow="auto">
-          <div className={classes.formRow}>
-            <p className={classes.label}>{"Company name*"}</p>
-            <HFTextFieldLogin
-              name="name"
-              control={control}
-              fullWidth
-              placeholder="Enter company name"
-              required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <img src="/img/company.svg" height={"23px"} alt="" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-          {!watch("googleToken") && (
+        <form style={{marginTop: "25px"}} onSubmit={handleSubmit(onSubmit)}>
+          <Box className="" h="calc(100vh - 300px)" overflow="auto">
             <div className={classes.formRow}>
-              <p className={classes.label}>{"Email*"}</p>
+              <p className={classes.label}>{"Company name*"}</p>
               <HFTextFieldLogin
-                name="user_info.email"
+                name="name"
                 control={control}
-                required
                 fullWidth
-                placeholder="Enter email address"
+                placeholder="Enter company name"
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <img src="/img/mail.svg" height={"23px"} alt="" />
+                      <img src="/img/company.svg" height={"23px"} alt="" />
                     </InputAdornment>
                   ),
                 }}
               />
             </div>
-          )}
+            {!watch("googleToken") && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{"Email*"}</p>
+                <HFTextFieldLogin
+                  name="user_info.email"
+                  control={control}
+                  required
+                  fullWidth
+                  placeholder="Enter email address"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <img src="/img/mail.svg" height={"23px"} alt="" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
+            )}
 
-          <div className={classes.formRow}>
-            <p className={classes.label}>{"Login*"}</p>
-            <HFTextFieldLogin
-              required
-              name="user_info.login"
-              control={control}
-              fullWidth
-              placeholder="Create login"
-              rules={loginRules}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <img src="/img/user-circle.svg" height={"23px"} alt="" />
-                  </InputAdornment>
-                ),
-              }}
+            <div className={classes.formRow}>
+              <p className={classes.label}>{"Login*"}</p>
+              <HFTextFieldLogin
+                required
+                name="user_info.login"
+                control={control}
+                fullWidth
+                placeholder="Create login"
+                rules={loginRules}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <img src="/img/user-circle.svg" height={"23px"} alt="" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+            <div className={classes.formRow}>
+              <p className={classes.label}>{"Password*"}</p>
+              <HFTextFieldPassword
+                required
+                name="user_info.password"
+                control={control}
+                fullWidth
+                type={"password"}
+                placeholder="Create password"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <img
+                        src="/img/passcode-lock.svg"
+                        height={"23px"}
+                        alt=""
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          </Box>
+        </form>
+
+        <Tooltip title="Google Auth!">
+          <Box sx={{marginBottom: "25px"}}>
+            <GoogleAuthLogin
+              watch={watch}
+              setValue={setValue}
+              text="Register with Google"
             />
-          </div>
-          <div className={classes.formRow}>
-            <p className={classes.label}>{"Password*"}</p>
-            <HFTextFieldPassword
-              required
-              name="user_info.password"
-              control={control}
-              fullWidth
-              type={"password"}
-              placeholder="Create password"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <img src="/img/passcode-lock.svg" height={"23px"} alt="" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-        </Box>
-      </form>
+          </Box>
+        </Tooltip>
 
-      <Tooltip title="Google Auth!">
-        <Box sx={{marginBottom: "15px"}}>
-          <GoogleAuthLogin
-            watch={watch}
-            setValue={setValue}
-            text="Register with Google"
-          />
-        </Box>
-      </Tooltip>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          justifyContent: "space-between",
-          margin: "0 0 15px 0",
-        }}>
-        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
+        <div className={classes.buttonsArea}>
+          <PrimaryButton
+            onClick={handleSubmit(onSubmit)}
+            size="large"
+            loader={loading}
+            style={{borderRadius: "8px", fontSize: "16px", margin: "0 0"}}>
+            {t("Registration")}
+          </PrimaryButton>
+        </div>
         <Box
           sx={{
-            width: "20%",
-            textAlign: "center",
-            fontSize: "14px",
-            color: "#475467",
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            marginTop: "16px",
+            justifyContent: "center",
           }}>
-          Or
+          <p>Already have an account?</p>
+          <Box
+            onClick={() => navigate("/login")}
+            sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
+            Sign In
+          </Box>
         </Box>
-        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
-      </Box>
-
-      <div className={classes.buttonsArea}>
-        <PrimaryButton
-          onClick={handleSubmit(onSubmit)}
-          size="large"
-          loader={loading}
-          style={{borderRadius: "8px", fontSize: "16px", margin: "0 0"}}>
-          {t("Registration")}
-        </PrimaryButton>
       </div>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-          marginTop: "16px",
-          justifyContent: "center",
-        }}>
-        <p>Already have an account?</p>
-        <Box
-          onClick={() => setFormType("LOGIN")}
-          sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-          Sign In
-        </Box>
-      </Box>
     </div>
   );
 };

@@ -44,7 +44,7 @@ const FrontendFormulaCellEditor = (props) => {
     } catch (err) {
       console.error("Error evaluating formula:", err);
     }
-  }, [formula, data, node, field.slug]);
+  }, [data, node, field]);
 
   useEffect(() => {
     evaluateFormula();

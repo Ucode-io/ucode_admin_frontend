@@ -55,10 +55,10 @@ const LoginFormDesign = ({
     setValue("password", "");
   };
 
-  const getFcmToken = async () => {
-    const token = await firebaseCloudMessaging.init();
-    localStorage.setItem("fcmToken", token);
-  };
+  // const getFcmToken = async () => {
+  //   const token = await firebaseCloudMessaging.init();
+  //   localStorage.setItem("fcmToken", token);
+  // };
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
@@ -187,9 +187,9 @@ const LoginFormDesign = ({
   const getCompany = (values) => {
     setGoogleAuth(values);
     const data = {
-      password: values?.password ? values?.password : null,
-      username: values?.username ? values?.password : null,
-      [values?.type]: values?.recipient,
+      password: values?.password ? values?.password : "",
+      username: values?.username ? values?.password : "",
+      [values?.type]: values?.recipient || "",
       ...values,
     };
     setLoading(true);
@@ -359,10 +359,10 @@ const LoginFormDesign = ({
     }
   };
 
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
+  // useEffect(() => {
+  //   getFcmToken();
+  //   reset();
+  // }, [index]);
 
   useEffect(() => {
     if (computedConnections?.length > 0) {

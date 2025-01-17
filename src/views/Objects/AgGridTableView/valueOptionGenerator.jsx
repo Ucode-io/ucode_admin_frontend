@@ -209,7 +209,7 @@ const getColumnEditorParams = (item, columnDef) => {
       };
 
       columnDef.valueGetter = (params) => {
-        return params.data[params.colDef.field] || [];
+        return params?.data?.[params.colDef.field] || [];
       };
 
       break;

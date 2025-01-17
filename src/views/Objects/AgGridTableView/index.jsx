@@ -25,6 +25,7 @@ import {
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   RowGroupingModule,
+  // TreeDataModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
@@ -43,6 +44,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
+  // TreeDataModule,
 ]);
 
 const myTheme = themeQuartz.withParams({

@@ -1,10 +1,16 @@
+import HFTextInputField from "./HFTextInputField";
 import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
+import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
 import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
+import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
+import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
 import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
 import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
 import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
+import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
 import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
@@ -18,12 +24,6 @@ import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaC
 import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
-import HFTextInputField from "./HFTextInputField";
-import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
-import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
-import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
-import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
-import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -209,7 +209,7 @@ const getColumnEditorParams = (item, columnDef) => {
       };
 
       columnDef.valueGetter = (params) => {
-        return params.data[params.colDef.field] || [];
+        return params?.data?.[params.colDef.field] || [];
       };
 
       break;

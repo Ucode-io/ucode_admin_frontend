@@ -15,7 +15,21 @@ function AggridDefaultComponents() {
     []
   );
 
-  const autoGroupColumnDef = useMemo(() => ({minWidth: 230}), []);
+  const autoGroupColumnDef = useMemo(
+    () => ({
+      minWidth: 230,
+      cellRendererParams: {
+        innerRenderer: (params) => {
+          return (
+            <div style={{display: "flex", alignItems: "center"}}>
+              {params.value}
+            </div>
+          );
+        },
+      },
+    }),
+    []
+  );
   const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
   const cellSelection = useMemo(
     () => ({

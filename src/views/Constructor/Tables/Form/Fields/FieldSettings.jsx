@@ -426,10 +426,9 @@ const FieldSettings = ({
                     />
                   </FRow>
 
-                  {fieldType !== "LINK" ||
-                    (fieldType !== "BUTTON" && (
-                      <DefaultValueBlock control={control} />
-                    ))}
+                  {fieldType !== "LINK" && fieldType !== "BUTTON" && (
+                    <DefaultValueBlock control={control} />
+                  )}
                   {fieldType === "BUTTON" && (
                     <ButtonFieldComponents control={control} />
                   )}

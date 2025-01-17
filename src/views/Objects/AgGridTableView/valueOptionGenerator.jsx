@@ -29,7 +29,6 @@ const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
     case "SINGLE_LINE":
       columnDef.cellRenderer = HFTextInputField;
-      columnDef.cellEditor = "agTextCellEditor";
       columnDef.cellEditorParams = {
         maxLength: 255,
         field: item,
@@ -209,7 +208,7 @@ const getColumnEditorParams = (item, columnDef) => {
       };
 
       columnDef.valueGetter = (params) => {
-        return params.data[params.colDef.field] || [];
+        return params?.data?.[params.colDef.field] || [];
       };
 
       break;
@@ -265,7 +264,13 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     default:
-      return {};
+      columnDef.cellRenderer = HFTextInputField;
+      columnDef.cellEditorParams = {
+        maxLength: 255,
+        field: item,
+      };
+      columnDef.valueFormatter = (params) => params.value || "";
+      break;
   }
 };
 export default getColumnEditorParams;

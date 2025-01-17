@@ -1,6 +1,6 @@
-import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import React from "react";
 import styles from "./style.module.scss";
+import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 
 function HFStatusFieldEditor({value, setValue, colDef} = props) {
   return (
@@ -20,7 +20,6 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
         value={value || ""}
         onChange={(e) => {
           setValue(e.target.value);
-          updateObject();
         }}
         fullWidth
         renderValue={(selected) => {
@@ -53,12 +52,12 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
         {colDef?.cellRendererParams?.field?.attributes?.todo?.options?.map(
           (el) => (
             <MenuItem
+              key={el?.id}
               style={{
                 background: `${el?.color}30`,
                 color: el?.color ? el?.color : "#000",
               }}
               className={styles.optionField}
-              key={el?.label}
               value={el?.label}>
               {el?.label}
             </MenuItem>
@@ -71,12 +70,12 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
         {colDef?.cellRendererParams?.field?.attributes?.progress?.options?.map(
           (el) => (
             <MenuItem
+              key={el?.id}
               style={{
                 background: `${el?.color}30`,
                 color: el?.color ? el?.color : "#000",
               }}
               className={styles.optionField}
-              key={el?.label}
               value={el?.label}>
               {el?.label}
             </MenuItem>
@@ -87,12 +86,12 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
         {colDef?.cellRendererParams?.field?.attributes?.complete?.options?.map(
           (el) => (
             <MenuItem
+              key={el?.id}
               style={{
                 background: `${el?.color}30`,
                 color: el?.color ? el?.color : "#000",
               }}
               className={styles.optionField}
-              key={el?.label}
               value={el?.label}>
               {el?.label}
             </MenuItem>

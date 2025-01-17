@@ -105,7 +105,7 @@ const ConstructorTablesFormPage = () => {
 
   const getData = async () => {
     setLoader(true);
-    console.log("tableSlugtableSlug", tableSlug);
+
     try {
       const [tableData, {custom_events: actions = []}] = await Promise.all([
         await constructorViewRelationService.getList({table_slug: tableSlug}),
@@ -243,8 +243,9 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
+        console.log("resssssssssssssssss", res);
         createType(res);
-        navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
+        // navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
         // if (location?.state?.create_table) {
         //   getData();
         //   navigate(-1);

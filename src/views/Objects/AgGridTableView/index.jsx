@@ -13,7 +13,7 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import getColumnEditorParams from "./valueOptionGenerator";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {
   ClientSideRowModelModule,
   ModuleRegistry,
@@ -24,6 +24,8 @@ import {
   ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
+  RowGroupingModule,
+  // TreeDataModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
@@ -41,6 +43,8 @@ ModuleRegistry.registerModules([
   ServerSideRowModelModule,
   ClientSideRowModelModule,
   RowSelectionModule,
+  RowGroupingModule,
+  // TreeDataModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -154,11 +158,11 @@ function AgGridTableView(props) {
             flex: 1,
             minWidth: 250,
             editable: true,
+            enableRowGroup: true,
             field: item?.slug,
-            cellClassRules: {
-              "required-field": (params) =>
-                Boolean(item?.required && !params?.value),
-            },
+            rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
+              ? true
+              : false,
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
             gridApi: gridApi,
@@ -198,9 +202,6 @@ function AgGridTableView(props) {
           ?.filter((item) => view?.columns?.includes(item?.columnID))
           .map((el) => ({
             ...el,
-            rowGroup: view?.attributes?.group_by_columns?.includes(el?.columnID)
-              ? true
-              : false,
           })),
         {
           ...ActionsColumn,
@@ -311,6 +312,8 @@ function AgGridTableView(props) {
     });
   };
 
+  const getDataPath = useCallback((data) => data.path, []);
+
   useEffect(() => {
     pinFieldsRef.current = view?.attributes?.pinnedFields;
   }, [view?.attributes?.pinnedFields]);
@@ -398,6 +401,7 @@ function AgGridTableView(props) {
             <AgGridReact
               ref={gridApi}
               rowBuffer={8}
+              treeData={true}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
@@ -405,6 +409,7 @@ function AgGridTableView(props) {
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
+              getDataPath={getDataPath}
               rowModelType="clientSide"
               paginationPageSize={limit}
               undoRedoCellEditing={true}
@@ -413,7 +418,7 @@ function AgGridTableView(props) {
               defaultColDef={defaultColDef}
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
-              groupDisplayType="singleColumn"
+              groupDisplayType="single"
               suppressColumnVirtualisation={false}
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}

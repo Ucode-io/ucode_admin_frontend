@@ -35,7 +35,7 @@ function HFMoneyFieldEditor(props) {
       setValueArray((prev) => [prev[0], currency]);
     }
   };
-
+  console.log("setValuesetValue", setValue);
   return (
     <Box sx={{display: "flex", alignItems: "center"}}>
       <NumericFormat
@@ -47,8 +47,9 @@ function HFMoneyFieldEditor(props) {
         autoComplete="off"
         className="customMoneyField"
         value={value?.[0] || 0}
-        onChange={(values) => {
-          const newValue = values.value;
+        onChange={(event) => {
+          const newValue = event.target.value;
+          console.log("newValue", newValue);
           setValueArray([newValue, valueArray[1]]);
           setValue([newValue, value[1]]);
         }}
@@ -92,8 +93,8 @@ function HFMoneyFieldEditor(props) {
         {currencies?.map((el) => (
           <MenuItem
             onClick={() => {
+              setValue([value?.[0] ?? "", el?.label]);
               handleMenuClose(el?.label);
-              setValue([value?.[0], el?.label]);
             }}>
             {el?.label}
           </MenuItem>

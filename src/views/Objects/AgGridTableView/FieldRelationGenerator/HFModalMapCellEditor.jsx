@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Box, Button, Dialog, TextField} from "@mui/material";
 import styles from "./style.module.scss";
+import {Box, Button, Dialog, TextField} from "@mui/material";
 import {generateLink} from "../../../../utils/generateYandexLink";
 import HFMapFieldCellEditor from "./MapCellEditorComponents/HFMapFieldCellEditor";
 
@@ -50,12 +50,12 @@ function HFModalMapCellEditor(props) {
       <Dialog open={open} onClose={handleClose}>
         <div className={styles.mapField}>
           <HFMapFieldCellEditor
-            onChange={setValue}
             value={value}
-            isNewTableView={false}
             field={field}
             width={"500px"}
             height={"400px"}
+            onChange={setValue}
+            isNewTableView={false}
             defaultValue={"defaultValue"}
           />
 

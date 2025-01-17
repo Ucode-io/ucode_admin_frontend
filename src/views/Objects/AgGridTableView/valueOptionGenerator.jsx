@@ -65,6 +65,10 @@ const getColumnEditorParams = (item, columnDef) => {
           field: item,
         });
 
+      columnDef.valueGetter = (params) => {
+        return params?.data?.[params.colDef.field] || [];
+      };
+
       break;
 
     case "STATUS":

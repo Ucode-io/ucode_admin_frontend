@@ -1,7 +1,14 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LinkIcon from "@mui/icons-material/Link";
 import WebIcon from "@mui/icons-material/Web";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  Switch,
+  Typography,
+} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
@@ -219,156 +226,163 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
             overflowY: "auto",
             padding: "10px 14px",
           }}>
-          <div>
-            <Container
-              onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}>
-              {visibleFields
-                ?.filter((el) => el?.id)
-                ?.map((column, index) => (
-                  <Draggable key={column?.id}>
-                    <div
-                      key={column?.id}
-                      style={{
-                        display: "flex",
-                        backgroundColor: "#fff",
-                      }}>
+          {Boolean(visibleFields?.length || unVisibleFields?.length) ? (
+            <div>
+              <Container
+                onDrop={onDrop}
+                dropPlaceholder={{className: "drag-row-drop-preview"}}>
+                {visibleFields
+                  ?.filter((el) => el?.id)
+                  ?.map((column, index) => (
+                    <Draggable key={column?.id}>
                       <div
+                        key={column?.id}
                         style={{
-                          flex: 1,
                           display: "flex",
-                          alignItems: "center",
-                          border: 0,
-                          paddingLeft: 0,
-                          paddingRight: 0,
-                          padding: "8px 0px",
-                          margin: "-1px -1px 0 0",
+                          backgroundColor: "#fff",
                         }}>
                         <div
                           style={{
-                            width: 20,
-                            height: 20,
-                            marginRight: 5,
+                            flex: 1,
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center",
+                            border: 0,
+                            paddingLeft: 0,
+                            paddingRight: 0,
+                            padding: "8px 0px",
+                            margin: "-1px -1px 0 0",
                           }}>
-                          {columnIcons(column?.type) ?? <LinkIcon />}
+                          <div
+                            style={{
+                              width: 20,
+                              height: 20,
+                              marginRight: 5,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            {columnIcons(column?.type) ?? <LinkIcon />}
+                          </div>
+                          {column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label}
                         </div>
-                        {column?.attributes?.[`label_${i18n.language}`] ||
-                          column?.attributes?.[`label_${i18n.language}`] ||
-                          column?.label}
+                        <div
+                          style={{
+                            width: 70,
+                            border: 0,
+                            paddingLeft: 0,
+                            paddingRight: 0,
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                            padding: "8px 0px",
+                            margin: "-1px -1px 0 0",
+                          }}>
+                          {column?.type === "LOOKUP" ||
+                          column?.type === "LOOKUPS" ? (
+                            <Switch
+                              size="small"
+                              checked={currentView?.attributes?.group_by_columns?.includes(
+                                column?.relation_id
+                              )}
+                              onChange={(e) => {
+                                onSwitchChange(e.target.checked, column);
+                              }}
+                            />
+                          ) : (
+                            <Switch
+                              size="small"
+                              checked={currentView?.attributes?.group_by_columns?.includes(
+                                column?.id
+                              )}
+                              onChange={(e) => {
+                                onSwitchChange(e.target.checked, column);
+                              }}
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div
-                        style={{
-                          width: 70,
-                          border: 0,
-                          paddingLeft: 0,
-                          paddingRight: 0,
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          alignItems: "center",
-                          padding: "8px 0px",
-                          margin: "-1px -1px 0 0",
-                        }}>
-                        {column?.type === "LOOKUP" ||
-                        column?.type === "LOOKUPS" ? (
-                          <Switch
-                            size="small"
-                            checked={currentView?.attributes?.group_by_columns?.includes(
-                              column?.relation_id
-                            )}
-                            onChange={(e) => {
-                              onSwitchChange(e.target.checked, column);
-                            }}
-                          />
-                        ) : (
-                          <Switch
-                            size="small"
-                            checked={currentView?.attributes?.group_by_columns?.includes(
-                              column?.id
-                            )}
-                            onChange={(e) => {
-                              onSwitchChange(e.target.checked, column);
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </Draggable>
-                ))}
+                    </Draggable>
+                  ))}
 
-              {unVisibleFields?.map((column, index) => (
-                <div
-                  key={column.id}
-                  style={{
-                    display: "flex",
-                    backgroundColor: "#fff",
-                  }}>
+                {unVisibleFields?.map((column, index) => (
                   <div
+                    key={column.id}
                     style={{
-                      flex: 1,
                       display: "flex",
-                      alignItems: "center",
-                      border: 0,
-                      paddingLeft: 0,
-                      paddingRight: 0,
-                      padding: "8px 0px",
-                      margin: "-1px -1px 0 0",
+                      backgroundColor: "#fff",
                     }}>
                     <div
                       style={{
-                        width: 20,
-                        height: 20,
-                        marginRight: 5,
+                        flex: 1,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
+                        border: 0,
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        padding: "8px 0px",
+                        margin: "-1px -1px 0 0",
                       }}>
-                      {columnIcons(column.type) ?? <LinkIcon />}
+                      <div
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 5,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        {columnIcons(column.type) ?? <LinkIcon />}
+                      </div>
+                      {column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.label}
                     </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ||
-                      column?.attributes?.[`label_${i18n.language}`] ||
-                      column?.label}
+                    <div
+                      style={{
+                        width: 70,
+                        border: 0,
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        padding: "8px 0px",
+                        margin: "-1px -1px 0 0",
+                      }}>
+                      {column?.type === "LOOKUP" ||
+                      column?.type === "LOOKUPS" ? (
+                        <Switch
+                          size="small"
+                          checked={currentView?.attributes?.group_by_columns?.includes(
+                            column?.relation_id
+                          )}
+                          onChange={(e) => {
+                            onSwitchChange(e.target.checked, column);
+                          }}
+                        />
+                      ) : (
+                        <Switch
+                          size="small"
+                          checked={currentView?.attributes?.group_by_columns?.includes(
+                            column?.id
+                          )}
+                          onChange={(e) => {
+                            onSwitchChange(e.target.checked, column);
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      width: 70,
-                      border: 0,
-                      paddingLeft: 0,
-                      paddingRight: 0,
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                      padding: "8px 0px",
-                      margin: "-1px -1px 0 0",
-                    }}>
-                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                      <Switch
-                        size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(
-                          column?.relation_id
-                        )}
-                        onChange={(e) => {
-                          onSwitchChange(e.target.checked, column);
-                        }}
-                      />
-                    ) : (
-                      <Switch
-                        size="small"
-                        checked={currentView?.attributes?.group_by_columns?.includes(
-                          column?.id
-                        )}
-                        onChange={(e) => {
-                          onSwitchChange(e.target.checked, column);
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </Container>
-          </div>
+                ))}
+              </Container>
+            </div>
+          ) : (
+            <Box style={{padding: "10px"}}>
+              <Typography>No columns found to group!</Typography>
+            </Box>
+          )}
         </div>
       </Menu>
     </div>

@@ -1,18 +1,25 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import { Box, Button, CircularProgress, Menu, Switch } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  Switch,
+  Typography,
+} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import constructorViewService from "../../../../services/constructorViewService";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
 import style from "./style.module.scss";
 
-export default function FixColumnsTableView({ view, fieldsMap }) {
+export default function FixColumnsTableView({view, fieldsMap}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = (event) => {
@@ -106,10 +113,9 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
           gap: "5px",
           color: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
           borderColor: badgeCount > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
-        }}
-      >
+        }}>
         {isLoading ? (
-          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
+          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -145,8 +151,7 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
             onClick={(e) => {
               e.stopPropagation();
               removeFixedColumns();
-            }}
-          >
+            }}>
             <CloseRoundedIcon />
           </button>
         )}
@@ -188,52 +193,54 @@ export default function FixColumnsTableView({ view, fieldsMap }) {
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div
           className={style.menuItems}
           style={{
             maxHeight: 300,
             overflowY: "auto",
-          }}
-        >
-          {allColumns?.map((column) => (
-            <div className={style.menuItem}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
-              >
+          }}>
+          {allColumns?.length ? (
+            allColumns?.map((column) => (
+              <div className={style.menuItem}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {column?.type && columnIcons(column?.type)}
+                    gap: "10px",
+                  }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    {column?.type && columnIcons(column?.type)}
+                  </div>
+
+                  <span>{column?.label}</span>
                 </div>
 
-                <span>{column?.label}</span>
+                <Switch
+                  size="small"
+                  onChange={(e) => {
+                    changeHandler(column, e.target.checked);
+                  }}
+                  checked={
+                    Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                      (el) => el === column.id
+                    )
+                      ? true
+                      : false
+                  }
+                />
               </div>
-
-              <Switch
-                size="small"
-                onChange={(e) => {
-                  changeHandler(column, e.target.checked);
-                }}
-                checked={
-                  Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
-                    (el) => el === column.id
-                  )
-                    ? true
-                    : false
-                }
-              />
-            </div>
-          ))}
+            ))
+          ) : (
+            <Box style={{padding: "10px"}}>
+              <Typography>No columns found to fix!</Typography>
+            </Box>
+          )}
         </div>
       </Menu>
     </>

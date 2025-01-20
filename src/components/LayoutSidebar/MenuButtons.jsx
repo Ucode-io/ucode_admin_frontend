@@ -259,7 +259,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Edit table"
+              title="Edit Website"
               onClick={(e) => {
                 e.stopPropagation();
                 setWebsiteModalLink(element);
@@ -276,7 +276,7 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Delete table"
+              title="Delete Website"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);

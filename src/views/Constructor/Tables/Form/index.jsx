@@ -1,6 +1,6 @@
-import Actions from "./Actions";
 import Fields from "./Fields";
 import Layout from "./Layout";
+import Actions from "./Actions";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import {Save} from "@mui/icons-material";

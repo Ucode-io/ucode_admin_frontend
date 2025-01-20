@@ -106,7 +106,7 @@ const Resources = ({
   const computedResources = useMemo(() => {
     return [
       ...(data?.resources || []),
-      ...(resources || []),
+      // ...(resources || []),
       ...(clickHouseList || []),
     ];
   }, [data, resources, clickHouseList]);

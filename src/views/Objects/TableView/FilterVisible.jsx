@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {quickFiltersActions} from "../../../store/filter/quick_filter";
 import styles from "./styles.module.scss";
 import {useParams} from "react-router-dom";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const customStyles = {
   gap: "5px",
@@ -35,9 +36,7 @@ export default function FilterVisible({
   const {tableSlug} = useParams();
   const [filterAnchor, setFilterAnchor] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
-  const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
-  );
+  const permissions = useSelector((state) => state.permissions?.[tableSlug]);
   const handleClickFilter = (event) => {
     setFilterAnchor(event.currentTarget);
   };
@@ -79,7 +78,7 @@ export default function FilterVisible({
 
   return (
     <div>
-      {permissions?.add_filter && (
+      <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
         <Box
           id="add_filter_btn"
           variant={"text"}
@@ -89,7 +88,7 @@ export default function FilterVisible({
           <FilterAltOutlinedIcon color={"#A8A8A8"} />
           Add Filters
         </Box>
-      )}
+      </PermissionWrapperV2>
       <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
         <FiltersTab
           form={form}

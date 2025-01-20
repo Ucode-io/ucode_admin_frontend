@@ -1,42 +1,39 @@
-import {Save} from "@mui/icons-material";
-import {useEffect, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useDispatch, useSelector} from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
-import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
-import Footer from "../../../../components/Footer";
-import HeaderSettings from "../../../../components/HeaderSettings";
-import PageFallback from "../../../../components/PageFallback";
-import constructorFieldService from "../../../../services/constructorFieldService";
-import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService, {
-  useTableByIdQuery,
-} from "../../../../services/constructorTableService";
-import constructorViewRelationService from "../../../../services/constructorViewRelationService";
-import layoutService from "../../../../services/layoutService";
-import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
-import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
-import {generateGUID} from "../../../../utils/generateID";
-import {listToMap} from "../../../../utils/listToMap";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import menuSettingsService from "../../../../services/menuSettingsService";
 import Actions from "./Actions";
-import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import CustomErrors from "./CustomErrors";
+import {useQueryClient} from "react-query";
+import {useTranslation} from "react-i18next";
+import {useForm, useWatch} from "react-hook-form";
+import Footer from "../../../../components/Footer";
+import {useDispatch, useSelector} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {listToMap} from "../../../../utils/listToMap";
+import {generateGUID} from "../../../../utils/generateID";
 import menuService from "../../../../services/menuService";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import PageFallback from "../../../../components/PageFallback";
+import layoutService from "../../../../services/layoutService";
+import HeaderSettings from "../../../../components/HeaderSettings";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import menuSettingsService from "../../../../services/menuSettingsService";
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
+import constructorFieldService from "../../../../services/constructorFieldService";
+import constructorRelationService from "../../../../services/constructorRelationService";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import constructorViewRelationService from "../../../../services/constructorViewRelationService";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
+import constructorTableService, {
+  useTableByIdQuery,
+} from "../../../../services/constructorTableService";
+import {authActions} from "../../../../store/auth/auth.slice";
+import {permissionsActions} from "../../../../store/permissions/permissions.slice";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -47,12 +44,17 @@ const ConstructorTablesFormPage = () => {
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const location = useLocation();
   const [selectedTab, setSelectedTab] = useState(0);
   const [exist, setExist] = useState(false);
   const [authInfo, setAuthInfo] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
+  const permissions = useSelector((state) =>
+    Object.entries(state.permissions?.permissions).map(([key, value]) => ({
+      table_slug: key,
+      ...value,
+    }))
+  );
 
   const mainForm = useForm({
     defaultValues: {
@@ -243,13 +245,9 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        console.log("resssssssssssssssss", res);
         createType(res);
-        // navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
-        // if (location?.state?.create_table) {
-        //   getData();
-        //   navigate(-1);
-        // }
+        setPermission(res?.record_permission, res?.slug);
+        navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
       })
       .catch(() => setBtnLoader(false));
   };
@@ -292,6 +290,13 @@ const ConstructorTablesFormPage = () => {
         dispatch(showAlert(`Table with key ${data?.slug} already exist`));
       }
     }
+  };
+
+  const setPermission = (permission, table_slug) => {
+    const newPermission = {table_slug, ...permission};
+    const res = [...permissions, newPermission];
+
+    dispatch(permissionsActions.setPermissions(res));
   };
 
   useEffect(() => {

@@ -1,41 +1,45 @@
-import {Box, Switch, Typography} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "../../../../utils/applyDrag";
-import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import ColorizeIcon from "@mui/icons-material/Colorize";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import EmailIcon from "@mui/icons-material/Email";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+import LinkIcon from "@mui/icons-material/Link";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
+import MapIcon from "@mui/icons-material/Map";
 import PasswordIcon from "@mui/icons-material/Password";
 import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
-import LinkIcon from "@mui/icons-material/Link";
+import {Box, CircularProgress, Switch} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
+import styles from "./style.module.scss";
 
 const ColumnsTab = ({
   form,
   updateView,
+  loading,
   isMenu,
   views,
   selectedTabIndex,
   computedColumns,
+  currentView,
+  visibleFields,
+  unVisibleFields,
 }) => {
   const {i18n} = useTranslation();
 
@@ -43,20 +47,6 @@ const ColumnsTab = ({
     control: form.control,
     name: "columns",
     keyName: "key",
-  });
-  const {
-    fields: groupColumn,
-    replace: replaceGroup,
-    move: groupMove,
-  } = useFieldArray({
-    control: form.control,
-    name: "attributes.group_by_columns",
-    keyName: "key",
-  });
-
-  const watchedColumns = useWatch({
-    control: form.control,
-    name: "columns",
   });
 
   const computeColumns = (checkedColumnsIds = [], columns) => {
@@ -89,22 +79,6 @@ const ColumnsTab = ({
     if (result) {
       move(dropResult.removedIndex, dropResult.addedIndex);
       groupMove(dropResult.removedIndex, dropResult.addedIndex);
-    }
-  };
-
-  const isAllChecked = useMemo(() => {
-    return watchedColumns?.every((column) => column?.is_checked);
-  }, [watchedColumns]);
-
-  const onAllChecked = (_, val) => {
-    const columns = form.getValues("columns");
-
-    columns?.forEach((column, index) => {
-      form.setValue(`columns[${index}].is_checked`, val);
-    });
-
-    if (isMenu) {
-      updateView();
     }
   };
 
@@ -142,9 +116,10 @@ const ColumnsTab = ({
     <div
       style={{
         minWidth: 200,
-        maxHeight: 300,
-        overflowY: "auto",
+        height: "300px",
+        overflowY: loading ? "hidden" : "auto",
         padding: "10px 14px",
+        position: "relative",
       }}>
       <div className={styles.table}>
         <div
@@ -167,20 +142,30 @@ const ColumnsTab = ({
               display: "flex",
               justifyContent: "flex-end",
             }}>
-            {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
-            <Button variant="outlined" color="error">Hide All</Button> */}
             <Switch
               id="columns_all"
               size="small"
-              checked={isAllChecked}
-              onChange={onAllChecked}
+              checked={visibleFields.length === columns.length}
+              onChange={(e) => {
+                updateView(
+                  e.target.checked
+                    ? columns?.map((el) => {
+                        if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+                          return el.relation_id;
+                        } else {
+                          return el.id;
+                        }
+                      })
+                    : []
+                );
+              }}
             />
           </div>
         </div>
         <Container
           onDrop={onDrop}
           dropPlaceholder={{className: "drag-row-drop-preview"}}>
-          {columns.map((column, index) => (
+          {visibleFields?.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
                 <div
@@ -220,27 +205,136 @@ const ColumnsTab = ({
                     display: "flex",
                     justifyContent: "flex-end",
                   }}>
-                  <Switch
-                    id={`column_switch_${
-                      column?.attributes?.[`label_${i18n.language}`] ||
-                      column?.label
-                    }`}
-                    size="small"
-                    checked={form.watch(`columns.${index}.is_checked`)}
-                    onChange={(e) => {
-                      form.setValue(
-                        `columns.${index}.is_checked`,
-                        e.target.checked
-                      );
-                      if (isMenu) return updateView();
-                    }}
-                  />
+                  {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                    <Switch
+                      size="small"
+                      checked={currentView?.columns?.includes(
+                        column?.relation_id
+                      )}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...currentView?.columns, column?.relation_id]
+                            : currentView?.columns?.filter(
+                                (el) => el !== column?.relation_id
+                              )
+                        );
+                      }}
+                    />
+                  ) : (
+                    <Switch
+                      size="small"
+                      checked={currentView?.columns?.includes(column?.id)}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...currentView?.columns, column?.id]
+                            : currentView?.columns?.filter(
+                                (el) => el !== column?.id
+                              )
+                        );
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            </Draggable>
+          ))}
+          {unVisibleFields?.map((column, index) => (
+            <Draggable key={column.id}>
+              <div key={column.id} className={styles.row}>
+                <div
+                  className={styles.cell}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    border: 0,
+                    borderBottom: "1px solid #eee",
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  }}>
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginRight: 5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    {columnIcons[column.type] ?? <LinkIcon />}
+                  </div>
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column?.attributes?.[`label_from_${i18n.language}`] ??
+                    column?.label}
+                </div>
+                <div
+                  className={styles.cell}
+                  style={{
+                    width: 70,
+                    border: 0,
+                    borderBottom: "1px solid #eee",
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}>
+                  {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                    <Switch
+                      size="small"
+                      checked={currentView?.columns?.includes(
+                        column?.relation_id
+                      )}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...currentView?.columns, column?.relation_id]
+                            : currentView?.columns?.filter(
+                                (el) => el !== column?.relation_id
+                              )
+                        );
+                      }}
+                    />
+                  ) : (
+                    <Switch
+                      size="small"
+                      checked={currentView?.columns?.includes(column?.id)}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...currentView?.columns, column?.id]
+                            : currentView?.columns?.filter(
+                                (el) => el !== column?.id
+                              )
+                        );
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </Draggable>
           ))}
         </Container>
       </div>
+      {loading && (
+        <Box
+          sx={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            background: "#eee",
+            overflow: "hidden",
+            opacity: "0.3",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <CircularProgress style={{color: "#007aff"}} />
+        </Box>
+      )}
     </div>
   );
 };

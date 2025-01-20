@@ -129,22 +129,6 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  // useEffect(() => {
-  //   initDB();
-  // }, [tableSlug]);
-
-  // useEffect(() => {
-  //   if (searchParams.get("menuId")) {
-  //     menuService
-  //       .getByID({
-  //         menuId: searchParams.get("menuId"),
-  //       })
-  //       .then((res) => {
-  //         setMenuItem(res);
-  //       });
-  //   }
-  // }, []);
-
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {

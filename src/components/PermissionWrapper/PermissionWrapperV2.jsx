@@ -1,10 +1,7 @@
-import {useMemo} from "react";
 import {useSelector} from "react-redux";
 
 const PermissionWrapperV2 = ({children, tableSlug, type}) => {
-  const permissions = useSelector((state) => state.auth.permissions);
   const permissions2 = useSelector((state) => state?.permissions?.permissions);
-  console.log("permisionw2229922929", permissions2);
 
   const role = useSelector((state) => state.auth.roleInfo);
   if (!tableSlug || role?.name === "DEFAULT ADMIN") return children;

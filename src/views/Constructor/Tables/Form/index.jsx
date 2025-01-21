@@ -1,6 +1,6 @@
-import Actions from "./Actions";
 import Fields from "./Fields";
 import Layout from "./Layout";
+import Actions from "./Actions";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import {Save} from "@mui/icons-material";
@@ -24,6 +24,7 @@ import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import menuSettingsService from "../../../../services/menuSettingsService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import constructorFieldService from "../../../../services/constructorFieldService";
+import {permissionsActions} from "../../../../store/permissions/permissions.slice";
 import constructorRelationService from "../../../../services/constructorRelationService";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
@@ -32,8 +33,6 @@ import {createConstructorTableAction} from "../../../../store/constructorTable/c
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../../../services/constructorTableService";
-import {authActions} from "../../../../store/auth/auth.slice";
-import {permissionsActions} from "../../../../store/permissions/permissions.slice";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();

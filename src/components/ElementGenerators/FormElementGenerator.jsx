@@ -491,7 +491,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             fullWidth
-            sectionModa={sectionModal}
+            sectionModal={sectionModal}
             width={"100%"}
             mask={"99.99.9999"}
             placeholder={field.attributes?.placeholder}

@@ -8,8 +8,6 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import resourceService, {
   useResourceCreateFromClusterMutation,
-  useResourceCreateMutation,
-  useResourceDeleteMutation,
   useResourceDeleteMutationV2,
   useResourceListQuery,
   useResourceListQueryV2,
@@ -106,7 +104,7 @@ const Resources = ({
   const computedResources = useMemo(() => {
     return [
       ...(data?.resources || []),
-      ...(resources || []),
+      // ...(resources || []),
       ...(clickHouseList || []),
     ];
   }, [data, resources, clickHouseList]);

@@ -92,6 +92,14 @@ const ObjectsPage = () => {
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
+      if (!tableSlug) {
+        return Promise.resolve({
+          views: [],
+          fieldsMap: {},
+          visibleColumns: [],
+          visibleRelationColumns: [],
+        });
+      }
       return constructorTableService.getTableInfo(
         tableSlug,
         {
@@ -102,6 +110,7 @@ const ObjectsPage = () => {
     },
     {
       enabled: Boolean(tableSlug),
+
       select: ({data}) => {
         return {
           views:
@@ -128,22 +137,6 @@ const ObjectsPage = () => {
       ? setSelectedTabIndex(parseInt(queryTab - 1))
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
-
-  // useEffect(() => {
-  //   initDB();
-  // }, [tableSlug]);
-
-  // useEffect(() => {
-  //   if (searchParams.get("menuId")) {
-  //     menuService
-  //       .getByID({
-  //         menuId: searchParams.get("menuId"),
-  //       })
-  //       .then((res) => {
-  //         setMenuItem(res);
-  //       });
-  //   }
-  // }, []);
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),

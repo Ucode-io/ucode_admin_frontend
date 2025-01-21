@@ -14,11 +14,13 @@ export default function ColumnVisible({
   isLoading,
   form,
   text = "Columns",
-  width = "",
+  currentView,
   refetch = () => {},
+  fieldsMap,
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loading, setloading] = useState(false);
   const {tableSlug} = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -33,6 +35,30 @@ export default function ColumnVisible({
     return columns;
   }, [columns, relationColumns, type]);
 
+  const visibleFields = useMemo(() => {
+    return (
+      currentView?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return el?.relation_id;
+          } else {
+            return el?.id;
+          }
+        }) ?? []
+    );
+  }, [currentView?.columns, fieldsMap]);
+
+  const unVisibleFields = useMemo(() => {
+    return columns.filter((field) => {
+      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+        return !currentView?.columns?.includes(field.relation_id);
+      } else {
+        return !currentView?.columns?.includes(field.id);
+      }
+    });
+  }, [columns, currentView?.columns]);
+
   useEffect(() => {
     form.reset({
       columns:
@@ -45,27 +71,18 @@ export default function ColumnVisible({
     });
   }, [selectedTabIndex, views, form, computedColumns]);
 
-  const updateView = async () => {
-    await constructorViewService
+  const updateView = (data) => {
+    setloading(true);
+    constructorViewService
       .update(tableSlug, {
-        ...views?.[selectedTabIndex],
-        attributes: {
-          ...views?.[selectedTabIndex]?.attributes,
-        },
-        group_by_columns: form
-          .getValues("attributes.group_by_columns")
-          ?.filter((el) => el?.is_checked)
-          ?.map((el) => el.id),
-        columns: form
-          .getValues("columns")
-          ?.filter((el) => el.is_checked)
-          ?.map((el) => el.id),
+        ...currentView,
+        columns: data,
       })
-      .then((res) => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      .then(() => {
         refetch();
-      });
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => setloading(false));
   };
 
   return (
@@ -114,12 +131,16 @@ export default function ColumnVisible({
         ) : (
           <ColumnsTab
             form={form}
+            loading={loading}
+            currentView={currentView}
             updateView={updateView}
             isMenu={true}
             views={views}
             selectedTabIndex={selectedTabIndex}
             computedColumns={computedColumns}
             columns={columns}
+            visibleFields={visibleFields}
+            unVisibleFields={unVisibleFields}
           />
         )}
       </Menu>

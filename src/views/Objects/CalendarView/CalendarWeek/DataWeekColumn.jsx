@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import {
   addMinutes,
   differenceInMinutes,
@@ -7,10 +7,10 @@ import {
   setHours,
   setMinutes,
 } from "date-fns";
-import { useMemo, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import {useMemo, useState} from "react";
+import {useSearchParams, useNavigate} from "react-router-dom";
 import styles from "./week.module.scss";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import DataWeekCard from "./DataWeekCard.jsx";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import useTimeList from "../../../../hooks/useTimeList";
@@ -35,7 +35,7 @@ const DataWeekColumn = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { timeList, timeInterval } = useTimeList(view.time_interval);
+  const {timeList, timeInterval} = useTimeList(view.time_interval);
 
   const elements = useMemo(() => {
     if (!parentTab) return [];
@@ -170,14 +170,12 @@ const DataWeekColumn = ({
           className={styles.timeBlock}
           style={{
             overflow: "auto",
-          }}
-        >
+          }}>
           <div className={styles.timePlaceholder}>{format(time, "HH:mm")}</div>
 
           <div
             className={`${styles.addButton}`}
-            onClick={() => navigateToCreatePage(time)}
-          >
+            onClick={() => navigateToCreatePage(time)}>
             <Add color="" />
             {queryGuid ? "Choose" : "Create"}
           </div>

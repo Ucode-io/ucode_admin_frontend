@@ -170,6 +170,7 @@ const CalendarView = ({
     },
     {
       cacheTime: 10,
+      enabled: Boolean(tableSlug),
       select: (res) => {
         const fields = res.data?.fields ?? [];
         const relationFields =
@@ -203,7 +204,7 @@ const CalendarView = ({
       },
     }
   );
-  console.log("currentUpdatedDate", currentUpdatedDate);
+
   const {data: workingDays} = useQuery(
     [
       "GET_OBJECTS_LIST",
@@ -225,6 +226,7 @@ const CalendarView = ({
       });
     },
     {
+      enabled: Boolean(view?.disable_dates?.table_slug),
       select: (res) => {
         const result = {};
         res?.data?.response?.forEach((el) => {
@@ -314,16 +316,6 @@ const CalendarView = ({
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
               <ShareModal />
             </PermissionWrapperV2>
-
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
-              <LanguagesNavbar />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
-              <Button variant="outlined">
-                <HexagonIcon />
-              </Button>
-            </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button
@@ -419,7 +411,9 @@ const CalendarView = ({
             initialValues={view}
           />
           <ColumnVisible
+            fieldsMap={fieldsMap}
             selectedTabIndex={selectedTabIndex}
+            currentView={view}
             views={visibleViews}
             columns={visibleColumns}
             relationColumns={visibleRelationColumns}

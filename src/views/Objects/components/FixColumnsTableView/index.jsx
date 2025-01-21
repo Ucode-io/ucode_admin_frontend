@@ -1,6 +1,13 @@
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  Switch,
+  Typography,
+} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
@@ -196,45 +203,47 @@ export default function FixColumnsTableView({view, fieldsMap}) {
             maxHeight: 300,
             overflowY: "auto",
           }}>
-          {allColumns?.map((column) => (
-            <div className={style.menuItem}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                }}>
+          {allColumns?.length ? (
+            allColumns?.map((column) => (
+              <div className={style.menuItem}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    gap: "10px",
                   }}>
-                  {column?.type && columnIcons(column?.type)}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    {column?.type && columnIcons(column?.type)}
+                  </div>
+
+                  <span>{column?.label}</span>
                 </div>
 
-                <span>{column?.label}</span>
+                <Switch
+                  size="small"
+                  onChange={(e) => {
+                    changeHandler(column, e.target.checked);
+                  }}
+                  checked={
+                    Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                      (el) => el === column.id
+                    )
+                      ? true
+                      : false
+                  }
+                />
               </div>
-
-              <Switch
-                id={`${
-                  column?.attributes?.[`label_${i18n.language}`] ||
-                  column?.label
-                }`}
-                size="small"
-                onChange={(e) => {
-                  changeHandler(column, e.target.checked);
-                }}
-                checked={
-                  Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
-                    (el) => el === column.id
-                  )
-                    ? true
-                    : false
-                }
-              />
-            </div>
-          ))}
+            ))
+          ) : (
+            <Box style={{padding: "10px"}}>
+              <Typography>No columns found to fix!</Typography>
+            </Box>
+          )}
         </div>
       </Menu>
     </>

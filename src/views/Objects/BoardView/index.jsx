@@ -224,6 +224,7 @@ const BoardView = ({
           refetch={refetch}
         />
         <BoardGroupButton
+          currentView={view}
           selectedTabIndex={selectedTabIndex}
           tabs={tabs}
           text="Group"

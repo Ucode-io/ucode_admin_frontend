@@ -13,6 +13,7 @@ export default function BoardGroupButton({
   selectedTabIndex,
   text = "Tab group",
   tabs,
+  currentView,
 }) {
   const form = useForm();
   const {tableSlug} = useParams();
@@ -60,8 +61,7 @@ export default function BoardGroupButton({
     },
   });
 
-  const type = views?.[selectedTabIndex]?.type;
-  const selectedView = views?.[selectedTabIndex];
+  const type = currentView?.type;
 
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -72,17 +72,17 @@ export default function BoardGroupButton({
   }, [columns, relationColumns, type]);
 
   const updateView = (updatedTabs) => {
-    delete views?.[selectedTabIndex]?.attributes?.tabs;
+    delete currentView?.attributes?.tabs;
     setUpdateLoading(true);
     constructorViewService
       .update(tableSlug, {
-        ...views?.[selectedTabIndex],
+        ...currentView,
         group_fields: !!form.watch("group_fields")
           ? form.watch("group_fields")
-          : views?.[selectedTabIndex]?.group_fields,
+          : currentView?.group_fields,
         attributes: {
           tabs: updatedTabs,
-          ...views?.[selectedTabIndex]?.attributes,
+          ...currentView?.attributes,
         },
       })
       .then(() => {
@@ -103,10 +103,10 @@ export default function BoardGroupButton({
     setUpdateLoading(true);
     constructorViewService
       .update(tableSlug, {
-        ...views?.[selectedTabIndex],
+        ...currentView,
         attributes: {
           tabs: [],
-          ...views?.[selectedTabIndex].attributes,
+          ...currentView?.attributes,
         },
         group_fields: [],
       })
@@ -129,27 +129,27 @@ export default function BoardGroupButton({
   return (
     <div>
       <Button
-        variant={`${selectedView?.group_fields?.length > 0 ? "outlined" : "text"}`}
+        variant={`${currentView?.group_fields?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
           color:
-            selectedView?.group_fields?.length > 0
+            currentView?.group_fields?.length > 0
               ? "rgb(0, 122, 255)"
               : "#A8A8A8",
           borderColor:
-            selectedView?.group_fields?.length > 0
+            currentView?.group_fields?.length > 0
               ? "rgb(0, 122, 255)"
               : "#A8A8A8",
         }}
         onClick={handleClick}>
         <LayersOutlinedIcon color={"#A8A8A8"} />
         {text}
-        {selectedView?.group_fields?.length > 0 && (
+        {currentView?.group_fields?.length > 0 && (
           <span>
-            {selectedView?.group_fields?.length ?? selectedColumns?.length}
+            {currentView?.group_fields?.length ?? selectedColumns?.length}
           </span>
         )}
-        {selectedView?.group_fields?.length > 0 && (
+        {currentView?.group_fields?.length > 0 && (
           <button
             style={{
               border: "none",
@@ -162,7 +162,7 @@ export default function BoardGroupButton({
               alignItems: "center",
               justifyContent: "center",
               color:
-                selectedView?.group_fields?.length > 0
+                currentView?.group_fields?.length > 0
                   ? "rgb(0, 122, 255)"
                   : "#A8A8A8",
             }}
@@ -173,7 +173,7 @@ export default function BoardGroupButton({
             <CloseRoundedIcon
               style={{
                 color:
-                  selectedView?.group_fields?.length > 0
+                  currentView?.group_fields?.length > 0
                     ? "rgb(0, 122, 255)"
                     : "#A8A8A8",
               }}
@@ -219,7 +219,7 @@ export default function BoardGroupButton({
             isLoading={isLoading}
             updateLoading={updateLoading}
             updateView={updateView}
-            selectedView={selectedView}
+            selectedView={currentView}
             form={form}
             views={views}
             selectedTabIndex={selectedTabIndex}

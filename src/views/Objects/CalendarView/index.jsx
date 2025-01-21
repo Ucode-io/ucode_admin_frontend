@@ -402,14 +402,14 @@ const CalendarView = ({
             relationColumns={visibleRelationColumns}
             isLoading={isVisibleLoading}
           />
-          <CalendarSceduleVisible
+          {/* <CalendarSceduleVisible
             selectedTabIndex={selectedTabIndex}
             views={visibleViews}
             columns={visibleColumns}
             isLoading={isVisibleLoading}
             text={"Schedule"}
             initialValues={view}
-          />
+          /> */}
           <ColumnVisible
             fieldsMap={fieldsMap}
             selectedTabIndex={selectedTabIndex}

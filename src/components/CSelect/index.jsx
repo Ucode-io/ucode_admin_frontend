@@ -1,8 +1,6 @@
-import { Clear } from "@mui/icons-material";
 import {
   FormControl,
   FormHelperText,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -21,15 +19,16 @@ const CSelect = ({
   ...props
 }) => {
   return (
-    <FormControl style={{ width }}>
+    <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
       <Select
         value={value || ""}
         label={label}
         size="small"
         error={error}
-        inputProps={{ placeholder, ...inputProps }}
+        inputProps={{placeholder, ...inputProps}}
         fullWidth
+        defaultValue={options?.[0]}
         just
         following
         attributes
@@ -40,16 +39,15 @@ const CSelect = ({
         renderValue={
           value !== ""
             ? undefined
-            : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
+            : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
         }
-        endAdornment={
-          <IconButton
-            sx={{ display: value ? "" : "none", transform: "translateX(10px)" }}
-            onClick={(e) => onChange({ ...e, target: { value: "" } })}
-          >
-            <Clear />
-          </IconButton>
-        }
+        // endAdornment={
+        //   <IconButton
+        //     sx={{display: value ? "" : "none", transform: "translateX(10px)"}}
+        //     onClick={(e) => onChange({...e, target: {value: ""}})}>
+        //     <Clear />
+        //   </IconButton>
+        // }
         sx={{
           "& .MuiSelect-iconOutlined": {
             display: value ? "none" : "",
@@ -58,8 +56,7 @@ const CSelect = ({
             color: "primary.main",
           },
         }}
-        {...props}
-      >
+        {...props}>
         {options?.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}

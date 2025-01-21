@@ -4,8 +4,11 @@ import {useMemo} from "react";
 import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLabel";
 import MultiselectCellColoredElement from "../MultiselectCellColoredElement";
 import styles from "./style.module.scss";
+import {Box} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 const BoardCardRowGenerator = ({field, el}) => {
+  const {i18n} = useTranslation();
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
     return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
@@ -14,6 +17,16 @@ const BoardCardRowGenerator = ({field, el}) => {
   switch (field?.type) {
     case "PHOTO":
       return <></>;
+
+    case "LOOKUP":
+      return (
+        <Box sx={{padding: "12px 12px 0"}}>
+          {field?.attributes?.[`label_${i18n?.language}`]}
+          <Box>
+            {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
+          </Box>
+        </Box>
+      );
 
     case "MULTISELECT":
       return (

@@ -148,12 +148,6 @@ const BoardView = ({
     },
   });
 
-  // useEffect(() => {
-  //   if (tabs) {
-  //     updateView(tabs);
-  //   }
-  // }, []);
-
   return (
     <div>
       <FiltersBlock
@@ -218,6 +212,8 @@ const BoardView = ({
           </div>
         </div>
         <ColumnVisible
+          fieldsMap={fieldsMap}
+          currentView={view}
           selectedTabIndex={selectedTabIndex}
           views={views}
           columns={visibleColumns}

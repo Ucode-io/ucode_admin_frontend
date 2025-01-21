@@ -55,11 +55,6 @@ const LoginFormDesign = ({
     setValue("password", "");
   };
 
-  // const getFcmToken = async () => {
-  //   const token = await firebaseCloudMessaging.init();
-  //   localStorage.setItem("fcmToken", token);
-  // };
-
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
@@ -189,7 +184,7 @@ const LoginFormDesign = ({
     const data = {
       password: values?.password ? values?.password : "",
       username: values?.username ? values?.password : "",
-      [values?.type]: values?.recipient || "",
+      [values?.type]: values?.recipient || undefined,
       ...values,
     };
     setLoading(true);
@@ -358,11 +353,6 @@ const LoginFormDesign = ({
     }
   };
 
-  // useEffect(() => {
-  //   getFcmToken();
-  //   reset();
-  // }, [index]);
-
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
@@ -477,11 +467,6 @@ const LoginFormDesign = ({
                     style={{padding: "10px 12px 10px 12px"}}>
                     {t("Email")}
                   </Tab>
-                  {/* <Tab
-                    onClick={() => setFormType("ESP")}
-                    style={{padding: "10px 8px 10px 8px"}}>
-                    {t("ЭЦП")}
-                  </Tab> */}
                 </TabList>
 
                 <div

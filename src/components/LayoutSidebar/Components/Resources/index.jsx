@@ -8,8 +8,6 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import resourceService, {
   useResourceCreateFromClusterMutation,
-  useResourceCreateMutation,
-  useResourceDeleteMutation,
   useResourceDeleteMutationV2,
   useResourceListQuery,
   useResourceListQueryV2,

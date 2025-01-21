@@ -148,6 +148,7 @@ const CPagination = ({
         <PermissionWrapperV2 tableSlug={tableSlug} type="write">
           {isTableView && (
             <Button
+              id="addObject"
               variant="outlined"
               onClick={() => {
                 if (view?.attributes?.url_object) {

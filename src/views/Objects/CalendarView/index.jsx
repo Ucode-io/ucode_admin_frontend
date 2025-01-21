@@ -170,6 +170,7 @@ const CalendarView = ({
     },
     {
       cacheTime: 10,
+      enabled: Boolean(tableSlug),
       select: (res) => {
         const fields = res.data?.fields ?? [];
         const relationFields =
@@ -225,6 +226,7 @@ const CalendarView = ({
       });
     },
     {
+      enabled: Boolean(view?.disable_dates?.table_slug),
       select: (res) => {
         const result = {};
         res?.data?.response?.forEach((el) => {

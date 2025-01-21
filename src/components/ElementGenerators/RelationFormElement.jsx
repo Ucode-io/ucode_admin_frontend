@@ -509,6 +509,7 @@ const AutoCompleteElement = ({
       ) : (
         <>
           <Select
+            id={`select_${field?.slug}`}
             isDisabled={
               disabled ||
               (field?.attributes?.object_id_from_jwt &&

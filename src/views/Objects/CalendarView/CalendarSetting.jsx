@@ -43,7 +43,7 @@ const CalendarSetting = ({columns, form, children}) => {
             </FRow>
           </div>
 
-          <div className={styles.formRow}>
+          {/* <div className={styles.formRow}>
             <FRow label="Time interval">
               <HFSelect
                 options={timeIntervalOptions}
@@ -59,7 +59,7 @@ const CalendarSetting = ({columns, form, children}) => {
                 name="status_field_slug"
               />
             </FRow>
-          </div>
+          </div> */}
         </div>
       </div>
       {children}

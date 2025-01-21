@@ -1,9 +1,9 @@
-import { Box, Button, CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import {Box, Button, CircularProgress, Menu} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import CalendarSetting from "./CalendarSetting";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ViewWeekIcon from "@mui/icons-material/ViewWeek";
@@ -19,7 +19,7 @@ export default function CalendarSettingsVisible({
   const [anchorEl, setAnchorEl] = useState(null);
   const form = useForm();
   const open = Boolean(anchorEl);
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -90,8 +90,7 @@ export default function CalendarSettingsVisible({
           textAlign: "left",
           width: width,
         }}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <ViewWeekIcon color={"#A8A8A8"} />
         {text}
       </Button>
@@ -123,8 +122,7 @@ export default function CalendarSettingsVisible({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         {isLoading ? (
           <CircularProgress />
         ) : (
@@ -136,13 +134,11 @@ export default function CalendarSettingsVisible({
                 <Box
                   style={{
                     padding: "7px 10px 0 10px",
-                  }}
-                >
+                  }}>
                   <Button
                     fullWidth
                     variant="contained"
-                    onClick={form.handleSubmit(onSubmit)}
-                  >
+                    onClick={form.handleSubmit(onSubmit)}>
                     Save
                   </Button>
                 </Box>

@@ -5,7 +5,7 @@ const MenuItemComponent = ({ title, onClick, icon }) => {
   return (
     <MenuItem onClick={onClick}>
       {icon}
-      <h3>{title}</h3>
+      <h3 style={{ color: "#475467", fontWeight: 500 }}>{title}</h3>
     </MenuItem>
   );
 };

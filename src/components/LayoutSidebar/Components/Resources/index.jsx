@@ -162,9 +162,9 @@ const Resources = ({
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle">
+      <div className="parent-block column-drag-handle" style={{ marginBottom: 5 }}>
         <Button
-          className={`nav-element`}
+          className="nav-element highlight-on-hover"
           style={activeStyle}
           onClick={(e) => {
             clickHandler(e);

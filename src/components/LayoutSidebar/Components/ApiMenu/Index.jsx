@@ -58,12 +58,13 @@ function ApiMenu({level = 1, menuStyle}) {
     setChildBlockVisible((prev) => !prev);
     dispatch(menuActions.setMenuItem(projectSettings));
   };
+
   return (
     <Box sx={{padding: "0 5px"}}>
-      <div className="parent-block column-drag-handle">
+      <div className="parent-block column-drag-handle" style={{marginBottom: 5}}>
         <Button
           style={activeStyle}
-          className="nav-element"
+          className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>

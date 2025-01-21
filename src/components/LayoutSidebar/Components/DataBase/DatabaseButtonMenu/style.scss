@@ -1,5 +1,24 @@
 $main-color: #0365F2;
 
+.parent-folder {
+  &:hover {
+    .extra_icon {
+      display: flex;
+      margin-right: 5px;
+      cursor: pointer;
+      z-index: 99999;
+    }
+  }
+
+  .folder-icon {
+    margin-right: 8px;
+  }
+
+  .extra_icon {
+    display: none;
+  }
+}
+
 .LayoutSidebar {
   // min-width: 280px;
   width: 280px;
@@ -201,7 +220,6 @@ $main-color: #0365F2;
     }
   }
 
-
   .nav-block {
     // padding: 12px;
     overflow-y: scroll;
@@ -222,28 +240,6 @@ $main-color: #0365F2;
     .sidebar-footer {
       padding-top: 10px;
       border-top: 1px solid rgba(192, 192, 192, 0.294);
-    }
-
-    .parent-folder {
-      cursor: default;
-      justify-content: center;
-
-      &:hover {
-        .extra_icon {
-          display: flex;
-          margin-right: 5px;
-          cursor: pointer;
-          z-index: 99999;
-        }
-      }
-
-      .folder-icon {
-        margin-right: 8px;
-      }
-
-      .extra_icon {
-        display: none;
-      }
     }
 
     .parent-block {

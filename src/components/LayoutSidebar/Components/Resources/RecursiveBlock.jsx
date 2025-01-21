@@ -47,7 +47,7 @@ const RecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className={`nav-element ${
+            className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
@@ -73,7 +73,7 @@ const RecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className={`nav-element ${
+            className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
@@ -106,7 +106,7 @@ const RecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className={`nav-element ${
+            className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}

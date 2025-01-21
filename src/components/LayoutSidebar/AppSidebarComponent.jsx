@@ -1,10 +1,10 @@
 import "./style.scss";
-import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
-import {useEffect, useMemo} from "react";
+import {Tooltip} from "@mui/material";
+import {Flex, Box} from "@chakra-ui/react";
+import {useEffect} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import IconGenerator from "../IconPicker/IconGenerator";
 import {useDispatch} from "react-redux";
@@ -14,20 +14,24 @@ import {useTranslation} from "react-i18next";
 import {store} from "../../store";
 import {useQueryClient} from "react-query";
 import {relationTabActions} from "../../store/relationTab/relationTab.slice";
-export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
-export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
+import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
+import {mainActions} from "@/store/main/main.slice";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
+export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
+export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
 
 const AppSidebar = ({
-  index,
-  element,
-  sidebarIsOpen,
-  setElement,
-  setSubMenuIsOpen,
-  handleOpenNotify,
-  setSelectedApp,
-  selectedApp,
-  menuTemplate,
-}) => {
+                      index,
+                      element,
+                      sidebarIsOpen,
+                      setElement,
+                      setSubMenuIsOpen,
+                      handleOpenNotify,
+                      setSelectedApp,
+                      selectedApp,
+                      menuTemplate,
+                    }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
@@ -117,76 +121,79 @@ const AppSidebar = ({
     setElement(element);
   }, [element]);
 
-  const defaultLanguage = i18n.language;
-
   const activeMenu =
     element?.type === "FOLDER"
       ? Boolean(selectedApp?.id === element?.id)
       : element?.id === menuItem;
 
+  if (!permission) {
+    return;
+  }
+
+  const title = element?.attributes?.[`label_${i18n.language}`] ||
+    element?.label ||
+    element?.data?.microfrontend?.name ||
+    element?.data?.webpage?.title;
+  const icon = element?.icon || element?.data?.microfrontend?.icon || element?.data?.webpage?.icon
+  const iconSize = menuStyle?.icon_size === "SMALL"
+    ? 10 : menuStyle?.icon_size === "MEDIUM"
+      ? 15 : 20
+
+  const conditionalProps = {};
+  if (!sidebarIsOpen) {
+    conditionalProps.onMouseEnter = () => dispatch(mainActions.setSidebarHighlightedMenu(element?.id));
+  }
+
   return (
     <Draggable key={index}>
-      {permission ? (
-        <ListItemButton
+      <SidebarTooltip id={element?.id} title={title}>
+        <Flex
           key={index}
           onClick={(e) => {
             e.stopPropagation();
             clickHandler();
+            dispatch(mainActions.setSidebarHighlightedMenu(null));
           }}
-          className="parent-folder column-drag-handle awdaw"
-          style={{
-            background: activeMenu
-              ? (menuStyle?.active_background ?? "#007AFF")
-              : menuStyle?.background,
-            cursor: "pointer",
-            color:
-              Boolean(
-                appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                  appId === element?.id
-              ) || menuItem === element?.id
-                ? "#fff"
-                : "#A8A8A8",
-            borderRadius: "10px",
-            margin: "0 10px",
-          }}>
-          <IconGenerator
-            icon={
-              element?.icon ||
-              element?.data?.microfrontend?.icon ||
-              element?.data?.webpage?.icon ||
-              "folder.svg"
-            }
-            size={
-              menuTemplate?.icon_size === "SMALL"
-                ? 10
-                : menuTemplate?.icon_size === "MEDIUM"
-                  ? 15
-                  : 18 || 18
-            }
-            className="folder-icon"
-            style={{
-              marginRight: sidebarIsOpen ? "8px" : "0px",
-              color: activeMenu
-                ? menuStyle?.active_text
-                : menuStyle?.text || "",
-            }}
-          />
-
-          {sidebarIsOpen && (
-            <ListItemText
-              primary={
-                element?.attributes?.[`label_${defaultLanguage}`] ||
-                element?.label ||
-                element?.data?.microfrontend?.name ||
-                element?.data?.webpage?.title
-              }
-              style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "#A8A8A8",
-              }}
+          position="relative"
+          h={36}
+          mx={8}
+          mb={4}
+          alignItems='center'
+          whiteSpace="nowrap"
+          borderRadius={6}
+          _hover={{bg: "#EAECF0"}}
+          cursor='pointer'
+          className="parent-folder column-drag-handle"
+          bg={activeMenu
+            ? (menuStyle?.active_background ?? "#EAECF0")
+            : menuStyle?.background}
+          color={Boolean(
+            appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+            appId === element?.id
+          ) || menuItem === element?.id
+            ? "#fff"
+            : "#A8A8A8"}
+          {...conditionalProps}
+        >
+          <Flex
+            position="absolute"
+            w={36}
+            h={36}
+            alignItems='center'
+            justifyContent='center'
+          >
+            <IconGenerator
+              icon={icon ?? "folder-new.svg"}
+              size={iconSize}
+              style={{color: icon ? (menuStyle?.text ?? "") : "#fff"}}
             />
-          )}
+          </Flex>
+
+          <Box color={activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467"} pl={48} fontSize={14}
+               mr='auto' overflow='hidden' textOverflow='ellipsis'>
+            {title}
+          </Box>
+
           {element?.type === "FOLDER" &&
           sidebarIsOpen &&
           !element?.is_static ? (
@@ -195,7 +202,7 @@ const AppSidebar = ({
                 element?.data?.permission?.update ||
                 element?.data?.permission?.write) && (
                 <Tooltip title="Folder settings" placement="top">
-                  <Box className="extra_icon">
+                  <div className="extra_icon">
                     <BsThreeDots
                       id={"three_dots"}
                       size={13}
@@ -208,13 +215,13 @@ const AppSidebar = ({
                           : (menuStyle?.text ?? "#fff"),
                       }}
                     />
-                  </Box>
+                  </div>
                 </Tooltip>
               )}
 
               {element?.data?.permission?.create && (
                 <Tooltip title="Create folder" placement="top">
-                  <Box
+                  <div
                     id={"create_folder"}
                     className="extra_icon"
                     onClick={(e) => {
@@ -228,7 +235,7 @@ const AppSidebar = ({
                           : menuStyle?.text || "",
                       }}
                     />
-                  </Box>
+                  </div>
                 </Tooltip>
               )}
             </>
@@ -304,20 +311,21 @@ const AppSidebar = ({
             />
           )}
           {sidebarIsOpen && element?.type === "FOLDER" ? (
-            <KeyboardArrowRightIcon
+            <KeyboardArrowDownIcon
               style={{
                 color: activeMenu
                   ? menuStyle?.active_text
                   : menuStyle?.text || "",
-                transform: selectedApp?.id === element.id && "rotate(90deg)",
-                transition: "0.3s",
+                transform: selectedApp?.id === element.id && "rotate(-180deg)",
+                transition: "transform 250ms ease-out",
+                marginRight: 4
               }}
             />
           ) : (
             ""
           )}
-        </ListItemButton>
-      ) : null}
+        </Flex>
+      </SidebarTooltip>
     </Draggable>
   );
 };

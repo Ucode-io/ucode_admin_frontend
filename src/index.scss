@@ -936,3 +936,7 @@ u {
     }
   }
 }
+
+.chakra-popover__popper {
+  z-index: 999;
+}

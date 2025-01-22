@@ -11,17 +11,12 @@ export default function SectionBlockForModal({
   control,
   setFormValue,
   fieldsList,
-  formTableSlug,
   relatedTable,
   activeLang,
   errors,
   isMultiLanguage,
-  toggleFields,
-  computedSections,
-  index,
   data,
   setData,
-  selectedTabIndex,
 }) {
   const {tableSlug} = useParams();
 

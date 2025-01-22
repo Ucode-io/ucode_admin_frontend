@@ -23,17 +23,14 @@ import {sortSections} from "../../utils/sectionsOrderNumber";
 import RelationSectionForModal from "./RelationSection/RelationSectionForModal";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import styles from "./style.module.scss";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 
 const ObjectsFormPageForModal = ({
   tableSlugFromProps,
   handleClose,
   fieldsMap,
   modal = false,
-  refetch,
+  refetch = () => {},
   selectedRow,
   dateInfo,
   fullScreen,

@@ -954,3 +954,15 @@ u {
     }
   }
 }
+
+#billingTable {
+  th {
+    box-shadow: none !important;
+    border-radius: 0px;
+    border: 1px solid #eee;
+  }
+
+  td {
+    border: 1px solid #eee;
+  }
+}

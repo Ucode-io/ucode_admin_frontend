@@ -87,7 +87,7 @@ const PermissionSidebarRecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className="nav-element"
+            className="nav-element highlight-on-hover"
             onClick={(e) => {
               customFunc(e);
               clickHandler(e);

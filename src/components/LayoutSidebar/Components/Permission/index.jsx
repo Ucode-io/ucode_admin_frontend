@@ -12,6 +12,7 @@ import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
 import PermissionSidebarRecursiveBlock from "./PermissionSidebarRecursiveBlock";
 import activeStyles from "../MenuUtils/activeStyles";
+
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
@@ -98,21 +99,21 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle">
+      <div className="parent-block column-drag-handle" style={{ marginBottom: 5 }}>
         <Button
           id="permissin_btn"
           style={activeStyle}
-          className="nav-element"
+          className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label" style={labelStyle}>
             {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
+              <KeyboardArrowDownIcon/>
             ) : (
-              <KeyboardArrowRightIcon />
+              <KeyboardArrowRightIcon/>
             )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+            <IconGenerator icon={"lock.svg"} size={18}/>
             Permissions
           </div>
           <Box className="icon_group">

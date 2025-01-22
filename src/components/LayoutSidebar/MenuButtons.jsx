@@ -133,7 +133,7 @@ const ButtonsMenu = ({
           />
 
           <MenuItemComponent
-            icon={<DeveloperBoardIcon size={13} />}
+            icon={<img src="/img/terminal-browser.svg" alt="table"/>}
             title="Add Website"
             onClick={(e) => {
               e.stopPropagation();
@@ -350,9 +350,9 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "ROOT" && (
-        <Box className="menu">
+        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
+            icon={<img src="/img/layout-alt-01.svg" alt="table"/>}
             title="Create table"
             onClick={(e) => {
               e.stopPropagation();
@@ -361,7 +361,7 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
+            icon={<img src="/img/layout-alt-03.svg" alt="table"/>}
             title="Add table"
             onClick={(e) => {
               e.stopPropagation();
@@ -369,8 +369,14 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
           <MenuItemComponent
-            icon={<DeveloperBoardIcon size={13} />}
+            icon={<img src="/img/cpu-chip.svg" alt="table"/>}
             title="Add microfrontend"
             onClick={(e) => {
               e.stopPropagation();
@@ -385,7 +391,7 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<CreateNewFolderIcon size={13} />}
+            icon={<img src="/img/folder-plus.svg" alt="table"/>}
             title="Add folder"
             onClick={(e) => {
               e.stopPropagation();
@@ -411,9 +417,9 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "CREATE" && (
-        <Box className="menu">
+        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
+            icon={<img src="/img/layout-alt-01.svg" alt="table"/>}
             title="Create table"
             onClick={(e) => {
               e.stopPropagation();
@@ -426,7 +432,7 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
+            icon={<img src="/img/layout-alt-03.svg" alt="table"/>}
             title="Add table"
             onClick={(e) => {
               e.stopPropagation();
@@ -434,8 +440,14 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
           <MenuItemComponent
-            icon={<DeveloperBoardIcon size={13} />}
+            icon={<img src="/img/cpu-chip.svg" alt="table"/>}
             title="Add microfrontend"
             onClick={(e) => {
               e.stopPropagation();
@@ -446,7 +458,7 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<DeveloperBoardIcon size={13} />}
+            icon={<img src="/img/terminal-browser.svg" alt="table"/>}
             title="Add Website"
             onClick={(e) => {
               e.stopPropagation();
@@ -463,7 +475,7 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<CreateNewFolderIcon size={13} />}
+            icon={<img src="/img/folder-plus.svg" alt="table"/>}
             title="Add folder"
             onClick={(e) => {
               e.stopPropagation();

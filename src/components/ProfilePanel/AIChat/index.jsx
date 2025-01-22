@@ -1,11 +1,127 @@
-import {Box, InputAdornment, Menu, TextField, Typography} from "@mui/material";
+import {Box, Menu, Typography} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import sendToGptService from "../../../services/sendToGptService";
 import GptChat from "./GptChat";
 import UserChat from "./UserChat";
 import ChatInput from "./ChatInput";
 
-function AiChatMenu({sidebarIsOpen}) {
+export const AIMenu = ({
+                         open,
+                         anchorEl,
+                         loader,
+                         setLoader,
+                         inputValue,
+                         setInputValue,
+                         messages,
+                         messagesEndRef,
+                         handleClose,
+                         handleKeyDown,
+                         handleSendClick
+                       }) => (
+  <Menu
+    anchorEl={anchorEl}
+    id="account-menu"
+    open={open}
+    onClose={handleClose}
+    PaperProps={{
+      elevation: 0,
+      sx: {
+        padding: 0,
+        overflow: "visible",
+        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+        mt: 1.5,
+        "& .MuiAvatar-root": {
+          width: 52,
+          height: 32,
+          ml: -0.5,
+          mr: 1,
+          bottom: 4,
+        },
+      },
+    }}
+    transformOrigin={{horizontal: "left", vertical: "bottom"}}
+    anchorOrigin={{horizontal: "left", vertical: "top"}}>
+    <Box
+      sx={{
+        height: "600px",
+        width: "400px",
+        display: "flex",
+        flexDirection: "column",
+        border: "1px solid #ccc",
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#ffff",
+          color: "#000",
+          padding: "10px",
+          borderBottom: "1px solid #ccc",
+        }}>
+        <Typography sx={{marginLeft: "10px"}} variant="h4">
+          Chat
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          flexGrow: 1,
+          padding: "10px",
+          overflowY: "auto",
+          backgroundColor: "#ffff",
+        }}>
+        {messages.length > 0 ? (
+          messages.map((msg, index) =>
+            msg.sender === "user" ? (
+              <UserChat index={index} msg={msg}/>
+            ) : (
+              <GptChat index={index} msg={msg}/>
+            )
+          )
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              gap: "15px",
+              fontSize: "16px",
+            }}>
+            <img width={30} height={30} src="/img/chat-gpt.png" alt=""/>
+            <p>How can I help you today...?</p>
+          </Box>
+        )}
+        <div ref={messagesEndRef}/>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          padding: "10px",
+          borderTop: "1px solid #ccc",
+          backgroundColor: "#fff",
+        }}>
+        <ChatInput
+          setLoader={setLoader}
+          loader={loader}
+          setInputValue={setInputValue}
+          handleSendClick={handleSendClick}
+          inputValue={inputValue}
+          handleKeyDown={handleKeyDown}
+        />
+      </Box>
+    </Box>
+  </Menu>
+)
+
+export const useAIChat = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [messages, setMessages] = useState([]);
@@ -92,130 +208,19 @@ function AiChatMenu({sidebarIsOpen}) {
     }
   }, [inputValue]);
 
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        gap: "10px",
-        padding: "0 5px",
-      }}>
-      <img
-        onClick={handleClick}
-        width={22}
-        height={22}
-        src="/img/ai.png"
-        alt="AI"
-      />
-      <Box onClick={handleClick} sx={{fontSize: "13px", fontWeight: 600}}>
-        {sidebarIsOpen ? "AI Chat" : ""}
-      </Box>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            padding: 0,
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 52,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-              bottom: 4,
-            },
-          },
-        }}
-        transformOrigin={{horizontal: "left", vertical: "bottom"}}
-        anchorOrigin={{horizontal: "left", vertical: "top"}}>
-        <Box
-          sx={{
-            height: "600px",
-            width: "400px",
-            display: "flex",
-            flexDirection: "column",
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            overflow: "hidden",
-          }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#ffff",
-              color: "#000",
-              padding: "10px",
-              borderBottom: "1px solid #ccc",
-            }}>
-            <Typography sx={{marginLeft: "10px"}} variant="h4">
-              Chat
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              flexGrow: 1,
-              padding: "10px",
-              overflowY: "auto",
-              backgroundColor: "#ffff",
-            }}>
-            {messages.length > 0 ? (
-              messages.map((msg, index) =>
-                msg.sender === "user" ? (
-                  <UserChat index={index} msg={msg} />
-                ) : (
-                  <GptChat index={index} msg={msg} />
-                )
-              )
-            ) : (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  gap: "15px",
-                  fontSize: "16px",
-                }}>
-                <img width={30} height={30} src="/img/chat-gpt.png" alt="" />
-                <p>How can I help you today...?</p>
-              </Box>
-            )}
-            <div ref={messagesEndRef} />
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              padding: "10px",
-              borderTop: "1px solid #ccc",
-              backgroundColor: "#fff",
-            }}>
-            <ChatInput
-              setLoader={setLoader}
-              loader={loader}
-              setInputValue={setInputValue}
-              handleSendClick={handleSendClick}
-              inputValue={inputValue}
-              handleKeyDown={handleKeyDown}
-            />
-          </Box>
-        </Box>
-      </Menu>
-    </Box>
-  );
+  return {
+    open,
+    anchorEl,
+    loader,
+    setLoader,
+    inputValue,
+    setInputValue,
+    messages,
+    messagesEndRef,
+    handleClick,
+    handleClose,
+    handleKeyDown,
+    handleSendClick
+  }
 }
 
-export default AiChatMenu;

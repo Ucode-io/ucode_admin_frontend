@@ -72,6 +72,7 @@ import ClientUserPage from "../views/Users/UserPage";
 import UsersList from "../views/Users/UsersList";
 import WebPage from "../views/WebPage";
 import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
+import {ClientTypes} from "@/views/client-types";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -195,6 +196,8 @@ const Router = () => {
       <Route
         path="/"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        <Route path='client-types' element={<ClientTypes />} />
+
         <Route path="main">
           <Route
             path=":appId/users-list"

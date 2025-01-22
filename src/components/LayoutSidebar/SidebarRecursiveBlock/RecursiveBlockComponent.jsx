@@ -12,20 +12,15 @@ import {useMenuListQuery} from "../../../services/menuService";
 import {store} from "../../../store";
 import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import ApiKeyButton from "../Components/ApiKey/ApiKeyButton";
-import DataBase from "../Components/DataBase";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
 import activeStyles from "../Components/MenuUtils/activeStyles";
-import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
-import RedirectButton from "../Components/Redirect/RedirectButton";
-import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
+
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -46,6 +41,7 @@ const RecursiveBlock = ({
   menuItemId,
   selectedApp,
   userType = false,
+  buttonProps
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({menuItem, element, menuStyle, level});
@@ -164,15 +160,15 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}}>
-        <div className="parent-block column-drag-handle" key={element.id}>
+      <Box sx={{padding: "0 5px"}} style={{ marginBottom: 5 }}>
+        <div className="parent-block column-drag-handle" key={element.id} style={{ marginBottom: 5 }}>
           {permission ? (
             <Button
               id="more-button"
               data-cy="three-dots-button"
               key={element.id}
               style={activeStyle}
-              className="nav-element"
+              className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -290,6 +286,7 @@ const RecursiveBlock = ({
               menuItem={menuItem}
               index={index}
               selectedApp={selectedApp}
+              buttonProps={buttonProps}
             />
           ))}
           {element.id === folderIds.data_base_folder_id && (

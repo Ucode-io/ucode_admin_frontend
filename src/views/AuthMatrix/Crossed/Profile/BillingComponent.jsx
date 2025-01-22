@@ -33,6 +33,7 @@ import HFNumberField from "../../../../components/FormElements/HFNumberField";
 import {store} from "../../../../store";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {format} from "date-fns";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
 
 const BillingComponent = ({
   handCloseBalance = () => {},
@@ -161,7 +162,7 @@ const BillingComponent = ({
             borderBottom: "1px solid #eee",
             height: "calc(100vh - 300px)",
           }}>
-          <Table stickyHeader>
+          <Table sx={{position: "relative"}} stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -191,56 +192,75 @@ const BillingComponent = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactions?.map((row, index) => (
-                <TableRow
-                  key={index}
+              {!transactions?.length ? (
+                transactions?.map((row, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{
+                      "&:nth-of-type(odd)": {backgroundColor: "#f9f9f9"},
+                    }}>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {project?.title}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {row.creator_type === "transfer" && "Bank"}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {row.payment_status === "accepted" ? (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: "success.main",
+                            fontSize: "14px",
+                          }}>
+                          <Done /> Paid
+                        </Typography>
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: "warning.main",
+                            fontSize: "14px",
+                          }}>
+                          <HourglassTop /> Pending
+                        </Typography>
+                      )}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {row?.currency?.code}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {numberWithSpaces(row.amount)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <Box
                   sx={{
-                    "&:nth-of-type(odd)": {backgroundColor: "#f9f9f9"},
+                    position: "absolute",
+                    width: "100%",
+                    height: "400px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    fontSize: "16px",
                   }}>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {project?.title}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {row.creator_type === "transfer" && "Bank"}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {row.payment_status === "accepted" ? (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "success.main",
-                          fontSize: "14px",
-                        }}>
-                        <Done /> Paid
-                      </Typography>
-                    ) : (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "warning.main",
-                          fontSize: "14px",
-                        }}>
-                        <HourglassTop /> Pending
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {row?.currency?.code}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {numberWithSpaces(row.amount)}
-                  </TableCell>
-                </TableRow>
-              ))}
+                  No transactions are found.
+                  <Box sx={{marginTop: "12px"}}>
+                    <BackupTableIcon style={{width: "40px", height: "30px"}} />
+                  </Box>
+                </Box>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

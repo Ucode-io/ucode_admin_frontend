@@ -311,7 +311,7 @@ const LayoutSidebar = ({appId}) => {
           }
         </Flex>
 
-        <Flex w='calc(100% - 8px)' maxWidth='220px' pl={8} py={10} h={56} borderBottom="1px solid #EAECF0"
+        <Flex pl={8} py={10} h={56} borderBottom="1px solid #EAECF0"
               alignItems='center'>
           <Header projectInfo={projectInfo}/>
         </Flex>
@@ -339,40 +339,40 @@ const LayoutSidebar = ({appId}) => {
                   />
                 ))}
               </Container>
+
+              {Boolean(permissions?.menu_button) &&
+                <SidebarTooltip id='create' title='Create'>
+                  <Flex
+                    position="relative"
+                    h={36}
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{bg: "#EAECF0"}}
+                    cursor='pointer'
+                    mx={8}
+                    onClick={(e) => {
+                      handleOpenNotify(e, "CREATE", true);
+                      dispatch(mainActions.setSidebarHighlightedMenu(null));
+                    }}
+                    {...itemConditionalProps}
+                  >
+                    <Flex
+                      position="absolute"
+                      w={36}
+                      h={36}
+                      alignItems='center'
+                      justifyContent='center'
+                    >
+                      <img src="/img/plus-icon.svg" alt="Add"/>
+                    </Flex>
+
+                    <Box whiteSpace='nowrap' color={menuStyle?.text ?? "#475467"} pl={48} fontSize={14}>
+                      Create
+                    </Box>
+                  </Flex>
+                </SidebarTooltip>
+              }
             </div>
-          }
-
-          {Boolean(permissions?.menu_button) &&
-            <SidebarTooltip id='create' title='Create'>
-              <Flex
-                position="relative"
-                h={36}
-                alignItems="center"
-                borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
-                cursor='pointer'
-                mx={8}
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE", true);
-                  dispatch(mainActions.setSidebarHighlightedMenu(null));
-                }}
-                {...itemConditionalProps}
-              >
-                <Flex
-                  position="absolute"
-                  w={36}
-                  h={36}
-                  alignItems='center'
-                  justifyContent='center'
-                >
-                  <img src="/img/plus-icon.svg" alt="Add"/>
-                </Flex>
-
-                <Box whiteSpace='nowrap' color={menuStyle?.text ?? "#475467"} pl={48} fontSize={14}>
-                  Create
-                </Box>
-              </Flex>
-            </SidebarTooltip>
           }
         </Box>
 
@@ -583,8 +583,8 @@ const Header = ({projectInfo}) => {
   return (
     <Popover offset={[45, 5]} isOpen={isOpen}>
       <PopoverTrigger>
-        <Flex ref={ref} position='relative' overflow='hidden' alignItems='center' p={8} borderRadius={8}
-              bg={isOpen ? "#EAECF0" : "#fff"} _hover={{bg: "#EAECF0"}} cursor="pointer"
+        <Flex ref={ref} w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
+              p={8} borderRadius={8} bg={isOpen ? "#EAECF0" : "#fff"} _hover={{bg: "#EAECF0"}} cursor="pointer"
               onClick={() => !isOpen ? onOpen() : null}>
           <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
             <Flex w={20} h={20} borderRadius={4} bg='#06AED4' color='#fff' alignItems='center'

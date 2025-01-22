@@ -15,7 +15,7 @@ const userService = {
     requestAuth.delete(`v2/user/${id}`, {
       params,
     }),
-  create: (data) => requestAuth.post("v2/user", data, {}),
+  create: (data) => requestAuth.post("v2/user", data),
   upsert: (data) =>
     requestAuth.post(`v2/upsert-user-info/${data.id}`, data, {}),
 };

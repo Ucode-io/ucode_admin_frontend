@@ -1,6 +1,6 @@
 import "./style.scss";
 import {Tooltip} from "@mui/material";
-import {Flex, Box} from "@chakra-ui/react";
+import {Box, Flex} from "@chakra-ui/react";
 import {useEffect} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
@@ -12,7 +12,6 @@ import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
-import {useQueryClient} from "react-query";
 import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
 import {mainActions} from "@/store/main/main.slice";
@@ -20,6 +19,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
+
+const USERS_MENU_ITEM_ID = "9e988322-cffd-484c-9ed6-460d8701551b";
 
 const AppSidebar = ({
                       index,
@@ -35,7 +36,6 @@ const AppSidebar = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
-  const queryClient = useQueryClient();
   const auth = store.getState().auth;
   const {appId} = useParams();
 
@@ -48,20 +48,17 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = () => {
+    if (element?.id === USERS_MENU_ITEM_ID) {
+      return navigate('/client-types');
+    }
+
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      if (element?.id === "9e988322-cffd-484c-9ed6-460d8701551b") {
-        setElement(element);
-        setSubMenuIsOpen(true);
-        navigate(`/main/${element.id}`);
-        queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
-      } else {
-        setElement(element);
-        setSubMenuIsOpen(true);
-        navigate(`/main/${element.id}`);
-      }
+      setElement(element);
+      setSubMenuIsOpen(true);
+      navigate(`/main/${element.id}`);
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
       navigate(

@@ -24,6 +24,7 @@ import {Pagination} from "@mui/material";
 import {CreateDrawer, EditDrawer} from "./actions";
 import {useClientTypesQuery} from "./utils";
 import {useNavigate} from "react-router-dom";
+import {useUserDeleteMutation} from "@/services/auth/userService";
 
 const templateColumns = 'minmax(72px, 72px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 76px)';
 
@@ -139,9 +140,15 @@ export const ClientTypes = () => {
               <Td>
                 {user.phone}
               </Td>
-              <Td display='flex' justifyContent='center' columnGap='12px'>
-                <Image src="/img/edit.svg" alt="edit" cursor='pointer' onClick={() => setEditUserGuid(user?.id)}/>
-                <Image src="/img/delete.svg" alt="delete" cursor='pointer'/>
+              <Td display='flex' justifyContent='center' columnGap='6px'>
+                <IconButton
+                  aria-label='edit'
+                  icon={<Image src="/img/edit.svg" alt="edit" />}
+                  onClick={() => setEditUserGuid(user?.id)}
+                  variant='ghost'
+                  colorScheme='gray'
+                />
+                <DeleteButton user={user} />
               </Td>
             </Grid>
           )}
@@ -173,6 +180,21 @@ export const ClientTypes = () => {
         </Flex>
       </Box>
     </ChakraProvider>
+  )
+}
+
+const DeleteButton = ({user}) => {
+  const deleteMutation = useUserDeleteMutation({ userMenuId: user?.client_type_id });
+
+  return (
+    <IconButton
+      aria-label='delete'
+      icon={<Image src="/img/delete.svg" alt="delete" />}
+      variant='ghost'
+      colorScheme='gray'
+      isLoading={deleteMutation.isLoading}
+      onClick={() => deleteMutation.mutate(user?.id)}
+    />
   )
 }
 

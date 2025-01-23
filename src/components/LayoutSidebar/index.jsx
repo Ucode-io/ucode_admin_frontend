@@ -41,6 +41,7 @@ import {
 } from "@chakra-ui/react";
 import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -398,6 +399,13 @@ const LayoutSidebar = ({appId}) => {
           <Chatwoot open={sidebarIsOpen}/>
           <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
           <AIChat sidebarOpen={sidebarIsOpen}/>
+          <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
+          <NewProfilePanel
+            sidebarAnchorEl={sidebarAnchorEl}
+            setSidebarAnchor={setSidebarAnchor}
+            handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+            handleTemplateModalOpen={handleTemplateModalOpen}
+          />
         </Flex>
 
         {(modalType === "create" ||
@@ -552,6 +560,7 @@ const AIChat = ({sidebarOpen}) => {
         _hover={{bg: "#EAECF0"}}
         cursor='pointer'
         onClick={handleClick}
+        mb={sidebarOpen ? 0 : 4}
       >
         <img src="/img/magic-wand.svg" alt="magic"/>
       </Flex>

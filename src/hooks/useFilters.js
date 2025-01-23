@@ -3,13 +3,15 @@ import { useDispatch, useSelector } from "react-redux"
 import { useLocation } from "react-router-dom"
 import { filterActions } from "../store/filter/filter.slice"
 
+const object = {}
+
 const useFilters = (tableSlug, viewId) => {
   const { state } = useLocation()
   const dispatch = useDispatch()
 
   const filtersFromLocation = useMemo(() => state ?? {}, [state])
   const filtersFromRedux = useSelector(
-    (state) => state.filter.list[tableSlug]?.[viewId] ?? {}
+    (state) => state.filter.list[tableSlug]?.[viewId] ?? object
   )
 
   const clearFilters = useCallback(() => {

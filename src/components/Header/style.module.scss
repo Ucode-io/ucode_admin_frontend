@@ -1,15 +1,15 @@
-@use '/src/scss/colors';
+@use "/src/scss/colors";
 
 .header {
   display: none;
-  height: 40px;
+  height: 55px;
   background-color: #fff;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  box-shadow: inset 0px -1px 0px #E5E9EB;
+  box-shadow: inset 0px -1px 0px #e5e9eb;
 
   &.sticky {
     position: sticky;
@@ -28,8 +28,6 @@
     }
 
     .titleBlock {
-
-
       .title {
         font-size: 16px;
         font-weight: 600;
@@ -49,14 +47,11 @@
       background-color: colors.$borders;
       margin: 0 24px;
     }
-
-
   }
-  
+
   .rightSide {
     display: flex;
     align-items: center;
     gap: 10px;
   }
 }
-

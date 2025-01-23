@@ -220,8 +220,8 @@ const DataMonthCard = ({
             </b>
             {field?.type === "LOOKUP" ? (
               getRelationFieldTableCellLabel(field, info, field.slug + "_data")
-            ) : field?.type === "DATE_TIME" ? (
-              dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
+            ) : field?.type === "DATE_TIME" || field?.type === "DATE" ? (
+              dateValidFormat(info[field.slug], "dd.MM.yyyy - HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
                 style={{padding: "2px 5px", marginBottom: 4}}

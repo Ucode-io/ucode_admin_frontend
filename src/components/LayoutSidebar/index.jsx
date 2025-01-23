@@ -317,7 +317,7 @@ const LayoutSidebar = ({appId}) => {
           <Header projectInfo={projectInfo}/>
         </Flex>
 
-        <Box pt={20} maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 210}px)`} overflowY='auto' overflow='hidden'>
+        <Box pt={20} maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`} overflowY='auto' overflowX='hidden'>
           {!menuList && <RingLoaderWithWrapper style={{height: "100%"}}/>}
 
           {Array.isArray(menuList) &&

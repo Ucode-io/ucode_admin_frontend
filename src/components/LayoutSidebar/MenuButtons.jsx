@@ -11,6 +11,7 @@ import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import AddIcon from "@mui/icons-material/Add";
+import SVG from "react-inlinesvg";
 
 const ButtonsMenu = ({
   element,
@@ -352,7 +353,7 @@ const ButtonsMenu = ({
       {menuType === "ROOT" && (
         <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
-            icon={<img src="/img/layout-alt-01.svg" alt="table"/>}
+            icon={<SVG src='/img/layout-alt-01.svg' color='#475467' />}
             title="Create table"
             onClick={(e) => {
               e.stopPropagation();
@@ -419,7 +420,7 @@ const ButtonsMenu = ({
       {menuType === "CREATE" && (
         <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
-            icon={<img src="/img/layout-alt-01.svg" alt="table"/>}
+            icon={<SVG src='/img/layout-alt-01.svg' color='#475467' />}
             title="Create table"
             onClick={(e) => {
               e.stopPropagation();

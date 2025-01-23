@@ -392,7 +392,7 @@ const LayoutSidebar = ({appId}) => {
             cursor='pointer'
             mb={sidebarIsOpen ? 0 : 4}
           >
-            <img src="/img/git-merge.svg" alt="merge"/>
+            <img src="/img/documentation.svg" alt="merge"/>
           </Flex>
 
           <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>

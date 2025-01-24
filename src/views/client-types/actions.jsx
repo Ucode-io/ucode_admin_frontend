@@ -39,7 +39,7 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
       ...data,
       role_id: data.role_id.guid,
       client_type_id: typeof data.client_type_id === 'string' ? data.client_type_id : data.client_type_id?.guid,
-      phone: '998' + data.phone.replaceAll(/\D/g, ''),
+      phone: data.phone,
       project_id
     }
 

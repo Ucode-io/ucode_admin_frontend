@@ -73,7 +73,11 @@ export const ClientTypes = () => {
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      <CreateDrawer isOpen={createDrawer.isOpen} onClose={createDrawer.onClose}/>
+      <CreateDrawer
+        isOpen={createDrawer.isOpen}
+        onClose={createDrawer.onClose}
+        clientTypeId={clientTypeId}
+      />
       <EditDrawer
         guid={editUserGuid}
         client_type_id={users.find(user => user.id === editUserGuid)?.client_type_id}

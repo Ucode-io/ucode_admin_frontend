@@ -27,11 +27,11 @@ import 'react-phone-number-input/style.css'
 
 import {useClientTypesQuery} from "./utils";
 
-export const CreateDrawer = ({isOpen, onClose}) => {
+export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
   const form = useForm();
   const project_id = useSelector((state) => state.company.projectId);
   const createMutation = useUserCreateMutation({
-    onSuccess: console.log
+    onSuccess: onClose
   });
 
   const onSubmit = (data) => {
@@ -45,6 +45,12 @@ export const CreateDrawer = ({isOpen, onClose}) => {
 
     createMutation.mutate(data);
   }
+
+  useEffect(() => {
+    if (isOpen && clientTypeId) {
+      form.reset({ client_type_id: clientTypeId });
+    }
+  }, [isOpen, clientTypeId])
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} size='md'>
@@ -206,8 +212,10 @@ const UserType = ({control}) => {
 
 const Role = ({control}) => {
   const clientTypeId = useWatch({control, name: "client_type_id"});
+  const id = typeof clientTypeId === 'string' ? clientTypeId : clientTypeId?.guid;
   const rolesQuery = useRoleListQuery({
-    params: clientTypeId?.guid ? {'client-type-id': clientTypeId?.guid} : {}
+    params: id ? {'client-type-id': id} : {},
+    queryParams: {enabled: Boolean(id)}
   });
   const roles = rolesQuery.data?.data?.response ?? [];
 

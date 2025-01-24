@@ -1,7 +1,7 @@
 import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
@@ -15,7 +15,7 @@ import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import menuService, {useMenuGetByIdQuery, useMenuListQuery,} from "../../services/menuService";
 import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
+import {useProjectGetByIdQuery, useProjectListQuery} from "../../services/projectService";
 import {store} from "../../store";
 import {mainActions} from "../../store/main/main.slice";
 import {applyDrag} from "../../utils/applyDrag";
@@ -29,19 +29,16 @@ import {useSearchParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
-import {
-  Box,
-  Flex,
-  Popover,
-  PopoverTrigger,
-  Button,
-  PopoverContent,
-  useDisclosure,
-  useOutsideClick
-} from "@chakra-ui/react";
+import {Box, Button, Flex, Popover, PopoverContent, PopoverTrigger, useDisclosure} from "@chakra-ui/react";
 import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
+import {useCompanyListQuery} from "@/services/companyService";
+import {ChevronLeftIcon} from "@chakra-ui/icons";
+import {useEnvironmentListQuery} from "@/services/environmentService";
+import {companyActions} from "@/store/company/company.slice";
+import authService from "@/services/auth/authService";
+import {authActions} from "@/store/auth/auth.slice";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -314,7 +311,7 @@ const LayoutSidebar = ({appId}) => {
 
         <Flex pl={8} py={10} h={56} borderBottom="1px solid #EAECF0"
               alignItems='center'>
-          <Header projectInfo={projectInfo}/>
+          <Header sidebarIsOpen={sidebarIsOpen} projectInfo={projectInfo}/>
         </Flex>
 
         <Box pt={20} maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`} overflowY='auto' overflowX='hidden'>
@@ -582,17 +579,61 @@ const AIChat = ({sidebarOpen}) => {
   )
 }
 
-const Header = ({projectInfo}) => {
-  const ref = useRef();
+const Header = ({sidebarIsOpen, projectInfo}) => {
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
-  useOutsideClick({
-    ref, enabled: isOpen, handler: () => onClose()
-  })
+  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+  const userId = useSelector((state) => state.auth?.userId);
+  const companiesQuery = useCompanyListQuery({
+    params: {owner_id: userId}, queryParams: {enabled: Boolean(userId)}
+  });
+  const projectsQuery = useProjectListQuery({
+    params: {company_id: selectedCompanyId},
+    queryParams: {enabled: Boolean(selectedCompanyId)}
+  });
+  const environmentsQuery = useEnvironmentListQuery({
+    params: {project_id: selectedProjectId},
+    queryParams: {enabled: Boolean(selectedProjectId)}
+  });
+
+  const companies = companiesQuery.data?.companies ?? [];
+  const projects = projectsQuery.data?.projects ?? [];
+  const environments = environmentsQuery.data?.environments ?? [];
+
+  const handleClose = () => {
+    onClose();
+    setSelectedCompanyId(null);
+  }
+
+  const onSelectEnvironment = (environment) => {
+    const params = {
+      refresh_token: auth?.refreshToken,
+      env_id: companies.find((company) => company.id === selectedCompanyId).environmentId,
+      project_id: projects.find((project) => project.project_id === selectedProjectId).projectId,
+      for_env: true,
+    }
+
+    dispatch(companyActions.setEnvironmentItem(environment));
+    dispatch(companyActions.setEnvironmentId(environment.id));
+    authService
+      .updateToken({...params, env_id: environment.id}, {...params})
+      .then((res) => {
+        store.dispatch(authActions.setTokens(res));
+        window.location.reload();
+        dispatch(companyActions.setEnvironmentId(environment.id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
-    <Popover offset={[45, 5]} isOpen={isOpen}>
+    <Popover offset={[sidebarIsOpen ? 15 : 95, 5]} isOpen={isOpen} onClose={handleClose}>
       <PopoverTrigger>
-        <Flex ref={ref} w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
+        <Flex w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
               p={8} borderRadius={8} bg={isOpen ? "#EAECF0" : "#fff"} _hover={{bg: "#EAECF0"}} cursor="pointer"
               onClick={() => !isOpen ? onOpen() : null}>
           <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
@@ -607,41 +648,128 @@ const Header = ({projectInfo}) => {
                textOverflow='ellipsis'>
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon
-            style={{
-              marginLeft: 8,
-              fontSize: 22,
-              transform: `rotate(${isOpen ? -180 : 0}deg)`,
-              transition: "transform 150ms linear"
-            }}
-          />
+          <KeyboardArrowDownIcon style={{marginLeft: 'auto', fontSize: 22,}}/>
         </Flex>
       </PopoverTrigger>
-      <PopoverContent bg='#fff' padding={6} borderRadius={8} border='1px solid #EAECF0'
-                      boxShadow='0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814' zIndex={999}
-                      outline='none'>
-        <Flex p={8} columnGap={8}>
-          <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
-                fontSize={18} fontWeight={500} color='#fff'>
-            P
-          </Flex>
-          <Box mr={36}>
-            <Box fontSize={12} fontWeight={500} color='#101828'>
-              Task manager
-            </Box>
-            <Box fontSize={12} fontWeight={400} color="#475467">
-              Business · 24 members
-            </Box>
-          </Box>
-          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
-        </Flex>
-        <Button mt={12} borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
-                fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
-          Create Team
-        </Button>
+      <PopoverContent w='211px' bg='#fff' padding={6} borderRadius={8} border='1px solid #EAECF0' outline='none'
+                      boxShadow='0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814' zIndex={999}>
+        {!selectedCompanyId &&
+          <Companies companies={companies} onSelectCompany={(company) => setSelectedCompanyId(company.id)}/>
+        }
+        {Boolean(selectedCompanyId) && !selectedProjectId &&
+          <Projects
+            company={companies.find((company) => company.id === selectedCompanyId)}
+            projects={projects}
+            onSelectProject={(project) => setSelectedProjectId(project.project_id)}
+            onBackClick={() => setSelectedCompanyId(null)}
+          />
+        }
+        {Boolean(selectedCompanyId) && Boolean(selectedProjectId) &&
+          <Environments
+            project={projects.find((project) => project.project_id === selectedProjectId)}
+            environments={environments}
+            onBackClick={() => setSelectedProjectId(null)}
+            onSelectEnvironment={onSelectEnvironment}
+          />
+        }
       </PopoverContent>
     </Popover>
   )
 }
+
+const Companies = ({companies, onSelectCompany}) => (
+  <Box>
+    <Box>
+      {companies.map((company) =>
+        <Flex key={company.id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
+              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectCompany(company)}>
+          <Flex columnGap={8} alignItems='center'>
+            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
+                  fontSize={18} fontWeight={500} color='#fff'>
+              {company.name?.[0]}
+            </Flex>
+            <Box mr={36}>
+              <Box fontSize={12} fontWeight={500} color='#101828'>
+                {company.name}
+              </Box>
+            </Box>
+          </Flex>
+          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
+        </Flex>
+      )}
+    </Box>
+
+    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
+            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
+      Create Team
+    </Button>
+  </Box>
+);
+
+const Projects = ({company, projects, onSelectProject, onBackClick}) => (
+  <Box>
+    <Flex columnGap='4px' alignItems='center' color='#475467' fontWeight={600} fontSize={14} onClick={onBackClick}
+          cursor='pointer'>
+      <ChevronLeftIcon fontSize={24}/> {company?.name}
+    </Flex>
+    <Box mt='8px'>
+      {projects.map((project) =>
+        <Flex key={project.project_id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
+              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectProject(project)}>
+          <Flex columnGap={8} alignItems='center'>
+            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
+                  fontSize={18} fontWeight={500} color='#fff'>
+              {project.title?.[0]}
+            </Flex>
+            <Box mr={36}>
+              <Box fontSize={12} fontWeight={500} color='#101828'>
+                {project.title}
+              </Box>
+            </Box>
+          </Flex>
+          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
+        </Flex>
+      )}
+    </Box>
+
+    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
+            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
+      Create Project
+    </Button>
+  </Box>
+);
+
+const Environments = ({project, environments, onBackClick, onSelectEnvironment}) => (
+  <Box>
+    <Flex columnGap='4px' alignItems='center' color='#475467' fontWeight={600} fontSize={14} onClick={onBackClick}
+          cursor='pointer'>
+      <ChevronLeftIcon fontSize={24}/> {project?.title}
+    </Flex>
+    <Box mt='8px'>
+      {environments.map((environment) =>
+        <Flex key={environment.id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
+              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectEnvironment(environment)}>
+          <Flex columnGap={8} alignItems='center'>
+            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
+                  fontSize={18} fontWeight={500} color='#fff'>
+              {environment.name?.[0]}
+            </Flex>
+            <Box mr={36}>
+              <Box fontSize={12} fontWeight={500} color='#101828'>
+                {environment.name}
+              </Box>
+            </Box>
+          </Flex>
+          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
+        </Flex>
+      )}
+    </Box>
+
+    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
+            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
+      Create Environment
+    </Button>
+  </Box>
+);
 
 export default LayoutSidebar;

@@ -38,7 +38,7 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
     data = {
       ...data,
       role_id: data.role_id.guid,
-      client_type_id: data.client_type_id.guid,
+      client_type_id: typeof data.client_type_id === 'string' ? data.client_type_id : data.client_type_id?.guid,
       phone: '998' + data.phone.replaceAll(/\D/g, ''),
       project_id
     }
@@ -168,6 +168,7 @@ const Form = ({form}) => {
       <FormControlLabel
         control={
           <Checkbox
+            defaultChecked={true}
             icon={<img src="/img/checbkox.svg" alt="checkbox"/>}
             checkedIcon={<img src="/img/checkbox-checked.svg" alt="checked"/>}
           />

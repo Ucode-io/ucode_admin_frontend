@@ -17,7 +17,6 @@ import {ChevronDownIcon, ArrowBackIcon, ChevronRightIcon} from "@chakra-ui/icons
 import PageFallback from "@/components/PageFallback";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {useUsersListQuery} from "@/services/userService";
-import {useRoleListQuery} from "@/services/roleServiceV2";
 import {Select} from "chakra-react-select";
 import {Pagination} from "@mui/material";
 

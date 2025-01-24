@@ -1,9 +1,19 @@
-import {Description, MoreVertOutlined} from "@mui/icons-material";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Backdrop, Badge, Box as MuiBox, Button as MuiButton, Divider, Menu, Popover, Switch,} from "@mui/material";
-import {Button, ChakraProvider, Flex, IconButton, Image} from "@chakra-ui/react";
+import {Backdrop, Box as MuiBox, Button as MuiButton, Popover as MuiPopover,} from "@mui/material";
+import {
+  Button,
+  ChakraProvider,
+  Flex,
+  IconButton,
+  Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
 import {useEffect, useMemo, useState} from "react";
@@ -16,7 +26,6 @@ import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
@@ -25,17 +34,11 @@ import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import {getSearchText, openDB, saveOrUpdateSearchText,} from "../../utils/indexedDb.jsx";
 import {queryGenerator} from "../../utils/queryGenerator";
 import AgGridTableView from "./AgGridTableView";
-import GroupByButton from "./GroupByButton";
 import ShareModal from "./ShareModal/ShareModal";
 import TableView from "./TableView";
 import GroupTableView from "./TableView/GroupTableView";
-import TableViewGroupByButton from "./TableViewGroupByButton";
 import TreeView from "./TreeView";
-import VisibleColumnsButton from "./VisibleColumnsButton";
 import WebsiteView from "./WebsiteView";
-import ExcelButtons from "./components/ExcelButtons";
-import FixColumnsTableView from "./components/FixColumnsTableView";
-import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import {ArrowBackIcon, ChevronDownIcon, ChevronRightIcon} from "@chakra-ui/icons";
@@ -44,6 +47,8 @@ import SVG from "react-inlinesvg";
 import {viewsActions} from "@/store/views/view.slice";
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import {computedViewTypes} from "@/utils/constants/viewTypes";
+import SearchParams from "./components/ViewSettings/SearchParams";
+import FastFilter from "@/views/Objects/components/FastFilter";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -393,8 +398,7 @@ const ViewsWithGroups = ({
         <Flex p='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
               columnGap='8px'>
           <Flex w='20px' h='20px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
-                fontSize={12}
-                justifyContent='center' alignItems='center'>
+                fontSize={12} justifyContent='center' alignItems='center'>
             {tableName?.[0]}
           </Flex>
           {tableName}
@@ -447,7 +451,7 @@ const ViewsWithGroups = ({
           <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
         )}
 
-        <Popover
+        <MuiPopover
           open={Boolean(viewAnchorEl)}
           anchorEl={viewAnchorEl}
           onClose={() => setViewAnchorEl(null)}
@@ -465,17 +469,65 @@ const ViewsWithGroups = ({
               setSelectedView(data);
             }}
           />
+        </MuiPopover>
+
+        <Popover>
+          <InputGroup ml='auto' w='320px'>
+            <InputLeftElement>
+              <Image src='/img/search-lg.svg' alt='search'/>
+            </InputLeftElement>
+            <Input id="search_input" defaultValue={searchText} placeholder="Search"
+                   onChange={(ev) => inputChangeHandler(ev.target.value)}/>
+
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) &&
+              <PopoverTrigger>
+                <InputRightElement>
+                  <IconButton
+                    w='24px'
+                    h='24px'
+                    aria-label='more'
+                    icon={<Image src='/img/dots-vertical.svg' alt='more'/>}
+                    variant='ghost'
+                    colorScheme='gray'
+                    size='xs'
+                  />
+                </InputRightElement>
+              </PopoverTrigger>
+            }
+          </InputGroup>
+
+          <PopoverContent>
+            <SearchParams
+              checkedColumns={checkedColumns}
+              setCheckedColumns={setCheckedColumns}
+              columns={columnsForSearch}
+              updateField={updateField}
+            />
+          </PopoverContent>
         </Popover>
 
-        <IconButton aria-label='search' icon={<Image src='/img/search-lg.svg' alt='search'/>} variant='ghost'
-                    colorScheme='gray' ml='auto' />
-        <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
-                    colorScheme='gray'/>
-        <Button rightIcon={<ChevronDownIcon fontSize={20} />}>
+        <Popover>
+          <PopoverTrigger>
+            <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost' colorScheme='gray' />
+          </PopoverTrigger>
+          <PopoverContent>
+            <FastFilter
+              view={view}
+              fieldsMap={fieldsMap}
+              isVertical
+              selectedTabIndex={selectedTabIndex}
+              visibleColumns={visibleColumns}
+              visibleRelationColumns={visibleRelationColumns}
+              visibleForm={visibleForm}
+              setFilterVisible={setFilterVisible}
+            />
+          </PopoverContent>
+        </Popover>
+        <Button rightIcon={<ChevronDownIcon fontSize={20}/>}>
           Create item
         </Button>
         <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
-                    colorScheme='gray' onClick={handleClick} />
+                    colorScheme='gray' onClick={handleClick}/>
       </Flex>
 
       <Tabs direction={"ltr"} defaultIndex={0}>

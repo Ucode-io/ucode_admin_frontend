@@ -34,6 +34,8 @@ import {store} from "../../../../store";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {format} from "date-fns";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
+import {useProjectListQuery} from "../../../../services/companyService";
+import {companyActions} from "../../../../store/company/company.slice";
 
 const BillingComponent = ({
   handCloseBalance = () => {},
@@ -43,7 +45,22 @@ const BillingComponent = ({
   const [loading, setLoading] = useState(false);
   const project = useSelector((state) => state?.company?.projectItem);
   const authStore = store.getState().auth;
+  const company = store.getState().company;
   const dispatch = useDispatch();
+
+  const {isLoading: projectLoading} = useProjectListQuery({
+    params: {
+      company_id: company.companyId,
+    },
+    queryParams: {
+      enabled: Boolean(!company.companyId),
+      onSuccess: (res) => {
+        dispatch(companyActions.setProjects(res.projects));
+        dispatch(companyActions.setProjectItem(res.projects[0]));
+        dispatch(companyActions.setProjectId(res.projects[0].project_id));
+      },
+    },
+  });
 
   const {data} = useQuery(
     ["GET_BILLING_DATA", project],
@@ -64,6 +81,8 @@ const BillingComponent = ({
       select: (res) => res?.transactions ?? [],
     }
   );
+
+  console.log("transactionstransactions", transactions);
 
   const onSubmit = (values) => {
     setLoading(true);
@@ -192,7 +211,7 @@ const BillingComponent = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {!transactions?.length ? (
+              {Boolean(transactions?.length) ? (
                 transactions?.map((row, index) => (
                   <TableRow
                     key={index}

@@ -85,7 +85,7 @@ const HFPolygonField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : {};
+        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
         return (
           <Box
             sx={{
@@ -97,7 +97,7 @@ const HFPolygonField = ({
             <YMaps
               query={{
                 load: "package.full",
-                apikey: "d7bd7a10-4ccd-47c6-8c61-eef0036c98cb",
+                apikey: "a152ff76-8337-42f9-a5c1-be25f9008dd0",
               }}>
               <Map
                 width={width !== 0 ? width : "265px"}
@@ -112,7 +112,6 @@ const HFPolygonField = ({
                         ?._coordinates;
                     if (coordinates) {
                       const coordinatesJson = JSON.stringify(coordinates);
-
                       onChange(coordinatesJson);
                     }
                   }}
@@ -124,7 +123,7 @@ const HFPolygonField = ({
                   geometry={parsedPolygon}
                   options={{
                     editorDrawingCursor: "crosshair",
-                    editorMaxPoints: 25,
+                    editorMaxPoints: 8,
                     fillColor: "rgba(222,109,110, 0.5)",
                     strokeColor: "rgb(69,130,250)",
                     strokeWidth: 3,

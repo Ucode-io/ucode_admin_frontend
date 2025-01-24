@@ -16,11 +16,11 @@ import {
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -41,14 +41,19 @@ import TreeView from "./TreeView";
 import WebsiteView from "./WebsiteView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import {ArrowBackIcon, ChevronDownIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import {ArrowBackIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {useTranslation} from "react-i18next";
 import SVG from "react-inlinesvg";
 import {viewsActions} from "@/store/views/view.slice";
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import {computedViewTypes} from "@/utils/constants/viewTypes";
 import SearchParams from "./components/ViewSettings/SearchParams";
-import FastFilter from "@/views/Objects/components/FastFilter";
+import {filterActions} from "@/store/filter/filter.slice";
+import {Filter} from "@/views/Objects/components/FilterGenerator";
+import FiltersTab from "@/views/Objects/components/ViewSettings/FiltersTab";
+import constructorViewService from "@/services/constructorViewService";
+import {quickFiltersActions} from "@/store/filter/quick_filter";
+import useTabRouter from "@/hooks/useTabRouter";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -68,7 +73,7 @@ const ViewsWithGroups = ({
                            visibleRelationColumns,
                            visibleColumns,
                          }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug, id} = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
@@ -85,6 +90,7 @@ const ViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
+  const [searchParams] = useSearchParams();
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -92,7 +98,7 @@ const ViewsWithGroups = ({
   const groupTable = view?.attributes.group_by_columns;
   const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const [inputKey, setInputKey] = useState(0);
-  const openHeightControl = Boolean(anchorElHeightControl);
+  const {navigateToForm} = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -508,24 +514,17 @@ const ViewsWithGroups = ({
 
         <Popover>
           <PopoverTrigger>
-            <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost' colorScheme='gray' />
+            <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
+                        colorScheme='gray'/>
           </PopoverTrigger>
-          <PopoverContent>
-            <FastFilter
-              view={view}
-              fieldsMap={fieldsMap}
-              isVertical
-              selectedTabIndex={selectedTabIndex}
-              visibleColumns={visibleColumns}
-              visibleRelationColumns={visibleRelationColumns}
-              visibleForm={visibleForm}
-              setFilterVisible={setFilterVisible}
-            />
-          </PopoverContent>
+          <FilterPopover view={view} visibleForm={visibleForm} visibleColumns={visibleColumns} fieldsMap={fieldsMap}/>
         </Popover>
-        <Button rightIcon={<ChevronDownIcon fontSize={20}/>}>
-          Create item
-        </Button>
+        <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+          <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
+                  onClick={() => navigateToForm(tableSlug, "CREATE", {}, {id}, searchParams.get('menuId'))}>
+            Create item
+          </Button>
+        </PermissionWrapperV2>
         <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
                     colorScheme='gray' onClick={handleClick}/>
       </Flex>
@@ -678,5 +677,161 @@ const ViewsWithGroups = ({
     </ChakraProvider>
   );
 };
+
+const FilterPopover = ({view, fieldsMap, visibleColumns, visibleForm}) => {
+  const {tableSlug} = useParams();
+  const [addingFilters, setAddingFilters] = useState(false);
+
+  return (
+    <PopoverContent p='12px'>
+      {!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}
+      {!addingFilters &&
+        <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
+          <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'
+                  onClick={() => setAddingFilters(true)}>
+            Add filters
+          </Button>
+        </PermissionWrapperV2>
+      }
+      {addingFilters &&
+        <Button leftIcon={<ChevronLeftIcon fontSize={18}/>} w='fit-content' colorScheme='gray' variant='ghost' mb='4px'
+                onClick={() => setAddingFilters(false)}>
+          Filters
+        </Button>
+      }
+      {addingFilters &&
+        <FiltersSwitch view={view} visibleColumns={visibleColumns} visibleForm={visibleForm}/>
+      }
+    </PopoverContent>
+  )
+}
+
+const FiltersList = ({view, fieldsMap,}) => {
+  const {tableSlug} = useParams();
+  const {new_list} = useSelector((state) => state.filter);
+  const [queryParameters] = useSearchParams();
+
+  useEffect(() => {
+    if (queryParameters.get("specialities")?.length) {
+      dispatch(
+        filterActions.setFilter({
+          tableSlug: tableSlug,
+          viewId: view?.id,
+          name: "specialities_id",
+          value: [`${queryParameters.get("specialities")}`],
+        })
+      );
+    }
+  }, [queryParameters]);
+
+  const dispatch = useDispatch();
+
+  const {filters} = useFilters(tableSlug, view?.id);
+
+  const computedFields = useMemo(() => {
+    const filter = view?.attributes?.quick_filters ?? [];
+
+    return (
+      [
+        ...(filter ?? []),
+        ...(new_list[tableSlug] ?? [])
+          ?.filter(
+            (fast) =>
+              fast.is_checked &&
+              !view?.attributes?.quick_filters?.find(
+                (quick) => quick?.id === fast.id
+              )
+          )
+          ?.map((fast) => fast),
+      ]
+        ?.map((el) => {
+          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+            return fieldsMap[el?.relation_id];
+          } else {
+            return fieldsMap[el?.id];
+          }
+        })
+        ?.filter((el) => el) ?? []
+    );
+  }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
+
+  const onChange = (value, name) => {
+    dispatch(
+      filterActions.setFilter({
+        tableSlug: tableSlug,
+        viewId: view.id,
+        name: name,
+        value,
+      })
+    );
+  };
+
+  return (
+    <Flex flexDirection='column' rowGap='6px'>
+      {computedFields?.map((filter) => (
+        <div key={filter.id}>
+          <Filter
+            field={filter}
+            name={filter?.path_slug || filter.slug}
+            tableSlug={tableSlug}
+            filters={filters}
+            onChange={onChange}
+          />
+        </div>
+      ))}
+    </Flex>
+  )
+}
+
+const FiltersSwitch = ({visibleForm, view, visibleColumns}) => {
+  const {tableSlug} = useParams();
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const [updateLoading, setUpdateLoading] = useState(false);
+
+  const updateView = (data) => {
+    setUpdateLoading(true);
+    const result = data?.map((item) => ({
+      ...item,
+      is_checked: true,
+    }));
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          quick_filters: result,
+        },
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug]);
+        setTimeout(() => {
+          setUpdateLoading(false);
+        }, 400);
+      })
+      .finally(() => {
+        dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
+      });
+  };
+
+  return (
+    <FiltersTab
+      form={visibleForm}
+      onChange={(value, name) => dispatch(
+        filterActions.setFilter({
+          tableSlug: tableSlug,
+          viewId: view.id,
+          name: name,
+          value,
+        })
+      )}
+      updateView={updateView}
+      views={view}
+      computedColumns={visibleColumns}
+      isLoading={updateLoading}
+      setFilterVisible={() => null}
+    />
+  )
+}
 
 export default ViewsWithGroups;

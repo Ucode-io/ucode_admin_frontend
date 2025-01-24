@@ -18,6 +18,7 @@ const FastFilter = ({
   visibleForm,
   isVisibleLoading,
   setFilterVisible,
+  container
 }) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
@@ -95,6 +96,7 @@ const FastFilter = ({
       ))}
 
       <FilterVisible
+        container={container}
         onChange={onChange}
         selectedTabIndex={selectedTabIndex}
         views={view}

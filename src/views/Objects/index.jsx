@@ -89,6 +89,7 @@ const ObjectsPage = () => {
       visibleRelationColumns: [],
     },
     isLoading,
+    refetch
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
@@ -226,6 +227,7 @@ const ObjectsPage = () => {
                       view={view}
                       fieldsMap={fieldsMap}
                       menuItem={menuItem}
+                      refetchViews={refetch}
                     />
                   </>
                 )}

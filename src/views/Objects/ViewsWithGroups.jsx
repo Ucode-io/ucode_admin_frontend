@@ -1,6 +1,7 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Backdrop, Box as MuiBox, Button as MuiButton, Popover as MuiPopover,} from "@mui/material";
 import {
+  Box,
   Button,
   ChakraProvider,
   Flex,
@@ -12,13 +13,15 @@ import {
   InputRightElement,
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
+  Spinner,
+  Switch
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
@@ -54,6 +57,10 @@ import FiltersTab from "@/views/Objects/components/ViewSettings/FiltersTab";
 import constructorViewService from "@/services/constructorViewService";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import useTabRouter from "@/hooks/useTabRouter";
+import {Visibility} from "@mui/icons-material";
+import {Link} from "react-router-dom";
+import layoutService from "@/services/layoutService";
+import {columnIcons} from "@/utils/constants/columnIcons";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -72,6 +79,7 @@ const ViewsWithGroups = ({
                            menuItem,
                            visibleRelationColumns,
                            visibleColumns,
+                           refetchViews
                          }) => {
   const {tableSlug, id} = useParams();
   const queryClient = useQueryClient();
@@ -384,6 +392,9 @@ const ViewsWithGroups = ({
   }
 
   const tableName = menuItem?.label ?? menuItem?.title;
+  const viewName = (view.attributes?.[`name_${i18n.language}`]
+    ? view.attributes?.[`name_${i18n.language}`]
+    : view.type) ?? view?.name;
 
   return (
     <ChakraProvider theme={chakraUITheme}>
@@ -440,9 +451,7 @@ const ViewsWithGroups = ({
               dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
               setSelectedTabIndex(index);
             }}>
-            {(view.attributes?.[`name_${i18n.language}`]
-              ? view.attributes?.[`name_${i18n.language}`]
-              : view.type) ?? view?.name}
+            {viewName}
           </Button>
         )}
 
@@ -525,8 +534,14 @@ const ViewsWithGroups = ({
             Create item
           </Button>
         </PermissionWrapperV2>
-        <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
-                    colorScheme='gray' onClick={handleClick}/>
+
+        <Popover offset={[-145, 8]}>
+          <PopoverTrigger>
+            <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
+                        colorScheme='gray' onClick={handleClick}/>
+          </PopoverTrigger>
+          <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}/>
+        </Popover>
       </Flex>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
@@ -833,5 +848,182 @@ const FiltersSwitch = ({visibleForm, view, visibleColumns}) => {
     />
   )
 }
+
+const ViewOptions = ({view, viewName, refetchViews, fieldsMap}) => {
+  const {appId, tableSlug} = useParams();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get('menuId');
+
+  const [openedMenu, setOpenedMenu] = useState(null);
+
+  const layoutQuery = useQuery({
+    queryKey: ["GET_LAYOUT", {tableSlug,},],
+    queryFn: () => layoutService.getLayout(tableSlug, appId),
+  });
+
+  const updateView = useMutation({
+    mutationFn: async (value) => {
+      await constructorViewService.update(tableSlug, {
+        id: view.id,
+        columns: view.columns,
+        attributes: {name_en: value}
+      });
+      return await refetchViews();
+    }
+  });
+
+  const onViewNameChange = useDebounce((ev) => {
+    updateView.mutate(ev.target.value);
+  }, 500);
+
+  const fixedColumnsCount = Object.values(view?.attributes?.fixedColumns || {}).length;
+
+  const onFixColumnsClick = () => {
+    setOpenedMenu('fix-column');
+  }
+
+
+  if (openedMenu === 'fix-column') {
+    return <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                       onBackClick={() => setOpenedMenu(null)}/>
+  }
+
+  return (
+    <PopoverContent w='320px'>
+      <Box p='8px' borderBottom='1px solid #D0D5DD'>
+        <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
+        <Flex mt='12px' columnGap='4px'>
+          <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
+                justifyContent='center'>
+            <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+          </Flex>
+          <InputGroup>
+            <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
+            {updateView.isLoading &&
+              <InputRightElement>
+                <Spinner color='#475467'/>
+              </InputRightElement>
+            }
+          </InputGroup>
+        </Flex>
+        <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+              as={Link}
+              to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
+          <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
+            <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+          </Flex>
+          <ViewOptionTitle>Layout</ViewOptionTitle>
+          <Flex ml='auto' columnGap='4px' alignItems='center'>
+            <Box color='#667085' fontWeight={400} fontSize={14}>
+              {viewName}
+            </Box>
+            <ChevronRightIcon fontSize={22}/>
+          </Flex>
+        </Flex>
+      </Box>
+      <Box p='8px'>
+        <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
+              onClick={onFixColumnsClick}>
+          <Image src="/img/layout-left.svg" alt="columns"/>
+          <ViewOptionTitle>Fix Column</ViewOptionTitle>
+          <Flex ml='auto' alignItems='center' columnGap='8px'>
+            {Boolean(fixedColumnsCount) &&
+              <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
+            }
+            <ChevronRightIcon fontSize={22}/>
+          </Flex>
+        </Flex>
+      </Box>
+    </PopoverContent>
+  )
+}
+
+const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
+  const {tableSlug} = useParams();
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    }
+  });
+
+  const checkedElements = Object.values(fieldsMap)
+    .filter((column) => {
+      return view?.columns?.find((el) => el === column?.id);
+    })
+    ?.filter((column) =>
+      Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id)
+    );
+
+  const uncheckedElements = Object.values(fieldsMap)
+    .filter((column) => {
+      return view?.columns?.find((el) => el === column?.id);
+    })
+    ?.filter(
+      (column) =>
+        !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(
+          column?.id
+        )
+    );
+
+  const columns = [...checkedElements, ...uncheckedElements];
+
+  const onChange = (column, checked) => {
+    let fixed = [...Object.keys(view?.attributes?.fixedColumns ?? {})];
+    if (checked) {
+      fixed.push(column.id);
+    } else {
+      fixed = fixed.filter((el) => el !== column.id);
+    }
+    mutation.mutate({
+      ...view, attributes: {...view.attributes, fixedColumns: Object.fromEntries(fixed.map((key) => [key, true]))}
+    })
+  }
+
+  return (
+    <PopoverContent w='320px' p='8px'>
+      <Button
+        leftIcon={<ChevronLeftIcon fontSize={22}/>}
+        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
+        colorScheme='gray'
+        variant='ghost'
+        w='fit-content'
+        onClick={onBackClick}
+      >
+        <Box color='#475467' fontSize={16} fontWeight={600}>Fix columns</Box>
+      </Button>
+
+      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+        {columns.map((column) =>
+          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            {column?.type && columnIcons(column?.type)}
+            <ViewOptionTitle>
+              {column?.label}
+            </ViewOptionTitle>
+            <Switch
+              ml='auto'
+              isChecked={Boolean(Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id))}
+              onChange={(ev) => onChange(column, ev.target.checked)}
+            />
+          </Flex>
+        )}
+      </Flex>
+    </PopoverContent>
+  )
+}
+
+const ViewOptionTitle = ({children}) => (
+  <Box color='#475467' fontWeight={500} fontSize={14}>
+    {children}
+  </Box>
+)
+
+const ViewOptionSubtitle = ({children}) => (
+  <Box color='#667085' fontWeight={400} fontSize={14}>
+    {children}
+  </Box>
+)
 
 export default ViewsWithGroups;

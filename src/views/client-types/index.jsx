@@ -54,10 +54,7 @@ export const ClientTypes = () => {
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
 
-  const rolesQuery = useRoleListQuery();
-  const roles = rolesQuery.data?.data?.response ?? [];
-
-  if (clientTypesQuery.isLoading || rolesQuery.isLoading) {
+  if (clientTypesQuery.isLoading) {
     return <PageFallback/>
   }
 
@@ -133,7 +130,7 @@ export const ClientTypes = () => {
                 {user.name}
               </Td>
               <Td>
-                {roles.find(role => role.guid === user.role_id)?.name}
+                {user.role_id_data?.name}
               </Td>
               <Td>
                 {user.login}

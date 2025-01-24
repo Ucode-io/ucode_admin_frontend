@@ -24,6 +24,7 @@ import {CreateDrawer, EditDrawer} from "./actions";
 import {useClientTypesQuery} from "./utils";
 import {useNavigate} from "react-router-dom";
 import {useUserDeleteMutation} from "@/services/auth/userService";
+import {useRoleListQuery} from "@/services/roleServiceV2";
 
 const templateColumns = 'minmax(72px, 72px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 76px)';
 
@@ -53,7 +54,10 @@ export const ClientTypes = () => {
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
 
-  if (clientTypesQuery.isLoading) {
+  const rolesQuery = useRoleListQuery();
+  const roles = rolesQuery.data?.data?.response ?? [];
+
+  if (clientTypesQuery.isLoading || rolesQuery.isLoading) {
     return <PageFallback/>
   }
 
@@ -132,7 +136,7 @@ export const ClientTypes = () => {
                 {user.name}
               </Td>
               <Td>
-                {user.role_id_data?.name}
+                {roles.find(role => role.guid === user.role_id)?.name}
               </Td>
               <Td>
                 {user.login}

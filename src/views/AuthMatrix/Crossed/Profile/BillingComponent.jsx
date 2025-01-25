@@ -47,13 +47,13 @@ const BillingComponent = ({
   const authStore = store.getState().auth;
   const company = store.getState().company;
   const dispatch = useDispatch();
-  console.log("companycompany", company);
+
   const {isLoading: projectLoading} = useProjectListQuery({
     params: {
       company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(!company.companyId),
+      enabled: Boolean(company.companyId),
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         dispatch(companyActions.setProjectItem(res.projects[0]));
@@ -68,7 +68,7 @@ const BillingComponent = ({
       return billingService.getList(project?.fare_id);
     },
     {
-      enabled: Boolean(company.companyId),
+      enabled: Boolean(project?.fare_id),
       onSuccess: (res) => res?.data,
     }
   );

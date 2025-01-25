@@ -47,7 +47,7 @@ const BillingComponent = ({
   const authStore = store.getState().auth;
   const company = store.getState().company;
   const dispatch = useDispatch();
-
+  console.log("companycompany", company);
   const {isLoading: projectLoading} = useProjectListQuery({
     params: {
       company_id: company.companyId,
@@ -68,6 +68,7 @@ const BillingComponent = ({
       return billingService.getList(project?.fare_id);
     },
     {
+      enabled: Boolean(company.companyId),
       onSuccess: (res) => res?.data,
     }
   );
@@ -81,8 +82,6 @@ const BillingComponent = ({
       select: (res) => res?.transactions ?? [],
     }
   );
-
-  console.log("transactionstransactions", transactions);
 
   const onSubmit = (values) => {
     setLoading(true);

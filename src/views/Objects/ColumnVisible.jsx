@@ -94,7 +94,6 @@ export default function ColumnVisible({
           tabs: [],
           ...currentView?.attributes,
         },
-        group_fields: [],
         columns: [],
       })
       .then(() => {

@@ -112,7 +112,7 @@ export default function BoardGroupButton({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+        queryClient.refetchQueries(["GET_TABLE_INFO"]);
       })
       .finally(() => {
         setUpdateLoading(false);
@@ -125,7 +125,7 @@ export default function BoardGroupButton({
       updateView(tabs);
     }
   }, [tabs]);
-
+  console.log("currentView", currentView);
   return (
     <div>
       <Button

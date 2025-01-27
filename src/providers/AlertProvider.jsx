@@ -1,5 +1,4 @@
-import Alerts from "../components/Alerts"
-
+import Alerts from "../components/Alerts";
 
 const AlertProvider = ({children}) => {
   return (
@@ -7,7 +6,7 @@ const AlertProvider = ({children}) => {
       <Alerts />
       {children}
     </>
-  )
-}
+  );
+};
 
-export default AlertProvider
+export default AlertProvider;

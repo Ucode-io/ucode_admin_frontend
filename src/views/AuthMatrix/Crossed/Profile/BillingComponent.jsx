@@ -36,6 +36,7 @@ import {format} from "date-fns";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
 import {useProjectListQuery} from "../../../../services/companyService";
 import {companyActions} from "../../../../store/company/company.slice";
+import BlockIcon from "@mui/icons-material/Block";
 
 const BillingComponent = ({
   handCloseBalance = () => {},
@@ -53,7 +54,7 @@ const BillingComponent = ({
       company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(!company.companyId),
+      enabled: Boolean(company.companyId),
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         dispatch(companyActions.setProjectItem(res.projects[0]));
@@ -68,6 +69,7 @@ const BillingComponent = ({
       return billingService.getList(project?.fare_id);
     },
     {
+      enabled: Boolean(project?.fare_id),
       onSuccess: (res) => res?.data,
     }
   );
@@ -81,8 +83,6 @@ const BillingComponent = ({
       select: (res) => res?.transactions ?? [],
     }
   );
-
-  console.log("transactionstransactions", transactions);
 
   const onSubmit = (values) => {
     setLoading(true);
@@ -106,6 +106,7 @@ const BillingComponent = ({
       })
       .finally(() => setLoading(false));
   };
+
   return (
     <Box
       id={"billingTable"}
@@ -239,6 +240,18 @@ const BillingComponent = ({
                             fontSize: "14px",
                           }}>
                           <Done /> Paid
+                        </Typography>
+                      ) : row?.payment_status === "cancelled" ? (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: "red",
+                            fontSize: "16px",
+                          }}>
+                          <BlockIcon /> Cancelled
                         </Typography>
                       ) : (
                         <Typography

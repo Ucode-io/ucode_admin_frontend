@@ -300,7 +300,7 @@ const CalendarView = ({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", {tableSlug}]);
       });
   };
 

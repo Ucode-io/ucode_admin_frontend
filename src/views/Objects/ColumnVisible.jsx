@@ -1,10 +1,11 @@
-import AppsIcon from "@mui/icons-material/Apps";
 import {Button, CircularProgress, Menu} from "@mui/material";
 import React, {useEffect, useMemo, useState} from "react";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import {useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import AppsIcon from "@mui/icons-material/Apps";
 
 export default function ColumnVisible({
   selectedTabIndex,
@@ -85,18 +86,75 @@ export default function ColumnVisible({
       .finally(() => setloading(false));
   };
 
+  const disableAll = () => {
+    constructorViewService
+      .update(tableSlug, {
+        ...currentView,
+        attributes: {
+          tabs: [],
+          ...currentView?.attributes,
+        },
+        group_fields: [],
+        columns: [],
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
+      })
+      .finally(() => {
+        form.setValue("columns", []);
+      });
+  };
+
   return (
     <div>
       <Button
-        variant={"text"}
+        variant={`${currentView?.columns?.length > 0 ? "outlined" : "text"}`}
         style={{
           gap: "5px",
-          color: "#A8A8A8",
-          borderColor: "#A8A8A8",
+          color:
+            currentView?.columns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          borderColor:
+            currentView?.columns?.length > 0 ? "rgb(0, 122, 255)" : "#A8A8A8",
+          marginRight: "10px",
         }}
         onClick={handleClick}>
         <AppsIcon color={"#A8A8A8"} />
         {text}
+        {currentView?.columns?.length > 0 && (
+          <span>{currentView?.columns?.length}</span>
+        )}
+        {currentView?.columns?.length > 0 && (
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              cursor: "pointer",
+              padding: "0",
+              margin: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color:
+                currentView?.columns?.length > 0
+                  ? "rgb(0, 122, 255)"
+                  : "#A8A8A8",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              disableAll();
+            }}>
+            <CloseRoundedIcon
+              style={{
+                color:
+                  currentView?.columns?.length > 0
+                    ? "rgb(0, 122, 255)"
+                    : "#A8A8A8",
+              }}
+            />
+          </button>
+        )}
       </Button>
       <Menu
         open={open}

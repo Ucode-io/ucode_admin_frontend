@@ -15,15 +15,18 @@ import {
   PopoverContent,
   PopoverTrigger,
   Spinner,
-  Switch
+  Switch,
+  useDisclosure,
+  Modal,
+  ModalContent, ModalOverlay
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
@@ -33,7 +36,6 @@ import TableCard from "../../components/TableCard";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
-import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import {getSearchText, openDB, saveOrUpdateSearchText,} from "../../utils/indexedDb.jsx";
 import {queryGenerator} from "../../utils/queryGenerator";
 import AgGridTableView from "./AgGridTableView";
@@ -50,17 +52,16 @@ import SVG from "react-inlinesvg";
 import {viewsActions} from "@/store/views/view.slice";
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import {computedViewTypes} from "@/utils/constants/viewTypes";
-import SearchParams from "./components/ViewSettings/SearchParams";
 import {filterActions} from "@/store/filter/filter.slice";
 import {Filter} from "@/views/Objects/components/FilterGenerator";
-import FiltersTab from "@/views/Objects/components/ViewSettings/FiltersTab";
 import constructorViewService from "@/services/constructorViewService";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import useTabRouter from "@/hooks/useTabRouter";
-import {Visibility} from "@mui/icons-material";
-import {Link} from "react-router-dom";
 import layoutService from "@/services/layoutService";
 import {columnIcons} from "@/utils/constants/columnIcons";
+import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
+import constructorObjectService from "@/services/constructorObjectService";
+import useDownloader from "@/hooks/useDownloader";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -104,7 +105,6 @@ const ViewsWithGroups = ({
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
-  const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
   const [inputKey, setInputKey] = useState(0);
   const {navigateToForm} = useTabRouter();
   const permissions = useSelector(
@@ -129,49 +129,11 @@ const ViewsWithGroups = ({
     $lt: endOfMonth(new Date()),
   });
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleCloseHeightControl = () => {
-    setAnchorElHeightControl(null);
-  };
-
-  const [anchorElSearch, setAnchorElSearch] = useState(null);
-  const openSearch = Boolean(anchorElSearch);
-  const handleClickSearch = (event) => {
-    setAnchorElSearch(event.currentTarget);
-  };
-  const handleCloseSearch = () => {
-    setAnchorElSearch(null);
-  };
-
-  const tableHeightOptions = [
-    {
-      label: "Small",
-      value: "small",
-    },
-    {
-      label: "Medium",
-      value: "medium",
-    },
-    {
-      label: "Large",
-      value: "large",
-    },
-  ];
-
   const {
     control,
     reset,
     setValue: setFormValue,
     getValues,
-    formState: {errors},
     watch,
   } = useForm({
     defaultValues: {
@@ -183,14 +145,6 @@ const ViewsWithGroups = ({
     control,
     name: "multi",
   });
-
-  const handleHeightControl = (val) => {
-    dispatch(
-      tableSizeAction.setTableHeight({
-        tableHeight: val,
-      })
-    );
-  };
 
   const {mutate: updateField, isLoading: updateLoading} =
     useFieldSearchUpdateMutation({
@@ -486,7 +440,7 @@ const ViewsWithGroups = ({
           />
         </MuiPopover>
 
-        <Popover>
+        <Popover placement='bottom-end'>
           <InputGroup ml='auto' w='320px'>
             <InputLeftElement>
               <Image src='/img/search-lg.svg' alt='search'/>
@@ -511,23 +465,30 @@ const ViewsWithGroups = ({
             }
           </InputGroup>
 
-          <PopoverContent>
-            <SearchParams
-              checkedColumns={checkedColumns}
-              setCheckedColumns={setCheckedColumns}
-              columns={columnsForSearch}
-              updateField={updateField}
-            />
+          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' rowGap='8px'>
+            {columnsForSearch.map((column) =>
+              <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                    _hover={{bg: "#EAECF0"}} cursor='pointer'>
+                {columnIcons(column.type)}
+                <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                <Switch
+                  ml='auto'
+                  isChecked={column.is_search}
+                  onChange={(e) => updateField({
+                    data: {
+                      fields: columnsForSearch
+                        .map((c) => c.id === column.id ? {...c, is_search: e.target.checked} : c)
+                    },
+                    tableSlug
+                  })}
+                />
+              </Flex>
+            )}
           </PopoverContent>
         </Popover>
 
-        <Popover>
-          <PopoverTrigger>
-            <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
-                        colorScheme='gray'/>
-          </PopoverTrigger>
-          <FilterPopover view={view} visibleForm={visibleForm} visibleColumns={visibleColumns} fieldsMap={fieldsMap}/>
-        </Popover>
+        <FilterPopover view={view} visibleColumns={visibleColumns} fieldsMap={fieldsMap} refetchViews={refetchViews}/>
+
         <PermissionWrapperV2 tableSlug={tableSlug} type="write">
           <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
                   onClick={() => navigateToForm(tableSlug, "CREATE", {}, {id}, searchParams.get('menuId'))}>
@@ -535,13 +496,10 @@ const ViewsWithGroups = ({
           </Button>
         </PermissionWrapperV2>
 
-        <Popover offset={[-145, 8]}>
-          <PopoverTrigger>
-            <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
-                        colorScheme='gray' onClick={handleClick}/>
-          </PopoverTrigger>
-          <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}/>
-        </Popover>
+        <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}
+                     visibleRelationColumns={visibleRelationColumns} checkedColumns={checkedColumns}
+                     onDocsClick={() => setSelectedTabIndex(views.length)} searchText={searchText}
+                     computedVisibleFields={computedVisibleFields}/>
       </Flex>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
@@ -693,33 +651,35 @@ const ViewsWithGroups = ({
   );
 };
 
-const FilterPopover = ({view, fieldsMap, visibleColumns, visibleForm}) => {
+const FilterPopover = ({view, fieldsMap, visibleColumns, refetchViews}) => {
   const {tableSlug} = useParams();
   const [addingFilters, setAddingFilters] = useState(false);
 
   return (
-    <PopoverContent p='12px'>
-      {!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}
-      {!addingFilters &&
-        <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
-          <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'
-                  onClick={() => setAddingFilters(true)}>
-            Add filters
-          </Button>
-        </PermissionWrapperV2>
-      }
-      {addingFilters &&
-        <Button leftIcon={<ChevronLeftIcon fontSize={18}/>} w='fit-content' colorScheme='gray' variant='ghost' mb='4px'
-                onClick={() => setAddingFilters(false)}>
-          Filters
-        </Button>
-      }
-      {addingFilters &&
-        <FiltersSwitch view={view} visibleColumns={visibleColumns} visibleForm={visibleForm}/>
-      }
-    </PopoverContent>
+    <Popover onClose={() => setAddingFilters(false)}>
+      <PopoverTrigger>
+        <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
+                    colorScheme='gray'/>
+      </PopoverTrigger>
+      <PopoverContent p='12px'>
+        {!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}
+        {!addingFilters &&
+          <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
+            <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'
+                    onClick={() => setAddingFilters(true)}>
+              Add filters
+            </Button>
+          </PermissionWrapperV2>
+        }
+        {addingFilters &&
+          <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}
+                         onBackClick={() => setAddingFilters(false)}/>
+        }
+      </PopoverContent>
+    </Popover>
   )
 }
+
 
 const FiltersList = ({view, fieldsMap,}) => {
   const {tableSlug} = useParams();
@@ -798,61 +758,85 @@ const FiltersList = ({view, fieldsMap,}) => {
   )
 }
 
-const FiltersSwitch = ({visibleForm, view, visibleColumns}) => {
+const FiltersSwitch = ({view, visibleColumns, onBackClick, refetchViews}) => {
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const [updateLoading, setUpdateLoading] = useState(false);
+
+  const columnsIds = visibleColumns?.map((item) => item?.id);
+  const quickFiltersIds = view?.attributes?.quick_filters?.map((item) => item?.id);
+  const checkedColumns = view?.attributes?.quick_filters?.filter((checkedField) => columnsIds?.includes(checkedField?.id)) ?? [];
+  const unCheckedColumns = ((view?.attributes?.quick_filters?.length === 0 || view?.attributes?.quick_filters?.length === undefined)
+    ? visibleColumns
+    : visibleColumns?.filter((column) => !quickFiltersIds?.includes(column?.id))) ?? []
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    },
+    onSettled: (data) => {
+      dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
+    }
+  });
 
   const updateView = (data) => {
-    setUpdateLoading(true);
     const result = data?.map((item) => ({
       ...item,
       is_checked: true,
     }));
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        attributes: {
-          ...view?.attributes,
-          quick_filters: result,
-        },
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", tableSlug]);
-        setTimeout(() => {
-          setUpdateLoading(false);
-        }, 400);
-      })
-      .finally(() => {
-        dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
-      });
+
+    mutation.mutate({...view, attributes: {...view?.attributes, quick_filters: result}})
   };
 
+  const onChange = (column, checked) => {
+    updateView(checked
+      ? [...view?.attributes?.quick_filters, column]
+      : view?.attributes?.quick_filters?.filter((c) => c.id !== column.id));
+  }
+
   return (
-    <FiltersTab
-      form={visibleForm}
-      onChange={(value, name) => dispatch(
-        filterActions.setFilter({
-          tableSlug: tableSlug,
-          viewId: view.id,
-          name: name,
-          value,
-        })
-      )}
-      updateView={updateView}
-      views={view}
-      computedColumns={visibleColumns}
-      isLoading={updateLoading}
-      setFilterVisible={() => null}
-    />
+    <Box>
+      <Button leftIcon={<ChevronLeftIcon fontSize={18}/>} w='fit-content' colorScheme='gray' variant='ghost' mb='4px'
+              rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined} onClick={onBackClick}>
+        Filters
+      </Button>
+      <Flex flexDirection='column'>
+        {[
+          ...checkedColumns.map((c) => ({...c, checked: true})),
+          ...unCheckedColumns.map((c) => ({...c, checked: false}))
+        ]
+          .map((column) =>
+            <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                  _hover={{bg: "#EAECF0"}} cursor='pointer'>
+              {column?.type && columnIcons(column?.type)}
+              {column?.attributes?.[`label_${i18n.language}`] || column.label}
+              <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
+            </Flex>
+          )}
+      </Flex>
+    </Box>
   )
 }
 
-const ViewOptions = ({view, viewName, refetchViews, fieldsMap}) => {
+const ViewOptions = ({
+                       view,
+                       viewName,
+                       refetchViews,
+                       fieldsMap,
+                       visibleRelationColumns,
+                       searchText,
+                       checkedColumns,
+                       onDocsClick,
+                       computedVisibleFields
+                     }) => {
   const {appId, tableSlug} = useParams();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get('menuId');
+  const permissions = useSelector(
+    (state) => state.permissions.permissions?.[tableSlug]
+  );
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [openedMenu, setOpenedMenu] = useState(null);
 
@@ -877,63 +861,339 @@ const ViewOptions = ({view, viewName, refetchViews, fieldsMap}) => {
   }, 500);
 
   const fixedColumnsCount = Object.values(view?.attributes?.fixedColumns || {}).length;
+  const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
+  const hiddenColumnsCount = Object.values(fieldsMap).length - (view?.columns?.length ?? 0);
+  const tabGroupColumnsCount = view?.group_fields?.length;
 
-  const onFixColumnsClick = () => {
-    setOpenedMenu('fix-column');
-  }
+  return (
+    <Popover offset={[-145, 8]}>
+      <PopoverTrigger>
+        <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
+                    colorScheme='gray'/>
+      </PopoverTrigger>
+      {openedMenu === 'columns-visibility' &&
+        <ColumnsVisibility view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                           onBackClick={() => setOpenedMenu(null)}/>
+      }
 
+      {openedMenu === 'group' &&
+        <Group view={view} fieldsMap={fieldsMap} refetchViews={refetchViews} onBackClick={() => setOpenedMenu(null)}/>
+      }
 
-  if (openedMenu === 'fix-column') {
-    return <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                       onBackClick={() => setOpenedMenu(null)}/>
+      {openedMenu === 'tab-group' &&
+        <TabGroup view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                  visibleRelationColumns={visibleRelationColumns} onBackClick={() => setOpenedMenu(null)}/>
+      }
+
+      {openedMenu === 'fix-column' &&
+        <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                    onBackClick={() => setOpenedMenu(null)}/>
+      }
+
+      {openedMenu === null &&
+        <PopoverContent w='320px'>
+          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+            <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
+            <Flex mt='12px' columnGap='4px'>
+              <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
+                    justifyContent='center'>
+                <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+              </Flex>
+              <InputGroup>
+                <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
+                {updateView.isLoading &&
+                  <InputRightElement>
+                    <Spinner color='#475467'/>
+                  </InputRightElement>
+                }
+              </InputGroup>
+            </Flex>
+            <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                  as={Link}
+                  to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
+              <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
+                <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+              </Flex>
+              <ViewOptionTitle>Layout</ViewOptionTitle>
+              <Flex ml='auto' columnGap='4px' alignItems='center'>
+                <Box color='#667085' fontWeight={400} fontSize={14}>
+                  {viewName}
+                </Box>
+                <ChevronRightIcon fontSize={22}/>
+              </Flex>
+            </Flex>
+          </Box>
+          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) &&
+              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                    cursor='pointer' onClick={() => setOpenedMenu('columns-visibility')}>
+                <Image src="/img/eye.svg" alt="Visibility"/>
+                <ViewOptionTitle>Columns</ViewOptionTitle>
+                <Flex ml='auto' alignItems='center' columnGap='8px'>
+                  {Boolean(hiddenColumnsCount) &&
+                    <ViewOptionSubtitle>{hiddenColumnsCount} hidden</ViewOptionSubtitle>
+                  }
+                  <ChevronRightIcon fontSize={22}/>
+                </Flex>
+              </Flex>
+            }
+
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                    cursor='pointer' onClick={() => setOpenedMenu('group')}>
+                <Image src="/img/copy-01.svg" alt="Group by"/>
+                <ViewOptionTitle>Group</ViewOptionTitle>
+                <Flex ml='auto' alignItems='center' columnGap='8px'>
+                  {Boolean(groupByColumnsCount) &&
+                    <ViewOptionSubtitle>{groupByColumnsCount} group</ViewOptionSubtitle>
+                  }
+                  <ChevronRightIcon fontSize={22}/>
+                </Flex>
+              </Flex>
+            }
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
+              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                    cursor='pointer' onClick={() => setOpenedMenu('tab-group')}>
+                <Image src="/img/browser.svg" alt="Group by"/>
+                <ViewOptionTitle>Tab group</ViewOptionTitle>
+                <Flex ml='auto' alignItems='center' columnGap='8px'>
+                  {Boolean(tabGroupColumnsCount) &&
+                    <ViewOptionSubtitle>{tabGroupColumnsCount} group</ViewOptionSubtitle>
+                  }
+                  <ChevronRightIcon fontSize={22}/>
+                </Flex>
+              </Flex>
+            }
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                    cursor='pointer' onClick={() => setOpenedMenu('fix-column')}>
+                <Image src="/img/layout-left.svg" alt="Fix columns"/>
+                <ViewOptionTitle>Fix Column</ViewOptionTitle>
+                <Flex ml='auto' alignItems='center' columnGap='8px'>
+                  {Boolean(fixedColumnsCount) &&
+                    <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
+                  }
+                  <ChevronRightIcon fontSize={22}/>
+                </Flex>
+              </Flex>
+            }
+          </Box>
+          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+            <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                  cursor='pointer' onClick={onDocsClick}>
+              <Image src="/img/file-docs.svg" alt="Docs"/>
+              <ViewOptionTitle>Docs</ViewOptionTitle>
+              <ChevronRightIcon ml='auto' fontSize={22}/>
+            </Flex>
+            <ExcelExportButton fieldsMap={fieldsMap}/>
+            <ExcelImportButton searchText={searchText} checkedColumns={checkedColumns}
+                               computedVisibleFields={computedVisibleFields}/>
+          </Box>
+          <Box px='8px' py='4px'>
+            <DeleteViewButton view={view} refetchViews={refetchViews} />
+          </Box>
+        </PopoverContent>
+      }
+    </Popover>
+  )
+}
+
+const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
+  const {i18n} = useTranslation();
+  const {tableSlug} = useParams();
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    }
+  });
+
+  const allFields = Object.values(fieldsMap);
+  const visibleFields = view?.columns
+    ?.map((id) => fieldsMap[id])
+    .filter((el) => {
+      return (el?.type === "LOOKUP" || el?.type === "LOOKUPS") ? el?.relation_id : el?.id
+    }) ?? [];
+  const invisibleFields = allFields.filter((field) => {
+    return !view?.columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
+  }) ?? [];
+
+  const onChange = (column, checked) => {
+    const columns = (view?.columns ?? []);
+    const id = (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
+      ? column.relation_id
+      : column.id
+
+    mutation.mutate({
+      ...view,
+      columns: checked
+        ? [...columns, id]
+        : columns.filter((c) => c !== id)
+    })
   }
 
   return (
-    <PopoverContent w='320px'>
-      <Box p='8px' borderBottom='1px solid #D0D5DD'>
-        <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
-        <Flex mt='12px' columnGap='4px'>
-          <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
-                justifyContent='center'>
-            <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+    <PopoverContent w='320px' p='8px'>
+      <Button
+        leftIcon={<ChevronLeftIcon fontSize={22}/>}
+        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
+        colorScheme='gray'
+        variant='ghost'
+        w='fit-content'
+        onClick={onBackClick}
+      >
+        <Box color='#475467' fontSize={16} fontWeight={600}>Visible columns</Box>
+      </Button>
+      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+        {[...visibleFields, ...invisibleFields].map((column) =>
+          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            {column?.type && columnIcons(column?.type)}
+            <ViewOptionTitle>
+              {column?.attributes?.[`label_${i18n.language}`] ||
+                column?.attributes?.[`label_${i18n.language}`] ||
+                column?.label}
+            </ViewOptionTitle>
+            <Switch
+              ml='auto'
+              onChange={(ev) => onChange(column, ev.target.checked)}
+              isChecked={view?.columns?.includes(
+                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+              )}
+            />
           </Flex>
-          <InputGroup>
-            <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
-            {updateView.isLoading &&
-              <InputRightElement>
-                <Spinner color='#475467'/>
-              </InputRightElement>
-            }
-          </InputGroup>
-        </Flex>
-        <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-              as={Link}
-              to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
-          <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
-            <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+        )}
+      </Flex>
+    </PopoverContent>
+  )
+}
+
+const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
+  const {i18n} = useTranslation();
+  const {tableSlug} = useParams();
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    }
+  });
+
+  const allFields = Object.values(fieldsMap);
+  const visibleFields = view?.attributes?.group_by_columns?.map((id) => fieldsMap[id]) ?? [];
+  const invisibleFields = allFields.filter((field) => {
+    return !view?.attributes?.group_by_columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
+  });
+
+  const onChange = (column, checked) => {
+    const columns = (view?.attributes?.group_by_columns ?? []);
+    const id = (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
+      ? column.relation_id
+      : column.id
+
+    mutation.mutate({
+      ...view,
+      attributes: {
+        ...view.attributes,
+        group_by_columns: checked
+          ? [...columns, id]
+          : columns.filter((c) => c !== id)
+      }
+    });
+  }
+
+  return (
+    <PopoverContent w='320px' p='8px'>
+      <Button
+        leftIcon={<ChevronLeftIcon fontSize={22}/>}
+        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
+        colorScheme='gray'
+        variant='ghost'
+        w='fit-content'
+        onClick={onBackClick}
+      >
+        <Box color='#475467' fontSize={16} fontWeight={600}>Group columns</Box>
+      </Button>
+      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+        {[...visibleFields, ...invisibleFields].map((column) =>
+          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            {column?.type && columnIcons(column?.type)}
+            <ViewOptionTitle>
+              {column?.attributes?.[`label_${i18n.language}`] ||
+                column?.attributes?.[`label_${i18n.language}`] ||
+                column?.label}
+            </ViewOptionTitle>
+            <Switch
+              ml='auto'
+              onChange={(ev) => onChange(column, ev.target.checked)}
+              isChecked={view?.attributes?.group_by_columns?.includes(
+                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+              )}
+            />
           </Flex>
-          <ViewOptionTitle>Layout</ViewOptionTitle>
-          <Flex ml='auto' columnGap='4px' alignItems='center'>
-            <Box color='#667085' fontWeight={400} fontSize={14}>
-              {viewName}
-            </Box>
-            <ChevronRightIcon fontSize={22}/>
+        )}
+      </Flex>
+    </PopoverContent>
+  )
+}
+
+const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBackClick}) => {
+  const {i18n} = useTranslation();
+  const {tableSlug} = useParams();
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    }
+  });
+
+  const computedColumns = (view?.type !== "CALENDAR" && view?.type !== "GANTT")
+    ? Object.values(fieldsMap)
+    : [...Object.values(fieldsMap), ...visibleRelationColumns];
+  const columns = (computedColumns ?? []).filter(
+    (column) => ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
+  )
+
+  const onChange = (column, checked) => {
+    mutation.mutate({
+      ...view,
+      group_fields: checked ? [(column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id] : []
+    })
+  }
+
+  return (
+    <PopoverContent w='320px' p='8px'>
+      <Button
+        leftIcon={<ChevronLeftIcon fontSize={22}/>}
+        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
+        colorScheme='gray'
+        variant='ghost'
+        w='fit-content'
+        onClick={onBackClick}
+      >
+        <Box color='#475467' fontSize={16} fontWeight={600}>Tab group columns</Box>
+      </Button>
+      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+        {columns.map((column) =>
+          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            {column?.type && columnIcons(column?.type)}
+            <ViewOptionTitle>
+              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+            </ViewOptionTitle>
+            <Switch
+              ml='auto'
+              onChange={(ev) => onChange(column, ev.target.checked)}
+              isChecked={(view?.group_fields ?? []).includes(
+                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+              )}
+            />
           </Flex>
-        </Flex>
-      </Box>
-      <Box p='8px'>
-        <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
-              onClick={onFixColumnsClick}>
-          <Image src="/img/layout-left.svg" alt="columns"/>
-          <ViewOptionTitle>Fix Column</ViewOptionTitle>
-          <Flex ml='auto' alignItems='center' columnGap='8px'>
-            {Boolean(fixedColumnsCount) &&
-              <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
-            }
-            <ChevronRightIcon fontSize={22}/>
-          </Flex>
-        </Flex>
-      </Box>
+        )}
+      </Flex>
     </PopoverContent>
   )
 }
@@ -1011,6 +1271,73 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
         )}
       </Flex>
     </PopoverContent>
+  )
+}
+
+const ExcelExportButton = ({fieldsMap}) => {
+  const {isOpen, onOpen, onClose} = useDisclosure();
+
+  return (
+    <>
+      <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
+            onClick={onOpen}>
+        <Image src="/img/file-download.svg" alt="Docs"/>
+        <ViewOptionTitle>Export</ViewOptionTitle>
+        <ChevronRightIcon ml='auto' fontSize={22}/>
+      </Flex>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay/>
+        <ModalContent minW='432px' w='432px'>
+          <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose}/>
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
+
+const ExcelImportButton = ({searchText, checkedColumns, computedVisibleFields}) => {
+  const {tableSlug} = useParams();
+  const {download} = useDownloader();
+  const {i18n} = useTranslation();
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const {data} = await constructorObjectService.downloadExcel(tableSlug, {
+        data: {
+          field_ids: computedVisibleFields,
+          language: i18n.language,
+          search: searchText,
+          view_fields: checkedColumns
+        }
+      });
+      return await download({fileName: `${tableSlug}.xlsx`, link: "https://" + data.link});
+    }
+  });
+
+  return (
+    <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
+          onClick={mutation.mutate}>
+      {mutation.isLoading ? <Spinner w='20px' h='20px'/> : <Image src="/img/file-download.svg" alt="Docs"/>}
+      <ViewOptionTitle>Import</ViewOptionTitle>
+      <ChevronRightIcon ml='auto' fontSize={22} />
+    </Flex>
+  )
+}
+
+const DeleteViewButton = ({view, refetchViews}) => {
+  const {tableSlug} = useParams();
+  const mutation = useMutation({
+    mutationFn: () => constructorViewService.delete(view.id, tableSlug),
+    onSuccess: () => refetchViews()
+  });
+
+  return (
+    <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+          cursor='pointer' onClick={() => mutation.mutate()}>
+      {mutation.isLoading ? <Spinner w='20px' h='20px' /> : <Image src="/img/trash.svg" alt="Delete" />}
+      <ViewOptionTitle>Delete</ViewOptionTitle>
+    </Flex>
   )
 }
 

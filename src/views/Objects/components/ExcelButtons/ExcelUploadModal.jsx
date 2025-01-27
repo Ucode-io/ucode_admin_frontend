@@ -132,7 +132,9 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                 </div>
               ) : (
                 <div className={styles.dialog_upload_section}>
-                  <UploadIcon />
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <UploadIcon />
+                  </div>
                   <p>Drag and drop files here</p>
                   <input
                     type="file"
@@ -141,7 +143,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                     style={{ display: "none" }}
                     onChange={onUpload}
                   />
-                  <button onClick={fileUpload}>Browse</button>
+                  <button onClick={fileUpload} style={{ width: "fit-content" }}>Browse</button>
                 </div>
               )}
             </div>

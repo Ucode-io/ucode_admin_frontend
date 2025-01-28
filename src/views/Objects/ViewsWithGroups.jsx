@@ -100,6 +100,7 @@ const ViewsWithGroups = ({
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
+  const [newUi, setNewUi] = useState(false);
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -416,6 +417,11 @@ const ViewsWithGroups = ({
           </Button>
         </PermissionWrapperV2>
 
+        <Box as='label' cursor='pointer'>
+          New ui
+          <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)} />
+        </Box>
+
         {view?.type === "FINANCE CALENDAR" && (
           <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
         )}
@@ -564,6 +570,7 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        newUi={newUi}
                         isVertical
                         setCurrentPage={setCurrentPage}
                         currentPage={currentPage}
@@ -610,6 +617,7 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      newUi={newUi}
                       visibleColumns={visibleColumns}
                       setCurrentPage={setCurrentPage}
                       currentPage={currentPage}

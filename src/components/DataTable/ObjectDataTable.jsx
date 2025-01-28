@@ -79,7 +79,6 @@ const ObjectDataTable = ({
   refetch,
   menuItem,
   getAllData = () => {},
-  footer,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -256,7 +255,6 @@ const ObjectDataTable = ({
       parentRef={parentRef}
       getAllData={getAllData}
       control={control}
-      footer={footer}
     >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (

@@ -22,6 +22,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import {DynamicTable} from "@/views/table-redesign";
 
 const TableView = ({
   filterVisible,
@@ -59,6 +60,7 @@ const TableView = ({
   setFormValue,
   currentView,
   watch,
+  newUi=false,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -514,6 +516,8 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
+  const TableUi = newUi ? DynamicTable : ObjectDataTable;
+
   return (
     <div id="wrapper_drag" className={styles.wrapper}>
       <div
@@ -523,7 +527,7 @@ const TableView = ({
           width: "100%",
         }}
         id="data-table">
-        <ObjectDataTable
+        <TableUi
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}

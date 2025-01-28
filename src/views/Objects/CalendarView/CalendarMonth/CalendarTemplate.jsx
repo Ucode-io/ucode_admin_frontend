@@ -5,6 +5,7 @@ import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 import DataMonthCard from "./DataMonthCard";
 import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import {format, setHours, setMinutes} from "date-fns";
 const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -19,9 +20,16 @@ const CalendarTemplate = ({month = [], data, view, fieldsMap}) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
-  const navigateToCreatePage = (time) => {
+  const navigateToCreatePage = async (time) => {
+    const hour = Number(format(time, "H"));
+    const minute = Number(format(time, "m"));
+    const computedDate = await setHours(setMinutes(time, minute), hour);
+    const startTimeStampSlug = view?.calendar_from_slug;
+
+    setDateInfo({
+      [startTimeStampSlug]: computedDate,
+    });
     setOpen(true);
-    setDateInfo({});
   };
 
   const navigateToEditPage = (el) => {
@@ -67,7 +75,7 @@ const CalendarTemplate = ({month = [], data, view, fieldsMap}) => {
                 {!data?.includes(date) && (
                   <Box
                     className={styles.desc}
-                    onClick={() => navigateToCreatePage()}>
+                    onClick={() => navigateToCreatePage(date)}>
                     <Box className={`${styles.addButton}`}>
                       <AddBoxIcon />
                     </Box>

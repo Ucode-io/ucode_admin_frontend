@@ -161,15 +161,19 @@ export default function TimeLineDayDataBlockItem({
       });
   };
 
-  const onDrag = ({target, beforeTranslate}) => {
+  const onDrag = ({target, width, beforeTranslate}) => {
     if (beforeTranslate[1] < 0) return null;
     const [x, y] = beforeTranslate;
     target.style.transform = `translate(${x}px, 0)`;
     setFocusedDays([
-      datesList[startDate + Math.round(x / (zoomPosition * 30))],
+      datesList[
+        startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+      ],
       addDays(
-        datesList[startDate + Math.round(x / (zoomPosition * 30))],
-        differenceInDays - 1
+        datesList[
+          startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+        ],
+        width / (zoomPosition * 30) - 1
       ),
     ]);
   };

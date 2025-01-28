@@ -300,7 +300,7 @@ const CalendarView = ({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", {tableSlug}]);
       });
   };
 
@@ -393,7 +393,7 @@ const CalendarView = ({
               updateView(e.target?.value);
             }}
           />
-          <CalendarGroupByButton
+          {/* <CalendarGroupByButton
             selectedTabIndex={selectedTabIndex}
             text="Group"
             width="105px"
@@ -401,7 +401,7 @@ const CalendarView = ({
             columns={visibleColumns}
             relationColumns={visibleRelationColumns}
             isLoading={isVisibleLoading}
-          />
+          /> */}
           {/* <CalendarSceduleVisible
             selectedTabIndex={selectedTabIndex}
             views={visibleViews}

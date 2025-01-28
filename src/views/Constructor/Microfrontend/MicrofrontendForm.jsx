@@ -1,7 +1,7 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useNavigate, useParams} from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import Footer from "../../../components/Footer";
@@ -15,14 +15,14 @@ import microfrontendService, {
   useMicrofrontendCreateWebhookMutation,
 } from "../../../services/microfrontendService";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import { useResourceListQueryV2 } from "@/services/resourceService";
+import {useResourceListQueryV2} from "@/services/resourceService";
 import listToOptions from "@/utils/listToOptions";
 import {
   useGithubBranchesQuery,
   useGithubRepositoriesQuery,
 } from "@/services/githubService";
-import { showAlert } from "@/store/alert/alert.thunk";
-import { useDispatch } from "react-redux";
+import {showAlert} from "@/store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
 
 const frameworkOptions = [
   {
@@ -40,7 +40,7 @@ const frameworkOptions = [
 ];
 
 const MicrofrontendForm = () => {
-  const { microfrontendId, appId } = useParams();
+  const {microfrontendId, appId} = useParams();
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
@@ -60,19 +60,19 @@ const MicrofrontendForm = () => {
   const resourceId = mainForm.watch("resource_id");
   const selectedRepo = mainForm.watch("repo_name");
 
-  const { data: resources } = useResourceListQueryV2({
+  const {data: resources} = useResourceListQueryV2({
     params: {
       type: "GITHUB",
     },
     queryParams: {
-      select: (res) => res.integration_resources,
+      select: (res) => res.resources,
     },
   });
 
   const resourceOptions = useMemo(() => {
     return [
-      { value: "ucode_gitlab", label: "Ucode GitLab" },
-      ...listToOptions(resources, "username", "id", " (GitHub)"),
+      {value: "ucode_gitlab", label: "Ucode GitLab"},
+      ...listToOptions(resources, "name", "id", " (GitHub)"),
     ];
   }, [resources]);
 
@@ -82,26 +82,26 @@ const MicrofrontendForm = () => {
     return resources?.find((resource) => resource.id === resourceId);
   }, [resources, resourceId]);
 
-  const { data: repositories } = useGithubRepositoriesQuery({
-    username: selectedResource?.username,
-    token: selectedResource?.token,
+  const {data: repositories} = useGithubRepositoriesQuery({
+    username: selectedResource?.settings?.github?.username,
+    token: selectedResource?.settings?.github?.token,
     queryParams: {
-      enabled: !!selectedResource?.username,
-      select: (res) => listToOptions(res?.data, "name", "name"),
+      enabled: !!selectedResource?.settings?.github?.username,
+      select: (res) => listToOptions(res, "name", "name"),
     },
   });
 
-  const { data: branches } = useGithubBranchesQuery({
-    username: selectedResource?.username,
+  const {data: branches} = useGithubBranchesQuery({
+    username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
-    token: selectedResource?.token,
+    token: selectedResource?.settings?.github?.token,
     queryParams: {
-      enabled: !!selectedResource?.username && !!selectedRepo,
-      select: (res) => listToOptions(res?.data, "name", "name"),
+      enabled: !!selectedResource?.settings?.github?.username && !!selectedRepo,
+      select: (res) => listToOptions(res, "name", "name"),
     },
   });
 
-  const { mutate: createWebHook, isLoading: createWebHookIsLoading } =
+  const {mutate: createWebHook, isLoading: createWebHookIsLoading} =
     useMicrofrontendCreateWebhookMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -171,20 +171,19 @@ const MicrofrontendForm = () => {
       <HeaderSettings
         title="Микрофронтенд"
         backButtonLink={-1}
-        subtitle={microfrontendId ? mainForm.watch("name") : "Новый"}
-      ></HeaderSettings>
+        subtitle={
+          microfrontendId ? mainForm.watch("name") : "Новый"
+        }></HeaderSettings>
 
       <form
         onSubmit={mainForm.handleSubmit(onSubmit)}
         className="p-2"
-        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-      >
+        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
         <FormCard title="Детали" maxWidth={500}>
           <FRow
             label={"Ресурс"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFSelect
               disabledHelperText
               name="resource_id"
@@ -221,8 +220,7 @@ const MicrofrontendForm = () => {
             <FRow
               label={"Ссылка"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="path"
@@ -235,8 +233,7 @@ const MicrofrontendForm = () => {
           <FRow
             label={"Названия"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFTextField
               disabledHelperText
               name="name"
@@ -273,15 +270,13 @@ const MicrofrontendForm = () => {
           <>
             <SecondaryButton
               onClick={() => navigate(microfrontendListPageLink)}
-              color="error"
-            >
+              color="error">
               Close
             </SecondaryButton>
             <PermissionWrapperV2 tableSlug="app" type="update">
               <PrimaryButton
                 loader={btnLoader || createWebHookIsLoading}
-                onClick={mainForm.handleSubmit(onSubmit)}
-              >
+                onClick={mainForm.handleSubmit(onSubmit)}>
                 <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>

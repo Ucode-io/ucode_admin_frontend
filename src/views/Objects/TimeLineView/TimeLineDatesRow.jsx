@@ -51,7 +51,8 @@ export default function TimeLineDatesRow({
     <div
       className={styles.datesRow}
       style={{
-        borderRight: selectedType === "month" ? "1px solid #e0e0e0" : "",
+        borderRight:
+          selectedType === "month" ? "1px solid #e0e0e0" : "1px solid #e0e0e0",
         position: "sticky",
         left: 0,
         top: 0,

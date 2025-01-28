@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./styles.module.scss";
-import { Popover, Typography } from "@mui/material";
-import { eachDayOfInterval, format } from "date-fns";
+import {Popover, Typography} from "@mui/material";
+import {eachDayOfInterval, format} from "date-fns";
 
-export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focusedDays }) {
+export default function TimeLineDayBlock({
+  day,
+  zoomPosition,
+  selectedType,
+  focusedDays,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const splittedDay = day.split("/");
-
+  const today = new Date().getDate();
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -22,7 +27,7 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const dateRange = eachDayOfInterval({ start, end });
+    const dateRange = eachDayOfInterval({start, end});
     return dateRange;
   }
 
@@ -81,13 +86,22 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
           visibility: selectedType === "month" ? "hidden" : "visible",
           backgroundColor: isFocusedDay ? "#7f77f1" : "transparent",
           color: isFocusedDay ? "#fff" : "inherit",
+          position: "relative",
         }}
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        className={`${styles.dayBlock} ${(splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday") && selectedType !== "month" ? styles.dayOff : ""}`}
-      >
+        className={`${styles.dayBlock} ${(splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday") && selectedType !== "month" ? styles.dayOff : ""}`}>
+        <div
+          style={{
+            position: "absolute",
+            top: "-20px",
+            color: "#007aff",
+            fontWeight: "bold",
+          }}>
+          {Number(splittedDay?.[0]) === today ? "Today" : ""}
+        </div>
         {splittedDay[0]}
       </div>
 
@@ -107,9 +121,10 @@ export default function TimeLineDayBlock({ day, zoomPosition, selectedType, focu
           horizontal: "center",
         }}
         onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography sx={{ p: 1, background: "#384147", color: "#fff" }}>{splittedDay[0] + " / " + splittedDay[1]}</Typography>
+        disableRestoreFocus>
+        <Typography sx={{p: 1, background: "#384147", color: "#fff"}}>
+          {splittedDay[0] + " / " + splittedDay[1]}
+        </Typography>
       </Popover>
     </>
   );

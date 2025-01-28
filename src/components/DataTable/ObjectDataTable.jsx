@@ -79,6 +79,7 @@ const ObjectDataTable = ({
   refetch,
   menuItem,
   getAllData = () => {},
+  footer,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -254,7 +255,9 @@ const ObjectDataTable = ({
       navigateToEditPage={navigateToEditPage}
       parentRef={parentRef}
       getAllData={getAllData}
-      control={control}>
+      control={control}
+      footer={footer}
+    >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow

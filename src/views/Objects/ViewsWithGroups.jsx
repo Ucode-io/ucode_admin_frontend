@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -653,15 +653,22 @@ const ViewsWithGroups = ({
 
 const FilterPopover = ({view, fieldsMap, visibleColumns, refetchViews}) => {
   const {tableSlug} = useParams();
+  const ref = useRef();
   const [addingFilters, setAddingFilters] = useState(false);
 
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.focus();
+    }
+  }, [addingFilters])
+
   return (
-    <Popover onClose={() => setAddingFilters(false)}>
+    <Popover onClose={() => setTimeout(() => setAddingFilters(false), 250)}>
       <PopoverTrigger>
         <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
                     colorScheme='gray'/>
       </PopoverTrigger>
-      <PopoverContent p='12px'>
+      <PopoverContent p='12px' ref={ref}>
         {!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}
         {!addingFilters &&
           <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
@@ -837,8 +844,15 @@ const ViewOptions = ({
     (state) => state.permissions.permissions?.[tableSlug]
   );
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const ref = useRef();
 
   const [openedMenu, setOpenedMenu] = useState(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.focus();
+    }
+  }, [openedMenu])
 
   const layoutQuery = useQuery({
     queryKey: ["GET_LAYOUT", {tableSlug,},],
@@ -866,134 +880,137 @@ const ViewOptions = ({
   const tabGroupColumnsCount = view?.group_fields?.length;
 
   return (
-    <Popover offset={[-145, 8]}>
+    <Popover offset={[-145, 8]} onClose={() => setTimeout(() => setOpenedMenu(null), 250)}>
       <PopoverTrigger>
         <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
                     colorScheme='gray'/>
       </PopoverTrigger>
-      {openedMenu === 'columns-visibility' &&
-        <ColumnsVisibility view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                           onBackClick={() => setOpenedMenu(null)}/>
-      }
-
-      {openedMenu === 'group' &&
-        <Group view={view} fieldsMap={fieldsMap} refetchViews={refetchViews} onBackClick={() => setOpenedMenu(null)}/>
-      }
-
-      {openedMenu === 'tab-group' &&
-        <TabGroup view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                  visibleRelationColumns={visibleRelationColumns} onBackClick={() => setOpenedMenu(null)}/>
-      }
-
-      {openedMenu === 'fix-column' &&
-        <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                    onBackClick={() => setOpenedMenu(null)}/>
-      }
-
-      {openedMenu === null &&
-        <PopoverContent w='320px'>
-          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-            <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
-            <Flex mt='12px' columnGap='4px'>
-              <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
-                    justifyContent='center'>
-                <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
-              </Flex>
-              <InputGroup>
-                <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
-                {updateView.isLoading &&
-                  <InputRightElement>
-                    <Spinner color='#475467'/>
-                  </InputRightElement>
-                }
-              </InputGroup>
-            </Flex>
-            <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                  as={Link}
-                  to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
-              <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
-                <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
-              </Flex>
-              <ViewOptionTitle>Layout</ViewOptionTitle>
-              <Flex ml='auto' columnGap='4px' alignItems='center'>
-                <Box color='#667085' fontWeight={400} fontSize={14}>
-                  {viewName}
-                </Box>
-                <ChevronRightIcon fontSize={22}/>
-              </Flex>
-            </Flex>
-          </Box>
-          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) &&
-              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                    cursor='pointer' onClick={() => setOpenedMenu('columns-visibility')}>
-                <Image src="/img/eye.svg" alt="Visibility"/>
-                <ViewOptionTitle>Columns</ViewOptionTitle>
-                <Flex ml='auto' alignItems='center' columnGap='8px'>
-                  {Boolean(hiddenColumnsCount) &&
-                    <ViewOptionSubtitle>{hiddenColumnsCount} hidden</ViewOptionSubtitle>
+      <PopoverContent ref={ref} w='320px' p={openedMenu === null ? "0px" : "8px"}>
+        {openedMenu === null &&
+          <>
+            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+              <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
+              <Flex mt='12px' columnGap='4px'>
+                <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
+                      justifyContent='center'>
+                  <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+                </Flex>
+                <InputGroup>
+                  <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
+                  {updateView.isLoading &&
+                    <InputRightElement>
+                      <Spinner color='#475467'/>
+                    </InputRightElement>
                   }
+                </InputGroup>
+              </Flex>
+              <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6}
+                    _hover={{bg: "#EAECF0"}}
+                    as={Link}
+                    to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
+                <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
+                  <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+                </Flex>
+                <ViewOptionTitle>Layout</ViewOptionTitle>
+                <Flex ml='auto' columnGap='4px' alignItems='center'>
+                  <Box color='#667085' fontWeight={400} fontSize={14}>
+                    {viewName}
+                  </Box>
                   <ChevronRightIcon fontSize={22}/>
                 </Flex>
               </Flex>
-            }
+            </Box>
+            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) &&
+                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                      cursor='pointer' onClick={() => setOpenedMenu('columns-visibility')}>
+                  <Image src="/img/eye.svg" alt="Visibility"/>
+                  <ViewOptionTitle>Columns</ViewOptionTitle>
+                  <Flex ml='auto' alignItems='center' columnGap='8px'>
+                    {Boolean(hiddenColumnsCount) &&
+                      <ViewOptionSubtitle>{hiddenColumnsCount} hidden</ViewOptionSubtitle>
+                    }
+                    <ChevronRightIcon fontSize={22}/>
+                  </Flex>
+                </Flex>
+              }
 
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                    cursor='pointer' onClick={() => setOpenedMenu('group')}>
-                <Image src="/img/copy-01.svg" alt="Group by"/>
-                <ViewOptionTitle>Group</ViewOptionTitle>
-                <Flex ml='auto' alignItems='center' columnGap='8px'>
-                  {Boolean(groupByColumnsCount) &&
-                    <ViewOptionSubtitle>{groupByColumnsCount} group</ViewOptionSubtitle>
-                  }
-                  <ChevronRightIcon fontSize={22}/>
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                      cursor='pointer' onClick={() => setOpenedMenu('group')}>
+                  <Image src="/img/copy-01.svg" alt="Group by"/>
+                  <ViewOptionTitle>Group</ViewOptionTitle>
+                  <Flex ml='auto' alignItems='center' columnGap='8px'>
+                    {Boolean(groupByColumnsCount) &&
+                      <ViewOptionSubtitle>{groupByColumnsCount} group</ViewOptionSubtitle>
+                    }
+                    <ChevronRightIcon fontSize={22}/>
+                  </Flex>
                 </Flex>
-              </Flex>
-            }
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
-              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                    cursor='pointer' onClick={() => setOpenedMenu('tab-group')}>
-                <Image src="/img/browser.svg" alt="Group by"/>
-                <ViewOptionTitle>Tab group</ViewOptionTitle>
-                <Flex ml='auto' alignItems='center' columnGap='8px'>
-                  {Boolean(tabGroupColumnsCount) &&
-                    <ViewOptionSubtitle>{tabGroupColumnsCount} group</ViewOptionSubtitle>
-                  }
-                  <ChevronRightIcon fontSize={22}/>
+              }
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
+                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                      cursor='pointer' onClick={() => setOpenedMenu('tab-group')}>
+                  <Image src="/img/browser.svg" alt="Group by"/>
+                  <ViewOptionTitle>Tab group</ViewOptionTitle>
+                  <Flex ml='auto' alignItems='center' columnGap='8px'>
+                    {Boolean(tabGroupColumnsCount) &&
+                      <ViewOptionSubtitle>{tabGroupColumnsCount} group</ViewOptionSubtitle>
+                    }
+                    <ChevronRightIcon fontSize={22}/>
+                  </Flex>
                 </Flex>
-              </Flex>
-            }
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
-              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                    cursor='pointer' onClick={() => setOpenedMenu('fix-column')}>
-                <Image src="/img/layout-left.svg" alt="Fix columns"/>
-                <ViewOptionTitle>Fix Column</ViewOptionTitle>
-                <Flex ml='auto' alignItems='center' columnGap='8px'>
-                  {Boolean(fixedColumnsCount) &&
-                    <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
-                  }
-                  <ChevronRightIcon fontSize={22}/>
+              }
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                      cursor='pointer' onClick={() => setOpenedMenu('fix-column')}>
+                  <Image src="/img/layout-left.svg" alt="Fix columns"/>
+                  <ViewOptionTitle>Fix Column</ViewOptionTitle>
+                  <Flex ml='auto' alignItems='center' columnGap='8px'>
+                    {Boolean(fixedColumnsCount) &&
+                      <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
+                    }
+                    <ChevronRightIcon fontSize={22}/>
+                  </Flex>
                 </Flex>
+              }
+            </Box>
+            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
+              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
+                    cursor='pointer' onClick={onDocsClick}>
+                <Image src="/img/file-docs.svg" alt="Docs"/>
+                <ViewOptionTitle>Docs</ViewOptionTitle>
+                <ChevronRightIcon ml='auto' fontSize={22}/>
               </Flex>
-            }
-          </Box>
-          <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-            <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                  cursor='pointer' onClick={onDocsClick}>
-              <Image src="/img/file-docs.svg" alt="Docs"/>
-              <ViewOptionTitle>Docs</ViewOptionTitle>
-              <ChevronRightIcon ml='auto' fontSize={22}/>
-            </Flex>
-            <ExcelExportButton fieldsMap={fieldsMap}/>
-            <ExcelImportButton searchText={searchText} checkedColumns={checkedColumns}
-                               computedVisibleFields={computedVisibleFields}/>
-          </Box>
-          <Box px='8px' py='4px'>
-            <DeleteViewButton view={view} refetchViews={refetchViews} />
-          </Box>
-        </PopoverContent>
-      }
+              <ExcelExportButton fieldsMap={fieldsMap}/>
+              <ExcelImportButton searchText={searchText} checkedColumns={checkedColumns}
+                                 computedVisibleFields={computedVisibleFields}/>
+            </Box>
+            <Box px='8px' py='4px'>
+              <DeleteViewButton view={view} refetchViews={refetchViews}/>
+            </Box>
+          </>
+        }
+
+        {openedMenu === 'columns-visibility' &&
+          <ColumnsVisibility view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                             onBackClick={() => setOpenedMenu(null)}/>
+        }
+
+        {openedMenu === 'group' &&
+          <Group view={view} fieldsMap={fieldsMap} refetchViews={refetchViews} onBackClick={() => setOpenedMenu(null)}/>
+        }
+
+        {openedMenu === 'tab-group' &&
+          <TabGroup view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                    visibleRelationColumns={visibleRelationColumns} onBackClick={() => setOpenedMenu(null)}/>
+        }
+
+        {openedMenu === 'fix-column' &&
+          <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
+                      onBackClick={() => setOpenedMenu(null)}/>
+        }
+      </PopoverContent>
     </Popover>
   )
 }
@@ -1034,7 +1051,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
   }
 
   return (
-    <PopoverContent w='320px' p='8px'>
+    <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22}/>}
         rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
@@ -1065,7 +1082,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
           </Flex>
         )}
       </Flex>
-    </PopoverContent>
+    </Box>
   )
 }
 
@@ -1104,7 +1121,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
   }
 
   return (
-    <PopoverContent w='320px' p='8px'>
+    <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22}/>}
         rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
@@ -1135,7 +1152,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
           </Flex>
         )}
       </Flex>
-    </PopoverContent>
+    </Box>
   )
 }
 
@@ -1165,7 +1182,7 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
   }
 
   return (
-    <PopoverContent w='320px' p='8px'>
+    <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22}/>}
         rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
@@ -1194,7 +1211,7 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
           </Flex>
         )}
       </Flex>
-    </PopoverContent>
+    </Box>
   )
 }
 
@@ -1242,7 +1259,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
   }
 
   return (
-    <PopoverContent w='320px' p='8px'>
+    <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22}/>}
         rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
@@ -1270,7 +1287,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
           </Flex>
         )}
       </Flex>
-    </PopoverContent>
+    </Box>
   )
 }
 
@@ -1320,7 +1337,7 @@ const ExcelImportButton = ({searchText, checkedColumns, computedVisibleFields}) 
           onClick={mutation.mutate}>
       {mutation.isLoading ? <Spinner w='20px' h='20px'/> : <Image src="/img/file-download.svg" alt="Docs"/>}
       <ViewOptionTitle>Import</ViewOptionTitle>
-      <ChevronRightIcon ml='auto' fontSize={22} />
+      <ChevronRightIcon ml='auto' fontSize={22}/>
     </Flex>
   )
 }
@@ -1335,7 +1352,7 @@ const DeleteViewButton = ({view, refetchViews}) => {
   return (
     <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
           cursor='pointer' onClick={() => mutation.mutate()}>
-      {mutation.isLoading ? <Spinner w='20px' h='20px' /> : <Image src="/img/trash.svg" alt="Delete" />}
+      {mutation.isLoading ? <Spinner w='20px' h='20px'/> : <Image src="/img/trash.svg" alt="Delete"/>}
       <ViewOptionTitle>Delete</ViewOptionTitle>
     </Flex>
   )

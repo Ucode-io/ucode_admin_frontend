@@ -7,3 +7,5 @@ export const viewTypes = [
   "WEBSITE",
   "GRID",
 ];
+
+export const computedViewTypes = viewTypes.map((el) => ({value: el, label: el}))

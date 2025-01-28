@@ -254,7 +254,8 @@ const ObjectDataTable = ({
       navigateToEditPage={navigateToEditPage}
       parentRef={parentRef}
       getAllData={getAllData}
-      control={control}>
+      control={control}
+    >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow

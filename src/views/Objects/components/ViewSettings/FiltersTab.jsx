@@ -119,7 +119,6 @@ const FiltersTab = ({
       style={{
         minWidth: 200,
         maxHeight: 300,
-        minHeight: 140,
         overflowY: "auto",
         padding: "0px 14px",
         position: "relative",

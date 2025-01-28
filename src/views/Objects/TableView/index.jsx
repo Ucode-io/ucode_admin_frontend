@@ -1,4 +1,4 @@
-import {Box, Drawer} from "@mui/material";
+import {Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -20,9 +20,9 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import {DynamicTable} from "@/views/table-redesign";
 
 const TableView = ({
   filterVisible,
@@ -60,6 +60,7 @@ const TableView = ({
   setFormValue,
   currentView,
   watch,
+  newUi=false,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -183,8 +184,6 @@ const TableView = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-
-  // OLD CODE
 
   function customSortArray(a, b) {
     const commonItems = a?.filter((item) => b.includes(item));
@@ -386,26 +385,6 @@ const TableView = ({
     },
   });
 
-  // ==========FILTER FIELDS=========== //
-  const getFilteredFilterFields = useMemo(() => {
-    const filteredFieldsView =
-      fieldView &&
-      fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.attributes?.quick_filters;
-      });
-
-    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
-      (el) => {
-        return el?.field_id;
-      }
-    );
-    const filteredFields = fiedlsarray?.filter((item) => {
-      return quickFilters?.includes(item.id);
-    });
-
-    return filteredFields;
-  }, [fieldView, fiedlsarray]);
-
   const {
     data: {layout} = {
       layout: [],
@@ -537,42 +516,18 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  useEffect(() => {
-    setFilterVisible(
-      view?.attributes?.quick_filters?.length < 0 ? true : false
-    );
-  }, []);
+  const TableUi = newUi ? DynamicTable : ObjectDataTable;
 
   return (
     <div id="wrapper_drag" className={styles.wrapper}>
-      {
-        <div
-          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
-          <Box className={styles.block}>
-            <p>{t("filters")}</p>
-            <FastFilter
-              view={view}
-              fieldsMap={fieldsMap}
-              getFilteredFilterFields={getFilteredFilterFields}
-              isVertical
-              selectedTabIndex={selectedTabIndex}
-              visibleColumns={visibleColumns}
-              visibleRelationColumns={visibleRelationColumns}
-              visibleForm={visibleForm}
-              isVisibleLoading={isVisibleLoading}
-              setFilterVisible={setFilterVisible}
-            />
-          </Box>
-        </div>
-      }
       <div
         style={{
           display: "flex",
           alignItems: "flex-start",
-          width: filterVisible ? "calc(100% - 200px)" : "100%",
+          width: "100%",
         }}
         id="data-table">
-        <ObjectDataTable
+        <TableUi
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}

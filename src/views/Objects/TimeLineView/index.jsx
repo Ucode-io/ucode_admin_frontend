@@ -241,8 +241,13 @@ export default function TimeLineView({
 
   const handleScrollClick = () => {
     const scrollToDiv = document.getElementById("todayDate");
+
     if (scrollToDiv) {
-      scrollToDiv.scrollIntoView({behavior: "smooth"});
+      scrollToDiv.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
     }
   };
 

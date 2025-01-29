@@ -96,8 +96,10 @@ export default function TimeLineDayBlock({
         <div
           style={{
             position: "absolute",
-            top: "35px",
+            top: "50px",
             color: "#d63b30",
+            transform: "rotate(90deg)",
+            zIndex: "-1 !important",
           }}>
           {Number(splittedDay?.[0]) === today ? "Today" : ""}
         </div>

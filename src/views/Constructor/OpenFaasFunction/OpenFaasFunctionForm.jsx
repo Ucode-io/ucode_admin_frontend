@@ -50,6 +50,8 @@ import KnativeLogs from "./KnativeLogs";
 
 export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
+  const test = useParams();
+
   const navigate = useNavigate();
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(false);
@@ -67,7 +69,7 @@ export default function OpenFaasFunctionForm() {
       type: "FUNCTION",
     },
   });
-
+  console.log("mainFormmainForm", mainForm.getValues());
   const knativeForm = useForm({});
 
   const resourceId = mainForm.watch("resource_id");
@@ -205,7 +207,7 @@ export default function OpenFaasFunctionForm() {
     <div>
       <Tabs>
         <HeaderSettings
-          title="Open faas функция"
+          title="Faas функция"
           backButtonLink={-1}
           subtitle={functionId ? mainForm.watch("name") : "Новый"}>
           <TabList>
@@ -262,23 +264,39 @@ export default function OpenFaasFunctionForm() {
               {resourceId !== "ucode_gitlab" && (
                 <>
                   <FRow label="Репозиторий" required>
-                    <HFSelect
-                      name="repo_name"
-                      control={mainForm.control}
-                      options={repositories ?? []}
-                      required
-                      disabled={functionId}
-                    />
+                    {functionId ? (
+                      <HFTextField
+                        disabled={true}
+                        name="path"
+                        control={mainForm.control}
+                      />
+                    ) : (
+                      <HFSelect
+                        name="repo_name"
+                        control={mainForm.control}
+                        options={repositories ?? []}
+                        required
+                        disabled={functionId}
+                      />
+                    )}
                   </FRow>
 
                   <FRow label="Ветка" required>
-                    <HFSelect
-                      name="branch"
-                      control={mainForm.control}
-                      options={branches}
-                      required
-                      disabled={functionId}
-                    />
+                    {functionId ? (
+                      <HFTextField
+                        name="branch"
+                        control={mainForm?.control}
+                        disabled
+                      />
+                    ) : (
+                      <HFSelect
+                        name="branch"
+                        control={mainForm.control}
+                        options={branches}
+                        required
+                        disabled={functionId}
+                      />
+                    )}
                   </FRow>
                 </>
               )}

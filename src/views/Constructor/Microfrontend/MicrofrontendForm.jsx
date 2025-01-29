@@ -197,21 +197,37 @@ const MicrofrontendForm = () => {
           {resourceId !== "ucode_gitlab" && (
             <>
               <FRow label="Репозиторий" required>
-                <HFSelect
-                  name="repo_name"
-                  control={mainForm.control}
-                  options={repositories ?? []}
-                  required
-                />
+                {microfrontendId ? (
+                  <HFTextField
+                    name="path"
+                    control={mainForm.control}
+                    disabled
+                  />
+                ) : (
+                  <HFSelect
+                    name="repo_name"
+                    control={mainForm.control}
+                    options={repositories ?? []}
+                    required
+                  />
+                )}
               </FRow>
 
               <FRow label="Ветка" required>
-                <HFSelect
-                  name="branch"
-                  control={mainForm.control}
-                  options={branches}
-                  required
-                />
+                {microfrontendId ? (
+                  <HFTextField
+                    name="branch"
+                    control={mainForm.control}
+                    disabled
+                  />
+                ) : (
+                  <HFSelect
+                    name="branch"
+                    control={mainForm.control}
+                    options={branches}
+                    required
+                  />
+                )}
               </FRow>
             </>
           )}

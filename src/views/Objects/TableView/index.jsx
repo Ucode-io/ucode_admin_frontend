@@ -23,6 +23,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import {DynamicTable} from "@/views/table-redesign";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 const TableView = ({
   filterVisible,
@@ -519,117 +520,119 @@ const TableView = ({
   const TableUi = newUi ? DynamicTable : ObjectDataTable;
 
   return (
-    <div id="wrapper_drag" className={styles.wrapper}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          width: "100%",
-        }}
-        id="data-table">
-        <TableUi
-          custom_events={custom_events}
-          dataCount={dataCount}
-          refetch={refetch}
-          filterVisible={filterVisible}
-          currentView={currentView}
-          tableView={true}
-          defaultLimit={view?.default_limit}
-          formVisible={formVisible}
-          selectedView={selectedView}
-          setSortedDatas={setSortedDatas}
-          sortedDatas={sortedDatas}
-          setDrawerState={setDrawerState}
-          setDrawerStateField={setDrawerStateField}
-          isTableView={true}
-          getValues={getValues}
-          setFormVisible={setFormVisible}
-          setFormValue={setFormValue}
-          mainForm={mainForm}
-          isRelationTable={false}
-          removableHeight={isDocView ? 150 : 170}
-          currentPage={currentPage}
-          pagesCount={pageCount}
-          selectedObjectsForDelete={selectedObjectsForDelete}
-          setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-          columns={columns}
-          multipleDelete={multipleDelete}
-          openFieldSettings={openFieldSettings}
-          limit={paginiation ?? limit}
-          setLimit={setLimit}
-          onPaginationChange={setCurrentPage}
-          loader={tableLoader || deleteLoader}
-          data={tableData}
-          navigateToEditPage={navigateCreatePage}
-          summaries={view?.attributes?.summaries}
-          disableFilters
-          isChecked={(row) => selectedObjects?.includes(row.guid)}
-          filters={filters}
-          filterChangeHandler={filterChangeHandler}
-          onRowClick={navigateToEditPage}
-          onDeleteClick={deleteHandler}
-          tableSlug={tableSlug}
-          watch={watch}
-          view={view}
-          tableStyle={{
-            borderRadius: 0,
-            border: "none",
-            borderBottom: "1px solid #E5E9EB",
+    <MaterialUIProvider>
+      <div id="wrapper_drag" className={styles.wrapper}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
             width: "100%",
-            margin: 0,
           }}
-          isResizeble={true}
-          navigateToForm={navigateToForm}
-          menuItem={menuItem}
-          {...props}
-        />
+          id="data-table">
+          <TableUi
+            custom_events={custom_events}
+            dataCount={dataCount}
+            refetch={refetch}
+            filterVisible={filterVisible}
+            currentView={currentView}
+            tableView={true}
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
+            isTableView={true}
+            getValues={getValues}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            mainForm={mainForm}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 170}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            columns={columns}
+            multipleDelete={multipleDelete}
+            openFieldSettings={openFieldSettings}
+            limit={paginiation ?? limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            navigateToEditPage={navigateCreatePage}
+            summaries={view?.attributes?.summaries}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            watch={watch}
+            view={view}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: "100%",
+              margin: 0,
+            }}
+            isResizeble={true}
+            navigateToForm={navigateToForm}
+            menuItem={menuItem}
+            {...props}
+          />
+        </div>
+
+        {open && (
+          <ModalDetailPage
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+          />
+        )}
+
+        <Drawer
+          open={drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <FieldSettings
+            closeSettingsBlock={() => setDrawerState(null)}
+            isTableView={true}
+            onSubmit={(index, field) => update(index, field)}
+            field={drawerState}
+            formType={drawerState}
+            mainForm={mainForm}
+            selectedTabIndex={selectedTabIndex}
+            height={`calc(100vh - 48px)`}
+            getRelationFields={getRelationFields}
+            menuItem={menuItem}
+          />
+        </Drawer>
+
+        <Drawer
+          open={drawerStateField}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <RelationSettings
+            relation={drawerStateField}
+            closeSettingsBlock={() => setDrawerStateField(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerStateField}
+            height={`calc(100vh - 48px)`}
+          />
+        </Drawer>
       </div>
-
-      {open && (
-        <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-        />
-      )}
-
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <FieldSettings
-          closeSettingsBlock={() => setDrawerState(null)}
-          isTableView={true}
-          onSubmit={(index, field) => update(index, field)}
-          field={drawerState}
-          formType={drawerState}
-          mainForm={mainForm}
-          selectedTabIndex={selectedTabIndex}
-          height={`calc(100vh - 48px)`}
-          getRelationFields={getRelationFields}
-          menuItem={menuItem}
-        />
-      </Drawer>
-
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <RelationSettings
-          relation={drawerStateField}
-          closeSettingsBlock={() => setDrawerStateField(null)}
-          getRelationFields={getRelationFields}
-          formType={drawerStateField}
-          height={`calc(100vh - 48px)`}
-        />
-      </Drawer>
-    </div>
+    </MaterialUIProvider>
   );
 };
 

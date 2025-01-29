@@ -256,14 +256,15 @@
 .moneyBtn {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: inherit;
   border: none;
   cursor: pointer;
   height: 40px;
   border-left: 1px solid #eee;
 
   div {
-    width: 25px;
+    width: fit-content;
+    min-width: 25px;
   }
 }
 

@@ -48,7 +48,6 @@ const ImageUpload = ({
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [altText, setAltText] = useState("");
   const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
@@ -119,12 +118,6 @@ const ImageUpload = ({
       }
     }
   };
-
-  const inputChange = useDebounce((val) => {
-    if (value) {
-      onChange(`${value.split("#")[0]}#${val}`);
-    }
-  }, 500);
 
   return (
     <div className={`Gallery ${className}`}>
@@ -219,13 +212,6 @@ const ImageUpload = ({
                 <ChangeCircleIcon />
                 Change Image
               </Button>
-              <Box id="imgAlt">
-                <TextField
-                  defaultValue={splitVal ?? ""}
-                  onChange={(e) => inputChange(e.target.value)}
-                  placeholder="Alt"
-                />
-              </Box>
             </Box>
             <input
               id="image_photo"
@@ -324,9 +310,9 @@ const ImageUpload = ({
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
-            minWidth: 0,
-            width: "25px",
-            height: "25px",
+            minWidth: 40,
+            width: 40,
+            height: 27,
           }}>
           <input
             id="img_upload"
@@ -339,12 +325,7 @@ const ImageUpload = ({
             disabled={disabled}
             accept=".jpg, .jpeg, .png, .gif"
           />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          />
+          <img src="/img/file-docs.svg" alt="Upload" style={{ width: 24, height: 24 }} />
         </Button>
       )}
     </div>

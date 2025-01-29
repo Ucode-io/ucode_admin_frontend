@@ -42,6 +42,7 @@ const TableRow = ({
   relationFields,
   data,
   style,
+  firstRowWidth=80
 }) => {
   const navigate = useNavigate();
 
@@ -143,7 +144,7 @@ const TableRow = ({
                       }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) + 80
+                            calculateWidthFixedColumn(virtualColumn.id) + firstRowWidth
                           }px`
                         : "0",
                       backgroundColor: `${
@@ -301,7 +302,7 @@ const TableRow = ({
                         : "relative"
                     }`,
                     left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                      ? `${calculateWidthFixedColumn(virtualColumn.id) + 80}px`
+                      ? `${calculateWidthFixedColumn(virtualColumn.id) + firstRowWidth}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
@@ -455,7 +456,7 @@ const TableRow = ({
                     : "relative"
                 }`,
                 left: view?.attributes?.fixedColumns?.[column?.id]
-                  ? `${calculateWidthFixedColumn(column.id) + 80}px`
+                  ? `${calculateWidthFixedColumn(column.id) + firstRowWidth}px`
                   : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(

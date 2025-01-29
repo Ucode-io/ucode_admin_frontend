@@ -25,7 +25,7 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {Menu} from "@mui/material";
+import {Button, Menu} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import {useForm} from "react-hook-form";
 import {transliterate} from "@/utils/textTranslater";
@@ -35,6 +35,8 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "@/components/DataTable/TableRow";
+import AddDataColumn from "@/components/DataTable/AddDataColumn";
+import SummaryRow from "@/components/DataTable/SummaryRow";
 
 export const DynamicTable = ({
                                custom_events,
@@ -254,7 +256,7 @@ export const DynamicTable = ({
 
   return (
     <div className='CTableContainer'>
-      <div className='table' style={{ border: "none", borderRadius: 0 }}>
+      <div className='table' style={{border: "none", borderRadius: 0}}>
         <table id="resizeMe">
           <thead style={{borderBottom: "1px solid #EAECF0"}}>
           <tr>
@@ -323,8 +325,63 @@ export const DynamicTable = ({
               relationFields={fields?.length}
               data={data}
               view={view}
+              firstRowWidth={82}
             />
           )}
+
+          {addNewRow && (
+            <AddDataColumn
+              rows={isRelationTable ? fields : data}
+              columns={columns}
+              isRelationTable={isRelationTable}
+              setAddNewRow={setAddNewRow}
+              isTableView={isTableView}
+              tableView={tableView}
+              tableSlug={relatedTableSlug ?? tableSlug}
+              fields={columns}
+              getValues={getValues}
+              mainForm={mainForm}
+              originControl={control}
+              setFormValue={setFormValue}
+              relationfields={fields}
+              data={data}
+              view={view}
+              onRowClick={onRowClick}
+              width={"80px"}
+              refetch={refetch}
+            />
+          )}
+
+          <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+            <tr>
+              <td style={{
+                padding: "0",
+                position: "sticky",
+                left: "0",
+                backgroundColor: "#FFF",
+                zIndex: "1",
+              }}>
+                <Button
+                  id="add-row"
+                  variant="text"
+                  style={{
+                    borderColor: "#F0F0F0",
+                    borderRadius: "0px",
+                    width: "100%",
+                  }}
+                  onClick={() => {
+                    setAddNewRow(true);
+                  }}>
+                  <AddRoundedIcon />
+                </Button>
+              </td>
+            </tr>
+          </PermissionWrapperV2>
+
+          {!!summaries?.length && (
+            <SummaryRow summaries={summaries} columns={columns} data={data} />
+          )}
+          {additionalRow}
           </tbody>
         </table>
       </div>
@@ -335,11 +392,11 @@ export const DynamicTable = ({
 const IndexTh = () => {
   return (
     <Box
-      minWidth='80px'
+      minWidth='82px'
       textAlign='center'
       as='th'
       bg="#f6f6f6"
-      py="14px"
+      py="2px"
       px="12px"
       borderRight='1px solid #EAECF0'
       position='sticky'
@@ -506,7 +563,7 @@ const FieldButton = ({
       <Box
         as='th'
         bg="#f6f6f6"
-        py="14px"
+        py="2px"
         px="12px"
         borderLeft='1px solid #EAECF0'
         position='sticky'
@@ -519,7 +576,7 @@ const FieldButton = ({
           setFieldData(null);
         }}
       >
-        <AddRoundedIcon style={{marginTop: "3px"}} />
+        <AddRoundedIcon style={{marginTop: "3px"}}/>
       </Box>
       <FieldOptionModal
         anchorEl={fieldOptionAnchor}
@@ -881,7 +938,7 @@ const Th = ({
     ? "sticky"
     : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({columns, column}) + 80}px`
+    ? `${calculateWidthFixedColumn({columns, column}) + 82}px`
     : "0";
   const bg = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
     ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
@@ -907,7 +964,7 @@ const Th = ({
       as='th'
       id={column.id}
       className='th'
-      py="14px"
+      py="2px"
       px="12px"
       borderRight='1px solid #EAECF0'
       color='#475467'
@@ -921,12 +978,13 @@ const Th = ({
       zIndex={zIndex}
       onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
     >
-      <Flex alignItems='center' columnGap='8px'>
+      <Flex alignItems='center' columnGap='8px' whiteSpace='nowrap' minW='max-content'>
         {getColumnIcon({column})}
         {label}
 
         {permissions?.field_filter &&
-          <IconButton aria-label='more' icon={<Image src='/img/chevron-down.svg' alt='more'/>} variant='ghost'
+          <IconButton aria-label='more' icon={<Image src='/img/chevron-down.svg' alt='more' style={{minWidth: 20}}/>}
+                      variant='ghost'
                       colorScheme='gray' ml='auto' onClick={handleClick}/>
         }
       </Flex>

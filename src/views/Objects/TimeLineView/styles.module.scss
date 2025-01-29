@@ -255,9 +255,9 @@
 
 .today {
   position: absolute;
-  top: 0;
+  top: 25px;
   width: 2px;
-  height: calc(100% + 1px);
+  height: calc(100% - 25px);
   background-color: #d63b30;
   z-index: 0;
 }

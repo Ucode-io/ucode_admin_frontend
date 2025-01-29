@@ -118,6 +118,62 @@ function AgGridTableView(props) {
   //   },
   // ];
 
+  // const staticCode = [
+  //   {
+  //     guid: "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:10:26.756416",
+  //     updated_at: "2025-01-29T06:10:26.756416",
+  //     deleted_at: null,
+  //     name: "Parent",
+  //     recursive_example_id: null,
+  //     level: 1,
+  //     path: ["5fb5c63f-af3f-47c3-8865-994908c77b32"],
+  //   },
+  //   {
+  //     guid: "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:10:38.098925",
+  //     updated_at: "2025-01-29T06:10:38.098925",
+  //     deleted_at: null,
+  //     name: "Child",
+  //     recursive_example_id: "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     ],
+  //   },
+  //   {
+  //     guid: "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:27:25.359555",
+  //     updated_at: "2025-01-29T06:27:25.359555",
+  //     deleted_at: null,
+  //     name: "Child 2",
+  //     recursive_example_id: "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //       "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     ],
+  //   },
+  //   {
+  //     guid: "96bcf2f6-8357-4e83-b1b9-d166e9e70455",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:34:03.747895",
+  //     updated_at: "2025-01-29T06:34:03.747895",
+  //     deleted_at: null,
+  //     name: "Child 3",
+  //     recursive_example_id: "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //       "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //       "96bcf2f6-8357-4e83-b1b9-d166e9e70455",
+  //     ],
+  //   },
+  // ];
+
   const {isLoading, refetch} = useQuery(
     [
       "GET_OBJECTS_LIST_DATA",

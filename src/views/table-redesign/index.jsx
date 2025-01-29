@@ -1,7 +1,6 @@
 import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import useOnClickOutside from "use-onclickoutside";
+import React, {useEffect, useMemo, useState} from "react";
 import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
 import {Box, Flex, IconButton, Image} from "@chakra-ui/react";
 import {useTranslation} from "react-i18next";
@@ -25,7 +24,7 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {Button, Menu} from "@mui/material";
+import {Menu, Checkbox} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import {useForm} from "react-hook-form";
 import {transliterate} from "@/utils/textTranslater";
@@ -108,8 +107,6 @@ export const DynamicTable = ({
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
-  const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
@@ -117,8 +114,6 @@ export const DynamicTable = ({
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
 
-  const popupRef = useRef(null);
-  useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   useEffect(() => {
@@ -182,36 +177,6 @@ export const DynamicTable = ({
     createResizableTable(document.getElementById("resizeMe"));
   }, [data, isResizeble, pageName, dispatch]);
 
-  const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
-    const element = document.getElementById(colID);
-    element.style.width = "auto";
-    element.style.minWidth = "auto";
-    dispatch(
-      tableSizeAction.setTableSettings({
-        pageName,
-        colID,
-        colWidth: element.offsetWidth,
-        isStiky: "ineffective",
-        colIdx,
-      })
-    );
-    setColumnId("");
-  };
-
-  const handlePin = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSettings({
-        pageName,
-        colID,
-        colWidth: currentColumnWidth,
-        isStiky: true,
-        colIdx,
-      })
-    );
-    setColumnId("");
-  };
-
   const calculateWidth = (colId, index) => {
     const colIdx = tableSettings?.[pageName]
       ?.filter((item) => item?.isStiky === true)
@@ -250,7 +215,6 @@ export const DynamicTable = ({
 
     return totalWidth;
   };
-  const parentRef = useRef(null);
 
   const renderColumns = (columns ?? []).filter((column) => Boolean(column?.attributes?.field_permission?.view_permission));
 
@@ -260,7 +224,8 @@ export const DynamicTable = ({
         <table id="resizeMe">
           <thead style={{borderBottom: "1px solid #EAECF0"}}>
           <tr>
-            <IndexTh formVisible={formVisible} data={data}/>
+            <IndexTh items={isRelationTable ? fields : data} selectedItems={selectedObjectsForDelete}
+                     formVisible={formVisible} onSelectAll={(checked) => setSelectedObjectsForDelete(checked ? isRelationTable ? fields : data : [])}/>
             {renderColumns.map((column) =>
               <Th key={column.id} tableSlug={tableSlug} columns={renderColumns} column={column} view={view}
                   tableSettings={tableSettings} tableSize={tableSize} pageName={pageName} sortedDatas={sortedDatas}
@@ -292,7 +257,7 @@ export const DynamicTable = ({
             <TableRow
               key={isRelationTable ? virtualRowObject?.id : index}
               tableView={tableView}
-              width={"80px"}
+              width={"40px"}
               remove={remove}
               watch={watch}
               getValues={getValues}
@@ -325,7 +290,7 @@ export const DynamicTable = ({
               relationFields={fields?.length}
               data={data}
               view={view}
-              firstRowWidth={82}
+              firstRowWidth={44}
             />
           )}
 
@@ -360,26 +325,27 @@ export const DynamicTable = ({
                 left: "0",
                 backgroundColor: "#FFF",
                 zIndex: "1",
+                width: "44px",
+                color: "#007aff"
               }}>
-                <Button
-                  id="add-row"
-                  variant="text"
-                  style={{
-                    borderColor: "#F0F0F0",
-                    borderRadius: "0px",
-                    width: "100%",
-                  }}
-                  onClick={() => {
-                    setAddNewRow(true);
-                  }}>
-                  <AddRoundedIcon />
-                </Button>
+                <Flex
+                  h='30px'
+                  alignItems='center'
+                  justifyContent='center'
+                  transition='background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
+                  cursor="pointer"
+                  _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
+                  onClick={() => setAddNewRow(true)}
+                >
+                  <AddRoundedIcon fill='#007aff'/>
+                </Flex>
+
               </td>
             </tr>
           </PermissionWrapperV2>
 
           {!!summaries?.length && (
-            <SummaryRow summaries={summaries} columns={columns} data={data} />
+            <SummaryRow summaries={summaries} columns={columns} data={data}/>
           )}
           {additionalRow}
           </tbody>
@@ -389,10 +355,16 @@ export const DynamicTable = ({
   )
 }
 
-const IndexTh = () => {
+const IndexTh = ({items, selectedItems, onSelectAll}) => {
+  const {tableSlug} = useParams();
+  const permissions = useSelector((state) => state?.permissions?.permissions);
+  const hasPermission = permissions?.[tableSlug]?.delete;
+  const [hover, setHover] = useState(false);
+
+  const showCheckbox = hover || selectedItems?.length > 0;
+
   return (
     <Box
-      minWidth='82px'
       textAlign='center'
       as='th'
       bg="#f6f6f6"
@@ -402,8 +374,20 @@ const IndexTh = () => {
       position='sticky'
       left={0}
       zIndex={1}
+      onMouseEnter={hasPermission ? () => setHover(true) : null}
+      onMouseLeave={hasPermission ? () => setHover(false) : null}
     >
-      <Image src="/img/hash.svg" alt="index" mx='auto'/>
+      {!showCheckbox &&
+        <Image src="/img/hash.svg" alt="index" mx='auto'/>
+      }
+      {showCheckbox &&
+        <Checkbox
+          style={{width: 10, height: 10}}
+          checked={items?.length === selectedItems?.length}
+          indeterminate={selectedItems?.length > 0 && items?.length !== selectedItems?.length}
+          onChange={(_, checked) => onSelectAll(checked)}
+        />
+      }
     </Box>
   )
 }
@@ -938,7 +922,7 @@ const Th = ({
     ? "sticky"
     : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({columns, column}) + 82}px`
+    ? `${calculateWidthFixedColumn({columns, column}) + 44}px`
     : "0";
   const bg = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
     ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]

@@ -1,11 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Button, CircularProgress, FormHelperText} from "@mui/material";
+import {Box, Button, CircularProgress, FormHelperText, Popover} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {Controller} from "react-hook-form";
 
 import fileService from "../../services/fileService";
 import "@/components/Upload/style.scss";
 import "./style.scss";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import DownloadIcon from "@mui/icons-material/Download";
+import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 
 export const HFVideoUpload = ({
                                 control,
@@ -53,6 +58,7 @@ export const HFVideoUpload = ({
 
 const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
   const inputRef = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const videoRef = useRef(null);
   const fileName = (value ?? "").split("#")[0].split("_")[1] ?? "";
@@ -84,62 +90,110 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
       .finally(() => setLoading(false));
   };
 
-  const deleteImage = (id) => {
-    onChange(null);
-  };
-
   const closeButtonHandler = (e) => {
     e.stopPropagation();
-    deleteImage();
+    onChange(null);
+    setAnchorEl(null);
   };
 
   return (
-    <div className={className} style={{ textAlign: "left" }}>
-      {value && (
-        <div style={{display: "flex", alignItems: "center", columnGap: 5}}>
-          <div className="video-block">
-            <button
-              className="close-btn"
-              type="button"
-              onClick={(e) => closeButtonHandler(e)}>
-              <CancelIcon/>
-            </button>
-            <video ref={videoRef} src={value} onClick={async (ev) => {
-              try {
-                await ev.target.requestFullscreen();
-                ev.target.play();
-              } catch (err) {
-                ev.target.play();
-              }
-            }}/>
+    <>
+      <div className={className} style={{textAlign: "left"}} onClick={(ev) => {
+        if (value) {
+          setAnchorEl(ev.target)
+        }
+      }}>
+        {value && (
+          <div style={{display: "flex", alignItems: "center", columnGap: 5}}>
+            <div className="video-block">
+              <video ref={videoRef} src={value}/>
+            </div>
+            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>{fileName}</div>
           </div>
-          <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>{fileName}</div>
-        </div>
-      )}
+        )}
 
-      {!value &&
-        <Button
-          onClick={() => inputRef.current.click()}
+        {!value &&
+          <Button
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            {!loading && <img src="/img/file-docs.svg" alt="Upload" style={{width: 24, height: 24}}/>}
+            {loading && <CircularProgress size={20}/>}
+          </Button>
+        }
+      </div>
+
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}>
+        <Box
           sx={{
-            padding: 0,
-            minWidth: 40,
-            width: 40,
-            height: 27,
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
           }}>
-          <input
-            id="video_add"
-            type="file"
-            hidden
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+            }}
+            onClick={async () => {
+              try {
+                await videoRef.current.requestFullscreen();
+                videoRef.current.play();
+              } catch (err) {
+                videoRef.current.play();
+              }
+            }}>
+            <OpenInFullIcon/>
+            Show full video
+          </Button>
+          <RectangleIconButton className="removeImg" onClick={closeButtonHandler}>
+            <DeleteIcon
+              style={{width: "17px", height: "17px", marginRight: "12px"}}
+            />
+            Remove video
+          </RectangleIconButton>
+
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+            }}
             disabled={disabled}
-          />
-          {!loading && <img src="/img/file-docs.svg" alt="Upload" style={{width: 24, height: 24}}/>}
-          {loading && <CircularProgress size={20} />}
-        </Button>
-      }
-    </div>
+            onClick={(e) => {
+              e.stopPropagation();
+              inputRef.current.click();
+            }}>
+            <ChangeCircleIcon/>
+            Change Video
+          </Button>
+        </Box>
+      </Popover>
+
+      <input
+        type="file"
+        hidden
+        ref={inputRef}
+        tabIndex={tabIndex}
+        autoFocus={tabIndex === 1}
+        onChange={inputChangeHandler}
+        disabled={disabled}
+      />
+    </>
   );
 };

@@ -289,7 +289,7 @@ const LayoutSidebar = ({appId}) => {
       >
         <Flex
           position="absolute"
-          zIndex={2}
+          zIndex={999}
           w={25}
           h={25}
           alignItems='center'

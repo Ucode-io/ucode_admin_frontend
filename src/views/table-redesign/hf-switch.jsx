@@ -38,7 +38,6 @@ const HFSwitch = ({
             }}>
             <ChakraProvider>
               <Switch
-                size='lg'
                 id={`switch_${newColumn ? "new" : field?.slug}`}
                 {...props}
                 autoFocus={tabIndex === 1}

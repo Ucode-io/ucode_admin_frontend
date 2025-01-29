@@ -54,6 +54,25 @@
     }
   }
 
+  .first_button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #007aff;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(0, 122, 255, 0.15);
+
+    &:hover {
+      background-color: rgba(0, 122, 255, 0.08);
+    }
+  }
+
   .first_button,
   .table_multi_checkbox {
     display: none;
@@ -68,9 +87,12 @@
       display: flex;
     }
 
-    .first_button,
     .table_multi_checkbox {
       display: block;
+    }
+
+    .first_button {
+      display: flex;
     }
 
     .data_table__row_number {

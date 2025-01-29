@@ -970,3 +970,7 @@ u {
 .chakra-popover__popper {
   z-index: 999;
 }
+
+div:has(.chakra-tooltip) {
+  z-index: 999;
+}

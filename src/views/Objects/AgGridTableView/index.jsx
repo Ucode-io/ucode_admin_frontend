@@ -25,7 +25,7 @@ import {
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   RowGroupingModule,
-  // TreeDataModule,
+  TreeDataModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
@@ -44,7 +44,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
-  // TreeDataModule,
+  TreeDataModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -96,6 +96,27 @@ function AgGridTableView(props) {
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+
+  // const staticTreeData = [
+  //   {
+  //     id: "1",
+  //     athlete: "Parent A",
+  //     age: 40,
+  //     country: "USA",
+  //     gold: 5,
+  //     silver: 3,
+  //     path: ["1", "2"],
+  //   },
+  //   {
+  //     id: "2",
+  //     athlete: "Child A1",
+  //     age: 25,
+  //     country: "Canada",
+  //     gold: 1,
+  //     silver: 2,
+  //     path: ["2"],
+  //   },
+  // ];
 
   const {isLoading, refetch} = useQuery(
     [
@@ -401,7 +422,7 @@ function AgGridTableView(props) {
             <AgGridReact
               ref={gridApi}
               rowBuffer={8}
-              treeData={true}
+              // treeData={true}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
@@ -409,8 +430,8 @@ function AgGridTableView(props) {
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
-              getDataPath={getDataPath}
-              rowModelType="clientSide"
+              rowModelType={"clientSide"}
+              // getDataPath={!view?.treeData ? getDataPath : undefined}
               paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}

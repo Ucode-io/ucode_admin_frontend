@@ -31,7 +31,6 @@ const HFSwitch = ({
                }) => {
         return (
           <div
-            className={!disabledHelperText ? "mb-1" : ""}
             style={{
               background: isBlackBg ? "#2A2D34" : "",
               color: isBlackBg ? "#fff" : "",

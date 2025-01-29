@@ -35,7 +35,6 @@ const HFCheckbox = ({
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",
-              margin: "8px 8px 8px 0",
             }}
             checked={
               typeof value === "string"

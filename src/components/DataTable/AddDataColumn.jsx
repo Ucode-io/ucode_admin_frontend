@@ -90,8 +90,6 @@ const AddDataColumn = React.memo(
             style={{
               padding: "4px 4px",
               minWidth: "80px",
-              position: "sticky",
-              left: "0",
               backgroundColor: "#fff",
               zIndex: "1",
             }}>

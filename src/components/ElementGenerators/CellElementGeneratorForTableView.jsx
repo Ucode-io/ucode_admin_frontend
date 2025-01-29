@@ -5,9 +5,12 @@ import {useSelector} from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "@/views/table-redesign/hf-checkbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
-import HFDatePicker from "../FormElements/HFDatePicker";
-import HFDateDatePickerWithoutTimeZoneTable from "../FormElements/HFDatePickerWithoutTimeZone";
-import HFDateTimePicker from "../FormElements/HFDateTimePicker";
+import {
+  HFDatePicker,
+  HFDateTimePicker,
+  HFDateDatePickerWithoutTimeZoneTable,
+  HFTimePicker
+} from "@/views/table-redesign/hf-date";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
 import HFFormulaField from "../FormElements/HFFormulaField";
@@ -23,7 +26,6 @@ import HFQrFieldComponent from "../FormElements/HFQrField";
 import HFSwitch from "@/views/table-redesign/hf-switch";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
-import HFTimePicker from "../FormElements/HFTimePicker";
 import {HFVideoUpload} from "@/views/table-redesign/hf-video-upload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
@@ -41,21 +43,23 @@ import HFMoneyField from "../FormElements/HFMoneyField";
 const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
-  row,
-  data,
-  field,
-  index,
-  watch,
-  fields,
-  control,
-  isWrapField,
-  isNewRow = false,
-  newColumn = false,
-  isBlackBg = false,
-  isTableView = false,
-  setFormValue = () => {},
-  updateObject = () => {},
-}) => {
+                                            row,
+                                            data,
+                                            field,
+                                            index,
+                                            watch,
+                                            fields,
+                                            control,
+                                            isWrapField,
+                                            isNewRow = false,
+                                            newColumn = false,
+                                            isBlackBg = false,
+                                            isTableView = false,
+                                            setFormValue = () => {
+                                            },
+                                            updateObject = () => {
+                                            },
+                                          }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
@@ -185,10 +189,10 @@ const CellElementGeneratorForTableView = ({
       );
 
     case "TEXT":
-      return <HFTextComponent isTableView={true} field={field} />;
+      return <HFTextComponent isTableView={true} field={field}/>;
 
     case "BUTTON":
-      return <HFButtonField field={field} row={row} isTableView={true} />;
+      return <HFButtonField field={field} row={row} isTableView={true}/>;
 
     case "MONEY":
       return (
@@ -756,7 +760,7 @@ const CellElementGeneratorForTableView = ({
     default:
       return (
         <div style={{padding: "0 4px"}}>
-          <CellElementGenerator field={field} row={row} />
+          <CellElementGenerator field={field} row={row}/>
         </div>
       );
   }

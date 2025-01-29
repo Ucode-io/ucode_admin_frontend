@@ -139,6 +139,7 @@ const MicrofrontendForm = () => {
       .getById(microfrontendId)
       .then((res) => {
         mainForm.reset(res);
+        mainForm.setValue("resource_id", res?.resource);
       })
       .finally(() => setLoader(false));
   };

@@ -471,7 +471,7 @@ const ViewsWithGroups = ({
             }
           </InputGroup>
 
-          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' rowGap='8px'>
+          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' rowGap='8px' maxH='300px' overflow='auto'>
             {columnsForSearch.map((column) =>
               <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                     _hover={{bg: "#EAECF0"}} cursor='pointer'>
@@ -816,7 +816,7 @@ const FiltersSwitch = ({view, visibleColumns, onBackClick, refetchViews}) => {
               rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined} onClick={onBackClick}>
         Filters
       </Button>
-      <Flex flexDirection='column'>
+      <Flex flexDirection='column' maxHeight='300px' overflow='auto'>
         {[
           ...checkedColumns.map((c) => ({...c, checked: true})),
           ...unCheckedColumns.map((c) => ({...c, checked: false}))
@@ -935,7 +935,7 @@ const ViewOptions = ({
                   <Image src="/img/eye.svg" alt="Visibility"/>
                   <ViewOptionTitle>Columns</ViewOptionTitle>
                   <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(hiddenColumnsCount) &&
+                    {Boolean(hiddenColumnsCount) && hiddenColumnsCount > 0 &&
                       <ViewOptionSubtitle>{hiddenColumnsCount} hidden</ViewOptionSubtitle>
                     }
                     <ChevronRightIcon fontSize={22}/>
@@ -1070,7 +1070,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Visible columns</Box>
       </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
         {[...visibleFields, ...invisibleFields].map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
@@ -1140,7 +1140,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Group columns</Box>
       </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
         {[...visibleFields, ...invisibleFields].map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
@@ -1201,7 +1201,7 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Tab group columns</Box>
       </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
         {columns.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
@@ -1279,7 +1279,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
         <Box color='#475467' fontSize={16} fontWeight={600}>Fix columns</Box>
       </Button>
 
-      <Flex flexDirection='column' rowGap='8px' mt='8px'>
+      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
         {columns.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>

@@ -318,10 +318,10 @@ div {
 
 .customMoneyField {
   width: 100%;
-  height: 100%;
   border: none !important;
   height: 41px;
   padding: 0 0 0 5px;
+  background-color: inherit;
 }
 
 .custom_textfield_new {
@@ -969,9 +969,4 @@ u {
 
 .chakra-popover__popper {
   z-index: 999;
-}
-.ucode-rangepicker {
-  input {
-    text-align: center !important;
-  }
 }

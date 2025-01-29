@@ -9,24 +9,24 @@ import {showAlert} from "../../store/alert/alert.thunk";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import {CTableCell, CTableRow} from "../CTable";
 import NewTableDataForm from "../ElementGenerators/NewTableDataForm";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import {CircularProgress} from "@mui/material";
+import {Box, Flex, Image} from "@chakra-ui/react";
 
 const AddDataColumn = React.memo(
   ({
-    columns,
-    getValues,
-    mainForm,
-    relationfields,
-    data,
-    onRowClick,
-    width,
-    rows,
-    setAddNewRow,
-    refetch,
-    view,
-    isRelationTable,
-  }) => {
+     columns,
+     getValues,
+     mainForm,
+     relationfields,
+     data,
+     onRowClick,
+     width,
+     rows,
+     setAddNewRow,
+     refetch,
+     view,
+     isRelationTable,
+   }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
     const [isLoading, setIsLoading] = useState();
@@ -65,7 +65,8 @@ const AddDataColumn = React.memo(
           setIsLoading(false);
           console.log("ERROR: ", e);
         })
-        .finally(() => {});
+        .finally(() => {
+        });
     };
 
     return (
@@ -75,7 +76,6 @@ const AddDataColumn = React.memo(
           className="data_table__number_cell"
           style={{
             padding: "4px 4px",
-            minWidth: "80px",
             position: "sticky",
             left: "0",
             backgroundColor: "#F6F6F6",
@@ -90,8 +90,6 @@ const AddDataColumn = React.memo(
             style={{
               padding: "4px 4px",
               minWidth: "80px",
-              position: "sticky",
-              left: "0",
               backgroundColor: "#fff",
               zIndex: "1",
             }}>
@@ -119,7 +117,6 @@ const AddDataColumn = React.memo(
             position: "sticky",
             backgroundColor: "#fff",
             zIndex: "1",
-            minWidth: "85px",
             color: "#262626",
             fontSize: "13px",
             fontStyle: "normal",
@@ -129,26 +126,17 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
           }}>
-          <td
-            style={{
-              border: "none",
-            }}>
-            <div
-              style={{
-                display: "flex",
-                gap: "5px",
-                padding: "3px",
-                justifyContent: "center",
-                alignItems: "center",
-              }}>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                <RectangleIconButton
-                  id="cancel-row"
-                  color="error"
-                  onClick={() => setAddNewRow(false)}>
-                  <ClearIcon color="error" />
-                </RectangleIconButton>
-              </PermissionWrapperV2>
+          <Box className='group' position="relative" h='32px'>
+            <Image src="/table-icons/save-delete.svg" alt="More" w='32px' h='32px' _groupHover={{display: "none"}} />
+
+            <Flex columnGap='3px' display="none" _groupHover={{ display: "flex" }} position='absolute' top={0} right='3px' bg='#fff' borderRadius={4}>
+              <RectangleIconButton
+                id="cancel-row"
+                color="error"
+                onClick={() => setAddNewRow(false)}>
+                <ClearIcon color="error"/>
+              </RectangleIconButton>
+
               {isLoading ? (
                 <CircularProgress
                   style={{width: "20px", height: "20px", marginLeft: "4px"}}
@@ -158,11 +146,11 @@ const AddDataColumn = React.memo(
                   id="confirm-row"
                   color="success"
                   onClick={handleSubmit(onSubmit)}>
-                  <DoneIcon color="success" />
+                  <DoneIcon color="success"/>
                 </RectangleIconButton>
               )}
-            </div>
-          </td>
+            </Flex>
+          </Box>
         </CTableCell>
       </CTableRow>
     );

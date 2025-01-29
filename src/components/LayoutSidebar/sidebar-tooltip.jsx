@@ -8,6 +8,7 @@ export const SidebarTooltip = ({id, title, children}) => {
   return (
     <Tooltip
       isOpen={Boolean(highlightedMenu)}
+      className='chakra-tooltip'
       label={
         <Box
           bg={highlighted ? "#101828" : "#344054"}

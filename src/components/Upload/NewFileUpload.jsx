@@ -74,9 +74,9 @@ export default function NewFileUpload({
               onClick={handleClick}
               sx={{
                 padding: 0,
-                minWidth: "25px",
-                width: "25px",
-                height: "25px",
+                minWidth: 40,
+                width: 40,
+                height: 27,
               }}>
               <AttachFileIcon
                 style={{
@@ -172,51 +172,14 @@ export default function NewFileUpload({
       )}
 
       {!value && (
-        // <div
-        //   className="add-block block"
-        //   onClick={() => inputRef.current.click()}
-        //   style={
-        //     disabled
-        //       ? {
-        //           background: "#c0c0c039",
-        //         }
-        //       : {
-        //           background: "inherit",
-        //           color: "inherit",
-        //         }
-        //   }
-        // >
-        //   <div className="add-icon">
-        //     {!loading ? (
-        //       <>
-        //         {disabled ? (
-        //           <Tooltip title="This field is disabled for this role!">
-        //             <InputAdornment position="start">
-        //               <Lock style={{ fontSize: "20px" }} />
-        //             </InputAdornment>
-        //           </Tooltip>
-        //         ) : (
-        //           <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-        //         )}
-        //         {/* <p>Max size: 4 MB</p> */}
-        //       </>
-        //     ) : (
-        //       <CircularProgress />
-        //     )}
-        //   </div>
-
-        //   <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
-        // </div>
-
         <Button
           id="file_upload_btn"
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
-            minWidth: "25px",
-            width: "25px",
-            height: "25px",
-            paddingLeft: "15px",
+            minWidth: 40,
+            width: 40,
+            height: 27,
           }}>
           <input
             id="file_upload"
@@ -228,12 +191,7 @@ export default function NewFileUpload({
             onChange={inputChangeHandler}
             disabled={disabled}
           />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          />
+          <img src="/img/file-docs.svg" alt="Upload" style={{width: 24, height: 24}}/>
         </Button>
       )}
     </div>

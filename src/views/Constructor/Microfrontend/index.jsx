@@ -1,5 +1,8 @@
-import {useDispatch} from "react-redux";
+import {Delete} from "@mui/icons-material";
+import {Box, Pagination} from "@mui/material";
+import {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
   CTableBody,
@@ -13,14 +16,9 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import SearchInput from "../../../components/SearchInput";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import {useEffect, useState} from "react";
-import microfrontendService from "../../../services/microfrontendService";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
-import {Delete} from "@mui/icons-material";
-import {CircularProgress} from "@mui/material";
-import StatusPipeline from "./StatusPipeline";
 import useDebounce from "../../../hooks/useDebounce";
+import microfrontendService from "../../../services/microfrontendService";
+import StatusPipeline from "./StatusPipeline";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
@@ -29,6 +27,7 @@ const MicrofrontendPage = () => {
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
   const [debounceValue, setDebouncedValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -48,6 +47,7 @@ const MicrofrontendPage = () => {
     microfrontendService
       .getList({
         search: debounceValue,
+        offset: currentPage * 10,
       })
       .then((res) => {
         setList(res);
@@ -64,7 +64,7 @@ const MicrofrontendPage = () => {
 
   useEffect(() => {
     getMicrofrontendList();
-  }, [debounceValue]);
+  }, [debounceValue, currentPage]);
 
   return (
     <div>
@@ -125,6 +125,28 @@ const MicrofrontendPage = () => {
           </CTableBody>
         </CTable>
       </TableCard>
+
+      <Box
+        sx={{
+          height: "50px",
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          borderTop: "1px solid #eee",
+          paddingRight: "30px",
+        }}
+        color="primary">
+        <Box>
+          <Pagination
+            count={Math.ceil(list?.count / 10)}
+            onChange={(e, val) => setCurrentPage(val - 1)}
+          />
+        </Box>
+      </Box>
     </div>
   );
 };

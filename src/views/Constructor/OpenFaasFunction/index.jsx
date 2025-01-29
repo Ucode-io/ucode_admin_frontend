@@ -20,6 +20,7 @@ import StatusPipeline from "../Microfrontend/StatusPipeline";
 import {useQueryClient} from "react-query";
 import {useFunctionDeleteMutation} from "../../../services/functionService";
 import useDebounce from "../../../hooks/useDebounce";
+import {Box, Pagination} from "@mui/material";
 
 export default function OpenFaasFunctionPage() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function OpenFaasFunctionPage() {
   const [list, setList] = useState([]);
   const queryClient = useQueryClient();
   const [debounceValue, setDebouncedValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -53,6 +55,8 @@ export default function OpenFaasFunctionPage() {
     constructorFunctionService
       .getList({
         search: debounceValue,
+        limit: 10,
+        offset: currentPage * 10,
       })
       .then((res) => {
         setList(res);
@@ -66,7 +70,7 @@ export default function OpenFaasFunctionPage() {
 
   useEffect(() => {
     getList();
-  }, [debounceValue]);
+  }, [debounceValue, currentPage]);
 
   return (
     <div>
@@ -126,6 +130,27 @@ export default function OpenFaasFunctionPage() {
           </CTableBody>
         </CTable>
       </TableCard>
+      <Box
+        sx={{
+          height: "50px",
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          borderTop: "1px solid #eee",
+          paddingRight: "30px",
+        }}
+        color="primary">
+        <Box>
+          <Pagination
+            count={Math.ceil(list?.count / 10)}
+            onChange={(e, val) => setCurrentPage(val - 1)}
+          />
+        </Box>
+      </Box>
     </div>
   );
 }

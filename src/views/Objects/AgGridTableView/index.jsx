@@ -13,7 +13,11 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import getColumnEditorParams from "./valueOptionGenerator";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import constructorViewService from "../../../services/constructorViewService";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorObjectService from "../../../services/constructorObjectService";
 import {
   ClientSideRowModelModule,
   ModuleRegistry,
@@ -31,10 +35,6 @@ import AggridDefaultComponents, {
   IndexColumn,
   ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -422,16 +422,15 @@ function AgGridTableView(props) {
             <AgGridReact
               ref={gridApi}
               rowBuffer={8}
-              // treeData={true}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
+              // treeData={true}
               columnDefs={columns}
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
               rowModelType={"clientSide"}
-              // getDataPath={!view?.treeData ? getDataPath : undefined}
               paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
@@ -444,6 +443,7 @@ function AgGridTableView(props) {
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
+              // getDataPath={!view?.treeData ? getDataPath : undefined}
               onCellValueChanged={(e) => {
                 updateObject(e.data);
               }}

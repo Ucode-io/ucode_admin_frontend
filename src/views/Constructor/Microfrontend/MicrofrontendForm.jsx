@@ -160,6 +160,8 @@ const MicrofrontendForm = () => {
           ...data,
           github_token: selectedResource?.token,
           username: selectedResource?.username,
+          type:
+            selectedResource?.type === "GITHUB" ? "MICRO_FRONTEND" : undefined,
         });
     }
   };

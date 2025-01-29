@@ -96,9 +96,8 @@ export default function TimeLineDayBlock({
         <div
           style={{
             position: "absolute",
-            top: "-20px",
-            color: "#007aff",
-            fontWeight: "bold",
+            top: "35px",
+            color: "#d63b30",
           }}>
           {Number(splittedDay?.[0]) === today ? "Today" : ""}
         </div>

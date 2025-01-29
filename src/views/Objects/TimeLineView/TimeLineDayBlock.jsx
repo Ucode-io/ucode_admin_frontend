@@ -93,14 +93,6 @@ export default function TimeLineDayBlock({
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         className={`${styles.dayBlock} ${(splittedDay[1] === "Saturday" || splittedDay[1] === "Sunday") && selectedType !== "month" ? styles.dayOff : ""}`}>
-        <div
-          style={{
-            position: "absolute",
-            top: "35px",
-            color: "#d63b30",
-          }}>
-          {Number(splittedDay?.[0]) === today ? "Today" : ""}
-        </div>
         {splittedDay[0]}
       </div>
 

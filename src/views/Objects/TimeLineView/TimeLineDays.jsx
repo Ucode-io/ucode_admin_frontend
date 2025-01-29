@@ -1,9 +1,9 @@
-import { format } from "date-fns";
-import React, { useState } from "react";
+import {format} from "date-fns";
+import React, {useState} from "react";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 
-export default function TimeLineDays({ date, zoomPosition, selectedType }) {
+export default function TimeLineDays({date, zoomPosition, selectedType}) {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const handleOpen = () => {
@@ -15,7 +15,7 @@ export default function TimeLineDays({ date, zoomPosition, selectedType }) {
     if (dayName === "Saturday" || dayName === "Sunday") return true;
     return false;
   };
-  
+
   return (
     <>
       <div
@@ -24,13 +24,31 @@ export default function TimeLineDays({ date, zoomPosition, selectedType }) {
         style={{
           minWidth: `${zoomPosition * 30}px`,
           cursor: "cell",
-          borderRight: selectedType === "month" && format(date, 'dd') === '31' ? "1px solid #e0e0e0" : "",
-        }}
-      >
-        {format(new Date(), "dd.MM.yyyy") === format(date, "dd.MM.yyyy") && <div className={styles.today} id="todayDate" />}
+          borderRight:
+            selectedType === "month" && format(date, "dd") === "31"
+              ? "1px solid #e0e0e0"
+              : "",
+        }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            color: "#d63b30",
+            transform: "rotate(90deg)",
+          }}>
+          {format(new Date(), "dd.MM.yyyy") === format(date, "dd.MM.yyyy") &&
+            "Today"}
+        </div>
+        {format(new Date(), "dd.MM.yyyy") === format(date, "dd.MM.yyyy") && (
+          <div className={styles.today} id="todayDate" />
+        )}
       </div>
 
-      <ModalDetailPage open={open} setOpen={setOpen} selectedRow={selectedRow} />
+      <ModalDetailPage
+        open={open}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+      />
     </>
   );
 }

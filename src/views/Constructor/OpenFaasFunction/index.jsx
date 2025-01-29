@@ -19,6 +19,8 @@ import constructorFunctionService from "../../../services/constructorFunctionSer
 import StatusPipeline from "../Microfrontend/StatusPipeline";
 import {useQueryClient} from "react-query";
 import {useFunctionDeleteMutation} from "../../../services/functionService";
+import useDebounce from "../../../hooks/useDebounce";
+import {Box, Pagination} from "@mui/material";
 
 export default function OpenFaasFunctionPage() {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ export default function OpenFaasFunctionPage() {
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
   const queryClient = useQueryClient();
+  const [debounceValue, setDebouncedValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -49,7 +53,11 @@ export default function OpenFaasFunctionPage() {
   const getList = () => {
     setLoader(true);
     constructorFunctionService
-      .getList()
+      .getList({
+        search: debounceValue,
+        limit: 10,
+        offset: currentPage * 10,
+      })
       .then((res) => {
         setList(res);
       })
@@ -58,17 +66,19 @@ export default function OpenFaasFunctionPage() {
       });
   };
 
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
   useEffect(() => {
     getList();
-  }, []);
+  }, [debounceValue, currentPage]);
 
   return (
     <div>
-      <HeaderSettings title={"Open faas функции"} backButtonLink={-1} />
+      <HeaderSettings title={"Faas функции"} backButtonLink={-1} />
 
       <FiltersBlock>
         <div className="p-1">
-          <SearchInput />
+          <SearchInput onChange={(e) => inputChangeHandler(e)} />
         </div>
       </FiltersBlock>
 
@@ -85,6 +95,7 @@ export default function OpenFaasFunctionPage() {
             <CTableCell>Name</CTableCell>
             <CTableCell>Status</CTableCell>
             <CTableCell>Path</CTableCell>
+            <CTableCell>Type</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
@@ -102,6 +113,9 @@ export default function OpenFaasFunctionPage() {
                 </CTableCell>
                 <CTableCell>{element?.path}</CTableCell>
                 <CTableCell>
+                  {element?.type === "FUNCTION" ? "OPENFAAS" : element?.type}
+                </CTableCell>
+                <CTableCell>
                   <RectangleIconButton
                     color="error"
                     onClick={() => deleteFunction(element.id)}>
@@ -111,11 +125,32 @@ export default function OpenFaasFunctionPage() {
               </CTableRow>
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={5} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={7} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>
+      <Box
+        sx={{
+          height: "50px",
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          borderTop: "1px solid #eee",
+          paddingRight: "30px",
+        }}
+        color="primary">
+        <Box>
+          <Pagination
+            count={Math.ceil(list?.count / 10)}
+            onChange={(e, val) => setCurrentPage(val - 1)}
+          />
+        </Box>
+      </Box>
     </div>
   );
 }

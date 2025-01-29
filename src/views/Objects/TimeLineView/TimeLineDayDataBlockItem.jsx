@@ -235,6 +235,7 @@ export default function TimeLineDayDataBlockItem({
           style={{
             width: "100%",
             height: "100%",
+            position: "relative",
           }}>
           <CellElementGenerator
             row={data}

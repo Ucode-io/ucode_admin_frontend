@@ -348,7 +348,7 @@ export default function TimeLineView({
       setZoomPosition(2);
     }
   }, [selectedType]);
-
+  console.log("viewview", view);
   return (
     <div>
       <FiltersBlock>

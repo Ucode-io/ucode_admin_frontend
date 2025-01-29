@@ -13,7 +13,11 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import getColumnEditorParams from "./valueOptionGenerator";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import constructorViewService from "../../../services/constructorViewService";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorObjectService from "../../../services/constructorObjectService";
 import {
   ClientSideRowModelModule,
   ModuleRegistry,
@@ -25,16 +29,12 @@ import {
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   RowGroupingModule,
-  // TreeDataModule,
+  TreeDataModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
   ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -44,7 +44,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
-  // TreeDataModule,
+  TreeDataModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -96,6 +96,83 @@ function AgGridTableView(props) {
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+
+  // const staticTreeData = [
+  //   {
+  //     id: "1",
+  //     athlete: "Parent A",
+  //     age: 40,
+  //     country: "USA",
+  //     gold: 5,
+  //     silver: 3,
+  //     path: ["1", "2"],
+  //   },
+  //   {
+  //     id: "2",
+  //     athlete: "Child A1",
+  //     age: 25,
+  //     country: "Canada",
+  //     gold: 1,
+  //     silver: 2,
+  //     path: ["2"],
+  //   },
+  // ];
+
+  // const staticCode = [
+  //   {
+  //     guid: "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:10:26.756416",
+  //     updated_at: "2025-01-29T06:10:26.756416",
+  //     deleted_at: null,
+  //     name: "Parent",
+  //     recursive_example_id: null,
+  //     level: 1,
+  //     path: ["5fb5c63f-af3f-47c3-8865-994908c77b32"],
+  //   },
+  //   {
+  //     guid: "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:10:38.098925",
+  //     updated_at: "2025-01-29T06:10:38.098925",
+  //     deleted_at: null,
+  //     name: "Child",
+  //     recursive_example_id: "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     ],
+  //   },
+  //   {
+  //     guid: "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:27:25.359555",
+  //     updated_at: "2025-01-29T06:27:25.359555",
+  //     deleted_at: null,
+  //     name: "Child 2",
+  //     recursive_example_id: "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //       "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     ],
+  //   },
+  //   {
+  //     guid: "96bcf2f6-8357-4e83-b1b9-d166e9e70455",
+  //     folder_id: null,
+  //     created_at: "2025-01-29T06:34:03.747895",
+  //     updated_at: "2025-01-29T06:34:03.747895",
+  //     deleted_at: null,
+  //     name: "Child 3",
+  //     recursive_example_id: "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //     path: [
+  //       "5fb5c63f-af3f-47c3-8865-994908c77b32",
+  //       "0db17e05-4e0f-46e6-bb5f-b903273ed062",
+  //       "eff0929e-8573-4913-b38b-cba93a2845c5",
+  //       "96bcf2f6-8357-4e83-b1b9-d166e9e70455",
+  //     ],
+  //   },
+  // ];
 
   const {isLoading, refetch} = useQuery(
     [
@@ -400,16 +477,15 @@ function AgGridTableView(props) {
             <AgGridReact
               ref={gridApi}
               rowBuffer={8}
-              treeData={true}
               theme={myTheme}
               rowData={rowData}
               loading={loading}
+              // treeData={true}
               columnDefs={columns}
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
-              getDataPath={getDataPath}
-              rowModelType="clientSide"
+              rowModelType={"clientSide"}
               paginationPageSize={limit}
               undoRedoCellEditing={true}
               rowSelection={rowSelection}
@@ -422,6 +498,7 @@ function AgGridTableView(props) {
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
+              // getDataPath={!view?.treeData ? getDataPath : undefined}
               onCellValueChanged={(e) => {
                 updateObject(e.data);
               }}

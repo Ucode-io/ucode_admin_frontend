@@ -20,6 +20,7 @@ import requestV2 from "../../../../../utils/requestV2";
 import {useSelector} from "react-redux";
 import {useTranslation} from "react-i18next";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
+import useDebounce from "../../../../../hooks/useDebounce";
 
 const actionTypeList = [
   {label: "HTTP", value: "HTTP"},
@@ -51,10 +52,9 @@ const ActionSettings = ({
   height,
 }) => {
   const {tableSlug} = useParams();
-
   const languages = useSelector((state) => state.languages.list);
-
   const [loader, setLoader] = useState(false);
+  const [debounceValue, setDebouncedValue] = useState("");
 
   const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
@@ -65,9 +65,11 @@ const ActionSettings = ({
   const action_type = watch("action_type");
 
   const {data: functions = []} = useQuery(
-    ["GET_FUNCTIONS_LIST"],
+    ["GET_FUNCTIONS_LIST", debounceValue],
     () => {
-      return constructorFunctionService.getListV2({});
+      return constructorFunctionService.getListV2({
+        search: debounceValue,
+      });
     },
     {
       onError: (err) => {
@@ -116,6 +118,8 @@ const ActionSettings = ({
     else updateAction(computedValues);
   };
 
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
   useEffect(() => {
     if (formType === "CREATE") return;
     reset(action);
@@ -154,6 +158,7 @@ const ActionSettings = ({
             </FRow>
             <FRow label="Function" required>
               <HFAutocomplete
+                onFieldChange={(e) => inputChangeHandler(e.target.value)}
                 name="event_path"
                 control={control}
                 placeholder="Event path"

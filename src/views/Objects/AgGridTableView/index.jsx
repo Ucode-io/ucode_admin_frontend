@@ -275,7 +275,7 @@ function AgGridTableView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        refetch();
+        view?.attributes?.tree ? updateTreeData() : refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -353,7 +353,6 @@ function AgGridTableView(props) {
       [`${tableSlug}_id`]: parentRow.guid,
       path: [...parentRow.path, generateGUID()],
     };
-
     gridApi.current.api.applyTransaction({
       add: [newChild],
     });
@@ -362,8 +361,6 @@ function AgGridTableView(props) {
       data: newChild,
     });
   };
-
-  console.log("viewviewview", view);
 
   const getDataPath = useCallback((data) => data.path, []);
 
@@ -476,9 +473,7 @@ function AgGridTableView(props) {
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              getDataPath={
-                !view?.attributes?.treeData ? getDataPath : undefined
-              }
+              getDataPath={view?.attributes?.treeData ? getDataPath : undefined}
               onCellValueChanged={(e) => {
                 updateObject(e.data);
               }}
@@ -501,6 +496,7 @@ function AgGridTableView(props) {
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
+        updateTreeData={updateTreeData}
       />
     </Box>
   );

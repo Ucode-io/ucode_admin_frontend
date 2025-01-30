@@ -62,6 +62,8 @@ import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploa
 import constructorObjectService from "@/services/constructorObjectService";
 import useDownloader from "@/hooks/useDownloader";
 import {getColumnIcon} from "@/views/table-redesign/icons";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "@/utils/applyDrag";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -888,7 +890,14 @@ const ViewOptions = ({
   const tabGroupColumnsCount = view?.group_fields?.length;
 
   return (
-    <Popover offset={[-145, 8]} onClose={() => setTimeout(() => setOpenedMenu(null), 250)}>
+    <Popover offset={[-145, 8]} onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
+             modifiers={[{
+               name: "computeStyles",
+               options: {
+                 gpuAcceleration: false,
+                 adaptive: false,
+               },
+             }]}>
       <PopoverTrigger>
         <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
                     colorScheme='gray'/>
@@ -1076,6 +1085,20 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
     });
   }
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(visibleFields, dropResult);
+    const computedResult = result?.filter((item) => {
+      return (item?.type === "LOOKUP" || item?.type === "LOOKUPS") ? item?.relation_id : item?.id;
+    });
+
+    if (computedResult) {
+      mutation.mutate({
+        ...view,
+        columns: computedResult?.map((item) => (item?.type === "LOOKUP" || item?.type === "LOOKUPS") ? item?.relation_id : item?.id)
+      });
+    }
+  };
+
   return (
     <Box>
       <Flex justifyContent='space-between' alignItems='center'>
@@ -1091,7 +1114,8 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
         </Button>
 
         <Flex as='label' alignItems='center' columnGap='4px' cursor='pointer'>
-          <Switch isChecked={renderFields?.length === visibleFields?.length} onChange={(ev) => onShowAllChange(ev.target.checked)} />
+          <Switch isChecked={renderFields?.length === visibleFields?.length}
+                  onChange={(ev) => onShowAllChange(ev.target.checked)}/>
           Show all
         </Flex>
       </Flex>
@@ -1099,25 +1123,29 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
         <InputLeftElement>
           <Image src='/img/search-lg.svg' alt='search'/>
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
       </InputGroup>
       <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
-        {renderFields.map((column) =>
-          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && getColumnIcon({column})}
-            <ViewOptionTitle>
-              {getLabel(column)}
-            </ViewOptionTitle>
-            <Switch
-              ml='auto'
-              onChange={(ev) => onChange(column, ev.target.checked)}
-              isChecked={view?.columns?.includes(
-                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
-              )}
-            />
-          </Flex>
-        )}
+        <Container onDrop={onDrop}>
+          {renderFields.map((column) =>
+            <Draggable key={column.id}>
+              <Flex as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6} bg='#fff'
+                    _hover={{bg: "#EAECF0"}} cursor='pointer' zIndex={999999}>
+                {column?.type && getColumnIcon({column})}
+                <ViewOptionTitle>
+                  {getLabel(column)}
+                </ViewOptionTitle>
+                <Switch
+                  ml='auto'
+                  onChange={(ev) => onChange(column, ev.target.checked)}
+                  isChecked={view?.columns?.includes(
+                    (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+                  )}
+                />
+              </Flex>
+            </Draggable>
+          )}
+        </Container>
       </Flex>
     </Box>
   )
@@ -1180,7 +1208,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
         <InputLeftElement>
           <Image src='/img/search-lg.svg' alt='search'/>
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
       </InputGroup>
       <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
         {renderFields.map((column) =>
@@ -1252,7 +1280,7 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
         <InputLeftElement>
           <Image src='/img/search-lg.svg' alt='search'/>
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
       </InputGroup>
       <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
         {renderFields.map((column) =>
@@ -1338,7 +1366,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
         <InputLeftElement>
           <Image src='/img/search-lg.svg' alt='search'/>
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
       </InputGroup>
       <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
         {columns.map((column) =>

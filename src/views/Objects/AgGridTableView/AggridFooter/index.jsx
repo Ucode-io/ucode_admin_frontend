@@ -21,6 +21,7 @@ const options = [
 ];
 
 function AggridFooter({
+  view,
   count,
   limit = 10,
   selectedRows = [],
@@ -29,6 +30,7 @@ function AggridFooter({
   setLimit = () => {},
   setLoading = () => {},
   createChild = () => {},
+  updateTreeData = () => {},
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -40,7 +42,7 @@ function AggridFooter({
       .deleteMultiple(tableSlug, {
         ids: selectedRows.map((i) => i.guid),
       })
-      .then(() => refetch());
+      .then(() => (view?.attributes?.treeData ? updateTreeData() : refetch()));
   };
 
   const navigateCreatePage = () => {

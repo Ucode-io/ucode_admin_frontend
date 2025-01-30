@@ -1,5 +1,8 @@
 import {useSelector} from "react-redux";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel, Box,
   Button,
   Drawer,
   DrawerBody,
@@ -26,6 +29,7 @@ import {useUserGetByIdQuery, useUserUpdateMutation} from "@/services/auth/userSe
 import 'react-phone-number-input/style.css'
 
 import {useClientTypesQuery} from "./utils";
+import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
 
 export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
   const form = useForm();
@@ -132,48 +136,99 @@ const Form = ({form}) => {
       <Field label='Name' required={true}>
         <Input size='lg' {...form.register('name', {required: true})} isInvalid={errors?.name}/>
       </Field>
-      <Field label='Email' required={true}>
-        <Input type='email' size='lg' {...form.register('email', {required: true})} isInvalid={errors?.email}/>
-      </Field>
       <Field label='Login' required={true}>
         <Input size='lg' {...form.register('login', {required: true})} isInvalid={errors?.login}/>
       </Field>
       <Field label='Password' required={true}>
         <PasswordInput size='lg' {...form.register('password', {required: true})} isInvalid={errors?.password}/>
       </Field>
-      <Field label='Phone' required={true}>
-        <Controller
-          name='phone'
-          control={form.control}
-          rules={{required: true}}
-          render={({field}) =>
-            <PhoneNumberInput
-              numberInputProps={{size: "lg", isInvalid: errors?.phone}}
-              defaultCountry="UZ"
-              international
-              value={field.value}
-              onChange={field.onChange}
-              inputComponent={Input}
-              limitMaxLength={true}
+
+      <Accordion allowToggle border='1px solid #E2E8F0' borderRadius={6}>
+        <AccordionItem border='none'>
+          <AccordionButton borderRadius={6} justifyContent='space-between' fontSize={14} _expanded={{ borderBottomRadius: 0 }}>
+            More
+            <AccordionIcon fontSize={18} />
+          </AccordionButton>
+          <AccordionPanel>
+            <Field label='Email'>
+              <Input type='email' size='lg' {...form.register('email')} isInvalid={errors?.email}/>
+            </Field>
+            <Field label='Phone'>
+              <Controller
+                name='phone'
+                control={form.control}
+                render={({field}) =>
+                  <Box
+                    sx={{
+                      '.PhoneInput': {
+                        display: 'flex',
+                        alignItems: 'center',
+                        border: '1px solid',
+                        borderColor: 'gray.200',
+                        borderRadius: 'md',
+                        _focusWithin: {
+                          borderColor: '#007AFF',
+                          boxShadow: "0 0 0 1px #007AFF"
+                        },
+                        transition: "box-shadow 200ms"
+                      },
+                      '.PhoneInputCountry': {
+                        ml: "12.8px"
+                      },
+                      '.PhoneInputCountrySelect': {
+                        px: 3,
+                        pr: 8,
+                        height: 'full',
+                        borderRight: '1px solid',
+                        borderColor: 'inherit',
+                        bg: 'transparent',
+                        _hover: { bg: 'gray.50' },
+                        _focus: { outline: 'none' },
+                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 0.5rem center',
+                        backgroundSize: '1.5em'
+                      },
+                      '.PhoneInputInput': {
+                        border: 'none !important',
+                        boxShadow: 'none !important',
+                        _focus: { boxShadow: 'none !important' }
+                      }
+                    }}
+                  >
+                    <PhoneNumberInput
+                      numberInputProps={{size: "lg", isInvalid: errors?.phone}}
+                      defaultCountry="UZ"
+                      international
+                      value={field.value}
+                      onChange={field.onChange}
+                      inputComponent={Input}
+                      limitMaxLength={true}
+                    />
+                  </Box>
+                }
+              />
+            </Field>
+            <Field label='User type' isInvalid={errors?.client_type_id}>
+              <UserType control={form.control}/>
+            </Field>
+            <Field label='Role' isInvalid={errors?.role_id}>
+              <Role control={form.control}/>
+            </Field>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  defaultChecked={true}
+                  icon={<img src="/img/checbkox.svg" alt="checkbox"/>}
+                  checkedIcon={<img src="/img/checkbox-checked.svg" alt="checked"/>}
+                />
+              }
+              label='Active role'
             />
-          }
-        />
-      </Field>
-      <Field label='User type' required={true} isInvalid={errors?.client_type_id}>
-        <UserType control={form.control}/>
-      </Field>
-      <Field label='Role' required={true} isInvalid={errors?.role_id}>
-        <Role control={form.control}/>
-      </Field>
-      <FormControlLabel
-        control={
-          <Checkbox
-            defaultChecked={true}
-            icon={<img src="/img/checbkox.svg" alt="checkbox"/>}
-            checkedIcon={<img src="/img/checkbox-checked.svg" alt="checked"/>}
-          />
-        }
-        label='Active role'/>
+
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
     </DrawerBody>
   )
 }
@@ -195,7 +250,6 @@ const UserType = ({control}) => {
     <Controller
       name='client_type_id'
       control={control}
-      rules={{required: true}}
       render={({field}) =>
         <Select
           value={clientTypes.find(type => type.guid === field.value)}
@@ -224,7 +278,6 @@ const Role = ({control}) => {
     <Controller
       name='role_id'
       control={control}
-      rules={{required: true}}
       render={({field}) =>
         <Select
           value={roles.find(role => role.guid === field.value)}

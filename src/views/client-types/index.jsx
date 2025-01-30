@@ -88,7 +88,7 @@ export const ClientTypes = () => {
       />
 
       <Box h='100%' display='flex' flexDirection='column' bg='#fff'>
-        <Flex h='56px' px='16px' alignItems='center' borderBottom='1px solid #EAECF0'>
+        <Flex minH='56px' h='56px' px='16px' alignItems='center' borderBottom='1px solid #EAECF0'>
           <Flex columnGap='8px' alignItems='center'>
             <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
                         colorScheme='gray' onClick={() => navigate(-1)}/>

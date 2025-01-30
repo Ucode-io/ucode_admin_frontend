@@ -36,10 +36,10 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => params.value || "";
       break;
     case "NUMBER":
-      (columnDef.cellRenderer = HFNumberFieldCell),
-        (columnDef.valueFormatter = (params) => {
-          return params?.value?.toLocaleString();
-        });
+      columnDef.cellRenderer = HFNumberFieldCell;
+      // (columnDef.valueFormatter = (params) => {
+      //   return params?.value?.toLocaleString();
+      // });
 
       break;
 

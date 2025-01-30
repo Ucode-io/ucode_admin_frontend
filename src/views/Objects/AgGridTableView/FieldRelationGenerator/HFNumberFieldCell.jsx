@@ -11,7 +11,10 @@ const HFNumberFieldCell = (props) => {
       decimalSeparator="."
       value={value}
       fullWidth
-      onChange={(e) => setValue(Number(e.target.value))}
+      onChange={(e) => {
+        const trimmedValue = e.target.value.replace(/\s/g, "");
+        setValue(Number(trimmedValue));
+      }}
       className="custom_number_field"
     />
   );

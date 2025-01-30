@@ -28,6 +28,7 @@ function AggridFooter({
   setOffset = () => {},
   setLimit = () => {},
   setLoading = () => {},
+  createChild = () => {},
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -77,6 +78,12 @@ function AggridFooter({
                 Delete all selected
               </Button>
             </RectangleIconButton>
+          )}
+
+          {Boolean(selectedRows?.length === 1) && (
+            <Button variant="outlined" onClick={createChild}>
+              Add Child
+            </Button>
           )}
           <PermissionWrapperV2 tableSlug={tableSlug} type="write">
             <Button

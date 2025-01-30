@@ -240,7 +240,7 @@ const ViewForm = ({
       form.setValue(`attributes.name_${i18n?.language}`, nameMulti);
     }
   }, [nameMulti]);
-
+  console.log("viewDataviewData", viewData);
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
@@ -303,6 +303,15 @@ const ViewForm = ({
                         fullWidth
                       />
                     </FRow>
+                    {viewData?.type === "GRID" && (
+                      <FRow label="Tree Data">
+                        <HFSwitch
+                          control={form.control}
+                          name={`attributes.treeData`}
+                          fullWidth
+                        />
+                      </FRow>
+                    )}
                   </div>
                 </div>
               </div>

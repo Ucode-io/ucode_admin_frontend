@@ -47,6 +47,11 @@ export const resourceTypes = [
     value: 2,
     icon: SiPostgresql,
   },
+  {
+    label: "Gitlab",
+    value: 8,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {

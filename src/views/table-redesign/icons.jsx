@@ -16,6 +16,7 @@ const icons = {
   "CHECKBOX": <img src="/table-icons/checkbox.svg" alt="Checkbox" />,
   "FORMULA_FRONTEND": <img src="/table-icons/formula.svg" alt="Formula" />,
   "LOOKUP": <img src="/table-icons/lookup.svg" alt="Lookup" />,
+  "RELATION": <img src="/table-icons/lookup.svg" alt="Lookup" />,
   "FILE": <img src="/table-icons/file.svg" alt="File" />,
   "PHOTO": <img src="/table-icons/photo.svg" alt="Photo" />,
   "VIDEO": <img src="/table-icons/video.svg" alt="Video" />,

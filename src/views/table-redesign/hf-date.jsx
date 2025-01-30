@@ -22,6 +22,7 @@ export const HFDatePicker = ({control, name, defaultValue = "", required, update
             updateObject();
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
+          highlightToday
         />
       }}
     />
@@ -48,6 +49,7 @@ export const HFDateTimePicker = ({control, name, defaultValue = "", required, up
             updateObject();
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
+          highlightToday
         />
       }}
     />
@@ -74,6 +76,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({control, name, defaultValu
             updateObject();
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
+          highlightToday
         />
       }}
     />

@@ -1,7 +1,7 @@
 import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {useEffect, useState} from "react";
+import {forwardRef, useEffect, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
@@ -30,7 +30,7 @@ import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
 import {Box, Button, Flex, Popover, PopoverContent, PopoverTrigger, useDisclosure} from "@chakra-ui/react";
-import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
+import {SidebarActionTooltip, SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
@@ -272,9 +272,13 @@ const LayoutSidebar = ({appId}) => {
     }
   }, []);
 
-  const itemConditionalProps = {}
+  const itemConditionalProps = {};
   if (!sidebarIsOpen) {
     itemConditionalProps.onMouseEnter = () => dispatch(mainActions.setSidebarHighlightedMenu('create'))
+  }
+
+  const getActionProps = (id) => sidebarIsOpen ? {} : {
+    onMouseEnter: () => dispatch(mainActions.setSidebarHighlightedAction(id))
   }
 
   return (
@@ -339,7 +343,7 @@ const LayoutSidebar = ({appId}) => {
               </Container>
 
               {Boolean(permissions?.menu_button) &&
-                <SidebarTooltip id='create' title='Create'>
+                <SidebarAppTooltip id='create' title='Create'>
                   <Flex
                     position="relative"
                     h={36}
@@ -368,34 +372,43 @@ const LayoutSidebar = ({appId}) => {
                       Create
                     </Box>
                   </Flex>
-                </SidebarTooltip>
+                </SidebarAppTooltip>
               }
             </div>
           }
         </Box>
 
         <Flex display={sidebarIsOpen ? "flex" : "block"} mt='auto' py={16} alignItems='center'
-              columnGap={16} px={8} borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}>
-          <Flex
-            as='a'
-            href='https://ucode.gitbook.io/ucode-docs'
-            target='_blank'
-            w={sidebarIsOpen ? "100%" : 36}
-            h={36}
-            alignItems='center'
-            justifyContent='center'
-            borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor='pointer'
-            mb={sidebarIsOpen ? 0 : 4}
-          >
-            <img src="/img/documentation.svg" alt="merge"/>
-          </Flex>
+              columnGap={16} px={8} borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
+              onMouseLeave={sidebarIsOpen ? undefined : () => dispatch(mainActions.setSidebarHighlightedAction(null))}
+        >
+          <SidebarActionTooltip id="documentation" title="Documentation">
+            <Flex
+              as='a'
+              href='https://ucode.gitbook.io/ucode-docs'
+              target='_blank'
+              w={sidebarIsOpen ? "100%" : 36}
+              h={36}
+              alignItems='center'
+              justifyContent='center'
+              borderRadius={6}
+              _hover={{bg: "#EAECF0"}}
+              cursor='pointer'
+              mb={sidebarIsOpen ? 0 : 4}
+              {...getActionProps('documentation')}
+            >
+              <img src="/img/documentation.svg" alt="merge"/>
+            </Flex>
+          </SidebarActionTooltip>
 
           <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
-          <Chatwoot open={sidebarIsOpen}/>
+          <SidebarActionTooltip id="chat" title="Chat">
+            <Chatwoot open={sidebarIsOpen} {...getActionProps('chat')} />
+          </SidebarActionTooltip>
           <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
-          <AIChat sidebarOpen={sidebarIsOpen}/>
+          <SidebarActionTooltip id="ai-chat" title="AI Chat">
+            <AIChat sidebarOpen={sidebarIsOpen} {...getActionProps('ai-chat')} />
+          </SidebarActionTooltip>
           <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
           <NewProfilePanel
             sidebarAnchorEl={sidebarAnchorEl}
@@ -510,11 +523,12 @@ const LayoutSidebar = ({appId}) => {
   );
 };
 
-const Chatwoot = ({open}) => {
+const Chatwoot = forwardRef(({open, ...props}, ref) => {
   const {originalButtonFunction} = useChatwoot();
 
   return (
     <Flex
+      ref={ref}
       w={open ? "100%" : 36}
       h={36}
       alignItems='center'
@@ -524,13 +538,14 @@ const Chatwoot = ({open}) => {
       cursor='pointer'
       mb={open ? 0 : 4}
       onClick={originalButtonFunction}
+      {...props}
     >
       <img src="/img/message-text-square.svg" alt="chat"/>
     </Flex>
   )
-}
+})
 
-const AIChat = ({sidebarOpen}) => {
+const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -558,6 +573,8 @@ const AIChat = ({sidebarOpen}) => {
         cursor='pointer'
         onClick={handleClick}
         mb={sidebarOpen ? 0 : 4}
+        ref={ref}
+        {...props}
       >
         <img src="/img/magic-wand.svg" alt="magic"/>
       </Flex>
@@ -577,7 +594,7 @@ const AIChat = ({sidebarOpen}) => {
       />
     </>
   )
-}
+})
 
 const Header = ({sidebarIsOpen, projectInfo}) => {
   const dispatch = useDispatch();

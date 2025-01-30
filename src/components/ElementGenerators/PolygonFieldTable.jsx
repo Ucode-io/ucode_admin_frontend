@@ -44,15 +44,14 @@ function PolygonFieldTable({
           display: "flex",
           alignItems: "center",
           padding: "0 20px",
+          columnGap: '16px'
         }}
         onClick={handleOpen}>
-        <span>Polygon</span>
-        <Button>
-          <LocationSearchingIcon />
-        </Button>
+        <span style={{ overflow: "visible" }}>Polygon</span>
+        <img src="/table-icons/polygon.svg" alt="Polygon"/>
       </Box>
       <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
+      <Box sx={style}>
           <Box>
             <HFPolygonField
               width={"740px"}

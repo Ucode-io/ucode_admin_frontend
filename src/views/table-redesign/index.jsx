@@ -2,7 +2,7 @@ import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useMemo, useState} from "react";
 import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
-import {Box, Flex, IconButton, Image} from "@chakra-ui/react";
+import {Box, ChakraProvider, Flex, IconButton, Image} from "@chakra-ui/react";
 import {useTranslation} from "react-i18next";
 
 import {getColumnIcon} from "./icons";
@@ -24,7 +24,7 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {Menu, Checkbox} from "@mui/material";
+import {Menu, Checkbox, Pagination, Button} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import {useForm} from "react-hook-form";
 import {transliterate} from "@/utils/textTranslater";
@@ -36,6 +36,8 @@ import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "@/components/DataTable/TableRow";
 import AddDataColumn from "@/components/DataTable/AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
+import {Select} from "chakra-react-select";
+import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 
 export const DynamicTable = ({
                                custom_events,
@@ -220,7 +222,7 @@ export const DynamicTable = ({
 
   return (
     <div className='CTableContainer'>
-      <div className='table' style={{border: "none", borderRadius: 0}}>
+      <div className='table' style={{border: "none", borderRadius: 0, height: "calc(100vh - 171px)"}}>
         <table id="resizeMe">
           <thead style={{borderBottom: "1px solid #EAECF0"}}>
           <tr>
@@ -290,7 +292,7 @@ export const DynamicTable = ({
               relationFields={fields?.length}
               data={data}
               view={view}
-              firstRowWidth={44}
+              firstRowWidth={45}
             />
           )}
 
@@ -314,6 +316,10 @@ export const DynamicTable = ({
               onRowClick={onRowClick}
               width={"80px"}
               refetch={refetch}
+              pageName={pageName}
+              tableSettings={tableSettings}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              firstRowWidth={45}
             />
           )}
 
@@ -325,7 +331,7 @@ export const DynamicTable = ({
                 left: "0",
                 backgroundColor: "#FFF",
                 zIndex: "1",
-                width: "44px",
+                width: "45px",
                 color: "#007aff"
               }}>
                 <Flex
@@ -351,6 +357,43 @@ export const DynamicTable = ({
           </tbody>
         </table>
       </div>
+
+      <Flex p='16px' borderTop='1px solid #EAECF0' justifyContent='space-between'>
+        <Flex columnGap='16px' alignItems='center' fontSize={14} fontWeight={600} color="#344054">
+          Show
+          <ChakraProvider>
+            <Select
+              value={{value: limit, label: `${limit} rows`}}
+              options={[
+                {value: 10, label: "10 rows"},
+                {value: 20, label: "20 rows"},
+                {value: 30, label: "30 rows"},
+                {value: 40, label: "40 rows"}
+              ]}
+              menuPlacement='top'
+              onChange={({value}) => setLimit(value)}
+            />
+          </ChakraProvider>
+          out of {dataCount}
+        </Flex>
+
+        <Pagination
+          page={currentPage}
+          onChange={(_, page) => onPaginationChange(page)}
+          count={Math.ceil((dataCount ?? 0) / limit)}
+          variant="outlined"
+          shape="rounded"
+          style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+        />
+
+        {selectedObjectsForDelete?.length > 0 &&
+          <RectangleIconButton color="error" onClick={multipleDelete}>
+            <Button variant="outlined" color="error">
+              Delete all selected
+            </Button>
+          </RectangleIconButton>
+        }
+      </Flex>
     </div>
   )
 }
@@ -365,6 +408,7 @@ const IndexTh = ({items, selectedItems, onSelectAll}) => {
 
   return (
     <Box
+      minWidth='45px'
       textAlign='center'
       as='th'
       bg="#f6f6f6"
@@ -922,7 +966,7 @@ const Th = ({
     ? "sticky"
     : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({columns, column}) + 44}px`
+    ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
     : "0";
   const bg = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
     ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]

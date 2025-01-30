@@ -13,7 +13,7 @@ import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
 import {store} from "../../store";
 import {relationTabActions} from "../../store/relationTab/relationTab.slice";
-import {SidebarTooltip} from "@/components/LayoutSidebar/sidebar-tooltip";
+import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import {mainActions} from "@/store/main/main.slice";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
@@ -143,7 +143,7 @@ const AppSidebar = ({
 
   return (
     <Draggable key={index}>
-      <SidebarTooltip id={element?.id} title={title}>
+      <SidebarAppTooltip id={element?.id} title={title}>
         <Flex
           key={index}
           onClick={(e) => {
@@ -180,9 +180,9 @@ const AppSidebar = ({
             justifyContent='center'
           >
             <IconGenerator
-              icon={icon ?? "folder-new.svg"}
+              icon={(!icon || icon === 'folder.svg') ? "folder-new.svg" : icon}
               size={iconSize}
-              style={{color: icon ? (menuStyle?.text ?? "") : "#fff"}}
+              style={{color: (icon && icon !== 'folder.svg') ? (menuStyle?.text ?? "") : "#fff"}}
             />
           </Flex>
 
@@ -322,7 +322,7 @@ const AppSidebar = ({
             ""
           )}
         </Flex>
-      </SidebarTooltip>
+      </SidebarAppTooltip>
     </Draggable>
   );
 };

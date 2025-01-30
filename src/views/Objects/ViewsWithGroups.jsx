@@ -58,10 +58,10 @@ import constructorViewService from "@/services/constructorViewService";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import useTabRouter from "@/hooks/useTabRouter";
 import layoutService from "@/services/layoutService";
-import {columnIcons} from "@/utils/constants/columnIcons";
 import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
 import constructorObjectService from "@/services/constructorObjectService";
 import useDownloader from "@/hooks/useDownloader";
+import {getColumnIcon} from "@/views/table-redesign/icons";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -419,7 +419,7 @@ const ViewsWithGroups = ({
 
         <Box as='label' cursor='pointer'>
           New ui
-          <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)} />
+          <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)}/>
         </Box>
 
         {view?.type === "FINANCE CALENDAR" && (
@@ -471,11 +471,11 @@ const ViewsWithGroups = ({
             }
           </InputGroup>
 
-          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' rowGap='8px' maxH='300px' overflow='auto'>
+          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' maxH='300px' overflow='auto'>
             {columnsForSearch.map((column) =>
               <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                     _hover={{bg: "#EAECF0"}} cursor='pointer'>
-                {columnIcons(column.type)}
+                {getColumnIcon({column})}
                 <ViewOptionTitle>{column.label}</ViewOptionTitle>
                 <Switch
                   ml='auto'
@@ -824,7 +824,7 @@ const FiltersSwitch = ({view, visibleColumns, onBackClick, refetchViews}) => {
           .map((column) =>
             <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                   _hover={{bg: "#EAECF0"}} cursor='pointer'>
-              {column?.type && columnIcons(column?.type)}
+              {column?.type && getColumnIcon({column})}
               {column?.attributes?.[`label_${i18n.language}`] || column.label}
               <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
             </Flex>
@@ -884,7 +884,7 @@ const ViewOptions = ({
 
   const fixedColumnsCount = Object.values(view?.attributes?.fixedColumns || {}).length;
   const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
-  const hiddenColumnsCount = Object.values(fieldsMap).length - (view?.columns?.length ?? 0);
+  const visibleColumnsCount = (view?.columns?.length ?? 0);
   const tabGroupColumnsCount = view?.group_fields?.length;
 
   return (
@@ -935,8 +935,8 @@ const ViewOptions = ({
                   <Image src="/img/eye.svg" alt="Visibility"/>
                   <ViewOptionTitle>Columns</ViewOptionTitle>
                   <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(hiddenColumnsCount) && hiddenColumnsCount > 0 &&
-                      <ViewOptionSubtitle>{hiddenColumnsCount} hidden</ViewOptionSubtitle>
+                    {Boolean(visibleColumnsCount) && visibleColumnsCount > 0 &&
+                      <ViewOptionSubtitle>{visibleColumnsCount} shown</ViewOptionSubtitle>
                     }
                     <ChevronRightIcon fontSize={22}/>
                   </Flex>
@@ -1026,6 +1026,7 @@ const ViewOptions = ({
 const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
+  const [search, setSearch] = useState('');
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1044,6 +1045,12 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
     return !view?.columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
   }) ?? [];
 
+  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+
+  const renderFields = [...visibleFields, ...invisibleFields].filter(
+    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  );
+
   const onChange = (column, checked) => {
     const columns = (view?.columns ?? []);
     const id = (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
@@ -1058,27 +1065,49 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
     })
   }
 
+  const onShowAllChange = (checked) => {
+    mutation.mutate({
+      ...view,
+      columns: checked
+        ? renderFields.map((column) => (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
+          ? column.relation_id
+          : column.id)
+        : []
+    });
+  }
+
   return (
     <Box>
-      <Button
-        leftIcon={<ChevronLeftIcon fontSize={22}/>}
-        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
-        colorScheme='gray'
-        variant='ghost'
-        w='fit-content'
-        onClick={onBackClick}
-      >
-        <Box color='#475467' fontSize={16} fontWeight={600}>Visible columns</Box>
-      </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
-        {[...visibleFields, ...invisibleFields].map((column) =>
+      <Flex justifyContent='space-between' alignItems='center'>
+        <Button
+          leftIcon={<ChevronLeftIcon fontSize={22}/>}
+          rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
+          colorScheme='gray'
+          variant='ghost'
+          w='fit-content'
+          onClick={onBackClick}
+        >
+          <Box color='#475467' fontSize={16} fontWeight={600}>Visible columns</Box>
+        </Button>
+
+        <Flex as='label' alignItems='center' columnGap='4px' cursor='pointer'>
+          <Switch isChecked={renderFields?.length === visibleFields?.length} onChange={(ev) => onShowAllChange(ev.target.checked)} />
+          Show all
+        </Flex>
+      </Flex>
+      <InputGroup mt='10px'>
+        <InputLeftElement>
+          <Image src='/img/search-lg.svg' alt='search'/>
+        </InputLeftElement>
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+      </InputGroup>
+      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
+        {renderFields.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && columnIcons(column?.type)}
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>
-              {column?.attributes?.[`label_${i18n.language}`] ||
-                column?.attributes?.[`label_${i18n.language}`] ||
-                column?.label}
+              {getLabel(column)}
             </ViewOptionTitle>
             <Switch
               ml='auto'
@@ -1097,6 +1126,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
 const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
+  const [search, setSearch] = useState('');
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1110,6 +1140,12 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const invisibleFields = allFields.filter((field) => {
     return !view?.attributes?.group_by_columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
   });
+
+  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+
+  const renderFields = [...visibleFields, ...invisibleFields].filter(
+    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const onChange = (column, checked) => {
     const columns = (view?.attributes?.group_by_columns ?? []);
@@ -1140,15 +1176,19 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Group columns</Box>
       </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
-        {[...visibleFields, ...invisibleFields].map((column) =>
+      <InputGroup mt='10px'>
+        <InputLeftElement>
+          <Image src='/img/search-lg.svg' alt='search'/>
+        </InputLeftElement>
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+      </InputGroup>
+      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
+        {renderFields.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && columnIcons(column?.type)}
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>
-              {column?.attributes?.[`label_${i18n.language}`] ||
-                column?.attributes?.[`label_${i18n.language}`] ||
-                column?.label}
+              {getLabel(column)}
             </ViewOptionTitle>
             <Switch
               ml='auto'
@@ -1167,6 +1207,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
 const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBackClick}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
+  const [search, setSearch] = useState('');
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1181,6 +1222,12 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
   const columns = (computedColumns ?? []).filter(
     (column) => ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
   )
+
+  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+
+  const renderFields = columns.filter(
+    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const onChange = (column, checked) => {
     mutation.mutate({
@@ -1201,13 +1248,19 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Tab group columns</Box>
       </Button>
-      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
-        {columns.map((column) =>
+      <InputGroup mt='10px'>
+        <InputLeftElement>
+          <Image src='/img/search-lg.svg' alt='search'/>
+        </InputLeftElement>
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+      </InputGroup>
+      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
+        {renderFields.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && columnIcons(column?.type)}
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>
-              {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+              {getLabel(column)}
             </ViewOptionTitle>
             <Switch
               ml='auto'
@@ -1225,6 +1278,7 @@ const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBack
 
 const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {tableSlug} = useParams();
+  const [search, setSearch] = useState('');
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1252,7 +1306,9 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
         )
     );
 
-  const columns = [...checkedElements, ...uncheckedElements];
+  const columns = [...checkedElements, ...uncheckedElements].filter(
+    (column) => search === "" ? true : column?.label?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const onChange = (column, checked) => {
     let fixed = [...Object.keys(view?.attributes?.fixedColumns ?? {})];
@@ -1278,12 +1334,17 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
       >
         <Box color='#475467' fontSize={16} fontWeight={600}>Fix columns</Box>
       </Button>
-
-      <Flex flexDirection='column' rowGap='8px' mt='8px' maxHeight='300px' overflow='auto'>
+      <InputGroup mt='10px'>
+        <InputLeftElement>
+          <Image src='/img/search-lg.svg' alt='search'/>
+        </InputLeftElement>
+        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)} />
+      </InputGroup>
+      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
         {columns.map((column) =>
           <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
                 _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && columnIcons(column?.type)}
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>
               {column?.label}
             </ViewOptionTitle>

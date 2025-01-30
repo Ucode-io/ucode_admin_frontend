@@ -26,6 +26,10 @@ const AddDataColumn = React.memo(
      refetch,
      view,
      isRelationTable,
+     pageName,
+     tableSettings,
+     calculateWidthFixedColumn,
+     firstRowWidth=45,
    }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
@@ -72,7 +76,6 @@ const AddDataColumn = React.memo(
     return (
       <CTableRow>
         <CTableCell
-          align="center"
           className="data_table__number_cell"
           style={{
             padding: "4px 4px",
@@ -80,18 +83,45 @@ const AddDataColumn = React.memo(
             left: "0",
             backgroundColor: "#F6F6F6",
             zIndex: "2",
+            textAlign: "center"
           }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
           <CTableCell
-            align="center"
             className="data_table__number_cell"
             style={{
-              padding: "4px 4px",
+              padding: "0 5px",
               minWidth: "80px",
-              backgroundColor: "#fff",
-              zIndex: "1",
+              position: `${
+                tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky ||
+                view?.attributes?.fixedColumns?.[column?.id]
+                  ? "sticky"
+                  : "relative"
+              }`,
+              left: view?.attributes?.fixedColumns?.[column?.id]
+                ? `${
+                  calculateWidthFixedColumn(column.id) + firstRowWidth
+                }px`
+                : "0",
+              backgroundColor: `${
+                tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky ||
+                view?.attributes?.fixedColumns?.[column?.id]
+                  ? "#F6F6F6"
+                  : "#fff"
+              }`,
+              zIndex: `${
+                tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky ||
+                view?.attributes?.fixedColumns?.[column?.id]
+                  ? "1"
+                  : "0"
+              }`,
             }}>
             <NewTableDataForm
               tableSlug={tableSlug}
@@ -111,11 +141,9 @@ const AddDataColumn = React.memo(
           </CTableCell>
         ))}
         <CTableCell
-          align="center"
           className="data_table__number_cell"
           style={{
             position: "sticky",
-            backgroundColor: "#fff",
             zIndex: "1",
             color: "#262626",
             fontSize: "13px",
@@ -125,6 +153,7 @@ const AddDataColumn = React.memo(
             padding: "0 5px",
             right: "0",
             borderLeft: "1px solid #eee",
+            backgroundColor: "#fff"
           }}>
           <Box className='group' position="relative" h='32px'>
             <Image src="/table-icons/save-delete.svg" alt="More" w='32px' h='32px' _groupHover={{display: "none"}} />

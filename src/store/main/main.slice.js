@@ -7,7 +7,8 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     pinIsEnabled: false,
     subMenuIsOpen: false,
     sidebarShowTooltip: false,
-    sidebarHighlightedMenu: null
+    sidebarHighlightedMenu: null,
+    sidebarHighlightedAction: null
   },
   reducers: {
     setSettingsSidebarIsOpen: (state, {payload}) => {
@@ -21,6 +22,9 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     },
     setSidebarHighlightedMenu: (state, {payload}) => {
       state.sidebarHighlightedMenu = payload;
+    },
+    setSidebarHighlightedAction: (state, {payload}) => {
+      state.sidebarHighlightedAction = payload;
     }
   },
 });

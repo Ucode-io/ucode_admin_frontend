@@ -8,7 +8,6 @@ import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import GeneratePdfFromTable from "./GeneratePdfFromTable";
 
 const TableRow = ({
                     relOptions,

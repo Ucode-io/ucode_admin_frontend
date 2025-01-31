@@ -42,6 +42,7 @@ const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
       options={options}
       value={filters[name] ?? []}
       onChange={(val) => onChange(val?.length ? val : undefined, name)}
+      field={field}
       label={field.label}
     />
   );

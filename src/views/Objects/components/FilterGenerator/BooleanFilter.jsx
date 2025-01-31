@@ -1,59 +1,36 @@
-import {Clear} from "@mui/icons-material";
-import {
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import CSelect from "../../../../components/CSelect";
 import {useMemo} from "react";
+import {Box, Popover, PopoverTrigger, PopoverContent} from "@chakra-ui/react";
+
+import {Chip} from "./chip";
 
 const BooleanFilter = ({
-  onChange = () => {},
-  field,
-  filters,
-  name,
-  ...props
-}) => {
+                         onChange = () => {
+                         }, field, filters, name,
+                       }) => {
   const value = useMemo(() => {
     if (filters[name] === true) return "true";
     if (filters[name] === false) return "false";
     return "";
   }, [filters, name]);
 
-  const onSelectChange = (e) => {
-    const value = e.target.value;
-
-    if (value === "true") {
-      onChange(true, name);
-    } else if (value === "false") {
-      onChange(false, name);
-    } else {
-      onChange(undefined, name);
-    }
-  };
-
   return (
-    <CSelect
-      fullWidth
-      placeholder={field.label}
-      value={value}
-      name={name}
-      disabledHelperText
-      options={[
-        {
-          label: field.attributes?.text_true ?? "Да",
-          value: "true",
-        },
-        {
-          label: field.attributes?.text_false ?? "Нет",
-          value: "false",
-        },
-      ]}
-      onChange={onSelectChange}
-    />
+    <Popover>
+      <PopoverTrigger>
+        <Chip showCloseIcon={value !== ""} onClearButtonClick={() => onChange(undefined, name)}>
+          {value || field.label}
+        </Chip>
+      </PopoverTrigger>
+      <PopoverContent w='fit-content'>
+        <Box px='40px' py='4px' cursor="pointer" bg={value === "true" ? "#eee" : "#fff"} _hover={{bg: "#eee"}}
+             onClick={() => onChange(true, name)}>
+          {field.attributes?.text_true ?? "Да"}
+        </Box>
+        <Box px='40px' py='4px' cursor="pointer" bg={value === "false" ? "#eee" : "#fff"} _hover={{bg: "#eee"}}
+             onClick={() => onChange(false, name)}>
+          {field.attributes?.text_false ?? "Нет"}
+        </Box>
+      </PopoverContent>
+    </Popover>
   );
 };
 

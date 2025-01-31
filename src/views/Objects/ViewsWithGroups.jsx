@@ -355,163 +355,167 @@ const ViewsWithGroups = ({
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      {updateLoading && (
-        <Backdrop
-          sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-          open={true}>
-          <RingLoaderWithWrapper/>
-        </Backdrop>
-      )}
+      <Flex h='100vh' flexDirection='column'>
+        {updateLoading && (
+          <Backdrop
+            sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
+            open={true}>
+            <RingLoaderWithWrapper/>
+          </Backdrop>
+        )}
 
-      <Flex h='56px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='4px'>
-        <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
-                    colorScheme='gray' onClick={() => navigate(-1)}/>
-        <IconButton aria-label='home' icon={<img src="/img/home.svg" alt="home"/>} variant='ghost'
-                    colorScheme='gray' onClick={() => navigate('/main')} ml='8px'/>
-        <ChevronRightIcon fontSize={20} color='#344054'/>
-        <Flex p='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
-              columnGap='8px'>
-          <Flex w='20px' h='20px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
-                fontSize={12} justifyContent='center' alignItems='center'>
-            {tableName?.[0]}
+        <Flex minH='56px' h='56px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='4px'>
+          <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
+                      colorScheme='gray' onClick={() => navigate(-1)}/>
+          <IconButton aria-label='home' icon={<img src="/img/home.svg" alt="home"/>} variant='ghost'
+                      colorScheme='gray' onClick={() => navigate('/main')} ml='8px'/>
+          <ChevronRightIcon fontSize={20} color='#344054'/>
+          <Flex p='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
+                columnGap='8px'>
+            <Flex w='20px' h='20px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
+                  fontSize={12} justifyContent='center' alignItems='center'>
+              {tableName?.[0]}
+            </Flex>
+            {tableName}
           </Flex>
-          {tableName}
+
+          <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+            <Button h='36px' ml='auto' onClick={navigateToSettingsPage} variant="outline" colorScheme='gray'
+                    borderColor='#D0D5DD' color='#344054' leftIcon={<Image src='/img/settings.svg' alt='settings'/>}
+                    borderRadius='8px'>
+              Table Settings
+            </Button>
+          </PermissionWrapperV2>
         </Flex>
 
-        <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-          <Button h='36px' ml='auto' onClick={navigateToSettingsPage} variant="outline" colorScheme='gray'
-                  borderColor='#D0D5DD' color='#344054' leftIcon={<Image src='/img/settings.svg' alt='settings'/>}
-                  borderRadius='8px'>
-            Table Settings
-          </Button>
-        </PermissionWrapperV2>
-      </Flex>
-
-      <Flex h='50px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='12px'>
-        {(views ?? []).map((view, index) =>
-          <Button
-            key={view.id}
-            variant='ghost'
-            colorScheme='gray'
-            leftIcon={<SVG
-              src={`/img/${viewIcons[view.type]}`}
+        <Flex minH='50px' h='50px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='12px'>
+          {(views ?? []).map((view, index) =>
+            <Button
+              key={view.id}
+              variant='ghost'
+              colorScheme='gray'
+              leftIcon={<SVG
+                src={`/img/${viewIcons[view.type]}`}
+                color={selectedTabIndex === index ? "#175CD3" : '#475467'}
+                width={20}
+                height={20}
+              />}
+              fontSize={14}
+              fontWeight={500}
               color={selectedTabIndex === index ? "#175CD3" : '#475467'}
-              width={20}
-              height={20}
-            />}
-            fontSize={14}
-            fontWeight={500}
-            color={selectedTabIndex === index ? "#175CD3" : '#475467'}
-            bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
-            _hover={selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined}
-            onClick={() => {
-              dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
-              setSelectedTabIndex(index);
+              bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
+              _hover={selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined}
+              onClick={() => {
+                dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
+                setSelectedTabIndex(index);
+              }}>
+              {viewName}
+            </Button>
+          )}
+
+          <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+            <Button leftIcon={<Image src='/img//plus-icon.svg' alt='Add'/>} variant='ghost' colorScheme='gray'
+                    color='#475467' onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+              View
+            </Button>
+          </PermissionWrapperV2>
+
+          <Box as='label' cursor='pointer'>
+            New ui
+            <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)}/>
+          </Box>
+
+          {view?.type === "FINANCE CALENDAR" && (
+            <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
+          )}
+
+          <MuiPopover
+            open={Boolean(viewAnchorEl)}
+            anchorEl={viewAnchorEl}
+            onClose={() => setViewAnchorEl(null)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
             }}>
-            {viewName}
-          </Button>
-        )}
+            <ViewTypeList
+              views={views}
+              computedViewTypes={computedViewTypes}
+              handleClose={() => setViewAnchorEl(null)}
+              openModal={(data) => {
+                setIsChanged(false);
+                setSettingsModalVisible(true);
+                setSelectedView(data);
+              }}
+            />
+          </MuiPopover>
 
-        <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-          <Button leftIcon={<Image src='/img//plus-icon.svg' alt='Add'/>} variant='ghost' colorScheme='gray'
-                  color='#475467' onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-            View
-          </Button>
-        </PermissionWrapperV2>
+          <Popover placement='bottom-end'>
+            <InputGroup ml='auto' w='320px'>
+              <InputLeftElement>
+                <Image src='/img/search-lg.svg' alt='search'/>
+              </InputLeftElement>
+              <Input id="search_input" defaultValue={searchText} placeholder="Search"
+                     onChange={(ev) => inputChangeHandler(ev.target.value)}/>
 
-        <Box as='label' cursor='pointer'>
-          New ui
-          <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)}/>
-        </Box>
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) &&
+                <PopoverTrigger>
+                  <InputRightElement>
+                    <IconButton
+                      w='24px'
+                      h='24px'
+                      aria-label='more'
+                      icon={<Image src='/img/dots-vertical.svg' alt='more'/>}
+                      variant='ghost'
+                      colorScheme='gray'
+                      size='xs'
+                    />
+                  </InputRightElement>
+                </PopoverTrigger>
+              }
+            </InputGroup>
 
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
-        )}
-
-        <MuiPopover
-          open={Boolean(viewAnchorEl)}
-          anchorEl={viewAnchorEl}
-          onClose={() => setViewAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}>
-          <ViewTypeList
-            views={views}
-            computedViewTypes={computedViewTypes}
-            handleClose={() => setViewAnchorEl(null)}
-            openModal={(data) => {
-              setIsChanged(false);
-              setSettingsModalVisible(true);
-              setSelectedView(data);
-            }}
-          />
-        </MuiPopover>
-
-        <Popover placement='bottom-end'>
-          <InputGroup ml='auto' w='320px'>
-            <InputLeftElement>
-              <Image src='/img/search-lg.svg' alt='search'/>
-            </InputLeftElement>
-            <Input id="search_input" defaultValue={searchText} placeholder="Search"
-                   onChange={(ev) => inputChangeHandler(ev.target.value)}/>
-
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) &&
-              <PopoverTrigger>
-                <InputRightElement>
-                  <IconButton
-                    w='24px'
-                    h='24px'
-                    aria-label='more'
-                    icon={<Image src='/img/dots-vertical.svg' alt='more'/>}
-                    variant='ghost'
-                    colorScheme='gray'
-                    size='xs'
+            <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' maxH='300px' overflow='auto'>
+              {columnsForSearch.map((column) =>
+                <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                      _hover={{bg: "#EAECF0"}} cursor='pointer'>
+                  {getColumnIcon({column})}
+                  <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                  <Switch
+                    ml='auto'
+                    isChecked={column.is_search}
+                    onChange={(e) => updateField({
+                      data: {
+                        fields: columnsForSearch
+                          .map((c) => c.id === column.id ? {...c, is_search: e.target.checked} : c)
+                      },
+                      tableSlug
+                    })}
                   />
-                </InputRightElement>
-              </PopoverTrigger>
-            }
-          </InputGroup>
+                </Flex>
+              )}
+            </PopoverContent>
+          </Popover>
 
-          <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' maxH='300px' overflow='auto'>
-            {columnsForSearch.map((column) =>
-              <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                    _hover={{bg: "#EAECF0"}} cursor='pointer'>
-                {getColumnIcon({column})}
-                <ViewOptionTitle>{column.label}</ViewOptionTitle>
-                <Switch
-                  ml='auto'
-                  isChecked={column.is_search}
-                  onChange={(e) => updateField({
-                    data: {
-                      fields: columnsForSearch
-                        .map((c) => c.id === column.id ? {...c, is_search: e.target.checked} : c)
-                    },
-                    tableSlug
-                  })}
-                />
-              </Flex>
-            )}
-          </PopoverContent>
-        </Popover>
+          <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}/>
 
-        <FilterPopover view={view} visibleColumns={visibleColumns} fieldsMap={fieldsMap} refetchViews={refetchViews}/>
+          <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+            <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
+                    onClick={() => navigateToForm(tableSlug, "CREATE", {}, {id}, searchParams.get('menuId'))}>
+              Create item
+            </Button>
+          </PermissionWrapperV2>
 
-        <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-          <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
-                  onClick={() => navigateToForm(tableSlug, "CREATE", {}, {id}, searchParams.get('menuId'))}>
-            Create item
-          </Button>
-        </PermissionWrapperV2>
+          <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}
+                       visibleRelationColumns={visibleRelationColumns} checkedColumns={checkedColumns}
+                       onDocsClick={() => setSelectedTabIndex(views.length)} searchText={searchText}
+                       computedVisibleFields={computedVisibleFields}/>
+        </Flex>
 
-        <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}
-                     visibleRelationColumns={visibleRelationColumns} checkedColumns={checkedColumns}
-                     onDocsClick={() => setSelectedTabIndex(views.length)} searchText={searchText}
-                     computedVisibleFields={computedVisibleFields}/>
-      </Flex>
+        {view?.attributes?.quick_filters?.length > 0 &&
+          <FiltersList view={view} fieldsMap={fieldsMap} />
+        }
 
-      <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard type="withoutPadding">
+        <Tabs direction={"ltr"} defaultIndex={0} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
               <div style={{display: "flex", alignItems: "center"}}>
@@ -561,7 +565,7 @@ const ViewsWithGroups = ({
               )}
               {!groupTable?.length &&
                 tabs?.map((tab) => (
-                  <TabPanel key={tab.value}>
+                  <TabPanel key={tab.value} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
                     {view.type === "TREE" ? (
                       <TreeView
                         tableSlug={tableSlug}
@@ -655,14 +659,13 @@ const ViewsWithGroups = ({
               ) : null}
             </>
           }
-        </TableCard>
-      </Tabs>
+        </Tabs>
+      </Flex>
     </ChakraProvider>
   );
 };
 
-const FilterPopover = ({view, fieldsMap, visibleColumns, refetchViews}) => {
-  const {tableSlug} = useParams();
+const FilterPopover = ({view, visibleColumns, refetchViews}) => {
   const ref = useRef();
   const [addingFilters, setAddingFilters] = useState(false);
 
@@ -670,7 +673,7 @@ const FilterPopover = ({view, fieldsMap, visibleColumns, refetchViews}) => {
     if (ref.current) {
       ref.current.focus();
     }
-  }, [addingFilters])
+  }, [addingFilters]);
 
   return (
     <Popover onClose={() => setTimeout(() => setAddingFilters(false), 250)}>
@@ -678,25 +681,21 @@ const FilterPopover = ({view, fieldsMap, visibleColumns, refetchViews}) => {
         <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
                     colorScheme='gray'/>
       </PopoverTrigger>
-      <PopoverContent p='12px' ref={ref}>
-        {!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}
-        {!addingFilters &&
-          <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
-            <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'
-                    onClick={() => setAddingFilters(true)}>
-              Add filters
-            </Button>
-          </PermissionWrapperV2>
-        }
-        {addingFilters &&
-          <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}
-                         onBackClick={() => setAddingFilters(false)}/>
-        }
+      <PopoverContent px='4px' py='8px' ref={ref}>
+        {/*{!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}*/}
+        {/*{!addingFilters &&*/}
+        {/*  <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">*/}
+        {/*    <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'*/}
+        {/*            onClick={() => setAddingFilters(true)}>*/}
+        {/*      Add filters*/}
+        {/*    </Button>*/}
+        {/*  </PermissionWrapperV2>*/}
+        {/*}*/}
+        <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews} />
       </PopoverContent>
     </Popover>
   )
 }
-
 
 const FiltersList = ({view, fieldsMap,}) => {
   const {tableSlug} = useParams();
@@ -759,7 +758,7 @@ const FiltersList = ({view, fieldsMap,}) => {
   };
 
   return (
-    <Flex flexDirection='column' rowGap='6px'>
+    <Flex minH='48px' px='16px' py='6px' bg='#fff' alignItems='center' columnGap='6px' borderBottom='1px solid #EAECF0' overflowX='auto'>
       {computedFields?.map((filter) => (
         <div key={filter.id}>
           <Filter
@@ -775,7 +774,7 @@ const FiltersList = ({view, fieldsMap,}) => {
   )
 }
 
-const FiltersSwitch = ({view, visibleColumns, onBackClick, refetchViews}) => {
+const FiltersSwitch = ({view, visibleColumns, refetchViews}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
@@ -807,32 +806,25 @@ const FiltersSwitch = ({view, visibleColumns, onBackClick, refetchViews}) => {
   };
 
   const onChange = (column, checked) => {
-    updateView(checked
-      ? [...view?.attributes?.quick_filters, column]
-      : view?.attributes?.quick_filters?.filter((c) => c.id !== column.id));
+    const quickFilters = view?.attributes?.quick_filters ?? [];
+    updateView(checked ? [...quickFilters, column] : quickFilters.filter((c) => c.id !== column.id));
   }
 
   return (
-    <Box>
-      <Button leftIcon={<ChevronLeftIcon fontSize={18}/>} w='fit-content' colorScheme='gray' variant='ghost' mb='4px'
-              rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined} onClick={onBackClick}>
-        Filters
-      </Button>
-      <Flex flexDirection='column' maxHeight='300px' overflow='auto'>
-        {[
-          ...checkedColumns.map((c) => ({...c, checked: true})),
-          ...unCheckedColumns.map((c) => ({...c, checked: false}))
-        ]
-          .map((column) =>
-            <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                  _hover={{bg: "#EAECF0"}} cursor='pointer'>
-              {column?.type && getColumnIcon({column})}
-              {column?.attributes?.[`label_${i18n.language}`] || column.label}
-              <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
-            </Flex>
-          )}
-      </Flex>
-    </Box>
+    <Flex flexDirection='column' maxHeight='300px' overflow='auto'>
+      {[
+        ...checkedColumns.map((c) => ({...c, checked: true})),
+        ...unCheckedColumns.map((c) => ({...c, checked: false}))
+      ]
+        .map((column) =>
+          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            {column?.type && getColumnIcon({column})}
+            {column?.attributes?.[`label_${i18n.language}`] || column.label}
+            <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
+          </Flex>
+        )}
+    </Flex>
   )
 }
 
@@ -1056,7 +1048,8 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
 
   const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
-  const renderFields = [...visibleFields, ...invisibleFields].filter(
+  const allColumns = [...visibleFields, ...invisibleFields];
+  const renderFields = allColumns.filter(
     (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -1114,7 +1107,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
         </Button>
 
         <Flex as='label' alignItems='center' columnGap='4px' cursor='pointer'>
-          <Switch isChecked={renderFields?.length === visibleFields?.length}
+          <Switch isChecked={allColumns?.length === visibleFields?.length}
                   onChange={(ev) => onShowAllChange(ev.target.checked)}/>
           Show all
         </Flex>

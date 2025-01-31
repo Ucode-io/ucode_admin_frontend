@@ -221,8 +221,8 @@ export const DynamicTable = ({
   const renderColumns = (columns ?? []).filter((column) => Boolean(column?.attributes?.field_permission?.view_permission));
 
   return (
-    <div className='CTableContainer'>
-      <div className='table' style={{border: "none", borderRadius: 0, height: "calc(100vh - 171px)"}}>
+    <div className='CTableContainer' style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+      <div className='table' style={{border: "none", borderRadius: 0, flexGrow: 1}}>
         <table id="resizeMe">
           <thead style={{borderBottom: "1px solid #EAECF0"}}>
           <tr>

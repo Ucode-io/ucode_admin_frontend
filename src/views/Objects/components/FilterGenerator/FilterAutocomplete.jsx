@@ -1,21 +1,22 @@
-import {ArrowDropDown, Close} from "@mui/icons-material";
-import {Checkbox, Divider, Fade, IconButton, Menu} from "@mui/material";
+import {Checkbox, Divider, Fade, Menu} from "@mui/material";
 import {useMemo, useState} from "react";
 import SearchInput from "../../../../components/SearchInput";
 import useDebounce from "../../../../hooks/useDebounce";
 import styles from "./style.module.scss";
+import {Chip} from "./chip";
 
 const FilterAutoComplete = ({
-  options = [],
-  searchText,
-  setSearchText,
-  localCheckedValues,
-  value = [],
-  onChange,
-  label,
-  field,
-  setChosenField = () => {},
-}) => {
+                              options = [],
+                              searchText,
+                              setSearchText,
+                              localCheckedValues,
+                              value = [],
+                              onChange,
+                              label,
+                              field,
+                              setChosenField = () => {
+                              },
+                            }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
 
@@ -54,25 +55,15 @@ const FilterAutoComplete = ({
   };
 
   return (
-    <div className={styles.autocomplete}>
-      <div className={styles.autocompleteButton} onClick={openMenu}>
-        <div className={styles.autocompleteValue}>
-          {computedValue?.[0]?.label ?? (
-            <span
-              className={styles.placeholder}
-              style={{color: !value?.length ? "#909EAB" : "#000"}}>
-              {value[0] || label}
-            </span>
-          )}
-        </div>
-        {value?.length > 1 && `+${value.length - 1}`}
-        {!!value?.length && (
-          <IconButton onClick={onClearButtonClick}>
-            <Close />
-          </IconButton>
-        )}
-        <ArrowDropDown />
-      </div>
+    <>
+      <Chip
+        onClick={openMenu}
+        onClearButtonClick={onClearButtonClick}
+        showCloseIcon={value?.length ?? 0}
+      >
+        {computedValue?.[0]?.label ?? (field?.attributes?.label_en || value[0])}
+        {(value?.length ?? 0) > 1 && <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>}
+      </Chip>
 
       <Menu
         anchorEl={anchorEl}
@@ -85,10 +76,11 @@ const FilterAutoComplete = ({
           fullWidth
           onChange={inputChangeHandler}
           placeholder={label}
+          style={{paddingTop: 8}}
         />
 
         <div className={styles.scrollBlock}>
-          <Divider />
+          <Divider/>
 
           {options?.map((option) => (
             <div
@@ -98,9 +90,9 @@ const FilterAutoComplete = ({
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox id="filter_checkbox" checked />
+                <Checkbox id="filter_checkbox" checked/>
               ) : (
-                <Checkbox id="filter_checkbox" />
+                <Checkbox id="filter_checkbox"/>
               )}
 
               <p className={styles.label}>{option.label}</p>
@@ -108,7 +100,7 @@ const FilterAutoComplete = ({
           ))}
         </div>
       </Menu>
-    </div>
+    </>
   );
 };
 

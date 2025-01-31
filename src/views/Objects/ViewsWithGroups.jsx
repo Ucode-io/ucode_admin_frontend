@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -32,7 +32,7 @@ import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import TableCard from "../../components/TableCard";
+import InlineSVG from "react-inlinesvg";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useFieldSearchUpdateMutation} from "../../services/constructorFieldService";
@@ -64,6 +64,7 @@ import useDownloader from "@/hooks/useDownloader";
 import {getColumnIcon} from "@/views/table-redesign/icons";
 import {Container, Draggable} from "react-smooth-dnd";
 import {applyDrag} from "@/utils/applyDrag";
+import {mainActions} from "@/store/main/main.slice";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -364,7 +365,8 @@ const ViewsWithGroups = ({
           </Backdrop>
         )}
 
-        <Flex minH='56px' h='56px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='4px'>
+        <Flex minH='56px' h='56px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
+              columnGap='4px'>
           <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
                       colorScheme='gray' onClick={() => navigate(-1)}/>
           <IconButton aria-label='home' icon={<img src="/img/home.svg" alt="home"/>} variant='ghost'
@@ -388,7 +390,8 @@ const ViewsWithGroups = ({
           </PermissionWrapperV2>
         </Flex>
 
-        <Flex minH='50px' h='50px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0' columnGap='12px'>
+        <Flex minH='50px' h='50px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
+              columnGap='12px'>
           {(views ?? []).map((view, index) =>
             <Button
               key={view.id}
@@ -496,7 +499,9 @@ const ViewsWithGroups = ({
             </PopoverContent>
           </Popover>
 
-          <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}/>
+          <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}>
+            <FilterButton view={view} />
+          </FilterPopover>
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="write">
             <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
@@ -512,10 +517,10 @@ const ViewsWithGroups = ({
         </Flex>
 
         {view?.attributes?.quick_filters?.length > 0 &&
-          <FiltersList view={view} fieldsMap={fieldsMap} />
+          <FiltersList view={view} fieldsMap={fieldsMap} visibleColumns={visibleColumns} refetchViews={refetchViews} />
         }
 
-        <Tabs direction={"ltr"} defaultIndex={0} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <Tabs direction={"ltr"} defaultIndex={0} style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
               <div style={{display: "flex", alignItems: "center"}}>
@@ -565,7 +570,7 @@ const ViewsWithGroups = ({
               )}
               {!groupTable?.length &&
                 tabs?.map((tab) => (
-                  <TabPanel key={tab.value} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+                  <TabPanel key={tab.value} style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
                     {view.type === "TREE" ? (
                       <TreeView
                         tableSlug={tableSlug}
@@ -665,42 +670,60 @@ const ViewsWithGroups = ({
   );
 };
 
-const FilterPopover = ({view, visibleColumns, refetchViews}) => {
-  const ref = useRef();
-  const [addingFilters, setAddingFilters] = useState(false);
+const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
+  const tableViewFiltersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.focus();
+  const handleClick = (ev) => {
+    if (tableViewFiltersOpen || (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)) {
+      ev.stopPropagation();
+      return dispatch(mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen))
     }
-  }, [addingFilters]);
+    onClick(ev);
+  }
 
   return (
-    <Popover onClose={() => setTimeout(() => setAddingFilters(false), 250)}>
+    <IconButton
+      ref={ref}
+      aria-label='filter'
+      icon={<Image src='/img/funnel.svg' alt='filter'/>}
+      variant='ghost'
+      colorScheme='gray'
+      onClick={handleClick}
+      {...props}
+    />
+  )
+})
+
+const FilterPopover = ({view, visibleColumns, refetchViews, children}) => {
+  const ref = useRef();
+  const [search, setSearch] = useState("")
+
+  return (
+    <Popover>
       <PopoverTrigger>
-        <IconButton aria-label='filter' icon={<Image src='/img/funnel.svg' alt='filter'/>} variant='ghost'
-                    colorScheme='gray'/>
+        {children}
       </PopoverTrigger>
       <PopoverContent px='4px' py='8px' ref={ref}>
-        {/*{!addingFilters && <FiltersList view={view} fieldsMap={fieldsMap}/>}*/}
-        {/*{!addingFilters &&*/}
-        {/*  <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">*/}
-        {/*    <Button leftIcon={<Image src='/img/plus-icon.svg'/>} colorScheme='gray' w='fit-content' mt='8px' mx='auto'*/}
-        {/*            onClick={() => setAddingFilters(true)}>*/}
-        {/*      Add filters*/}
-        {/*    </Button>*/}
-        {/*  </PermissionWrapperV2>*/}
-        {/*}*/}
-        <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews} />
+        <InputGroup mb='8px'>
+          <InputLeftElement>
+            <Image src='/img/search-lg.svg' alt='search'/>
+          </InputLeftElement>
+          <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+        </InputGroup>
+        <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews} search={search}/>
       </PopoverContent>
     </Popover>
   )
 }
 
-const FiltersList = ({view, fieldsMap,}) => {
+const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
+  const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
+  const {filters} = useFilters(tableSlug, view?.id);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -714,10 +737,6 @@ const FiltersList = ({view, fieldsMap,}) => {
       );
     }
   }, [queryParameters]);
-
-  const dispatch = useDispatch();
-
-  const {filters} = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
     const filter = view?.attributes?.quick_filters ?? [];
@@ -757,8 +776,29 @@ const FiltersList = ({view, fieldsMap,}) => {
     );
   };
 
+  if (!filtersOpen) {
+    return;
+  }
+
   return (
-    <Flex minH='48px' px='16px' py='6px' bg='#fff' alignItems='center' columnGap='6px' borderBottom='1px solid #EAECF0' overflowX='auto'>
+    <Flex minH='max-content' px='16px' py='6px' bg='#fff' alignItems='center' gap='6px' borderBottom='1px solid #EAECF0'
+          flexWrap='wrap'>
+      <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}>
+        <Flex
+          alignItems='center'
+          columnGap='4px'
+          border="1px solid #EAECF0"
+          borderRadius={32}
+          color="#FFFFFF70"
+          py='1px'
+          px='8px'
+          cursor='pointer'
+          _hover={{bg: "#f3f3f3"}}>
+          <InlineSVG src="/img/plus-icon.svg" width={14} height={14} color="#909EAB"/>
+          <Box color='#909EAB'>Add filter</Box>
+        </Flex>
+      </FilterPopover>
+
       {computedFields?.map((filter) => (
         <div key={filter.id}>
           <Filter
@@ -774,7 +814,7 @@ const FiltersList = ({view, fieldsMap,}) => {
   )
 }
 
-const FiltersSwitch = ({view, visibleColumns, refetchViews}) => {
+const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
@@ -784,7 +824,14 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews}) => {
   const checkedColumns = view?.attributes?.quick_filters?.filter((checkedField) => columnsIds?.includes(checkedField?.id)) ?? [];
   const unCheckedColumns = ((view?.attributes?.quick_filters?.length === 0 || view?.attributes?.quick_filters?.length === undefined)
     ? visibleColumns
-    : visibleColumns?.filter((column) => !quickFiltersIds?.includes(column?.id))) ?? []
+    : visibleColumns?.filter((column) => !quickFiltersIds?.includes(column?.id))) ?? [];
+
+  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column.label;
+
+  const renderColumns = [
+    ...checkedColumns.map((c) => ({...c, checked: true})),
+    ...unCheckedColumns.map((c) => ({...c, checked: false}))
+  ].filter((column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase()));
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -796,34 +843,36 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews}) => {
     }
   });
 
-  const updateView = (data) => {
+  const updateView = async (data, checked) => {
     const result = data?.map((item) => ({
       ...item,
       is_checked: true,
     }));
 
-    mutation.mutate({...view, attributes: {...view?.attributes, quick_filters: result}})
+    await mutation.mutateAsync({...view, attributes: {...view?.attributes, quick_filters: result}});
+    if (view?.attributes?.quick_filters?.length === 0) {
+      dispatch(mainActions.setTableViewFiltersOpen(true))
+    }
+    if (view?.attributes?.quick_filters?.length === 1 && !checked) {
+      dispatch(mainActions.setTableViewFiltersOpen(false))
+    }
   };
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
-    updateView(checked ? [...quickFilters, column] : quickFilters.filter((c) => c.id !== column.id));
+    updateView(checked ? [...quickFilters, column] : quickFilters.filter((c) => c.id !== column.id), checked);
   }
 
   return (
     <Flex flexDirection='column' maxHeight='300px' overflow='auto'>
-      {[
-        ...checkedColumns.map((c) => ({...c, checked: true})),
-        ...unCheckedColumns.map((c) => ({...c, checked: false}))
-      ]
-        .map((column) =>
-          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                _hover={{bg: "#EAECF0"}} cursor='pointer'>
-            {column?.type && getColumnIcon({column})}
-            {column?.attributes?.[`label_${i18n.language}`] || column.label}
-            <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
-          </Flex>
-        )}
+      {renderColumns.map((column) =>
+        <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
+              _hover={{bg: "#EAECF0"}} cursor='pointer'>
+          {column?.type && getColumnIcon({column})}
+          {getLabel(column)}
+          <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
+        </Flex>
+      )}
     </Flex>
   )
 }

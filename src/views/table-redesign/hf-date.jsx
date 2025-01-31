@@ -2,12 +2,12 @@ import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import {format, parse} from "date-fns";
 
-export const HFDatePicker = ({control, name, defaultValue = "", required, updateObject}) => {
+export const HFDatePicker = ({control, name, defaultValue = "", required, updateObject, disabled}) => {
   return (
     <Controller
       control={control}
       name={name}
-      disabled
+      disabled={disabled}
       rules={{
         required: required ? "This field is required" : false,
       }}
@@ -23,18 +23,19 @@ export const HFDatePicker = ({control, name, defaultValue = "", required, update
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
           highlightToday
+          disabled={disabled}
         />
       }}
     />
   )
 }
 
-export const HFDateTimePicker = ({control, name, defaultValue = "", required, updateObject}) => {
+export const HFDateTimePicker = ({control, name, defaultValue = "", required, updateObject, disabled}) => {
   return (
     <Controller
       control={control}
       name={name}
-      disabled
+      disabled={disabled}
       rules={{
         required: required ? "This field is required" : false,
       }}
@@ -50,18 +51,19 @@ export const HFDateTimePicker = ({control, name, defaultValue = "", required, up
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
           highlightToday
+          disabled={disabled}
         />
       }}
     />
   )
 }
 
-export const HFDateDatePickerWithoutTimeZoneTable = ({control, name, defaultValue = "", required, updateObject}) => {
+export const HFDateDatePickerWithoutTimeZoneTable = ({control, name, defaultValue = "", required, updateObject, disabled}) => {
   return (
     <Controller
       control={control}
       name={name}
-      disabled
+      disabled={disabled}
       rules={{
         required: required ? "This field is required" : false,
       }}
@@ -77,13 +79,14 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({control, name, defaultValu
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
           highlightToday
+          disabled={disabled}
         />
       }}
     />
   )
 }
 
-export const HFTimePicker = ({control, name,  required, updateObject}) => {
+export const HFTimePicker = ({control, name,  required, updateObject, disabled}) => {
   return (
     <Controller
       control={control}
@@ -101,6 +104,7 @@ export const HFTimePicker = ({control, name,  required, updateObject}) => {
             updateObject();
           }}
           styles={{ input: { background: "inherit", border: "none" } }}
+          disabled={disabled}
         />
       }}
     />

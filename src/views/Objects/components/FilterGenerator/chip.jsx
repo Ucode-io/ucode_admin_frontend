@@ -1,8 +1,10 @@
 import {forwardRef} from "react";
 import {Flex} from "@chakra-ui/react";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
+import InlineSVG from "react-inlinesvg";
+import {getColumnIconPath} from "@/views/table-redesign/icons";
 
-export const Chip = forwardRef(({value, onClearButtonClick, showCloseIcon, children, ...props}, ref) => (
+export const Chip = forwardRef(({field, value, onClearButtonClick, showCloseIcon, children, ...props}, ref) => (
   <Flex
     ref={ref}
     alignItems='center'
@@ -15,6 +17,7 @@ export const Chip = forwardRef(({value, onClearButtonClick, showCloseIcon, child
     cursor='pointer'
     {...props}
   >
+    <InlineSVG src={getColumnIconPath({column: field})} width={14} height={14} color="#909EAB" />
     <div style={{color: "#909EAB"}}>{children}</div>
     {Boolean(showCloseIcon) && (
       <CloseIcon

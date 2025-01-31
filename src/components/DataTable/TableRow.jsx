@@ -94,7 +94,7 @@ const TableRow = ({
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
                   <Checkbox
                     className="table_multi_checkbox"
-                    style={ selected ? { display: "block" } : {} }
+                    style={selected ? {display: "block"} : {}}
                     checked={selected}
                     onChange={() => {
                       changeSetDelete(row);
@@ -138,7 +138,7 @@ const TableRow = ({
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
-                          : "#fff"
+                          : ((virtualColumn.attributes?.disabled || !virtualColumn.attributes?.field_permission?.edit_permission) ? "#f8f8f8" : "#fff")
                       }`,
                       zIndex: `${
                         tableSettings?.[pageName]?.find(
@@ -176,7 +176,21 @@ const TableRow = ({
 
                     {index === 0 &&
                       <div onClick={() => onRowClick(row, rowIndex)} className="first_button">
-                        <OpenInFullIcon style={{ width: 14 }} fill="#007aff" />
+                        <OpenInFullIcon style={{width: 14}} fill="#007aff"/>
+                      </div>
+                    }
+                    {(virtualColumn.attributes?.disabled || !virtualColumn.attributes?.field_permission?.edit_permission) &&
+                      <div style={{
+                        position: "absolute",
+                        top: '50%',
+                        transform: "translateY(-50%)",
+                        right: 4,
+                        backgroundColor: "inherit",
+                        padding: 4,
+                        borderRadius: 6,
+                        zIndex: 1
+                      }}>
+                        <img src="/table-icons/lock.svg" alt="lock"/>
                       </div>
                     }
                   </CTableCell>

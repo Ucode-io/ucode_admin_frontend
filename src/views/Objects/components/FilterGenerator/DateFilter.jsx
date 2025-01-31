@@ -50,11 +50,11 @@ const DateFilter = ({onChange, value: defaultValue, field, withTime = false}) =>
   return (
     <Popover>
       <PopoverTrigger>
-        <Chip showCloseIcon={rangeSelected} onClearButtonClick={onClearButtonClick}>
+        <Chip field={field} showCloseIcon={rangeSelected} onClearButtonClick={onClearButtonClick}>
           {rangeSelected ? `${format(start, 'dd.MM.yyyy')} ~ ${format(end, 'dd.MM.yyyy')}` : field?.attributes?.label_en}
         </Chip>
       </PopoverTrigger>
-      <PopoverContent w='fit-content' style={{ outline: "none", boxShadow: "none" }}>
+      <PopoverContent w='fit-content' style={{outline: "none", boxShadow: "none"}}>
         <DatePicker
           type='range'
           allowSingleDateInRange
@@ -63,9 +63,9 @@ const DateFilter = ({onChange, value: defaultValue, field, withTime = false}) =>
         />
         {withTime &&
           <Flex pt='8px' pb='4px' px='4px' columnGap='8px' alignItems='center'>
-            <TimeInput value={startTime} w='100%' onChange={(ev) => setStartTime(ev.target.value)} />
+            <TimeInput value={startTime} w='100%' onChange={(ev) => setStartTime(ev.target.value)}/>
             ~
-            <TimeInput value={endTime} w='100%' onChange={(ev) => setEndTime(ev.target.value)} />
+            <TimeInput value={endTime} w='100%' onChange={(ev) => setEndTime(ev.target.value)}/>
           </Flex>
         }
       </PopoverContent>
@@ -83,7 +83,7 @@ const parseTimeFromString = (value, fallbackHours, fallbackMinutes) => {
     return {hours: fallbackHours, minutes: fallbackMinutes};
   }
   const [hours, minutes] = value.split(":")
-  return { hours: Number(hours), minutes: Number(minutes) }
+  return {hours: Number(hours), minutes: Number(minutes)}
 }
 
 

@@ -39,6 +39,7 @@ import {useEnvironmentListQuery} from "@/services/environmentService";
 import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
 import {authActions} from "@/store/auth/auth.slice";
+import InlineSVG from "react-inlinesvg";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -365,7 +366,7 @@ const LayoutSidebar = ({appId}) => {
                       alignItems='center'
                       justifyContent='center'
                     >
-                      <img src="/img/plus-icon.svg" alt="Add"/>
+                      <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
                     <Box whiteSpace='nowrap' color={menuStyle?.text ?? "#475467"} pl={48} fontSize={14}>

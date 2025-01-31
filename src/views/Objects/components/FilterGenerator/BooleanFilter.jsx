@@ -16,7 +16,7 @@ const BooleanFilter = ({
   return (
     <Popover>
       <PopoverTrigger>
-        <Chip showCloseIcon={value !== ""} onClearButtonClick={() => onChange(undefined, name)}>
+        <Chip field={field} showCloseIcon={value !== ""} onClearButtonClick={() => onChange(undefined, name)}>
           {value || field.label}
         </Chip>
       </PopoverTrigger>

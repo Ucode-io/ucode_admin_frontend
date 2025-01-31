@@ -28,9 +28,46 @@ const icons = {
   "PASSWORD": <img src="/table-icons/password.svg" alt="Password" />,
 }
 
+const iconsPaths = {
+  "SINGLE_LINE": "/img/text-column.svg",
+  "MULTI_LINE": "/table-icons/multi-line.svg",
+  "TEXT": "/img/text-column.svg",
+  "LINK": "/table-icons/link.svg",
+  "NUMBER": "/table-icons/number.svg",
+  "FLOAT": "/table-icons/float.svg",
+  "MONEY": "/table-icons/money.svg",
+  "DATE": "/table-icons/date.svg",
+  "DATE_TIME": "/table-icons/date-time.svg",
+  "DATE_TIME_WITHOUT_TIME_ZONE": "/table-icons/date-time.svg",
+  "TIME": "/table-icons/time.svg",
+  "MULTISELECT": "/table-icons/multi-select.svg",
+  "STATUS": "/table-icons/status.svg",
+  "SWITCH": "/table-icons/switch.svg",
+  "CHECKBOX": "/table-icons/checkbox.svg",
+  "FORMULA_FRONTEND": "/table-icons/formula.svg",
+  "LOOKUP": "/table-icons/lookup.svg",
+  "RELATION": "/table-icons/lookup.svg",
+  "FILE": "/table-icons/file.svg",
+  "PHOTO": "/table-icons/photo.svg",
+  "VIDEO": "/table-icons/video.svg",
+  "MULTI_IMAGE": "/table-icons/multi-image.svg",
+  "MAP": "/table-icons/map.svg",
+  "POLYGON": "/table-icons/polygon.svg",
+  "INTERNATION_PHONE": "/img/phone.svg",
+  "EMAIL": "/table-icons/email.svg",
+  "PASSWORD": "/table-icons/password.svg",
+};
+
 export const getColumnIcon = ({column}) => {
   if (column.table_slug === 'person') {
     return <img src="/table-icons/person.svg" alt="Person"/>;
   }
   return icons[column.type];
+}
+
+export const getColumnIconPath = ({column}) => {
+  if (column.table_slug === 'person') {
+    return "/table-icons/person.svg";
+  }
+  return iconsPaths[column.type]
 }

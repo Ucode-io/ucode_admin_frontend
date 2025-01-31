@@ -7,9 +7,7 @@ import {Chip} from "./chip";
 
 const FilterAutoComplete = ({
                               options = [],
-                              searchText,
                               setSearchText,
-                              localCheckedValues,
                               value = [],
                               onChange,
                               label,
@@ -57,10 +55,10 @@ const FilterAutoComplete = ({
   return (
     <>
       <Chip
+        field={field}
         onClick={openMenu}
         onClearButtonClick={onClearButtonClick}
-        showCloseIcon={value?.length ?? 0}
-      >
+        showCloseIcon={value?.length ?? 0}>
         {computedValue?.[0]?.label ?? (field?.attributes?.label_en || value[0])}
         {(value?.length ?? 0) > 1 && <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>}
       </Chip>

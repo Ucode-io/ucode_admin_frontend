@@ -61,7 +61,6 @@ const TableView = ({
   setFormValue,
   currentView,
   watch,
-  newUi=false,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -517,12 +516,10 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  const TableUi = newUi ? DynamicTable : ObjectDataTable;
-
   return (
     <MaterialUIProvider style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
       <div id="wrapper_drag" className={styles.wrapper} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <TableUi
+        <DynamicTable
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}

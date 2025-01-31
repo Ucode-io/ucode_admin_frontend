@@ -103,7 +103,6 @@ const ViewsWithGroups = ({
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
-  const [newUi, setNewUi] = useState(false);
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -423,11 +422,6 @@ const ViewsWithGroups = ({
             </Button>
           </PermissionWrapperV2>
 
-          <Box as='label' cursor='pointer'>
-            New ui
-            <Switch ml={2} isChecked={newUi} onChange={(ev) => setNewUi(ev.target.checked)}/>
-          </Box>
-
           {view?.type === "FINANCE CALENDAR" && (
             <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
           )}
@@ -500,7 +494,7 @@ const ViewsWithGroups = ({
           </Popover>
 
           <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}>
-            <FilterButton view={view} />
+            <FilterButton view={view}/>
           </FilterPopover>
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="write">
@@ -517,7 +511,7 @@ const ViewsWithGroups = ({
         </Flex>
 
         {view?.attributes?.quick_filters?.length > 0 &&
-          <FiltersList view={view} fieldsMap={fieldsMap} visibleColumns={visibleColumns} refetchViews={refetchViews} />
+          <FiltersList view={view} fieldsMap={fieldsMap} visibleColumns={visibleColumns} refetchViews={refetchViews}/>
         }
 
         <Tabs direction={"ltr"} defaultIndex={0} style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
@@ -581,7 +575,6 @@ const ViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
-                        newUi={newUi}
                         isVertical
                         setCurrentPage={setCurrentPage}
                         currentPage={currentPage}
@@ -628,7 +621,6 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
-                      newUi={newUi}
                       visibleColumns={visibleColumns}
                       setCurrentPage={setCurrentPage}
                       currentPage={currentPage}
@@ -683,15 +675,23 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   }
 
   return (
-    <IconButton
-      ref={ref}
-      aria-label='filter'
-      icon={<Image src='/img/funnel.svg' alt='filter'/>}
-      variant='ghost'
-      colorScheme='gray'
-      onClick={handleClick}
-      {...props}
-    />
+    <Box position='relative'>
+      <IconButton
+        ref={ref}
+        aria-label='filter'
+        icon={<Image src='/img/funnel.svg' alt='filter'/>}
+        variant='ghost'
+        colorScheme='gray'
+        onClick={handleClick}
+        {...props}
+      />
+      {Boolean(view?.attributes?.quick_filters?.length) &&
+        <Flex position='absolute' top='-8px' right='-4px' w='16px' h='16px' bg='#007AFF' alignItems='center'
+              justifyContent='center' color='#fff' borderRadius='50%' fontSize='10px'>
+          {view?.attributes?.quick_filters?.length}
+        </Flex>
+      }
+    </Box>
   )
 })
 

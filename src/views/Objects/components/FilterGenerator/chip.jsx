@@ -32,6 +32,6 @@ export const Chip = forwardRef(({field, value, onClearButtonClick, showCloseIcon
         _hover={{color: "#c00000"}}
       />
     )}
-    <ChevronDownIcon color="#909EAB" fontSize='18px' />
+    {!showCloseIcon && <ChevronDownIcon color="#909EAB" fontSize='18px'/>}
   </Flex>
 ));

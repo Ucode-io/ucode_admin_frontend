@@ -33,7 +33,7 @@
   }
 }
 
-.CTableRow {
+.CTableRow.new-ui {
   .data_table__number_cell {
     position: relative;
 
@@ -54,6 +54,28 @@
     }
   }
 
+  .first_button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #007aff;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(0, 122, 255, 0.15);
+    background-color: #fff;
+    z-index: 1;
+
+    &:hover {
+      background-color: rgb(237, 244, 254);
+    }
+  }
+
   .first_button,
   .table_multi_checkbox {
     display: none;
@@ -68,9 +90,12 @@
       display: flex;
     }
 
-    .first_button,
     .table_multi_checkbox {
       display: block;
+    }
+
+    .first_button {
+      display: flex;
     }
 
     .data_table__row_number {

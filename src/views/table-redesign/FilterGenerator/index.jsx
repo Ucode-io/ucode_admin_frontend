@@ -1,20 +1,19 @@
 import {TextField} from "@mui/material";
 import {useMemo, useState} from "react";
-import TableOrderingButton from "../../../../components/TableOrderingButton";
 import BooleanFilter from "./BooleanFilter";
 import DateFilter from "./DateFilter";
 import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
-import DateFilterWithoutTimeZ from "./DateFilterWithoutTimeZ";
+import TableOrderingButton from "@/components/TableOrderingButton";
 
 const FilterGenerator = ({
-                           field,
-                           name,
-                           filters = {},
-                           onChange = () => {},
-                           tableSlug,
-                         }) => {
+  field,
+  name,
+  filters = {},
+  onChange = () => {},
+  tableSlug,
+}) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -38,12 +37,12 @@ const FilterGenerator = ({
 export default FilterGenerator;
 
 export const Filter = ({
-                         field = {},
-                         name,
-                         filters = {},
-                         onChange,
-                         tableSlug,
-                       }) => {
+  field = {},
+  name,
+  filters = {},
+  onChange,
+  tableSlug,
+}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const computedOptions = useMemo(() => {
@@ -92,18 +91,7 @@ export const Filter = ({
     case "PHOTO":
       return null;
 
-    case "DATE_TIME_WITHOUT_TIME_ZONE":
-      return (
-        <DateFilterWithoutTimeZ
-          field={field}
-          placeholder={field?.label}
-          value={filters[name]}
-          onChange={(val) => onChange(val, name)}
-        />
-      );
-
     case "DATE":
-    case "DATE_TIME":
       return (
         <DateFilter
           field={field}
@@ -113,15 +101,27 @@ export const Filter = ({
         />
       );
 
+    case "DATE_TIME":
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <DateFilter
+          field={field}
+          placeholder={field?.label}
+          value={filters[name]}
+          onChange={(val) => onChange(val, name)}
+          withTime={true}
+        />
+      );
+
     case "NUMBER":
       return (
         <TextField
-          fullWidth
-          size="small"
+          size='small'
           placeholder={field.label}
           type="number"
           value={filters[name] ?? ""}
           onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+          inputProps={{ style: { height: "23px", padding: "0 14px" } }}
         />
       );
 

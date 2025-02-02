@@ -33,11 +33,12 @@ import {generateGUID} from "@/utils/generateID";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
-import TableRow from "@/components/DataTable/TableRow";
-import AddDataColumn from "@/components/DataTable/AddDataColumn";
+import TableRow from "./table-row";
+import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
 import {Select} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
+import "./data-table.scss"
 
 export const DynamicTable = ({
                                custom_events,

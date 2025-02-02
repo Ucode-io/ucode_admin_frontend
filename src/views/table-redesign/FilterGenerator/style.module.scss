@@ -1,33 +1,5 @@
 @use "/src/scss/colors";
 
-.autocomplete {
-
-  .autocompleteButton {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    height: 35px;
-    border: 1px solid colors.$borders;
-    border-radius: 6px;
-    padding: 0 5px 0 12px;
-    gap: 4px;
-    width: 180px;
-
-
-    .autocompleteValue {
-      flex: 1;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-
-      .placeholder {
-        color: #909EAB;
-      }
-    }
-  }
-}
-
-
 .paper {
   margin-top: 5px;
   margin-right: 10px;
@@ -39,9 +11,10 @@
   padding: 8px;
   min-width: 130px;
   max-width: 250px;
+  border-radius: 8px;
 
   .scrollBlock {
-    margin-top: 8px;
+    margin: 8px 0;
     max-height: 300px;
     overflow: auto;
 

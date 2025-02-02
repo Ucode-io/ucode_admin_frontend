@@ -1,28 +1,28 @@
-import {Box, Drawer} from "@mui/material";
+import {Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
-import constructorFieldService from "../../../services/constructorFieldService";
-import constructorObjectService from "../../../services/constructorObjectService";
-import constructorRelationService from "../../../services/constructorRelationService";
-import constructorTableService from "../../../services/constructorTableService";
-import layoutService from "../../../services/layoutService";
-import {quickFiltersActions} from "../../../store/filter/quick_filter";
-import {generateGUID} from "../../../utils/generateID";
-import {mergeStringAndState} from "../../../utils/jsonPath";
-import {listToMap} from "../../../utils/listToMap";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import FastFilter from "../components/FastFilter";
-import styles from "./styles.module.scss";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import useFilters from "@/hooks/useFilters";
+import useTabRouter from "@/hooks/useTabRouter";
+import constructorFieldService from "@/services/constructorFieldService";
+import constructorObjectService from "@/services/constructorObjectService";
+import constructorRelationService from "@/services/constructorRelationService";
+import constructorTableService from "@/services/constructorTableService";
+import layoutService from "@/services/layoutService";
+import {quickFiltersActions} from "@/store/filter/quick_filter";
+import {generateGUID} from "@/utils/generateID";
+import {mergeStringAndState} from "@/utils/jsonPath";
+import {listToMap} from "@/utils/listToMap";
+import {pageToOffset} from "@/utils/pageToOffset";
+import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
+import styles from "@/views/Objects/style.module.scss";
+import {DynamicTable} from "@/views/table-redesign";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
+import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
+import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
 
 const TableView = ({
                      filterVisible,
@@ -183,8 +183,6 @@ const TableView = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-
-  // OLD CODE
 
   function customSortArray(a, b) {
     const commonItems = a?.filter((item) => b.includes(item));
@@ -386,26 +384,6 @@ const TableView = ({
     },
   });
 
-  // ==========FILTER FIELDS=========== //
-  const getFilteredFilterFields = useMemo(() => {
-    const filteredFieldsView =
-      fieldView &&
-      fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.attributes?.quick_filters;
-      });
-
-    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
-      (el) => {
-        return el?.field_id;
-      }
-    );
-    const filteredFields = fiedlsarray?.filter((item) => {
-      return quickFilters?.includes(item.id);
-    });
-
-    return filteredFields;
-  }, [fieldView, fiedlsarray]);
-
   const {
     data: {layout} = {
       layout: [],
@@ -537,42 +515,10 @@ const TableView = ({
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  useEffect(() => {
-    setFilterVisible(
-      view?.attributes?.quick_filters?.length < 0 ? true : false
-    );
-  }, []);
-
   return (
-    <div id="wrapper_drag" className={styles.wrapper}>
-      {
-        <div
-          className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
-          <Box className={styles.block}>
-            <p>{t("filters")}</p>
-            <FastFilter
-              view={view}
-              fieldsMap={fieldsMap}
-              getFilteredFilterFields={getFilteredFilterFields}
-              isVertical
-              selectedTabIndex={selectedTabIndex}
-              visibleColumns={visibleColumns}
-              visibleRelationColumns={visibleRelationColumns}
-              visibleForm={visibleForm}
-              isVisibleLoading={isVisibleLoading}
-              setFilterVisible={setFilterVisible}
-            />
-          </Box>
-        </div>
-      }
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          width: filterVisible ? "calc(100% - 200px)" : "100%",
-        }}
-        id="data-table">
-        <ObjectDataTable
+    <MaterialUIProvider style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+      <div id="wrapper_drag" className={styles.wrapper} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <DynamicTable
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}
@@ -600,7 +546,7 @@ const TableView = ({
           columns={columns}
           multipleDelete={multipleDelete}
           openFieldSettings={openFieldSettings}
-          limit={paginiation ?? limit}
+          limit={limit ?? paginiation}
           setLimit={setLimit}
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
@@ -628,53 +574,53 @@ const TableView = ({
           menuItem={menuItem}
           {...props}
         />
+
+        {open && (
+          <ModalDetailPage
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+          />
+        )}
+
+        <Drawer
+          open={drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <FieldSettings
+            closeSettingsBlock={() => setDrawerState(null)}
+            isTableView={true}
+            onSubmit={(index, field) => update(index, field)}
+            field={drawerState}
+            formType={drawerState}
+            mainForm={mainForm}
+            selectedTabIndex={selectedTabIndex}
+            height={`calc(100vh - 48px)`}
+            getRelationFields={getRelationFields}
+            menuItem={menuItem}
+          />
+        </Drawer>
+
+        <Drawer
+          open={drawerStateField}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <RelationSettings
+            relation={drawerStateField}
+            closeSettingsBlock={() => setDrawerStateField(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerStateField}
+            height={`calc(100vh - 48px)`}
+          />
+        </Drawer>
       </div>
-
-      {open && (
-        <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-        />
-      )}
-
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <FieldSettings
-          closeSettingsBlock={() => setDrawerState(null)}
-          isTableView={true}
-          onSubmit={(index, field) => update(index, field)}
-          field={drawerState}
-          formType={drawerState}
-          mainForm={mainForm}
-          selectedTabIndex={selectedTabIndex}
-          height={`calc(100vh - 48px)`}
-          getRelationFields={getRelationFields}
-          menuItem={menuItem}
-        />
-      </Drawer>
-
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <RelationSettings
-          relation={drawerStateField}
-          closeSettingsBlock={() => setDrawerStateField(null)}
-          getRelationFields={getRelationFields}
-          formType={drawerStateField}
-          height={`calc(100vh - 48px)`}
-        />
-      </Drawer>
-    </div>
+    </MaterialUIProvider>
   );
 };
 

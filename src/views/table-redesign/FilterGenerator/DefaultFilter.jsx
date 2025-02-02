@@ -1,8 +1,8 @@
 import {useMemo} from "react";
 import {useState} from "react";
-import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery";
 
 import FilterAutoComplete from "./FilterAutocomplete";
+import useObjectsQuery from "@/queries/hooks/useObjectsQuery";
 
 const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -23,7 +23,7 @@ const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
   const {query} = useObjectsQuery({
     tableSlug: tableSlug,
     queryPayload: {
-      [name]: debouncedValue,
+      [name || field?.slug]: debouncedValue,
       limit: 10,
       additional_ids: value,
     },
@@ -42,6 +42,7 @@ const DefaultFilter = ({field, filters, onChange, name, tableSlug}) => {
       options={options}
       value={filters[name] ?? []}
       onChange={(val) => onChange(val?.length ? val : undefined, name)}
+      field={field}
       label={field.label}
     />
   );

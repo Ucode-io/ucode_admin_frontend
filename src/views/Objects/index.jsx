@@ -25,6 +25,8 @@ import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
 
+import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
+
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
@@ -144,6 +146,10 @@ const ObjectsPage = () => {
 
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
+
+  const newUi = JSON.parse(localStorage.getItem('newUi') ?? "false");
+  const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -211,7 +217,7 @@ const ObjectsPage = () => {
                   </>
                 ) : (
                   <>
-                    <ViewsWithGroups
+                    <ViewsComponent
                       visibleColumns={visibleColumns}
                       visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}

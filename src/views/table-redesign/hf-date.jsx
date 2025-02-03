@@ -120,7 +120,8 @@ const getValue = (value) => {
   }
 
   try {
-    return (value === 'now()' || value === '$$NOW') ? new Date() : new Date(value);
+    const date = value?.toLowerCase()?.includes("now") ? new Date() : new Date(value);
+    return isNaN(date) ? new Date() : date;
   } catch (e) {
     return null;
   }

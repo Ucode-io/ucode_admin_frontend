@@ -114,6 +114,7 @@ const InventoryBarCode = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <TextField
+            id="barcode"
             size="small"
             value={value}
             onChange={(e) => {

@@ -56,29 +56,30 @@ function ProjectSettings({level = 1, menuStyle}) {
     setChildBlockVisible((prev) => !prev);
     dispatch(menuActions.setMenuItem(projectSettings));
   };
+
   return (
-    <Box sx={{padding: "0 5px"}}>
+    <Box sx={{padding: "0 5px"}} style={{ marginBottom: 5 }}>
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className="nav-element"
+          className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label" style={labelStyle}>
             {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
+              <KeyboardArrowDownIcon/>
             ) : (
-              <KeyboardArrowRightIcon />
+              <KeyboardArrowRightIcon/>
             )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+            <IconGenerator icon={"lock.svg"} size={18}/>
             Project Settings
           </div>
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem} />
+        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem}/>
       </Collapse>
     </Box>
   );

@@ -11,38 +11,38 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 
 const TableRow = ({
-  relOptions,
-  tableView,
-  row,
-  key,
-  width,
-  rowIndex,
-  control,
-  isTableView,
-  onRowClick,
-  calculateWidthFixedColumn,
-  onDeleteClick,
-  mainForm,
-  getValues,
-  currentPage,
-  view,
-  columns,
-  selectedObjectsForDelete,
-  setSelectedObjectsForDelete,
-  tableHeight,
-  tableSettings,
-  pageName,
-  watch,
-  setFormValue,
-  tableSlug,
-  remove,
-  limit = 10,
-  relationAction,
-  onChecked,
-  relationFields,
-  data,
-  style,
-}) => {
+                    relOptions,
+                    tableView,
+                    row,
+                    key,
+                    width,
+                    rowIndex,
+                    control,
+                    isTableView,
+                    onRowClick,
+                    calculateWidthFixedColumn,
+                    onDeleteClick,
+                    mainForm,
+                    getValues,
+                    currentPage,
+                    view,
+                    columns,
+                    selectedObjectsForDelete,
+                    setSelectedObjectsForDelete,
+                    tableHeight,
+                    tableSettings,
+                    pageName,
+                    watch,
+                    setFormValue,
+                    tableSlug,
+                    remove,
+                    limit = 10,
+                    relationAction,
+                    onChecked,
+                    relationFields,
+                    data,
+                    style,
+                  }) => {
   const navigate = useNavigate();
 
   const changeSetDelete = (row) => {
@@ -143,8 +143,8 @@ const TableRow = ({
                       }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) + 80
-                          }px`
+                          calculateWidthFixedColumn(virtualColumn.id) + 80
+                        }px`
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
@@ -239,7 +239,7 @@ const TableRow = ({
           </CTableRow>
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
-        !relationAction?.action_relations ? (
+      !relationAction?.action_relations ? (
         <CTableRow>
           <CTableCell
             align="center"

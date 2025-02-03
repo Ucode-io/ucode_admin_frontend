@@ -137,6 +137,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
 
         <div className={`${styles.columnFooterBlock}`}>
           <Button
+            id={`addBoardItem`}
             variant="contain"
             fullWidth
             onClick={(e) => {

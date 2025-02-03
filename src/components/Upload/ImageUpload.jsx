@@ -2,15 +2,7 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {
-  Box,
-  Button,
-  Modal,
-  Popover,
-  TextField,
-  Typography,
-} from "@mui/material";
+import {Box, Button, Modal, Popover, Typography,} from "@mui/material";
 import {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
@@ -20,7 +12,6 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import useDebounce from "../../hooks/useDebounce";
 
 const style = {
   position: "absolute",
@@ -48,7 +39,6 @@ const ImageUpload = ({
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [altText, setAltText] = useState("");
   const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
@@ -120,17 +110,12 @@ const ImageUpload = ({
     }
   };
 
-  const inputChange = useDebounce((val) => {
-    if (value) {
-      onChange(`${value.split("#")[0]}#${val}`);
-    }
-  }, 500);
-
   return (
     <div className={`Gallery ${className}`}>
       {value && (
         <>
           <div
+            id="photo"
             className="uploadedImage"
             aria-describedby={id}
             onClick={handleClick}>
@@ -218,15 +203,9 @@ const ImageUpload = ({
                 <ChangeCircleIcon />
                 Change Image
               </Button>
-              <Box id="imgAlt">
-                <TextField
-                  defaultValue={splitVal ?? ""}
-                  onChange={(e) => inputChange(e.target.value)}
-                  placeholder="Alt"
-                />
-              </Box>
             </Box>
             <input
+              id="image_photo"
               type="file"
               style={{
                 display: "none",
@@ -318,14 +297,16 @@ const ImageUpload = ({
 
       {!value && (
         <Button
+          id="image_upload_btn"
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
-            minWidth: 0,
-            width: "25px",
-            height: "25px",
+            minWidth: 40,
+            width: 40,
+            height: 27,
           }}>
           <input
+            id="img_upload"
             type="file"
             className="hidden"
             ref={inputRef}
@@ -335,12 +316,7 @@ const ImageUpload = ({
             disabled={disabled}
             accept=".jpg, .jpeg, .png, .gif"
           />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          />
+          <img src="/img/file-docs.svg" alt="Upload" style={{ width: 24, height: 24 }} />
         </Button>
       )}
     </div>

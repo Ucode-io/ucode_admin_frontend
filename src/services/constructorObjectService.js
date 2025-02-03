@@ -6,7 +6,7 @@ const constructorObjectService = {
   getList: (tableSlug, data, params) =>
     request.post(`/object/get-list/${tableSlug}`, data, {params}),
   getListTreeData: (tableSlug, data) =>
-    requestV2.post(`/items/${tableSlug}/tree`, data),
+    requestV2.post(`/items/${tableSlug}/tree`, {data}),
   getListV2: (tableSlug, data, params) =>
     requestV2.post(`/object/get-list/${tableSlug}`, data, {params}),
   groupByList: (tableSlug, rowTableSlug, data, params) =>

@@ -1,9 +1,9 @@
-import CRangePickerNew from "../../../../components/DatePickers/CRangePickerNew";
+import CRangePickerNewWithoutTime from "../../../../components/DatePickers/CRangePickerNewWithoutTime";
 
-const DateFilter = ({onChange, value, placeholder, field}) => {
+const DateFilterWithoutTimeZ = ({onChange, value, placeholder, field}) => {
   return (
     <>
-      <CRangePickerNew
+      <CRangePickerNewWithoutTime
         placeholder={placeholder}
         value={value}
         onChange={onChange}
@@ -12,4 +12,4 @@ const DateFilter = ({onChange, value, placeholder, field}) => {
   );
 };
 
-export default DateFilter;
+export default DateFilterWithoutTimeZ;

@@ -82,6 +82,7 @@ function MultiImageUpload({
           {isTableView ? (
             <Box
               onClick={handleClick}
+              id="multi_image"
               sx={{
                 width: "100%",
                 height: "36px",
@@ -127,6 +128,7 @@ function MultiImageUpload({
               />
 
               <Box
+                id="multi_image_2"
                 onClick={handleClick}
                 sx={{
                   position: "absolute",
@@ -151,6 +153,7 @@ function MultiImageUpload({
         <>
           {isTableView ? (
             <Box
+              id="multi_images"
               onClick={handleClick}
               sx={{
                 width: "100%",
@@ -181,6 +184,7 @@ function MultiImageUpload({
             </Box>
           ) : (
             <Box
+              id="multi_images_2"
               onClick={handleClick}
               sx={{
                 border: "1px dashed #ddd",

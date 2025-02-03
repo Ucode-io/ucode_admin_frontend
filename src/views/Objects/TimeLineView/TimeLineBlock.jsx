@@ -40,13 +40,14 @@ export default function TimeLineBlock({
   }, []);
 
   useEffect(() => {
-    if (calendar_from_slug === calendar_to_slug) {
-      dispatch(
-        showAlert(
-          "Date from and date to are same. Please select different dates!",
-          "error"
-        )
-      );
+    if (Boolean(calendar_from_slug) && Boolean(calendar_to_slug)) {
+      if (calendar_from_slug === calendar_to_slug)
+        dispatch(
+          showAlert(
+            "Date from and date to are same. Please select different dates!",
+            "error"
+          )
+        );
     }
   }, [calendar_from_slug, calendar_to_slug]);
 

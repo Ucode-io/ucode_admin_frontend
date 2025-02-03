@@ -5,7 +5,9 @@ import requestV2 from "../utils/requestV2";
 
 const githubService = {
   login: (params) => httpsRequest.get("/github/login", {params}),
+  loginGitlab: (params) => httpsRequest.get("/gitlab/login", {params}),
   githubUsername: (params) => httpsRequest.get("/github/user", {params}),
+  gitlabUsername: (params) => httpsRequest.get("/gitlab/user", {params}),
   githubRepositories: (params) => httpsRequest.get("/github/repos", {params}),
   githubBranches: (params) => httpsRequest.get("/github/branches", {params}),
   getUser: ({token}) =>
@@ -25,6 +27,13 @@ const githubService = {
 
 export const useGithubLoginMutation = (mutationSettings) => {
   return useMutation((data) => githubService.login(data), mutationSettings);
+};
+
+export const useGitlabLoginMutation = (mutationSettings) => {
+  return useMutation(
+    (data) => githubService.loginGitlab(data),
+    mutationSettings
+  );
 };
 
 export const useGithubUserQuery = ({token, queryParams} = {}) => {

@@ -9,12 +9,12 @@ import RelationFilter from "./RelationFilter";
 import DateFilterWithoutTimeZ from "./DateFilterWithoutTimeZ";
 
 const FilterGenerator = ({
-  field,
-  name,
-  filters = {},
-  onChange = () => {},
-  tableSlug,
-}) => {
+                           field,
+                           name,
+                           filters = {},
+                           onChange = () => {},
+                           tableSlug,
+                         }) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -38,12 +38,12 @@ const FilterGenerator = ({
 export default FilterGenerator;
 
 export const Filter = ({
-  field = {},
-  name,
-  filters = {},
-  onChange,
-  tableSlug,
-}) => {
+                         field = {},
+                         name,
+                         filters = {},
+                         onChange,
+                         tableSlug,
+                       }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const computedOptions = useMemo(() => {

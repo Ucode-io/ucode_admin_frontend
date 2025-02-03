@@ -38,6 +38,7 @@ import {
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
 import {useQuery} from "react-query";
+import {useGitlabLoginMutation} from "../../../services/githubService";
 
 const headerStyle = {
   width: "100%",
@@ -55,7 +56,7 @@ const ResourceDetail = () => {
   const {projectId, resourceId, resourceType} = useParams();
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-  const [selectedEnv, setSelectedEnv] = useState("");
+  const [selectedGitlab, setSelectedGitlab] = useState();
 
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
@@ -69,8 +70,13 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
-      resource_type:
-        searchParams.get("code") || searchParams.get("access_token") ? 5 : 0,
+      resource_type: Boolean(
+        searchParams.get("code") || searchParams.get("access_token")
+      )
+        ? searchParams.get("access_token")?.includes("gho")
+          ? 5
+          : 8
+        : 0,
     },
   });
 
@@ -240,10 +246,21 @@ const ResourceDetail = () => {
       },
     });
 
+  const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
+    useGitlabLoginMutation({
+      onSuccess: (res) => {
+        setSearchParams({access_token: res.access_token});
+        setSelectedGitlab(res);
+      },
+      onError: () => {
+        // navigate(microfrontendListPageLink);
+      },
+    });
+
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) {
-      githubLogin({code});
+      gitlabLogin({code});
     }
   }, [searchParams.get("code")]);
 
@@ -284,6 +301,36 @@ const ResourceDetail = () => {
           token: values?.token,
         },
       },
+      id:
+        selectedEnvironment?.[0].resource_environment_id ??
+        variables?.environment_id,
+
+      integration_resource: {
+        username: values.integration_resource?.username,
+        token:
+          searchParams.get("access_token") ??
+          values.integration_resource?.token,
+      },
+    };
+    console.log("authStoreauthStore", authStore);
+    const computedValues2Gitlab = {
+      ...values,
+      project_id: authStore?.projectId,
+      type: values?.resource_type,
+      company_id: company?.companyId,
+      project_id: projectId,
+      resource_id: resourceId,
+      user_id: authStore.userId,
+      is_configured: true,
+      settings: {
+        gitlab: {
+          username: values?.integration_resource?.username,
+          token: values?.token,
+          refresh_token: selectedGitlab?.refresh_token,
+          expires_in: selectedGitlab?.expires_in,
+        },
+      },
+
       id:
         selectedEnvironment?.[0].resource_environment_id ??
         variables?.environment_id,
@@ -338,6 +385,8 @@ const ResourceDetail = () => {
         createResourceV2(computedValues2Github);
       } else if (values?.resource_type === 2) {
         createResourceV1(computedValuesClickHouse);
+      } else if (values?.resource_type === 8) {
+        createResourceV2(computedValues2Gitlab);
       } else if (!isEditPage) createResourceV2(computedValues2);
       else {
         if (!selectedEnvironment?.[0].is_configured) {

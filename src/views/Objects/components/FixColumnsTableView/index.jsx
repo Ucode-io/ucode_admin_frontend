@@ -14,6 +14,7 @@ import {useParams} from "react-router-dom";
 import constructorViewService from "../../../../services/constructorViewService";
 import {columnIcons} from "../../../../utils/constants/columnIcons";
 import style from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 export default function FixColumnsTableView({view, fieldsMap}) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,6 +22,7 @@ export default function FixColumnsTableView({view, fieldsMap}) {
   const open = Boolean(anchorEl);
   const {tableSlug} = useParams();
   const [isLoading, setIsLoading] = useState(false);
+  const {i18n} = useTranslation();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -107,6 +109,7 @@ export default function FixColumnsTableView({view, fieldsMap}) {
   return (
     <>
       <Button
+        id="fix_column"
         onClick={handleClick}
         variant={badgeCount > 0 ? "outlined" : "text"}
         style={{

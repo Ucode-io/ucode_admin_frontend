@@ -5,7 +5,9 @@ import IndexHeaderComponent from "../IndexHeaderComponent";
 import FieldCreateHeaderComponent from "../FieldCreateHeaderComponent";
 import constructorObjectService from "../../../../services/constructorObjectService";
 
-function AggridDefaultComponents() {
+function AggridDefaultComponents({customAutoGroupColumnDef}) {
+  const {view, fields} = customAutoGroupColumnDef;
+
   const defaultColDef = useMemo(
     () => ({
       width: 200,
@@ -18,6 +20,12 @@ function AggridDefaultComponents() {
   const autoGroupColumnDef = useMemo(
     () => ({
       minWidth: 230,
+      field: fields?.[1]?.slug,
+      cellRendererParams: {
+        suppressCount: true,
+      },
+      minWidth: 280,
+
       cellRendererParams: {
         innerRenderer: (params) => {
           return (
@@ -26,11 +34,17 @@ function AggridDefaultComponents() {
             </div>
           );
         },
+        checkbox: true,
       },
     }),
     []
   );
-  const rowSelection = useMemo(() => ({mode: "multiRow"}), []);
+  const rowSelection = useMemo(
+    () => ({
+      mode: "multiRow",
+    }),
+    []
+  );
   const cellSelection = useMemo(
     () => ({
       handle: {mode: "fill", suppressClearOnFillReduction: true},

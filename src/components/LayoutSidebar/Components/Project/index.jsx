@@ -119,6 +119,7 @@ const ProjectSettingPage = () => {
   );
 
   const onSubmit = (values) => {
+    console.log("Dfdfdf");
     updateProject({
       ...values,
       timezone: filteredTimezone.map((item) => ({
@@ -162,7 +163,6 @@ const ProjectSettingPage = () => {
             name="title"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <HFAvatarUpload control={control} name="logo" />
@@ -176,7 +176,6 @@ const ProjectSettingPage = () => {
             name="language"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <FRow
@@ -189,7 +188,6 @@ const ProjectSettingPage = () => {
             name="currency"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <FRow
@@ -202,7 +200,6 @@ const ProjectSettingPage = () => {
             name="timezone"
             control={control}
             fullWidth
-            required
           />
         </FRow>
       </form>

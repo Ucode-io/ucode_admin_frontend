@@ -25,43 +25,43 @@ import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 
 const TableView = ({
-  filterVisible,
-  setCurrentPage,
-  currentPage,
-  setFilterVisible,
-  handleClickFilter,
-  handleCloseFilter,
-  visibleColumns,
-  visibleRelationColumns,
-  isVisibleLoading,
-  visibleForm,
-  filterAnchor,
-  tab,
-  view,
-  shouldGet,
-  isTableView = false,
-  selectedView,
-  reset = () => {},
-  fieldsMap,
-  isDocView,
-  sortedDatas = [],
-  setSortedDatas,
-  formVisible,
-  setFormVisible,
-  selectedObjects,
-  checkedColumns,
-  getValues,
-  searchText,
-  setSelectedObjects,
-  selectedLinkedObject,
-  selectedTabIndex,
-  selectedLinkedTableSlug,
-  menuItem,
-  setFormValue,
-  currentView,
-  watch,
-  ...props
-}) => {
+                     filterVisible,
+                     setCurrentPage,
+                     currentPage,
+                     setFilterVisible,
+                     handleClickFilter,
+                     handleCloseFilter,
+                     visibleColumns,
+                     visibleRelationColumns,
+                     isVisibleLoading,
+                     visibleForm,
+                     filterAnchor,
+                     tab,
+                     view,
+                     shouldGet,
+                     isTableView = false,
+                     selectedView,
+                     reset = () => {},
+                     fieldsMap,
+                     isDocView,
+                     sortedDatas = [],
+                     setSortedDatas,
+                     formVisible,
+                     setFormVisible,
+                     selectedObjects,
+                     checkedColumns,
+                     getValues,
+                     searchText,
+                     setSelectedObjects,
+                     selectedLinkedObject,
+                     selectedTabIndex,
+                     selectedLinkedTableSlug,
+                     menuItem,
+                     setFormValue,
+                     currentView,
+                     watch,
+                     ...props
+                   }) => {
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
@@ -358,7 +358,7 @@ const TableView = ({
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
+              ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
             : "",

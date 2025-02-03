@@ -67,7 +67,6 @@ function AgGridTableView(props) {
     computedVisibleFields,
     visibleRelationColumns,
   } = props;
-
   const gridApi = useRef(null);
   const pinFieldsRef = useRef({});
   const {tableSlug} = useParams();
@@ -86,7 +85,13 @@ function AgGridTableView(props) {
   const groupField = fieldsMap[groupFieldId];
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
-    AggridDefaultComponents();
+    AggridDefaultComponents({
+      customAutoGroupColumnDef: {
+        suppressCount: true,
+        fields: visibleColumns,
+        view,
+      },
+    });
 
   const tableSearch =
     detectStringType(searchText) === "number"
@@ -94,29 +99,13 @@ function AgGridTableView(props) {
       : searchText;
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
-
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
-  // const staticTreeData = [
-  //   {
-  //     id: "1",
-  //     athlete: "Parent A",
-  //     age: 40,
-  //     country: "USA",
-  //     gold: 5,
-  //     silver: 3,
-  //     path: ["1", "2"],
-  //   },
-  //   {
-  //     id: "2",
-  //     athlete: "Child A1",
-  //     age: 25,
-  //     country: "Canada",
-  //     gold: 1,
-  //     silver: 2,
-  //     path: ["2"],
-  //   },
-  // ];
+  const visibleFields = useMemo(() => {
+    return visibleColumns
+      ?.filter((el) => computedVisibleFields?.includes(el?.id))
+      .map((item) => item?.slug);
+  }, [visibleColumns, computedVisibleFields]);
 
   const {isLoading, refetch} = useQuery(
     [
@@ -149,10 +138,28 @@ function AgGridTableView(props) {
         },
       }),
     {
-      enabled: !!tableSlug,
+      enabled: !!tableSlug && !view?.attributes?.treeData,
       onSuccess: (data) => {
         setCount(data?.data?.count);
         setRowData(data?.data?.response ?? []);
+        setLoading(false);
+      },
+      onError: () => {
+        setLoading(false);
+      },
+    }
+  );
+
+  const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
+    ["GET_OBJECTS_TREEDATA"],
+    () =>
+      constructorObjectService.getListTreeData(tableSlug, {
+        fields: [...visibleFields, "guid"],
+      }),
+    {
+      enabled: !!tableSlug && view?.attributes?.treeData,
+      onSuccess: (data) => {
+        setRowData(data?.data?.response);
         setLoading(false);
       },
       onError: () => {
@@ -232,6 +239,7 @@ function AgGridTableView(props) {
           removeRow,
           addRow,
           deleteFunction: deleteHandler,
+          updateTreeData: updateTreeData,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
             : "actionBtnNoBorder",
@@ -239,7 +247,6 @@ function AgGridTableView(props) {
       ];
     }
   }, [fiedlsarray, view]);
-
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
       views &&
@@ -267,7 +274,7 @@ function AgGridTableView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        refetch();
+        view?.attributes?.tree ? updateTreeData() : refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -321,7 +328,7 @@ function AgGridTableView(props) {
 
   function deleteHandler(row) {
     constructorObjectService.delete(tableSlug, row.guid).then(() => {
-      refetch();
+      view?.attributes?.treeData ? updateTreeData() : refetch();
     });
   }
 
@@ -330,6 +337,27 @@ function AgGridTableView(props) {
     const fieldId = column?.colDef?.columnID;
     updateView({
       [fieldId]: {pinned},
+    });
+  };
+
+  const createChild = () => {
+    if (!selectedRows?.length) {
+      console.error("No parent row selected");
+      return;
+    }
+
+    const parentRow = selectedRows[0];
+    const newChild = {
+      guid: generateGUID(),
+      [`${tableSlug}_id`]: parentRow.guid,
+      path: [...parentRow.path, generateGUID()],
+    };
+    gridApi.current.api.applyTransaction({
+      add: [newChild],
+    });
+
+    constructorObjectService.create(tableSlug, {
+      data: newChild,
     });
   };
 
@@ -425,25 +453,26 @@ function AgGridTableView(props) {
               theme={myTheme}
               rowData={rowData}
               loading={loading}
-              // treeData={true}
               columnDefs={columns}
               suppressRefresh={true}
               enableClipboard={true}
               showOpenedGroup={true}
-              rowModelType={"clientSide"}
+              groupDisplayType="single"
+              suppressAutoColumn={true}
               paginationPageSize={limit}
               undoRedoCellEditing={true}
+              rowModelType={"clientSide"}
               rowSelection={rowSelection}
               undoRedoCellEditingLimit={5}
               defaultColDef={defaultColDef}
               cellSelection={cellSelection}
               onColumnPinned={onColumnPinned}
-              groupDisplayType="single"
-              suppressColumnVirtualisation={false}
+              suppressColumnVirtualisation={true}
+              treeData={view?.attributes?.treeData}
               autoGroupColumnDef={autoGroupColumnDef}
               suppressServerSideFullWidthLoadingRow={true}
               loadingOverlayComponent={CustomLoadingOverlay}
-              // getDataPath={!view?.treeData ? getDataPath : undefined}
+              getDataPath={view?.attributes?.treeData ? getDataPath : undefined}
               onCellValueChanged={(e) => {
                 updateObject(e.data);
               }}
@@ -464,7 +493,9 @@ function AgGridTableView(props) {
         setLimit={setLimit}
         setOffset={setOffset}
         setLoading={setLoading}
+        createChild={createChild}
         selectedRows={selectedRows}
+        updateTreeData={updateTreeData}
       />
     </Box>
   );

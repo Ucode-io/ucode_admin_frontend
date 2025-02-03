@@ -6,16 +6,16 @@ import useDebounce from "../../../../hooks/useDebounce";
 import styles from "./style.module.scss";
 
 const FilterAutoComplete = ({
-  options = [],
-  searchText,
-  setSearchText,
-  localCheckedValues,
-  value = [],
-  onChange,
-  label,
-  field,
-  setChosenField = () => {},
-}) => {
+                              options = [],
+                              searchText,
+                              setSearchText,
+                              localCheckedValues,
+                              value = [],
+                              onChange,
+                              label,
+                              field,
+                              setChosenField = () => {},
+                            }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
 

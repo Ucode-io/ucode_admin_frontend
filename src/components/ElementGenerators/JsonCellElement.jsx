@@ -36,6 +36,7 @@ function JsonCellElement({
       <Box>
         <p
           onClick={handleClick}
+          id="json_field"
           style={
             isWrapField
               ? {

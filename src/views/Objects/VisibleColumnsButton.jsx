@@ -102,6 +102,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
   return (
     <div>
       <Button
+        id="columns"
         variant={"text"}
         style={{
           gap: "5px",
@@ -367,6 +368,10 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       {column?.type === "LOOKUP" ||
                       column?.type === "LOOKUPS" ? (
                         <Switch
+                          id={`${
+                            column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label
+                          }`}
                           size="small"
                           checked={currentView?.columns?.includes(
                             column?.relation_id
@@ -383,6 +388,10 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         />
                       ) : (
                         <Switch
+                          id={`${
+                            column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label
+                          }`}
                           size="small"
                           checked={currentView?.columns?.includes(column?.id)}
                           onChange={(e) => {

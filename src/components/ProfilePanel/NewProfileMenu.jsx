@@ -1,4 +1,4 @@
-import {Menu} from "@mui/material";
+import {Menu, MenuItem} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -10,6 +10,7 @@ import UserAvatar from "../UserAvatar";
 import ProfileItem from "./ProfileItem";
 import styles from "./newprofile.module.scss";
 import useBooleanState from "../../hooks/useBooleanState";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 import {useTranslation} from "react-i18next";
@@ -23,6 +24,8 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
   const [selected, setSelected] = useState(false);
   const menuVisible = Boolean(anchorProfileEl || sidebarAnchorEl);
   const location = useLocation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const settings = location.pathname.includes("settings");
   const {i18n} = useTranslation();
@@ -134,6 +137,17 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
     if (selected) refreshTokenFunc();
   };
 
+  const handleClickLanguages = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
+  };
+
+
   return (
     <div>
       <UserAvatar
@@ -165,6 +179,43 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
           )}
 
           <ProfileItem text={"Logout"} onClick={logoutClickHandler}/>
+
+          <ProfileItem
+            children={
+              <GTranslateIcon
+                style={{
+                  color: "#747474",
+                }}
+              />
+            }
+            text={"Languages"}
+            onClick={handleClickLanguages}
+          />
+
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}>
+            {languages?.map((item) => (
+              <MenuItem
+                onClick={() => {
+                  changeLanguage(item.slug);
+                }}
+                key={item.id}
+                style={{
+                  backgroundColor:
+                    item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
+                }}>
+                {item?.title}
+              </MenuItem>
+            ))}
+          </Menu>
+
+
         </div>
       </Menu>
     </div>

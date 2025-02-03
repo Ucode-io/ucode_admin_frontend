@@ -65,12 +65,13 @@ export const useGithubRepositoriesQuery = ({
 export const useGitlabRepositoriesQuery = ({
   username,
   token,
+  resource_id,
   queryParams,
 } = {}) => {
   return useQuery(
-    ["GITLAB_REPOSITORIES", {username, token}],
+    ["GITLAB_REPOSITORIES", {username, token, resource_id}],
     () => {
-      return githubService.gitlabRepositories({username, token});
+      return githubService.gitlabRepositories({username, token, resource_id});
     },
     queryParams
   );
@@ -95,12 +96,13 @@ export const useGitlabBranchesQuery = ({
   username,
   repo,
   token,
+  resource_id,
   queryParams,
 } = {}) => {
   return useQuery(
-    ["GITLAB_BRANCHES", {username, repo, token}],
+    ["GITLAB_BRANCHES", {username, repo, token, resource_id}],
     () => {
-      return githubService.gitlabBranches({username, repo, token});
+      return githubService.gitlabBranches({username, repo, token, resource_id});
     },
     queryParams
   );

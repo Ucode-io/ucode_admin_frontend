@@ -113,6 +113,7 @@ export default function OpenFaasFunctionForm() {
   const {data: repositoriesGitlab} = useGitlabRepositoriesQuery({
     username: selectedResource?.settings?.gitlab?.username,
     token: selectedResource?.settings?.gitlab?.token,
+    resource_id: selectedResource?.id,
     queryParams: {
       enabled: !!selectedResource?.settings?.gitlab?.username,
       select: (res) => listToOptions(res, "name", "name"),
@@ -128,11 +129,12 @@ export default function OpenFaasFunctionForm() {
       select: (res) => listToOptions(res, "name", "name"),
     },
   });
-
+  console.log("selectedResource", selectedResource);
   const {data: branchesGitlab} = useGitlabBranchesQuery({
     username: selectedResource?.settings?.gitlab?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.gitlab?.token,
+    resource_id: selectedResource?.id,
     queryParams: {
       enabled: !!selectedResource?.settings?.gitlab?.username && !!selectedRepo,
       select: (res) => listToOptions(res, "name", "name"),

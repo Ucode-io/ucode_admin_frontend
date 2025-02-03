@@ -120,7 +120,7 @@ const getValue = (value) => {
   }
 
   try {
-    return value === 'now()' ? new Date() : new Date(value);
+    return (value === 'now()' || value === '$$NOW') ? new Date() : new Date(value);
   } catch (e) {
     return null;
   }

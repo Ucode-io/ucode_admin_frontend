@@ -1,8 +1,8 @@
 import {FormHelperText} from "@mui/material";
 import {Controller} from "react-hook-form";
-import NewFileUpload from "../Upload/NewFileUpload.jsx";
+import TopUpBalance from "../Upload/TopUpBalance.jsx";
 
-const HFFileUpload = ({
+const HFBalanceFile = ({
   name,
   rules,
   field,
@@ -26,7 +26,7 @@ const HFFileUpload = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
-          <NewFileUpload
+          <TopUpBalance
             name={name}
             value={value}
             tabIndex={tabIndex}
@@ -46,4 +46,4 @@ const HFFileUpload = ({
   );
 };
 
-export default HFFileUpload;
+export default HFBalanceFile;

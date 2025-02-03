@@ -7,7 +7,7 @@ import {Box, Button, Popover, Typography} from "@mui/material";
 import React, {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 
-export default function NewFileUpload({
+export default function TopUpBalance({
   value,
   onChange,
   className = "",
@@ -64,7 +64,7 @@ export default function NewFileUpload({
   const id = open ? "simple-popover" : undefined;
 
   return (
-    <div className={`Gallery ${className}`}>
+    <div className={``}>
       {value && (
         <>
           <Box className="uploadedFile">
@@ -73,9 +73,9 @@ export default function NewFileUpload({
               onClick={handleClick}
               sx={{
                 padding: 0,
-                minWidth: "25px",
-                width: "25px",
+                width: "100%",
                 height: "25px",
+                border: "1px solid #eee",
               }}>
               <AttachFileIcon
                 style={{

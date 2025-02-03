@@ -37,6 +37,7 @@ import BackupTableIcon from "@mui/icons-material/BackupTable";
 import {useProjectListQuery} from "../../../../services/companyService";
 import {companyActions} from "../../../../store/company/company.slice";
 import BlockIcon from "@mui/icons-material/Block";
+import HFBalanceFile from "../../../../components/FormElements/HFBalanceFile";
 
 const BillingComponent = ({
   handCloseBalance = () => {},
@@ -329,7 +330,17 @@ const BillingComponent = ({
               name={`amount`}
             />
 
+            <HFBalanceFile
+              autoFocus
+              fullWidth={true}
+              required
+              control={control}
+              placeholder={"write amount..."}
+              name={`receipt_file`}
+            />
+
             <Button
+              loading={loading}
               disabled={loading}
               type="submit"
               sx={{marginTop: "24px", fontSize: "12px"}}

@@ -129,6 +129,7 @@ const getValue = (value) => {
 
 const getNoTimezoneValue = (value) => {
   if (!value) return "";
+  if (value instanceof Date) return value;
 
   if (value.includes("Z")) return new Date(value);
 

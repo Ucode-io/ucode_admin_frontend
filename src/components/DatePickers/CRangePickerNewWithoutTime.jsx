@@ -10,17 +10,6 @@ const CRangePickerNewWithoutTime = ({
   placeholder,
   isClearable = true,
 }) => {
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return date.toLocaleString("ru-RU", options).replace(",", "");
-  };
-
   const changeHandler = (val) => {
     if (!val?.length) {
       onChange([]);
@@ -30,20 +19,18 @@ const CRangePickerNewWithoutTime = ({
     const from = new Date(val[0]);
     const to = new Date(val[1]);
 
-    // Adjust hours to match the required format
     from.setHours(0);
     from.setMinutes(0);
     from.setSeconds(0);
 
-    // to.setHours(00);
-    // to.setMinutes(00);
-    // to.setSeconds(00);
+    to.setHours(23);
+    to.setMinutes(59);
+    to.setSeconds(59);
 
-    // Trigger the onChange with formatted dates
     if (val?.[0] && val?.[1]) {
       onChange({
-        $gte: formatDate(from),
-        $lt: formatDate(to),
+        $gte: from,
+        $lt: to,
       });
     }
   };

@@ -364,24 +364,24 @@ export const NewUiViewsWithGroups = ({
           </Backdrop>
         )}
 
-        <Flex minH='56px' h='56px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
-              columnGap='4px'>
+        <Flex minH='45px' h='36px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
+              columnGap='8px'>
           <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
-                      colorScheme='gray' onClick={() => navigate(-1)}/>
+                      colorScheme='gray' onClick={() => navigate(-1)} size="sm" />
           <IconButton aria-label='home' icon={<img src="/img/home.svg" alt="home"/>} variant='ghost'
-                      colorScheme='gray' onClick={() => navigate('/main')} ml='8px'/>
+                      colorScheme='gray' onClick={() => navigate('/main')} ml='8px' size="sm" />
           <ChevronRightIcon fontSize={20} color='#344054'/>
-          <Flex p='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
+          <Flex py='4px' px='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
                 columnGap='8px'>
-            <Flex w='20px' h='20px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
-                  fontSize={12} justifyContent='center' alignItems='center'>
+            <Flex w='16px' h='16px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
+                  fontSize={11} justifyContent='center' alignItems='center'>
               {tableName?.[0]}
             </Flex>
             {tableName}
           </Flex>
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-            <Button h='36px' ml='auto' onClick={navigateToSettingsPage} variant="outline" colorScheme='gray'
+            <Button h='30px' ml='auto' onClick={navigateToSettingsPage} variant="outline" colorScheme='gray'
                     borderColor='#D0D5DD' color='#344054' leftIcon={<Image src='/img/settings.svg' alt='settings'/>}
                     borderRadius='8px'>
               Table Settings

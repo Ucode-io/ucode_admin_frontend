@@ -2,7 +2,17 @@ import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useMemo, useState} from "react";
 import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
-import {Box, ChakraProvider, Flex, IconButton, Image} from "@chakra-ui/react";
+import {
+  Box,
+  ChakraProvider,
+  Flex,
+  IconButton,
+  Image,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Portal
+} from "@chakra-ui/react";
 import {useTranslation} from "react-i18next";
 
 import {getColumnIcon} from "./icons";
@@ -222,13 +232,14 @@ export const DynamicTable = ({
   const renderColumns = (columns ?? []).filter((column) => Boolean(column?.attributes?.field_permission?.view_permission));
 
   return (
-    <div className='CTableContainer' style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-      <div className='table' style={{border: "none", borderRadius: 0, flexGrow: 1}}>
+    <div className='CTableContainer' style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
+      <div className='table' style={{border: "none", borderRadius: 0, flexGrow: 1, backgroundColor: "#fff"}}>
         <table id="resizeMe">
           <thead style={{borderBottom: "1px solid #EAECF0"}}>
           <tr>
             <IndexTh items={isRelationTable ? fields : data} selectedItems={selectedObjectsForDelete}
-                     formVisible={formVisible} onSelectAll={(checked) => setSelectedObjectsForDelete(checked ? isRelationTable ? fields : data : [])}/>
+                     formVisible={formVisible}
+                     onSelectAll={(checked) => setSelectedObjectsForDelete(checked ? isRelationTable ? fields : data : [])}/>
             {renderColumns.map((column) =>
               <Th key={column.id} tableSlug={tableSlug} columns={renderColumns} column={column} view={view}
                   tableSettings={tableSettings} tableSize={tableSize} pageName={pageName} sortedDatas={sortedDatas}
@@ -359,7 +370,7 @@ export const DynamicTable = ({
         </table>
       </div>
 
-      <Flex p='16px' borderTop='1px solid #EAECF0' justifyContent='space-between'>
+      <Flex p='16px' borderTop='1px solid #EAECF0' justifyContent='space-between' bg="#fff">
         <Flex columnGap='16px' alignItems='center' fontSize={14} fontWeight={600} color="#344054">
           Show
           <ChakraProvider>
@@ -384,7 +395,7 @@ export const DynamicTable = ({
           count={Math.ceil((dataCount ?? 0) / limit)}
           variant="outlined"
           shape="rounded"
-          style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+          style={{position: "absolute", left: "50%", transform: "translateX(-50%)"}}
         />
 
         {selectedObjectsForDelete?.length > 0 &&
@@ -1012,103 +1023,49 @@ const Th = ({
         {label}
 
         {permissions?.field_filter &&
-          <IconButton aria-label='more' icon={<Image src='/img/chevron-down.svg' alt='more' style={{minWidth: 20}}/>}
-                      variant='ghost'
-                      colorScheme='gray' ml='auto' onClick={handleClick}/>
+          <ChakraProvider>
+            <Popover>
+              <PopoverTrigger>
+                <IconButton aria-label='more'
+                            icon={<Image src='/img/chevron-down.svg' alt='more' style={{minWidth: 20}}/>}
+                            variant='ghost' colorScheme='gray' ml='auto' onClick={handleClick}/>
+              </PopoverTrigger>
+              <Portal>
+                <PopoverContent w='200px' bg="#fff" py='4px'>
+                  {menu.map((item, index) => (
+                    <Flex flexDirection='column'>
+                      {item.children.filter(child => !(child.id === 19 && column?.type !== "MULTI_LINE"))
+                        .map((child) =>
+                          <Flex
+                            mx='10px'
+                            columnGap='10px'
+                            alignItems='center'
+                            cursor='pointer'
+                            color={child.id === 14 ? "red" : "#475467"}
+                            fontSize='14px'
+                            fontWeight={500}
+                            p='5px'
+                            borderRadius='6px'
+                            _hover={{ bg: "#919eab14" }}
+                            onClick={(e) => child.onClickAction(e)}>
+                            <Flex justifyContent='center' alignItems='center'>
+                              {child.icon}
+                            </Flex>
+
+                            <Flex justifyContent='center'>
+                              {child.title}
+                            </Flex>
+                          </Flex>
+                        )}
+                      {index !== menu.length - 1 && <Box as='hr' mb='4px' />}
+                    </Flex>
+                  ))}
+                </PopoverContent>
+              </Portal>
+            </Popover>
+          </ChakraProvider>
         }
       </Flex>
-
-      <Menu
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            padding: "10px",
-          }}>
-          {menu.map((item) => (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                borderBottom: "1px solid #E0E0E0",
-              }}>
-              {item.children.map((child) =>
-                child.id === 19 && column?.type !== "MULTI_LINE" ? (
-                  ""
-                ) : (
-                  <div
-                    onClick={(e) => {
-                      child.onClickAction(e);
-                    }}
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      color: child.id === 14 ? "red" : "",
-                      padding: "2px 0",
-                    }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}>
-                      {child.icon}
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}>
-                      {child.title}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          ))}
-        </div>
-      </Menu>
 
       <Menu
         anchorEl={summaryOpen}

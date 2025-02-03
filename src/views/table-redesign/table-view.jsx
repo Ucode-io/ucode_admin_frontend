@@ -351,8 +351,7 @@ const TableView = ({
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
-
-          limit: limitPage !== 0 ? limitPage : limit,
+          limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)

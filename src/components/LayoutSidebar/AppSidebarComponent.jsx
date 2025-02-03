@@ -102,7 +102,10 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
     }
   };
-  const menuStyle = menuTemplate?.menu_template;
+  const menuStyle = {
+    ...menuTemplate?.menu_template,
+    text: menuTemplate?.menu_template?.text === "#A8A8A8" ? "" : menuTemplate?.menu_template?.text
+  };
 
   const [searchParams] = useSearchParams();
 
@@ -162,7 +165,7 @@ const AppSidebar = ({
           cursor='pointer'
           className="parent-folder column-drag-handle"
           bg={activeMenu
-            ? (menuStyle?.active_background ?? "#EAECF0")
+            ? (`${menuStyle?.active_background ?? "#EAECF0"} !important`)
             : menuStyle?.background}
           color={Boolean(
             appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
@@ -176,17 +179,17 @@ const AppSidebar = ({
             position="absolute"
             w={36}
             h={36}
-            alignItems='center'
-            justifyContent='center'
+            alignItems="center"
+            justifyContent="center"
           >
             <IconGenerator
               icon={(!icon || icon === 'folder.svg') ? "folder-new.svg" : icon}
               size={iconSize}
-              style={{color: (icon && icon !== 'folder.svg') ? (menuStyle?.text ?? "") : "#fff"}}
+              style={{color: (icon && icon !== 'folder.svg') ? (menuStyle?.text || "#475467") : "#fff"}}
             />
           </Flex>
 
-          <Box color={activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467"} pl={48} fontSize={14}
+          <Box color={activeMenu ? menuStyle?.active_text : (menuStyle?.text || "#475467")} pl={48} fontSize={14}
                mr='auto' overflow='hidden' textOverflow='ellipsis'>
             {title}
           </Box>
@@ -313,7 +316,7 @@ const AppSidebar = ({
                 color: activeMenu
                   ? menuStyle?.active_text
                   : menuStyle?.text || "",
-                transform: selectedApp?.id === element.id && "rotate(-180deg)",
+                transform: selectedApp?.id === element.id && "rotate(-90deg)",
                 transition: "transform 250ms ease-out",
                 marginRight: 4
               }}

@@ -301,7 +301,7 @@ const LayoutSidebar = ({appId}) => {
           justifyContent='center'
           border="1px solid #e5e5e5"
           borderRadius='50%'
-          top={18}
+          top={27}
           right={0}
           transform={sidebarIsOpen ? "translateX(50%)" : "translateX(60%)"}
           bg='#fff'
@@ -314,8 +314,7 @@ const LayoutSidebar = ({appId}) => {
           }
         </Flex>
 
-        <Flex pl={8} py={10} h={56} borderBottom="1px solid #EAECF0"
-              alignItems='center'>
+        <Flex pl={8} py={10} h={45} borderBottom="1px solid #EAECF0" alignItems='center'>
           <Header sidebarIsOpen={sidebarIsOpen} projectInfo={projectInfo}/>
         </Flex>
 
@@ -366,10 +365,10 @@ const LayoutSidebar = ({appId}) => {
                       alignItems='center'
                       justifyContent='center'
                     >
-                      <InlineSVG src="/img/plus-icon.svg" color="#475467" />
+                      <InlineSVG src="/img/plus-icon.svg" color="#475467"/>
                     </Flex>
 
-                    <Box whiteSpace='nowrap' color={menuStyle?.text ?? "#475467"} pl={48} fontSize={14}>
+                    <Box whiteSpace='nowrap' color={(menuStyle?.text === "#A8A8A8" ? null : "#475467") ?? "#475467"} pl={48} fontSize={14}>
                       Create
                     </Box>
                   </Flex>
@@ -379,7 +378,7 @@ const LayoutSidebar = ({appId}) => {
           }
         </Box>
 
-        <Flex display={sidebarIsOpen ? "flex" : "block"} mt='auto' py={16} alignItems='center'
+        <Flex display={sidebarIsOpen ? "flex" : "block"} mt='auto' py={4} alignItems='center'
               columnGap={16} px={8} borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
               onMouseLeave={sidebarIsOpen ? undefined : () => dispatch(mainActions.setSidebarHighlightedAction(null))}
         >
@@ -538,8 +537,8 @@ const Chatwoot = forwardRef(({open, ...props}, ref) => {
       _hover={{bg: "#EAECF0"}}
       cursor='pointer'
       mb={open ? 0 : 4}
-      onClick={originalButtonFunction}
       {...props}
+      onClick={originalButtonFunction}
     >
       <img src="/img/message-text-square.svg" alt="chat"/>
     </Flex>
@@ -572,10 +571,10 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
         borderRadius={6}
         _hover={{bg: "#EAECF0"}}
         cursor='pointer'
-        onClick={handleClick}
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
+        onClick={handleClick}
       >
         <img src="/img/magic-wand.svg" alt="magic"/>
       </Flex>
@@ -652,8 +651,7 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
     <Popover offset={[sidebarIsOpen ? 15 : 95, 5]} isOpen={isOpen} onClose={handleClose}>
       <PopoverTrigger>
         <Flex w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
-              p={8} borderRadius={8} bg={isOpen ? "#EAECF0" : "#fff"} _hover={{bg: "#EAECF0"}} cursor="pointer"
-              onClick={() => !isOpen ? onOpen() : null}>
+              p={8} borderRadius={8} bg="#fff" cursor="pointer" onClick={() => !isOpen ? onOpen() : null}>
           <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
             {Boolean(projectInfo?.logo) &&
               <img src={projectInfo?.logo} alt="" width={20} height={20}/>

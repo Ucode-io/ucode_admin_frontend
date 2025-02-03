@@ -39,6 +39,7 @@ import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
 import {useQuery} from "react-query";
 import {useGitlabLoginMutation} from "../../../services/githubService";
+import GitLabForm from "./GitlabForm";
 
 const headerStyle = {
   width: "100%",
@@ -57,7 +58,7 @@ const ResourceDetail = () => {
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedGitlab, setSelectedGitlab] = useState();
-
+  console.log("selectedGitlab", selectedGitlab);
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -225,17 +226,6 @@ const ResourceDetail = () => {
       }
     );
 
-  // useGithubUserQuery({
-  //   token: searchParams.get("access_token"),
-  //   enabled:
-  //     !!searchParams.get("access_token") && !resourceType == "CLICK_HOUSE",
-  //   queryParams: {
-  //     select: (res) => res?.data?.login,
-  //     onSuccess: (username) =>
-  //       setValue("integration_resource.username", username),
-  //   },
-  // });
-
   const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
     useGithubLoginMutation({
       onSuccess: (res) => {
@@ -312,7 +302,7 @@ const ResourceDetail = () => {
           values.integration_resource?.token,
       },
     };
-    console.log("authStoreauthStore", authStore);
+
     const computedValues2Gitlab = {
       ...values,
       project_id: authStore?.projectId,
@@ -328,6 +318,7 @@ const ResourceDetail = () => {
           token: values?.token,
           refresh_token: selectedGitlab?.refresh_token,
           expires_in: selectedGitlab?.expires_in,
+          created_at: selectedGitlab?.created_at,
         },
       },
 
@@ -507,6 +498,16 @@ const ResourceDetail = () => {
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+            />
+          ) : resourceType === "GITLAB" ? (
+            <GitLabForm
+              control={control}
+              selectedEnvironment={selectedEnvironment}
+              btnLoading={configureLoading || updateLoading}
+              setSelectedEnvironment={setSelectedEnvironment}
+              projectEnvironments={projectEnvironments}
+              isEditPage={isEditPage}
+              watch={watch}
             />
           ) : (
             <Form

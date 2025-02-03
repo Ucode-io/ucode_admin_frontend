@@ -10,6 +10,8 @@ const githubService = {
   gitlabUsername: (params) => httpsRequest.get("/gitlab/user", {params}),
   githubRepositories: (params) => httpsRequest.get("/github/repos", {params}),
   githubBranches: (params) => httpsRequest.get("/github/branches", {params}),
+  gitlabRepositories: (params) => httpsRequest.get("/gitlab/repos", {params}),
+  gitlabBranches: (params) => httpsRequest.get("/gitlab/branches", {params}),
   getUser: ({token}) =>
     axios.get("https://api.github.com/user", {
       headers: {Authorization: `Bearer ${token}`},
@@ -60,6 +62,20 @@ export const useGithubRepositoriesQuery = ({
   );
 };
 
+export const useGitlabRepositoriesQuery = ({
+  username,
+  token,
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["GITLAB_REPOSITORIES", {username, token}],
+    () => {
+      return githubService.gitlabRepositories({username, token});
+    },
+    queryParams
+  );
+};
+
 export const useGithubBranchesQuery = ({
   username,
   repo,
@@ -70,6 +86,21 @@ export const useGithubBranchesQuery = ({
     ["GITHUB_BRANCHES", {username, repo, token}],
     () => {
       return githubService.githubBranches({username, repo, token});
+    },
+    queryParams
+  );
+};
+
+export const useGitlabBranchesQuery = ({
+  username,
+  repo,
+  token,
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["GITLAB_BRANCHES", {username, repo, token}],
+    () => {
+      return githubService.gitlabBranches({username, repo, token});
     },
     queryParams
   );

@@ -147,7 +147,8 @@ const ObjectsPage = () => {
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
 
-  const newUi = JSON.parse(localStorage.getItem('newUi') ?? "false");
+  const storageItem = localStorage.getItem('newUi');
+  const newUi = JSON.parse((!storageItem || storageItem === 'undefined') ? "false" : "true");
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
   return (

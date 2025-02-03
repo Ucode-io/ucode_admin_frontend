@@ -14,6 +14,7 @@ import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 import {useTranslation} from "react-i18next";
+import {showAlert} from "@/store/alert/alert.thunk";
 
 const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
   const dispatch = useDispatch();

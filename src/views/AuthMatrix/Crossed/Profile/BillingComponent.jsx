@@ -96,6 +96,7 @@ const BillingComponent = ({
       creator_type: "transfer",
       fare_id: project?.fare_id,
       currency_id: "88c816a3-24e8-4994-ab70-9bc826bb9dc3",
+      receipt_file: values?.receipt_file,
     };
 
     billingService
@@ -307,7 +308,7 @@ const BillingComponent = ({
         <Box
           sx={{
             width: "200px",
-            height: "170px",
+            height: "320px",
             background: "#fff",
             position: "absolute",
             left: "50%",

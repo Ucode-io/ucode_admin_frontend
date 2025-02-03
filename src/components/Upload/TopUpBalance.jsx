@@ -1,201 +1,194 @@
+import React, {useRef, useState} from "react";
+import {
+  Box,
+  Button,
+  Popover,
+  Typography,
+  CircularProgress,
+  Tooltip,
+  IconButton,
+  Card,
+  CardContent,
+} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {Box, Button, Popover, Typography} from "@mui/material";
-import React, {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 
 export default function TopUpBalance({
   value,
   onChange,
-  className = "",
   disabled,
   tabIndex,
   field,
 }) {
-  const inputRef = useRef("");
-  const [previewVisible, setPreviewVisible] = useState(false);
+  const inputRef = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const imageClickHandler = (index) => {
-    setPreviewVisible(true);
-  };
+  const handleFileChange = async (e) => {
+    if (!e.target.files[0]) return;
 
-  const inputChangeHandler = (e) => {
     setLoading(true);
-
     const file = e.target.files[0];
-
     const data = new FormData();
     data.append("file", file);
 
-    fileService
-      .folderUpload(data, {
+    try {
+      const res = await fileService.folderUpload(data, {
         folder_name: field?.attributes?.path,
-      })
-      .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
-      })
-      .finally(() => setLoading(false));
+      });
+      onChange(import.meta.env.VITE_CDN_BASE_URL + res.link);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const deleteImage = (id) => {
+  const deleteImage = () => {
     onChange(null);
   };
 
-  const closeButtonHandler = (e) => {
-    e.stopPropagation();
-    deleteImage();
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
+  const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handlePopoverClose = () => {
     setAnchorEl(null);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const id = open ? "file-options-popover" : undefined;
 
   return (
-    <div className={``}>
-      {value && (
+    <Card
+      sx={{
+        padding: 2,
+        borderRadius: 1,
+        boxShadow: 3,
+        border: "1px solid #eee",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%",
+        maxWidth: "100%",
+        textAlign: "center",
+        margin: "20px auto 0",
+      }}>
+      {value ? (
         <>
-          <Box className="uploadedFile">
-            <Button
-              aria-describedby={id}
-              onClick={handleClick}
-              sx={{
-                padding: 0,
-                width: "100%",
-                height: "25px",
-                border: "1px solid #eee",
-              }}>
-              <AttachFileIcon
-                style={{
-                  color: "#747474",
-                  fontSize: "25px",
-                }}
-              />
-            </Button>
-
-            <Typography
-              sx={{
-                fontSize: "10px",
-                color: "#747474",
-              }}>
-              {value?.split?.("_")?.[1] ?? ""}
-            </Typography>
-          </Box>
-
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
+          <CardContent
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                padding: "10px",
-              }}>
+            <Tooltip title="Click for options">
               <Button
-                href={value}
-                className=""
-                download
-                target="_blank"
-                rel="noreferrer"
+                onClick={handlePopoverOpen}
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "10px",
-                  justifyContent: "flex-start",
+                  gap: 1,
+                  width: "100%",
+                  border: "1px solid #ddd",
+                  padding: 1,
                 }}>
-                <OpenInFullIcon />
-                Show file
+                <AttachFileIcon sx={{fontSize: 24, color: "#666"}} />
+                <Typography variant="body2" sx={{flexGrow: 1, color: "#333"}}>
+                  {value.split("_")[1] ?? "Uploaded receipt"}
+                </Typography>
               </Button>
-              <Button
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  justifyContent: "flex-start",
-                }}
-                disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}>
-                <DeleteIcon />
-                Remove file
-              </Button>
-              <Button
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  justifyContent: "flex-start",
-                }}
-                disabled={disabled}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  inputRef.current.click();
-                }}>
-                <ChangeCircleIcon />
-                Change file
-              </Button>
-            </Box>
-            <input
-              type="file"
-              style={{
-                display: "none",
-              }}
-              className="hidden"
-              ref={inputRef}
-              tabIndex={tabIndex}
-              autoFocus={tabIndex === 1}
-              onChange={inputChangeHandler}
-              disabled={disabled}
-            />
-          </Popover>
-        </>
-      )}
+            </Tooltip>
 
-      {!value && (
-        <Button
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: "25px",
-            width: "25px",
-            height: "25px",
-            paddingLeft: "15px",
-          }}>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handlePopoverClose}
+              anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+              <Box sx={{display: "flex", flexDirection: "column", padding: 1}}>
+                {/* <Button
+                  href={value}
+                  download
+                  target="_blank"
+                  sx={{display: "flex", alignItems: "center", gap: 1}}>
+                  <OpenInFullIcon />
+                  View File
+                </Button> */}
+
+                <Button
+                  disabled={disabled}
+                  onClick={deleteImage}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    color: "red",
+                  }}>
+                  <DeleteIcon />
+                  Remove File
+                </Button>
+
+                <Button
+                  disabled={disabled}
+                  onClick={() => inputRef.current.click()}
+                  sx={{display: "flex", alignItems: "center", gap: 1}}>
+                  <ChangeCircleIcon />
+                  Change File
+                </Button>
+              </Box>
+            </Popover>
+          </CardContent>
+
           <input
             type="file"
-            className="hidden"
+            style={{display: "none"}}
             ref={inputRef}
             tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
+            onChange={handleFileChange}
             disabled={disabled}
           />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
+        </>
+      ) : (
+        <>
+          <Typography variant="body1" sx={{mb: 1, color: "#555"}}>
+            Upload a Receipt
+          </Typography>
+          <Tooltip title="Click to upload">
+            <IconButton
+              onClick={() => inputRef.current.click()}
+              sx={{
+                width: 50,
+                height: 50,
+                borderRadius: "50%",
+                border: "1px solid #ddd",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f5f5f5",
+                "&:hover": {backgroundColor: "#e0e0e0"},
+              }}>
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <UploadFileIcon sx={{fontSize: 30, color: "#666"}} />
+              )}
+            </IconButton>
+          </Tooltip>
+
+          <input
+            type="file"
+            style={{display: "none"}}
+            ref={inputRef}
+            tabIndex={tabIndex}
+            onChange={handleFileChange}
+            disabled={disabled}
           />
-        </Button>
+        </>
       )}
-    </div>
+    </Card>
   );
 }

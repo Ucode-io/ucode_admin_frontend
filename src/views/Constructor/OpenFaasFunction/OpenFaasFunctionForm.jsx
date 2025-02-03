@@ -32,6 +32,10 @@ import {useQueryClient} from "react-query";
 import {Box} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import KnativeLogs from "./KnativeLogs";
+import {
+  useGitlabBranchesQuery,
+  useGitlabRepositoriesQuery,
+} from "../../../services/githubService";
 
 // const frameworkOptions = [
 //   {
@@ -106,12 +110,31 @@ export default function OpenFaasFunctionForm() {
     },
   });
 
+  const {data: repositoriesGitlab} = useGitlabRepositoriesQuery({
+    username: selectedResource?.settings?.gitlab?.username,
+    token: selectedResource?.settings?.gitlab?.token,
+    queryParams: {
+      enabled: !!selectedResource?.settings?.gitlab?.username,
+      select: (res) => listToOptions(res, "name", "name"),
+    },
+  });
+
   const {data: branches} = useGithubBranchesQuery({
     username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
     queryParams: {
       enabled: !!selectedResource?.settings?.github?.username && !!selectedRepo,
+      select: (res) => listToOptions(res, "name", "name"),
+    },
+  });
+
+  const {data: branchesGitlab} = useGitlabBranchesQuery({
+    username: selectedResource?.settings?.gitlab?.username,
+    repo: selectedRepo,
+    token: selectedResource?.settings?.gitlab?.token,
+    queryParams: {
+      enabled: !!selectedResource?.settings?.gitlab?.username && !!selectedRepo,
       select: (res) => listToOptions(res, "name", "name"),
     },
   });
@@ -274,7 +297,7 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="repo_name"
                         control={mainForm.control}
-                        options={repositories ?? []}
+                        options={repositories ?? repositoriesGitlab}
                         required
                         disabled={functionId}
                       />
@@ -292,7 +315,7 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="branch"
                         control={mainForm.control}
-                        options={branches}
+                        options={branches || branchesGitlab}
                         required
                         disabled={functionId}
                       />

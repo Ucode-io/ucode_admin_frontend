@@ -190,6 +190,7 @@ export default function FieldButton({
   return (
     <>
       <CTableHeadCell
+        data-cy="add_button"
         style={{
           padding: "0 4px",
           position: "sticky",

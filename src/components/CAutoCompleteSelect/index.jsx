@@ -18,6 +18,7 @@ const CAutoCompleteSelect = ({
   return (
     <div>
       <Autocomplete
+        id="table_choose"
         multiple={multiple}
         // disablePortal
         options={options}

@@ -37,7 +37,7 @@ function HFQrField({
           error={error}
           InputProps={{
             endAdornment: (
-              <IconButton onClick={handClick}>
+              <IconButton id="full_screen" onClick={handClick}>
                 <QrCode2Icon />
               </IconButton>
             ),

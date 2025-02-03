@@ -254,7 +254,8 @@ const ObjectDataTable = ({
       navigateToEditPage={navigateToEditPage}
       parentRef={parentRef}
       getAllData={getAllData}
-      control={control}>
+      control={control}
+    >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -412,6 +413,7 @@ const ObjectDataTable = ({
             }}>
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
               <Button
+                id="add-row"
                 variant="text"
                 style={{
                   borderColor: "#F0F0F0",

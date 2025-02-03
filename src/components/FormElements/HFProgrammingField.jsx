@@ -128,6 +128,7 @@ function HFProgrammingField({
               position: "relative",
             }}>
             <AceEditor
+              id="program_field"
               style={{paddingTop: "20px"}}
               mode={progLanguage}
               theme="monokai"
@@ -152,6 +153,7 @@ function HFProgrammingField({
             {error && <span>{error.message}</span>}
 
             <Button
+              id="choose_program"
               onClick={handleClick}
               variant="contained"
               sx={{
@@ -168,6 +170,7 @@ function HFProgrammingField({
                   : "Programming langauge"}
             </Button>
             <Button
+              id="cancel_btn_program"
               onClick={() => {
                 handleClose();
                 updateObject();

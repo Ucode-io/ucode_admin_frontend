@@ -2,9 +2,23 @@ include:
   - .gitlab/ci/*.gitlab-ci.yml
 
 stages:
+  - cypress-testing
   - build
   - deploy
   - rollback
+
+cypress-testing:
+  stage: cypress-testing
+  extends: .cypress_testing
+  variables:
+    OAUTH_GITLAB_TOKEN: $OAUTH_GITLAB_TOKEN
+    REPOSITORY_URL: gitlab.udevs.io/ucode/ucode_cypress_test.git
+    TEST_DIRECTORY: ucode_cypress_testing
+    TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+    TELEGRAM_CHAT_ID: $TELEGRAM_CHAT_ID
+  allow_failure: true 
+  only:
+    - staging
 
 build-dev:
   stage: build

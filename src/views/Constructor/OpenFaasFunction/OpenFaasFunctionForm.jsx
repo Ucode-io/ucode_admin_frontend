@@ -33,21 +33,6 @@ import {Box} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import KnativeLogs from "./KnativeLogs";
 
-// const frameworkOptions = [
-//   {
-//     label: "React",
-//     value: "REACT",
-//   },
-//   {
-//     label: "Vue",
-//     value: "VUE",
-//   },
-//   {
-//     label: "Angular",
-//     value: "ANGULAR",
-//   },
-// ];
-
 export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
   const test = useParams();

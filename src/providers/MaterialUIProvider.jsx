@@ -4,11 +4,11 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ruLocale from "date-fns/locale/ru";
 
 
-const MaterialUIProvider = ({children}) => {
+const MaterialUIProvider = ({children, ...props}) => {
   const theme = "light"
 
   return (
-    <div className={theme === "dark" ? 'night-mode' : ''} >
+    <div className={theme === "dark" ? 'night-mode' : ''} {...props}>
       <ThemeConfig >
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale} >
           {children}

@@ -11,12 +11,12 @@ import CSelect from "../../../../components/CSelect";
 import {useMemo} from "react";
 
 const BooleanFilter = ({
-  onChange = () => {},
-  field,
-  filters,
-  name,
-  ...props
-}) => {
+                         onChange = () => {},
+                         field,
+                         filters,
+                         name,
+                         ...props
+                       }) => {
   const value = useMemo(() => {
     if (filters[name] === true) return "true";
     if (filters[name] === false) return "false";

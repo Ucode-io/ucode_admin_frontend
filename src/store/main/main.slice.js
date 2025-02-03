@@ -6,6 +6,9 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     settingsSidebarIsOpen: true,
     pinIsEnabled: false,
     subMenuIsOpen: false,
+    sidebarHighlightedMenu: null,
+    sidebarHighlightedAction: null,
+    tableViewFiltersOpen: true,
   },
   reducers: {
     setSettingsSidebarIsOpen: (state, {payload}) => {
@@ -17,5 +20,14 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     setSubMenuIsOpen: (state, { payload }) => {
       state.subMenuIsOpen = payload;
     },
+    setSidebarHighlightedMenu: (state, {payload}) => {
+      state.sidebarHighlightedMenu = payload;
+    },
+    setSidebarHighlightedAction: (state, {payload}) => {
+      state.sidebarHighlightedAction = payload;
+    },
+    setTableViewFiltersOpen: (state, {payload}) => {
+      state.tableViewFiltersOpen = payload;
+    }
   },
 });

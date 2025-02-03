@@ -45,7 +45,6 @@ const ImageUploadCellEditor = ({
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [altText, setAltText] = useState("");
   const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
@@ -233,13 +232,6 @@ const ImageUploadCellEditor = ({
                 <ChangeCircleIcon />
                 Change Image
               </Button>
-              <Box id="imgAlt">
-                <TextField
-                  defaultValue={splitVal ?? ""}
-                  onChange={(e) => inputChange(e.target.value)}
-                  placeholder="Alt"
-                />
-              </Box>
             </Box>
             <input
               type="file"

@@ -119,7 +119,6 @@ const FiltersTab = ({
       style={{
         minWidth: 200,
         maxHeight: 300,
-        minHeight: 140,
         overflowY: "auto",
         padding: "0px 14px",
         position: "relative",
@@ -181,6 +180,7 @@ const FiltersTab = ({
                 justifyContent: "flex-end",
               }}>
               <Switch
+                id={`${column?.attributes?.[`label_${i18n.language}`] || column.label}`}
                 size="small"
                 checked={views?.attributes?.quick_filters?.find(
                   (filtered) => filtered?.id === column.id
@@ -229,6 +229,7 @@ const FiltersTab = ({
                 justifyContent: "flex-end",
               }}>
               <Switch
+                id={`${column?.attributes?.[`label_${i18n.language}`] || column.label}`}
                 size="small"
                 checked={false}
                 onChange={(e, val) => {

@@ -21,6 +21,7 @@ const options = [
 ];
 
 function AggridFooter({
+  view,
   count,
   limit = 10,
   selectedRows = [],
@@ -28,6 +29,8 @@ function AggridFooter({
   setOffset = () => {},
   setLimit = () => {},
   setLoading = () => {},
+  createChild = () => {},
+  updateTreeData = () => {},
 }) {
   const {tableSlug, appId} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -39,7 +42,7 @@ function AggridFooter({
       .deleteMultiple(tableSlug, {
         ids: selectedRows.map((i) => i.guid),
       })
-      .then(() => refetch());
+      .then(() => (view?.attributes?.treeData ? updateTreeData() : refetch()));
   };
 
   const navigateCreatePage = () => {
@@ -77,6 +80,12 @@ function AggridFooter({
                 Delete all selected
               </Button>
             </RectangleIconButton>
+          )}
+
+          {Boolean(selectedRows?.length === 1) && (
+            <Button variant="outlined" onClick={createChild}>
+              Add Child
+            </Button>
           )}
           <PermissionWrapperV2 tableSlug={tableSlug} type="write">
             <Button

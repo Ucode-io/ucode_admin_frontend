@@ -30,7 +30,7 @@ function HFQrForTableView({
   };
 
   return (
-    <Box>
+    <Box id={"qr_box"}>
       <Controller
         control={control}
         name={name}
@@ -41,6 +41,7 @@ function HFQrForTableView({
         render={({field: {onChange, value}, fieldState: {error}}) => (
           <Box>
             <QRCode
+              id="qr_code"
               ref={qrRef}
               onClick={handClick}
               style={{

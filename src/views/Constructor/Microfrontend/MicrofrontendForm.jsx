@@ -139,6 +139,7 @@ const MicrofrontendForm = () => {
       .getById(microfrontendId)
       .then((res) => {
         mainForm.reset(res);
+        mainForm.setValue("resource_id", res?.resource);
       })
       .finally(() => setLoader(false));
   };
@@ -160,6 +161,8 @@ const MicrofrontendForm = () => {
           ...data,
           github_token: selectedResource?.token,
           username: selectedResource?.username,
+          type:
+            selectedResource?.type === "GITHUB" ? "MICRO_FRONTEND" : undefined,
         });
     }
   };

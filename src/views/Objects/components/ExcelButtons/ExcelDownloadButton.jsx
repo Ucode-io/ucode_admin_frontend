@@ -55,7 +55,7 @@ const ExcelDownloadButton = ({
   };
 
   return (
-    <div className={style.excelUpload} onClick={onClick}>
+    <div id="excel_download" className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>
         {withText ? "Экспорт" : null}
         <Download />

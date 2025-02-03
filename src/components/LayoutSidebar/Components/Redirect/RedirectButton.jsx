@@ -63,7 +63,7 @@ const RedirectButton = ({level = 1, menuStyle, menuItem}) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className="nav-element"
+          className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>

@@ -51,53 +51,56 @@ const HFMultipleSelect = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
-        <FormControl style={{width}}>
-          <InputLabel size="small">{label}</InputLabel>
-          <Select
-            labelId={`multiselect-${id}-label`}
-            id={`multiselect-${id}`}
-            multiple
-            displayEmpty
-            value={Array.isArray(value) ? value : []}
-            onChange={(e) => {
-              onChange(e.target.value);
-            }}
-            input={
-              <OutlinedInput
-                error={error}
-                size="small"
-                id={`multiselect-${id}`}
-              />
-            }
-            renderValue={(selected) => {
-              if (!selected?.length) {
-                return (
-                  <span className={styles.placeholder}>{placeholder}</span>
-                );
+        console.log("errorerror", error),
+        (
+          <FormControl style={{width}}>
+            <InputLabel size="small">{label}</InputLabel>
+            <Select
+              labelId={`multiselect${id}`}
+              id={`multiselect${id}`}
+              multiple
+              displayEmpty
+              value={Array.isArray(value) ? value : []}
+              onChange={(e) => {
+                onChange(e.target.value);
+              }}
+              input={
+                <OutlinedInput
+                  error={error}
+                  size="small"
+                  id={`multiselect-${id}`}
+                />
               }
+              renderValue={(selected) => {
+                if (!selected?.length) {
+                  return (
+                    <span className={styles.placeholder}>{placeholder}</span>
+                  );
+                }
 
-              return (
-                <Box sx={{display: "flex", flexWrap: "wrap", gap: 0.5}}>
-                  {selected?.map((value) => (
-                    <div key={value} className={styles.tag}>
-                      {optionsMap[value]?.label ?? value}
-                    </div>
-                  ))}
-                </Box>
-              );
-            }}
-            MenuProps={MenuProps}>
-            {options.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
+                return (
+                  <Box sx={{display: "flex", flexWrap: "wrap", gap: 0.5}}>
+                    {selected?.map((value) => (
+                      <div key={value} className={styles.tag}>
+                        {optionsMap[value]?.label ?? value}
+                      </div>
+                    ))}
+                  </Box>
+                );
+              }}
+              MenuProps={MenuProps}>
+              {options.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
 
-          {error?.message && (
-            <FormHelperText error>{error?.message}</FormHelperText>
-          )}
-        </FormControl>
+            {error?.message && (
+              <FormHelperText error>{error?.message}</FormHelperText>
+            )}
+          </FormControl>
+        )
       )}></Controller>
   );
 };

@@ -131,7 +131,7 @@ const HFLinkField = ({
               ),
             }}
             helperText={!disabledHelperText && error?.message}
-            className={isFormEdit ? "customLinkField" : ""}
+            className={"customLinkField"}
             {...props}
           />
         );

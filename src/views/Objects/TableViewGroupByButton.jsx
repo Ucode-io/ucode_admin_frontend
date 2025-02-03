@@ -128,6 +128,7 @@ export default function TableViewGroupByButton({currentView, fieldsMap}) {
   return (
     <div>
       <Button
+        id="group"
         variant={`${isGroupBy ? "outlined" : "text"}`}
         style={{
           gap: "5px",

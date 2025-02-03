@@ -28,6 +28,7 @@ const HFSelect = ({
   optionType,
   defaultValue = "",
   rules = {},
+  id,
   isClearable = true,
   ...props
 }) => {
@@ -37,6 +38,8 @@ const HFSelect = ({
     setSelectedValue("");
     onChange("");
   };
+
+  const idSet = id ? `select_${id}` : `select_${name}`;
 
   return (
     <Controller
@@ -63,7 +66,7 @@ const HFSelect = ({
               error={error}
               inputProps={{placeholder}}
               fullWidth
-              id={`select_${name}`}
+              id={idSet}
               just
               following
               attributes
@@ -111,6 +114,7 @@ const HFSelect = ({
                   ])
                 : options?.map((option) => (
                     <MenuItem
+                      id={`field_option_${option?.value}`}
                       onClick={(e) => getOnchangeField(option)}
                       key={option?.value}
                       value={option?.value}>

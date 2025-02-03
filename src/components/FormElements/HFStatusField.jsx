@@ -16,6 +16,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
               sx={{
                 height: "41px",
                 border: "none",
+                backgroundColor: "inherit",
                 "& .MuiSelect-select": {
                   display: "flex",
                   alignItems: "center",

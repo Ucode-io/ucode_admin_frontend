@@ -117,6 +117,7 @@ const Fields = ({mainForm, getRelationFields}) => {
         checkPermission={false}
         disablePagination
         dataLength={1}
+        setSelectedField={setSelectedField}
         tableSlug={"app"}
         setSelectedField={setSelectedField}
         onDeleteClick={deleteField}

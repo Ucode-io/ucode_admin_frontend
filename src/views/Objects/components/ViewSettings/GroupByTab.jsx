@@ -1,13 +1,13 @@
 import LinkIcon from "@mui/icons-material/Link";
-import { Switch } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
+import {Switch} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
 import styles from "./style.module.scss";
 
-const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
+const GroupByTab = ({initialColumns, form, updateView, isMenu}) => {
   const {
     fields: columns,
     move,
@@ -122,13 +122,11 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
         maxHeight: 300,
         overflowY: "auto",
         padding: "10px 14px",
-      }}
-    >
+      }}>
       <div className={styles.table} style={{}}>
         <Container
           onDrop={onDrop}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        >
+          dropPlaceholder={{className: "drag-row-drop-preview"}}>
           {groupColumn?.map((column, index) =>
             (!form.watch(`attributes.group_by_columns.${index}.is_checked`) &&
               isWhatChecked?.length === 2) ||
@@ -145,8 +143,7 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
                       borderBottom: "1px solid #eee",
                       paddingLeft: 0,
                       paddingRight: 0,
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         width: 20,
@@ -155,8 +152,7 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}
-                    >
+                      }}>
                       {columnIcons(column.type) ?? <LinkIcon />}
                     </div>
                     {column.label}
@@ -171,8 +167,7 @@ const GroupByTab = ({ initialColumns, form, updateView, isMenu }) => {
                       paddingRight: 0,
                       display: "flex",
                       justifyContent: "flex-end",
-                    }}
-                  >
+                    }}>
                     <Switch
                       disabled={
                         (!form.watch(

@@ -61,10 +61,9 @@ const FieldSettings = ({
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
-
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-  const {i18n} = useTranslation();
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
@@ -208,6 +207,7 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
+    console.log("valueeeeeeeee", values);
     const data = {
       ...values,
       attributes: {
@@ -215,7 +215,7 @@ const FieldSettings = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-
+    console.log("datadatadatadatadata", data);
     if (formType === "CREATE") createField(data);
     else updateField(data);
   };
@@ -582,6 +582,7 @@ const FieldSettings = ({
                       label="Hide Field From"
                       classname={styles.custom_label}>
                       <HFSelect
+                        id="hide_fields"
                         disabledHelperText
                         name="attributes.hide_path_field"
                         control={control}
@@ -594,6 +595,7 @@ const FieldSettings = ({
 
                     {selectedField?.type === "MULTISELECT" ? (
                       <HFMultipleSelect
+                        id="hide_multi_field"
                         options={computedMultiSelectOptions}
                         disabledHelperText
                         name="attributes.hide_path"
@@ -604,6 +606,7 @@ const FieldSettings = ({
                     ) : selectedField?.type === "LOOKUP" ? (
                       <HFRelationFieldSetting
                         disabledHelperText
+                        id="hide_relation_field"
                         name="attributes.hide_path"
                         control={control}
                         placeholder="Type"
@@ -614,6 +617,7 @@ const FieldSettings = ({
                       <>
                         <FRow label="Hide Value">
                           <HFNumberField
+                            id="hide_path_field"
                             type={"number"}
                             disabledHelperText
                             name="attributes.hide_path"
@@ -624,6 +628,7 @@ const FieldSettings = ({
                         </FRow>
                         <FRow label="Number range">
                           <HFSelect
+                            id="hide_type_field"
                             options={numberTypeOptions}
                             disabledHelperText
                             name="attributes.type"
@@ -635,6 +640,7 @@ const FieldSettings = ({
                       </>
                     ) : (
                       <HFTextField
+                        id="hide_field_path"
                         disabledHelperText
                         name="attributes.hide_path"
                         control={control}
@@ -650,6 +656,7 @@ const FieldSettings = ({
 
           <div className={styles.settingsFooter}>
             <PrimaryButton
+              id="field_save"
               size="large"
               className={styles.button}
               style={{width: "100%"}}

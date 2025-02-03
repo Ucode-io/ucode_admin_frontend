@@ -16,7 +16,7 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const styles = {
-    color: "#a8a8a8",
+    color: "#475467",
     borderRadius: "8px",
     margin: "5px 0",
   };
@@ -24,7 +24,7 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
   return (
     <Box
       sx={{
-        backgroundColor: "rgb(255, 255, 255)",
+        backgroundColor: "#f2f4f7",
         color: "rgb(168, 168, 168)",
         paddingLeft: "10px",
         paddingRight: "10px",

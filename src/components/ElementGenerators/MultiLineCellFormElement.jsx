@@ -102,6 +102,7 @@ export default function MultiLineCellFormElement({
             horizontal: "left",
           }}>
           <HFTextEditor
+            id="multi-line"
             control={control}
             updateObject={updateObject}
             isNewTableView={isNewTableView}

@@ -562,6 +562,7 @@ export const newFieldTypes = [
     label: "Person",
     value: "PERSON",
     icon: "link-simple.svg",
+    table_slug: "person"
   },
   {
     label: "File",
@@ -573,16 +574,6 @@ export const newFieldTypes = [
     value: "MAP",
     icon: "map-pin.svg",
   },
-  // {
-  //   label: "Primary key",
-  //   value: "PRIMARY_KEY",
-  //   icon: "map-pin.svg",
-  // },
-  // {
-  //   label: "Code",
-  //   value: "CODE",
-  //   icon: "map-pin.svg",
-  // },
   {
     label: "Phone",
     value: "INTERNATION_PHONE",
@@ -739,18 +730,18 @@ export const math = [
     label: "plus",
     value: "+",
   },
-  {
-    label: "minus",
-    value: "-",
-  },
+  // {
+  //   label: "minus",
+  //   value: "-",
+  // },
   {
     label: "multiplication",
     value: "*",
   },
-  {
-    label: "division",
-    value: "/",
-  },
+  // {
+  //   label: "division",
+  //   value: "/",
+  // },
 ];
 
 export const relationFieldButtons = [

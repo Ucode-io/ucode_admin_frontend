@@ -2,7 +2,7 @@ import {Button, Menu, Typography} from "@mui/material";
 import React from "react";
 import style from "./field.module.scss";
 import {newFieldTypes} from "../../utils/constants/fieldTypes";
-import {columnIcons} from "../../utils/constants/columnIcons";
+import {getColumnIcon} from "@/views/table-redesign/icons";
 
 export default function FieldOptionModal({
   anchorEl,
@@ -94,7 +94,7 @@ export default function FieldOptionModal({
             onClick={(e) => {
               handleChange(e, field?.value);
             }}>
-            {field?.value && columnIcons(field?.value)}
+            {field?.value && getColumnIcon({column: {type: field?.value, table_slug: field?.table_slug}})}
             <p>{field?.label}</p>
           </Button>
         ))}

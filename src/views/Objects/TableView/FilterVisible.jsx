@@ -80,6 +80,7 @@ export default function FilterVisible({
     <div>
       <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
         <Box
+          id="add_filter_btn"
           variant={"text"}
           className={styles.add_filter}
           sx={customStyles}

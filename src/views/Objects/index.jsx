@@ -25,6 +25,8 @@ import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
 
+import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
+
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
@@ -89,6 +91,7 @@ const ObjectsPage = () => {
       visibleRelationColumns: [],
     },
     isLoading,
+    refetch
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
@@ -143,6 +146,11 @@ const ObjectsPage = () => {
 
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
+
+  const storageItem = localStorage.getItem('newUi');
+  const newUi = JSON.parse((!storageItem || storageItem === 'undefined') ? "false" : "true");
+  const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -210,7 +218,7 @@ const ObjectsPage = () => {
                   </>
                 ) : (
                   <>
-                    <ViewsWithGroups
+                    <ViewsComponent
                       visibleColumns={visibleColumns}
                       visibleRelationColumns={visibleRelationColumns}
                       selectedTabIndex={selectedTabIndex}
@@ -219,6 +227,7 @@ const ObjectsPage = () => {
                       view={view}
                       fieldsMap={fieldsMap}
                       menuItem={menuItem}
+                      refetchViews={refetch}
                     />
                   </>
                 )}

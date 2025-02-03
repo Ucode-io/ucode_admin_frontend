@@ -655,11 +655,17 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
               p={8} borderRadius={8} bg={isOpen ? "#EAECF0" : "#fff"} _hover={{bg: "#EAECF0"}} cursor="pointer"
               onClick={() => !isOpen ? onOpen() : null}>
           <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
-            <Flex w={20} h={20} borderRadius={4} bg='#06AED4' color='#fff' alignItems='center'
-                  justifyContent='center'
-                  fontSize={14} fontWeight={500}>
-              {projectInfo?.title?.[0]?.toUpperCase()}
-            </Flex>
+            {Boolean(projectInfo?.logo) &&
+              <img src={projectInfo?.logo} alt="" width={20} height={20}/>
+            }
+
+            {!projectInfo?.logo &&
+              <Flex w={20} h={20} borderRadius={4} bg='#06AED4' color='#fff' alignItems='center'
+                    justifyContent='center'
+                    fontSize={14} fontWeight={500}>
+                {projectInfo?.title?.[0]?.toUpperCase()}
+              </Flex>
+            }
           </Flex>
 
           <Box pl={36} whiteSpace='nowrap' color='#344054' fontSize={15} fontWeight={500} overflow='hidden'

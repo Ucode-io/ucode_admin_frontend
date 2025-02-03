@@ -16,7 +16,7 @@ import {languagesActions} from "../../store/globalLanguages/globalLanguages.slic
 import {useTranslation} from "react-i18next";
 import {showAlert} from "@/store/alert/alert.thunk";
 
-const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
+const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -91,7 +91,6 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
     );
   }, [company.companies, company.environments]);
 
-
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
       title: lang?.name,
@@ -148,7 +147,6 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
     dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
   };
 
-
   return (
     <div>
       <UserAvatar
@@ -179,7 +177,7 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
             />
           )}
 
-          <ProfileItem text={"Logout"} onClick={logoutClickHandler}/>
+          <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
 
           <ProfileItem
             children={
@@ -215,8 +213,6 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl,}) => {
               </MenuItem>
             ))}
           </Menu>
-
-
         </div>
       </Menu>
     </div>

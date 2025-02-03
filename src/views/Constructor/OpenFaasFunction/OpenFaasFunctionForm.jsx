@@ -69,7 +69,7 @@ export default function OpenFaasFunctionForm() {
       type: "FUNCTION",
     },
   });
-  console.log("mainFormmainForm", mainForm.getValues());
+
   const knativeForm = useForm({});
 
   const resourceId = mainForm.watch("resource_id");
@@ -77,7 +77,7 @@ export default function OpenFaasFunctionForm() {
 
   const {data: resources} = useResourceListQueryV2({
     params: {
-      type: "GITHUB",
+      type: "GIT",
     },
     queryParams: {
       select: (res) => res?.resources,

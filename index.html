@@ -26,61 +26,35 @@
         type: "standard",
         launcherTitle: "Chat with us",
       };
+
       (function (d, t) {
         var BASE_URL = "https://app.chatwoot.com";
         var g = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
+
         g.src = BASE_URL + "/packs/js/sdk.js";
         g.defer = true;
         g.async = true;
-        s.parentNode.insertBefore(g, s);
+
+        g.onerror = function () {
+          console.error("Chatwoot SDK failed to load. Check network settings.");
+        };
+
+        if (s.parentNode) {
+          s.parentNode.insertBefore(g, s);
+        }
+
         g.onload = function () {
-          window.chatwootSDK.run({
-            websiteToken: "CvxBn1SLNhnmWa5mgV4nm9dB",
-            baseUrl: BASE_URL,
-          });
+          if (window.chatwootSDK) {
+            window.chatwootSDK.run({
+              websiteToken: "CvxBn1SLNhnmWa5mgV4nm9dB",
+              baseUrl: BASE_URL,
+            });
+          } else {
+            console.error("Chatwoot SDK did not initialize.");
+          }
         };
       })(document, "script");
     </script>
-    <!-- <script type="text/javascript">
-      (function (m, e, t, r, i, k, a) {
-        m[i] =
-          m[i] ||
-          function () {
-            (m[i].a = m[i].a || []).push(arguments);
-          };
-        m[i].l = 1 * new Date();
-        for (var j = 0; j < document.scripts.length; j++) {
-          if (document.scripts[j].src === r) {
-            return;
-          }
-        }
-        (k = e.createElement(t)),
-          (a = e.getElementsByTagName(t)[0]),
-          (k.async = 1),
-          (k.src = r),
-          a.parentNode.insertBefore(k, a);
-      })(
-        window,
-        document,
-        "script",
-        "https://mc.yandex.ru/metrika/tag.js",
-        "ym"
-      );
-
-      ym(98856853, "init", {
-        clickmap: true,
-        trackLinks: true,
-        accurateTrackBounce: true,
-        webvisor: true,
-      });
-    </script>
-    <noscript
-      ><div>
-        <img
-          src="https://mc.yandex.ru/watch/98856853"
-          style="position: absolute; left: -9999px"
-          alt="" /></div
-    ></noscript> -->
   </body>
 </html>

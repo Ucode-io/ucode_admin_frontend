@@ -68,6 +68,7 @@ const GithubMicrofrontendForm = () => {
   });
 
   const {mutate: login, isLoading} = useGithubLoginMutation({
+    enabled: false,
     onSuccess: (res) => {
       setSearchParams({access_token: res.access_token});
     },

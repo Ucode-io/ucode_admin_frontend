@@ -34,6 +34,7 @@ const Form = ({
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const [searchParams] = useSearchParams();
   const token = searchParams.get("access_token");
+
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
       value: item.environment_id ?? item.id,
@@ -98,7 +99,6 @@ const Form = ({
       githubService
         .gitlabUsername(params)
         .then((res) => {
-          console.log("resssssss", res);
           if (!res?.username) {
             dispatch(showAlert("No username found", "error"));
             setValue("integration_resource.username", res?.username);
@@ -116,7 +116,7 @@ const Form = ({
       setValue("token", token);
     }
   }, [token]);
-  console.log("resurceType", resurceType);
+
   return (
     <Box
       flex={1}
@@ -132,7 +132,6 @@ const Form = ({
         <Stack spacing={4}>
           <Box
             sx={{
-              // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
             }}>
@@ -326,7 +325,7 @@ const Form = ({
               </>
             )}
 
-            {resurceType === 5 || resurceType === 8 || type === "GITHUB" ? (
+            {resurceType === 5 || type === "GITHUB" ? (
               <>
                 <Box
                   sx={{
@@ -334,7 +333,7 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Gihub username
+                  Gihub usernamesss
                 </Box>
                 <HFTextField
                   control={control}
@@ -358,6 +357,47 @@ const Form = ({
                   control={control}
                   required
                   disabled={Boolean(token)}
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
+                  }}
+                />
+              </>
+            ) : null}
+
+            {resurceType === 8 ? (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Gitlab username
+                </Box>
+                <HFTextField
+                  control={control}
+                  // required
+                  name="integration_resource.username"
+                  fullWidth
+                  disabled
+                  inputProps={{
+                    placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  Token
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
                   name="token"
                   fullWidth
                   inputProps={{

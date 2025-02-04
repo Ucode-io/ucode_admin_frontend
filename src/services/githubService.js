@@ -4,12 +4,16 @@ import axios from "axios";
 import requestV2 from "../utils/requestV2";
 
 const githubService = {
-  login: (params) => httpsRequest.get("/github/login", {params}),
-  loginGitlab: (params) => httpsRequest.get("/gitlab/login", {params}),
-  githubUsername: (params) => httpsRequest.get("/github/user", {params}),
-  gitlabUsername: (params) => httpsRequest.get("/gitlab/user", {params}),
-  githubRepositories: (params) => httpsRequest.get("/github/repos", {params}),
-  githubBranches: (params) => httpsRequest.get("/github/branches", {params}),
+  login: (params) => httpsRequest.get("/v1/github/login", {params}),
+  loginGitlab: (params) => httpsRequest.get("/v1/gitlab/login", {params}),
+  githubUsername: (params) => httpsRequest.get("/v1/github/user", {params}),
+  gitlabUsername: (params) => httpsRequest.get("/v1/gitlab/user", {params}),
+  githubRepositories: (params) =>
+    httpsRequest.get("/v1/github/repos", {params}),
+  githubBranches: (params) => httpsRequest.get("/v1/github/branches", {params}),
+  gitlabRepositories: (params) =>
+    httpsRequest.get("/v1/gitlab/repos", {params}),
+  gitlabBranches: (params) => httpsRequest.get("/v1/gitlab/branches", {params}),
   getUser: ({token}) =>
     axios.get("https://api.github.com/user", {
       headers: {Authorization: `Bearer ${token}`},
@@ -60,6 +64,21 @@ export const useGithubRepositoriesQuery = ({
   );
 };
 
+export const useGitlabRepositoriesQuery = ({
+  username,
+  token,
+  resource_id,
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["GITLAB_REPOSITORIES", {username, token, resource_id}],
+    () => {
+      return githubService.gitlabRepositories({username, token, resource_id});
+    },
+    queryParams
+  );
+};
+
 export const useGithubBranchesQuery = ({
   username,
   repo,
@@ -70,6 +89,27 @@ export const useGithubBranchesQuery = ({
     ["GITHUB_BRANCHES", {username, repo, token}],
     () => {
       return githubService.githubBranches({username, repo, token});
+    },
+    queryParams
+  );
+};
+
+export const useGitlabBranchesQuery = ({
+  username,
+  repo_id,
+  token,
+  resource_id,
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["GITLAB_BRANCHES", {username, repo_id, token, resource_id}],
+    () => {
+      return githubService.gitlabBranches({
+        username,
+        repo_id,
+        token,
+        resource_id,
+      });
     },
     queryParams
   );

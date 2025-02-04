@@ -191,7 +191,11 @@ export default function NewFileUpload({
             onChange={inputChangeHandler}
             disabled={disabled}
           />
-          <img src="/img/file-docs.svg" alt="Upload" style={{width: 24, height: 24}}/>
+          <img
+            src="/img/file-docs.svg"
+            alt="Upload"
+            style={{width: 24, height: 24}}
+          />
         </Button>
       )}
     </div>

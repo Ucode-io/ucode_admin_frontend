@@ -84,6 +84,12 @@ export const resources = [
     value: "GITHUB",
     icon: SiPostgresql,
   },
+
+  {
+    label: "Gitlab",
+    value: "GITLAB",
+    icon: SiPostgresql,
+  },
 ];
 
 export const serviceTypes = [

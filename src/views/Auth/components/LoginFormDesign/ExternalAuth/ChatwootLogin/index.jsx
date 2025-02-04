@@ -22,7 +22,10 @@ function ChatwootLogin() {
         return;
       }
 
+      if (originalButton.querySelector(".custom-chatwoot-close")) return;
+
       const closeButton = document.createElement("button");
+      closeButton.classList.add("custom-chatwoot-close");
       closeButton.style.position = "absolute";
       closeButton.style.top = "20px";
       closeButton.style.right = "20px";
@@ -44,22 +47,17 @@ function ChatwootLogin() {
       setOriginalButtonFunction(() => handleOriginalButtonClick);
     };
 
-    // Observe DOM changes to wait for Chatwoot to initialize
-    observer = new MutationObserver(() => {
+    const waitForChatwoot = setTimeout(() => {
       const originalButton = document.querySelector(".woot-elements--left");
       if (originalButton) {
         initializeCloseButton();
-        observer.disconnect(); // Stop observing once the button is found
+      } else {
+        console.warn("Chatwoot button not found, retrying...");
       }
-    });
-
-    // Start observing the body for Chatwoot widget initialization
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    }, 3000);
 
     return () => {
+      clearTimeout(waitForChatwoot);
       if (observer) observer.disconnect();
       const originalButton = document.querySelector(".woot-elements--left");
       if (originalButton) {
@@ -87,9 +85,7 @@ function ChatwootLogin() {
         <p style={{fontSize: "14px", color: "#344054"}}>Support</p>
         <div style={{display: "flex", alignItems: "center", gap: "15px"}}>
           <a
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            onClick={(e) => e.stopPropagation()}
             href="tel:+998998650109"
             style={{fontSize: "14px", color: "#344054"}}>
             +998 99-865-01-09

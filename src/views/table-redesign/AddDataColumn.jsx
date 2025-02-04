@@ -112,7 +112,7 @@ const AddDataColumn = React.memo(
                 )?.isStiky ||
                 view?.attributes?.fixedColumns?.[column?.id]
                   ? "#F6F6F6"
-                  : "#fff"
+                  : ((column.attributes?.disabled || !column.attributes?.field_permission?.edit_permission) ? "#f8f8f8" : "#fff")
               }`,
               zIndex: `${
                 tableSettings?.[pageName]?.find(
@@ -138,6 +138,21 @@ const AddDataColumn = React.memo(
               index={index}
               watch={mainForm.watch}
             />
+
+            {(column.attributes?.disabled || !column.attributes?.field_permission?.edit_permission) &&
+              <div style={{
+                position: "absolute",
+                top: '50%',
+                transform: "translateY(-50%)",
+                right: 4,
+                backgroundColor: "inherit",
+                padding: 4,
+                borderRadius: 6,
+                zIndex: 1
+              }}>
+                <img src="/table-icons/lock.svg" alt="lock"/>
+              </div>
+            }
           </CTableCell>
         ))}
         <CTableCell
@@ -155,10 +170,10 @@ const AddDataColumn = React.memo(
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff"
           }}>
-          <Box className='group' position="relative" h='32px'>
-            <Image src="/table-icons/save-delete.svg" alt="More" w='32px' h='32px' _groupHover={{display: "none"}} />
+          <Box className='group' position="relative" h='32px' w='32px'>
+            <Image ml='3px' src="/table-icons/save-delete.svg" alt="More" w='32px' h='32px' _groupHover={{display: "none"}} />
 
-            <Flex columnGap='3px' display="none" _groupHover={{ display: "flex" }} position='absolute' top={0} right='3px' bg='#fff' borderRadius={4}>
+            <Flex columnGap='3px' display="none" _groupHover={{ display: "flex" }} position='absolute' top={0} right='-3px' bg='#fff' borderRadius={4}>
               <RectangleIconButton
                 id="cancel-row"
                 color="error"

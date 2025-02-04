@@ -514,7 +514,7 @@ export const NewUiViewsWithGroups = ({
           <FiltersList view={view} fieldsMap={fieldsMap} visibleColumns={visibleColumns} refetchViews={refetchViews}/>
         }
 
-        <Tabs direction={"ltr"} defaultIndex={0} style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
+        <Tabs direction={"ltr"} defaultIndex={0}>
           {tabs?.length > 0 && (
             <div className={style.tableCardHeader}>
               <div style={{display: "flex", alignItems: "center"}}>
@@ -564,7 +564,7 @@ export const NewUiViewsWithGroups = ({
               )}
               {!groupTable?.length &&
                 tabs?.map((tab) => (
-                  <TabPanel key={tab.value} style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
+                  <TabPanel key={tab.value}>
                     {view.type === "TREE" ? (
                       <TreeView
                         tableSlug={tableSlug}

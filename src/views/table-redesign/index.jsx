@@ -46,7 +46,7 @@ import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "./table-row";
 import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
-import {Select} from "chakra-react-select";
+import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss"
 
@@ -126,6 +126,12 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+  const [limitOptions, setLimitOptions] = useState([
+    {value: 10, label: "10 rows"},
+    {value: 20, label: "20 rows"},
+    {value: 30, label: "30 rows"},
+    {value: 40, label: "40 rows"}
+  ]);
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -231,11 +237,26 @@ export const DynamicTable = ({
 
   const renderColumns = (columns ?? []).filter((column) => Boolean(column?.attributes?.field_permission?.view_permission));
 
+  const onCreateLimitOption = (value) => {
+    value = value.trim();
+    if (value.match(/\D/g) !== null) {
+      return;
+    }
+    setLimitOptions([...limitOptions, {value: Number(value), label: `${value} rows`}]);
+    setLimit(Number(value));
+  }
+
   return (
-    <div className='CTableContainer' style={{display: "flex", flexDirection: "column", flexGrow: 1}}>
-      <div className='table' style={{border: "none", borderRadius: 0, flexGrow: 1, backgroundColor: "#fff"}}>
+    <div className='CTableContainer'>
+      <div className='table' style={{
+        border: "none",
+        borderRadius: 0,
+        flexGrow: 1,
+        backgroundColor: "#fff",
+        height: "calc(100vh - 140px)"
+      }}>
         <table id="resizeMe">
-          <thead style={{borderBottom: "1px solid #EAECF0"}}>
+          <thead style={{borderBottom: "1px solid #EAECF0", position: "sticky", top: 0, zIndex: 10}}>
           <tr>
             <IndexTh items={isRelationTable ? fields : data} selectedItems={selectedObjectsForDelete}
                      formVisible={formVisible}
@@ -370,20 +391,22 @@ export const DynamicTable = ({
         </table>
       </div>
 
-      <Flex p='16px' borderTop='1px solid #EAECF0' justifyContent='space-between' bg="#fff">
+      <Flex px='16px' py='6px' borderTop='1px solid #EAECF0' justifyContent='space-between' bg="#fff">
         <Flex columnGap='16px' alignItems='center' fontSize={14} fontWeight={600} color="#344054">
           Show
           <ChakraProvider>
-            <Select
+            <CreatableSelect
+              chakraStyles={{
+                container: (provided) => ({
+                  ...provided,
+                  width: "150px"
+                }),
+              }}
               value={{value: limit, label: `${limit} rows`}}
-              options={[
-                {value: 10, label: "10 rows"},
-                {value: 20, label: "20 rows"},
-                {value: 30, label: "30 rows"},
-                {value: 40, label: "40 rows"}
-              ]}
+              options={limitOptions}
               menuPlacement='top'
               onChange={({value}) => setLimit(value)}
+              onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
           out of {dataCount}
@@ -1031,7 +1054,8 @@ const Th = ({
                             variant='ghost' colorScheme='gray' ml='auto' onClick={handleClick}/>
               </PopoverTrigger>
               <Portal>
-                <PopoverContent w='200px' bg="#fff" py='4px'>
+                <PopoverContent w='200px' bg="#fff" py='4px' borderRadius={6}
+                                boxShadow='0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)'>
                   {menu.map((item, index) => (
                     <Flex flexDirection='column'>
                       {item.children.filter(child => !(child.id === 19 && column?.type !== "MULTI_LINE"))
@@ -1046,7 +1070,7 @@ const Th = ({
                             fontWeight={500}
                             p='5px'
                             borderRadius='6px'
-                            _hover={{ bg: "#919eab14" }}
+                            _hover={{bg: "#919eab14"}}
                             onClick={(e) => child.onClickAction(e)}>
                             <Flex justifyContent='center' alignItems='center'>
                               {child.icon}
@@ -1057,7 +1081,7 @@ const Th = ({
                             </Flex>
                           </Flex>
                         )}
-                      {index !== menu.length - 1 && <Box as='hr' mb='4px' />}
+                      {index !== menu.length - 1 && <Box as='hr' my='4px'/>}
                     </Flex>
                   ))}
                 </PopoverContent>

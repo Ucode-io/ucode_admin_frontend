@@ -29,12 +29,22 @@ import {useSearchParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
-import {Box, Button, Flex, Popover, PopoverContent, PopoverTrigger, useDisclosure} from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Flex,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  useDisclosure
+} from "@chakra-ui/react";
 import {SidebarActionTooltip, SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
-import {ChevronLeftIcon} from "@chakra-ui/icons";
+import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
@@ -368,7 +378,8 @@ const LayoutSidebar = ({appId}) => {
                       <InlineSVG src="/img/plus-icon.svg" color="#475467"/>
                     </Flex>
 
-                    <Box whiteSpace='nowrap' color={(menuStyle?.text === "#A8A8A8" ? null : "#475467") ?? "#475467"} pl={48} fontSize={14}>
+                    <Box whiteSpace='nowrap' color={(menuStyle?.text === "#A8A8A8" ? null : "#475467") ?? "#475467"}
+                         pl={48} fontSize={14}>
                       Create
                     </Box>
                   </Flex>
@@ -600,36 +611,16 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
-  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-
-  const userId = useSelector((state) => state.auth?.userId);
-  const companiesQuery = useCompanyListQuery({
-    params: {owner_id: userId}, queryParams: {enabled: Boolean(userId)}
-  });
-  const projectsQuery = useProjectListQuery({
-    params: {company_id: selectedCompanyId},
-    queryParams: {enabled: Boolean(selectedCompanyId)}
-  });
-  const environmentsQuery = useEnvironmentListQuery({
-    params: {project_id: selectedProjectId},
-    queryParams: {enabled: Boolean(selectedProjectId)}
-  });
-
-  const companies = companiesQuery.data?.companies ?? [];
-  const projects = projectsQuery.data?.projects ?? [];
-  const environments = environmentsQuery.data?.environments ?? [];
 
   const handleClose = () => {
     onClose();
-    setSelectedCompanyId(null);
   }
 
   const onSelectEnvironment = (environment) => {
     const params = {
       refresh_token: auth?.refreshToken,
-      env_id: companies.find((company) => company.id === selectedCompanyId).environmentId,
-      project_id: projects.find((project) => project.project_id === selectedProjectId).projectId,
+      env_id: environment.id,
+      project_id: environment.project_id,
       for_env: true,
     }
 
@@ -648,10 +639,11 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
   }
 
   return (
-    <Popover offset={[sidebarIsOpen ? 15 : 95, 5]} isOpen={isOpen} onClose={handleClose}>
+    <Popover offset={[sidebarIsOpen ? 20 : 95, 5]} isOpen={isOpen} onClose={handleClose}>
       <PopoverTrigger>
         <Flex w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
-              p={8} borderRadius={8} bg="#fff" cursor="pointer" onClick={() => !isOpen ? onOpen() : null}>
+              p={5} borderRadius={8} bg="#fff" _hover={{bg: "#EAECF0"}} cursor="pointer"
+              onClick={() => !isOpen ? onOpen() : null}>
           <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
             {Boolean(projectInfo?.logo) &&
               <img src={projectInfo?.logo} alt="" width={20} height={20}/>
@@ -659,139 +651,120 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
 
             {!projectInfo?.logo &&
               <Flex w={20} h={20} borderRadius={4} bg='#06AED4' color='#fff' alignItems='center'
-                    justifyContent='center'
-                    fontSize={14} fontWeight={500}>
+                    justifyContent='center' fontSize={14} fontWeight={500}>
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             }
           </Flex>
 
-          <Box pl={36} whiteSpace='nowrap' color='#344054' fontSize={15} fontWeight={500} overflow='hidden'
+          <Box pl={30} whiteSpace='nowrap' color='#344054' fontSize={13} fontWeight={500} overflow='hidden'
                textOverflow='ellipsis'>
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: 'auto', fontSize: 22,}}/>
+          <KeyboardArrowDownIcon style={{marginLeft: 'auto', fontSize: 20,}}/>
         </Flex>
       </PopoverTrigger>
-      <PopoverContent w='211px' bg='#fff' padding={6} borderRadius={8} border='1px solid #EAECF0' outline='none'
+      <PopoverContent w='240px' bg='#fff' padding={6} borderRadius={8} border='1px solid #EAECF0' outline='none'
                       boxShadow='0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814' zIndex={999}>
-        {!selectedCompanyId &&
-          <Companies companies={companies} onSelectCompany={(company) => setSelectedCompanyId(company.id)}/>
-        }
-        {Boolean(selectedCompanyId) && !selectedProjectId &&
-          <Projects
-            company={companies.find((company) => company.id === selectedCompanyId)}
-            projects={projects}
-            onSelectProject={(project) => setSelectedProjectId(project.project_id)}
-            onBackClick={() => setSelectedCompanyId(null)}
-          />
-        }
-        {Boolean(selectedCompanyId) && Boolean(selectedProjectId) &&
-          <Environments
-            project={projects.find((project) => project.project_id === selectedProjectId)}
-            environments={environments}
-            onBackClick={() => setSelectedProjectId(null)}
-            onSelectEnvironment={onSelectEnvironment}
-          />
-        }
+        <Companies onSelectEnvironment={onSelectEnvironment}/>
       </PopoverContent>
     </Popover>
   )
 }
 
-const Companies = ({companies, onSelectCompany}) => (
-  <Box>
+const Companies = ({onSelectEnvironment}) => {
+  const userId = useSelector((state) => state.auth?.userId);
+  const companiesQuery = useCompanyListQuery({
+    params: {owner_id: userId}, queryParams: {enabled: Boolean(userId)}
+  });
+  const companies = companiesQuery.data?.companies ?? [];
+
+  return (
     <Box>
-      {companies.map((company) =>
-        <Flex key={company.id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
-              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectCompany(company)}>
-          <Flex columnGap={8} alignItems='center'>
-            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
-                  fontSize={18} fontWeight={500} color='#fff'>
-              {company.name?.[0]}
-            </Flex>
-            <Box mr={36}>
+      <Accordion allowToggle>
+        {companies.map((company) =>
+          <AccordionItem key={company.id}>
+            <AccordionButton columnGap={8} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
+                             borderRadius={6} _hover={{bg: "#EAECF0"}}>
+              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
+                    fontSize={18} fontWeight={500} color='#fff'>
+                {company.name?.[0]?.toUpperCase()}
+              </Flex>
               <Box fontSize={12} fontWeight={500} color='#101828'>
                 {company.name}
               </Box>
-            </Box>
-          </Flex>
-          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
-        </Flex>
-      )}
+              <AccordionIcon ml='auto' fontSize='20px'/>
+            </AccordionButton>
+            <Projects company={company} onSelectEnvironment={onSelectEnvironment}/>
+          </AccordionItem>
+        )}
+      </Accordion>
     </Box>
+  )
+};
 
-    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
-            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
-      Create Team
-    </Button>
-  </Box>
-);
+const Projects = ({company, onSelectEnvironment}) => {
+  const projectsQuery = useProjectListQuery({
+    params: {company_id: company?.id},
+    queryParams: {enabled: Boolean(company?.id)}
+  });
+  const projects = projectsQuery.data?.projects ?? [];
 
-const Projects = ({company, projects, onSelectProject, onBackClick}) => (
-  <Box>
-    <Flex columnGap='4px' alignItems='center' color='#475467' fontWeight={600} fontSize={14} onClick={onBackClick}
-          cursor='pointer'>
-      <ChevronLeftIcon fontSize={24}/> {company?.name}
-    </Flex>
-    <Box mt='8px'>
-      {projects.map((project) =>
-        <Flex key={project.project_id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
-              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectProject(project)}>
-          <Flex columnGap={8} alignItems='center'>
-            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
-                  fontSize={18} fontWeight={500} color='#fff'>
-              {project.title?.[0]}
-            </Flex>
-            <Box mr={36}>
+  return (
+    <AccordionPanel pl='12px' mt='4px'>
+      <Accordion allowToggle>
+        {projects.map((project) =>
+          <AccordionItem key={project.project_id}>
+            <AccordionButton columnGap={8} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
+                             borderRadius={6} _hover={{bg: "#EAECF0"}}>
+              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
+                    fontSize={18} fontWeight={500} color='#fff'>
+                {project.title?.[0]?.toUpperCase()}
+              </Flex>
               <Box fontSize={12} fontWeight={500} color='#101828'>
                 {project.title}
               </Box>
-            </Box>
-          </Flex>
-          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
-        </Flex>
-      )}
-    </Box>
+              <AccordionIcon ml='auto' fontSize='20px'/>
+            </AccordionButton>
 
-    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
-            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
-      Create Project
-    </Button>
-  </Box>
-);
+            <Environments project={project} onSelectEnvironment={onSelectEnvironment}/>
+          </AccordionItem>
+        )}
+      </Accordion>
+    </AccordionPanel>
+  )
+};
 
-const Environments = ({project, environments, onBackClick, onSelectEnvironment}) => (
-  <Box>
-    <Flex columnGap='4px' alignItems='center' color='#475467' fontWeight={600} fontSize={14} onClick={onBackClick}
-          cursor='pointer'>
-      <ChevronLeftIcon fontSize={24}/> {project?.title}
-    </Flex>
-    <Box mt='8px'>
-      {environments.map((environment) =>
-        <Flex key={environment.id} p={8} justifyContent='space-between' alignItems='center' cursor="pointer"
-              borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectEnvironment(environment)}>
-          <Flex columnGap={8} alignItems='center'>
-            <Flex w={36} h={36} alignItems='center' justifyContent='center' borderRadius={6} bg='#15B79E'
-                  fontSize={18} fontWeight={500} color='#fff'>
-              {environment.name?.[0]}
-            </Flex>
-            <Box mr={36}>
-              <Box fontSize={12} fontWeight={500} color='#101828'>
-                {environment.name}
+const Environments = ({project, onSelectEnvironment}) => {
+  const environmentsQuery = useEnvironmentListQuery({
+    params: {project_id: project?.project_id},
+    queryParams: {enabled: Boolean(project?.project_id)}
+  });
+  const environments = environmentsQuery.data?.environments ?? [];
+
+  return (
+    <AccordionPanel pl='12px' mt='4px'>
+      <Box>
+        {environments.map((environment) =>
+          <Flex key={environment.id} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
+                borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectEnvironment(environment)}>
+            <Flex columnGap={8} alignItems='center'>
+              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
+                    fontSize={18} fontWeight={500} color='#fff'>
+                {environment.name?.[0]?.toUpperCase()}
+              </Flex>
+              <Box mr={36}>
+                <Box fontSize={12} fontWeight={500} color='#101828'>
+                  {environment.name}
+                </Box>
               </Box>
-            </Box>
+            </Flex>
+            <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
           </Flex>
-          <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
-        </Flex>
-      )}
-    </Box>
-
-    <Button w='100%' mt='8px' borderRadius={8} border='1px solid #D0D5DD' p={8} bg='#fff' color='#344054'
-            fontSize={14} fontWeight={600} boxShadow='0px 1px 2px 0px #1018280D'>
-      Create Environment
-    </Button>
-  </Box>
-);
+        )}
+      </Box>
+    </AccordionPanel>
+  )
+}
 
 export default LayoutSidebar;

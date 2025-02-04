@@ -99,7 +99,7 @@ const HFTextField = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039",
+                    background: isNewTableView ? "inherit" : "#c0c0c039",
                     padding: "0px",
                   }
                 : isNewTableView
@@ -112,7 +112,7 @@ const HFTextField = ({
                     }
                   : {},
 
-              endAdornment: disabled ? (
+              endAdornment: (disabled && !isNewTableView) ? (
                 <Tooltip title={disabled_text}>
                   <InputAdornment position="start">
                     <Lock style={{fontSize: "20px"}} />

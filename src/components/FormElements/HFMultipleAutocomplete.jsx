@@ -102,6 +102,7 @@ const HFMultipleAutocomplete = ({
             disabled={disabled}
             field={field}
             className="hf-select"
+            isNewTableView={isNewTableView}
           />
         );
       }}></Controller>
@@ -127,6 +128,7 @@ const AutoCompleteElement = ({
   disabled,
   field,
   isBlackBg,
+  isNewTableView,
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
@@ -178,12 +180,6 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-  // useEffect(() => {
-  //   if (value) {
-  //     onFormChange(value);
-  //   }
-  // }, []);
-
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
@@ -227,11 +223,13 @@ const AutoCompleteElement = ({
               },
             }}
             InputProps={{
-              // inputProps: { tabIndex },
               ...params.InputProps,
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
+              inputProps: isNewTableView ?
+                { ...params.inputProps, style: computedValue?.length > 0 ? {height: 0} : undefined }
+                : params.inputProps,
               style: disabled
                 ? {
                     background: "inherit",
@@ -279,7 +277,10 @@ const AutoCompleteElement = ({
                     : {}
                 }>
                 {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p className={styles.value}>{el?.label ?? el?.value}</p>
+                <p className={styles.value}
+                   style={isNewTableView ? { maxWidth: "150px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } : undefined}>
+                  {el?.label ?? el?.value}
+                </p>
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"

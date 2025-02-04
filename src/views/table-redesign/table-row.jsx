@@ -198,6 +198,7 @@ const TableRow = ({
             )}
             <td
               style={{
+                width: 50,
                 color: "#262626",
                 fontSize: "13px",
                 fontStyle: "normal",
@@ -364,8 +365,8 @@ const TableRow = ({
               padding: "0 5px",
               position: `${"sticky"}`,
               right: "0",
-              backgroundColor: `${"#fff"}`,
-              zIndex: `${"0"}`,
+              backgroundColor: "#fff",
+              zIndex: 0,
               borderLeft: "1px solid #eee",
             }}>
             <div

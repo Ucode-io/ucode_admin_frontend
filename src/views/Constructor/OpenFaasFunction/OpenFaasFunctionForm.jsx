@@ -76,7 +76,7 @@ export default function OpenFaasFunctionForm() {
   const resourceOptions = useMemo(() => {
     return [
       {value: "ucode_gitlab", label: "Ucode GitLab"},
-      ...listToOptions(resources, "name", "id", "(GitHub)"),
+      ...listToOptions(resources, "name", "id"),
     ];
   }, [resources]);
 
@@ -101,7 +101,7 @@ export default function OpenFaasFunctionForm() {
     resource_id: selectedResource?.id,
     queryParams: {
       enabled: !!selectedResource?.settings?.gitlab?.username,
-      select: (res) => listToOptions(res, "name", "name"),
+      select: (res) => res,
     },
   });
 
@@ -114,14 +114,21 @@ export default function OpenFaasFunctionForm() {
       select: (res) => listToOptions(res, "name", "name"),
     },
   });
-  console.log("selectedResource", selectedResource);
+
+  const gitlabRepoId = repositoriesGitlab?.find(
+    (item) => item?.name === selectedRepo
+  )?.id;
+
   const {data: branchesGitlab} = useGitlabBranchesQuery({
     username: selectedResource?.settings?.gitlab?.username,
-    repo: selectedRepo,
+    repo_id: gitlabRepoId,
     token: selectedResource?.settings?.gitlab?.token,
     resource_id: selectedResource?.id,
     queryParams: {
-      enabled: !!selectedResource?.settings?.gitlab?.username && !!selectedRepo,
+      enabled:
+        !!selectedResource?.settings?.gitlab?.username &&
+        !!selectedRepo &&
+        Boolean(gitlabRepoId),
       select: (res) => listToOptions(res, "name", "name"),
     },
   });
@@ -163,6 +170,7 @@ export default function OpenFaasFunctionForm() {
               ? "knative-fn"
               : ""
         );
+
         knativeForm.setValue("path", res?.path);
         mainForm.reset({...res, resource_id: res.resource});
       },
@@ -284,7 +292,11 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="repo_name"
                         control={mainForm.control}
-                        options={repositories ?? repositoriesGitlab}
+                        options={
+                          repositories?.length
+                            ? listToOptions(repositories, "name", "name")
+                            : listToOptions(repositoriesGitlab, "name", "name")
+                        }
                         required
                         disabled={functionId}
                       />

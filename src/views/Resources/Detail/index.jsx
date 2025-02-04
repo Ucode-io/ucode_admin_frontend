@@ -58,7 +58,7 @@ const ResourceDetail = () => {
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedGitlab, setSelectedGitlab] = useState();
-  console.log("selectedGitlab", selectedGitlab);
+
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -71,12 +71,12 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
-      resource_type: Boolean(
-        searchParams.get("code") || searchParams.get("access_token")
-      )
-        ? searchParams.get("access_token")?.includes("gho")
+      resource_type: Boolean(searchParams.get("code"))
+        ? searchParams.get("code")?.length === 20
           ? 5
-          : 8
+          : searchParams.get("code")
+            ? 8
+            : 0
         : 0,
     },
   });
@@ -249,8 +249,9 @@ const ResourceDetail = () => {
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      gitlabLogin({code});
+    if (Boolean(code)) {
+      if (code?.length <= 20) githubLogin({code});
+      else if (code?.length > 20) gitlabLogin({code});
     }
   }, [searchParams.get("code")]);
 

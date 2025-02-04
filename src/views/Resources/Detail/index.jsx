@@ -71,7 +71,13 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
-      resource_type: searchParams.get("code")?.length === 20 ? 5 : 8,
+      resource_type: Boolean(searchParams.get("code"))
+        ? searchParams.get("code")?.length === 20
+          ? 5
+          : searchParams.get("code")
+            ? 8
+            : 0
+        : 0,
     },
   });
 
@@ -243,9 +249,9 @@ const ResourceDetail = () => {
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      if (code?.length >= 20) githubLogin({code});
-      else if (code?.length < 20) gitlabLogin({code});
+    if (Boolean(code)) {
+      if (code?.length <= 20) githubLogin({code});
+      else if (code?.length > 20) gitlabLogin({code});
     }
   }, [searchParams.get("code")]);
 

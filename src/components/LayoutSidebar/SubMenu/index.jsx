@@ -109,7 +109,7 @@ const SubMenu = ({
         position: "relative"
       }}>
       <div className="body">
-        <div className="header" onClick={() => {}}>
+        <div className="header" onClick={() => {}} style={{ height: 45 }}>
           {subMenuIsOpen && (
             <h2
               style={{

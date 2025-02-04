@@ -155,7 +155,7 @@ const AppSidebar = ({
             dispatch(mainActions.setSidebarHighlightedMenu(null));
           }}
           position="relative"
-          h={36}
+          h={32}
           mx={8}
           mb={4}
           alignItems='center'

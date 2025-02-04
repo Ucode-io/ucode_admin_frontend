@@ -1,4 +1,11 @@
-import {endOfWeek, format, startOfWeek} from "date-fns";
+import {
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 import React, {useMemo} from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
@@ -47,6 +54,24 @@ export default function TimeLineDatesRow({
     return Object.values(result);
   }, [datesList]);
 
+  const computedMonthList = useMemo(() => {
+    const result = {};
+    const referenceDate = datesList.length ? datesList[0] : new Date();
+
+    for (let i = 0; i <= 1; i++) {
+      const monthStart = startOfMonth(addMonths(referenceDate, i));
+      const monthEnd = endOfMonth(monthStart);
+      const month = format(monthStart, "MMMM yyyy");
+
+      result[month] = {
+        month,
+        monthDays: [monthStart.toISOString(), monthEnd.toISOString()],
+      };
+    }
+
+    return Object.values(result);
+  }, [datesList]);
+
   return (
     <div
       className={styles.datesRow}
@@ -65,12 +90,9 @@ export default function TimeLineDatesRow({
         <div
           className={styles.dateBlock}
           style={{
-            display:
-              selectedType === "day" || selectedType === "month"
-                ? "block"
-                : "flex",
+            display: selectedType === "day" ? "block" : "flex",
           }}>
-          {selectedType === "day" || selectedType === "month" ? (
+          {selectedType === "day" ? (
             <>
               <div className={styles.monthBlock}>
                 <span className={styles.monthText}>{month}</span>
@@ -122,6 +144,29 @@ export default function TimeLineDatesRow({
                     <TimeLineDayBlock day={day} zoomPosition={zoomPosition} />
                   ))}
                 </div>
+              </div>
+            ))
+          ) : selectedType === "month" ? (
+            computedMonthList.map(({month, monthDays}) => (
+              <div key={month} className={styles.monthBlock}>
+                {/* <div className={styles.monthBlock}>
+                  <span className={styles.monthText}>{month}</span>
+                </div> */}
+
+                {/* <div
+                  className={styles.daysRow}
+                  style={{
+                    borderRight: "1px solid #eee",
+                  }}>
+                  {days?.map((day) => (
+                    <TimeLineDayBlock
+                      day={day}
+                      focusedDays={focusedDays}
+                      zoomPosition={zoomPosition}
+                      selectedType={selectedType}
+                    />
+                  ))}
+                </div> */}
               </div>
             ))
           ) : (

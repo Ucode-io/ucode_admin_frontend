@@ -201,6 +201,7 @@ export default function OpenFaasFunctionForm() {
           ...data,
           github_token: selectedResource?.token,
           username: selectedResource?.username,
+          repo_id: gitlabRepoId,
         });
     }
   };

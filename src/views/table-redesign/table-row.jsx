@@ -110,7 +110,7 @@ const TableRow = ({
                   ?.view_permission && (
                   <CTableCell
                     key={virtualColumn.id}
-                    className={`overflow-ellipsis ${tableHeight}`}
+                    className="overflow-ellipsis"
                     style={{
                       minWidth: "220px",
                       color: "#262626",
@@ -289,7 +289,7 @@ const TableRow = ({
               virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={virtualColumn.id}
-                  className={`overflow-ellipsis ${tableHeight}`}
+                  className="overflow-ellipsis"
                   style={{
                     minWidth: "220px",
                     color: "#262626",
@@ -444,7 +444,7 @@ const TableRow = ({
           {columns.map((column, index) => (
             <CTableCell
               key={column.id}
-              className={`overflow-ellipsis ${tableHeight}`}
+              className="overflow-ellipsis"
               style={{
                 minWidth: "220px",
                 color: "#262626",

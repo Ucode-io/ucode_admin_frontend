@@ -58,7 +58,7 @@ export default function TimeLineDatesRow({
     const result = {};
     const referenceDate = datesList.length ? datesList[0] : new Date();
 
-    for (let i = -1; i <= 2; i++) {
+    for (let i = 0; i <= 1; i++) {
       const monthStart = startOfMonth(addMonths(referenceDate, i));
       const monthEnd = endOfMonth(monthStart);
       const month = format(monthStart, "MMMM yyyy");
@@ -72,7 +72,6 @@ export default function TimeLineDatesRow({
     return Object.values(result);
   }, [datesList]);
 
-  console.log("selectedType", selectedType);
   return (
     <div
       className={styles.datesRow}
@@ -93,7 +92,7 @@ export default function TimeLineDatesRow({
           style={{
             display: selectedType === "day" ? "block" : "flex",
           }}>
-          {selectedType === "day" || selectedType === "month" ? (
+          {selectedType === "day" ? (
             <>
               <div className={styles.monthBlock}>
                 <span className={styles.monthText}>{month}</span>
@@ -150,22 +149,24 @@ export default function TimeLineDatesRow({
           ) : selectedType === "month" ? (
             computedMonthList.map(({month, monthDays}) => (
               <div key={month} className={styles.monthBlock}>
-                <div
-                  className={styles.monthHeader}
+                {/* <div className={styles.monthBlock}>
+                  <span className={styles.monthText}>{month}</span>
+                </div> */}
+
+                {/* <div
+                  className={styles.daysRow}
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontWeight: "bold",
-                    borderBottom: "1px solid #e0e0e0",
+                    borderRight: "1px solid #eee",
                   }}>
-                  {month}
-                </div>
-                <div className={styles.monthDays}>
-                  {format(new Date(monthDays[0]), "dd/EEEE") +
-                    " - " +
-                    format(new Date(monthDays[1]), "dd/EEEE")}
-                </div>
+                  {days?.map((day) => (
+                    <TimeLineDayBlock
+                      day={day}
+                      focusedDays={focusedDays}
+                      zoomPosition={zoomPosition}
+                      selectedType={selectedType}
+                    />
+                  ))}
+                </div> */}
               </div>
             ))
           ) : (

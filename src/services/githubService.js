@@ -96,15 +96,20 @@ export const useGithubBranchesQuery = ({
 
 export const useGitlabBranchesQuery = ({
   username,
-  repo,
+  repo_id,
   token,
   resource_id,
   queryParams,
 } = {}) => {
   return useQuery(
-    ["GITLAB_BRANCHES", {username, repo, token, resource_id}],
+    ["GITLAB_BRANCHES", {username, repo_id, token, resource_id}],
     () => {
-      return githubService.gitlabBranches({username, repo, token, resource_id});
+      return githubService.gitlabBranches({
+        username,
+        repo_id,
+        token,
+        resource_id,
+      });
     },
     queryParams
   );

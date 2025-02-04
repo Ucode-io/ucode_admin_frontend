@@ -7,6 +7,7 @@ import UploadIcon from "@mui/icons-material/Upload";
 import fileService from "../../../services/fileService";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
 const style = {
   position: "absolute",
@@ -31,17 +32,20 @@ function MultiImageUpload({
   updateObject,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
+  const [fullScreen, setFullScreen] = useState("");
+
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
 
-  const handleClick = () => {
-    setUploadImg(true);
-  };
+  const handleClick = () => setUploadImg(true);
+  const handleClose = () => setUploadImg(false);
 
-  const handleClose = () => {
-    setUploadImg(false);
+  const handleFullScreen = (imgSrc) => {
+    handleClick();
+    setFullScreen(imgSrc);
   };
+  const handleCloseFullScreen = () => setFullScreen(null);
 
   const inputChangeHandler = (e) => {
     setLoading(true);
@@ -159,9 +163,6 @@ function MultiImageUpload({
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                // alignItems: "center",
-                // flexDirection: "column",
-                // justifyContent: "center",
                 cursor: "pointer",
               }}>
               <Box
@@ -229,7 +230,6 @@ function MultiImageUpload({
               zIndex: "999",
               background: "white",
             }}>
-            <Box></Box>
             <Button onClick={handleClose}>
               <CloseIcon style={{width: "24", height: "24px"}} />
             </Button>
@@ -238,16 +238,27 @@ function MultiImageUpload({
           <div className={styles.imageContainer}>
             {value &&
               value?.map((item) => (
-                <div key={item} className={styles.ImageItem}>
+                <div
+                  key={item}
+                  className={styles.ImageItem}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFullScreen(item);
+                  }}>
                   <img src={item} alt="photo" />
 
                   <button
-                    onClick={() => {
+                    variant="outlined"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       removeImage(item);
                     }}
                     className={styles.clearBtn}>
                     <DeleteIcon style={{color: "red"}} />
                   </button>
+                  <Button className={styles.fullBtn} onClick={handleClose}>
+                    <FullscreenIcon style={{width: "35px", height: "35px"}} />
+                  </Button>
                 </div>
               ))}
             <Box
@@ -278,7 +289,6 @@ function MultiImageUpload({
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
-                // disabled={disabled}
               />
               <UploadIcon style={{width: "32px", height: "32px"}} />
             </Box>
@@ -307,6 +317,35 @@ function MultiImageUpload({
               Save
             </Button>
           </Box>
+        </Box>
+      </Modal>
+
+      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            bgcolor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCloseFullScreen();
+            }}
+            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
+            <CloseIcon />
+          </Button>
+          <img
+            src={fullScreen}
+            alt="Fullscreen"
+            style={{maxWidth: "100%", maxHeight: "100%"}}
+          />
         </Box>
       </Modal>
     </>

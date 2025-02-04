@@ -1,4 +1,11 @@
-import {endOfWeek, format, startOfWeek} from "date-fns";
+import {
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 import React, {useMemo} from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
@@ -47,6 +54,25 @@ export default function TimeLineDatesRow({
     return Object.values(result);
   }, [datesList]);
 
+  const computedMonthList = useMemo(() => {
+    const result = {};
+    const referenceDate = datesList.length ? datesList[0] : new Date();
+
+    for (let i = -1; i <= 2; i++) {
+      const monthStart = startOfMonth(addMonths(referenceDate, i));
+      const monthEnd = endOfMonth(monthStart);
+      const month = format(monthStart, "MMMM yyyy");
+
+      result[month] = {
+        month,
+        monthDays: [monthStart.toISOString(), monthEnd.toISOString()],
+      };
+    }
+
+    return Object.values(result);
+  }, [datesList]);
+
+  console.log("selectedType", selectedType);
   return (
     <div
       className={styles.datesRow}
@@ -65,10 +91,7 @@ export default function TimeLineDatesRow({
         <div
           className={styles.dateBlock}
           style={{
-            display:
-              selectedType === "day" || selectedType === "month"
-                ? "block"
-                : "flex",
+            display: selectedType === "day" ? "block" : "flex",
           }}>
           {selectedType === "day" || selectedType === "month" ? (
             <>
@@ -121,6 +144,27 @@ export default function TimeLineDatesRow({
                   {days?.map((day) => (
                     <TimeLineDayBlock day={day} zoomPosition={zoomPosition} />
                   ))}
+                </div>
+              </div>
+            ))
+          ) : selectedType === "month" ? (
+            computedMonthList.map(({month, monthDays}) => (
+              <div key={month} className={styles.monthBlock}>
+                <div
+                  className={styles.monthHeader}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #e0e0e0",
+                  }}>
+                  {month}
+                </div>
+                <div className={styles.monthDays}>
+                  {format(new Date(monthDays[0]), "dd/EEEE") +
+                    " - " +
+                    format(new Date(monthDays[1]), "dd/EEEE")}
                 </div>
               </div>
             ))

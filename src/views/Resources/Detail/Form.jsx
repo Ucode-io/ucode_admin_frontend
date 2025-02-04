@@ -64,14 +64,14 @@ const Form = ({
       const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
       const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
 
-      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}&resource=8`;
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
 
       window.open(url, "_blank", "noopener,noreferrer");
     } else if (value === 8) {
       const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID_GITLAB;
       const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
 
-      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api&resource=8 read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
 
       window.open(url, "_blank", "noopener,noreferrer");
     }

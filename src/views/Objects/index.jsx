@@ -148,9 +148,9 @@ const ObjectsPage = () => {
   if (isLoading) return <PageFallback />;
 
   const storageItem = localStorage.getItem('newUi');
-  const newUi = JSON.parse((!storageItem || storageItem === 'undefined') ? "false" : "true");
+  const newUi = JSON.parse((!storageItem || storageItem === 'undefined' || storageItem === "false") ? "false" : "true");
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
-
+console.log('here')
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>

@@ -137,6 +137,7 @@ const AddDataColumn = React.memo(
               width={width}
               index={index}
               watch={mainForm.watch}
+              newUi={true}
             />
 
             {(column.attributes?.disabled || !column.attributes?.field_permission?.edit_permission) &&
@@ -170,14 +171,16 @@ const AddDataColumn = React.memo(
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff"
           }}>
-          <Box className='group' position="relative" h='32px' w='32px'>
-            <Image ml='3px' src="/table-icons/save-delete.svg" alt="More" w='32px' h='32px' _groupHover={{display: "none"}} />
+          <Box className='group' position="relative" h='25px' w='25px'>
+            <Image ml='3px' src="/table-icons/save-delete.svg" alt="More" w='25px' h='25px' _groupHover={{display: "none"}} />
 
             <Flex columnGap='3px' display="none" _groupHover={{ display: "flex" }} position='absolute' top={0} right='-3px' bg='#fff' borderRadius={4}>
               <RectangleIconButton
                 id="cancel-row"
                 color="error"
-                onClick={() => setAddNewRow(false)}>
+                onClick={() => setAddNewRow(false)}
+                style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
+              >
                 <ClearIcon color="error"/>
               </RectangleIconButton>
 
@@ -189,7 +192,9 @@ const AddDataColumn = React.memo(
                 <RectangleIconButton
                   id="confirm-row"
                   color="success"
-                  onClick={handleSubmit(onSubmit)}>
+                  onClick={handleSubmit(onSubmit)}
+                  style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
+                >
                   <DoneIcon color="success"/>
                 </RectangleIconButton>
               )}

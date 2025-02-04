@@ -28,7 +28,6 @@ const TableRow = ({
                     columns,
                     selectedObjectsForDelete,
                     setSelectedObjectsForDelete,
-                    tableHeight,
                     tableSettings,
                     pageName,
                     watch,
@@ -93,6 +92,8 @@ const TableRow = ({
 
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
                   <Checkbox
+                    size='small'
+                    sx={{ padding: '4px' }}
                     className="table_multi_checkbox"
                     style={selected ? {display: "block"} : {}}
                     checked={selected}
@@ -169,6 +170,7 @@ const TableRow = ({
                         isTableView={isTableView}
                         view={view}
                         watch={watch}
+                        newUi={true}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row}/>
@@ -228,6 +230,7 @@ const TableRow = ({
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                     <RectangleIconButton
                       color="error"
+                      style={{ minWidth: 25, minHeight: 25, height: 25 }}
                       onClick={() =>
                         row.guid
                           ? onDeleteClick(row, rowIndex)

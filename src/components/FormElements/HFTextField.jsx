@@ -40,6 +40,7 @@ const HFTextField = ({
   setFormValue = () => {},
   customOnChange = () => {},
   exist = false,
+  newUi,
   ...props
 }) => {
   const location = useLocation();
@@ -85,6 +86,7 @@ const HFTextField = ({
               border: exist ? "1px solid red" : "0px solid #000",
               borderRadius: "8px",
             }}
+            inputProps={{ style: {height: "25px", padding: "0px 2px 0 7px"} }}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
             error={error}
@@ -112,7 +114,7 @@ const HFTextField = ({
                     }
                   : {},
 
-              endAdornment: (disabled && !isNewTableView) ? (
+              endAdornment: disabled ? (
                 <Tooltip title={disabled_text}>
                   <InputAdornment position="start">
                     <Lock style={{fontSize: "20px"}} />

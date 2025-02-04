@@ -23,6 +23,7 @@ const NewCHFFormulaField = ({
   isTransparent = false,
   field,
   index,
+  newUi,
   ...props
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
@@ -107,6 +108,7 @@ const NewCHFFormulaField = ({
               background: isTransparent ? "transparent" : "#fff",
               border: "0",
               borderWidth: "0px",
+              height: newUi ? '25px' : undefined,
             },
             endAdornment: (
               <InputAdornment position="end">
@@ -117,6 +119,7 @@ const NewCHFFormulaField = ({
                     edge="end"
                     color={formulaIsVisible ? "primary" : "default"}
                     onClick={() => setFormulaIsVisible((prev) => !prev)}
+                    style={newUi ? {padding: 2} : {}}
                   >
                     <FunctionsIcon />
                   </IconButton>

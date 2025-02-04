@@ -3,7 +3,7 @@ import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 
-function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
+function HFStatusField({field = {}, control, name, updateObject = () => {}, newUi}) {
   return (
     <Box>
       <Controller
@@ -14,7 +14,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}}) {
             <Select
               className={styles.statusSelect}
               sx={{
-                height: "41px",
+                height: newUi ? "25px" : "41px",
                 border: "none",
                 backgroundColor: "inherit",
                 "& .MuiSelect-select": {

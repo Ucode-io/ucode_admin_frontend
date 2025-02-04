@@ -23,6 +23,7 @@ const TableDataForm = ({
   relationfields,
   getValues = () => {},
   setFormValue = () => {},
+  newUi,
 }) => {
   const {mutate: updateObject} = useMutation(() =>
     constructorObjectService.update(tableSlug, {
@@ -71,6 +72,7 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
+          newUi={newUi}
         />
       ) : (
         <CellElementGeneratorForTableView
@@ -91,6 +93,7 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
+          newUi={newUi}
         />
       )}
     </Box>

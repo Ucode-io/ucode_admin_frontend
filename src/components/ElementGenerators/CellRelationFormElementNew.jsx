@@ -48,6 +48,7 @@ const CellRelationFormElementNew = ({
   data,
   isTableView,
   row,
+  newUi,
 }) => {
   const classes = useStyles();
 
@@ -119,6 +120,7 @@ const CellRelationFormElementNew = ({
               index={index}
               relationfields={relationfields}
               data={data}
+              newUi={newUi}
             />
           );
         }}
@@ -143,6 +145,7 @@ const AutoCompleteElement = ({
   relationfields,
   setFormValue = () => {},
   row,
+  newUi,
 }) => {
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -171,6 +174,8 @@ const AutoCompleteElement = ({
       alignItems: "center",
       border: "0px solid #fff",
       outline: "none",
+      minHeight: newUi ? "25px" : undefined,
+      height: newUi ? "25px" : undefined
     }),
     input: (provided) => ({
       ...provided,

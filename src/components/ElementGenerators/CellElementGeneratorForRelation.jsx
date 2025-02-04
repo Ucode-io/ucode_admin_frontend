@@ -22,6 +22,7 @@ const CellElementGeneratorForRelation = ({
   isBlackBg = false,
   updateObject = () => {},
   setFormValue = () => {},
+  newUi,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -135,6 +136,7 @@ const CellElementGeneratorForRelation = ({
           defaultValue={defaultValue}
           relationfields={relationfields}
           placeholder={field.attributes?.placeholder}
+          newUi={newUi}
         />
       );
     },

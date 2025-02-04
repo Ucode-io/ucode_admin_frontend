@@ -1051,7 +1051,7 @@ const Th = ({
               <PopoverTrigger>
                 <IconButton aria-label='more'
                             icon={<Image src='/img/chevron-down.svg' alt='more' style={{minWidth: 20}}/>}
-                            variant='ghost' colorScheme='gray' ml='auto' onClick={handleClick}/>
+                            variant='ghost' colorScheme='gray' ml='auto' onClick={handleClick} size='xs'/>
               </PopoverTrigger>
               <Portal>
                 <PopoverContent w='200px' bg="#fff" py='4px' borderRadius={6}

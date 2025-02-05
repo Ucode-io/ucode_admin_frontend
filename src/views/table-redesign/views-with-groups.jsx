@@ -1,5 +1,10 @@
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Backdrop, Box as MuiBox, Button as MuiButton, Popover as MuiPopover,} from "@mui/material";
+import {
+  Backdrop,
+  Box as MuiBox,
+  Button as MuiButton,
+  Popover as MuiPopover,
+} from "@mui/material";
 import {
   Box,
   Button,
@@ -18,7 +23,8 @@ import {
   Switch,
   useDisclosure,
   Modal,
-  ModalContent, ModalOverlay
+  ModalContent,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
@@ -36,11 +42,20 @@ import InlineSVG from "react-inlinesvg";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
-import {getSearchText, openDB, saveOrUpdateSearchText,} from "@/utils/indexedDb.jsx";
+import {
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
 import TableView from "./table-view";
 import style from "@/views/Objects/style.module.scss";
-import {ArrowBackIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
 import {useTranslation} from "react-i18next";
 import SVG from "react-inlinesvg";
 import {viewsActions} from "@/store/views/view.slice";
@@ -70,21 +85,21 @@ const viewIcons = {
   TABLE: "layout-alt-01.svg",
   CALENDAR: "calendar.svg",
   BOARD: "rows.svg",
-  GRID: 'grid.svg',
-  TIMELINE: "line-chart-up.svg"
-}
+  GRID: "grid.svg",
+  TIMELINE: "line-chart-up.svg",
+};
 
 export const NewUiViewsWithGroups = ({
-                           views,
-                           selectedTabIndex,
-                           setSelectedTabIndex,
-                           view,
-                           fieldsMap,
-                           menuItem,
-                           visibleRelationColumns,
-                           visibleColumns,
-                           refetchViews
-                         }) => {
+  views,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  view,
+  fieldsMap,
+  menuItem,
+  visibleRelationColumns,
+  visibleColumns,
+  refetchViews,
+}) => {
   const {tableSlug, id} = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
@@ -239,7 +254,7 @@ export const NewUiViewsWithGroups = ({
           extra={
             <>
               <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-                <ShareModal/>
+                <ShareModal />
               </PermissionWrapperV2>
 
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
@@ -275,12 +290,12 @@ export const NewUiViewsWithGroups = ({
             menuItem={menuItem}
           />
           {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
+            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
           )}
         </FiltersBlock>
-        <WebsiteView view={view}/>
+        <WebsiteView view={view} />
       </>
-    )
+    );
   }
 
   if (view?.type === "GRID") {
@@ -290,7 +305,7 @@ export const NewUiViewsWithGroups = ({
           extra={
             <>
               <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-                <ShareModal/>
+                <ShareModal />
               </PermissionWrapperV2>
 
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
@@ -326,7 +341,7 @@ export const NewUiViewsWithGroups = ({
             menuItem={menuItem}
           />
           {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
+            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
           )}
         </FiltersBlock>
         <AgGridTableView
@@ -345,66 +360,118 @@ export const NewUiViewsWithGroups = ({
           menuItem={menuItem}
         />
       </MuiBox>
-    )
+    );
   }
 
   const tableName = menuItem?.label ?? menuItem?.title;
-  const viewName = (view.attributes?.[`name_${i18n.language}`]
-    ? view.attributes?.[`name_${i18n.language}`]
-    : view.type) ?? view?.name;
+  const viewName =
+    (view.attributes?.[`name_${i18n.language}`]
+      ? view.attributes?.[`name_${i18n.language}`]
+      : view.type) ?? view?.name;
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      <Flex h='100vh' flexDirection='column'>
+      <Flex h="100vh" flexDirection="column">
         {updateLoading && (
           <Backdrop
             sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
             open={true}>
-            <RingLoaderWithWrapper/>
+            <RingLoaderWithWrapper />
           </Backdrop>
         )}
 
-        <Flex minH='45px' h='36px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
-              columnGap='8px'>
-          <IconButton aria-label='back' icon={<ArrowBackIcon fontSize={20} color='#344054'/>} variant='ghost'
-                      colorScheme='gray' onClick={() => navigate(-1)} size="sm" />
-          <IconButton aria-label='home' icon={<img src="/img/home.svg" alt="home"/>} variant='ghost'
-                      colorScheme='gray' onClick={() => navigate('/main')} ml='8px' size="sm" />
-          <ChevronRightIcon fontSize={20} color='#344054'/>
-          <Flex py='4px' px='8px' bg='#EAECF0' borderRadius={6} color='#344054' fontWeight={500} alignItems='center'
-                columnGap='8px'>
-            <Flex w='16px' h='16px' bg='#EE46BC' borderRadius={4} columnGap={8} color='#fff' fontWeight={500}
-                  fontSize={11} justifyContent='center' alignItems='center'>
+        <Flex
+          minH="45px"
+          h="36px"
+          px="16px"
+          alignItems="center"
+          bg="#fff"
+          borderBottom="1px solid #EAECF0"
+          columnGap="8px">
+          <IconButton
+            aria-label="back"
+            icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+            variant="ghost"
+            colorScheme="gray"
+            onClick={() => navigate(-1)}
+            size="sm"
+          />
+          <IconButton
+            aria-label="home"
+            icon={<img src="/img/home.svg" alt="home" />}
+            variant="ghost"
+            colorScheme="gray"
+            onClick={() => navigate("/main")}
+            ml="8px"
+            size="sm"
+          />
+          <ChevronRightIcon fontSize={20} color="#344054" />
+          <Flex
+            py="4px"
+            px="8px"
+            bg="#EAECF0"
+            borderRadius={6}
+            color="#344054"
+            fontWeight={500}
+            alignItems="center"
+            columnGap="8px">
+            <Flex
+              w="16px"
+              h="16px"
+              bg="#EE46BC"
+              borderRadius={4}
+              columnGap={8}
+              color="#fff"
+              fontWeight={500}
+              fontSize={11}
+              justifyContent="center"
+              alignItems="center">
               {tableName?.[0]}
             </Flex>
             {tableName}
           </Flex>
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-            <Button h='30px' ml='auto' onClick={navigateToSettingsPage} variant="outline" colorScheme='gray'
-                    borderColor='#D0D5DD' color='#344054' leftIcon={<Image src='/img/settings.svg' alt='settings'/>}
-                    borderRadius='8px'>
+            <Button
+              h="30px"
+              ml="auto"
+              onClick={navigateToSettingsPage}
+              variant="outline"
+              colorScheme="gray"
+              borderColor="#D0D5DD"
+              color="#344054"
+              leftIcon={<Image src="/img/settings.svg" alt="settings" />}
+              borderRadius="8px">
               Table Settings
             </Button>
           </PermissionWrapperV2>
         </Flex>
 
-        <Flex minH='50px' h='50px' px='16px' alignItems='center' bg='#fff' borderBottom='1px solid #EAECF0'
-              columnGap='12px'>
-          {(views ?? []).map((view, index) =>
+        <Flex
+          minH="40px"
+          h="40px"
+          px="16px"
+          alignItems="center"
+          bg="#fff"
+          borderBottom="1px solid #EAECF0"
+          columnGap="5px">
+          {(views ?? []).map((view, index) => (
             <Button
               key={view.id}
-              variant='ghost'
-              colorScheme='gray'
-              leftIcon={<SVG
-                src={`/img/${viewIcons[view.type]}`}
-                color={selectedTabIndex === index ? "#175CD3" : '#475467'}
-                width={20}
-                height={20}
-              />}
-              fontSize={14}
+              variant="ghost"
+              colorScheme="gray"
+              leftIcon={
+                <SVG
+                  src={`/img/${viewIcons[view.type]}`}
+                  color={selectedTabIndex === index ? "#175CD3" : "#475467"}
+                  width={18}
+                  height={18}
+                />
+              }
+              fontSize={13}
+              h={"30px"}
               fontWeight={500}
-              color={selectedTabIndex === index ? "#175CD3" : '#475467'}
+              color={selectedTabIndex === index ? "#175CD3" : "#475467"}
               bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
               _hover={selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined}
               onClick={() => {
@@ -413,17 +480,21 @@ export const NewUiViewsWithGroups = ({
               }}>
               {viewName}
             </Button>
-          )}
+          ))}
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-            <Button leftIcon={<Image src='/img//plus-icon.svg' alt='Add'/>} variant='ghost' colorScheme='gray'
-                    color='#475467' onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+            <Button
+              leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+              variant="ghost"
+              colorScheme="gray"
+              color="#475467"
+              onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
               View
             </Button>
           </PermissionWrapperV2>
 
           {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters}/>
+            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
           )}
 
           <MuiPopover
@@ -446,73 +517,120 @@ export const NewUiViewsWithGroups = ({
             />
           </MuiPopover>
 
-          <Popover placement='bottom-end'>
-            <InputGroup ml='auto' w='320px'>
+          <Popover placement="bottom-end">
+            <InputGroup ml="auto" w="320px">
               <InputLeftElement>
-                <Image src='/img/search-lg.svg' alt='search'/>
+                <Image src="/img/search-lg.svg" alt="search" />
               </InputLeftElement>
-              <Input id="search_input" defaultValue={searchText} placeholder="Search"
-                     onChange={(ev) => inputChangeHandler(ev.target.value)}/>
+              <Input
+                id="search_input"
+                defaultValue={searchText}
+                placeholder="Search"
+                onChange={(ev) => inputChangeHandler(ev.target.value)}
+              />
 
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) &&
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) && (
                 <PopoverTrigger>
                   <InputRightElement>
                     <IconButton
-                      w='24px'
-                      h='24px'
-                      aria-label='more'
-                      icon={<Image src='/img/dots-vertical.svg' alt='more'/>}
-                      variant='ghost'
-                      colorScheme='gray'
-                      size='xs'
+                      w="24px"
+                      h="24px"
+                      aria-label="more"
+                      icon={<Image src="/img/dots-vertical.svg" alt="more" />}
+                      variant="ghost"
+                      colorScheme="gray"
+                      size="xs"
                     />
                   </InputRightElement>
                 </PopoverTrigger>
-              }
+              )}
             </InputGroup>
 
-            <PopoverContent w='280px' p='8px' display='flex' flexDirection='column' maxH='300px' overflow='auto'>
-              {columnsForSearch.map((column) =>
-                <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                      _hover={{bg: "#EAECF0"}} cursor='pointer'>
+            <PopoverContent
+              w="280px"
+              p="8px"
+              display="flex"
+              flexDirection="column"
+              maxH="300px"
+              overflow="auto">
+              {columnsForSearch.map((column) => (
+                <Flex
+                  key={column.id}
+                  as="label"
+                  p="8px"
+                  columnGap="8px"
+                  alignItems="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer">
                   {getColumnIcon({column})}
                   <ViewOptionTitle>{column.label}</ViewOptionTitle>
                   <Switch
-                    ml='auto'
+                    ml="auto"
                     isChecked={column.is_search}
-                    onChange={(e) => updateField({
-                      data: {
-                        fields: columnsForSearch
-                          .map((c) => c.id === column.id ? {...c, is_search: e.target.checked} : c)
-                      },
-                      tableSlug
-                    })}
+                    onChange={(e) =>
+                      updateField({
+                        data: {
+                          fields: columnsForSearch.map((c) =>
+                            c.id === column.id
+                              ? {...c, is_search: e.target.checked}
+                              : c
+                          ),
+                        },
+                        tableSlug,
+                      })
+                    }
                   />
                 </Flex>
-              )}
+              ))}
             </PopoverContent>
           </Popover>
 
-          <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}>
-            <FilterButton view={view}/>
+          <FilterPopover
+            view={view}
+            visibleColumns={visibleColumns}
+            refetchViews={refetchViews}>
+            <FilterButton view={view} />
           </FilterPopover>
 
           <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-            <Button rightIcon={<ChevronDownIcon fontSize={20}/>}
-                    onClick={() => navigateToForm(tableSlug, "CREATE", {}, {id}, searchParams.get('menuId'))}>
+            <Button
+              h={"30px"}
+              rightIcon={<ChevronDownIcon fontSize={18} />}
+              onClick={() =>
+                navigateToForm(
+                  tableSlug,
+                  "CREATE",
+                  {},
+                  {id},
+                  searchParams.get("menuId")
+                )
+              }>
               Create item
             </Button>
           </PermissionWrapperV2>
 
-          <ViewOptions view={view} viewName={viewName} refetchViews={refetchViews} fieldsMap={fieldsMap}
-                       visibleRelationColumns={visibleRelationColumns} checkedColumns={checkedColumns}
-                       onDocsClick={() => setSelectedTabIndex(views.length)} searchText={searchText}
-                       computedVisibleFields={computedVisibleFields}/>
+          <ViewOptions
+            view={view}
+            viewName={viewName}
+            refetchViews={refetchViews}
+            fieldsMap={fieldsMap}
+            visibleRelationColumns={visibleRelationColumns}
+            checkedColumns={checkedColumns}
+            onDocsClick={() => setSelectedTabIndex(views.length)}
+            searchText={searchText}
+            computedVisibleFields={computedVisibleFields}
+          />
         </Flex>
 
-        {view?.attributes?.quick_filters?.length > 0 &&
-          <FiltersList view={view} fieldsMap={fieldsMap} visibleColumns={visibleColumns} refetchViews={refetchViews}/>
-        }
+        {view?.attributes?.quick_filters?.length > 0 && (
+          <FiltersList
+            view={view}
+            fieldsMap={fieldsMap}
+            visibleColumns={visibleColumns}
+            refetchViews={refetchViews}
+          />
+        )}
 
         <Tabs direction={"ltr"} defaultIndex={0}>
           {tabs?.length > 0 && (
@@ -663,59 +781,83 @@ export const NewUiViewsWithGroups = ({
 };
 
 const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
-  const tableViewFiltersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
+  const tableViewFiltersOpen = useSelector(
+    (state) => state.main.tableViewFiltersOpen
+  );
   const dispatch = useDispatch();
 
   const handleClick = (ev) => {
-    if (tableViewFiltersOpen || (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)) {
+    if (
+      tableViewFiltersOpen ||
+      (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
+    ) {
       ev.stopPropagation();
-      return dispatch(mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen))
+      return dispatch(
+        mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
+      );
     }
     onClick(ev);
-  }
+  };
 
   return (
-    <Box position='relative'>
+    <Box position="relative">
       <IconButton
         ref={ref}
-        aria-label='filter'
-        icon={<Image src='/img/funnel.svg' alt='filter'/>}
-        variant='ghost'
-        colorScheme='gray'
+        aria-label="filter"
+        icon={<Image src="/img/funnel.svg" alt="filter" />}
+        variant="ghost"
+        colorScheme="gray"
         onClick={handleClick}
         {...props}
       />
-      {Boolean(view?.attributes?.quick_filters?.length) &&
-        <Flex position='absolute' top='-8px' right='-4px' w='16px' h='16px' bg='#007AFF' alignItems='center'
-              justifyContent='center' color='#fff' borderRadius='50%' fontSize='10px'>
+      {Boolean(view?.attributes?.quick_filters?.length) && (
+        <Flex
+          position="absolute"
+          top="-8px"
+          right="-4px"
+          w="16px"
+          h="16px"
+          bg="#007AFF"
+          alignItems="center"
+          justifyContent="center"
+          color="#fff"
+          borderRadius="50%"
+          fontSize="10px">
           {view?.attributes?.quick_filters?.length}
         </Flex>
-      }
+      )}
     </Box>
-  )
-})
+  );
+});
 
 const FilterPopover = ({view, visibleColumns, refetchViews, children}) => {
   const ref = useRef();
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
 
   return (
     <Popover>
-      <PopoverTrigger>
-        {children}
-      </PopoverTrigger>
-      <PopoverContent px='4px' py='8px' ref={ref}>
-        <InputGroup mb='8px'>
+      <PopoverTrigger>{children}</PopoverTrigger>
+      <PopoverContent px="4px" py="8px" ref={ref}>
+        <InputGroup mb="8px">
           <InputLeftElement>
-            <Image src='/img/search-lg.svg' alt='search'/>
+            <Image src="/img/search-lg.svg" alt="search" />
           </InputLeftElement>
-          <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+          <Input
+            placeholder="Search by filled name"
+            value={search}
+            onChange={(ev) => setSearch(ev.target.value)}
+          />
         </InputGroup>
-        <FiltersSwitch view={view} visibleColumns={visibleColumns} refetchViews={refetchViews} search={search}/>
+        <FiltersSwitch
+          view={view}
+          visibleColumns={visibleColumns}
+          refetchViews={refetchViews}
+          search={search}
+        />
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
 
 const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
   const {tableSlug} = useParams();
@@ -781,21 +923,36 @@ const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
   }
 
   return (
-    <Flex minH='max-content' px='16px' py='6px' bg='#fff' alignItems='center' gap='6px' borderBottom='1px solid #EAECF0'
-          flexWrap='wrap'>
-      <FilterPopover view={view} visibleColumns={visibleColumns} refetchViews={refetchViews}>
+    <Flex
+      minH="max-content"
+      px="16px"
+      py="6px"
+      bg="#fff"
+      alignItems="center"
+      gap="6px"
+      borderBottom="1px solid #EAECF0"
+      flexWrap="wrap">
+      <FilterPopover
+        view={view}
+        visibleColumns={visibleColumns}
+        refetchViews={refetchViews}>
         <Flex
-          alignItems='center'
-          columnGap='4px'
+          alignItems="center"
+          columnGap="4px"
           border="1px solid #EAECF0"
           borderRadius={32}
           color="#FFFFFF70"
-          py='1px'
-          px='8px'
-          cursor='pointer'
+          py="1px"
+          px="8px"
+          cursor="pointer"
           _hover={{bg: "#f3f3f3"}}>
-          <InlineSVG src="/img/plus-icon.svg" width={14} height={14} color="#909EAB"/>
-          <Box color='#909EAB'>Add filter</Box>
+          <InlineSVG
+            src="/img/plus-icon.svg"
+            width={14}
+            height={14}
+            color="#909EAB"
+          />
+          <Box color="#909EAB">Add filter</Box>
         </Flex>
       </FilterPopover>
 
@@ -811,8 +968,8 @@ const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
         </div>
       ))}
     </Flex>
-  )
-}
+  );
+};
 
 const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const {tableSlug} = useParams();
@@ -820,18 +977,32 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const dispatch = useDispatch();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
-  const quickFiltersIds = view?.attributes?.quick_filters?.map((item) => item?.id);
-  const checkedColumns = view?.attributes?.quick_filters?.filter((checkedField) => columnsIds?.includes(checkedField?.id)) ?? [];
-  const unCheckedColumns = ((view?.attributes?.quick_filters?.length === 0 || view?.attributes?.quick_filters?.length === undefined)
-    ? visibleColumns
-    : visibleColumns?.filter((column) => !quickFiltersIds?.includes(column?.id))) ?? [];
+  const quickFiltersIds = view?.attributes?.quick_filters?.map(
+    (item) => item?.id
+  );
+  const checkedColumns =
+    view?.attributes?.quick_filters?.filter((checkedField) =>
+      columnsIds?.includes(checkedField?.id)
+    ) ?? [];
+  const unCheckedColumns =
+    (view?.attributes?.quick_filters?.length === 0 ||
+    view?.attributes?.quick_filters?.length === undefined
+      ? visibleColumns
+      : visibleColumns?.filter(
+          (column) => !quickFiltersIds?.includes(column?.id)
+        )) ?? [];
 
-  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column.label;
+  const getLabel = (column) =>
+    column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
     ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false}))
-  ].filter((column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase()));
+    ...unCheckedColumns.map((c) => ({...c, checked: false})),
+  ].filter((column) =>
+    search === ""
+      ? true
+      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -840,7 +1011,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
     },
     onSettled: (data) => {
       dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
-    }
+    },
   });
 
   const updateView = async (data, checked) => {
@@ -849,48 +1020,67 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
       is_checked: true,
     }));
 
-    await mutation.mutateAsync({...view, attributes: {...view?.attributes, quick_filters: result}});
+    await mutation.mutateAsync({
+      ...view,
+      attributes: {...view?.attributes, quick_filters: result},
+    });
     if (view?.attributes?.quick_filters?.length === 0) {
-      dispatch(mainActions.setTableViewFiltersOpen(true))
+      dispatch(mainActions.setTableViewFiltersOpen(true));
     }
     if (view?.attributes?.quick_filters?.length === 1 && !checked) {
-      dispatch(mainActions.setTableViewFiltersOpen(false))
+      dispatch(mainActions.setTableViewFiltersOpen(false));
     }
   };
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
-    updateView(checked ? [...quickFilters, column] : quickFilters.filter((c) => c.id !== column.id), checked);
-  }
+    updateView(
+      checked
+        ? [...quickFilters, column]
+        : quickFilters.filter((c) => c.id !== column.id),
+      checked
+    );
+  };
 
   return (
-    <Flex flexDirection='column' maxHeight='300px' overflow='auto'>
-      {renderColumns.map((column) =>
-        <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-              _hover={{bg: "#EAECF0"}} cursor='pointer'>
+    <Flex flexDirection="column" maxHeight="300px" overflow="auto">
+      {renderColumns.map((column) => (
+        <Flex
+          key={column.id}
+          as="label"
+          p="8px"
+          columnGap="8px"
+          alignItems="center"
+          borderRadius={6}
+          _hover={{bg: "#EAECF0"}}
+          cursor="pointer">
           {column?.type && getColumnIcon({column})}
           {getLabel(column)}
-          <Switch ml='auto' isChecked={column.checked} onChange={(ev) => onChange(column, ev.target.checked)}/>
+          <Switch
+            ml="auto"
+            isChecked={column.checked}
+            onChange={(ev) => onChange(column, ev.target.checked)}
+          />
         </Flex>
-      )}
+      ))}
     </Flex>
-  )
-}
+  );
+};
 
 const ViewOptions = ({
-                       view,
-                       viewName,
-                       refetchViews,
-                       fieldsMap,
-                       visibleRelationColumns,
-                       searchText,
-                       checkedColumns,
-                       onDocsClick,
-                       computedVisibleFields
-                     }) => {
+  view,
+  viewName,
+  refetchViews,
+  fieldsMap,
+  visibleRelationColumns,
+  searchText,
+  checkedColumns,
+  onDocsClick,
+  computedVisibleFields,
+}) => {
   const {appId, tableSlug} = useParams();
   const [searchParams] = useSearchParams();
-  const menuId = searchParams.get('menuId');
+  const menuId = searchParams.get("menuId");
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -903,10 +1093,10 @@ const ViewOptions = ({
     if (ref.current) {
       ref.current.focus();
     }
-  }, [openedMenu])
+  }, [openedMenu]);
 
   const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug,},],
+    queryKey: ["GET_LAYOUT", {tableSlug}],
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
@@ -915,313 +1105,465 @@ const ViewOptions = ({
       await constructorViewService.update(tableSlug, {
         id: view.id,
         columns: view.columns,
-        attributes: {name_en: value}
+        attributes: {name_en: value},
       });
       return await refetchViews();
-    }
+    },
   });
 
   const onViewNameChange = useDebounce((ev) => {
     updateView.mutate(ev.target.value);
   }, 500);
 
-  const fixedColumnsCount = Object.values(view?.attributes?.fixedColumns || {}).length;
+  const fixedColumnsCount = Object.values(
+    view?.attributes?.fixedColumns || {}
+  ).length;
   const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
-  const visibleColumnsCount = (view?.columns?.length ?? 0);
+  const visibleColumnsCount = view?.columns?.length ?? 0;
   const tabGroupColumnsCount = view?.group_fields?.length;
 
   return (
-    <Popover offset={[-145, 8]} onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
-             modifiers={[{
-               name: "computeStyles",
-               options: {
-                 gpuAcceleration: false,
-                 adaptive: false,
-               },
-             }]}>
+    <Popover
+      offset={[-145, 8]}
+      onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
+      modifiers={[
+        {
+          name: "computeStyles",
+          options: {
+            gpuAcceleration: false,
+            adaptive: false,
+          },
+        },
+      ]}>
       <PopoverTrigger>
-        <IconButton aria-label='more' icon={<Image src='/img/dots-vertical.svg' alt='more'/>} variant='ghost'
-                    colorScheme='gray'/>
+        <IconButton
+          aria-label="more"
+          icon={<Image src="/img/dots-vertical.svg" alt="more" />}
+          variant="ghost"
+          colorScheme="gray"
+        />
       </PopoverTrigger>
-      <PopoverContent ref={ref} w='320px' p={openedMenu === null ? "0px" : "8px"}>
-        {openedMenu === null &&
+      <PopoverContent
+        ref={ref}
+        w="320px"
+        p={openedMenu === null ? "0px" : "8px"}>
+        {openedMenu === null && (
           <>
-            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-              <Box color='#475467' fontSize={16} fontWeight={600}>View options</Box>
-              <Flex mt='12px' columnGap='4px'>
-                <Flex minW='36px' h='36px' borderRadius={6} border='1px solid #D0D5DD' alignItems='center'
-                      justifyContent='center'>
-                  <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+            <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+              <Box color="#475467" fontSize={16} fontWeight={600}>
+                View options
+              </Box>
+              <Flex mt="12px" columnGap="4px">
+                <Flex
+                  minW="36px"
+                  h="32px"
+                  borderRadius={6}
+                  border="1px solid #D0D5DD"
+                  alignItems="center"
+                  justifyContent="center">
+                  <SVG
+                    src={`/img/${viewIcons[view.type]}`}
+                    width={20}
+                    height={20}
+                  />
                 </Flex>
                 <InputGroup>
-                  <Input h='36px' placeholder='View name' defaultValue={viewName} onChange={onViewNameChange}/>
-                  {updateView.isLoading &&
+                  <Input
+                    h="32px"
+                    placeholder="View name"
+                    defaultValue={viewName}
+                    onChange={onViewNameChange}
+                  />
+                  {updateView.isLoading && (
                     <InputRightElement>
-                      <Spinner color='#475467'/>
+                      <Spinner color="#475467" />
                     </InputRightElement>
-                  }
+                  )}
                 </InputGroup>
               </Flex>
-              <Flex color='#475467' mt='4px' columnGap='4px' alignItems='center' borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    as={Link}
-                    to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
-                <Flex minW='36px' h='36px' alignItems='center' justifyContent='center'>
-                  <SVG src={`/img/${viewIcons[view.type]}`} width={20} height={20}/>
+              <Flex
+                color="#475467"
+                mt="4px"
+                columnGap="4px"
+                alignItems="center"
+                borderRadius={6}
+                _hover={{bg: "#EAECF0"}}
+                as={Link}
+                to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
+                <Flex
+                  minW="36px"
+                  h="32px"
+                  alignItems="center"
+                  justifyContent="center">
+                  <SVG
+                    src={`/img/${viewIcons[view.type]}`}
+                    width={20}
+                    height={20}
+                  />
                 </Flex>
                 <ViewOptionTitle>Layout</ViewOptionTitle>
-                <Flex ml='auto' columnGap='4px' alignItems='center'>
-                  <Box color='#667085' fontWeight={400} fontSize={14}>
+                <Flex ml="auto" columnGap="4px" alignItems="center">
+                  <Box color="#667085" fontWeight={400} fontSize={14}>
                     {viewName}
                   </Box>
-                  <ChevronRightIcon fontSize={22}/>
+                  <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
             </Box>
-            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) &&
-                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                      cursor='pointer' onClick={() => setOpenedMenu('columns-visibility')}>
-                  <Image src="/img/eye.svg" alt="Visibility"/>
+            <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
+                <Flex
+                  p="8px"
+                  h="32px"
+                  columnGap="8px"
+                  alignItems="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  onClick={() => setOpenedMenu("columns-visibility")}>
+                  <Image src="/img/eye.svg" alt="Visibility" />
                   <ViewOptionTitle>Columns</ViewOptionTitle>
-                  <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(visibleColumnsCount) && visibleColumnsCount > 0 &&
-                      <ViewOptionSubtitle>{visibleColumnsCount} shown</ViewOptionSubtitle>
-                    }
-                    <ChevronRightIcon fontSize={22}/>
+                  <Flex ml="auto" alignItems="center" columnGap="8px">
+                    {Boolean(visibleColumnsCount) &&
+                      visibleColumnsCount > 0 && (
+                        <ViewOptionSubtitle>
+                          {visibleColumnsCount} shown
+                        </ViewOptionSubtitle>
+                      )}
+                    <ChevronRightIcon fontSize={22} />
                   </Flex>
                 </Flex>
-              }
+              )}
 
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                      cursor='pointer' onClick={() => setOpenedMenu('group')}>
-                  <Image src="/img/copy-01.svg" alt="Group by"/>
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
+                <Flex
+                  p="8px"
+                  h="32px"
+                  columnGap="8px"
+                  alignItems="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  onClick={() => setOpenedMenu("group")}>
+                  <Image src="/img/copy-01.svg" alt="Group by" />
                   <ViewOptionTitle>Group</ViewOptionTitle>
-                  <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(groupByColumnsCount) &&
-                      <ViewOptionSubtitle>{groupByColumnsCount} group</ViewOptionSubtitle>
-                    }
-                    <ChevronRightIcon fontSize={22}/>
+                  <Flex ml="auto" alignItems="center" columnGap="8px">
+                    {Boolean(groupByColumnsCount) && (
+                      <ViewOptionSubtitle>
+                        {groupByColumnsCount} group
+                      </ViewOptionSubtitle>
+                    )}
+                    <ChevronRightIcon fontSize={22} />
                   </Flex>
                 </Flex>
-              }
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
-                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                      cursor='pointer' onClick={() => setOpenedMenu('tab-group')}>
-                  <Image src="/img/browser.svg" alt="Group by"/>
+              )}
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
+                <Flex
+                  p="8px"
+                  h="32px"
+                  columnGap="8px"
+                  alignItems="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  onClick={() => setOpenedMenu("tab-group")}>
+                  <Image src="/img/browser.svg" alt="Group by" />
                   <ViewOptionTitle>Tab group</ViewOptionTitle>
-                  <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(tabGroupColumnsCount) &&
-                      <ViewOptionSubtitle>{tabGroupColumnsCount} group</ViewOptionSubtitle>
-                    }
-                    <ChevronRightIcon fontSize={22}/>
+                  <Flex ml="auto" alignItems="center" columnGap="8px">
+                    {Boolean(tabGroupColumnsCount) && (
+                      <ViewOptionSubtitle>
+                        {tabGroupColumnsCount} group
+                      </ViewOptionSubtitle>
+                    )}
+                    <ChevronRightIcon fontSize={22} />
                   </Flex>
                 </Flex>
-              }
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
-                <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                      cursor='pointer' onClick={() => setOpenedMenu('fix-column')}>
-                  <Image src="/img/layout-left.svg" alt="Fix columns"/>
+              )}
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
+                <Flex
+                  p="8px"
+                  h="32px"
+                  columnGap="8px"
+                  alignItems="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  onClick={() => setOpenedMenu("fix-column")}>
+                  <Image src="/img/layout-left.svg" alt="Fix columns" />
                   <ViewOptionTitle>Fix Column</ViewOptionTitle>
-                  <Flex ml='auto' alignItems='center' columnGap='8px'>
-                    {Boolean(fixedColumnsCount) &&
-                      <ViewOptionSubtitle>{fixedColumnsCount} fixed</ViewOptionSubtitle>
-                    }
-                    <ChevronRightIcon fontSize={22}/>
+                  <Flex ml="auto" alignItems="center" columnGap="8px">
+                    {Boolean(fixedColumnsCount) && (
+                      <ViewOptionSubtitle>
+                        {fixedColumnsCount} fixed
+                      </ViewOptionSubtitle>
+                    )}
+                    <ChevronRightIcon fontSize={22} />
                   </Flex>
                 </Flex>
-              }
+              )}
             </Box>
-            <Box px='8px' py='4px' borderBottom='1px solid #D0D5DD'>
-              <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-                    cursor='pointer' onClick={onDocsClick}>
-                <Image src="/img/file-docs.svg" alt="Docs"/>
+            <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+              <Flex
+                p="8px"
+                h="32px"
+                columnGap="8px"
+                alignItems="center"
+                borderRadius={6}
+                _hover={{bg: "#EAECF0"}}
+                cursor="pointer"
+                onClick={onDocsClick}>
+                <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>Docs</ViewOptionTitle>
-                <ChevronRightIcon ml='auto' fontSize={22}/>
+                <ChevronRightIcon ml="auto" fontSize={22} />
               </Flex>
-              <ExcelExportButton fieldsMap={fieldsMap}/>
-              <ExcelImportButton searchText={searchText} checkedColumns={checkedColumns}
-                                 computedVisibleFields={computedVisibleFields}/>
+              <ExcelExportButton fieldsMap={fieldsMap} />
+              <ExcelImportButton
+                searchText={searchText}
+                checkedColumns={checkedColumns}
+                computedVisibleFields={computedVisibleFields}
+              />
             </Box>
-            <Box px='8px' py='4px'>
-              <DeleteViewButton view={view} refetchViews={refetchViews}/>
+            <Box px="8px" py="4px">
+              <DeleteViewButton view={view} refetchViews={refetchViews} />
             </Box>
           </>
-        }
+        )}
 
-        {openedMenu === 'columns-visibility' &&
-          <ColumnsVisibility view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                             onBackClick={() => setOpenedMenu(null)}/>
-        }
+        {openedMenu === "columns-visibility" && (
+          <ColumnsVisibility
+            view={view}
+            fieldsMap={fieldsMap}
+            refetchViews={refetchViews}
+            onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
 
-        {openedMenu === 'group' &&
-          <Group view={view} fieldsMap={fieldsMap} refetchViews={refetchViews} onBackClick={() => setOpenedMenu(null)}/>
-        }
+        {openedMenu === "group" && (
+          <Group
+            view={view}
+            fieldsMap={fieldsMap}
+            refetchViews={refetchViews}
+            onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
 
-        {openedMenu === 'tab-group' &&
-          <TabGroup view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                    visibleRelationColumns={visibleRelationColumns} onBackClick={() => setOpenedMenu(null)}/>
-        }
+        {openedMenu === "tab-group" && (
+          <TabGroup
+            view={view}
+            fieldsMap={fieldsMap}
+            refetchViews={refetchViews}
+            visibleRelationColumns={visibleRelationColumns}
+            onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
 
-        {openedMenu === 'fix-column' &&
-          <FixColumns view={view} fieldsMap={fieldsMap} refetchViews={refetchViews}
-                      onBackClick={() => setOpenedMenu(null)}/>
-        }
+        {openedMenu === "fix-column" && (
+          <FixColumns
+            view={view}
+            fieldsMap={fieldsMap}
+            refetchViews={refetchViews}
+            onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
 
 const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
       return await refetchViews();
-    }
+    },
   });
 
   const allFields = Object.values(fieldsMap);
-  const visibleFields = view?.columns
-    ?.map((id) => fieldsMap[id])
-    .filter((el) => {
-      return (el?.type === "LOOKUP" || el?.type === "LOOKUPS") ? el?.relation_id : el?.id
+  const visibleFields =
+    view?.columns
+      ?.map((id) => fieldsMap[id])
+      .filter((el) => {
+        return el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id;
+      }) ?? [];
+  const invisibleFields =
+    allFields.filter((field) => {
+      return !view?.columns?.includes(
+        field?.type === "LOOKUP" || field?.type === "LOOKUPS"
+          ? field.relation_id
+          : field.id
+      );
     }) ?? [];
-  const invisibleFields = allFields.filter((field) => {
-    return !view?.columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
-  }) ?? [];
 
-  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+  const getLabel = (column) =>
+    column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
   const allColumns = [...visibleFields, ...invisibleFields];
-  const renderFields = allColumns.filter(
-    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  const renderFields = allColumns.filter((column) =>
+    search === ""
+      ? true
+      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
   const onChange = (column, checked) => {
-    const columns = (view?.columns ?? []);
-    const id = (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
-      ? column.relation_id
-      : column.id
+    const columns = view?.columns ?? [];
+    const id =
+      column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+        ? column.relation_id
+        : column.id;
 
     mutation.mutate({
       ...view,
-      columns: checked
-        ? [...columns, id]
-        : columns.filter((c) => c !== id)
-    })
-  }
+      columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
+    });
+  };
 
   const onShowAllChange = (checked) => {
     mutation.mutate({
       ...view,
       columns: checked
-        ? renderFields.map((column) => (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
-          ? column.relation_id
-          : column.id)
-        : []
+        ? renderFields.map((column) =>
+            column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+              ? column.relation_id
+              : column.id
+          )
+        : [],
     });
-  }
+  };
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
     const computedResult = result?.filter((item) => {
-      return (item?.type === "LOOKUP" || item?.type === "LOOKUPS") ? item?.relation_id : item?.id;
+      return item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+        ? item?.relation_id
+        : item?.id;
     });
 
     if (computedResult) {
       mutation.mutate({
         ...view,
-        columns: computedResult?.map((item) => (item?.type === "LOOKUP" || item?.type === "LOOKUPS") ? item?.relation_id : item?.id)
+        columns: computedResult?.map((item) =>
+          item?.type === "LOOKUP" || item?.type === "LOOKUPS"
+            ? item?.relation_id
+            : item?.id
+        ),
       });
     }
   };
 
   return (
     <Box>
-      <Flex justifyContent='space-between' alignItems='center'>
+      <Flex justifyContent="space-between" alignItems="center">
         <Button
-          leftIcon={<ChevronLeftIcon fontSize={22}/>}
-          rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
-          colorScheme='gray'
-          variant='ghost'
-          w='fit-content'
-          onClick={onBackClick}
-        >
-          <Box color='#475467' fontSize={16} fontWeight={600}>Visible columns</Box>
+          leftIcon={<ChevronLeftIcon fontSize={22} />}
+          rightIcon={
+            mutation.isLoading ? <Spinner color="#475467" /> : undefined
+          }
+          colorScheme="gray"
+          variant="ghost"
+          w="fit-content"
+          onClick={onBackClick}>
+          <Box color="#475467" fontSize={16} fontWeight={600}>
+            Visible columns
+          </Box>
         </Button>
 
-        <Flex as='label' alignItems='center' columnGap='4px' cursor='pointer'>
-          <Switch isChecked={allColumns?.length === visibleFields?.length}
-                  onChange={(ev) => onShowAllChange(ev.target.checked)}/>
+        <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
+          <Switch
+            isChecked={allColumns?.length === visibleFields?.length}
+            onChange={(ev) => onShowAllChange(ev.target.checked)}
+          />
           Show all
         </Flex>
       </Flex>
-      <InputGroup mt='10px'>
+      <InputGroup mt="10px">
         <InputLeftElement>
-          <Image src='/img/search-lg.svg' alt='search'/>
+          <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+        <Input
+          placeholder="Search by filled name"
+          value={search}
+          onChange={(ev) => setSearch(ev.target.value)}
+        />
       </InputGroup>
-      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
+      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
         <Container onDrop={onDrop}>
-          {renderFields.map((column) =>
+          {renderFields.map((column) => (
             <Draggable key={column.id}>
-              <Flex as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6} bg='#fff'
-                    _hover={{bg: "#EAECF0"}} cursor='pointer' zIndex={999999}>
+              <Flex
+                as="label"
+                p="8px"
+                columnGap="8px"
+                alignItems="center"
+                borderRadius={6}
+                bg="#fff"
+                _hover={{bg: "#EAECF0"}}
+                cursor="pointer"
+                zIndex={999999}>
                 {column?.type && getColumnIcon({column})}
-                <ViewOptionTitle>
-                  {getLabel(column)}
-                </ViewOptionTitle>
+                <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
-                  ml='auto'
+                  ml="auto"
                   onChange={(ev) => onChange(column, ev.target.checked)}
                   isChecked={view?.columns?.includes(
-                    (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+                    column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                      ? column?.relation_id
+                      : column?.id
                   )}
                 />
               </Flex>
             </Draggable>
-          )}
+          ))}
         </Container>
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
       return await refetchViews();
-    }
+    },
   });
 
   const allFields = Object.values(fieldsMap);
-  const visibleFields = view?.attributes?.group_by_columns?.map((id) => fieldsMap[id]) ?? [];
+  const visibleFields =
+    view?.attributes?.group_by_columns?.map((id) => fieldsMap[id]) ?? [];
   const invisibleFields = allFields.filter((field) => {
-    return !view?.attributes?.group_by_columns?.includes((field?.type === "LOOKUP" || field?.type === "LOOKUPS") ? field.relation_id : field.id);
+    return !view?.attributes?.group_by_columns?.includes(
+      field?.type === "LOOKUP" || field?.type === "LOOKUPS"
+        ? field.relation_id
+        : field.id
+    );
   });
 
-  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+  const getLabel = (column) =>
+    column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
   const renderFields = [...visibleFields, ...invisibleFields].filter(
-    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+    (column) =>
+      search === ""
+        ? true
+        : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
   const onChange = (column, checked) => {
-    const columns = (view?.attributes?.group_by_columns ?? []);
-    const id = (column?.type === "LOOKUP" || column?.type === "LOOKUPS")
-      ? column.relation_id
-      : column.id
+    const columns = view?.attributes?.group_by_columns ?? [];
+    const id =
+      column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+        ? column.relation_id
+        : column.id;
 
     mutation.mutate({
       ...view,
@@ -1229,132 +1571,172 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
         ...view.attributes,
         group_by_columns: checked
           ? [...columns, id]
-          : columns.filter((c) => c !== id)
-      }
+          : columns.filter((c) => c !== id),
+      },
     });
-  }
+  };
 
   return (
     <Box>
       <Button
-        leftIcon={<ChevronLeftIcon fontSize={22}/>}
-        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
-        colorScheme='gray'
-        variant='ghost'
-        w='fit-content'
-        onClick={onBackClick}
-      >
-        <Box color='#475467' fontSize={16} fontWeight={600}>Group columns</Box>
+        leftIcon={<ChevronLeftIcon fontSize={22} />}
+        rightIcon={mutation.isLoading ? <Spinner color="#475467" /> : undefined}
+        colorScheme="gray"
+        variant="ghost"
+        w="fit-content"
+        onClick={onBackClick}>
+        <Box color="#475467" fontSize={16} fontWeight={600}>
+          Group columns
+        </Box>
       </Button>
-      <InputGroup mt='10px'>
+      <InputGroup mt="10px">
         <InputLeftElement>
-          <Image src='/img/search-lg.svg' alt='search'/>
+          <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+        <Input
+          placeholder="Search by filled name"
+          value={search}
+          onChange={(ev) => setSearch(ev.target.value)}
+        />
       </InputGroup>
-      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
-        {renderFields.map((column) =>
-          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+        {renderFields.map((column) => (
+          <Flex
+            key={column.id}
+            as="label"
+            p="8px"
+            columnGap="8px"
+            alignItems="center"
+            borderRadius={6}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
             {column?.type && getColumnIcon({column})}
-            <ViewOptionTitle>
-              {getLabel(column)}
-            </ViewOptionTitle>
+            <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
-              ml='auto'
+              ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
               isChecked={view?.attributes?.group_by_columns?.includes(
-                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+                column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                  ? column?.relation_id
+                  : column?.id
               )}
             />
           </Flex>
-        )}
+        ))}
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
-const TabGroup = ({view, fieldsMap, refetchViews, visibleRelationColumns, onBackClick}) => {
+const TabGroup = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  visibleRelationColumns,
+  onBackClick,
+}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
       return await refetchViews();
-    }
+    },
   });
 
-  const computedColumns = (view?.type !== "CALENDAR" && view?.type !== "GANTT")
-    ? Object.values(fieldsMap)
-    : [...Object.values(fieldsMap), ...visibleRelationColumns];
-  const columns = (computedColumns ?? []).filter(
-    (column) => ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
-  )
+  const computedColumns =
+    view?.type !== "CALENDAR" && view?.type !== "GANTT"
+      ? Object.values(fieldsMap)
+      : [...Object.values(fieldsMap), ...visibleRelationColumns];
+  const columns = (computedColumns ?? []).filter((column) =>
+    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
+  );
 
-  const getLabel = (column) => column?.attributes?.[`label_${i18n.language}`] || column?.label;
+  const getLabel = (column) =>
+    column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
-  const renderFields = columns.filter(
-    (column) => search === "" ? true : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  const renderFields = columns.filter((column) =>
+    search === ""
+      ? true
+      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
   const onChange = (column, checked) => {
     mutation.mutate({
       ...view,
-      group_fields: checked ? [(column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id] : []
-    })
-  }
+      group_fields: checked
+        ? [
+            column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+              ? column?.relation_id
+              : column?.id,
+          ]
+        : [],
+    });
+  };
 
   return (
     <Box>
       <Button
-        leftIcon={<ChevronLeftIcon fontSize={22}/>}
-        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
-        colorScheme='gray'
-        variant='ghost'
-        w='fit-content'
-        onClick={onBackClick}
-      >
-        <Box color='#475467' fontSize={16} fontWeight={600}>Tab group columns</Box>
+        leftIcon={<ChevronLeftIcon fontSize={22} />}
+        rightIcon={mutation.isLoading ? <Spinner color="#475467" /> : undefined}
+        colorScheme="gray"
+        variant="ghost"
+        w="fit-content"
+        onClick={onBackClick}>
+        <Box color="#475467" fontSize={16} fontWeight={600}>
+          Tab group columns
+        </Box>
       </Button>
-      <InputGroup mt='10px'>
+      <InputGroup mt="10px">
         <InputLeftElement>
-          <Image src='/img/search-lg.svg' alt='search'/>
+          <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+        <Input
+          placeholder="Search by filled name"
+          value={search}
+          onChange={(ev) => setSearch(ev.target.value)}
+        />
       </InputGroup>
-      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
-        {renderFields.map((column) =>
-          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+        {renderFields.map((column) => (
+          <Flex
+            key={column.id}
+            as="label"
+            p="8px"
+            columnGap="8px"
+            alignItems="center"
+            borderRadius={6}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
             {column?.type && getColumnIcon({column})}
-            <ViewOptionTitle>
-              {getLabel(column)}
-            </ViewOptionTitle>
+            <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
-              ml='auto'
+              ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
               isChecked={(view?.group_fields ?? []).includes(
-                (column?.type === "LOOKUP" || column?.type === "LOOKUPS") ? column?.relation_id : column?.id
+                column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                  ? column?.relation_id
+                  : column?.id
               )}
             />
           </Flex>
-        )}
+        ))}
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
   const {tableSlug} = useParams();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
       return await refetchViews();
-    }
+    },
   });
 
   const checkedElements = Object.values(fieldsMap)
@@ -1371,13 +1753,13 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
     })
     ?.filter(
       (column) =>
-        !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(
-          column?.id
-        )
+        !Object.keys(view?.attributes?.fixedColumns ?? {}).includes(column?.id)
     );
 
-  const columns = [...checkedElements, ...uncheckedElements].filter(
-    (column) => search === "" ? true : column?.label?.toLowerCase().includes(search.toLowerCase())
+  const columns = [...checkedElements, ...uncheckedElements].filter((column) =>
+    search === ""
+      ? true
+      : column?.label?.toLowerCase().includes(search.toLowerCase())
   );
 
   const onChange = (column, checked) => {
@@ -1388,71 +1770,100 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
       fixed = fixed.filter((el) => el !== column.id);
     }
     mutation.mutate({
-      ...view, attributes: {...view.attributes, fixedColumns: Object.fromEntries(fixed.map((key) => [key, true]))}
-    })
-  }
+      ...view,
+      attributes: {
+        ...view.attributes,
+        fixedColumns: Object.fromEntries(fixed.map((key) => [key, true])),
+      },
+    });
+  };
 
   return (
     <Box>
       <Button
-        leftIcon={<ChevronLeftIcon fontSize={22}/>}
-        rightIcon={mutation.isLoading ? <Spinner color='#475467'/> : undefined}
-        colorScheme='gray'
-        variant='ghost'
-        w='fit-content'
-        onClick={onBackClick}
-      >
-        <Box color='#475467' fontSize={16} fontWeight={600}>Fix columns</Box>
+        leftIcon={<ChevronLeftIcon fontSize={22} />}
+        rightIcon={mutation.isLoading ? <Spinner color="#475467" /> : undefined}
+        colorScheme="gray"
+        variant="ghost"
+        w="fit-content"
+        onClick={onBackClick}>
+        <Box color="#475467" fontSize={16} fontWeight={600}>
+          Fix columns
+        </Box>
       </Button>
-      <InputGroup mt='10px'>
+      <InputGroup mt="10px">
         <InputLeftElement>
-          <Image src='/img/search-lg.svg' alt='search'/>
+          <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
-        <Input placeholder="Search by filled name" value={search} onChange={(ev) => setSearch(ev.target.value)}/>
+        <Input
+          placeholder="Search by filled name"
+          value={search}
+          onChange={(ev) => setSearch(ev.target.value)}
+        />
       </InputGroup>
-      <Flex flexDirection='column' mt='8px' maxHeight='300px' overflow='auto'>
-        {columns.map((column) =>
-          <Flex key={column.id} as='label' p='8px' columnGap='8px' alignItems='center' borderRadius={6}
-                _hover={{bg: "#EAECF0"}} cursor='pointer'>
+      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+        {columns.map((column) => (
+          <Flex
+            key={column.id}
+            as="label"
+            p="8px"
+            columnGap="8px"
+            alignItems="center"
+            borderRadius={6}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
             {column?.type && getColumnIcon({column})}
-            <ViewOptionTitle>
-              {column?.label}
-            </ViewOptionTitle>
+            <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
-              ml='auto'
-              isChecked={Boolean(Object.keys(view?.attributes?.fixedColumns ?? {})?.find((el) => el === column.id))}
+              ml="auto"
+              isChecked={Boolean(
+                Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                  (el) => el === column.id
+                )
+              )}
               onChange={(ev) => onChange(column, ev.target.checked)}
             />
           </Flex>
-        )}
+        ))}
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const ExcelExportButton = ({fieldsMap}) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
 
   return (
     <>
-      <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
-            onClick={onOpen}>
-        <Image src="/img/file-download.svg" alt="Docs"/>
+      <Flex
+        p="8px"
+        h="32px"
+        columnGap="8px"
+        alignItems="center"
+        borderRadius={6}
+        _hover={{bg: "#EAECF0"}}
+        cursor="pointer"
+        onClick={onOpen}>
+        <Image src="/img/file-download.svg" alt="Docs" />
         <ViewOptionTitle>Export</ViewOptionTitle>
-        <ChevronRightIcon ml='auto' fontSize={22}/>
+        <ChevronRightIcon ml="auto" fontSize={22} />
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay/>
-        <ModalContent minW='432px' w='432px'>
-          <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose}/>
+        <ModalOverlay />
+        <ModalContent minW="432px" w="432px">
+          <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose} />
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-const ExcelImportButton = ({searchText, checkedColumns, computedVisibleFields}) => {
+const ExcelImportButton = ({
+  searchText,
+  checkedColumns,
+  computedVisibleFields,
+}) => {
   const {tableSlug} = useParams();
   const {download} = useDownloader();
   const {i18n} = useTranslation();
@@ -1464,47 +1875,72 @@ const ExcelImportButton = ({searchText, checkedColumns, computedVisibleFields}) 
           field_ids: computedVisibleFields,
           language: i18n.language,
           search: searchText,
-          view_fields: checkedColumns
-        }
+          view_fields: checkedColumns,
+        },
       });
-      return await download({fileName: `${tableSlug}.xlsx`, link: "https://" + data.link});
-    }
+      return await download({
+        fileName: `${tableSlug}.xlsx`,
+        link: "https://" + data.link,
+      });
+    },
   });
 
   return (
-    <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}} cursor='pointer'
-          onClick={mutation.mutate}>
-      {mutation.isLoading ? <Spinner w='20px' h='20px'/> : <Image src="/img/file-download.svg" alt="Docs"/>}
+    <Flex
+      p="8px"
+      h="32px"
+      columnGap="8px"
+      alignItems="center"
+      borderRadius={6}
+      _hover={{bg: "#EAECF0"}}
+      cursor="pointer"
+      onClick={mutation.mutate}>
+      {mutation.isLoading ? (
+        <Spinner w="20px" h="20px" />
+      ) : (
+        <Image src="/img/file-download.svg" alt="Docs" />
+      )}
       <ViewOptionTitle>Import</ViewOptionTitle>
-      <ChevronRightIcon ml='auto' fontSize={22}/>
+      <ChevronRightIcon ml="auto" fontSize={22} />
     </Flex>
-  )
-}
+  );
+};
 
 const DeleteViewButton = ({view, refetchViews}) => {
   const {tableSlug} = useParams();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
-    onSuccess: () => refetchViews()
+    onSuccess: () => refetchViews(),
   });
 
   return (
-    <Flex p='8px' columnGap='8px' alignItems='center' borderRadius={6} _hover={{bg: "#EAECF0"}}
-          cursor='pointer' onClick={() => mutation.mutate()}>
-      {mutation.isLoading ? <Spinner w='20px' h='20px'/> : <Image src="/img/trash.svg" alt="Delete"/>}
+    <Flex
+      p="8px"
+      h="32px"
+      columnGap="8px"
+      alignItems="center"
+      borderRadius={6}
+      _hover={{bg: "#EAECF0"}}
+      cursor="pointer"
+      onClick={() => mutation.mutate()}>
+      {mutation.isLoading ? (
+        <Spinner w="20px" h="20px" />
+      ) : (
+        <Image src="/img/trash.svg" alt="Delete" />
+      )}
       <ViewOptionTitle>Delete</ViewOptionTitle>
     </Flex>
-  )
-}
+  );
+};
 
 const ViewOptionTitle = ({children}) => (
-  <Box color='#475467' fontWeight={500} fontSize={14}>
+  <Box color="#475467" fontWeight={500} fontSize={14}>
     {children}
   </Box>
-)
+);
 
 const ViewOptionSubtitle = ({children}) => (
-  <Box color='#667085' fontWeight={400} fontSize={14}>
+  <Box color="#667085" fontWeight={400} fontSize={14}>
     {children}
   </Box>
 );

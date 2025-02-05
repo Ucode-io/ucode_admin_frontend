@@ -11,17 +11,20 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Portal
+  Portal,
 } from "@chakra-ui/react";
 import {useTranslation} from "react-i18next";
 
 import {getColumnIcon} from "./icons";
 import {useQueryClient} from "react-query";
 import constructorViewService from "@/services/constructorViewService";
-import relationService, {useRelationFieldUpdateMutation, useRelationsCreateMutation} from "@/services/relationService";
+import relationService, {
+  useRelationFieldUpdateMutation,
+  useRelationsCreateMutation,
+} from "@/services/relationService";
 import constructorFieldService, {
   useFieldCreateMutation,
-  useFieldUpdateMutation
+  useFieldUpdateMutation,
 } from "@/services/constructorFieldService";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
@@ -48,75 +51,71 @@ import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
 import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import "./data-table.scss"
+import "./data-table.scss";
 
 export const DynamicTable = ({
-                               custom_events,
-                               dataCount,
-                               selectedTab,
-                               filterVisible,
-                               tableView,
-                               data = [],
-                               loader = false,
-                               setDrawerState,
-                               currentView,
-                               setDrawerStateField,
-                               removableHeight,
-                               getValues,
-                               additionalRow,
-                               mainForm,
-                               selectedView,
-                               isTableView = false,
-                               remove,
-                               multipleDelete,
-                               openFieldSettings,
-                               sortedDatas,
-                               fields = [],
-                               isRelationTable = false,
-                               disablePagination,
-                               count,
-                               currentPage = 1,
-                               onPaginationChange = () => {
-                               },
-                               pagesCount = 1,
-                               setSortedDatas,
-                               columns = [],
-                               relatedTableSlug,
-                               watch,
-                               control,
-                               setFormValue,
-                               navigateToEditPage,
-                               dataLength,
-                               onDeleteClick,
-                               onRowClick = () => {
-                               },
-                               filterChangeHandler = () => {
-                               },
-                               filters,
-                               disableFilters,
-                               tableStyle,
-                               wrapperStyle,
-                               tableSlug,
-                               isResizeble,
-                               paginationExtraButton,
-                               selectedObjectsForDelete,
-                               setSelectedObjectsForDelete,
-                               onCheckboxChange,
-                               limit,
-                               setLimit,
-                               isChecked,
-                               formVisible,
-                               summaries,
-                               relationAction,
-                               onChecked,
-                               defaultLimit,
-                               title,
-                               view,
-                               refetch,
-                               menuItem,
-                               getAllData = () => {
-                               },
-                             }) => {
+  custom_events,
+  dataCount,
+  selectedTab,
+  filterVisible,
+  tableView,
+  data = [],
+  loader = false,
+  setDrawerState,
+  currentView,
+  setDrawerStateField,
+  removableHeight,
+  getValues,
+  additionalRow,
+  mainForm,
+  selectedView,
+  isTableView = false,
+  remove,
+  multipleDelete,
+  openFieldSettings,
+  sortedDatas,
+  fields = [],
+  isRelationTable = false,
+  disablePagination,
+  count,
+  currentPage = 1,
+  onPaginationChange = () => {},
+  pagesCount = 1,
+  setSortedDatas,
+  columns = [],
+  relatedTableSlug,
+  watch,
+  control,
+  setFormValue,
+  navigateToEditPage,
+  dataLength,
+  onDeleteClick,
+  onRowClick = () => {},
+  filterChangeHandler = () => {},
+  filters,
+  disableFilters,
+  tableStyle,
+  wrapperStyle,
+  tableSlug,
+  isResizeble,
+  paginationExtraButton,
+  selectedObjectsForDelete,
+  setSelectedObjectsForDelete,
+  onCheckboxChange,
+  limit,
+  setLimit,
+  isChecked,
+  formVisible,
+  summaries,
+  relationAction,
+  onChecked,
+  defaultLimit,
+  title,
+  view,
+  refetch,
+  menuItem,
+  getAllData = () => {},
+}) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -130,7 +129,7 @@ export const DynamicTable = ({
     {value: 10, label: "10 rows"},
     {value: 20, label: "20 rows"},
     {value: 30, label: "30 rows"},
-    {value: 40, label: "40 rows"}
+    {value: 40, label: "40 rows"},
   ]);
 
   const pageName =
@@ -141,8 +140,8 @@ export const DynamicTable = ({
       if (!table) return;
       const cols = table.querySelectorAll(".th");
       [].forEach.call(cols, function (col, idx) {
-        if (col.querySelector('.resizer')) {
-          return
+        if (col.querySelector(".resizer")) {
+          return;
         }
         const resizer = document.createElement("span");
         resizer.classList.add("resizer");
@@ -235,176 +234,222 @@ export const DynamicTable = ({
     return totalWidth;
   };
 
-  const renderColumns = (columns ?? []).filter((column) => Boolean(column?.attributes?.field_permission?.view_permission));
+  const renderColumns = (columns ?? []).filter((column) =>
+    Boolean(column?.attributes?.field_permission?.view_permission)
+  );
 
   const onCreateLimitOption = (value) => {
     value = value.trim();
     if (value.match(/\D/g) !== null) {
       return;
     }
-    setLimitOptions([...limitOptions, {value: Number(value), label: `${value} rows`}]);
+    setLimitOptions([
+      ...limitOptions,
+      {value: Number(value), label: `${value} rows`},
+    ]);
     setLimit(Number(value));
-  }
+  };
 
   return (
-    <div className='CTableContainer'>
-      <div className='table' style={{
-        border: "none",
-        borderRadius: 0,
-        flexGrow: 1,
-        backgroundColor: "#fff",
-        height: "calc(100vh - 140px)"
-      }}>
+    <div className="CTableContainer">
+      <div
+        className="table"
+        style={{
+          border: "none",
+          borderRadius: 0,
+          flexGrow: 1,
+          backgroundColor: "#fff",
+          height: "calc(100vh - 140px)",
+        }}>
         <table id="resizeMe">
-          <thead style={{borderBottom: "1px solid #EAECF0", position: "sticky", top: 0, zIndex: 10}}>
-          <tr>
-            <IndexTh items={isRelationTable ? fields : data} selectedItems={selectedObjectsForDelete}
-                     formVisible={formVisible}
-                     onSelectAll={(checked) => setSelectedObjectsForDelete(checked ? isRelationTable ? fields : data : [])}/>
-            {renderColumns.map((column) =>
-              <Th key={column.id} tableSlug={tableSlug} columns={renderColumns} column={column} view={view}
-                  tableSettings={tableSettings} tableSize={tableSize} pageName={pageName} sortedDatas={sortedDatas}
-                  setSortedDatas={setSortedDatas} relationAction={relationAction} isRelationTable={isRelationTable}
-                  setFieldCreateAnchor={setFieldCreateAnchor} setFieldData={setFieldData} getAllData={getAllData}
-                  setCurrentColumnWidth={setCurrentColumnWidth}/>
-            )}
-            {!isRelationTable &&
-              <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="add_field">
-                <FieldButton
-                  openFieldSettings={openFieldSettings}
+          <thead
+            style={{
+              borderBottom: "1px solid #EAECF0",
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+            }}>
+            <tr>
+              <IndexTh
+                items={isRelationTable ? fields : data}
+                selectedItems={selectedObjectsForDelete}
+                formVisible={formVisible}
+                onSelectAll={(checked) =>
+                  setSelectedObjectsForDelete(
+                    checked ? (isRelationTable ? fields : data) : []
+                  )
+                }
+              />
+              {renderColumns.map((column) => (
+                <Th
+                  key={column.id}
+                  tableSlug={tableSlug}
+                  columns={renderColumns}
+                  column={column}
                   view={view}
-                  mainForm={mainForm}
-                  fields={fields}
+                  tableSettings={tableSettings}
+                  tableSize={tableSize}
+                  pageName={pageName}
+                  sortedDatas={sortedDatas}
+                  setSortedDatas={setSortedDatas}
+                  relationAction={relationAction}
+                  isRelationTable={isRelationTable}
                   setFieldCreateAnchor={setFieldCreateAnchor}
-                  fieldCreateAnchor={fieldCreateAnchor}
-                  fieldData={fieldData}
                   setFieldData={setFieldData}
-                  setDrawerState={setDrawerState}
-                  setDrawerStateField={setDrawerStateField}
-                  menuItem={menuItem}
+                  getAllData={getAllData}
+                  setCurrentColumnWidth={setCurrentColumnWidth}
                 />
-              </PermissionWrapperV2>
-            }
-          </tr>
+              ))}
+              {!isRelationTable && (
+                <PermissionWrapperV2
+                  tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+                  type="add_field">
+                  <FieldButton
+                    openFieldSettings={openFieldSettings}
+                    view={view}
+                    mainForm={mainForm}
+                    fields={fields}
+                    setFieldCreateAnchor={setFieldCreateAnchor}
+                    fieldCreateAnchor={fieldCreateAnchor}
+                    fieldData={fieldData}
+                    setFieldData={setFieldData}
+                    setDrawerState={setDrawerState}
+                    setDrawerStateField={setDrawerStateField}
+                    menuItem={menuItem}
+                  />
+                </PermissionWrapperV2>
+              )}
+            </tr>
           </thead>
           <tbody>
-          {(isRelationTable ? fields : data).map((virtualRowObject, index) =>
-            <TableRow
-              key={isRelationTable ? virtualRowObject?.id : index}
-              tableView={tableView}
-              width={"40px"}
-              remove={remove}
-              watch={watch}
-              getValues={getValues}
-              control={control}
-              row={virtualRowObject}
-              mainForm={mainForm}
-              formVisible={formVisible}
-              rowIndex={index}
-              isTableView={isTableView}
-              selectedObjectsForDelete={selectedObjectsForDelete}
-              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-              isRelationTable={isRelationTable}
-              relatedTableSlug={relatedTableSlug}
-              onRowClick={onRowClick}
-              isChecked={isChecked}
-              calculateWidthFixedColumn={calculateWidthFixedColumn}
-              onCheckboxChange={onCheckboxChange}
-              currentPage={currentPage}
-              limit={limit}
-              setFormValue={setFormValue}
-              columns={columns}
-              tableHeight={tableHeight}
-              tableSettings={tableSettings}
-              pageName={pageName}
-              calculateWidth={calculateWidth}
-              tableSlug={tableSlug}
-              onDeleteClick={onDeleteClick}
-              relationAction={relationAction}
-              onChecked={onChecked}
-              relationFields={fields?.length}
-              data={data}
-              view={view}
-              firstRowWidth={45}
-            />
-          )}
+            {(isRelationTable ? fields : data).map(
+              (virtualRowObject, index) => (
+                <TableRow
+                  key={isRelationTable ? virtualRowObject?.id : index}
+                  tableView={tableView}
+                  width={"40px"}
+                  remove={remove}
+                  watch={watch}
+                  getValues={getValues}
+                  control={control}
+                  row={virtualRowObject}
+                  mainForm={mainForm}
+                  formVisible={formVisible}
+                  rowIndex={index}
+                  isTableView={isTableView}
+                  selectedObjectsForDelete={selectedObjectsForDelete}
+                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                  isRelationTable={isRelationTable}
+                  relatedTableSlug={relatedTableSlug}
+                  onRowClick={onRowClick}
+                  isChecked={isChecked}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  onCheckboxChange={onCheckboxChange}
+                  currentPage={currentPage}
+                  limit={limit}
+                  setFormValue={setFormValue}
+                  columns={columns}
+                  tableHeight={tableHeight}
+                  tableSettings={tableSettings}
+                  pageName={pageName}
+                  calculateWidth={calculateWidth}
+                  tableSlug={tableSlug}
+                  onDeleteClick={onDeleteClick}
+                  relationAction={relationAction}
+                  onChecked={onChecked}
+                  relationFields={fields?.length}
+                  data={data}
+                  view={view}
+                  firstRowWidth={45}
+                />
+              )
+            )}
 
-          {addNewRow && (
-            <AddDataColumn
-              rows={isRelationTable ? fields : data}
-              columns={columns}
-              isRelationTable={isRelationTable}
-              setAddNewRow={setAddNewRow}
-              isTableView={isTableView}
-              tableView={tableView}
-              tableSlug={relatedTableSlug ?? tableSlug}
-              fields={columns}
-              getValues={getValues}
-              mainForm={mainForm}
-              originControl={control}
-              setFormValue={setFormValue}
-              relationfields={fields}
-              data={data}
-              view={view}
-              onRowClick={onRowClick}
-              width={"80px"}
-              refetch={refetch}
-              pageName={pageName}
-              tableSettings={tableSettings}
-              calculateWidthFixedColumn={calculateWidthFixedColumn}
-              firstRowWidth={45}
-            />
-          )}
+            {addNewRow && (
+              <AddDataColumn
+                rows={isRelationTable ? fields : data}
+                columns={columns}
+                isRelationTable={isRelationTable}
+                setAddNewRow={setAddNewRow}
+                isTableView={isTableView}
+                tableView={tableView}
+                tableSlug={relatedTableSlug ?? tableSlug}
+                fields={columns}
+                getValues={getValues}
+                mainForm={mainForm}
+                originControl={control}
+                setFormValue={setFormValue}
+                relationfields={fields}
+                data={data}
+                view={view}
+                onRowClick={onRowClick}
+                width={"80px"}
+                refetch={refetch}
+                pageName={pageName}
+                tableSettings={tableSettings}
+                calculateWidthFixedColumn={calculateWidthFixedColumn}
+                firstRowWidth={45}
+              />
+            )}
 
-          <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
-            <tr>
-              <td style={{
-                padding: "0",
-                position: "sticky",
-                left: "0",
-                backgroundColor: "#FFF",
-                zIndex: "1",
-                width: "45px",
-                color: "#007aff"
-              }}>
-                <Flex
-                  h='30px'
-                  alignItems='center'
-                  justifyContent='center'
-                  transition='background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-                  cursor="pointer"
-                  _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
-                  onClick={() => setAddNewRow(true)}
-                >
-                  <AddRoundedIcon fill='#007aff'/>
-                </Flex>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
+              <tr>
+                <td
+                  style={{
+                    padding: "0",
+                    position: "sticky",
+                    left: "0",
+                    backgroundColor: "#FFF",
+                    zIndex: "1",
+                    width: "45px",
+                    color: "#007aff",
+                  }}>
+                  <Flex
+                    h="30px"
+                    alignItems="center"
+                    justifyContent="center"
+                    transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+                    cursor="pointer"
+                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
+                    onClick={() => setAddNewRow(true)}>
+                    <AddRoundedIcon fill="#007aff" />
+                  </Flex>
+                </td>
+              </tr>
+            </PermissionWrapperV2>
 
-              </td>
-            </tr>
-          </PermissionWrapperV2>
-
-          {!!summaries?.length && (
-            <SummaryRow summaries={summaries} columns={columns} data={data}/>
-          )}
-          {additionalRow}
+            {!!summaries?.length && (
+              <SummaryRow summaries={summaries} columns={columns} data={data} />
+            )}
+            {additionalRow}
           </tbody>
         </table>
       </div>
 
-      <Flex px='16px' py='6px' borderTop='1px solid #EAECF0' justifyContent='space-between' bg="#fff">
-        <Flex columnGap='16px' alignItems='center' fontSize={14} fontWeight={600} color="#344054">
+      <Flex
+        px="16px"
+        py="6px"
+        borderTop="1px solid #EAECF0"
+        justifyContent="space-between"
+        bg="#fff">
+        <Flex
+          columnGap="16px"
+          alignItems="center"
+          fontSize={14}
+          fontWeight={600}
+          color="#344054">
           Show
           <ChakraProvider>
             <CreatableSelect
               chakraStyles={{
                 container: (provided) => ({
                   ...provided,
-                  width: "150px"
+                  width: "150px",
                 }),
               }}
               value={{value: limit, label: `${limit} rows`}}
               options={limitOptions}
-              menuPlacement='top'
+              menuPlacement="top"
               onChange={({value}) => setLimit(value)}
               onCreateOption={onCreateLimitOption}
             />
@@ -418,20 +463,24 @@ export const DynamicTable = ({
           count={Math.ceil((dataCount ?? 0) / limit)}
           variant="outlined"
           shape="rounded"
-          style={{position: "absolute", left: "50%", transform: "translateX(-50%)"}}
+          style={{
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
         />
 
-        {selectedObjectsForDelete?.length > 0 &&
+        {selectedObjectsForDelete?.length > 0 && (
           <RectangleIconButton color="error" onClick={multipleDelete}>
             <Button variant="outlined" color="error">
               Delete all selected
             </Button>
           </RectangleIconButton>
-        }
+        )}
       </Flex>
     </div>
-  )
-}
+  );
+};
 
 const IndexTh = ({items, selectedItems, onSelectAll}) => {
   const {tableSlug} = useParams();
@@ -443,44 +492,43 @@ const IndexTh = ({items, selectedItems, onSelectAll}) => {
 
   return (
     <Box
-      minWidth='45px'
-      textAlign='center'
-      as='th'
+      minWidth="45px"
+      textAlign="center"
+      as="th"
       bg="#f6f6f6"
       py="2px"
       px="12px"
-      borderRight='1px solid #EAECF0'
-      position='sticky'
+      borderRight="1px solid #EAECF0"
+      position="sticky"
       left={0}
       zIndex={1}
       onMouseEnter={hasPermission ? () => setHover(true) : null}
-      onMouseLeave={hasPermission ? () => setHover(false) : null}
-    >
-      {!showCheckbox &&
-        <Image src="/img/hash.svg" alt="index" mx='auto'/>
-      }
-      {showCheckbox &&
+      onMouseLeave={hasPermission ? () => setHover(false) : null}>
+      {!showCheckbox && <Image src="/img/hash.svg" alt="index" mx="auto" />}
+      {showCheckbox && (
         <Checkbox
           style={{width: 10, height: 10}}
           checked={items?.length === selectedItems?.length}
-          indeterminate={selectedItems?.length > 0 && items?.length !== selectedItems?.length}
+          indeterminate={
+            selectedItems?.length > 0 && items?.length !== selectedItems?.length
+          }
           onChange={(_, checked) => onSelectAll(checked)}
         />
-      }
+      )}
     </Box>
-  )
-}
+  );
+};
 
 const FieldButton = ({
-                       view,
-                       setFieldCreateAnchor,
-                       fieldCreateAnchor,
-                       fieldData,
-                       setFieldData,
-                       setDrawerState,
-                       setDrawerStateField,
-                       menuItem,
-                     }) => {
+  view,
+  setFieldCreateAnchor,
+  fieldCreateAnchor,
+  fieldData,
+  setFieldData,
+  setDrawerState,
+  setDrawerStateField,
+  menuItem,
+}) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const {tableSlug} = useParams();
@@ -512,49 +560,45 @@ const FieldButton = ({
       });
   };
 
-  const {mutate: createField} =
-    useFieldCreateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful created", "success"));
-        updateView(res?.id);
-      },
-    });
+  const {mutate: createField} = useFieldCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful created", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const {mutate: updateField} =
-    useFieldUpdateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const {mutate: updateField} = useFieldUpdateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const {mutate: createRelation} =
-    useRelationsCreateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const {mutate: createRelation} = useRelationsCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
 
-  const {mutate: updateRelation} =
-    useRelationFieldUpdateMutation({
-      onSuccess: (res) => {
-        reset({});
-        setFieldOptionAnchor(null);
-        setFieldCreateAnchor(null);
-        dispatch(showAlert("Successful updated", "success"));
-        updateView(res?.id);
-      },
-    });
+  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
   const onSubmit = (values) => {
     const data = {
       ...values,
@@ -570,10 +614,10 @@ const FieldButton = ({
         formula: values?.attributes?.advanced_type
           ? values?.attributes?.formula
           : values?.attributes?.from_formula +
-          " " +
-          values?.attributes?.math?.value +
-          " " +
-          values?.attributes?.to_formula,
+            " " +
+            values?.attributes?.math?.value +
+            " " +
+            values?.attributes?.to_formula,
       },
     };
 
@@ -624,22 +668,21 @@ const FieldButton = ({
   return (
     <>
       <Box
-        as='th'
+        as="th"
         bg="#f6f6f6"
         py="2px"
         px="12px"
-        borderLeft='1px solid #EAECF0'
-        position='sticky'
+        borderLeft="1px solid #EAECF0"
+        position="sticky"
         right={0}
         zIndex={1}
-        cursor='pointer'
+        cursor="pointer"
         onClick={(e) => {
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}
-      >
-        <AddRoundedIcon style={{marginTop: "3px"}}/>
+        }}>
+        <AddRoundedIcon style={{marginTop: "3px"}} />
       </Box>
       <FieldOptionModal
         anchorEl={fieldOptionAnchor}
@@ -666,27 +709,27 @@ const FieldButton = ({
         />
       )}
     </>
-  )
-}
+  );
+};
 
 const Th = ({
-              tableSlug,
-              columns,
-              column,
-              view,
-              tableSettings,
-              tableSize,
-              pageName,
-              sortedDatas,
-              setSortedDatas,
-              relationAction,
-              relatedTable,
-              isRelationTable,
-              getAllData,
-              setFieldCreateAnchor,
-              setFieldData,
-              setCurrentColumnWidth,
-            }) => {
+  tableSlug,
+  columns,
+  column,
+  view,
+  tableSettings,
+  tableSize,
+  pageName,
+  sortedDatas,
+  setSortedDatas,
+  relationAction,
+  relatedTable,
+  isRelationTable,
+  getAllData,
+  setFieldCreateAnchor,
+  setFieldData,
+  setCurrentColumnWidth,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
@@ -797,7 +840,7 @@ const Th = ({
         {
           id: 2,
           title: "Edit field",
-          icon: <CreateOutlinedIcon/>,
+          icon: <CreateOutlinedIcon />,
           onClickAction: (e) => {
             setFieldCreateAnchor(e.currentTarget);
             setFieldData(column);
@@ -822,7 +865,7 @@ const Th = ({
               ? "Z -> A"
               : "A -> Z"
           }`,
-          icon: <SortByAlphaOutlinedIcon/>,
+          icon: <SortByAlphaOutlinedIcon />,
           onClickAction: () => {
             const field = column.id;
             const order =
@@ -854,8 +897,8 @@ const Th = ({
         {
           id: 18,
           title: computedViewSummaries ? `Unset Summary` : "Add Summary",
-          icon: <PlaylistAddCircleIcon/>,
-          arrowIcon: <KeyboardArrowRightIcon/>,
+          icon: <PlaylistAddCircleIcon />,
+          arrowIcon: <KeyboardArrowRightIcon />,
           onClickAction: (e) => {
             if (computedViewSummaries) {
               handleAddSummary(column, "unset");
@@ -870,9 +913,9 @@ const Th = ({
             view?.attributes?.textWrap?.[column?.id] ? "Unwrap" : "Wrap"
           } text`,
           icon: view?.attributes?.textWrap?.[column?.id] ? (
-            <WrapTextOutlinedIcon/>
+            <WrapTextOutlinedIcon />
           ) : (
-            <AlignHorizontalLeftIcon/>
+            <AlignHorizontalLeftIcon />
           ),
           onClickAction: () => {
             textWrapChangeHandler(
@@ -886,7 +929,7 @@ const Th = ({
           title: `${
             view?.attributes?.fixedColumns?.[column?.id] ? "Unfix" : "Fix"
           } column`,
-          icon: <ViewWeekOutlinedIcon/>,
+          icon: <ViewWeekOutlinedIcon />,
           onClickAction: () => {
             fixColumnChangeHandler(
               column,
@@ -902,7 +945,7 @@ const Th = ({
         {
           id: 13,
           title: "Hide field",
-          icon: <VisibilityOffOutlinedIcon/>,
+          icon: <VisibilityOffOutlinedIcon />,
           onClickAction: () => {
             updateView(column.id);
           },
@@ -911,7 +954,7 @@ const Th = ({
         {
           id: 14,
           title: "Delete field",
-          icon: <DeleteOutlinedIcon/>,
+          icon: <DeleteOutlinedIcon />,
           onClickAction: () => {
             deleteField(column.id);
           },
@@ -922,13 +965,13 @@ const Th = ({
 
   const formulaTypes = [
     {
-      icon: <FunctionsIcon/>,
+      icon: <FunctionsIcon />,
       id: 1,
       label: "Sum ()",
       value: "sum",
     },
     {
-      icon: <FunctionsIcon/>,
+      icon: <FunctionsIcon />,
       id: 1,
       label: "Avg ()",
       value: "avg",
@@ -996,22 +1039,26 @@ const Th = ({
     }
   };
 
-  const position = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-    ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-    ? "sticky"
-    : "relative";
+  const position =
+    tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+      ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+      ? "sticky"
+      : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
     ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
     : "0";
-  const bg = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-    ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-    ? "#F6F6F6"
-    : "#F9FAFB";
-  const zIndex = tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
-    ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-    ? "1"
-    : "0";
-  const label = column?.attributes?.[`label_${i18n?.language}`] ||
+  const bg =
+    tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+      ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+      ? "#F6F6F6"
+      : "#F9FAFB";
+  const zIndex =
+    tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
+      ?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+      ? "1"
+      : "0";
+  const label =
+    column?.attributes?.[`label_${i18n?.language}`] ||
     column?.attributes?.[`title_${i18n?.language}`] ||
     column?.attributes?.[`name_${i18n?.language}`] ||
     column.label;
@@ -1024,13 +1071,13 @@ const Th = ({
 
   return (
     <Box
-      as='th'
+      as="th"
       id={column.id}
-      className='th'
+      className="th"
       py="2px"
       px="12px"
-      borderRight='1px solid #EAECF0'
-      color='#475467'
+      borderRight="1px solid #EAECF0"
+      color="#475467"
       fontWeight={500}
       fontSize={12}
       minW={minWidth}
@@ -1039,56 +1086,77 @@ const Th = ({
       left={left}
       bg={bg}
       zIndex={zIndex}
-      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
-    >
-      <Flex alignItems='center' columnGap='8px' whiteSpace='nowrap' minW='max-content'>
+      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}>
+      <Flex
+        alignItems="center"
+        columnGap="8px"
+        whiteSpace="nowrap"
+        minW="max-content">
         {getColumnIcon({column})}
         {label}
 
-        {permissions?.field_filter &&
+        {permissions?.field_filter && (
           <ChakraProvider>
             <Popover>
               <PopoverTrigger>
-                <IconButton aria-label='more'
-                            icon={<Image src='/img/chevron-down.svg' alt='more' style={{minWidth: 20}}/>}
-                            variant='ghost' colorScheme='gray' ml='auto' onClick={handleClick} size='xs'/>
+                <IconButton
+                  aria-label="more"
+                  icon={
+                    <Image
+                      src="/img/chevron-down.svg"
+                      alt="more"
+                      style={{minWidth: 20}}
+                    />
+                  }
+                  variant="ghost"
+                  colorScheme="gray"
+                  ml="auto"
+                  onClick={handleClick}
+                  size="xs"
+                />
               </PopoverTrigger>
               <Portal>
-                <PopoverContent w='200px' bg="#fff" py='4px' borderRadius={6}
-                                boxShadow='0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)'>
+                <PopoverContent
+                  w="200px"
+                  bg="#fff"
+                  py="4px"
+                  borderRadius={6}
+                  boxShadow="0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)">
                   {menu.map((item, index) => (
-                    <Flex flexDirection='column'>
-                      {item.children.filter(child => !(child.id === 19 && column?.type !== "MULTI_LINE"))
-                        .map((child) =>
+                    <Flex flexDirection="column">
+                      {item.children
+                        .filter(
+                          (child) =>
+                            !(child.id === 19 && column?.type !== "MULTI_LINE")
+                        )
+                        .map((child) => (
                           <Flex
-                            mx='10px'
-                            columnGap='10px'
-                            alignItems='center'
-                            cursor='pointer'
+                            mx="10px"
+                            columnGap="10px"
+                            alignItems="center"
+                            cursor="pointer"
                             color={child.id === 14 ? "red" : "#475467"}
-                            fontSize='14px'
+                            fontSize="14px"
                             fontWeight={500}
-                            p='5px'
-                            borderRadius='6px'
+                            p="5px"
+                            borderRadius="6px"
                             _hover={{bg: "#919eab14"}}
                             onClick={(e) => child.onClickAction(e)}>
-                            <Flex justifyContent='center' alignItems='center'>
+                            <Flex justifyContent="center" alignItems="center">
                               {child.icon}
                             </Flex>
 
-                            <Flex justifyContent='center'>
-                              {child.title}
-                            </Flex>
+                            <Flex justifyContent="center">{child.title}</Flex>
                           </Flex>
-                        )}
-                      {index !== menu.length - 1 && <Box as='hr' my='4px'/>}
+                        ))}
+                      {index !== menu.length - 1 && <Box as="hr" my="4px" />}
                     </Flex>
                   ))}
                 </PopoverContent>
               </Portal>
             </Popover>
           </ChakraProvider>
-        }
+        )}
       </Flex>
 
       <Menu
@@ -1150,8 +1218,8 @@ const Th = ({
         </div>
       </Menu>
     </Box>
-  )
-}
+  );
+};
 
 const calculateWidthFixedColumn = ({columns, column}) => {
   const prevElementIndex = columns?.findIndex((item) => item.id === column.id);

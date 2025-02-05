@@ -18,6 +18,7 @@ function HFPassword({
   props,
   field,
   defaultValue,
+  newUi,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,7 +35,7 @@ function HFPassword({
       isDisabled={isDisabled}
       isFormEdit
       updateObject={updateObject}
-          isNewTableView={isNewTableView}
+      isNewTableView={isNewTableView}
       isBlackBg={isBlackBg}
       control={control}
       name={name}
@@ -49,6 +50,7 @@ function HFPassword({
             <IconButton
               aria-label="toggle password visibility"
               onClick={togglePasswordVisibility}
+              style={newUi ? {padding: '4px'} : undefined}
             >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </IconButton>

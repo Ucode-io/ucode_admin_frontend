@@ -29,6 +29,7 @@ const HFInternationPhone = ({
   isTableView,
   updateObject,
   isNewTableView,
+  newUi,
   ...props
 }) => {
   const classes = useStyles();
@@ -69,6 +70,7 @@ const HFInternationPhone = ({
           limitMaxLength={true}
           {...props}
           isValidPhoneNumber
+          style={{ height: newUi ? "25px" : undefined }}
           renderInput={(inputProps) => (
             <input
               {...inputProps}

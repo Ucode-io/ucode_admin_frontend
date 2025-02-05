@@ -14,6 +14,7 @@ const HFCheckbox = ({
                       defaultValue = false,
                       isShowLable = true,
                       id = "",
+                      newUi,
                       ...props
                     }) => {
   return (
@@ -30,11 +31,12 @@ const HFCheckbox = ({
           }}>
           <Checkbox
             id={`checkbox${id}`}
-            icon={<img src="/img/checbkox.svg" alt="checkbox" style={{ width: 20 }} />}
-            checkedIcon={<img src="/img/checkbox-checked.svg" alt="checked" style={{ width: 20 }} />}
+            icon={<img src="/img/checbkox.svg" alt="checkbox" style={{width: 20}}/>}
+            checkedIcon={<img src="/img/checkbox-checked.svg" alt="checked" style={{width: 20}}/>}
             style={{
               transform: "translatey(-1px)",
               marginRight: "8px",
+              padding: newUi ? "4px" : undefined
             }}
             checked={
               typeof value === "string"

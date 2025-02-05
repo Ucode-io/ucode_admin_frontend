@@ -71,7 +71,7 @@ const HFTextFieldWithMask = ({
                     <LocalPhoneIcon style={{ fontSize: "30px" }} />
                   </InputAdornment>
                 ),
-                inputProps: { tabIndex },
+                inputProps: { tabIndex},
                 classes: {
                   input: isBlackBg ? classes.input : "",
                 },

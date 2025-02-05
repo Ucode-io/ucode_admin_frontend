@@ -16,6 +16,7 @@ function HFMoneyField({
   isBlackBg = false,
   isTransparent = false,
   updateObject = () => {},
+  newUi,
 }) {
   const value = watch(name);
 
@@ -49,7 +50,7 @@ function HFMoneyField({
       control={control}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
-          <Box sx={{display: "flex", alignItems: "center"}}>
+          <Box sx={{display: "flex", alignItems: "center", height: newUi ? 25 : undefined }}>
             <NumericFormat
               thousandsGroupStyle="thousand"
               thousandSeparator=" "

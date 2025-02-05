@@ -351,8 +351,7 @@ const TableView = ({
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
-
-          limit: limitPage !== 0 ? limitPage : limit,
+          limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -516,8 +515,8 @@ const TableView = ({
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
   return (
-    <MaterialUIProvider style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-      <div id="wrapper_drag" className={styles.wrapper} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+    <MaterialUIProvider>
+      <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
           custom_events={custom_events}
           dataCount={dataCount}

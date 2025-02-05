@@ -39,25 +39,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HFMultipleAutocomplete = ({
-  control,
-  name,
-  label,
-  updateObject,
-  isNewTableView = false,
-  isFormEdit = false,
-  isBlackBg = false,
-  width = "100%",
-  disabledHelperText,
-  placeholder,
-  tabIndex,
-  required = false,
-  onChange = () => {},
-  field,
-  rules = {},
-  defaultValue = [],
-  disabled,
-  setFormValue,
-}) => {
+                                  control,
+                                  name,
+                                  label,
+                                  updateObject,
+                                  isNewTableView = false,
+                                  isFormEdit = false,
+                                  isBlackBg = false,
+                                  width = "100%",
+                                  disabledHelperText,
+                                  placeholder,
+                                  tabIndex,
+                                  required = false,
+                                  onChange = () => {
+                                  },
+                                  field,
+                                  rules = {},
+                                  defaultValue = [],
+                                  disabled,
+                                  setFormValue,
+                                  newUi,
+                                }) => {
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
   const hasColor = field.attributes?.has_color;
@@ -74,9 +76,9 @@ const HFMultipleAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: {onChange: onFormChange, value},
-        fieldState: {error},
-      }) => {
+                 field: {onChange: onFormChange, value},
+                 fieldState: {error},
+               }) => {
         return (
           <AutoCompleteElement
             value={value}
@@ -102,6 +104,8 @@ const HFMultipleAutocomplete = ({
             disabled={disabled}
             field={field}
             className="hf-select"
+            isNewTableView={isNewTableView}
+            newUi={newUi}
           />
         );
       }}></Controller>
@@ -109,25 +113,27 @@ const HFMultipleAutocomplete = ({
 };
 
 const AutoCompleteElement = ({
-  value,
-  options,
-  width,
-  label,
-  hasColor,
-  // tabIndex,
-  hasIcon,
-  required,
-  classes,
-  placeholder,
-  onFormChange,
-  disabledHelperText,
-  isFormEdit,
-  error,
-  isMultiSelect,
-  disabled,
-  field,
-  isBlackBg,
-}) => {
+                               value,
+                               options,
+                               width,
+                               label,
+                               hasColor,
+                               // tabIndex,
+                               hasIcon,
+                               required,
+                               classes,
+                               placeholder,
+                               onFormChange,
+                               disabledHelperText,
+                               isFormEdit,
+                               error,
+                               isMultiSelect,
+                               disabled,
+                               field,
+                               isBlackBg,
+                               isNewTableView,
+                               newUi = false
+                             }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
 
@@ -178,12 +184,6 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-  // useEffect(() => {
-  //   if (value) {
-  //     onFormChange(value);
-  //   }
-  // }, []);
-
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
@@ -194,9 +194,9 @@ const AutoCompleteElement = ({
         options={localOptions}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{color: "#fff"}} />
+            <ArrowDropDownIcon style={{color: "#fff"}}/>
           ) : (
-            <ArrowDropDownIcon />
+            <ArrowDropDownIcon/>
           )
         }
         disableCloseOnSelect
@@ -227,20 +227,23 @@ const AutoCompleteElement = ({
               },
             }}
             InputProps={{
-              // inputProps: { tabIndex },
               ...params.InputProps,
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
+              inputProps: isNewTableView ?
+                {...params.inputProps, style: computedValue?.length > 0 ? {height: 0} : undefined}
+                : params.inputProps,
               style: disabled
                 ? {
-                    background: "inherit",
-                  }
+                  background: "inherit",
+                }
                 : {
-                    background: "inherit",
-                    color: isBlackBg ? "#fff" : "inherit",
-                    border: error?.message ? "1px solid red" : "",
-                  },
+                  padding: newUi ? "0" : undefined,
+                  background: "inherit",
+                  color: isBlackBg ? "#fff" : "inherit",
+                  border: error?.message ? "1px solid red" : "",
+                },
 
               endAdornment: Boolean(
                 appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
@@ -252,7 +255,7 @@ const AutoCompleteElement = ({
                     right: 0,
                   }}>
                   <InputAdornment position="start">
-                    <Lock style={{fontSize: "20px"}} />
+                    <Lock style={{fontSize: "20px"}}/>
                   </InputAdornment>
                 </Tooltip>
               ),
@@ -278,8 +281,16 @@ const AutoCompleteElement = ({
                     ? {color: el?.color, background: `${el?.color}30`}
                     : {}
                 }>
-                {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p className={styles.value}>{el?.label ?? el?.value}</p>
+                {hasIcon && <IconGenerator icon={el?.icon}/>}
+                <p className={styles.value}
+                   style={isNewTableView ? {
+                     maxWidth: "150px",
+                     whiteSpace: "nowrap",
+                     overflow: "hidden",
+                     textOverflow: "ellipsis"
+                   } : undefined}>
+                  {el?.label ?? el?.value}
+                </p>
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"
@@ -363,7 +374,7 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
         </div>
         <div className={styles.icon_picker}>
           {hasIcon && (
-            <HFIconPicker shape="rectangle" control={control} name="icon" />
+            <HFIconPicker shape="rectangle" control={control} name="icon"/>
           )}
           <h4>Icon</h4>
         </div>
@@ -371,12 +382,12 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
       <form action="" className={styles.form_control}>
         <div className={styles.input_control}>
           <FRow label="Label">
-            <HFTextField defaultValue="" control={control} name="label" />
+            <HFTextField defaultValue="" control={control} name="label"/>
           </FRow>
         </div>
         <div className={styles.input_control}>
           <FRow label="Value">
-            <HFTextField defaultValue="" control={control} name="value" />
+            <HFTextField defaultValue="" control={control} name="value"/>
           </FRow>
         </div>
       </form>
@@ -385,10 +396,10 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
           Add
           {loader ? (
             <span className={styles.btn_loader}>
-              <RippleLoader size="btn_size" height="20px" />
+              <RippleLoader size="btn_size" height="20px"/>
             </span>
           ) : (
-            <AddIcon />
+            <AddIcon/>
           )}
         </PrimaryButton>
       </div>

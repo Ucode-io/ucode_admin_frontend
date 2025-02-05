@@ -9,6 +9,7 @@ import {
 import React, {useMemo} from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
+import {Box} from "@chakra-ui/react";
 
 export default function TimeLineDatesRow({
   datesList,
@@ -76,6 +77,7 @@ export default function TimeLineDatesRow({
     <div
       className={styles.datesRow}
       style={{
+        display: "flex",
         borderRight:
           selectedType === "month" ? "1px solid #e0e0e0" : "1px solid #e0e0e0",
         position: "sticky",
@@ -170,10 +172,60 @@ export default function TimeLineDatesRow({
               </div>
             ))
           ) : (
-            ""
+            <MonthBlock
+              datesList={datesList}
+              days={days}
+              selectedType={selectedType}
+              zoomPosition={zoomPosition}
+            />
           )}
         </div>
       ))}
     </div>
   );
 }
+
+const MonthBlock = ({datesList, days, selectedType, zoomPosition}) => {
+  const computedMonthList = useMemo(() => {
+    const result = {};
+    const referenceDate = datesList.length ? datesList[0] : new Date();
+
+    for (let i = 0; i <= 2; i++) {
+      const monthStart = startOfMonth(addMonths(referenceDate, i));
+      const monthEnd = endOfMonth(monthStart);
+      const month = format(monthStart, "MMMM yyyy");
+
+      result[month] = {
+        month,
+        monthDays: [monthStart.toISOString(), monthEnd.toISOString()],
+      };
+    }
+
+    return Object.values(result);
+  }, [datesList]);
+
+  return computedMonthList.map(({month, days}) => (
+    <div className={styles.weekBlock}>
+      <div
+        className={styles.weekNumber}
+        style={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "32px",
+          width: `${days?.length > 2 ? "100%" : zoomPosition * 30}px`,
+          border: "1px solid #e0e0e0",
+        }}>
+        {`${format(month[0], "dd/EEEE") + " - " + format(month[1], "dd/EEEE")}`}
+      </div>
+      <div className={styles.daysRow}>
+        {days?.map((day) => (
+          <TimeLineDayBlock day={day} zoomPosition={zoomPosition} />
+        ))}
+      </div>
+    </div>
+  ));
+};

@@ -70,10 +70,11 @@
   align-items: center;
   justify-content: space-between;
   // margin-bottom: 10px;
-  min-height: 54px;
+  min-height: 40px !important;
   width: 100%;
   overflow-x: scroll;
   padding: 0 16px;
+  background: #fff;
 }
 
 .loader {
@@ -427,6 +428,7 @@
   font-weight: 500 !important;
   line-height: normal;
   white-space: nowrap;
+  height: 25px !important;
 }
 
 .activeTab {

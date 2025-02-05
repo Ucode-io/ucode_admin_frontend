@@ -296,6 +296,8 @@ export default function TimeLineView({
   useEffect(() => {
     if (selectedType === "month") {
       setZoomPosition(1);
+    } else if (selectedType === "week") {
+      setZoomPosition(2);
     }
   }, [selectedType]);
 

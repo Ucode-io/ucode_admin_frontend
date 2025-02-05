@@ -20,6 +20,17 @@
       border: 1px solid #e5e9eb;
       border-left: none;
       margin: -1px -1px 0 0;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        right: -1px;
+        top: 100%;
+        width: 1px;
+        height: calc(100vh - 32px);
+        background-color: #e5e9eb;
+      }
     }
 
     .daysRow {

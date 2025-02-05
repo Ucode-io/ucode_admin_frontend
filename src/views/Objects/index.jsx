@@ -91,7 +91,7 @@ const ObjectsPage = () => {
       visibleRelationColumns: [],
     },
     isLoading,
-    refetch
+    refetch,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
@@ -147,10 +147,14 @@ const ObjectsPage = () => {
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
 
-  const storageItem = localStorage.getItem('newUi');
-  const newUi = JSON.parse((!storageItem || storageItem === 'undefined' || storageItem === "false") ? "false" : "true");
+  const storageItem = localStorage.getItem("newUi");
+  const newUi = JSON.parse(
+    !storageItem || storageItem === "undefined" || storageItem === "false"
+      ? "false"
+      : "true"
+  );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
-console.log('here')
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>

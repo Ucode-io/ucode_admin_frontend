@@ -103,22 +103,26 @@ export default function TimeLineDayDataBlockItem({
       newDatePosition = [
         addDays(
           new Date(data[calendar_from_slug]),
-          (-position.translate[0] * -1) / (zoomPosition * 30)
+          (-position.translate[0] * -1) /
+            (zoomPosition * (selectedType === "month" ? 20 : 30))
         ),
         addDays(
           new Date(data[calendar_to_slug]),
-          (-position.translate[0] * -1) / (zoomPosition * 30)
+          (-position.translate[0] * -1) /
+            (zoomPosition * (selectedType === "month" ? 20 : 30))
         ),
       ];
     } else if (position.translate[0] > 0) {
       newDatePosition = [
         addDays(
           new Date(data[calendar_from_slug]),
-          position.translate[0] / (zoomPosition * 30)
+          position.translate[0] /
+            (zoomPosition * (selectedType === "month" ? 20 : 30))
         ),
         addDays(
           new Date(data[calendar_to_slug]),
-          position.translate[0] / (zoomPosition * 30)
+          position.translate[0] /
+            (zoomPosition * (selectedType === "month" ? 20 : 30))
         ),
       ];
     }
@@ -141,10 +145,16 @@ export default function TimeLineDayDataBlockItem({
   const onResizeEndToUpdate = (position, width) => {
     if (!position) return null;
     let newDatePosition = [
-      datesList[position.drag.left / (zoomPosition * 30)],
+      datesList[
+        position.drag.left /
+          (zoomPosition * (selectedType === "month" ? 20 : 30))
+      ],
       addDays(
-        datesList[position.drag.left / (zoomPosition * 30)],
-        width / (zoomPosition * 30)
+        datesList[
+          position.drag.left /
+            (zoomPosition * (selectedType === "month" ? 20 : 30))
+        ],
+        width / (zoomPosition * (selectedType === "month" ? 20 : 30))
       ),
     ];
     const computedData = {
@@ -168,11 +178,19 @@ export default function TimeLineDayDataBlockItem({
     target.style.transform = `translate(${x}px, 0)`;
     setFocusedDays([
       datesList[
-        startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+        startDate +
+          Math.round(
+            beforeTranslate[0] /
+              (zoomPosition * (selectedType === "month" ? 20 : 30))
+          )
       ],
       addDays(
         datesList[
-          startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+          startDate +
+            Math.round(
+              beforeTranslate[0] /
+                (zoomPosition * (selectedType === "month" ? 20 : 30))
+            )
         ],
         width / (zoomPosition * 30) - 1
       ),
@@ -196,11 +214,19 @@ export default function TimeLineDayDataBlockItem({
     target.style.transform = `translateX(${beforeTranslate[0]}px)`;
     setFocusedDays([
       datesList[
-        startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+        startDate +
+          Math.round(
+            beforeTranslate[0] /
+              (zoomPosition * (selectedType === "month" ? 20 : 30))
+          )
       ],
       addDays(
         datesList[
-          startDate + Math.round(beforeTranslate[0] / (zoomPosition * 30))
+          startDate +
+            Math.round(
+              beforeTranslate[0] /
+                (zoomPosition * (selectedType === "month" ? 20 : 30))
+            )
         ],
         width / (zoomPosition * 30) - 1
       ),
@@ -220,12 +246,11 @@ export default function TimeLineDayDataBlockItem({
       <div
         className={styles.dataBlock}
         style={{
-          background: "green",
           top:
             view?.attributes?.group_by_columns?.length === 0 &&
             `${level * 32}px`,
-          left: `${startDate * (zoomPosition * 30)}px`,
-          width: `${zoomPosition * 30 * differenceInDays}px`,
+          left: `${startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))}px`,
+          width: `${zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays}px`,
           cursor: "pointer",
           display: startDate === -1 || level === -1 ? "none" : "block",
         }}
@@ -238,6 +263,8 @@ export default function TimeLineDayDataBlockItem({
             width: "100%",
             height: "100%",
             position: "relative",
+            display: "flex",
+            alignItems: "center",
           }}>
           <CellElementGenerator
             row={data}
@@ -262,8 +289,8 @@ export default function TimeLineDayDataBlockItem({
           key={`${zoomPosition}${data?.guid}`}
           draggable
           resizable
-          throttleDrag={zoomPosition * 30}
-          throttleResize={zoomPosition * 30}
+          throttleDrag={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          throttleResize={zoomPosition * (selectedType === "month" ? 20 : 30)}
           keepRatio={false}
           origin={false}
           renderDirections={["w", "e"]}

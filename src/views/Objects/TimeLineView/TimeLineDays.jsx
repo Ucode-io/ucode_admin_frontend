@@ -22,7 +22,7 @@ export default function TimeLineDays({date, zoomPosition, selectedType}) {
         onClick={handleOpen}
         className={`${styles.rowItem} ${detectDayName(date) && selectedType !== "month" ? styles.dayOff : ""} ${selectedType === "month" ? styles.month : ""}`}
         style={{
-          minWidth: `${zoomPosition * 30}px`,
+          minWidth: `${zoomPosition * (selectedType === "month" ? 20 : 30)}px`,
           cursor: "cell",
           borderRight:
             selectedType === "month" && format(date, "dd") === "31"

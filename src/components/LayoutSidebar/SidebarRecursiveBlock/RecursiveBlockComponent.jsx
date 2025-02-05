@@ -221,7 +221,7 @@ const RecursiveBlock = ({
                   </Box>
                   {(settingsButtonPermission && !userType) &&
                     <Box id="moreicon" className="icon_group"
-                         style={{position: "absolute", right: 0, backgroundColor: "#EAECF0", padding: "2px 4px", borderRadius: 4}}>
+                         style={{position: "absolute", right: 0, backgroundColor: "#EAECF0", padding: "2px 4px", borderRadius: 4,}}>
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (

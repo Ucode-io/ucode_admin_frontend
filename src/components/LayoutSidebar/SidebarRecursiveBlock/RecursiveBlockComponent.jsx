@@ -25,24 +25,25 @@ export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
-  customFunc = () => {},
-  element,
-  openFolderCreateModal,
-  environment,
-  setFolderModalType,
-  level = 1,
-  sidebarIsOpen,
-  setTableModal,
-  handleOpenNotify,
-  setElement,
-  setSubMenuIsOpen,
-  menuStyle,
-  index,
-  menuItemId,
-  selectedApp,
-  userType = false,
-  buttonProps
-}) => {
+                          customFunc = () => {
+                          },
+                          element,
+                          openFolderCreateModal,
+                          environment,
+                          setFolderModalType,
+                          level = 1,
+                          sidebarIsOpen,
+                          setTableModal,
+                          handleOpenNotify,
+                          setElement,
+                          setSubMenuIsOpen,
+                          menuStyle,
+                          index,
+                          menuItemId,
+                          selectedApp,
+                          userType = false,
+                          buttonProps
+                        }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({menuItem, element, menuStyle, level});
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -160,9 +161,9 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}} style={{ marginBottom: 5 }}>
-        <div className="parent-block column-drag-handle" key={element.id} style={{ marginBottom: 5 }}>
-          {permission ? (
+      <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
+        <div className="parent-block column-drag-handle" key={element.id} style={{marginBottom: 5}}>
+          {permission &&
             <Button
               id="more-button"
               data-cy="three-dots-button"
@@ -208,6 +209,7 @@ const RecursiveBlock = ({
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
+                    position: "relative"
                   }}>
                   <Box>
                     <p>
@@ -217,8 +219,9 @@ const RecursiveBlock = ({
                         element?.name}
                     </p>
                   </Box>
-                  {settingsButtonPermission && !userType ? (
-                    <Box id="moreicon" className="icon_group">
+                  {(settingsButtonPermission && !userType) &&
+                    <Box id="moreicon" className="icon_group"
+                         style={{position: "absolute", right: 0, backgroundColor: "#EAECF0", padding: "2px 4px", borderRadius: 4}}>
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (
@@ -239,32 +242,31 @@ const RecursiveBlock = ({
                           </Box>
                         </Tooltip>
                       )}
+
+                      {(addButtonPermission && element?.data?.permission?.write) &&
+                        <Tooltip title="Create folder" placement="top">
+                          <Box className="extra_icon">
+                            <AddIcon
+                              size={13}
+                              onClick={(e) => {
+                                menuAddClick(e);
+                              }}
+                              style={{
+                                color:
+                                  menuItem?.id === element?.id
+                                    ? menuStyle?.active_text
+                                    : menuStyle?.text || "",
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
+                      }
                     </Box>
-                  ) : null}
+                  }
                 </Box>
               </div>
-              {addButtonPermission && element?.data?.permission?.write ? (
-                <Box className="icon_group">
-                  <Tooltip title="Create folder" placement="top">
-                    <Box className="extra_icon">
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          menuAddClick(e);
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                </Box>
-              ) : null}
             </Button>
-          ) : null}
+          }
         </div>
 
         <Collapse in={childBlockVisible} unmountOnExit>
@@ -291,48 +293,16 @@ const RecursiveBlock = ({
           ))}
           {element.id === folderIds.data_base_folder_id && (
             <>
-              {/* <DataBase
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                level={2}
-              />
-              <MicroServiceSidebar
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              /> */}
               <TableSettingSidebar
                 menuStyle={menuStyle}
                 menuItem={menuItem}
                 level={2}
               />
-              {/* <ApiKeyButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <RedirectButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              />
-              <SmsOtpButton
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-              /> */}
             </>
           )}
 
           {element.id === folderIds.code_folder_id && (
             <>
-              {/* <ScenarioSidebar
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                level={2}
-              /> */}
-
               <FunctionSidebar
                 menuStyle={menuStyle}
                 menuItem={menuItem}
@@ -361,17 +331,6 @@ const RecursiveBlock = ({
               />
             </>
           )}
-          {/* {element.id === folderIds.api_folder_id && (
-            <>
-              <QuerySidebar
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                level={2}
-                menuItem={menuItem}
-              />
-              <ApiSidebar menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} level={2} menuItem={menuItem} />
-            </>
-          )} */}
         </Collapse>
       </Box>
     </Draggable>

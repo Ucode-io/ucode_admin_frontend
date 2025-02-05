@@ -43,6 +43,7 @@ const MicrofrontendSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+    height: "32px",
   };
 
   const labelStyle = {

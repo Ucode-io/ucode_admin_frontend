@@ -19,12 +19,12 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
     color: "#475467",
     borderRadius: "8px",
     margin: "5px 0",
+    height: "32px"
   };
 
   return (
     <Box
       sx={{
-        backgroundColor: "#f2f4f7",
         color: "rgb(168, 168, 168)",
         paddingLeft: "10px",
         paddingRight: "10px",

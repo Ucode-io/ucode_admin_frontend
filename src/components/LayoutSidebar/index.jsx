@@ -356,7 +356,7 @@ const LayoutSidebar = ({appId}) => {
                 <SidebarAppTooltip id='create' title='Create'>
                   <Flex
                     position="relative"
-                    h={36}
+                    h={32}
                     alignItems="center"
                     borderRadius={6}
                     _hover={{bg: "#EAECF0"}}

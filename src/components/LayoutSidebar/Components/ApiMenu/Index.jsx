@@ -39,13 +39,6 @@ function ApiMenu({level = 1, menuStyle}) {
     level,
   });
 
-  const iconStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
-  };
-
   const labelStyle = {
     color:
       projectSettings?.id === menuItem?.id

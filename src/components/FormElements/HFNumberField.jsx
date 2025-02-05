@@ -24,6 +24,7 @@ const HFNumberField = ({
   field,
   type = "text",
   newUi,
+  error = {},
   ...props
 }) => {
   const handleChange = (event, onChange) => {
@@ -45,20 +46,19 @@ const HFNumberField = ({
 
   const styles = isTransparent
     ? {
-      background: "transparent",
-      border: "none",
-      borderRadius: "0",
-      outline: "none",
-    }
+        background: "transparent",
+        border: "none",
+        borderRadius: "0",
+        outline: "none",
+      }
     : disabled
       ? {background: "#c0c0c039", borderRight: 0, outline: "none"}
       : {
-        background: isBlackBg ? "#2A2D34" : "",
-        color: isBlackBg ? "#fff" : "",
-        outline: "none",
-        border:
-          error?.type === "required" ? "1px solid red" : "",
-      }
+          background: isBlackBg ? "#2A2D34" : "",
+          color: isBlackBg ? "#fff" : "",
+          outline: "none",
+          border: error?.type === "required" ? "1px solid red" : "",
+        };
 
   return (
     <Controller
@@ -119,7 +119,7 @@ const HFNumberField = ({
               }`}
               name={name}
               readOnly={disabled}
-              style={{...styles, height: newUi ? "25px" : undefined }}
+              style={{...styles, height: newUi ? "25px" : undefined}}
               {...props}
             />
             {!disabledHelperText && error?.message && (

@@ -220,6 +220,7 @@ export default function TimeLineDayDataBlockItem({
       <div
         className={styles.dataBlock}
         style={{
+          background: "green",
           top:
             view?.attributes?.group_by_columns?.length === 0 &&
             `${level * 32}px`,

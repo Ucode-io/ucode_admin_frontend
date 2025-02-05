@@ -216,10 +216,10 @@ const MonthBlock = ({datesList, days, selectedType, zoomPosition}) => {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "32px",
-          width: `${days?.length > 2 ? "100%" : zoomPosition * 30}px`,
+          width: `${month?.length > 2 ? "100%" : zoomPosition * 30}px`,
           border: "1px solid #e0e0e0",
         }}>
-        {`${format(month[0], "dd/EEEE") + " - " + format(month[1], "dd/EEEE")}`}
+        {/* {`${format(month[0], "dd/EEEE") + " - " + format(month[1], "dd/EEEE")}`} */}
       </div>
       <div className={styles.daysRow}>
         {days?.map((day) => (

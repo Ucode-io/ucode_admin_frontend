@@ -220,8 +220,12 @@ export default function OpenFaasFunctionForm() {
     }
   }, [selectedRepo]);
 
-  if (isLoading) return <PageFallback />;
+  const resourcesOptions = repositories?.length
+    ? repositories
+    : listToOptions(repositoriesGitlab, "name", "name");
 
+  if (isLoading) return <PageFallback />;
+  console.log("resourcesOptions", resourcesOptions, repositories);
   return (
     <div>
       <Tabs>
@@ -293,11 +297,7 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="repo_name"
                         control={mainForm.control}
-                        options={
-                          repositories?.length
-                            ? listToOptions(repositories, "name", "name")
-                            : listToOptions(repositoriesGitlab, "name", "name")
-                        }
+                        options={resourcesOptions}
                         required
                         disabled={functionId}
                       />

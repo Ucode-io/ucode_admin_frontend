@@ -21,8 +21,18 @@ const HFFloatField = ({
   type = "text",
   isFloat = false,
   decimalScale = 50,
+  newUi,
   ...props
 }) => {
+  const style = isTransparent
+    ? {background: "transparent", border: "none"}
+    : disabled
+      ? {background: "#c0c0c039"}
+      : {
+        background: isBlackBg ? "#2A2D34" : "",
+        color: isBlackBg ? "#fff" : "",
+      };
+
   return (
     <Controller
       control={control}
@@ -68,16 +78,7 @@ const HFFloatField = ({
             }`}
             name={name}
             readOnly={disabled}
-            style={
-              isTransparent
-                ? {background: "transparent", border: "none"}
-                : disabled
-                  ? {background: "#c0c0c039"}
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "",
-                      color: isBlackBg ? "#fff" : "",
-                    }
-            }
+            style={{...style, padding: newUi ? "4px" : ""}}
             {...props}
           />
         );

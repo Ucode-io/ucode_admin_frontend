@@ -28,7 +28,6 @@ const TableRow = ({
                     columns,
                     selectedObjectsForDelete,
                     setSelectedObjectsForDelete,
-                    tableHeight,
                     tableSettings,
                     pageName,
                     watch,
@@ -93,6 +92,8 @@ const TableRow = ({
 
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
                   <Checkbox
+                    size='small'
+                    sx={{ padding: '4px' }}
                     className="table_multi_checkbox"
                     style={selected ? {display: "block"} : {}}
                     checked={selected}
@@ -110,7 +111,7 @@ const TableRow = ({
                   ?.view_permission && (
                   <CTableCell
                     key={virtualColumn.id}
-                    className={`overflow-ellipsis ${tableHeight}`}
+                    className="overflow-ellipsis"
                     style={{
                       minWidth: "220px",
                       color: "#262626",
@@ -169,6 +170,7 @@ const TableRow = ({
                         isTableView={isTableView}
                         view={view}
                         watch={watch}
+                        newUi={true}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row}/>
@@ -198,6 +200,7 @@ const TableRow = ({
             )}
             <td
               style={{
+                width: 50,
                 color: "#262626",
                 fontSize: "13px",
                 fontStyle: "normal",
@@ -227,6 +230,7 @@ const TableRow = ({
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                     <RectangleIconButton
                       color="error"
+                      style={{ minWidth: 25, minHeight: 25, height: 25 }}
                       onClick={() =>
                         row.guid
                           ? onDeleteClick(row, rowIndex)
@@ -288,7 +292,7 @@ const TableRow = ({
               virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={virtualColumn.id}
-                  className={`overflow-ellipsis ${tableHeight}`}
+                  className="overflow-ellipsis"
                   style={{
                     minWidth: "220px",
                     color: "#262626",
@@ -364,8 +368,8 @@ const TableRow = ({
               padding: "0 5px",
               position: `${"sticky"}`,
               right: "0",
-              backgroundColor: `${"#fff"}`,
-              zIndex: `${"0"}`,
+              backgroundColor: "#fff",
+              zIndex: 0,
               borderLeft: "1px solid #eee",
             }}>
             <div
@@ -443,7 +447,7 @@ const TableRow = ({
           {columns.map((column, index) => (
             <CTableCell
               key={column.id}
-              className={`overflow-ellipsis ${tableHeight}`}
+              className="overflow-ellipsis"
               style={{
                 minWidth: "220px",
                 color: "#262626",

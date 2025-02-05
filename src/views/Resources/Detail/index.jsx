@@ -39,6 +39,7 @@ import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
 import {useQuery} from "react-query";
 import {useGitlabLoginMutation} from "../../../services/githubService";
+import GitLabForm from "./GitlabForm";
 
 const headerStyle = {
   width: "100%",
@@ -70,12 +71,12 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
-      resource_type: Boolean(
-        searchParams.get("code") || searchParams.get("access_token")
-      )
-        ? searchParams.get("access_token")?.includes("gho")
+      resource_type: Boolean(searchParams.get("code"))
+        ? searchParams.get("code")?.length === 20
           ? 5
-          : 8
+          : searchParams.get("code")
+            ? 8
+            : 0
         : 0,
     },
   });
@@ -225,17 +226,6 @@ const ResourceDetail = () => {
       }
     );
 
-  // useGithubUserQuery({
-  //   token: searchParams.get("access_token"),
-  //   enabled:
-  //     !!searchParams.get("access_token") && !resourceType == "CLICK_HOUSE",
-  //   queryParams: {
-  //     select: (res) => res?.data?.login,
-  //     onSuccess: (username) =>
-  //       setValue("integration_resource.username", username),
-  //   },
-  // });
-
   const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
     useGithubLoginMutation({
       onSuccess: (res) => {
@@ -259,8 +249,9 @@ const ResourceDetail = () => {
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      gitlabLogin({code});
+    if (Boolean(code)) {
+      if (code?.length <= 20) githubLogin({code});
+      else if (code?.length > 20) gitlabLogin({code});
     }
   }, [searchParams.get("code")]);
 
@@ -312,7 +303,7 @@ const ResourceDetail = () => {
           values.integration_resource?.token,
       },
     };
-    console.log("authStoreauthStore", authStore);
+
     const computedValues2Gitlab = {
       ...values,
       project_id: authStore?.projectId,
@@ -328,6 +319,7 @@ const ResourceDetail = () => {
           token: values?.token,
           refresh_token: selectedGitlab?.refresh_token,
           expires_in: selectedGitlab?.expires_in,
+          created_at: selectedGitlab?.created_at,
         },
       },
 
@@ -507,6 +499,16 @@ const ResourceDetail = () => {
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+            />
+          ) : resourceType === "GITLAB" ? (
+            <GitLabForm
+              control={control}
+              selectedEnvironment={selectedEnvironment}
+              btnLoading={configureLoading || updateLoading}
+              setSelectedEnvironment={setSelectedEnvironment}
+              projectEnvironments={projectEnvironments}
+              isEditPage={isEditPage}
+              watch={watch}
             />
           ) : (
             <Form

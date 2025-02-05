@@ -30,6 +30,7 @@ function MultiImageUpload({
   onChange,
   isTableView,
   updateObject,
+  newUi,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
@@ -89,7 +90,7 @@ function MultiImageUpload({
               id="multi_image"
               sx={{
                 width: "100%",
-                height: "36px",
+                height: newUi ? "25px" : "36px",
                 display: "flex",
                 alignItems: "center",
                 gap: "10px",

@@ -170,7 +170,7 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
         <div className={styles.block}>
           {permissions?.profile_settings_button && (
             <ProfileItem
-              text={"Profile settings"}
+              text="Profile settings"
               onClick={() => {
                 navigate(`/settings/auth/matrix/profile/crossed`);
               }}
@@ -187,7 +187,7 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
                 }}
               />
             }
-            text={"Languages"}
+            text="Languages"
             onClick={handleClickLanguages}
           />
 

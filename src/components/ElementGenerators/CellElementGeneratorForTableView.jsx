@@ -59,6 +59,7 @@ const CellElementGeneratorForTableView = ({
                                             },
                                             updateObject = () => {
                                             },
+                                            newUi,
                                           }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -207,6 +208,7 @@ const CellElementGeneratorForTableView = ({
           disabled={isDisabled}
           required={field.required}
           updateObject={updateObject}
+          newUi={newUi}
         />
       );
 
@@ -219,6 +221,7 @@ const CellElementGeneratorForTableView = ({
           control={control}
           name={computedSlug}
           updateObject={updateObject}
+          newUi={newUi}
         />
       );
 
@@ -239,6 +242,7 @@ const CellElementGeneratorForTableView = ({
           type="password"
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          newUi={newUi}
         />
       );
 
@@ -313,6 +317,7 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          newUi={newUi}
         />
       );
 
@@ -352,6 +357,7 @@ const CellElementGeneratorForTableView = ({
           field={field}
           index={index}
           defaultValue={defaultValue}
+          newUi={newUi}
         />
       );
 
@@ -389,6 +395,7 @@ const CellElementGeneratorForTableView = ({
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
           disabled={isDisabled}
+          newUi={newUi}
         />
       );
 
@@ -408,6 +415,7 @@ const CellElementGeneratorForTableView = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           data={data}
+          newUi={newUi}
         />
       );
     case "MULTISELECT_V2":
@@ -518,6 +526,7 @@ const CellElementGeneratorForTableView = ({
           defaultValue={defaultValue}
           isTransparent={true}
           newColumn={newColumn}
+          newUi={newUi}
         />
       );
     case "FLOAT":
@@ -535,6 +544,7 @@ const CellElementGeneratorForTableView = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           isTransparent={true}
+          newUi={newUi}
         />
       );
 
@@ -552,6 +562,7 @@ const CellElementGeneratorForTableView = ({
           name={computedSlug}
           required={field.required}
           defaultValue={defaultValue}
+          newUi={newUi}
         />
       );
 

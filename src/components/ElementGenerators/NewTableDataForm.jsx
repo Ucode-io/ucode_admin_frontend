@@ -17,6 +17,7 @@ export default function NewTableDataForm({
   data,
   isWrap,
   watch,
+  newUi=false
 }) {
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
@@ -60,6 +61,7 @@ export default function NewTableDataForm({
           setFormValue={setFormValue}
           relationfields={relationfields}
           data={data}
+          newUi={newUi}
         />
       ) : (
         <CellElementGeneratorForTableView
@@ -78,6 +80,7 @@ export default function NewTableDataForm({
           setFormValue={setFormValue}
           relationfields={relationfields}
           data={data}
+          newUi={newUi}
         />
       )}
     </Box>

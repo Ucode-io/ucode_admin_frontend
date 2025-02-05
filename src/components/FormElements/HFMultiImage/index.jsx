@@ -13,6 +13,7 @@ const HFMultiImage = ({
   field,
   isTableView,
   updateObject = () => {},
+  newUi,
   ...props
 }) => {
   return (
@@ -35,6 +36,7 @@ const HFMultiImage = ({
             disabled={disabled}
             field={field}
             isTableView={isTableView}
+            newUi={newUi}
             {...props}
           />
           {!disabledHelperText && error?.message && (

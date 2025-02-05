@@ -40,6 +40,7 @@ const HFTextField = ({
   setFormValue = () => {},
   customOnChange = () => {},
   exist = false,
+  newUi,
   ...props
 }) => {
   const location = useLocation();
@@ -85,6 +86,7 @@ const HFTextField = ({
               border: exist ? "1px solid red" : "0px solid #000",
               borderRadius: "8px",
             }}
+            inputProps={{ style: {height: "25px", padding: "0px 2px 0 7px"} }}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
             error={error}
@@ -99,7 +101,7 @@ const HFTextField = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039",
+                    background: isNewTableView ? "inherit" : "#c0c0c039",
                     padding: "0px",
                   }
                 : isNewTableView

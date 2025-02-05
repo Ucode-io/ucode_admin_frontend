@@ -22,6 +22,7 @@ export default function TimeLineDayDataBlockItem({
   computedColumnsFor,
   visible_field,
   groupByList,
+  selectedType,
 }) {
   const ref = useRef();
   const {tableSlug} = useParams();

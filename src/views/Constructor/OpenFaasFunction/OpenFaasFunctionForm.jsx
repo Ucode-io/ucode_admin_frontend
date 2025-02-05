@@ -32,6 +32,10 @@ import {useQueryClient} from "react-query";
 import {Box} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import KnativeLogs from "./KnativeLogs";
+import {
+  useGitlabBranchesQuery,
+  useGitlabRepositoriesQuery,
+} from "../../../services/githubService";
 
 export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
@@ -54,7 +58,7 @@ export default function OpenFaasFunctionForm() {
       type: "FUNCTION",
     },
   });
-  console.log("mainFormmainForm", mainForm.getValues());
+
   const knativeForm = useForm({});
 
   const resourceId = mainForm.watch("resource_id");
@@ -62,7 +66,7 @@ export default function OpenFaasFunctionForm() {
 
   const {data: resources} = useResourceListQueryV2({
     params: {
-      type: "GITHUB",
+      type: "GIT",
     },
     queryParams: {
       select: (res) => res?.resources,
@@ -72,7 +76,7 @@ export default function OpenFaasFunctionForm() {
   const resourceOptions = useMemo(() => {
     return [
       {value: "ucode_gitlab", label: "Ucode GitLab"},
-      ...listToOptions(resources, "name", "id", "(GitHub)"),
+      ...listToOptions(resources, "name", "id"),
     ];
   }, [resources]);
 
@@ -91,12 +95,40 @@ export default function OpenFaasFunctionForm() {
     },
   });
 
+  const {data: repositoriesGitlab} = useGitlabRepositoriesQuery({
+    username: selectedResource?.settings?.gitlab?.username,
+    token: selectedResource?.settings?.gitlab?.token,
+    resource_id: selectedResource?.id,
+    queryParams: {
+      enabled: !!selectedResource?.settings?.gitlab?.username,
+      select: (res) => res,
+    },
+  });
+
   const {data: branches} = useGithubBranchesQuery({
     username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
     queryParams: {
       enabled: !!selectedResource?.settings?.github?.username && !!selectedRepo,
+      select: (res) => listToOptions(res, "name", "name"),
+    },
+  });
+
+  const gitlabRepoId = repositoriesGitlab?.find(
+    (item) => item?.name === selectedRepo
+  )?.id;
+
+  const {data: branchesGitlab} = useGitlabBranchesQuery({
+    username: selectedResource?.settings?.gitlab?.username,
+    repo_id: gitlabRepoId,
+    token: selectedResource?.settings?.gitlab?.token,
+    resource_id: selectedResource?.id,
+    queryParams: {
+      enabled:
+        !!selectedResource?.settings?.gitlab?.username &&
+        !!selectedRepo &&
+        Boolean(gitlabRepoId),
       select: (res) => listToOptions(res, "name", "name"),
     },
   });
@@ -138,6 +170,7 @@ export default function OpenFaasFunctionForm() {
               ? "knative-fn"
               : ""
         );
+
         knativeForm.setValue("path", res?.path);
         mainForm.reset({...res, resource_id: res.resource});
       },
@@ -153,6 +186,7 @@ export default function OpenFaasFunctionForm() {
           ...data,
           github_token: selectedResource?.token,
           username: selectedResource?.username,
+          repo_id: gitlabRepoId,
         });
     }
   };
@@ -259,7 +293,11 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="repo_name"
                         control={mainForm.control}
-                        options={repositories ?? []}
+                        options={
+                          repositories?.length
+                            ? listToOptions(repositories, "name", "name")
+                            : listToOptions(repositoriesGitlab, "name", "name")
+                        }
                         required
                         disabled={functionId}
                       />
@@ -277,7 +315,7 @@ export default function OpenFaasFunctionForm() {
                       <HFSelect
                         name="branch"
                         control={mainForm.control}
-                        options={branches}
+                        options={branches || branchesGitlab}
                         required
                         disabled={functionId}
                       />

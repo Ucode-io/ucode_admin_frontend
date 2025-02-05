@@ -103,15 +103,21 @@ const SubMenu = ({
 
   const menuStyle = {
     ...menuStyles,
-    text: (menuStyles?.text?.toLowerCase() === '#a8a8a8' ? "#475467" : menuStyles?.text) ?? "#475467"
-  }
+    text:
+      (menuStyles?.text?.toLowerCase() === "#a8a8a8"
+        ? "#475467"
+        : menuStyles?.text) ?? "#475467",
+  };
 
   return (
     <div
       className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
-      style={{background: "#fff", position: "relative"}}>
+      style={{
+        background: "#F2F4F7",
+        position: "relative",
+      }}>
       <div className="body">
-        <div className="header" onClick={() => {}} style={{ height: 45 }}>
+        <div className="header" onClick={() => {}} style={{height: 45}}>
           {subMenuIsOpen && (
             <h2
               style={{
@@ -121,7 +127,7 @@ const SubMenu = ({
                 width: 120,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                whiteSpace: "nowrap"
+                whiteSpace: "nowrap",
               }}>
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
                 selectedApp?.label}
@@ -148,8 +154,8 @@ const SubMenu = ({
                 ))}
               {!selectedApp?.is_static && (
                 <img
-                  src='/img/dots-vertical.svg'
-                  alt='settings'
+                  src="/img/dots-vertical.svg"
+                  alt="settings"
                   id={"three_dots"}
                   onClick={(e) => {
                     handleOpenNotify(e, "FOLDER");
@@ -161,8 +167,8 @@ const SubMenu = ({
                 />
               )}
               <img
-                src='/img/pin.svg'
-                alt='pin'
+                src="/img/pin.svg"
+                alt="pin"
                 onClick={() => {
                   if (!pinIsEnabled) setPinIsEnabledFunc(true);
                   else setPinIsEnabledFunc(false);
@@ -179,7 +185,7 @@ const SubMenu = ({
                 setSelectedApp({});
                 setSubMenuIsOpen(false);
               }}>
-              <img src="/img/close-icon.svg" alt="close"/>
+              <img src="/img/close-icon.svg" alt="close" />
             </div>
           </Box>
         </div>
@@ -190,7 +196,7 @@ const SubMenu = ({
             flexDirection: "column",
             justifyContent: "space-between",
             height: "calc(100% - 56px)",
-            paddingTop: "20px"
+            // paddingTop: "20px"
           }}>
           <div>
             {isLoading ? (
@@ -206,7 +212,10 @@ const SubMenu = ({
                   />
                 )}
                 {selectedApp?.id === adminId && (
-                  <Permissions menuStyle={menuStyle} setElement={setElement} />
+                  <Permissions
+                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    setElement={setElement}
+                  />
                 )}
                 {selectedApp?.id === adminId && (
                   <Resources
@@ -254,7 +263,7 @@ const SubMenu = ({
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
-                          buttonProps={{className: "highlight-on-hover" }}
+                          buttonProps={{className: "highlight-on-hover"}}
                         />
                       ))}
                     </Container>
@@ -282,7 +291,7 @@ const SubMenu = ({
             )}
 
             {selectedApp?.data?.permission?.write && exception && (
-              <div style={{ margin: 8 }}>
+              <div>
                 <Button
                   id="create_btn"
                   className="menu-button active-with-child"
@@ -295,7 +304,7 @@ const SubMenu = ({
                     alignItems: "center",
                     justifyContent: "flex-start",
                     borderRadius: 6,
-                    height: '32px'
+                    height: "32px",
                   }}>
                   <div
                     style={{
@@ -308,9 +317,9 @@ const SubMenu = ({
                       whiteSpace: "nowrap",
                       columnGap: "8px",
                       color: menuStyle?.text,
-                      cursor: "pointer"
+                      cursor: "pointer",
                     }}>
-                    <img src="/img/plus-icon.svg" alt="Add"/>
+                    <img src="/img/plus-icon.svg" alt="Add" />
                     Create
                   </div>
                 </Button>

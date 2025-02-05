@@ -63,7 +63,7 @@
     display: flex;
     justify-content: flex-start;
     padding: 11px 15px;
-    height: 35px;
+    height: 32px;
     column-gap: 7px;
 
     svg {
@@ -74,7 +74,7 @@
     }
 
     p {
-      font-size: 14.5px;
+      font-size: 14px;
       line-height: 24px;
       font-weight: 500;
       color: #111;
@@ -156,8 +156,12 @@
       align-items: center;
       justify-content: center;
       min-width: 500px;
-      width: 100%;
+      width: 300px;
       column-gap: 10px;
     }
   }
+}
+
+.field {
+  width: 270px;
 }

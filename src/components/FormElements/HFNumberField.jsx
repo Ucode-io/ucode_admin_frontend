@@ -1,6 +1,6 @@
 import {Controller} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
-import styles from "./style.module.scss";
+import style from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 
@@ -115,7 +115,7 @@ const HFNumberField = ({
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
               className={`${isFormEdit ? "custom_textfield" : ""} ${
-                styles.numberField
+                style.numberField
               }`}
               name={name}
               readOnly={disabled}

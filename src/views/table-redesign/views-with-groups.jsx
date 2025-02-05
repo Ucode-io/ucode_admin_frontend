@@ -634,7 +634,7 @@ export const NewUiViewsWithGroups = ({
 
         <Tabs direction={"ltr"} defaultIndex={0}>
           {tabs?.length > 0 && (
-            <div className={style.tableCardHeader}>
+            <div id="tabsHeight" className={style.tableCardHeader}>
               <div style={{display: "flex", alignItems: "center"}}>
                 <div className="title" style={{marginRight: "20px"}}>
                   <h3>{view.table_label}</h3>
@@ -931,7 +931,8 @@ const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
       alignItems="center"
       gap="6px"
       borderBottom="1px solid #EAECF0"
-      flexWrap="wrap">
+      flexWrap="wrap"
+      id="filterHeight">
       <FilterPopover
         view={view}
         visibleColumns={visibleColumns}

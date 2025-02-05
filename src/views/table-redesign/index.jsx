@@ -54,21 +54,15 @@ import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
 
 export const DynamicTable = ({
-  custom_events,
   dataCount,
-  selectedTab,
-  filterVisible,
   tableView,
   data = [],
-  loader = false,
   setDrawerState,
-  currentView,
   setDrawerStateField,
   removableHeight,
   getValues,
   additionalRow,
   mainForm,
-  selectedView,
   isTableView = false,
   remove,
   multipleDelete,
@@ -76,11 +70,8 @@ export const DynamicTable = ({
   sortedDatas,
   fields = [],
   isRelationTable = false,
-  disablePagination,
-  count,
   currentPage = 1,
   onPaginationChange = () => {},
-  pagesCount = 1,
   setSortedDatas,
   columns = [],
   relatedTableSlug,
@@ -91,11 +82,6 @@ export const DynamicTable = ({
   dataLength,
   onDeleteClick,
   onRowClick = () => {},
-  filterChangeHandler = () => {},
-  filters,
-  disableFilters,
-  tableStyle,
-  wrapperStyle,
   tableSlug,
   isResizeble,
   paginationExtraButton,
@@ -109,8 +95,6 @@ export const DynamicTable = ({
   summaries,
   relationAction,
   onChecked,
-  defaultLimit,
-  title,
   view,
   refetch,
   menuItem,
@@ -125,6 +109,13 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+  const tableViewFiltersOpen = useSelector(
+    (state) => state.main.tableViewFiltersOpen
+  );
+
+  const filterHeight =
+    document.querySelector("#filterHeight")?.offsetHeight ?? 0;
+  const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const [limitOptions, setLimitOptions] = useState([
     {value: 10, label: "10 rows"},
     {value: 20, label: "20 rows"},
@@ -259,7 +250,7 @@ export const DynamicTable = ({
           borderRadius: 0,
           flexGrow: 1,
           backgroundColor: "#fff",
-          height: "calc(100vh - 140px)",
+          height: `calc(100vh - ${(tableViewFiltersOpen ? 40 : 0) + tabHeight + 130}px)`,
         }}>
         <table id="resizeMe">
           <thead
@@ -1131,6 +1122,7 @@ const Th = ({
                         )
                         .map((child) => (
                           <Flex
+                            h="32px"
                             mx="10px"
                             columnGap="10px"
                             alignItems="center"

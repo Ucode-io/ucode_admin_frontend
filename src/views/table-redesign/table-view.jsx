@@ -1,5 +1,5 @@
 import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -25,43 +25,43 @@ import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings"
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
 
 const TableView = ({
-                     filterVisible,
-                     setCurrentPage,
-                     currentPage,
-                     setFilterVisible,
-                     handleClickFilter,
-                     handleCloseFilter,
-                     visibleColumns,
-                     visibleRelationColumns,
-                     isVisibleLoading,
-                     visibleForm,
-                     filterAnchor,
-                     tab,
-                     view,
-                     shouldGet,
-                     isTableView = false,
-                     selectedView,
-                     reset = () => {},
-                     fieldsMap,
-                     isDocView,
-                     sortedDatas = [],
-                     setSortedDatas,
-                     formVisible,
-                     setFormVisible,
-                     selectedObjects,
-                     checkedColumns,
-                     getValues,
-                     searchText,
-                     setSelectedObjects,
-                     selectedLinkedObject,
-                     selectedTabIndex,
-                     selectedLinkedTableSlug,
-                     menuItem,
-                     setFormValue,
-                     currentView,
-                     watch,
-                     ...props
-                   }) => {
+  filterVisible,
+  setCurrentPage,
+  currentPage,
+  setFilterVisible,
+  handleClickFilter,
+  handleCloseFilter,
+  visibleColumns,
+  visibleRelationColumns,
+  isVisibleLoading,
+  visibleForm,
+  filterAnchor,
+  tab,
+  view,
+  shouldGet,
+  isTableView = false,
+  selectedView,
+  reset = () => {},
+  fieldsMap,
+  isDocView,
+  sortedDatas = [],
+  setSortedDatas,
+  formVisible,
+  setFormVisible,
+  selectedObjects,
+  checkedColumns,
+  getValues,
+  searchText,
+  setSelectedObjects,
+  selectedLinkedObject,
+  selectedTabIndex,
+  selectedLinkedTableSlug,
+  menuItem,
+  setFormValue,
+  currentView,
+  watch,
+  ...props
+}) => {
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
@@ -355,7 +355,7 @@ const TableView = ({
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-              ?.type === "MULTISELECT"
+                ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
             : "",

@@ -50,6 +50,7 @@ const RecursiveBlock = ({
               color: "#475467",
               borderRadius: "8px",
               height: "32px",
+              fontSize: "13px",
             }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&

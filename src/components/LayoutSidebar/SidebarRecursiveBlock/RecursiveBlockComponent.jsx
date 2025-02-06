@@ -253,10 +253,7 @@ const RecursiveBlock = ({
                           menuAddClick(e);
                         }}
                         style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
+                          color: "#475767",
                         }}
                       />
                     </Box>

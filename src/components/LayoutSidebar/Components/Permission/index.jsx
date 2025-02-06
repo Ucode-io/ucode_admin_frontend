@@ -39,12 +39,6 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
   const [userFolderModalType, setUserFolderModalType] = useState(null);
   const closeUserFolderModal = () => setSelectedUserFolder(null);
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const activeStyle = activeStyles({
-    menuItem,
-    element: permissionFolder,
-    menuStyle,
-    level,
-  });
 
   const openUserFolderModal = (folder, type) => {
     setSelectedUserFolder(folder);
@@ -53,13 +47,6 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
 
   const iconStyle = {
     color: "#475467",
-  };
-
-  const labelStyle = {
-    color:
-      permissionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
   };
 
   const {isLoading} = useQuery(
@@ -96,9 +83,7 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div
-        className="parent-block column-drag-handle"
-        style={{marginBottom: 5}}>
+      <div className="parent-block column-drag-handle" style={menuStyle}>
         <Button
           id="permissin_btn"
           style={{borderRadius: "8px", color: "#475467", height: "32px"}}

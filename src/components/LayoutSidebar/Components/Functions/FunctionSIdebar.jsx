@@ -195,30 +195,6 @@ const FunctionSidebar = ({
     }
   };
 
-  const activeStyle = {
-    backgroundColor:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-
-  const labelStyle = {
-    paddingLeft: "15px",
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
-
   return (
     <Box style={{marginBottom: 5}}>
       <div className="parent-block column-drag-handle">

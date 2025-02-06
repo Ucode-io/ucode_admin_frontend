@@ -170,7 +170,7 @@ const RecursiveBlock = ({
               id="more-button"
               data-cy="three-dots-button"
               key={element.id}
-              style={activeStyle}
+              style={{...activeStyle, marginTop: "5px"}}
               className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
               onClick={(e) => {
                 customFunc(e);

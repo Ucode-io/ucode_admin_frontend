@@ -170,21 +170,18 @@ const RecursiveBlock = ({
               id="more-button"
               data-cy="three-dots-button"
               key={element.id}
-              style={{...activeStyle, marginTop: "5px"}}
+              style={{
+                marginTop: "5px",
+                borderRadius: "8px",
+                color: "#475767",
+                height: "32px",
+              }}
               className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
               }}>
-              <div
-                className="label"
-                style={{
-                  color:
-                    menuItem?.id === element?.id || menuItemId === element?.id
-                      ? menuStyle?.active_text
-                      : menuStyle?.text,
-                  opacity: element?.isChild && 0.6,
-                }}>
+              <div className="label">
                 {element?.type === "USER" && (
                   <PersonIcon
                     style={{
@@ -276,6 +273,23 @@ const RecursiveBlock = ({
                   )}
                 </Box>
               </div>
+              {addButtonPermission && element?.data?.permission?.write ? (
+                <Box className="icon_group">
+                  <Tooltip title="Create folder" placement="top">
+                    <Box className="extra_icon">
+                      <AddIcon
+                        size={13}
+                        onClick={(e) => {
+                          menuAddClick(e);
+                        }}
+                        style={{
+                          color: "#475767",
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                </Box>
+              ) : null}
             </Button>
           )}
         </div>

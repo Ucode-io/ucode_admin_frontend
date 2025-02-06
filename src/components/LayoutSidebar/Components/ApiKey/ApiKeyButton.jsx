@@ -1,10 +1,10 @@
-import { Box, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import {Box, Button} from "@mui/material";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { updateLevel } from "../../../../utils/level";
+import {useNavigate, useParams} from "react-router-dom";
+import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const apiKeyButton = {
@@ -23,8 +23,8 @@ const apiKeyButton = {
   },
 };
 
-const ApiKeyButton = ({ level = 1, menuStyle, menuItem }) => {
-  const { appId } = useParams();
+const ApiKeyButton = ({level = 1, menuStyle, menuItem}) => {
+  const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,13 +62,16 @@ const ApiKeyButton = ({ level = 1, menuStyle, menuItem }) => {
     <Box>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{
+            borderRadius: "8px",
+            height: "32px",
+            color: "#475465",
+          }}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
-          }}
-        >
-          <div className="label" style={labelStyle}>
+          }}>
+          <div className="label" style={{fontSize: "13px"}}>
             <IconGenerator icon={apiKeyButton?.icon} size={18} />
             {apiKeyButton?.label}
           </div>

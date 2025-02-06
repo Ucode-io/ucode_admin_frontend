@@ -63,12 +63,12 @@ const RedirectButton = ({level = 1, menuStyle, menuItem}) => {
     <Box>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{color: "#475465", height: "32px", borderRadius: "8px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label" style={{fontSize: "13px"}}>
             <MoveUpIcon size={18} />
             {redirectButton?.label}
           </div>

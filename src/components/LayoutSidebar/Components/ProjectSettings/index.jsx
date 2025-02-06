@@ -30,19 +30,6 @@ function ProjectSettings({level = 1, menuStyle}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
-  const activeStyle = activeStyles({
-    menuItem,
-    element: projectSettings,
-    menuStyle,
-    level,
-  });
-
-  const labelStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -51,28 +38,28 @@ function ProjectSettings({level = 1, menuStyle}) {
   };
 
   return (
-    <Box sx={{padding: "0 5px"}} style={{ marginBottom: 5 }}>
+    <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={menuStyle}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label">
             {childBlockVisible ? (
-              <KeyboardArrowDownIcon/>
+              <KeyboardArrowDownIcon />
             ) : (
-              <KeyboardArrowRightIcon/>
+              <KeyboardArrowRightIcon />
             )}
-            <IconGenerator icon={"lock.svg"} size={18}/>
+            <IconGenerator icon={"lock.svg"} size={18} />
             Project Settings
           </div>
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem}/>
+        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem} />
       </Collapse>
     </Box>
   );

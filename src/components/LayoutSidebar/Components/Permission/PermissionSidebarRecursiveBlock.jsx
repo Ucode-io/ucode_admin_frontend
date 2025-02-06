@@ -86,7 +86,7 @@ const PermissionSidebarRecursiveBlock = ({
         {permission ? (
           <Button
             key={element.id}
-            style={activeStyle}
+            style={{height: "31px", borderRadius: "8px"}}
             className="nav-element highlight-on-hover"
             onClick={(e) => {
               customFunc(e);
@@ -95,11 +95,8 @@ const PermissionSidebarRecursiveBlock = ({
             <div
               className="label"
               style={{
-                color:
-                  menuItem?.id === element?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text,
-                opacity: element?.isChild && 0.6,
+                color: "#475467",
+                fontSize: "13px",
               }}>
               {element?.type === "USER" && (
                 <PersonIcon
@@ -153,17 +150,14 @@ const PermissionSidebarRecursiveBlock = ({
                           alignItems: "center",
                           gap: "10px",
                         }}>
-                        <Box className="extra_icon">
+                        <Box className="">
                           <RiPencilFill
                             size={13}
                             onClick={(e) => {
                               menuSettingsClick(e);
                             }}
                             style={{
-                              color:
-                                menuItem?.id === element?.id
-                                  ? menuStyle?.active_text
-                                  : menuStyle?.text || "",
+                              color: "#475467",
                             }}
                           />
                         </Box>
@@ -176,10 +170,7 @@ const PermissionSidebarRecursiveBlock = ({
                               <Delete
                                 size={13}
                                 style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
+                                  color: "#475467",
                                 }}
                               />
                             </RectangleIconButton>

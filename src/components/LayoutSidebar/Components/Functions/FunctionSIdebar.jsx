@@ -195,41 +195,16 @@ const FunctionSidebar = ({
     }
   };
 
-  const activeStyle = {
-    backgroundColor:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-    height: "32px"
-  };
-
-  const labelStyle = {
-    paddingLeft: "15px",
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
-
   return (
-    <Box style={{ marginBottom: 5 }}>
+    <Box style={{marginBottom: 5}}>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{borderRadius: "8px", height: "32px", fontSize: "13px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label" style={{color: "#475467", fontSize: "13px"}}>
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>

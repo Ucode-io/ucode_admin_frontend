@@ -90,12 +90,12 @@ function FileUploadMenu({level = 1, menuStyle, menuItem}) {
     <Box>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{borderRadius: "8px", height: "32px", fontSize: "13px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label" style={{color: "#475467", fontSize: "13px"}}>
             <IconGenerator icon={"upload.svg"} size={18} />
             Upload ERD
           </div>

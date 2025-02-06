@@ -7,7 +7,6 @@ import HFCheckbox from "@/views/table-redesign/hf-checkbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import {
   HFDatePicker,
-  HFDateTimePicker,
   HFDateDatePickerWithoutTimeZoneTable,
   HFTimePicker,
 } from "@/views/table-redesign/hf-date";
@@ -39,6 +38,7 @@ import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
 import HFStatusField from "../FormElements/HFStatusField";
 import HFMoneyField from "../FormElements/HFMoneyField";
+import HFDateTimePicker from "../FormElements/HFDateTimePicker";
 
 const parser = new Parser();
 

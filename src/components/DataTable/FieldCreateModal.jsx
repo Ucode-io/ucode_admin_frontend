@@ -240,6 +240,7 @@ export default function FieldCreateModal({
       open={open}
       onClose={handleClose}
       anchorEl={anchorEl}
+      background="red"
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "center",

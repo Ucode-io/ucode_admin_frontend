@@ -667,6 +667,7 @@ const FieldButton = ({
         position="sticky"
         right={0}
         zIndex={1}
+        id="addFieldBtn"
         cursor="pointer"
         onClick={(e) => {
           setFieldOptionAnchor(e.currentTarget);

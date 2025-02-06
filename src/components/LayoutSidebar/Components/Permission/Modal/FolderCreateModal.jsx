@@ -15,6 +15,7 @@ import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
 import {useMemo} from "react";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
+import HFNumberField from "../../../../FormElements/HFNumberField";
 
 const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
@@ -135,6 +136,16 @@ const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
                 name="table_slug"
                 control={control}
                 placeholder="Table"
+                fullWidth
+                options={tableOptions}
+              />
+            </FRow>
+
+            <FRow label="Session limit">
+              <HFNumberField
+                name="session_limit"
+                control={control}
+                placeholder="session limit"
                 fullWidth
                 options={tableOptions}
               />

@@ -645,7 +645,7 @@ export default function TimeLineView({
             </div>
           </Menu>
 
-          <Button
+          {/* <Button
             className={style.moreButton}
             onClick={() => zoom("zoomin")}
             style={{
@@ -685,7 +685,7 @@ export default function TimeLineView({
                 color: "#888",
               }}
             />
-          </Button>
+          </Button> */}
           <Divider orientation="vertical" flexItem />
         </div>
       </div>

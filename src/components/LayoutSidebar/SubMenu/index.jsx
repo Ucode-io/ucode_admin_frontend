@@ -113,7 +113,7 @@ const SubMenu = ({
     <div
       className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
       style={{
-        background: "#F2F4F7",
+        background: "#fff",
         position: "relative",
       }}>
       <div className="body">

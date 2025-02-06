@@ -52,10 +52,7 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
   };
 
   const iconStyle = {
-    color:
-      permissionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
+    color: "#475467",
   };
 
   const labelStyle = {
@@ -99,21 +96,23 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle" style={{ marginBottom: 5 }}>
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
           id="permissin_btn"
-          style={activeStyle}
+          style={{borderRadius: "8px", color: "#475467", height: "32px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label">
             {childBlockVisible ? (
-              <KeyboardArrowDownIcon/>
+              <KeyboardArrowDownIcon />
             ) : (
-              <KeyboardArrowRightIcon/>
+              <KeyboardArrowRightIcon />
             )}
-            <IconGenerator icon={"lock.svg"} size={18}/>
+            <IconGenerator icon={"lock.svg"} size={18} />
             Permissions
           </div>
           <Box className="icon_group">

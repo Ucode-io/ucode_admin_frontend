@@ -46,13 +46,17 @@ const RecursiveBlock = ({
         {element?.type === "REST" ? (
           <Button
             key={element.id}
-            style={activeStyle}
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+            }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
             onClick={clickHandler}>
-            <div className="label">
+            <div className="label" style={{fontSize: "13px"}}>
               <IconGenerator icon={element?.icon} size={18} />
               <Tooltip title={element?.title ?? element?.name} placement="top">
                 <p>{element?.title ?? element?.name}</p>
@@ -72,7 +76,12 @@ const RecursiveBlock = ({
         ) : element?.type === "CLICK_HOUSE" ? (
           <Button
             key={element.id}
-            style={activeStyle}
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+              fontSize: "13px",
+            }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
@@ -80,6 +89,7 @@ const RecursiveBlock = ({
             onClick={clickHandler}>
             <div
               className="label"
+              style={{fontSize: "13px"}}
               onClick={() =>
                 navigate(
                   `/main/${appId}/resources/${element?.id}/${element.type}`
@@ -105,7 +115,12 @@ const RecursiveBlock = ({
         ) : (
           <Button
             key={element.id}
-            style={activeStyle}
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+              fontSize: "13px",
+            }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")

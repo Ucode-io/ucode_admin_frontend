@@ -66,15 +66,15 @@ const ActivityFeedButton = ({
   };
 
   return (
-    <Box margin='0 5px'>
+    <Box margin="0 5px">
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{color: "#475467", borderRadius: "8px", height: "32px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label">
             <InventoryIcon size={18} />
             {activityFeedData?.label}
           </div>

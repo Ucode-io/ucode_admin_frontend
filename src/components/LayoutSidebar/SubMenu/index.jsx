@@ -198,21 +198,24 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <ProjectSettings
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{...menuStyle, background: "#fff"}}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === adminId && (
                   <Permissions
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{
+                      ...menuStyle,
+                      background: "#fff",
+                    }}
                     setElement={setElement}
                   />
                 )}
                 {selectedApp?.id === adminId && (
                   <Resources
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{...menuStyle, background: "#ffff"}}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
@@ -220,14 +223,14 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <ApiMenu
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{...menuStyle, background: "#ffff"}}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{...menuStyle, background: "#ffff"}}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     child={child}
                     selectedApp={selectedApp}

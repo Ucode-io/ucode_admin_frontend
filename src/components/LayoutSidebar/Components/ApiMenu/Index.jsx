@@ -61,14 +61,16 @@ function ApiMenu({level = 1, menuStyle}) {
 
   return (
     <Box sx={{padding: "0 5px"}}>
-      <div className="parent-block column-drag-handle" style={{marginBottom: 5}}>
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
-          style={activeStyle}
+          style={{borderRadius: "8px", color: "#475467", height: "32px"}}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label">
             {childBlockVisible ? (
               <KeyboardArrowDownIcon />
             ) : (

@@ -61,12 +61,12 @@ const TableSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
     <Box>
       <div className="parent-block column-drag-handle">
         <Button
-          style={activeStyle}
+          style={{borderRadius: "8px", color: "#475467"}}
           className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label" style={{fontSize: "13px"}}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
             {projectFolder?.label}
           </div>

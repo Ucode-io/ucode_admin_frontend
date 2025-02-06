@@ -12,8 +12,13 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  Flex,
   FormControl,
   FormLabel,
+  Grid,
+  GridItem,
+  IconButton,
+  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -22,9 +27,10 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tooltip,
 } from "@chakra-ui/react";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {Checkbox, FormControlLabel} from "@mui/material";
+import {Checkbox, FormControlLabel, Pagination} from "@mui/material";
 import {Controller, useForm, useWatch} from "react-hook-form";
 import {forwardRef, useEffect, useState} from "react";
 import PhoneNumberInput from "react-phone-number-input";
@@ -39,6 +45,12 @@ import "react-phone-number-input/style.css";
 
 import {useClientTypesQuery} from "./utils";
 import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
+import sessionService from "../../services/sessionService";
+import {format} from "date-fns";
+import {pageToOffset} from "../../utils/pageToOffset";
+
+const templateColumns =
+  "minmax(45px, 30px) minmax(180px, 1fr) minmax(100px, 1fr) minmax(150px, 1fr) minmax(20px, 1fr) ";
 
 export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
   const form = useForm();
@@ -98,6 +110,10 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
 };
 
 export const EditDrawer = ({guid, client_type_id, onClose}) => {
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [offset, setOffset] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const userQuery = useUserGetByIdQuery({
     userId: guid,
     params: {
@@ -126,9 +142,9 @@ export const EditDrawer = ({guid, client_type_id, onClose}) => {
   }, [guid]);
 
   return (
-    <Drawer isOpen={Boolean(guid)} onClose={onClose} size="md">
+    <Drawer isOpen={Boolean(guid)} onClose={onClose} size="lg">
       <DrawerOverlay />
-      <Tabs>
+      <Tabs onChange={setSelectedTab}>
         <form onSubmit={onSubmit}>
           <DrawerContent>
             <DrawerCloseButton />
@@ -137,22 +153,38 @@ export const EditDrawer = ({guid, client_type_id, onClose}) => {
               fontSize={18}
               fontWeight={600}
               color="#344054">
-              <TabList>
+              <TabList borderBottom={0}>
                 <Tab> Edit User</Tab>
                 <Tab> Sessions</Tab>
               </TabList>
             </DrawerHeader>
-            <DrawerBody py="20px">
+            <DrawerBody px={0} py="20px" pt={0}>
               <TabPanels>
                 <TabPanel>
                   <Form form={form} />
                 </TabPanel>
+                <TabPanel>
+                  <Sessions offset={offset} setTotalPages={setTotalPages} />
+                </TabPanel>
               </TabPanels>
             </DrawerBody>
             <DrawerFooter borderTopWidth="1px">
-              <Button w="100%" size="lg" type="submit">
-                Save
-              </Button>
+              {selectedTab === 0 ? (
+                <Button w="100%" size="lg" type="submit">
+                  Save
+                </Button>
+              ) : (
+                <Flex
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}>
+                  <Pagination
+                    count={Math.ceil(totalPages / 15)}
+                    color="primary"
+                    onChange={(e, val) => setOffset(val)}
+                  />
+                </Flex>
+              )}
             </DrawerFooter>
           </DrawerContent>
         </form>
@@ -372,3 +404,154 @@ const PasswordInput = forwardRef((props, ref) => {
     </InputGroup>
   );
 });
+
+const Sessions = ({offset, setTotalPages = () => {}}) => {
+  const state = useSelector((state) => state?.auth);
+
+  const [sessions, setSessions] = useState([]);
+
+  const getSessions = () => {
+    sessionService
+      .getList({
+        user_id: state?.userId,
+        client_type_id: state?.clientType?.id,
+        limit: 15,
+        offset: pageToOffset(offset, 5),
+      })
+      .then((res) => {
+        setTotalPages(res?.count);
+        setSessions(res?.sessions);
+      });
+  };
+
+  useEffect(() => {
+    getSessions();
+  }, [offset]);
+
+  return (
+    <Box overflowX="auto" flexGrow={1}>
+      <Grid templateColumns={templateColumns} borderBottom="1px solid #EAECF0">
+        <Th justifyContent="center">
+          <img src="/img/hash.svg" alt="index" />
+        </Th>
+        <Th type="text">Data</Th>
+        <Th type="text">IP</Th>
+        <Th type="time">Created time</Th>
+        <Th></Th>
+      </Grid>
+
+      {sessions.map((user, index) => (
+        <Grid
+          key={user.id}
+          templateColumns={templateColumns}
+          borderBottom="1px solid #EAECF0">
+          <Td display="flex" justifyContent="center" fontWeight={600}>
+            {index + 1}
+          </Td>
+          <Td>
+            <Tooltip label={user.data} placement="top" hasArrow>
+              <Box
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis">
+                {user.data}
+              </Box>
+            </Tooltip>
+          </Td>
+          <Td>
+            <Tooltip label={user.ip} placement="top" hasArrow>
+              <Box
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis">
+                {user.ip}
+              </Box>
+            </Tooltip>
+          </Td>
+          <Td>
+            <Tooltip
+              label={format(
+                new Date(user?.created_at),
+                "dd-MM-yyyy - HH:mm:ss"
+              )}
+              placement="top"
+              hasArrow>
+              <Box
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis">
+                {format(new Date(user?.created_at), "dd-MM-yyyy - HH:mm:ss")}
+              </Box>
+            </Tooltip>
+          </Td>
+          <Td display="flex" justifyContent="center" columnGap="6px">
+            <DeleteButton user={user} getSessions={getSessions} />
+          </Td>
+        </Grid>
+      ))}
+    </Box>
+  );
+};
+
+const DeleteButton = ({user, getSessions = () => {}}) => {
+  const deleteSession = (id) => {
+    sessionService.delete(id).then(() => getSessions());
+  };
+
+  return (
+    <IconButton
+      aria-label="delete"
+      icon={<Image src="/img/delete.svg" alt="delete" />}
+      variant="ghost"
+      colorScheme="gray"
+      // isLoading={deleteMutation.isLoading}
+      onClick={() => deleteSession(user?.id)}
+    />
+  );
+};
+
+const icons = {
+  text: <img src="/img/text-column.svg" alt="text" />,
+  phone: <img src="/img/phone.svg" alt="text" />,
+  time: <img src="/img/terminal-browser.svg" alt="text" />,
+  ip: <img src="/img/pin.svg" alt="text" />,
+};
+
+const Th = ({type, children, ...props}) => {
+  const icon = icons[type];
+
+  return (
+    <GridItem
+      display="flex"
+      alignItems="center"
+      columnGap="8px"
+      py="14px"
+      px="12px"
+      bg="#F9FAFB"
+      borderRight="1px solid #EAECF0"
+      color="#475467"
+      fontWeight={500}
+      fontSize={12}
+      {...props}>
+      {Boolean(icon) && icon}
+      {children}
+    </GridItem>
+  );
+};
+
+const Td = ({children, ...props}) => (
+  <GridItem
+    px="12px"
+    py="16px"
+    bg="#fff"
+    borderRight="1px solid #EAECF0"
+    color="#475467"
+    fontSize={14}
+    fontWeight={400}
+    whiteSpace="nowrap"
+    overflow="hidden"
+    textOverflow="ellipsis"
+    {...props}>
+    {children}
+  </GridItem>
+);

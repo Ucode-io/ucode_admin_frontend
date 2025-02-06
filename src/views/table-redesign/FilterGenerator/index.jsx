@@ -1,4 +1,4 @@
-import {TextField} from "@mui/material";
+import {InputAdornment, TextField} from "@mui/material";
 import {useMemo, useState} from "react";
 import BooleanFilter from "./BooleanFilter";
 import DateFilter from "./DateFilter";
@@ -6,6 +6,7 @@ import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
+import {getColumnIcon} from "../icons";
 
 const FilterGenerator = ({
   field,
@@ -113,17 +114,28 @@ export const Filter = ({
         />
       );
 
-    case "NUMBER":
-      return (
-        <TextField
-          size='small'
-          placeholder={field.label}
-          type="number"
-          value={filters[name] ?? ""}
-          onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
-          inputProps={{ style: { height: "23px", padding: "0 14px" } }}
-        />
-      );
+    // case "NUMBER":
+    //   return (
+    //     <TextField
+    //       size="small"
+    //       placeholder={field.label}
+    //       type="number"
+    //       value={filters[name] ?? ""}
+    //       onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+    //       inputProps={{
+    //         style: {height: "23px", padding: "0 14px"},
+    //       }}
+    //       // InputProps={{
+    //       //   startAdornment: (
+    //       //     <InputAdornment position="start">
+    //       //       {getColumnIcon({
+    //       //         column: {type: "NUMBER", table_slug: field?.table_slug},
+    //       //       })}
+    //       //     </InputAdornment>
+    //       //   ),
+    //       // }}
+    //     />
+    //   );
 
     case "SWITCH":
       return (

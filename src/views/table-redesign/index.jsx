@@ -250,7 +250,7 @@ export const DynamicTable = ({
           borderRadius: 0,
           flexGrow: 1,
           backgroundColor: "#fff",
-          height: `calc(100vh - ${(tableViewFiltersOpen ? 40 : 0) + tabHeight + 130}px)`,
+          height: `calc(100vh - ${(tableViewFiltersOpen ? 35 : 0) + tabHeight + 130}px)`,
         }}>
         <table id="resizeMe">
           <thead

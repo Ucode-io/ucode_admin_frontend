@@ -41,7 +41,7 @@ const RecursiveBlock = ({
   menuItemId,
   selectedApp,
   userType = false,
-  buttonProps
+  buttonProps,
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const activeStyle = activeStyles({menuItem, element, menuStyle, level});
@@ -160,14 +160,17 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}} style={{ marginBottom: 5 }}>
-        <div className="parent-block column-drag-handle" key={element.id} style={{ marginBottom: 5 }}>
+      <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
+        <div
+          className="parent-block column-drag-handle"
+          key={element.id}
+          style={{marginBottom: 5}}>
           {permission ? (
             <Button
               id="more-button"
               data-cy="three-dots-button"
               key={element.id}
-              style={activeStyle}
+              style={{...activeStyle, marginTop: "5px"}}
               className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
               onClick={(e) => {
                 customFunc(e);

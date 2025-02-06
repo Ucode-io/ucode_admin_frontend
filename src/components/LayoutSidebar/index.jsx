@@ -12,10 +12,16 @@ import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkMo
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, {useMenuGetByIdQuery, useMenuListQuery,} from "../../services/menuService";
+import menuService, {
+  useMenuGetByIdQuery,
+  useMenuListQuery,
+} from "../../services/menuService";
 import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import {useProjectGetByIdQuery, useProjectListQuery} from "../../services/projectService";
+import {
+  useProjectGetByIdQuery,
+  useProjectListQuery,
+} from "../../services/projectService";
 import {store} from "../../store";
 import {mainActions} from "../../store/main/main.slice";
 import {applyDrag} from "../../utils/applyDrag";
@@ -38,9 +44,12 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
-import {SidebarActionTooltip, SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import {
+  SidebarActionTooltip,
+  SidebarAppTooltip,
+} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
@@ -285,54 +294,73 @@ const LayoutSidebar = ({appId}) => {
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
-    itemConditionalProps.onMouseEnter = () => dispatch(mainActions.setSidebarHighlightedMenu('create'))
+    itemConditionalProps.onMouseEnter = () =>
+      dispatch(mainActions.setSidebarHighlightedMenu("create"));
   }
 
-  const getActionProps = (id) => sidebarIsOpen ? {} : {
-    onMouseEnter: () => dispatch(mainActions.setSidebarHighlightedAction(id))
-  }
+  const getActionProps = (id) =>
+    sidebarIsOpen
+      ? {}
+      : {
+          onMouseEnter: () =>
+            dispatch(mainActions.setSidebarHighlightedAction(id)),
+        };
 
   return (
     <>
       <Flex
         position="relative"
         w={sidebarIsOpen ? 240 : 52}
-        flexDirection='column'
-        transition='width 200ms ease-out'
+        flexDirection="column"
+        transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}
-      >
+        bg={menuStyle?.background ?? "#fff"}>
         <Flex
           position="absolute"
           zIndex={999}
           w={25}
           h={25}
-          alignItems='center'
-          justifyContent='center'
+          alignItems="center"
+          justifyContent="center"
           border="1px solid #e5e5e5"
-          borderRadius='50%'
+          borderRadius="50%"
           top={27}
           right={0}
           transform={sidebarIsOpen ? "translateX(50%)" : "translateX(60%)"}
-          bg='#fff'
+          bg="#fff"
           cursor="pointer"
-          onClick={() => dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))}
-        >
-          {sidebarIsOpen
-            ? <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}}/>
-            : <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}}/>
-          }
+          onClick={() =>
+            dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
+          }>
+          {sidebarIsOpen ? (
+            <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}} />
+          ) : (
+            <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}} />
+          )}
         </Flex>
 
-        <Flex pl={8} py={10} h={45} borderBottom="1px solid #EAECF0" alignItems='center'>
-          <Header sidebarIsOpen={sidebarIsOpen} projectInfo={projectInfo}/>
+        <Flex
+          pl={8}
+          py={10}
+          h={45}
+          borderBottom="1px solid #EAECF0"
+          alignItems="center">
+          <Header sidebarIsOpen={sidebarIsOpen} projectInfo={projectInfo} />
         </Flex>
 
-        <Box pt={8} maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`} overflowY='auto' overflowX='hidden'>
-          {!menuList && <RingLoaderWithWrapper style={{height: "100%"}}/>}
+        <Box
+          pt={8}
+          maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`}
+          overflowY="auto"
+          overflowX="hidden">
+          {!menuList && <RingLoaderWithWrapper style={{height: "100%"}} />}
 
-          {Array.isArray(menuList) &&
-            <div className="menu-element" onMouseLeave={() => dispatch(mainActions.setSidebarHighlightedMenu(null))}>
+          {Array.isArray(menuList) && (
+            <div
+              className="menu-element"
+              onMouseLeave={() =>
+                dispatch(mainActions.setSidebarHighlightedMenu(null))
+              }>
               <Container
                 dragHandleSelector=".column-drag-handle"
                 onDrop={onDrop}>
@@ -352,75 +380,105 @@ const LayoutSidebar = ({appId}) => {
                 ))}
               </Container>
 
-              {Boolean(permissions?.menu_button) &&
-                <SidebarAppTooltip id='create' title='Create'>
+              {Boolean(permissions?.menu_button) && (
+                <SidebarAppTooltip id="create" title="Create">
                   <Flex
                     position="relative"
                     h={36}
                     alignItems="center"
                     borderRadius={6}
                     _hover={{bg: "#EAECF0"}}
-                    cursor='pointer'
+                    cursor="pointer"
                     mx={8}
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
-                    {...itemConditionalProps}
-                  >
+                    {...itemConditionalProps}>
                     <Flex
                       position="absolute"
                       w={36}
                       h={36}
-                      alignItems='center'
-                      justifyContent='center'
-                    >
-                      <InlineSVG src="/img/plus-icon.svg" color="#475467"/>
+                      alignItems="center"
+                      justifyContent="center">
+                      <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    <Box whiteSpace='nowrap' color={(menuStyle?.text === "#A8A8A8" ? null : "#475467") ?? "#475467"}
-                         pl={48} fontSize={14}>
+                    <Box
+                      whiteSpace="nowrap"
+                      color={
+                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                        "#475467"
+                      }
+                      pl={48}
+                      fontSize={14}>
                       Create
                     </Box>
                   </Flex>
                 </SidebarAppTooltip>
-              }
+              )}
             </div>
-          }
+          )}
         </Box>
 
-        <Flex display={sidebarIsOpen ? "flex" : "block"} mt='auto' py={4} alignItems='center'
-              columnGap={16} px={8} borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
-              onMouseLeave={sidebarIsOpen ? undefined : () => dispatch(mainActions.setSidebarHighlightedAction(null))}
-        >
+        <Flex
+          display={sidebarIsOpen ? "flex" : "block"}
+          mt="auto"
+          py={4}
+          alignItems="center"
+          columnGap={16}
+          px={8}
+          borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
+          onMouseLeave={
+            sidebarIsOpen
+              ? undefined
+              : () => dispatch(mainActions.setSidebarHighlightedAction(null))
+          }>
           <SidebarActionTooltip id="documentation" title="Documentation">
             <Flex
-              as='a'
-              href='https://ucode.gitbook.io/ucode-docs'
-              target='_blank'
+              as="a"
+              href="https://ucode.gitbook.io/ucode-docs"
+              target="_blank"
               w={sidebarIsOpen ? "100%" : 36}
               h={36}
-              alignItems='center'
-              justifyContent='center'
+              alignItems="center"
+              justifyContent="center"
               borderRadius={6}
               _hover={{bg: "#EAECF0"}}
-              cursor='pointer'
+              cursor="pointer"
               mb={sidebarIsOpen ? 0 : 4}
-              {...getActionProps('documentation')}
-            >
-              <img src="/img/documentation.svg" alt="merge"/>
+              {...getActionProps("documentation")}>
+              <img src="/img/documentation.svg" alt="merge" />
             </Flex>
           </SidebarActionTooltip>
 
-          <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
+          <Box
+            display={sidebarIsOpen ? "block" : "none"}
+            w="1px"
+            h={20}
+            bg="#D0D5DD"
+          />
           <SidebarActionTooltip id="chat" title="Chat">
-            <Chatwoot open={sidebarIsOpen} {...getActionProps('chat')} />
+            <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
           </SidebarActionTooltip>
-          <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
+          <Box
+            display={sidebarIsOpen ? "block" : "none"}
+            w="1px"
+            h={20}
+            bg="#D0D5DD"
+          />
           <SidebarActionTooltip id="ai-chat" title="AI Chat">
-            <AIChat sidebarOpen={sidebarIsOpen} {...getActionProps('ai-chat')} />
+            <AIChat
+              sidebarOpen={sidebarIsOpen}
+              {...getActionProps("ai-chat")}
+            />
           </SidebarActionTooltip>
-          <Box display={sidebarIsOpen ? "block" : "none"} w='1px' h={20} bg='#D0D5DD'/>
+          <Box
+            display={sidebarIsOpen ? "block" : "none"}
+            w="1px"
+            h={20}
+            bg="#D0D5DD"
+          />
           <NewProfilePanel
             sidebarAnchorEl={sidebarAnchorEl}
             setSidebarAnchor={setSidebarAnchor}
@@ -526,9 +584,9 @@ const LayoutSidebar = ({appId}) => {
           setWebsiteModalLink={setWebsiteModalLink}
         />
       ) : null}
-      {templateModal && <TemplateModal closeModal={closeTemplateModal}/>}
+      {templateModal && <TemplateModal closeModal={closeTemplateModal} />}
       {menuSettingModal && (
-        <MenuSettingModal closeModal={closeMenuSettingModal}/>
+        <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
     </>
   );
@@ -542,19 +600,18 @@ const Chatwoot = forwardRef(({open, ...props}, ref) => {
       ref={ref}
       w={open ? "100%" : 36}
       h={36}
-      alignItems='center'
-      justifyContent='center'
+      alignItems="center"
+      justifyContent="center"
       borderRadius={6}
       _hover={{bg: "#EAECF0"}}
-      cursor='pointer'
+      cursor="pointer"
       mb={open ? 0 : 4}
       {...props}
-      onClick={originalButtonFunction}
-    >
-      <img src="/img/message-text-square.svg" alt="chat"/>
+      onClick={originalButtonFunction}>
+      <img src="/img/message-text-square.svg" alt="chat" />
     </Flex>
-  )
-})
+  );
+});
 
 const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   const {
@@ -569,25 +626,24 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
     handleClick,
     handleClose,
     handleKeyDown,
-    handleSendClick
-  } = useAIChat()
+    handleSendClick,
+  } = useAIChat();
 
   return (
     <>
       <Flex
         w={sidebarOpen ? "100%" : 36}
         h={36}
-        alignItems='center'
-        justifyContent='center'
+        alignItems="center"
+        justifyContent="center"
         borderRadius={6}
         _hover={{bg: "#EAECF0"}}
-        cursor='pointer'
+        cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        onClick={handleClick}
-      >
-        <img src="/img/magic-wand.svg" alt="magic"/>
+        onClick={handleClick}>
+        <img src="/img/magic-wand.svg" alt="magic" />
       </Flex>
 
       <AIMenu
@@ -604,8 +660,8 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
         handleSendClick={handleSendClick}
       />
     </>
-  )
-})
+  );
+});
 
 const Header = ({sidebarIsOpen, projectInfo}) => {
   const dispatch = useDispatch();
@@ -614,7 +670,7 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
 
   const handleClose = () => {
     onClose();
-  }
+  };
 
   const onSelectEnvironment = (environment) => {
     const params = {
@@ -622,7 +678,7 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
       env_id: environment.id,
       project_id: environment.project_id,
       for_env: true,
-    }
+    };
 
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
@@ -636,135 +692,230 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   return (
-    <Popover offset={[sidebarIsOpen ? 20 : 95, 5]} isOpen={isOpen} onClose={handleClose}>
+    <Popover
+      offset={[sidebarIsOpen ? 20 : 95, 5]}
+      isOpen={isOpen}
+      onClose={handleClose}>
       <PopoverTrigger>
-        <Flex w='calc(100% - 8px)' maxWidth='200px' position='relative' overflow='hidden' alignItems='center'
-              p={5} borderRadius={8} bg="#fff" _hover={{bg: "#EAECF0"}} cursor="pointer"
-              onClick={() => !isOpen ? onOpen() : null}>
-          <Flex w={36} h={36} position="absolute" left={0} alignItems='center' justifyContent='center'>
-            {Boolean(projectInfo?.logo) &&
-              <img src={projectInfo?.logo} alt="" width={20} height={20}/>
-            }
+        <Flex
+          w="calc(100% - 8px)"
+          maxWidth="200px"
+          position="relative"
+          overflow="hidden"
+          alignItems="center"
+          p={5}
+          borderRadius={8}
+          bg="#fff"
+          _hover={{bg: "#EAECF0"}}
+          cursor="pointer"
+          onClick={() => (!isOpen ? onOpen() : null)}>
+          <Flex
+            w={36}
+            h={36}
+            position="absolute"
+            left={0}
+            alignItems="center"
+            justifyContent="center">
+            {Boolean(projectInfo?.logo) && (
+              <img src={projectInfo?.logo} alt="" width={20} height={20} />
+            )}
 
-            {!projectInfo?.logo &&
-              <Flex w={20} h={20} borderRadius={4} bg='#06AED4' color='#fff' alignItems='center'
-                    justifyContent='center' fontSize={14} fontWeight={500}>
+            {!projectInfo?.logo && (
+              <Flex
+                w={20}
+                h={20}
+                borderRadius={4}
+                bg="#06AED4"
+                color="#fff"
+                alignItems="center"
+                justifyContent="center"
+                fontSize={14}
+                fontWeight={500}>
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
-            }
+            )}
           </Flex>
 
-          <Box pl={30} whiteSpace='nowrap' color='#344054' fontSize={13} fontWeight={500} overflow='hidden'
-               textOverflow='ellipsis'>
+          <Box
+            pl={30}
+            whiteSpace="nowrap"
+            color="#344054"
+            fontSize={13}
+            fontWeight={500}
+            overflow="hidden"
+            textOverflow="ellipsis">
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: 'auto', fontSize: 20,}}/>
+          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
         </Flex>
       </PopoverTrigger>
-      <PopoverContent w='240px' bg='#fff' padding={6} borderRadius={8} border='1px solid #EAECF0' outline='none'
-                      boxShadow='0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814' zIndex={999}>
-        <Companies onSelectEnvironment={onSelectEnvironment}/>
+      <PopoverContent
+        w="240px"
+        bg="#fff"
+        padding={6}
+        borderRadius={8}
+        border="1px solid #EAECF0"
+        outline="none"
+        boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
+        zIndex={999}>
+        <Companies onSelectEnvironment={onSelectEnvironment} />
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
 
 const Companies = ({onSelectEnvironment}) => {
   const userId = useSelector((state) => state.auth?.userId);
   const companiesQuery = useCompanyListQuery({
-    params: {owner_id: userId}, queryParams: {enabled: Boolean(userId)}
+    params: {owner_id: userId},
+    queryParams: {enabled: Boolean(userId)},
   });
   const companies = companiesQuery.data?.companies ?? [];
 
   return (
     <Box>
       <Accordion allowToggle>
-        {companies.map((company) =>
+        {companies.map((company) => (
           <AccordionItem key={company.id}>
-            <AccordionButton columnGap={8} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
-                             borderRadius={6} _hover={{bg: "#EAECF0"}}>
-              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
-                    fontSize={18} fontWeight={500} color='#fff'>
+            <AccordionButton
+              columnGap={8}
+              p={5}
+              justifyContent="space-between"
+              alignItems="center"
+              cursor="pointer"
+              borderRadius={6}
+              _hover={{bg: "#EAECF0"}}>
+              <Flex
+                w={20}
+                h={20}
+                alignItems="center"
+                justifyContent="center"
+                borderRadius={4}
+                bg="#15B79E"
+                fontSize={18}
+                fontWeight={500}
+                color="#fff">
                 {company.name?.[0]?.toUpperCase()}
               </Flex>
-              <Box fontSize={12} fontWeight={500} color='#101828'>
+              <Box fontSize={12} fontWeight={500} color="#101828">
                 {company.name}
               </Box>
-              <AccordionIcon ml='auto' fontSize='20px'/>
+              <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>
-            <Projects company={company} onSelectEnvironment={onSelectEnvironment}/>
+            <Projects
+              company={company}
+              onSelectEnvironment={onSelectEnvironment}
+            />
           </AccordionItem>
-        )}
+        ))}
       </Accordion>
     </Box>
-  )
+  );
 };
 
 const Projects = ({company, onSelectEnvironment}) => {
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
-    queryParams: {enabled: Boolean(company?.id)}
+    queryParams: {enabled: Boolean(company?.id)},
   });
   const projects = projectsQuery.data?.projects ?? [];
 
   return (
-    <AccordionPanel pl='12px' mt='4px'>
+    <AccordionPanel pl="12px" mt="4px">
       <Accordion allowToggle>
-        {projects.map((project) =>
+        {projects.map((project) => (
           <AccordionItem key={project.project_id}>
-            <AccordionButton columnGap={8} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
-                             borderRadius={6} _hover={{bg: "#EAECF0"}}>
-              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
-                    fontSize={18} fontWeight={500} color='#fff'>
+            <AccordionButton
+              columnGap={8}
+              p={5}
+              justifyContent="space-between"
+              alignItems="center"
+              cursor="pointer"
+              borderRadius={6}
+              _hover={{bg: "#EAECF0"}}>
+              <Flex
+                w={20}
+                h={20}
+                alignItems="center"
+                justifyContent="center"
+                borderRadius={4}
+                bg="#15B79E"
+                fontSize={18}
+                fontWeight={500}
+                color="#fff">
                 {project.title?.[0]?.toUpperCase()}
               </Flex>
-              <Box fontSize={12} fontWeight={500} color='#101828'>
+              <Box fontSize={12} fontWeight={500} color="#101828">
                 {project.title}
               </Box>
-              <AccordionIcon ml='auto' fontSize='20px'/>
+              <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>
 
-            <Environments project={project} onSelectEnvironment={onSelectEnvironment}/>
+            <Environments
+              project={project}
+              onSelectEnvironment={onSelectEnvironment}
+            />
           </AccordionItem>
-        )}
+        ))}
       </Accordion>
     </AccordionPanel>
-  )
+  );
 };
 
 const Environments = ({project, onSelectEnvironment}) => {
   const environmentsQuery = useEnvironmentListQuery({
     params: {project_id: project?.project_id},
-    queryParams: {enabled: Boolean(project?.project_id)}
+    queryParams: {enabled: Boolean(project?.project_id)},
   });
   const environments = environmentsQuery.data?.environments ?? [];
 
   return (
-    <AccordionPanel pl='12px' mt='4px'>
+    <AccordionPanel pl="12px" mt="4px">
       <Box>
-        {environments.map((environment) =>
-          <Flex key={environment.id} p={5} justifyContent='space-between' alignItems='center' cursor="pointer"
-                borderRadius={6} _hover={{bg: "#EAECF0"}} onClick={() => onSelectEnvironment(environment)}>
-            <Flex columnGap={8} alignItems='center'>
-              <Flex w={20} h={20} alignItems='center' justifyContent='center' borderRadius={4} bg='#15B79E'
-                    fontSize={18} fontWeight={500} color='#fff'>
+        {environments.map((environment) => (
+          <Flex
+            key={environment.id}
+            p={5}
+            justifyContent="space-between"
+            alignItems="center"
+            cursor="pointer"
+            borderRadius={6}
+            _hover={{bg: "#EAECF0"}}
+            onClick={() => onSelectEnvironment(environment)}>
+            <Flex columnGap={8} alignItems="center">
+              <Flex
+                w={20}
+                h={20}
+                alignItems="center"
+                justifyContent="center"
+                borderRadius={4}
+                bg="#15B79E"
+                fontSize={18}
+                fontWeight={500}
+                color="#fff">
                 {environment.name?.[0]?.toUpperCase()}
               </Flex>
               <Box mr={36}>
-                <Box fontSize={12} fontWeight={500} color='#101828'>
+                <Box fontSize={12} fontWeight={500} color="#101828">
                   {environment.name}
                 </Box>
               </Box>
             </Flex>
-            <KeyboardArrowDownIcon style={{alignSelf: "center", transform: "rotate(-90deg)", fontSize: 20}}/>
+            <KeyboardArrowDownIcon
+              style={{
+                alignSelf: "center",
+                transform: "rotate(-90deg)",
+                fontSize: 20,
+              }}
+            />
           </Flex>
-        )}
+        ))}
       </Box>
     </AccordionPanel>
-  )
-}
+  );
+};
 
 export default LayoutSidebar;

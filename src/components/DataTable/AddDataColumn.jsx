@@ -14,19 +14,19 @@ import {CircularProgress} from "@mui/material";
 
 const AddDataColumn = React.memo(
   ({
-     columns,
-     getValues,
-     mainForm,
-     relationfields,
-     data,
-     onRowClick,
-     width,
-     rows,
-     setAddNewRow,
-     refetch,
-     view,
-     isRelationTable,
-   }) => {
+    columns,
+    getValues,
+    mainForm,
+    relationfields,
+    data,
+    onRowClick,
+    width,
+    rows,
+    setAddNewRow,
+    refetch,
+    view,
+    isRelationTable,
+  }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
     const [isLoading, setIsLoading] = useState();

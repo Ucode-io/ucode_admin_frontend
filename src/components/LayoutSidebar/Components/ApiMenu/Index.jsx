@@ -32,26 +32,6 @@ function ApiMenu({level = 1, menuStyle}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
-  const activeStyle = activeStyles({
-    menuItem,
-    element: projectSettings,
-    menuStyle,
-    level,
-  });
-
-  const iconStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
-  };
-
-  const labelStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -61,14 +41,16 @@ function ApiMenu({level = 1, menuStyle}) {
 
   return (
     <Box sx={{padding: "0 5px"}}>
-      <div className="parent-block column-drag-handle" style={{marginBottom: 5}}>
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
-          style={activeStyle}
+          style={menuStyle}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
+          <div className="label">
             {childBlockVisible ? (
               <KeyboardArrowDownIcon />
             ) : (

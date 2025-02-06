@@ -101,6 +101,14 @@ const SubMenu = ({
     }
   };
 
+  const menuStyleNew = {
+    background: "#fff",
+    borderRadius: "8px",
+    color: "#475467",
+    height: "32px",
+    marginTop: "5px",
+  };
+
   return (
     <div
       className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
@@ -198,21 +206,24 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <ProjectSettings
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === adminId && (
                   <Permissions
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={{
+                      ...menuStyle,
+                      background: "#fff",
+                    }}
                     setElement={setElement}
                   />
                 )}
                 {selectedApp?.id === adminId && (
                   <Resources
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
@@ -220,14 +231,14 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <ApiMenu
                     handleOpenNotify={handleOpenNotify}
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
-                    menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                    menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     child={child}
                     selectedApp={selectedApp}
@@ -263,7 +274,7 @@ const SubMenu = ({
                   {selectedApp?.id ===
                     "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
                     <DocumentsSidebar
-                      menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                      menuStyle={menuStyleNew}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       menuItem={menuItem}
                       level={2}
@@ -277,7 +288,7 @@ const SubMenu = ({
                   )} */}
                   {selectedApp?.id === adminId && (
                     <ActivityFeedButton
-                      menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                      menuStyle={menuStyleNew}
                       menuItem={menuItem}
                       level={2}
                       setSubMenuIsOpen={setSubMenuIsOpen}
@@ -297,7 +308,7 @@ const SubMenu = ({
                   openFolderCreateModal={openFolderCreateModal}
                   style={{
                     backgroundColor: "transparent",
-                    color: menuStyle?.text || "#475467",
+                    color: "#475467",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-start",
@@ -313,7 +324,7 @@ const SubMenu = ({
                       flex: 1,
                       whiteSpace: "nowrap",
                       columnGap: "8px",
-                      color: menuStyle?.text || "#475467",
+                      color: "#475467",
                       cursor: "pointer",
                     }}>
                     <img src="/img/plus-icon.svg" alt="Add" />

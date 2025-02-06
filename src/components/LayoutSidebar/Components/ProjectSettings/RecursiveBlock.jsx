@@ -19,12 +19,13 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
     color: "#475467",
     borderRadius: "8px",
     margin: "5px 0",
+    height: "32px",
   };
 
   return (
     <Box
       sx={{
-        backgroundColor: "#f2f4f7",
+        // backgroundColor: "#f2f4f7",
         color: "rgb(168, 168, 168)",
         paddingLeft: "10px",
         paddingRight: "10px",
@@ -39,7 +40,7 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
             e?.stopPropagation();
             navigate(`/main/${appId}/project-setting`);
           }}>
-          <div className="label" style={{padding: "0 10px"}}>
+          <div className="label" style={{padding: "0 10px", fontSize: "13px"}}>
             <Tooltip title="Project Settings" placement="top">
               <p>Project Settings</p>
             </Tooltip>
@@ -59,7 +60,7 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
             e?.stopPropagation();
             navigate(`/main/${appId}/environments`);
           }}>
-          <div className="label" style={{padding: "0 10px"}}>
+          <div className="label" style={{padding: "0 10px", fontSize: "13px"}}>
             <Tooltip title="Project Settings" placement="top">
               <p>Environments</p>
             </Tooltip>
@@ -80,7 +81,7 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
             handleOpen();
             navigate("main/c57eedc3-a954-4262-a0af-376c65b5a280");
           }}>
-          <div className="label" style={{padding: "0 10px"}}>
+          <div className="label" style={{padding: "0 10px", fontSize: "13px"}}>
             <Tooltip title="Project Settings" placement="top">
               <p>Versions</p>
             </Tooltip>

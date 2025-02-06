@@ -160,10 +160,12 @@ const Resources = ({
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle" style={{ marginBottom: 5 }}>
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
           className="nav-element highlight-on-hover"
-          style={activeStyle}
+          style={{borderRadius: "8px", color: "#475767", height: "32px"}}
           onClick={(e) => {
             clickHandler(e);
           }}>

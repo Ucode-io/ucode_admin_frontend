@@ -1,6 +1,6 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
-import {format, parse} from "date-fns";
+import {format, isValid, parse} from "date-fns";
 
 export const HFDatePicker = ({
   control,
@@ -149,18 +149,24 @@ export const HFTimePicker = ({
 };
 
 const getValue = (value) => {
-  if (!value) {
-    return null;
-  }
-  if (value instanceof Date) {
-    return value;
-  }
+  if (!value) return null;
+  if (value instanceof Date && isValid(value)) return value;
 
   try {
-    const date = value?.toLowerCase()?.includes("now")
-      ? new Date()
-      : new Date(value);
-    return isNaN(date) ? new Date() : date;
+    if (typeof value === "string") {
+      if (value.toLowerCase().includes("now")) return new Date();
+
+      const formats = [
+        "yyyy-MM-dd HH:mm",
+        "dd.MM.yyyy HH:mm",
+        "yyyy-MM-dd'T'HH:mm:ssX",
+      ];
+      for (const fmt of formats) {
+        const parsedDate = parse(value, fmt, new Date());
+        if (isValid(parsedDate)) return parsedDate;
+      }
+    }
+    return null;
   } catch (e) {
     return null;
   }
@@ -168,9 +174,13 @@ const getValue = (value) => {
 
 const getNoTimezoneValue = (value) => {
   if (!value) return "";
-  if (value instanceof Date) return value;
+  if (value instanceof Date && isValid(value)) return value;
 
-  if (value.includes("Z")) return new Date(value);
-
-  return parse(value, "dd.MM.yyyy HH:mm", new Date());
+  try {
+    if (value.includes("Z")) return new Date(value);
+    const parsedDate = parse(value, "dd.MM.yyyy HH:mm", new Date());
+    return isValid(parsedDate) ? parsedDate : "";
+  } catch (e) {
+    return "";
+  }
 };

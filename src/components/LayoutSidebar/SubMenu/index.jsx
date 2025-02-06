@@ -139,7 +139,7 @@ const SubMenu = ({
                 (isCopied ? (
                   <DoneIcon
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                     size={13}
                   />
@@ -148,7 +148,7 @@ const SubMenu = ({
                     size={13}
                     onClick={handleClick}
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                   />
                 ))}
@@ -162,7 +162,7 @@ const SubMenu = ({
                     setElement(selectedApp);
                   }}
                   style={{
-                    color: menuStyle?.text,
+                    color: menuStyles?.text,
                   }}
                 />
               )}
@@ -175,7 +175,7 @@ const SubMenu = ({
                 }}
                 style={{
                   rotate: pinIsEnabled ? "" : "-45deg",
-                  color: menuStyle?.text,
+                  color: menuStyles?.text,
                 }}
               />
             </div>
@@ -214,7 +214,7 @@ const SubMenu = ({
                 {selectedApp?.id === adminId && (
                   <Permissions
                     menuStyle={{
-                      ...menuStyle,
+                      ...menuStyles,
                       background: "#fff",
                     }}
                     setElement={setElement}
@@ -262,7 +262,7 @@ const SubMenu = ({
                           handleOpenNotify={handleOpenNotify}
                           setElement={setElement}
                           setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyle}
+                          menuStyle={menuStyleNew}
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}

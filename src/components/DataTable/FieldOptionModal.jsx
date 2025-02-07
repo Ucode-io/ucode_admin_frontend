@@ -107,7 +107,7 @@ export default function FieldOptionModal({
               onChange={(ev) => setSearchValue(ev.target.value)}
             />
           </InputGroup>
-          <Box sx={{overflow: "auto", height: "350px"}}>
+          <Box sx={{overflow: "auto", height: "400px"}}>
             {newFieldTypes
               ?.filter((el) =>
                 searchValue

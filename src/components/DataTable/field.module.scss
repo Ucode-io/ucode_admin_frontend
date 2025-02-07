@@ -15,10 +15,9 @@
 .field {
   width: 100%;
   min-width: 240px;
-  height: 500px;
+  max-height: 500px;
   overflow: scroll;
   position: relative;
-  background: #fff;
 
   .advanced {
     color: #4f5762 !important;

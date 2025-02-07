@@ -40,9 +40,9 @@ export default function FieldOptionModal({
     } else if (value === "INCREMENT") {
       setValue("type", "INCREMENT_ID");
     } else if (value === "FILE") {
-      setValue("type", "MAP");
+      setValue("type", "PHOTO");
     } else if (value === "MAP") {
-      setValue("type", "FILE");
+      setValue("type", "MAP");
     } else if (value === "PRIMARY_KEY") {
       setValue("type", "RANDOM_TEXT");
     } else if (value === "CODE") {

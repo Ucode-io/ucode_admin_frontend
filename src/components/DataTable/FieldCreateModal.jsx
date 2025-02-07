@@ -333,7 +333,6 @@ export default function FieldCreateModal({
                 fullWidth
                 required
                 onChange={(e) => {
-                  console.log("eeeeeeeeeeee", e);
                   if (e === "NUMBER") {
                     setValue("type", "NUMBER");
                   } else if (e === "DATE") {
@@ -342,8 +341,6 @@ export default function FieldCreateModal({
                     setValue("type", "INCREMENT_ID");
                   } else if (e === "SINGLE_LINE") {
                     setValue("type", "SINGLE_LINE");
-                  } else if (e === "FILE") {
-                    setValue("type", "FILE");
                   } else {
                     setValue("type", e);
                   }

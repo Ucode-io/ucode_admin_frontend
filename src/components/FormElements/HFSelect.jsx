@@ -79,7 +79,6 @@ const HFSelect = ({
                   : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
               }
               onChange={(e) => {
-                console.log("eeeeeeeeeeeeeeee====>", e);
                 onFormChange(e.target.value);
                 onChange(e.target.value);
                 setSelectedValue(e.target.value);

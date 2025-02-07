@@ -9,6 +9,7 @@ import {
   HFDatePicker,
   HFDateDatePickerWithoutTimeZoneTable,
   HFTimePicker,
+  HFDateTimePicker,
 } from "@/views/table-redesign/hf-date";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
@@ -38,7 +39,6 @@ import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
 import HFStatusField from "../FormElements/HFStatusField";
 import HFMoneyField from "../FormElements/HFMoneyField";
-import HFDateTimePicker from "../FormElements/HFDateTimePicker";
 
 const parser = new Parser();
 

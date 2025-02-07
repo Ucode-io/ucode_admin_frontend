@@ -1,9 +1,9 @@
-import { Box, Menu } from "@mui/material";
-import { RiPencilFill } from "react-icons/ri";
+import {Box, Menu} from "@mui/material";
+import {RiPencilFill} from "react-icons/ri";
 import "./style.scss";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import MenuItemComponent from "../../../MenuItem";
-import { FaPlus } from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
 
 const ApiButtonMenu = ({
   menu,
@@ -39,8 +39,7 @@ const ApiButtonMenu = ({
               padding: 0,
             },
           },
-        }}
-      >
+        }}>
         {menuType === "FOLDER" ? (
           <>
             <Box className="menu">

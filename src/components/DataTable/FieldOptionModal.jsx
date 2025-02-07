@@ -1,4 +1,4 @@
-import {Button, Menu, Typography} from "@mui/material";
+import {Box, Button, Menu, Typography} from "@mui/material";
 import React, {useState} from "react";
 import style from "./field.module.scss";
 import {newFieldTypes} from "../../utils/constants/fieldTypes";
@@ -107,27 +107,32 @@ export default function FieldOptionModal({
               onChange={(ev) => setSearchValue(ev.target.value)}
             />
           </InputGroup>
-          {newFieldTypes
-            ?.filter((el) =>
-              searchValue
-                ? el?.label.toLowerCase().includes(searchValue.toLowerCase())
-                : true
-            )
-            ?.map((field) => (
-              <Button
-                key={field?.value}
-                fullWidth
-                className={style.button}
-                onClick={(e) => {
-                  handleChange(e, field?.value);
-                }}>
-                {field?.value &&
-                  getColumnIcon({
-                    column: {type: field?.value, table_slug: field?.table_slug},
-                  })}
-                <p>{field?.label}</p>
-              </Button>
-            ))}
+          <Box sx={{overflow: "auto", height: "350px"}}>
+            {newFieldTypes
+              ?.filter((el) =>
+                searchValue
+                  ? el?.label.toLowerCase().includes(searchValue.toLowerCase())
+                  : true
+              )
+              ?.map((field) => (
+                <Button
+                  key={field?.value}
+                  fullWidth
+                  className={style.button}
+                  onClick={(e) => {
+                    handleChange(e, field?.value);
+                  }}>
+                  {field?.value &&
+                    getColumnIcon({
+                      column: {
+                        type: field?.value,
+                        table_slug: field?.table_slug,
+                      },
+                    })}
+                  <p>{field?.label}</p>
+                </Button>
+              ))}
+          </Box>
         </div>
       </Menu>
     </ChakraProvider>

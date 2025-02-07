@@ -372,11 +372,11 @@ export const textFieldFormats = [
     value: "TEXT",
     icon: "minus.svg",
   },
-  {
-    label: "Link",
-    value: "LINK",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Link",
+  //   value: "LINK",
+  //   icon: "minus.svg",
+  // },
 ];
 
 export const incrementFieldFormats = [

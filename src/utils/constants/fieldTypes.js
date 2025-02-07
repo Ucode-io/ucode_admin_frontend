@@ -344,18 +344,19 @@ export const numberFieldFormats = [
   },
 ];
 
-export const barcodeFieldFormats = [
-  {
-    label: "QR",
-    value: "QR",
-    icon: "minus.svg",
-  },
-  {
-    label: "Barcode",
-    value: "BARCODE",
-    icon: "minus.svg",
-  },
-];
+// export const barcodeFieldFormats = [
+//   {
+//     label: "QR",
+//     value: "QR",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Barcode",
+//     value: "BARCODE",
+//     icon: "minus.svg",
+//   },
+// ];
+
 export const textFieldFormats = [
   {
     label: "Text",
@@ -372,11 +373,11 @@ export const textFieldFormats = [
     value: "TEXT",
     icon: "minus.svg",
   },
-  {
-    label: "Link",
-    value: "LINK",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Link",
+  //   value: "LINK",
+  //   icon: "minus.svg",
+  // },
 ];
 
 export const incrementFieldFormats = [
@@ -421,18 +422,18 @@ export const PrimaryKeyFieldFormats = [
   // },
 ];
 
-export const codeFieldFormats = [
-  {
-    label: "JSON",
-    value: "JSON",
-    icon: "minus.svg",
-  },
-  {
-    label: "Programming Language",
-    value: "PROGRAMMING_LANGUAGE",
-    icon: "computer.svg",
-  },
-];
+// export const codeFieldFormats = [
+//   {
+//     label: "JSON",
+//     value: "JSON",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Programming Language",
+//     value: "PROGRAMMING_LANGUAGE",
+//     icon: "computer.svg",
+//   },
+// ];
 
 export const toggleButtonFormats = [
   {
@@ -580,11 +581,6 @@ export const newFieldTypes = [
     value: "PASSWORD",
     icon: "lock.svg",
   },
-  // {
-  //   icon: "text-height.svg",
-  //   label: "Text",
-  //   value: "TEXT",
-  // },
   {
     icon: "link.svg",
     label: "Link",
@@ -600,27 +596,12 @@ export const newFieldTypes = [
     label: "Increment ID",
     value: "INCREMENT_ID",
   },
-  // {
-  //   icon: "code.svg",
-  //   label: "Programming language",
-  //   value: "PROGRAMMING_LANGUAGE",
-  // },
   {
     icon: "file-lines.svg",
     label: "JSON",
     value: "JSON",
   },
-  {
-    icon: "qrcode.svg",
-    label: "Qr",
-    value: "QR",
-  },
 
-  // {
-  //   icon: "phone.svg",
-  //   label: "Phone",
-  //   value: "PHONE",
-  // },
   {
     icon: "phone.svg",
     label: "Internation Phone",
@@ -630,6 +611,11 @@ export const newFieldTypes = [
     icon: "icons.svg",
     label: "Icon",
     value: "ICON",
+  },
+  {
+    icon: "qrcode.svg",
+    label: "Qr",
+    value: "QR",
   },
   {
     icon: "barcode.svg",
@@ -864,16 +850,13 @@ export const formatIncludes = [
   "DATE_TIME",
   "DATE_TIME_WITHOUT_TIME_ZONE",
   "TIME",
-  "BARCODE",
   "PHOTO",
   "MULTI_IMAGE",
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",
-  "CODE",
   "MAP",
   "POLYGON",
-  "JSON",
   "RANDOM_TEXT",
   "PRIMARY_KEY",
   "SWITCH",
@@ -900,8 +883,6 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
     case "INCREMENT":
       return incrementFieldFormats;
-    case "CODE":
-      return codeFieldFormats;
     case "MAP":
       return mapFieldFormats;
     case "MULTI_LINE":
@@ -910,8 +891,8 @@ export const FormatOptionType = (item) => {
       return numberFieldFormats;
     case "FLOAT":
       return numberFieldFormats;
-    case "BARCODE":
-      return barcodeFieldFormats;
+    // case "BARCODE":
+    //   return barcodeFieldFormats;
     case "PRIMARY_KEY":
       return PrimaryKeyFieldFormats;
     case "SWITCH":
@@ -920,7 +901,7 @@ export const FormatOptionType = (item) => {
       return dropDownFormats;
 
     default:
-      return textFieldFormats;
+      return null;
   }
 };
 export const FormatTypes = (format) => {

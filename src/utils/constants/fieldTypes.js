@@ -570,11 +570,6 @@ export const newFieldTypes = [
     icon: "map-pin.svg",
   },
   {
-    label: "Phone",
-    value: "INTERNATION_PHONE",
-    icon: "phone.svg",
-  },
-  {
     label: "Email",
     value: "EMAIL",
     icon: "envelope.svg",
@@ -585,11 +580,11 @@ export const newFieldTypes = [
     value: "PASSWORD",
     icon: "lock.svg",
   },
-  {
-    icon: "text-height.svg",
-    label: "Text",
-    value: "TEXT",
-  },
+  // {
+  //   icon: "text-height.svg",
+  //   label: "Text",
+  //   value: "TEXT",
+  // },
   {
     icon: "link.svg",
     label: "Link",
@@ -632,19 +627,9 @@ export const newFieldTypes = [
     value: "INTERNATION_PHONE",
   },
   {
-    icon: "envelope.svg",
-    label: "Email",
-    value: "EMAIL",
-  },
-  {
     icon: "icons.svg",
     label: "Icon",
     value: "ICON",
-  },
-  {
-    icon: "lock.svg",
-    label: "Password",
-    value: "PASSWORD",
   },
   {
     icon: "barcode.svg",

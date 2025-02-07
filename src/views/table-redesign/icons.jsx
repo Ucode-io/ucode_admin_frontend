@@ -31,7 +31,7 @@ const icons = {
   BUTTON: <img src="/table-icons/plus-square.svg" alt="Password" />,
   JSON: <img src="/table-icons/code-02.svg" alt="Password" />,
   QR: <img src="/table-icons/qr-code-02.svg" alt="Password" />,
-  INCREMENT_ID: <img src="/table-icons/plus-square.svg" alt="Password" />,
+  INCREMENT_ID: <img src="/table-icons/Line.svg" alt="Password" />,
   ICON: <img src="/table-icons/plus-square.svg" alt="Password" />,
   BARCODE: <img src="/table-icons/scan.svg" alt="Password" />,
   COLOR: <img src="/table-icons/palette.svg" alt="Password" />,

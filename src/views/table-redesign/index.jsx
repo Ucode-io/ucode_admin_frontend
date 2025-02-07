@@ -614,6 +614,11 @@ const FieldButton = ({
 
     const relationData = {
       ...values,
+      attributes: {
+        ...values.attributes,
+        label: values?.table_to?.split("/")?.[0],
+      },
+      table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
       type: values.relation_type ? values.relation_type : values.type,
       required: false,
@@ -621,6 +626,7 @@ const FieldButton = ({
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
     };
+
     if (!fieldData) {
       if (values?.type !== "RELATION") {
         createField({data, tableSlug});

@@ -368,11 +368,11 @@ export const textFieldFormats = [
     value: "MULTI_LINE",
     icon: "minus.svg",
   },
-  {
-    label: "Text Input",
-    value: "TEXT",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Text Input",
+  //   value: "TEXT",
+  //   icon: "minus.svg",
+  // },
   // {
   //   label: "Link",
   //   value: "LINK",

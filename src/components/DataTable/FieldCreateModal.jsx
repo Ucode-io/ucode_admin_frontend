@@ -88,9 +88,11 @@ export default function FieldCreateModal({
   });
 
   const relatedTableSlug = useMemo(() => {
+    const tableTo = values.table_to?.split("/")?.[1];
+
     if (values.type === "Recursive") return values.table_from;
-    if (values.table_to === tableSlug) return values.table_from;
-    else if (values.table_from === tableSlug) return values.table_to;
+    if (tableTo === tableSlug) return values.table_from;
+    else if (values.table_from === tableSlug) return tableTo;
     return null;
   }, [values, tableSlug]);
 
@@ -148,9 +150,9 @@ export default function FieldCreateModal({
     },
     {
       cacheTime: 10,
-      onSuccess: ({data}) => {
+      onSuccess: (data) => {
         if (!data) return;
-
+        setFields(data?.fields ?? []);
         const fields = data?.fields ?? [];
 
         const checkedColumns =
@@ -235,7 +237,7 @@ export default function FieldCreateModal({
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{top: 350, left: 850}}
+      anchorPosition={{top: 450, left: 900}}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -280,43 +282,6 @@ export default function FieldCreateModal({
                   </Box>
                 </FRow>
               ) : null}
-              {FormatTypes(format) || ValueTypes(values?.type) ? (
-                <>
-                  <FRow
-                    label="Field label"
-                    classname={style.custom_label}
-                    required>
-                    <Box style={{display: "flex", gap: "6px"}}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label"
-                        fullWidth
-                        placeholder="Field label"
-                        defaultValue={tableName}
-                        languages={languages}
-                        id={"create_field_label"}
-                      />
-                    </Box>
-                  </FRow>
-
-                  <FRow
-                    label="Tab label"
-                    classname={style.custom_label}
-                    required>
-                    <Box style={{display: "flex", gap: "6px"}}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label_to"
-                        fullWidth
-                        placeholder="Tab label"
-                        defaultValue={tableName}
-                        languages={languages}
-                        id={"create_tab_label"}
-                      />
-                    </Box>
-                  </FRow>
-                </>
-              ) : null}
             </Box>
             <FRow
               label={"Type"}
@@ -349,37 +314,39 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          {formatIncludes?.includes(format) ? (
-            <FRow
-              label={"Format"}
-              componentClassName="flex gap-2 align-center"
-              required
-              classname={style.custom_label}>
-              <HFSelect
-                className={style.input}
-                disabledHelperText
-                options={FormatOptionType(format)}
-                name="type"
-                control={control}
-                disabled={fieldData}
-                fullWidth
+          <Box sx={{padding: "0 5px"}}>
+            {formatIncludes?.includes(format) ? (
+              <FRow
+                label={"Format"}
+                componentClassName="flex gap-2 align-center"
                 required
-                placeholder="Select type"
-              />
-            </FRow>
-          ) : null}
-          {fieldData && (
-            <Button
-              fullWidth
-              className={style.advanced}
-              onClick={() => {
-                handleOpenFieldDrawer(fieldData);
-                closeAllDrawer();
-              }}>
-              <SettingsIcon />
-              Advanced settings
-            </Button>
-          )}
+                classname={style.custom_label}>
+                <HFSelect
+                  className={style.input}
+                  disabledHelperText
+                  options={FormatOptionType(format)}
+                  name="type"
+                  control={control}
+                  disabled={fieldData}
+                  fullWidth
+                  required
+                  placeholder="Select type"
+                />
+              </FRow>
+            ) : null}
+            {fieldData && (
+              <Button
+                fullWidth
+                className={style.advanced}
+                onClick={() => {
+                  handleOpenFieldDrawer(fieldData);
+                  closeAllDrawer();
+                }}>
+                <SettingsIcon />
+                Advanced settings
+              </Button>
+            )}
+          </Box>
           <div>
             {format === "MULTISELECT" && (
               <Box className={style.dropdown}>
@@ -426,12 +393,6 @@ export default function FieldCreateModal({
                                   />
                                 </Box>
                               }
-                              // customOnChange={(e) => {
-                              //   setValue(
-                              //     `attributes.options.${index}.value`,
-                              //     e.target.value.replace(/ /g, "_")
-                              //   );
-                              // }}
                             />
                           </FRow>
                           <FRow
@@ -447,20 +408,11 @@ export default function FieldCreateModal({
                               className={style.input}
                               endAdornment={
                                 <Box className={style.adornment}>
-                                  {/* <p onClick={(e) => handleOpenColor(e, index)}>
-                                    Add color
-                                  </p> */}
                                   <CloseIcon
                                     onClick={() => dropdownRemove(index)}
                                   />
                                 </Box>
                               }
-                              // customOnChange={(e) => {
-                              //   setValue(
-                              //     `attributes.options.${index}.value`,
-                              //     e.target.value.replace(/ /g, "_")
-                              //   );
-                              // }}
                             />
                           </FRow>
                         </Box>
@@ -628,7 +580,7 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
-          <Box className={style.button_group}>
+          <Box className={style.button_group} sx={{padding: "0 5px"}}>
             <Button variant="contained" color="error" onClick={handleClick}>
               Cancel
             </Button>

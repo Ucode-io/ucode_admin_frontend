@@ -1156,21 +1156,21 @@ const ViewOptions = ({
               </Box>
               <Flex mt="12px" columnGap="4px">
                 <Flex
-                  minW="36px"
-                  h="32px"
+                  minW="32px"
+                  h="26px"
                   borderRadius={6}
                   border="1px solid #D0D5DD"
                   alignItems="center"
                   justifyContent="center">
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
-                    width={20}
-                    height={20}
+                    width={18}
+                    height={18}
                   />
                 </Flex>
                 <InputGroup>
                   <Input
-                    h="32px"
+                    h="26px"
                     placeholder="View name"
                     defaultValue={viewName}
                     onChange={onViewNameChange}
@@ -1193,13 +1193,13 @@ const ViewOptions = ({
                 to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}>
                 <Flex
                   minW="36px"
-                  h="32px"
+                  h="28px"
                   alignItems="center"
                   justifyContent="center">
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
-                    width={20}
-                    height={20}
+                    width={18}
+                    height={18}
                   />
                 </Flex>
                 <ViewOptionTitle>Layout</ViewOptionTitle>

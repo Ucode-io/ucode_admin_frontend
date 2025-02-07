@@ -31,7 +31,7 @@ import {useUserDeleteMutation} from "@/services/auth/userService";
 import {useRoleListQuery} from "@/services/roleServiceV2";
 
 const templateColumns =
-  "minmax(72px, 72px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 76px)";
+  "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
 
 const limitOptions = [
   {value: 10, label: "10 rows"},
@@ -140,7 +140,9 @@ export const ClientTypes = () => {
           <Tabs index={tabIndex} onChange={onTabChange}>
             <TabList>
               {clientTypes.map((type) => (
-                <Tab key={type.guid}>{type.name}</Tab>
+                <Tab sx={{fontSize: "12px"}} key={type.guid}>
+                  {type.name}
+                </Tab>
               ))}
             </TabList>
           </Tabs>
@@ -176,6 +178,7 @@ export const ClientTypes = () => {
               <Td>{user.phone}</Td>
               <Td display="flex" justifyContent="center" columnGap="6px">
                 <IconButton
+                  h={"25px"}
                   aria-label="edit"
                   icon={<Image src="/img/edit.svg" alt="edit" />}
                   onClick={() => setEditUserGuid(user?.id)}
@@ -232,6 +235,7 @@ const DeleteButton = ({user}) => {
 
   return (
     <IconButton
+      h={"25px"}
       aria-label="delete"
       icon={<Image src="/img/delete.svg" alt="delete" />}
       variant="ghost"
@@ -255,8 +259,9 @@ const Th = ({type, children, ...props}) => {
       display="flex"
       alignItems="center"
       columnGap="8px"
-      py="14px"
-      px="12px"
+      h="32px"
+      py="4px"
+      px="8px"
       bg="#F9FAFB"
       borderRight="1px solid #EAECF0"
       color="#475467"
@@ -271,8 +276,9 @@ const Th = ({type, children, ...props}) => {
 
 const Td = ({children, ...props}) => (
   <GridItem
-    px="12px"
-    py="16px"
+    px="8px"
+    py="4px"
+    h="32px"
     bg="#fff"
     borderRight="1px solid #EAECF0"
     color="#475467"

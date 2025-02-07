@@ -585,6 +585,97 @@ export const newFieldTypes = [
     value: "PASSWORD",
     icon: "lock.svg",
   },
+  {
+    icon: "text-height.svg",
+    label: "Text",
+    value: "TEXT",
+  },
+  {
+    icon: "link.svg",
+    label: "Link",
+    value: "LINK",
+  },
+  {
+    icon: "regular_square-caret-down.svg",
+    label: "Button",
+    value: "BUTTON",
+  },
+  {
+    icon: "arrow-up-9-1.svg",
+    label: "Increment ID",
+    value: "INCREMENT_ID",
+  },
+  // {
+  //   icon: "code.svg",
+  //   label: "Programming language",
+  //   value: "PROGRAMMING_LANGUAGE",
+  // },
+  {
+    icon: "file-lines.svg",
+    label: "JSON",
+    value: "JSON",
+  },
+  {
+    icon: "qrcode.svg",
+    label: "Qr",
+    value: "QR",
+  },
+
+  // {
+  //   icon: "phone.svg",
+  //   label: "Phone",
+  //   value: "PHONE",
+  // },
+  {
+    icon: "phone.svg",
+    label: "Internation Phone",
+    value: "INTERNATION_PHONE",
+  },
+  {
+    icon: "envelope.svg",
+    label: "Email",
+    value: "EMAIL",
+  },
+  {
+    icon: "icons.svg",
+    label: "Icon",
+    value: "ICON",
+  },
+  {
+    icon: "lock.svg",
+    label: "Password",
+    value: "PASSWORD",
+  },
+  {
+    icon: "barcode.svg",
+    label: "Barcode",
+    value: "BARCODE",
+  },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Codabar",
+  //   value: "CODABAR",
+  // },
+  // {
+  //   icon: "fill.svg",
+  //   label: "Autofill",
+  //   value: "AUTOFILL",
+  // },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Scan-barcode",
+  //   value: "SCAN_BARCODE",
+  // },
+  // {
+  //   icon: "teeth.svg",
+  //   label: "Dentist",
+  //   value: "DENTIST",
+  // },
+  {
+    icon: "colon-sign.svg",
+    label: "Color",
+    value: "COLOR",
+  },
   // {
   //   label: "Increment",
   //   value: "INCREMENT",

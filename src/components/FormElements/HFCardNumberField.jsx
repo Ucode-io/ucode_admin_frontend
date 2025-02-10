@@ -4,7 +4,7 @@ import style from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 
-const HFCardNumberField = ({
+const HFCardnumberField = ({
   control,
   name = "",
   disabledHelperText = false,
@@ -137,4 +137,4 @@ const HFCardNumberField = ({
   );
 };
 
-export default HFCardNumberField;
+export default HFCardnumberField;

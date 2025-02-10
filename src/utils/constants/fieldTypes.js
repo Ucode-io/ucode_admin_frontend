@@ -344,18 +344,19 @@ export const numberFieldFormats = [
   },
 ];
 
-export const barcodeFieldFormats = [
-  {
-    label: "QR",
-    value: "QR",
-    icon: "minus.svg",
-  },
-  {
-    label: "Barcode",
-    value: "BARCODE",
-    icon: "minus.svg",
-  },
-];
+// export const barcodeFieldFormats = [
+//   {
+//     label: "QR",
+//     value: "QR",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Barcode",
+//     value: "BARCODE",
+//     icon: "minus.svg",
+//   },
+// ];
+
 export const textFieldFormats = [
   {
     label: "Text",
@@ -367,16 +368,16 @@ export const textFieldFormats = [
     value: "MULTI_LINE",
     icon: "minus.svg",
   },
-  {
-    label: "Text Input",
-    value: "TEXT",
-    icon: "minus.svg",
-  },
-  {
-    label: "Link",
-    value: "LINK",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Text Input",
+  //   value: "TEXT",
+  //   icon: "minus.svg",
+  // },
+  // {
+  //   label: "Link",
+  //   value: "LINK",
+  //   icon: "minus.svg",
+  // },
 ];
 
 export const incrementFieldFormats = [
@@ -421,18 +422,18 @@ export const PrimaryKeyFieldFormats = [
   // },
 ];
 
-export const codeFieldFormats = [
-  {
-    label: "JSON",
-    value: "JSON",
-    icon: "minus.svg",
-  },
-  {
-    label: "Programming Language",
-    value: "PROGRAMMING_LANGUAGE",
-    icon: "computer.svg",
-  },
-];
+// export const codeFieldFormats = [
+//   {
+//     label: "JSON",
+//     value: "JSON",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Programming Language",
+//     value: "PROGRAMMING_LANGUAGE",
+//     icon: "computer.svg",
+//   },
+// ];
 
 export const toggleButtonFormats = [
   {
@@ -570,11 +571,6 @@ export const newFieldTypes = [
     icon: "map-pin.svg",
   },
   {
-    label: "Phone",
-    value: "INTERNATION_PHONE",
-    icon: "phone.svg",
-  },
-  {
     label: "Email",
     value: "EMAIL",
     icon: "envelope.svg",
@@ -584,6 +580,72 @@ export const newFieldTypes = [
     label: "Password",
     value: "PASSWORD",
     icon: "lock.svg",
+  },
+  {
+    icon: "link.svg",
+    label: "Link",
+    value: "LINK",
+  },
+  {
+    icon: "regular_square-caret-down.svg",
+    label: "Button",
+    value: "BUTTON",
+  },
+  {
+    icon: "arrow-up-9-1.svg",
+    label: "Increment ID",
+    value: "INCREMENT_ID",
+  },
+  {
+    icon: "file-lines.svg",
+    label: "JSON",
+    value: "JSON",
+  },
+
+  {
+    icon: "phone.svg",
+    label: "Internation Phone",
+    value: "INTERNATION_PHONE",
+  },
+  {
+    icon: "icons.svg",
+    label: "Icon",
+    value: "ICON",
+  },
+  {
+    icon: "qrcode.svg",
+    label: "Qr",
+    value: "QR",
+  },
+  {
+    icon: "barcode.svg",
+    label: "Barcode",
+    value: "BARCODE",
+  },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Codabar",
+  //   value: "CODABAR",
+  // },
+  // {
+  //   icon: "fill.svg",
+  //   label: "Autofill",
+  //   value: "AUTOFILL",
+  // },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Scan-barcode",
+  //   value: "SCAN_BARCODE",
+  // },
+  // {
+  //   icon: "teeth.svg",
+  //   label: "Dentist",
+  //   value: "DENTIST",
+  // },
+  {
+    icon: "colon-sign.svg",
+    label: "Color",
+    value: "COLOR",
   },
   // {
   //   label: "Increment",
@@ -788,16 +850,13 @@ export const formatIncludes = [
   "DATE_TIME",
   "DATE_TIME_WITHOUT_TIME_ZONE",
   "TIME",
-  "BARCODE",
   "PHOTO",
   "MULTI_IMAGE",
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",
-  "CODE",
   "MAP",
   "POLYGON",
-  "JSON",
   "RANDOM_TEXT",
   "PRIMARY_KEY",
   "SWITCH",
@@ -824,8 +883,6 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
     case "INCREMENT":
       return incrementFieldFormats;
-    case "CODE":
-      return codeFieldFormats;
     case "MAP":
       return mapFieldFormats;
     case "MULTI_LINE":
@@ -834,8 +891,8 @@ export const FormatOptionType = (item) => {
       return numberFieldFormats;
     case "FLOAT":
       return numberFieldFormats;
-    case "BARCODE":
-      return barcodeFieldFormats;
+    // case "BARCODE":
+    //   return barcodeFieldFormats;
     case "PRIMARY_KEY":
       return PrimaryKeyFieldFormats;
     case "SWITCH":
@@ -844,7 +901,7 @@ export const FormatOptionType = (item) => {
       return dropDownFormats;
 
     default:
-      return textFieldFormats;
+      return null;
   }
 };
 export const FormatTypes = (format) => {

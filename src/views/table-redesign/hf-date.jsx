@@ -156,11 +156,18 @@ const getValue = (value) => {
     if (typeof value === "string") {
       if (value.toLowerCase().includes("now")) return new Date();
 
+      if (value.endsWith("Z")) {
+        const parsedISO = new Date(value);
+        if (isValid(parsedISO)) return parsedISO;
+      }
+
       const formats = [
         "yyyy-MM-dd HH:mm",
         "dd.MM.yyyy HH:mm",
         "yyyy-MM-dd'T'HH:mm:ssX",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSX",
       ];
+
       for (const fmt of formats) {
         const parsedDate = parse(value, fmt, new Date());
         if (isValid(parsedDate)) return parsedDate;

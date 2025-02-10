@@ -47,29 +47,17 @@ import {AddIcon} from "@chakra-ui/icons";
 import HFCardNumberField from "../../../../components/FormElements/HFCardnumberField";
 
 const tableHeads = [
-  {
-    label: "Date",
-  },
-  {
-    label: "Project",
-  },
-  {
-    label: "Payment Type",
-  },
-  {
-    label: "Status",
-  },
-  {
-    label: "Currency",
-  },
-  {
-    label: "Amount",
-  },
+  "Date",
+  "Project",
+  "Payment Type",
+  "Status",
+  "Currency",
+  "Amount",
 ];
 
 const BillingComponent = ({
-  handCloseBalance = () => {},
   addBalance = false,
+  handCloseBalance = () => {},
 }) => {
   const {control, handleSubmit, watch} = useForm();
   const [loading, setLoading] = useState(false);
@@ -216,7 +204,7 @@ const BillingComponent = ({
             <TableHead>
               <TableRow>
                 {tableHeads?.map((item) => (
-                  <TableHeadCell>{item?.label}</TableHeadCell>
+                  <TableHeadCell>{item}</TableHeadCell>
                 ))}
               </TableRow>
             </TableHead>

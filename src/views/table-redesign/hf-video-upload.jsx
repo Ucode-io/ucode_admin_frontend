@@ -1,5 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Box, Button, CircularProgress, FormHelperText, Popover} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormHelperText,
+  Popover,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {Controller} from "react-hook-form";
 
@@ -13,17 +19,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 
 export const HFVideoUpload = ({
-                                control,
-                                name,
-                                required,
-                                updateObject,
-                                isNewTableView = false,
-                                tabIndex,
-                                rules,
-                                disabledHelperText = false,
-                                disabled,
-                                ...props
-                              }) => {
+  control,
+  name,
+  required,
+  updateObject,
+  isNewTableView = false,
+  tabIndex,
+  rules,
+  disabledHelperText = false,
+  disabled,
+  ...props
+}) => {
   return (
     <Controller
       control={control}
@@ -39,8 +45,8 @@ export const HFVideoUpload = ({
             name={name}
             value={value}
             onChange={(val) => {
-              onChange(val)
-              isNewTableView && updateObject()
+              onChange(val);
+              isNewTableView && updateObject();
             }}
             tabIndex={tabIndex}
             disabled={disabled}
@@ -51,8 +57,7 @@ export const HFVideoUpload = ({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -69,11 +74,11 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
         videoRef.current.currentTime = 0;
         videoRef.current.pause();
       }
-    }
+    };
 
-    document.addEventListener('fullscreenchange', listener);
-    return () => document.removeEventListener('fullscreenchange', listener);
-  }, [])
+    document.addEventListener("fullscreenchange", listener);
+    return () => document.removeEventListener("fullscreenchange", listener);
+  }, []);
 
   const inputChangeHandler = (e) => {
     setLoading(true);
@@ -98,22 +103,28 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
 
   return (
     <>
-      <div className={className} style={{textAlign: "left"}} onClick={(ev) => {
-        if (value) {
-          setAnchorEl(ev.target)
-        }
-      }}>
+      <div
+        className={className}
+        style={{textAlign: "left"}}
+        onClick={(ev) => {
+          if (value) {
+            setAnchorEl(ev.target);
+          }
+        }}>
         {value && (
           <div style={{display: "flex", alignItems: "center", columnGap: 5}}>
             <div className="video-block">
-              <video ref={videoRef} src={value}/>
+              <video ref={videoRef} src={value} />
             </div>
-            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>{fileName}</div>
+            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>
+              {fileName}
+            </div>
           </div>
         )}
 
-        {!value &&
+        {!value && (
           <Button
+            id="video_button_field"
             onClick={() => inputRef.current.click()}
             sx={{
               padding: 0,
@@ -121,10 +132,16 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               width: 40,
               height: 27,
             }}>
-            {!loading && <img src="/img/file-docs.svg" alt="Upload" style={{width: 24, height: 24}}/>}
-            {loading && <CircularProgress size={20}/>}
+            {!loading && (
+              <img
+                src="/img/file-docs.svg"
+                alt="Upload"
+                style={{width: 24, height: 24}}
+              />
+            )}
+            {loading && <CircularProgress size={20} />}
           </Button>
-        }
+        )}
       </div>
 
       <Popover
@@ -157,10 +174,12 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
                 videoRef.current.play();
               }
             }}>
-            <OpenInFullIcon/>
+            <OpenInFullIcon />
             Show full video
           </Button>
-          <RectangleIconButton className="removeImg" onClick={closeButtonHandler}>
+          <RectangleIconButton
+            className="removeImg"
+            onClick={closeButtonHandler}>
             <DeleteIcon
               style={{width: "17px", height: "17px", marginRight: "12px"}}
             />
@@ -179,7 +198,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               e.stopPropagation();
               inputRef.current.click();
             }}>
-            <ChangeCircleIcon/>
+            <ChangeCircleIcon />
             Change Video
           </Button>
         </Box>

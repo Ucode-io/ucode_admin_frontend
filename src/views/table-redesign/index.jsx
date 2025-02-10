@@ -294,7 +294,8 @@ export const DynamicTable = ({
               {!isRelationTable && (
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-                  type="add_field">
+                  type="add_field"
+                  id="addField">
                   <FieldButton
                     openFieldSettings={openFieldSettings}
                     view={view}
@@ -396,6 +397,7 @@ export const DynamicTable = ({
                     color: "#007aff",
                   }}>
                   <Flex
+                    id="addRowBtn"
                     h="30px"
                     alignItems="center"
                     justifyContent="center"

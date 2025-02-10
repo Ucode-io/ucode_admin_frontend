@@ -45,6 +45,7 @@ function HFButtonField({
       {isTableView ? (
         <Box sx={{width: "100%", height: "100%", textAlign: "center"}}>
           <Button
+            id="button_field"
             disabled={btnLoader}
             onClick={invokeFunction}
             variant="outlined">
@@ -66,6 +67,7 @@ function HFButtonField({
           }}>
           <Box sx={{height: "30px", width: "100%"}}></Box>
           <Button
+            id="button_field_second"
             disabled={btnLoader}
             onClick={invokeFunction}
             variant="outlined">

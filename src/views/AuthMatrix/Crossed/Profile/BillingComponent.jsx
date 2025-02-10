@@ -1,27 +1,4 @@
 import React, {useState} from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Grid,
-  Modal,
-  Button,
-  CircularProgress,
-} from "@mui/material";
-import {
-  AccountBalance,
-  AttachMoney,
-  Done,
-  HourglassTop,
-} from "@mui/icons-material";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import {useDispatch, useSelector} from "react-redux";
 import billingService from "../../../../services/billingService";
@@ -38,12 +15,64 @@ import {useProjectListQuery} from "../../../../services/companyService";
 import {companyActions} from "../../../../store/company/company.slice";
 import BlockIcon from "@mui/icons-material/Block";
 import HFBalanceFile from "../../../../components/FormElements/HFBalanceFile";
+import OtpInput from "react-otp-input";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Grid,
+  Modal,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import {
+  AccountBalance,
+  AttachMoney,
+  Done,
+  HourglassTop,
+} from "@mui/icons-material";
+import {AddIcon} from "@chakra-ui/icons";
+import HFTextField from "../../../../components/FormElements/HFTextField";
+import HFCardNumberField from "../../../../components/FormElements/HFCardnumberField";
+
+const tableHeads = [
+  {
+    label: "Date",
+  },
+  {
+    label: "Project",
+  },
+  {
+    label: "Payment Type",
+  },
+  {
+    label: "Status",
+  },
+  {
+    label: "Currency",
+  },
+  {
+    label: "Amount",
+  },
+];
 
 const BillingComponent = ({
   handCloseBalance = () => {},
   addBalance = false,
 }) => {
-  const {control, handleSubmit} = useForm();
+  const {control, handleSubmit, watch} = useForm();
   const [loading, setLoading] = useState(false);
   const project = useSelector((state) => state?.company?.projectItem);
   const authStore = store.getState().auth;
@@ -112,7 +141,7 @@ const BillingComponent = ({
   return (
     <Box
       id={"billingTable"}
-      sx={{p: 4, backgroundColor: "#f9f9f9", minHeight: "calc(100vh - 60px)"}}>
+      sx={{p: 2, backgroundColor: "#f9f9f9", minHeight: "calc(100vh - 60px)"}}>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={4}>
           <Card sx={{height: "118px"}}>
@@ -182,35 +211,14 @@ const BillingComponent = ({
             borderRadius: 1,
             borderTop: "1px solid #eee",
             borderBottom: "1px solid #eee",
-            height: "calc(100vh - 300px)",
+            height: "calc(100vh - 280px)",
           }}>
           <Table sx={{position: "relative"}} stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    boxShadow: "none",
-                    borderRadius: 0,
-                    fontSize: "14px",
-                  }}>
-                  Date
-                </TableCell>
-                <TableCell sx={{fontWeight: "bold", fontSize: "14px"}}>
-                  Project
-                </TableCell>
-                <TableCell sx={{fontWeight: "bold", fontSize: "14px"}}>
-                  Payment Type
-                </TableCell>
-                <TableCell sx={{fontWeight: "bold", fontSize: "14px"}}>
-                  Status
-                </TableCell>
-                <TableCell sx={{fontWeight: "bold", fontSize: "14px"}}>
-                  Currency
-                </TableCell>
-                <TableCell sx={{fontWeight: "bold", fontSize: "14px"}}>
-                  Amount
-                </TableCell>
+                {tableHeads?.map((item) => (
+                  <TableHeadCell>{item?.label}</TableHeadCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -305,58 +313,316 @@ const BillingComponent = ({
         open={addBalance}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-slide-description">
-        <Box
-          sx={{
-            width: "200px",
-            height: "320px",
-            background: "#fff",
-            position: "absolute",
-            left: "50%",
-            top: "20%",
-            transform: "translate(-50%, 50%)",
-            borderRadius: "8px",
-          }}
-          className="PlatformModal">
-          <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Top Up Balance</Typography>
-          </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <HFNumberField
-              autoFocus
-              fullWidth={true}
-              required
-              control={control}
-              placeholder={"write amount..."}
-              name={`amount`}
-            />
-
-            <HFBalanceFile
-              autoFocus
-              fullWidth={true}
-              required
-              control={control}
-              placeholder={"write amount..."}
-              name={`receipt_file`}
-            />
-
-            <Button
-              loading={loading}
-              disabled={loading}
-              type="submit"
-              sx={{marginTop: "24px", fontSize: "12px"}}
-              variant="contained"
-              fullWidth>
-              {loading ? (
-                <CircularProgress size={25} style={{color: "#fff"}} />
-              ) : (
-                "Add balance"
-              )}
-            </Button>
-          </form>
-        </Box>
+        <TopUpBalance
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          control={control}
+          loading={loading}
+          watch={watch}
+        />
       </Modal>
     </Box>
+  );
+};
+
+const TopUpBalance = ({
+  watch,
+  control,
+  loading = false,
+  onSubmit = () => {},
+  handleSubmit = () => {},
+}) => {
+  return (
+    <Box
+      sx={{
+        top: "10%",
+        left: "50%",
+        width: "580px",
+        height: "360px",
+        background: "#fff",
+        borderRadius: "8px",
+        position: "absolute",
+        transform: "translate(-50%, 50%)",
+      }}
+      className="PlatformModal">
+      <Box>
+        <div className="modal-header silver-bottom-border">
+          <Typography variant="h4">Top Up Balance</Typography>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="form">
+          {watch("card") ? (
+            <TopUpBalanceComponent control={control} loading={loading} />
+          ) : (
+            <AddCardComponent watch={watch} control={control} />
+          )}
+        </form>
+      </Box>
+    </Box>
+  );
+};
+
+const AddCardComponent = ({control, watch}) => {
+  const {setValue} = control;
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [verifyCard, setVerifyCard] = useState(false);
+  const [otpVal, setOtpVal] = useState("");
+  const [newCard, setNewCard] = useState({
+    cardNumber: "",
+    expiry: "",
+  });
+  const dispatch = useDispatch();
+
+  const {isLoading, data: cards} = useQuery(
+    ["GET_CARDS_LIST"],
+    () => {
+      return billingService.getCardList({
+        limit: 10,
+      });
+    },
+    {
+      select: (res) => res?.cards ?? [],
+    }
+  );
+
+  const handleCardSelect = (index, card) => {
+    setSelectedCard(index);
+    setValue("selectedCard", card);
+  };
+
+  // const handleAddCard = () => {
+  //   if (newCard.cardNumber && newCard.expiry) {
+  //     setCards([...cards, newCard]);
+  //     setNewCard({cardNumber: "", expiry: ""});
+  //     setOpenDialog(false);
+  //   }
+  // };
+
+  const verifyCardNumber = () => {
+    if (Boolean(watch("card_number")) && Boolean(watch("expiry_date"))) {
+      billingService
+        .cardVerify({
+          pan: watch("card_number"),
+          expire: watch("expiry_date"),
+        })
+        .then(() => setVerifyCard(true));
+    } else dispatch(showAlert("Enter card number", "error"));
+  };
+
+  const getOtpVal = (val) => {
+    setOtpVal(val);
+  };
+
+  return (
+    <Box sx={{maxWidth: "100%", textAlign: "center"}}>
+      <Grid container sx={{height: "240px", overflow: "auto"}}>
+        {cards.map((card, index) => (
+          <Grid item key={index}>
+            <Card
+              sx={{
+                margin: "10px",
+                width: 160,
+                height: 80,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
+                boxShadow:
+                  selectedCard === index
+                    ? "0px 4px 10px rgba(0, 0, 0, 0.2)"
+                    : "0px 2px 5px rgba(0,0,0,0.1)",
+                backgroundColor: selectedCard === index ? "#1976d2" : "#f8f9fa",
+                color: selectedCard === index ? "#fff" : "#000",
+                cursor: "pointer",
+                transition: "0.3s",
+              }}
+              onClick={() => handleCardSelect(index, card)}>
+              <CardContent sx={{textAlign: "justify", position: "relative"}}>
+                <Typography fontSize={"14px"} fontWeight="bold">
+                  **** **** **** {card.cardNumber.slice(-4)}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold">
+                  {card?.expiry}
+                </Typography>
+
+                <Box sx={{position: "absolute", right: "10px", bottom: "10px"}}>
+                  <img src="/public/img/uzc.svg" alt="uzcard" />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+        <Grid xs={3}>
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={{
+              width: "120px",
+              marginTop: "10px",
+              marginLeft: "10px",
+              height: "80px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 1,
+            }}
+            onClick={() => setOpenDialog(true)}>
+            <AddIcon sx={{fontSize: 16}} />
+            Add Card
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}>
+        {Boolean(selectedCard) && (
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              width: "150px",
+              fontSize: "14px",
+              fontWeight: "bold",
+            }}
+            onClick={() => setOpenDialog(true)}>
+            Topup balance
+          </Button>
+        )}
+      </Box>
+
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        maxWidth="xs"
+        fullWidth>
+        <DialogTitle sx={{marginBottom: "20px"}}>Add a New Card</DialogTitle>
+        <DialogContent sx={{padding: "10px 20px"}}>
+          {!verifyCard ? (
+            <Box>
+              <Box sx={{marginTop: "10px"}}>
+                <HFCardNumberField
+                  format="#### #### #### ####"
+                  name="card_number"
+                  placeholder="Card Number"
+                  control={control}
+                  value={newCard.cardNumber}
+                  onChange={(e) =>
+                    setNewCard({...newCard, cardNumber: e.target.value})
+                  }
+                />
+              </Box>
+              <Box sx={{marginTop: "15px"}}>
+                <HFCardNumberField
+                  control={control}
+                  name="expiry_date"
+                  format="##/##"
+                  placeholder="expiry date (MM/YY)"
+                  margin="dense"
+                  value={newCard.expiry}
+                  onChange={(e) =>
+                    setNewCard({...newCard, expiry: e.target.value})
+                  }
+                />
+              </Box>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "24px",
+              }}>
+              <OtpInput
+                value={otpVal}
+                onChange={getOtpVal}
+                numInputs={6}
+                renderSeparator={<span style={{width: "12px"}}></span>}
+                renderInput={(props) => <input {...props} />}
+                inputStyle={{
+                  border: "1px solid #D0D5DD",
+                  borderRadius: "8px",
+                  width: "45px",
+                  height: "50px",
+                  fontSize: "22px",
+                  color: "#000",
+                  fontWeight: "400",
+                  caretColor: "blue",
+                }}
+              />
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions padding="0">
+          <Button
+            color="error"
+            variant="outlined"
+            onClick={() => {
+              setVerifyCard(false);
+              setOpenDialog(false);
+            }}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={verifyCardNumber}>
+            Add Card
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+const TopUpBalanceComponent = ({control, loading = false}) => {
+  return (
+    <Box>
+      <HFNumberField
+        autoFocus
+        fullWidth={true}
+        required
+        control={control}
+        placeholder={"write amount..."}
+        name={`amount`}
+      />
+
+      <HFBalanceFile
+        autoFocus
+        fullWidth={true}
+        required
+        control={control}
+        placeholder={"write amount..."}
+        name={`receipt_file`}
+      />
+
+      <Button
+        loading={loading}
+        disabled={loading}
+        type="submit"
+        sx={{marginTop: "24px", fontSize: "12px"}}
+        variant="contained"
+        fullWidth>
+        {loading ? (
+          <CircularProgress size={25} style={{color: "#fff"}} />
+        ) : (
+          "Add balance"
+        )}
+      </Button>
+    </Box>
+  );
+};
+
+const TableHeadCell = ({children, props}) => {
+  return (
+    <TableCell sx={{fontWeight: "bold", fontSize: "14px"}} props>
+      {children}
+    </TableCell>
   );
 };
 

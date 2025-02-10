@@ -44,7 +44,7 @@ import {
   HourglassTop,
 } from "@mui/icons-material";
 import {AddIcon} from "@chakra-ui/icons";
-import HFTextField from "../../../../components/FormElements/HFTextField";
+import HFCardField from "../../../../components/FormElements/HFCardField";
 
 const tableHeads = [
   "Date",
@@ -495,7 +495,7 @@ const AddCardComponent = ({control, watch}) => {
           {!verifyCard ? (
             <Box>
               <Box sx={{marginTop: "10px"}}>
-                <HFTextField
+                <HFCardField
                   format="#### #### #### ####"
                   name="card_number"
                   placeholder="Card Number"
@@ -507,7 +507,7 @@ const AddCardComponent = ({control, watch}) => {
                 />
               </Box>
               <Box sx={{marginTop: "15px"}}>
-                <HFTextField
+                <HFCardField
                   control={control}
                   name="expiry_date"
                   format="##/##"

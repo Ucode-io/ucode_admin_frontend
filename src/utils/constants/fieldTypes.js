@@ -293,11 +293,11 @@ export const fieldTypesOptions = [
         label: "Password",
         value: "PASSWORD",
       },
-      {
-        icon: "barcode.svg",
-        label: "Barcode",
-        value: "BARCODE",
-      },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Barcode",
+      //   value: "BARCODE",
+      // },
       // {
       //   icon: "barcode.svg",
       //   label: "Codabar",
@@ -617,11 +617,11 @@ export const newFieldTypes = [
     label: "Qr",
     value: "QR",
   },
-  {
-    icon: "barcode.svg",
-    label: "Barcode",
-    value: "BARCODE",
-  },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Barcode",
+  //   value: "BARCODE",
+  // },
   // {
   //   icon: "barcode.svg",
   //   label: "Codabar",
@@ -725,11 +725,11 @@ export const fieldFormats = [
     value: "COLOR",
     icon: "colon-sign.svg",
   },
-  {
-    label: "File",
-    value: "BARCODE",
-    icon: "barcode.svg",
-  },
+  // {
+  //   label: "File",
+  //   value: "BARCODE",
+  //   icon: "barcode.svg",
+  // },
   {
     icon: "image.svg",
     label: "File",

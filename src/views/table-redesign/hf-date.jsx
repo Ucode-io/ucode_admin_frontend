@@ -22,6 +22,7 @@ export const HFDatePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
+            id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"
             rightSection={<img src="/table-icons/date.svg" alt="" />}
@@ -59,6 +60,7 @@ export const HFDateTimePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            id="dateTimeField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={<img src="/table-icons/date-time.svg" alt="" />}
@@ -96,6 +98,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            id="dateTimeZoneField"
             value={getNoTimezoneValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={<img src="/table-icons/date-time.svg" alt="" />}
@@ -133,6 +136,7 @@ export const HFTimePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <TimeInput
+            id="timeField"
             value={value}
             rightSection={<img src="/table-icons/time.svg" alt="" />}
             onChange={(value) => {

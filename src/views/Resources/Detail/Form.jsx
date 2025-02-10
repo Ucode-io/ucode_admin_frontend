@@ -68,7 +68,7 @@ const Form = ({
 
       window.open(url, "_blank", "noopener,noreferrer");
     } else if (value === 8) {
-      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID_GITLAB;
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
       const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
 
       const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;

@@ -47,16 +47,6 @@ export const fieldTypesOptions = [
         label: "Multi line",
         value: "MULTI_LINE",
       },
-      {
-        icon: "text-height.svg",
-        label: "Text",
-        value: "TEXT",
-      },
-      {
-        icon: "link.svg",
-        label: "Link",
-        value: "LINK",
-      },
     ],
   },
   {
@@ -68,19 +58,19 @@ export const fieldTypesOptions = [
         value: "DATE",
       },
       {
+        icon: "business-time.svg",
+        label: "Date time",
+        value: "DATE_TIME",
+      },
+      {
         icon: "clock.svg",
-        label: "Date time (without timezone)",
+        label: "Date time - Timezone",
         value: "DATE_TIME_WITHOUT_TIME_ZONE",
       },
       {
         icon: "clock.svg",
         label: "Time",
         value: "TIME",
-      },
-      {
-        icon: "business-time.svg",
-        label: "Date time",
-        value: "DATE_TIME",
       },
     ],
   },
@@ -128,7 +118,7 @@ export const fieldTypesOptions = [
       // },
       {
         icon: "list-check.svg",
-        label: "Multi select",
+        label: "Select",
         value: "MULTISELECT",
       },
       {
@@ -148,21 +138,26 @@ export const fieldTypesOptions = [
     options: [
       {
         icon: "map-pin.svg",
-        label: "Map",
+        label: "Point",
         value: "MAP",
       },
-    ],
-  },
-  {
-    label: "Code",
-    options: [
       {
-        icon: "map-pin.svg",
-        label: "Code",
-        value: "CODE",
+        icon: "draw-polygon.svg",
+        label: "Geozone",
+        value: "POLYGON",
       },
     ],
   },
+  // {
+  //   label: "Code",
+  //   options: [
+  //     {
+  //       icon: "map-pin.svg",
+  //       label: "Code",
+  //       value: "CODE",
+  //     },
+  //   ],
+  // },
 
   {
     label: "File",
@@ -204,39 +199,44 @@ export const fieldTypesOptions = [
       },
     ],
   },
+  // {
+  //   label: "Primary Key",
+  //   options: [
+  //     {
+  //       icon: "ellipsis.svg",
+  //       label: "Generated string",
+  //       value: "RANDOM_TEXT",
+  //     },
+  //     {
+  //       icon: "regular_id-badge.svg",
+  //       label: "UUID",
+  //       value: "RANDOM_UUID",
+  //     },
+  //     {
+  //       icon: "pen.svg",
+  //       label: "Manual string",
+  //       value: "MANUAL_STRING",
+  //     },
+  //     {
+  //       icon: "arrow-up-a-z.svg",
+  //       label: "Increment number",
+  //       value: "INCREMENT_NUMBER",
+  //     },
+  //   ],
+  // },
   {
-    label: "Primary Key",
+    label: "Special",
     options: [
       {
-        icon: "ellipsis.svg",
-        label: "Generated string",
-        value: "RANDOM_TEXT",
+        icon: "text-height.svg",
+        label: "Text",
+        value: "TEXT",
       },
       {
-        icon: "regular_id-badge.svg",
-        label: "UUID",
-        value: "RANDOM_UUID",
+        icon: "link.svg",
+        label: "Link",
+        value: "LINK",
       },
-      {
-        icon: "pen.svg",
-        label: "Manual string",
-        value: "MANUAL_STRING",
-      },
-      {
-        icon: "arrow-up-a-z.svg",
-        label: "Increment number",
-        value: "INCREMENT_NUMBER",
-      },
-    ],
-  },
-  {
-    label: "Other",
-    options: [
-      // {
-      //   icon: "arrow-up-9-1.svg",
-      //   label: "FLOAT_NOLIMIT",
-      //   value: "FLOAT_NOLIMIT",
-      // },
       {
         icon: "circle-user.svg",
         label: "Person",
@@ -252,20 +252,15 @@ export const fieldTypesOptions = [
         label: "Increment ID",
         value: "INCREMENT_ID",
       },
-      {
-        icon: "code.svg",
-        label: "Programming language",
-        value: "PROGRAMMING_LANGUAGE",
-      },
+      // {
+      //   icon: "code.svg",
+      //   label: "Programming language",
+      //   value: "PROGRAMMING_LANGUAGE",
+      // },
       {
         icon: "file-lines.svg",
         label: "JSON",
         value: "JSON",
-      },
-      {
-        icon: "draw-polygon.svg",
-        label: "Polygon",
-        value: "POLYGON",
       },
       {
         icon: "qrcode.svg",
@@ -298,11 +293,11 @@ export const fieldTypesOptions = [
         label: "Password",
         value: "PASSWORD",
       },
-      {
-        icon: "barcode.svg",
-        label: "Barcode",
-        value: "BARCODE",
-      },
+      // {
+      //   icon: "barcode.svg",
+      //   label: "Barcode",
+      //   value: "BARCODE",
+      // },
       // {
       //   icon: "barcode.svg",
       //   label: "Codabar",
@@ -349,18 +344,19 @@ export const numberFieldFormats = [
   },
 ];
 
-export const barcodeFieldFormats = [
-  {
-    label: "QR",
-    value: "QR",
-    icon: "minus.svg",
-  },
-  {
-    label: "Barcode",
-    value: "BARCODE",
-    icon: "minus.svg",
-  },
-];
+// export const barcodeFieldFormats = [
+//   {
+//     label: "QR",
+//     value: "QR",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Barcode",
+//     value: "BARCODE",
+//     icon: "minus.svg",
+//   },
+// ];
+
 export const textFieldFormats = [
   {
     label: "Text",
@@ -372,16 +368,16 @@ export const textFieldFormats = [
     value: "MULTI_LINE",
     icon: "minus.svg",
   },
-  {
-    label: "Text Input",
-    value: "TEXT",
-    icon: "minus.svg",
-  },
-  {
-    label: "Link",
-    value: "LINK",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Text Input",
+  //   value: "TEXT",
+  //   icon: "minus.svg",
+  // },
+  // {
+  //   label: "Link",
+  //   value: "LINK",
+  //   icon: "minus.svg",
+  // },
 ];
 
 export const incrementFieldFormats = [
@@ -426,18 +422,18 @@ export const PrimaryKeyFieldFormats = [
   // },
 ];
 
-export const codeFieldFormats = [
-  {
-    label: "JSON",
-    value: "JSON",
-    icon: "minus.svg",
-  },
-  {
-    label: "Programming Language",
-    value: "PROGRAMMING_LANGUAGE",
-    icon: "computer.svg",
-  },
-];
+// export const codeFieldFormats = [
+//   {
+//     label: "JSON",
+//     value: "JSON",
+//     icon: "minus.svg",
+//   },
+//   {
+//     label: "Programming Language",
+//     value: "PROGRAMMING_LANGUAGE",
+//     icon: "computer.svg",
+//   },
+// ];
 
 export const toggleButtonFormats = [
   {
@@ -483,6 +479,11 @@ export const dateFieldFormats = [
     icon: "minus.svg",
   },
   {
+    label: "Date time",
+    value: "DATE_TIME",
+    icon: "minus.svg",
+  },
+  {
     label: "Date time (without timezone)",
     value: "DATE_TIME_WITHOUT_TIME_ZONE",
     icon: "minus.svg",
@@ -490,11 +491,6 @@ export const dateFieldFormats = [
   {
     label: "Time",
     value: "TIME",
-    icon: "minus.svg",
-  },
-  {
-    label: "Date time",
-    value: "DATE_TIME",
     icon: "minus.svg",
   },
 ];
@@ -562,7 +558,7 @@ export const newFieldTypes = [
     label: "Person",
     value: "PERSON",
     icon: "link-simple.svg",
-    table_slug: "person"
+    table_slug: "person",
   },
   {
     label: "File",
@@ -575,11 +571,6 @@ export const newFieldTypes = [
     icon: "map-pin.svg",
   },
   {
-    label: "Phone",
-    value: "INTERNATION_PHONE",
-    icon: "phone.svg",
-  },
-  {
     label: "Email",
     value: "EMAIL",
     icon: "envelope.svg",
@@ -589,6 +580,72 @@ export const newFieldTypes = [
     label: "Password",
     value: "PASSWORD",
     icon: "lock.svg",
+  },
+  {
+    icon: "link.svg",
+    label: "Link",
+    value: "LINK",
+  },
+  {
+    icon: "regular_square-caret-down.svg",
+    label: "Button",
+    value: "BUTTON",
+  },
+  {
+    icon: "arrow-up-9-1.svg",
+    label: "Increment ID",
+    value: "INCREMENT_ID",
+  },
+  {
+    icon: "file-lines.svg",
+    label: "JSON",
+    value: "JSON",
+  },
+
+  {
+    icon: "phone.svg",
+    label: "Internation Phone",
+    value: "INTERNATION_PHONE",
+  },
+  {
+    icon: "icons.svg",
+    label: "Icon",
+    value: "ICON",
+  },
+  {
+    icon: "qrcode.svg",
+    label: "Qr",
+    value: "QR",
+  },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Barcode",
+  //   value: "BARCODE",
+  // },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Codabar",
+  //   value: "CODABAR",
+  // },
+  // {
+  //   icon: "fill.svg",
+  //   label: "Autofill",
+  //   value: "AUTOFILL",
+  // },
+  // {
+  //   icon: "barcode.svg",
+  //   label: "Scan-barcode",
+  //   value: "SCAN_BARCODE",
+  // },
+  // {
+  //   icon: "teeth.svg",
+  //   label: "Dentist",
+  //   value: "DENTIST",
+  // },
+  {
+    icon: "colon-sign.svg",
+    label: "Color",
+    value: "COLOR",
   },
   // {
   //   label: "Increment",
@@ -668,11 +725,11 @@ export const fieldFormats = [
     value: "COLOR",
     icon: "colon-sign.svg",
   },
-  {
-    label: "File",
-    value: "BARCODE",
-    icon: "barcode.svg",
-  },
+  // {
+  //   label: "File",
+  //   value: "BARCODE",
+  //   icon: "barcode.svg",
+  // },
   {
     icon: "image.svg",
     label: "File",
@@ -793,16 +850,13 @@ export const formatIncludes = [
   "DATE_TIME",
   "DATE_TIME_WITHOUT_TIME_ZONE",
   "TIME",
-  "BARCODE",
   "PHOTO",
   "MULTI_IMAGE",
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",
-  "CODE",
   "MAP",
   "POLYGON",
-  "JSON",
   "RANDOM_TEXT",
   "PRIMARY_KEY",
   "SWITCH",
@@ -829,8 +883,6 @@ export const FormatOptionType = (item) => {
       return textFieldFormats;
     case "INCREMENT":
       return incrementFieldFormats;
-    case "CODE":
-      return codeFieldFormats;
     case "MAP":
       return mapFieldFormats;
     case "MULTI_LINE":
@@ -839,8 +891,8 @@ export const FormatOptionType = (item) => {
       return numberFieldFormats;
     case "FLOAT":
       return numberFieldFormats;
-    case "BARCODE":
-      return barcodeFieldFormats;
+    // case "BARCODE":
+    //   return barcodeFieldFormats;
     case "PRIMARY_KEY":
       return PrimaryKeyFieldFormats;
     case "SWITCH":
@@ -849,7 +901,7 @@ export const FormatOptionType = (item) => {
       return dropDownFormats;
 
     default:
-      return textFieldFormats;
+      return null;
   }
 };
 export const FormatTypes = (format) => {

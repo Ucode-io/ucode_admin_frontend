@@ -7,9 +7,9 @@ import HFCheckbox from "@/views/table-redesign/hf-checkbox";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import {
   HFDatePicker,
-  HFDateTimePicker,
   HFDateDatePickerWithoutTimeZoneTable,
-  HFTimePicker
+  HFTimePicker,
+  HFDateTimePicker,
 } from "@/views/table-redesign/hf-date";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
@@ -43,24 +43,22 @@ import HFMoneyField from "../FormElements/HFMoneyField";
 const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
-                                            row,
-                                            data,
-                                            field,
-                                            index,
-                                            watch,
-                                            fields,
-                                            control,
-                                            isWrapField,
-                                            isNewRow = false,
-                                            newColumn = false,
-                                            isBlackBg = false,
-                                            isTableView = false,
-                                            setFormValue = () => {
-                                            },
-                                            updateObject = () => {
-                                            },
-                                            newUi,
-                                          }) => {
+  row,
+  data,
+  field,
+  index,
+  watch,
+  fields,
+  control,
+  isWrapField,
+  isNewRow = false,
+  newColumn = false,
+  isBlackBg = false,
+  isTableView = false,
+  setFormValue = () => {},
+  updateObject = () => {},
+  newUi,
+}) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
@@ -190,10 +188,10 @@ const CellElementGeneratorForTableView = ({
       );
 
     case "TEXT":
-      return <HFTextComponent isTableView={true} field={field}/>;
+      return <HFTextComponent isTableView={true} field={field} />;
 
     case "BUTTON":
-      return <HFButtonField field={field} row={row} isTableView={true}/>;
+      return <HFButtonField field={field} row={row} isTableView={true} />;
 
     case "MONEY":
       return (
@@ -771,7 +769,7 @@ const CellElementGeneratorForTableView = ({
     default:
       return (
         <div style={{padding: "0 4px"}}>
-          <CellElementGenerator field={field} row={row}/>
+          <CellElementGenerator field={field} row={row} />
         </div>
       );
   }

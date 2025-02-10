@@ -1,6 +1,6 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
-import {format, parse} from "date-fns";
+import {format, isValid, parse} from "date-fns";
 
 export const HFDatePicker = ({
   control,
@@ -22,6 +22,7 @@ export const HFDatePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
+            id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"
             rightSection={<img src="/table-icons/date.svg" alt="" />}
@@ -59,6 +60,7 @@ export const HFDateTimePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            id="dateTimeField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={<img src="/table-icons/date-time.svg" alt="" />}
@@ -96,6 +98,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            id="dateTimeZoneField"
             value={getNoTimezoneValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={<img src="/table-icons/date-time.svg" alt="" />}
@@ -133,6 +136,7 @@ export const HFTimePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <TimeInput
+            id="timeField"
             value={value}
             rightSection={<img src="/table-icons/time.svg" alt="" />}
             onChange={(value) => {
@@ -149,18 +153,31 @@ export const HFTimePicker = ({
 };
 
 const getValue = (value) => {
-  if (!value) {
-    return null;
-  }
-  if (value instanceof Date) {
-    return value;
-  }
+  if (!value) return null;
+  if (value instanceof Date && isValid(value)) return value;
 
   try {
-    const date = value?.toLowerCase()?.includes("now")
-      ? new Date()
-      : new Date(value);
-    return isNaN(date) ? new Date() : date;
+    if (typeof value === "string") {
+      if (value.toLowerCase().includes("now")) return new Date();
+
+      if (value.endsWith("Z")) {
+        const parsedISO = new Date(value);
+        if (isValid(parsedISO)) return parsedISO;
+      }
+
+      const formats = [
+        "yyyy-MM-dd HH:mm",
+        "dd.MM.yyyy HH:mm",
+        "yyyy-MM-dd'T'HH:mm:ssX",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+      ];
+
+      for (const fmt of formats) {
+        const parsedDate = parse(value, fmt, new Date());
+        if (isValid(parsedDate)) return parsedDate;
+      }
+    }
+    return null;
   } catch (e) {
     return null;
   }
@@ -168,9 +185,13 @@ const getValue = (value) => {
 
 const getNoTimezoneValue = (value) => {
   if (!value) return "";
-  if (value instanceof Date) return value;
+  if (value instanceof Date && isValid(value)) return value;
 
-  if (value.includes("Z")) return new Date(value);
-
-  return parse(value, "dd.MM.yyyy HH:mm", new Date());
+  try {
+    if (value.includes("Z")) return new Date(value);
+    const parsedDate = parse(value, "dd.MM.yyyy HH:mm", new Date());
+    return isValid(parsedDate) ? parsedDate : "";
+  } catch (e) {
+    return "";
+  }
 };

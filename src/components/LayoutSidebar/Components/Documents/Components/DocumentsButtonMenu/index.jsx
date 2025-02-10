@@ -1,11 +1,11 @@
-import { Box, Menu } from "@mui/material";
-import { RiPencilFill } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import {Box, Menu} from "@mui/material";
+import {RiPencilFill} from "react-icons/ri";
+import {useNavigate} from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import AddIcon from "@mui/icons-material/Add";
-import { Delete } from "@mui/icons-material";
-import { BsFillTrashFill } from "react-icons/bs";
+import {Delete} from "@mui/icons-material";
+import {BsFillTrashFill} from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -44,8 +44,7 @@ const DocumentButtonMenu = ({
               padding: 0,
             },
           },
-        }}
-      >
+        }}>
         {menuType === "FOLDER" && (
           <Box className="menu">
             <MenuItemComponent
@@ -120,7 +119,7 @@ const DocumentButtonMenu = ({
                 title="Delete Note"
                 onClick={(e) => {
                   e.stopPropagation();
-                  deleteNoteFolder({ id: element.id });
+                  deleteNoteFolder({id: element.id});
                   handleCloseNotify();
                 }}
               />
@@ -134,7 +133,7 @@ const DocumentButtonMenu = ({
               title="Delete Template"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteTemplateFolder({ id: element.id });
+                deleteTemplateFolder({id: element.id});
                 handleCloseNotify();
               }}
             />

@@ -31,7 +31,10 @@ export default function RelationFieldForm({
     params: {envId: envId},
     queryParams: {
       select: (res) => {
-        return listToOptions(res.tables, "label", "slug");
+        return res?.tables?.map((el) => ({
+          label: el?.label,
+          value: `${el?.label}/${el?.slug}`,
+        }));
       },
     },
   });
@@ -58,16 +61,15 @@ export default function RelationFieldForm({
 
   return (
     <Box className={style.relation}>
-      <HFSelect
+      {/* <HFSelect
         className={style.input}
         disabledHelperText
-        options={[
-          {label: "Single", value: "Many2One"},
-          {label: "Multi", value: "Many2Many"},
-          {label: "Recursive", value: "Recursive"},
-        ]}
+        defaultValue="Many2One"
+        disabled={true}
+        options={[{label: "Single", value: "Many2One"}]}
         name="relation_type"
         control={control}
+        isClearable={false}
         fullWidth
         required
         placeholder="Relation type"
@@ -80,7 +82,7 @@ export default function RelationFieldForm({
             setValue("view_type", undefined);
           }
         }}
-      />
+      /> */}
       {fieldWatch.relation_type !== "Recursive" && (
         <>
           <HFSelect

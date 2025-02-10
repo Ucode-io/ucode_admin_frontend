@@ -50,8 +50,14 @@ function HFMoneyField({
       control={control}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
-          <Box sx={{display: "flex", alignItems: "center", height: newUi ? 25 : undefined }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              height: newUi ? 25 : undefined,
+            }}>
             <NumericFormat
+              id="moneyField"
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
               decimalSeparator="."

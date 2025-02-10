@@ -294,7 +294,8 @@ export const DynamicTable = ({
               {!isRelationTable && (
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-                  type="add_field">
+                  type="add_field"
+                  id="addField">
                   <FieldButton
                     openFieldSettings={openFieldSettings}
                     view={view}
@@ -396,6 +397,7 @@ export const DynamicTable = ({
                     color: "#007aff",
                   }}>
                   <Flex
+                    id="addRowBtn"
                     h="30px"
                     alignItems="center"
                     justifyContent="center"
@@ -614,6 +616,11 @@ const FieldButton = ({
 
     const relationData = {
       ...values,
+      attributes: {
+        ...values.attributes,
+        label: values?.table_to?.split("/")?.[0],
+      },
+      table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
       type: values.relation_type ? values.relation_type : values.type,
       required: false,
@@ -621,6 +628,7 @@ const FieldButton = ({
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
     };
+
     if (!fieldData) {
       if (values?.type !== "RELATION") {
         createField({data, tableSlug});
@@ -667,6 +675,7 @@ const FieldButton = ({
         position="sticky"
         right={0}
         zIndex={1}
+        id="addFieldBtn"
         cursor="pointer"
         onClick={(e) => {
           setFieldOptionAnchor(e.currentTarget);

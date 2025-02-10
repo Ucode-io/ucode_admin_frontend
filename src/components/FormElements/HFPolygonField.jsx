@@ -88,6 +88,7 @@ const HFPolygonField = ({
         const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
         return (
           <Box
+            id="polygon_field"
             sx={{
               width: "100%",
               height: "100%",
@@ -100,11 +101,13 @@ const HFPolygonField = ({
                 apikey: "a152ff76-8337-42f9-a5c1-be25f9008dd0",
               }}>
               <Map
+                id="map_polygon_field"
                 width={width !== 0 ? width : "265px"}
                 height={height !== 0 ? height : "200px"}
                 defaultState={mapState}
                 modules={["geoObject.addon.editor"]}>
                 <Polygon
+                  id="polygon"
                   editingPolygon={true}
                   onGeometryChange={(event) => {
                     const coordinates =

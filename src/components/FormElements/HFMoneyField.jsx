@@ -96,6 +96,7 @@ function HFMoneyField({
               }
             />
             <button
+              id="currency_field"
               className={styles.moneyBtn}
               onClick={handleMenuClick}
               style={{cursor: "pointer", paddingLeft: "5px"}}>

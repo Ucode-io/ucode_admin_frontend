@@ -38,20 +38,21 @@ function PolygonFieldTable({
   const value = get(row, field.slug, "");
 
   return (
-    <Box>
+    <Box id="polygon_field">
       <Box
+        id="polygonField"
         sx={{
           display: "flex",
           alignItems: "center",
           padding: "0 20px",
-          columnGap: '16px'
+          columnGap: "16px",
         }}
         onClick={handleOpen}>
-        <span style={{ overflow: "visible" }}>Polygon</span>
-        <img src="/table-icons/polygon.svg" alt="Polygon"/>
+        <span style={{overflow: "visible"}}>Polygon</span>
+        <img src="/table-icons/polygon.svg" alt="Polygon" />
       </Box>
       <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
+        <Box sx={style}>
           <Box>
             <HFPolygonField
               width={"740px"}

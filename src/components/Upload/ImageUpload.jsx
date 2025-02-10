@@ -2,7 +2,7 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import {Box, Button, Modal, Popover, Typography,} from "@mui/material";
+import {Box, Button, Modal, Popover, Typography} from "@mui/material";
 import {useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
@@ -297,7 +297,7 @@ const ImageUpload = ({
 
       {!value && (
         <Button
-          id="image_upload_btn"
+          id="imageUploadBtn"
           onClick={() => inputRef.current.click()}
           sx={{
             padding: 0,
@@ -316,7 +316,11 @@ const ImageUpload = ({
             disabled={disabled}
             accept=".jpg, .jpeg, .png, .gif"
           />
-          <img src="/img/file-docs.svg" alt="Upload" style={{ width: 24, height: 24 }} />
+          <img
+            src="/img/file-docs.svg"
+            alt="Upload"
+            style={{width: 24, height: 24}}
+          />
         </Button>
       )}
     </div>

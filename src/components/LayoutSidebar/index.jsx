@@ -477,7 +477,7 @@ const LayoutSidebar = ({appId}) => {
               {...getActionProps("ai-chat")}
             />
           </SidebarActionTooltip>
-          <Box
+          {/* <Box
             display={sidebarIsOpen ? "block" : "none"}
             w="1px"
             h={20}
@@ -488,7 +488,7 @@ const LayoutSidebar = ({appId}) => {
             setSidebarAnchor={setSidebarAnchor}
             handleMenuSettingModalOpen={handleMenuSettingModalOpen}
             handleTemplateModalOpen={handleTemplateModalOpen}
-          />
+          /> */}
         </Flex>
 
         {(modalType === "create" ||

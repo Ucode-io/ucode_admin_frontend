@@ -55,16 +55,18 @@ const tableHeads = [
   "Amount",
 ];
 
-const BillingComponent = ({
-  addBalance = false,
-  handCloseBalance = () => {},
-}) => {
+const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
   const {control, handleSubmit, watch, reset} = useForm();
   const [loading, setLoading] = useState(false);
   const project = useSelector((state) => state?.company?.projectItem);
   const company = store.getState().company;
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+
+  const handCloseBalance = () => {
+    reset({});
+    setAddBalance(false);
+  };
 
   const {isLoading: projectLoading} = useProjectListQuery({
     params: {
@@ -111,7 +113,6 @@ const BillingComponent = ({
       .receiptPay(data, {limit: 10})
       .then(() => {
         dispatch(showAlert("Transaction successfully created!", "success"));
-        reset({});
         refetch();
         queryClient.refetchQueries(["PROJECT"]);
         handCloseBalance();

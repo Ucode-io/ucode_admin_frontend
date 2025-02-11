@@ -453,7 +453,7 @@ const AddCardComponent = ({
                 </Typography>
 
                 <Box sx={{position: "absolute", right: "10px", bottom: "10px"}}>
-                  <img src="/public/img/uzc.svg" alt="uzcard" />
+                  <img src="/img/uzc.svg" alt="uzcard" />
                 </Box>
               </CardContent>
             </Card>

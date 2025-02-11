@@ -82,7 +82,7 @@ const HFTextEditor = ({
         render={({field: {onChange}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
-              id="multi-line"
+              id="multilineField"
               theme="snow"
               value={value}
               modules={modules}

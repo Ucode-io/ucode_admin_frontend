@@ -60,6 +60,7 @@ export default function MultiLineCellFormElement({
           display: "flex",
         }}>
         <p
+          id="textAreaInput"
           onClick={handleClick}
           style={
             isWrapField
@@ -102,7 +103,7 @@ export default function MultiLineCellFormElement({
             horizontal: "left",
           }}>
           <HFTextEditor
-            id="multi-line"
+            id="multi_line"
             control={control}
             updateObject={updateObject}
             isNewTableView={isNewTableView}

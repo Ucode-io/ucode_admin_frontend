@@ -35,7 +35,6 @@ const UsersForm = () => {
   const [addBalance, setAddBalance] = useState(false);
 
   const handClickBalance = () => setAddBalance(true);
-  const handCloseBalance = () => setAddBalance(false);
 
   const update = (data) => {
     const oldPassword = data?.old_password;
@@ -290,7 +289,7 @@ const UsersForm = () => {
 
           <TabPanel>
             <BillingComponent
-              handCloseBalance={handCloseBalance}
+              setAddBalance={setAddBalance}
               addBalance={addBalance}
             />
           </TabPanel>

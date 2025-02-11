@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import {useDispatch, useSelector} from "react-redux";
 import billingService from "../../../../services/billingService";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import {useForm} from "react-hook-form";
 import "./style.scss";
@@ -59,12 +59,12 @@ const BillingComponent = ({
   addBalance = false,
   handCloseBalance = () => {},
 }) => {
-  const {control, handleSubmit, watch} = useForm();
+  const {control, handleSubmit, watch, reset} = useForm();
   const [loading, setLoading] = useState(false);
   const project = useSelector((state) => state?.company?.projectItem);
-  const authStore = store.getState().auth;
   const company = store.getState().company;
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const {isLoading: projectLoading} = useProjectListQuery({
     params: {
@@ -100,26 +100,20 @@ const BillingComponent = ({
       select: (res) => res?.transactions ?? [],
     }
   );
-
   const onSubmit = (values) => {
     setLoading(true);
     const data = {
-      project_id: project?.project_id,
-      creator_id: authStore?.userId,
-      payment_status: "pending",
+      project_card_id: watch("id"),
       amount: values?.amount,
-      transaction_type: "topup",
-      creator_type: "transfer",
-      fare_id: project?.fare_id,
-      currency_id: "88c816a3-24e8-4994-ab70-9bc826bb9dc3",
-      receipt_file: values?.receipt_file,
     };
 
     billingService
-      .fillBalance(data)
+      .receiptPay(data, {limit: 10})
       .then(() => {
         dispatch(showAlert("Transaction successfully created!", "success"));
+        reset({});
         refetch();
+        queryClient.refetchQueries(["PROJECT"]);
         handCloseBalance();
       })
       .finally(() => setLoading(false));
@@ -306,6 +300,7 @@ const BillingComponent = ({
           control={control}
           loading={loading}
           watch={watch}
+          reset={reset}
         />
       </Modal>
     </Box>
@@ -316,16 +311,19 @@ const TopUpBalance = ({
   watch,
   control,
   loading = false,
+  reset = () => {},
   onSubmit = () => {},
   handleSubmit = () => {},
 }) => {
+  const [verifyCard, setVerifyCard] = useState(false);
+
   return (
     <Box
       sx={{
         top: "10%",
         left: "50%",
         width: "580px",
-        height: "360px",
+        height: watch("verify") ? "180px" : "360px",
         background: "#fff",
         borderRadius: "8px",
         position: "absolute",
@@ -338,10 +336,16 @@ const TopUpBalance = ({
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="form">
-          {watch("card") ? (
+          {Boolean(watch("verify")) ? (
             <TopUpBalanceComponent control={control} loading={loading} />
           ) : (
-            <AddCardComponent watch={watch} control={control} />
+            <AddCardComponent
+              watch={watch}
+              control={control}
+              reset={reset}
+              verifyCard={verifyCard}
+              setVerifyCard={setVerifyCard}
+            />
           )}
         </form>
       </Box>
@@ -349,19 +353,25 @@ const TopUpBalance = ({
   );
 };
 
-const AddCardComponent = ({control, watch}) => {
-  const {setValue} = control;
+const AddCardComponent = ({
+  control,
+  watch,
+  reset = () => {},
+  verifyCard,
+  setVerifyCard = () => {},
+}) => {
+  const dispatch = useDispatch();
   const [selectedCard, setSelectedCard] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [verifyCard, setVerifyCard] = useState(false);
   const [otpVal, setOtpVal] = useState("");
-  const [newCard, setNewCard] = useState({
-    cardNumber: "",
-    expiry: "",
-  });
-  const dispatch = useDispatch();
+  const [newCard, setNewCard] = useState();
+  const [card, setCard] = useState(null);
 
-  const {isLoading, data: cards} = useQuery(
+  const {
+    isLoading,
+    data: cards,
+    refetch,
+  } = useQuery(
     ["GET_CARDS_LIST"],
     () => {
       return billingService.getCardList({
@@ -369,36 +379,44 @@ const AddCardComponent = ({control, watch}) => {
       });
     },
     {
-      select: (res) => res?.cards ?? [],
+      select: (res) => res?.project_cards ?? [],
     }
   );
 
   const handleCardSelect = (index, card) => {
     setSelectedCard(index);
-    setValue("selectedCard", card);
+    setCard(card);
   };
 
-  // const handleAddCard = () => {
-  //   if (newCard.cardNumber && newCard.expiry) {
-  //     setCards([...cards, newCard]);
-  //     setNewCard({cardNumber: "", expiry: ""});
-  //     setOpenDialog(false);
-  //   }
-  // };
-
   const verifyCardNumber = () => {
-    if (Boolean(watch("card_number")) && Boolean(watch("expiry_date"))) {
+    if (Boolean(watch("card_number")) && Boolean(watch("expire"))) {
       billingService
         .cardVerify({
           pan: watch("card_number"),
-          expire: watch("expiry_date"),
+          expire: watch("expire"),
         })
-        .then(() => setVerifyCard(true));
+        .then((res) => {
+          setNewCard(res);
+          setVerifyCard(true);
+        });
     } else dispatch(showAlert("Enter card number", "error"));
   };
 
   const getOtpVal = (val) => {
     setOtpVal(val);
+  };
+
+  const confirmOtpFunc = () => {
+    billingService
+      .cardOtpVerify({
+        code: otpVal,
+        project_card_id: newCard?.project_card_id,
+      })
+      .then(() => {
+        dispatch(showAlert("The Card is successfully added!", "success"));
+        refetch();
+        setOpenDialog(false);
+      });
   };
 
   return (
@@ -428,10 +446,10 @@ const AddCardComponent = ({control, watch}) => {
               onClick={() => handleCardSelect(index, card)}>
               <CardContent sx={{textAlign: "justify", position: "relative"}}>
                 <Typography fontSize={"14px"} fontWeight="bold">
-                  **** **** **** {card.cardNumber.slice(-4)}
+                  {card.pan}
                 </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {card?.expiry}
+                <Typography sx={{fontSize: "12px"}} fontWeight="bold">
+                  {card?.expire}
                 </Typography>
 
                 <Box sx={{position: "absolute", right: "10px", bottom: "10px"}}>
@@ -470,7 +488,7 @@ const AddCardComponent = ({control, watch}) => {
           alignItems: "center",
           justifyContent: "flex-end",
         }}>
-        {Boolean(selectedCard) && (
+        {card?.verify && (
           <Button
             variant="contained"
             fullWidth
@@ -479,7 +497,10 @@ const AddCardComponent = ({control, watch}) => {
               fontSize: "14px",
               fontWeight: "bold",
             }}
-            onClick={() => setOpenDialog(true)}>
+            onClick={() => {
+              setVerifyCard(true);
+              reset(card);
+            }}>
             Topup balance
           </Button>
         )}
@@ -500,23 +521,15 @@ const AddCardComponent = ({control, watch}) => {
                   name="card_number"
                   placeholder="Card Number"
                   control={control}
-                  value={newCard.cardNumber}
-                  onChange={(e) =>
-                    setNewCard({...newCard, cardNumber: e.target.value})
-                  }
                 />
               </Box>
               <Box sx={{marginTop: "15px"}}>
                 <HFCardField
                   control={control}
-                  name="expiry_date"
+                  name="expire"
                   format="##/##"
                   placeholder="expiry date (MM/YY)"
                   margin="dense"
-                  value={newCard.expiry}
-                  onChange={(e) =>
-                    setNewCard({...newCard, expiry: e.target.value})
-                  }
                 />
               </Box>
             </Box>
@@ -558,9 +571,20 @@ const AddCardComponent = ({control, watch}) => {
             }}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={verifyCardNumber}>
-            Add Card
-          </Button>
+          {verifyCard ? (
+            <Button variant="contained" onClick={confirmOtpFunc}>
+              Confirm
+            </Button>
+          ) : (
+            <Button
+              disabled={
+                !Boolean(watch("card_number")) && !Boolean(watch("expire"))
+              }
+              variant="contained"
+              onClick={verifyCardNumber}>
+              Add Card
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>
@@ -579,14 +603,14 @@ const TopUpBalanceComponent = ({control, loading = false}) => {
         name={`amount`}
       />
 
-      <HFBalanceFile
+      {/* <HFBalanceFile
         autoFocus
         fullWidth={true}
         required
         control={control}
         placeholder={"write amount..."}
         name={`receipt_file`}
-      />
+      /> */}
 
       <Button
         loading={loading}

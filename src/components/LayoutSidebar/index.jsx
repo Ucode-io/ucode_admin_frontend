@@ -1,7 +1,7 @@
 import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {forwardRef, useEffect, useState} from "react";
+import {forwardRef, useEffect, useMemo, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
@@ -31,10 +31,11 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {
   Accordion,
   AccordionItem,
@@ -53,12 +54,15 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
-import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
+import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
 import {authActions} from "@/store/auth/auth.slice";
 import InlineSVG from "react-inlinesvg";
+import ProfileItem from "../ProfilePanel/ProfileItem";
+import {Logout} from "@mui/icons-material";
+import {Menu, MenuItem} from "@mui/material";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -696,8 +700,9 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
 
   return (
     <Popover
-      offset={[sidebarIsOpen ? 20 : 95, 5]}
+      offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
+      closeOnBlur={false}
       onClose={handleClose}>
       <PopoverTrigger>
         <Flex
@@ -753,17 +758,160 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
         </Flex>
       </PopoverTrigger>
       <PopoverContent
-        w="240px"
+        w="300px"
         bg="#fff"
-        padding={6}
+        // padding={6}
         borderRadius={8}
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}>
-        <Companies onSelectEnvironment={onSelectEnvironment} />
+        <>
+          <ProfilePanel onClose={onClose} />
+          <Companies onSelectEnvironment={onSelectEnvironment} />
+          <ProfileBottom projectInfo={projectInfo} />
+        </>
       </PopoverContent>
     </Popover>
+  );
+};
+
+const ProfilePanel = ({onClose = () => {}}) => {
+  const navigate = useNavigate();
+  return (
+    <Box p={"12px"} borderBottom={"1px solid #eee"}>
+      <Flex gap={10} alignItems={"center"}>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={36}
+          h={36}
+          style={{border: "1px solid #eee", fontSize: "24px"}}
+          borderRadius={"5px"}>
+          A
+        </Box>
+        <Box>
+          <Box fontSize={"14px"} fontWeight={"bold"}>
+            Asadbek
+          </Box>
+          <Box fontSize={"12px"}>Guest</Box>
+        </Box>
+      </Flex>
+
+      <Flex
+        alignItems={"center"}
+        h={25}
+        w={86}
+        border={"1px solid #eee"}
+        borderRadius={"5px"}
+        justifyContent={"center"}
+        gap={5}
+        mt={10}
+        cursor={"pointer"}
+        onClick={() => {
+          onClose();
+          navigate(`/settings/auth/matrix/profile/crossed`);
+        }}>
+        <SettingsIcon />
+        <Box>Settings</Box>
+      </Flex>
+    </Box>
+  );
+};
+
+const ProfileBottom = ({projectInfo}) => {
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
+
+  const handleClickLanguages = (event) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  const logoutClickHandler = () => {
+    dispatch(authActions.logout());
+    dispatch(companyActions.setCompanies([]));
+  };
+
+  return (
+    <Box p={8}>
+      <ProfileItem
+        sx={{
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          paddingLeft: "8px",
+          height: "32px",
+        }}
+        children={
+          <GTranslateIcon
+            style={{
+              color: "#000",
+            }}
+          />
+        }
+        text="Languages"
+        onClick={handleClickLanguages}
+      />
+
+      <ProfileItem
+        sx={{
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          paddingLeft: "8px",
+          height: "32px",
+        }}
+        children={
+          <Logout
+            style={{
+              color: "#000",
+            }}
+          />
+        }
+        text="Logout"
+        onClick={logoutClickHandler}
+      />
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}>
+        {languages?.map((item) => (
+          <MenuItem
+            onClick={() => {
+              changeLanguage(item.slug);
+            }}
+            key={item.id}
+            style={{
+              backgroundColor:
+                item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
+              width: "80px",
+            }}>
+            {item?.title}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Box>
   );
 };
 
@@ -776,7 +924,7 @@ const Companies = ({onSelectEnvironment}) => {
   const companies = companiesQuery.data?.companies ?? [];
 
   return (
-    <Box>
+    <Box p={8} borderBottom={"1px solid #eee"}>
       <Accordion allowToggle>
         {companies.map((company) => (
           <AccordionItem key={company.id}>
@@ -787,6 +935,8 @@ const Companies = ({onSelectEnvironment}) => {
               alignItems="center"
               cursor="pointer"
               borderRadius={6}
+              background={"none"}
+              border={"none"}
               _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}
@@ -835,6 +985,8 @@ const Projects = ({company, onSelectEnvironment}) => {
               alignItems="center"
               cursor="pointer"
               borderRadius={6}
+              background={"none"}
+              border={"none"}
               _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}

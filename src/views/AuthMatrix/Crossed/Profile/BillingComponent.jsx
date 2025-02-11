@@ -14,7 +14,6 @@ import BackupTableIcon from "@mui/icons-material/BackupTable";
 import {useProjectListQuery} from "../../../../services/companyService";
 import {companyActions} from "../../../../store/company/company.slice";
 import BlockIcon from "@mui/icons-material/Block";
-import HFBalanceFile from "../../../../components/FormElements/HFBalanceFile";
 import OtpInput from "react-otp-input";
 import {
   Box,
@@ -579,7 +578,7 @@ const AddCardComponent = ({
           ) : (
             <Button
               disabled={
-                !Boolean(watch("card_number")) && !Boolean(watch("expire"))
+                Boolean(!watch("card_number")) || Boolean(!watch("expire"))
               }
               variant="contained"
               onClick={verifyCardNumber}>

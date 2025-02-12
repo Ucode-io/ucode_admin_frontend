@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
 function Chatwoot({sidebarIsOpen}) {
-  const {originalButtonFunction} = useChatwoot()
+  const {originalButtonFunction} = useChatwoot();
 
   return (
     <Box
@@ -15,7 +15,7 @@ function Chatwoot({sidebarIsOpen}) {
         padding: "0 5px",
       }}
       onClick={originalButtonFunction}>
-      <img width={22} height={22} src="/img/chatwoot.svg" alt="AI"/>
+      <img width={22} height={22} src="/img/chatwoot.svg" alt="AI" />
       <Box sx={{fontSize: "13px", fontWeight: 600}}>
         {sidebarIsOpen ? "Support" : ""}
       </Box>
@@ -26,13 +26,13 @@ function Chatwoot({sidebarIsOpen}) {
 export const useChatwoot = () => {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
 
-  useEffect(() => {
+  useEffect(async () => {
     const handleOriginalButtonClick = () => {
       window.$chatwoot.toggle();
     };
     const originalButton = document.querySelector(".woot-elements--left");
 
-    const closeButton = document.createElement("button");
+    const closeButton = await document.createElement("button");
     closeButton.style.position = "absolute";
     closeButton.style.top = "20px";
     closeButton.style.right = "20px";
@@ -42,7 +42,7 @@ export const useChatwoot = () => {
     closeButton.style.cursor = "pointer";
     originalButton.appendChild(closeButton);
 
-    const closeButtonImage = document.createElement("img");
+    const closeButtonImage = await document.createElement("img");
     closeButtonImage.src = "/img/close.svg";
     closeButtonImage.alt = "Close Chat";
     closeButtonImage.style.width = "20px";
@@ -51,7 +51,7 @@ export const useChatwoot = () => {
     closeButton.appendChild(closeButtonImage);
 
     if (originalButton) {
-      originalButton.addEventListener("click", handleOriginalButtonClick);
+      await originalButton.addEventListener("click", handleOriginalButtonClick);
       setOriginalButtonFunction(() => handleOriginalButtonClick);
     }
     return () => {
@@ -61,7 +61,7 @@ export const useChatwoot = () => {
     };
   }, []);
 
-  return {originalButtonFunction}
-}
+  return {originalButtonFunction};
+};
 
 export default Chatwoot;

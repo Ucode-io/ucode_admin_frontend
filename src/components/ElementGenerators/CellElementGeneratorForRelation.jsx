@@ -93,7 +93,7 @@ const CellElementGeneratorForRelation = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [row, computedSlug, defaultValue]);
-  console.log("fielddddddddd", field);
+
   const renderInputValues = {
     LOOKUP: () => {
       return newColumn ? (

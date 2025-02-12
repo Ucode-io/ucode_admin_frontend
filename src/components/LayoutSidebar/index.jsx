@@ -41,7 +41,9 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Button,
   Flex,
+  HStack,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -64,6 +66,8 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {Fade, Modal, Typography} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -827,14 +831,21 @@ const ProfilePanel = ({onClose = () => {}}) => {
     </Box>
   );
 };
+
 const ProfileBottom = ({projectInfo}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
+
   const popoverRef = useRef();
   const {i18n} = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const onCloseModal = () => setIsOpenModal(false);
+  const onOpenModal = () => setIsOpenModal(true);
 
   useOutsideClick({
     ref: popoverRef,
@@ -856,6 +867,8 @@ const ProfileBottom = ({projectInfo}) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
+    // onOpenModal();
+    onClose();
   };
 
   return (
@@ -886,29 +899,25 @@ const ProfileBottom = ({projectInfo}) => {
           </Box>
         </PopoverTrigger>
 
-        <PopoverContent w="150px">
+        <PopoverContent w="250px">
           <Box
             minH={50}
             maxH={250}
             bg={"white"}
-            p={10}
+            p={4}
             borderRadius={5}
-            boxShadow="0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)">
+            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
             <PopoverBody>
               {languages?.map((item) => (
                 <Box
                   key={item.slug}
                   p={4}
-                  pl={10}
                   borderRadius="6px"
                   cursor="pointer"
-                  color={item.slug === defaultLanguage ? "#000" : "white"}
+                  color={item.slug === defaultLanguage ? "#000" : "#333"}
                   bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
                   _hover={{bg: "#F0F0F0"}}
-                  onClick={() => {
-                    changeLanguage(item.slug);
-                    onClose();
-                  }}>
+                  onClick={() => changeLanguage(item.slug)}>
                   {item.title}
                 </Box>
               ))}
@@ -928,10 +937,67 @@ const ProfileBottom = ({projectInfo}) => {
           cursor: "pointer",
         }}
         _hover={{background: "#eeee"}}
-        onClick={logoutClickHandler}>
+        onClick={onOpenModal}>
         <Logout style={{color: "#000"}} />
         <span>Logout</span>
       </Box>
+
+      <Modal open={isOpenModal} onClose={onCloseModal}>
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}>
+          <Box display="flex" justifyContent="center" mb={2}>
+            <LogoutIcon style={{width: "48", height: "28px"}} />
+          </Box>
+
+          <Box fontWeight={700} fontSize={"18px"}>
+            Log out of your account?
+          </Box>
+
+          <Box mt={5} fontWeight={400} fontSize={"12px"}>
+            You will need to log back in to access your workspace.
+          </Box>
+
+          <Box mt={20} display="flex" flexDirection="column" gap={1}>
+            <Button
+              cursor={"pointer"}
+              borderRadius={8}
+              border="none"
+              fontSize={14}
+              fullWidth
+              bg={"#a63431"}
+              color="#fff"
+              _hover={{bg: "#a63400"}}
+              style={{height: "40px"}}
+              onClick={logoutClickHandler}>
+              Log out
+            </Button>
+            <Button
+              mt={5}
+              cursor={"pointer"}
+              borderRadius={8}
+              fontSize={14}
+              fullWidth
+              bg={"#fff"}
+              _hover={{bg: "#eee"}}
+              border="2px solid #eee"
+              style={{height: "40px"}}
+              onClick={onCloseModal}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

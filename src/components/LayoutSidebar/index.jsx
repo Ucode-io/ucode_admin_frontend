@@ -784,6 +784,8 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
 
 const ProfilePanel = ({onClose = () => {}}) => {
   const navigate = useNavigate();
+  const state = useSelector((state) => state.auth);
+
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
       <Flex gap={10} alignItems={"center"}>
@@ -794,14 +796,16 @@ const ProfilePanel = ({onClose = () => {}}) => {
           w={36}
           h={36}
           style={{border: "1px solid #eee", fontSize: "24px"}}
-          borderRadius={"5px"}>
-          A
+          borderRadius={"5px"}
+          bg={"#04ADD4"}
+          color={"white"}>
+          {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
           <Box fontSize={"14px"} fontWeight={"bold"}>
-            Asadbek
+            {state?.userInfo?.login ?? ""}
           </Box>
-          <Box fontSize={"12px"}>Guest</Box>
+          <Box fontSize={"12px"}>{state?.clientType?.name ?? ""}</Box>
         </Box>
       </Flex>
 

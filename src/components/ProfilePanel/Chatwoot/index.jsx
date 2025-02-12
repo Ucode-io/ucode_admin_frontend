@@ -26,13 +26,13 @@ function Chatwoot({sidebarIsOpen}) {
 export const useChatwoot = () => {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
 
-  useEffect(async () => {
+  useEffect(() => {
     const handleOriginalButtonClick = () => {
       window.$chatwoot.toggle();
     };
     const originalButton = document.querySelector(".woot-elements--left");
 
-    const closeButton = await document.createElement("button");
+    const closeButton = document.createElement("button");
     closeButton.style.position = "absolute";
     closeButton.style.top = "20px";
     closeButton.style.right = "20px";
@@ -42,7 +42,7 @@ export const useChatwoot = () => {
     closeButton.style.cursor = "pointer";
     originalButton.appendChild(closeButton);
 
-    const closeButtonImage = await document.createElement("img");
+    const closeButtonImage = document.createElement("img");
     closeButtonImage.src = "/img/close.svg";
     closeButtonImage.alt = "Close Chat";
     closeButtonImage.style.width = "20px";
@@ -51,7 +51,7 @@ export const useChatwoot = () => {
     closeButton.appendChild(closeButtonImage);
 
     if (originalButton) {
-      await originalButton.addEventListener("click", handleOriginalButtonClick);
+      originalButton.addEventListener("click", handleOriginalButtonClick);
       setOriginalButtonFunction(() => handleOriginalButtonClick);
     }
     return () => {

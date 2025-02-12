@@ -54,7 +54,6 @@ import {
   SidebarAppTooltip,
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
 import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
 import {useEnvironmentListQuery} from "@/services/environmentService";
@@ -62,9 +61,7 @@ import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
 import {authActions} from "@/store/auth/auth.slice";
 import InlineSVG from "react-inlinesvg";
-import ProfileItem from "../ProfilePanel/ProfileItem";
 import {Logout} from "@mui/icons-material";
-import {Menu, MenuItem} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 
@@ -810,6 +807,7 @@ const ProfilePanel = ({onClose = () => {}}) => {
       </Flex>
 
       <Flex
+        _hover={{background: "#eeee"}}
         alignItems={"center"}
         h={25}
         w={86}
@@ -851,7 +849,7 @@ const ProfileBottom = ({projectInfo}) => {
   }, [projectInfo]);
 
   const logoutClickHandler = () => {
-    dispatch(authActions.logout());
+    store.dispatch(authActions.logout());
     dispatch(companyActions.setCompanies([]));
   };
 
@@ -878,6 +876,7 @@ const ProfileBottom = ({projectInfo}) => {
               height: "32px",
               cursor: "pointer",
             }}
+            _hover={{background: "#eeee"}}
             onClick={(e) => {
               e.stopPropagation();
               onOpen();
@@ -918,7 +917,6 @@ const ProfileBottom = ({projectInfo}) => {
         </PopoverContent>
       </Popover>
 
-      {/* Logout Option */}
       <Box
         sx={{
           borderRadius: "5px",
@@ -929,6 +927,7 @@ const ProfileBottom = ({projectInfo}) => {
           height: "32px",
           cursor: "pointer",
         }}
+        _hover={{background: "#eeee"}}
         onClick={logoutClickHandler}>
         <Logout style={{color: "#000"}} />
         <span>Logout</span>

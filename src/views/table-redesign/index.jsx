@@ -241,6 +241,16 @@ export const DynamicTable = ({
     setLimit(Number(value));
   };
 
+  const getLimitValue = (item) => {
+    setLimit(item);
+    dispatch(
+      paginationActions.setTablePages({
+        tableSlug: tableSlug,
+        pageLimit: item,
+      })
+    );
+  };
+
   return (
     <div className="CTableContainer">
       <div
@@ -440,10 +450,13 @@ export const DynamicTable = ({
                   width: "150px",
                 }),
               }}
-              value={{value: limit, label: `${limit} rows`}}
+              value={{
+                value: limit,
+                label: `${limit} rows`,
+              }}
               options={limitOptions}
               menuPlacement="top"
-              onChange={({value}) => setLimit(value)}
+              onChange={({value}) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>

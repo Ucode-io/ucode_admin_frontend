@@ -274,7 +274,7 @@ function AgGridTableView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        view?.attributes?.tree ? updateTreeData() : refetch();
+        view?.attributes?.treeData ? updateTreeData() : refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));

@@ -1,7 +1,7 @@
 import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {forwardRef, useEffect, useMemo, useState} from "react";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
@@ -43,9 +43,11 @@ import {
   Box,
   Flex,
   Popover,
+  PopoverBody,
   PopoverContent,
   PopoverTrigger,
   useDisclosure,
+  useOutsideClick,
 } from "@chakra-ui/react";
 import {
   SidebarActionTooltip,
@@ -63,6 +65,8 @@ import InlineSVG from "react-inlinesvg";
 import ProfileItem from "../ProfilePanel/ProfileItem";
 import {Logout} from "@mui/icons-material";
 import {Menu, MenuItem} from "@mui/material";
+import {useTranslation} from "react-i18next";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -124,13 +128,16 @@ const LayoutSidebar = ({appId}) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: appId || menuItem?.id,
+      parent_id: menuItem?.id || appId,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(appId),
+      enabled:
+        Boolean(appId === "undefined" ? undefined : appId) ||
+        Boolean(menuItem?.id),
       onSuccess: (res) => {
         setChild(res.menus ?? []);
       },
@@ -702,7 +709,6 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      closeOnBlur={false}
       onClose={handleClose}>
       <PopoverTrigger>
         <Flex
@@ -810,8 +816,8 @@ const ProfilePanel = ({onClose = () => {}}) => {
         mt={10}
         cursor={"pointer"}
         onClick={() => {
-          onClose();
           navigate(`/settings/auth/matrix/profile/crossed`);
+          onClose();
         }}>
         <SettingsIcon />
         <Box>Settings</Box>
@@ -819,20 +825,19 @@ const ProfilePanel = ({onClose = () => {}}) => {
     </Box>
   );
 };
-
 const ProfileBottom = ({projectInfo}) => {
   const dispatch = useDispatch();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const popoverRef = useRef();
+  const {i18n} = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
 
-  const handleClickLanguages = (event) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
+  useOutsideClick({
+    ref: popoverRef,
+    handler: () => onClose(),
+  });
 
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
@@ -846,71 +851,84 @@ const ProfileBottom = ({projectInfo}) => {
     dispatch(companyActions.setCompanies([]));
   };
 
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+  };
+
   return (
-    <Box p={8}>
-      <ProfileItem
-        sx={{
-          borderRadius: "5px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          paddingLeft: "8px",
-          height: "32px",
-        }}
-        children={
-          <GTranslateIcon
-            style={{
-              color: "#000",
+    <Box p={8} ref={popoverRef}>
+      <Popover
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="right-start"
+        closeOnBlur={false}>
+        <PopoverTrigger>
+          <Box
+            sx={{
+              borderRadius: "5px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              paddingLeft: "8px",
+              height: "32px",
+              cursor: "pointer",
             }}
-          />
-        }
-        text="Languages"
-        onClick={handleClickLanguages}
-      />
-
-      <ProfileItem
-        sx={{
-          borderRadius: "5px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          paddingLeft: "8px",
-          height: "32px",
-        }}
-        children={
-          <Logout
-            style={{
-              color: "#000",
-            }}
-          />
-        }
-        text="Logout"
-        onClick={logoutClickHandler}
-      />
-
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => setAnchorEl(null)}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}>
-        {languages?.map((item) => (
-          <MenuItem
-            onClick={() => {
-              changeLanguage(item.slug);
-            }}
-            key={item.id}
-            style={{
-              backgroundColor:
-                item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
-              width: "80px",
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
             }}>
-            {item?.title}
-          </MenuItem>
-        ))}
-      </Menu>
+            <GTranslateIcon style={{color: "#000"}} />
+            <span>Languages</span>
+          </Box>
+        </PopoverTrigger>
+
+        <PopoverContent w="150px">
+          <Box
+            minH={50}
+            maxH={250}
+            bg={"white"}
+            p={10}
+            borderRadius={5}
+            boxShadow="0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)">
+            <PopoverBody>
+              {languages?.map((item) => (
+                <Box
+                  key={item.slug}
+                  p={4}
+                  pl={10}
+                  borderRadius="6px"
+                  cursor="pointer"
+                  color={item.slug === defaultLanguage ? "#000" : "white"}
+                  bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
+                  _hover={{bg: "#F0F0F0"}}
+                  onClick={() => {
+                    changeLanguage(item.slug);
+                    onClose();
+                  }}>
+                  {item.title}
+                </Box>
+              ))}
+            </PopoverBody>
+          </Box>
+        </PopoverContent>
+      </Popover>
+
+      {/* Logout Option */}
+      <Box
+        sx={{
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          paddingLeft: "8px",
+          height: "32px",
+          cursor: "pointer",
+        }}
+        onClick={logoutClickHandler}>
+        <Logout style={{color: "#000"}} />
+        <span>Logout</span>
+      </Box>
     </Box>
   );
 };

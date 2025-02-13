@@ -803,10 +803,12 @@ const ProfilePanel = ({onClose = () => {}}) => {
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
-          <Box fontSize={"14px"} fontWeight={"bold"}>
+          <Box fontSize={"14px"} fontWeight={"bold"} color={"#475467"}>
             {state?.userInfo?.login ?? ""}
           </Box>
-          <Box fontSize={"12px"}>{state?.clientType?.name ?? ""}</Box>
+          <Box fontSize={"12px"} color={"#475467"}>
+            {state?.clientType?.name ?? ""}
+          </Box>
         </Box>
       </Flex>
 
@@ -826,7 +828,7 @@ const ProfilePanel = ({onClose = () => {}}) => {
           onClose();
         }}>
         <SettingsIcon />
-        <Box>Settings</Box>
+        <Box color={"#475467"}>Settings</Box>
       </Flex>
     </Box>
   );
@@ -888,6 +890,7 @@ const ProfileBottom = ({projectInfo}) => {
               paddingLeft: "8px",
               height: "32px",
               cursor: "pointer",
+              color: "#475467",
             }}
             _hover={{background: "#eeee"}}
             onClick={(e) => {
@@ -935,6 +938,7 @@ const ProfileBottom = ({projectInfo}) => {
           paddingLeft: "8px",
           height: "32px",
           cursor: "pointer",
+          color: "#475467",
         }}
         _hover={{background: "#eeee"}}
         onClick={onOpenModal}>
@@ -951,6 +955,7 @@ const ProfileBottom = ({projectInfo}) => {
             transform: "translate(-50%, -50%)",
             backgroundColor: "#fff",
             borderRadius: "12px",
+            outline: "none",
             width: 400,
             padding: "20px",
             boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",

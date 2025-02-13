@@ -347,13 +347,6 @@ const RecursiveBlock = ({
                 element={element}
                 level={2}
               />
-              <FileUploadMenu
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                element={element}
-                level={2}
-              />
             </>
           )}
         </Collapse>

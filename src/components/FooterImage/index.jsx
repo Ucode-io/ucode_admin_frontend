@@ -1,10 +1,24 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import classes from "./style.module.scss";
 
 function FooterImage() {
+  const [height, setHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const newHeight = window.innerWidth * 0.25;
+      setHeight(newHeight);
+    };
+
+    window.addEventListener("resize", updateHeight);
+    updateHeight();
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [height]);
+
   return (
-    <div className={classes.footerImage}>
-      <img src="/img/newDesign.svg" width={"100%"} height={"100%"} alt="" />
+    <div style={{height: `${height}px`}} className={classes.footerImage}>
+      <img src="/img/newDesign.svg" alt="" />
     </div>
   );
 }

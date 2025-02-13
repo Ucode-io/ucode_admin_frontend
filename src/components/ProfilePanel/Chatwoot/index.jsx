@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
 function Chatwoot({sidebarIsOpen}) {
-  const {originalButtonFunction} = useChatwoot()
+  const {originalButtonFunction} = useChatwoot();
 
   return (
     <Box
@@ -15,7 +15,7 @@ function Chatwoot({sidebarIsOpen}) {
         padding: "0 5px",
       }}
       onClick={originalButtonFunction}>
-      <img width={22} height={22} src="/img/chatwoot.svg" alt="AI"/>
+      <img width={22} height={22} src="/img/chatwoot.svg" alt="AI" />
       <Box sx={{fontSize: "13px", fontWeight: 600}}>
         {sidebarIsOpen ? "Support" : ""}
       </Box>
@@ -61,7 +61,7 @@ export const useChatwoot = () => {
     };
   }, []);
 
-  return {originalButtonFunction}
-}
+  return {originalButtonFunction};
+};
 
 export default Chatwoot;

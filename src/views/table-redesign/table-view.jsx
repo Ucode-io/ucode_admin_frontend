@@ -1,12 +1,6 @@
-import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useFilters from "@/hooks/useFilters";
 import useTabRouter from "@/hooks/useTabRouter";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import constructorFieldService from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
 import constructorRelationService from "@/services/constructorRelationService";
@@ -17,12 +11,18 @@ import {generateGUID} from "@/utils/generateID";
 import {mergeStringAndState} from "@/utils/jsonPath";
 import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
+import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
+import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
-import MaterialUIProvider from "@/providers/MaterialUIProvider";
-import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
-import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
+import {Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 
 const TableView = ({
   filterVisible,
@@ -272,16 +272,6 @@ const TableView = ({
     }
   }, [filters]);
 
-  const limitPage = useMemo(() => {
-    if (typeof paginiation === "number") {
-      return paginiation;
-    } else if (paginiation === "all" && limit === "all") {
-      return undefined;
-    } else {
-      return pageToOffset(currentPage, limit);
-    }
-  }, [paginiation, limit, currentPage]);
-
   const {
     data: {fiedlsarray, fieldView, custom_events} = {
       tableData: [],
@@ -351,7 +341,7 @@ const TableView = ({
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
-          limit,
+          limit: paginiation ?? limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -545,7 +535,7 @@ const TableView = ({
           columns={columns}
           multipleDelete={multipleDelete}
           openFieldSettings={openFieldSettings}
-          limit={limit ?? paginiation}
+          limit={paginiation ?? limit}
           setLimit={setLimit}
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}

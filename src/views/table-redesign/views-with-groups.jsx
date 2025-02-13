@@ -371,7 +371,7 @@ export const NewUiViewsWithGroups = ({
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      <Flex h="100vh" flexDirection="column">
+      <Flex h="100vh" flexDirection="column" bg={"white"}>
         {updateLoading && (
           <Backdrop
             sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}

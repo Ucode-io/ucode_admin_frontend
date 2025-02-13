@@ -195,7 +195,10 @@ const LoginFormDesign = ({
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
           computeCompanyElement(res?.companies ?? "");
-          localStorage.setItem('newUi', res?.companies?.[0]?.projects?.[0]?.new_design)
+          localStorage.setItem(
+            "newUi",
+            res?.companies?.[0]?.projects?.[0]?.new_design
+          );
         } else {
           dispatch(showAlert("The company does not exist", "error"));
         }

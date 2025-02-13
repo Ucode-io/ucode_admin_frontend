@@ -263,6 +263,7 @@ function MultiImageUpload({
                 </div>
               ))}
             <Box
+              id="uploadImageField"
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",

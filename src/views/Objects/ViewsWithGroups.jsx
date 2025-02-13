@@ -50,15 +50,15 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 
 const ViewsWithGroups = ({
-                           views,
-                           selectedTabIndex,
-                           setSelectedTabIndex,
-                           view,
-                           fieldsMap,
-                           menuItem,
-                           visibleRelationColumns,
-                           visibleColumns,
-                         }) => {
+  views,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  view,
+  fieldsMap,
+  menuItem,
+  visibleRelationColumns,
+  visibleColumns,
+}) => {
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();

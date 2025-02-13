@@ -10,38 +10,38 @@ import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrappe
 import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 
 const TableRow = ({
-                    relOptions,
-                    tableView,
-                    row,
-                    key,
-                    width,
-                    rowIndex,
-                    control,
-                    isTableView,
-                    onRowClick,
-                    calculateWidthFixedColumn,
-                    onDeleteClick,
-                    mainForm,
-                    getValues,
-                    currentPage,
-                    view,
-                    columns,
-                    selectedObjectsForDelete,
-                    setSelectedObjectsForDelete,
-                    tableSettings,
-                    pageName,
-                    watch,
-                    setFormValue,
-                    tableSlug,
-                    remove,
-                    limit = 10,
-                    relationAction,
-                    onChecked,
-                    relationFields,
-                    data,
-                    style,
-                    firstRowWidth = 80
-                  }) => {
+  relOptions,
+  tableView,
+  row,
+  key,
+  width,
+  rowIndex,
+  control,
+  isTableView,
+  onRowClick,
+  calculateWidthFixedColumn,
+  onDeleteClick,
+  mainForm,
+  getValues,
+  currentPage,
+  view,
+  columns,
+  selectedObjectsForDelete,
+  setSelectedObjectsForDelete,
+  tableSettings,
+  pageName,
+  watch,
+  setFormValue,
+  tableSlug,
+  remove,
+  limit = 10,
+  relationAction,
+  onChecked,
+  relationFields,
+  data,
+  style,
+  firstRowWidth = 80,
+}) => {
   const navigate = useNavigate();
 
   const changeSetDelete = (row) => {
@@ -54,15 +54,15 @@ const TableRow = ({
     }
   };
   const parentRef = useRef(null);
-  const selected = Boolean(selectedObjectsForDelete?.find(
-    (item) => item?.guid === row?.guid
-  ));
+  const selected = Boolean(
+    selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)
+  );
 
   return (
     <>
       {!relationAction ? (
         <>
-          <CTableRow key={key} style={style} className='new-ui' ref={parentRef}>
+          <CTableRow key={key} style={style} className="new-ui" ref={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -79,21 +79,20 @@ const TableRow = ({
                   alignItems: "center",
                   justifyContent: "center",
                 }}>
-                {!selected &&
+                {!selected && (
                   <span
                     className="data_table__row_number"
                     style={{width: "35px"}}>
                     {limit === "all"
                       ? rowIndex + 1
-                      : (currentPage - 1) * limit + rowIndex + 1
-                    }
+                      : (currentPage - 1) * limit + rowIndex + 1}
                   </span>
-                }
+                )}
 
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
                   <Checkbox
-                    size='small'
-                    sx={{ padding: '4px' }}
+                    size="small"
+                    sx={{padding: "4px"}}
                     className="table_multi_checkbox"
                     style={selected ? {display: "block"} : {}}
                     checked={selected}
@@ -130,8 +129,9 @@ const TableRow = ({
                       }`,
                       left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? `${
-                          calculateWidthFixedColumn(virtualColumn.id) + firstRowWidth
-                        }px`
+                            calculateWidthFixedColumn(virtualColumn.id) +
+                            firstRowWidth
+                          }px`
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
@@ -139,7 +139,11 @@ const TableRow = ({
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
-                          : ((virtualColumn.attributes?.disabled || !virtualColumn.attributes?.field_permission?.edit_permission) ? "#f8f8f8" : "#fff")
+                          : virtualColumn.attributes?.disabled ||
+                              !virtualColumn.attributes?.field_permission
+                                ?.edit_permission
+                            ? "#f8f8f8"
+                            : "#fff"
                       }`,
                       zIndex: `${
                         tableSettings?.[pageName]?.find(
@@ -173,28 +177,33 @@ const TableRow = ({
                         newUi={true}
                       />
                     ) : (
-                      <CellElementGenerator field={virtualColumn} row={row}/>
+                      <CellElementGenerator field={virtualColumn} row={row} />
                     )}
 
-                    {index === 0 &&
-                      <div onClick={() => onRowClick(row, rowIndex)} className="first_button">
-                        <OpenInFullIcon style={{width: 14}} fill="#007aff"/>
+                    {index === 0 && (
+                      <div
+                        onClick={() => onRowClick(row, rowIndex)}
+                        className="first_button">
+                        <OpenInFullIcon style={{width: 14}} fill="#007aff" />
                       </div>
-                    }
-                    {(virtualColumn.attributes?.disabled || !virtualColumn.attributes?.field_permission?.edit_permission) &&
-                      <div style={{
-                        position: "absolute",
-                        top: '50%',
-                        transform: "translateY(-50%)",
-                        right: 4,
-                        backgroundColor: "inherit",
-                        padding: 4,
-                        borderRadius: 6,
-                        zIndex: 1
-                      }}>
-                        <img src="/table-icons/lock.svg" alt="lock"/>
+                    )}
+                    {(virtualColumn.attributes?.disabled ||
+                      !virtualColumn.attributes?.field_permission
+                        ?.edit_permission) && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          right: 4,
+                          backgroundColor: "inherit",
+                          padding: 4,
+                          borderRadius: 6,
+                          zIndex: 1,
+                        }}>
+                        <img src="/table-icons/lock.svg" alt="lock" />
                       </div>
-                    }
+                    )}
                   </CTableCell>
                 )
             )}
@@ -230,13 +239,13 @@ const TableRow = ({
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                     <RectangleIconButton
                       color="error"
-                      style={{ minWidth: 25, minHeight: 25, height: 25 }}
+                      style={{minWidth: 25, minHeight: 25, height: 25}}
                       onClick={() =>
                         row.guid
                           ? onDeleteClick(row, rowIndex)
                           : remove(rowIndex)
                       }>
-                      <Delete color="error"/>
+                      <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
                 </CTableCell>
@@ -248,7 +257,7 @@ const TableRow = ({
           </CTableRow>
         </>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
-      !relationAction?.action_relations ? (
+        !relationAction?.action_relations ? (
         <CTableRow>
           <CTableCell
             align="center"
@@ -275,7 +284,7 @@ const TableRow = ({
                 style={{
                   minWidth: "max-content",
                 }}>
-                <OpenInFullIcon/>
+                <OpenInFullIcon />
               </Button>
 
               <span className="data_table__row_number" style={{width: "35px"}}>
@@ -351,7 +360,7 @@ const TableRow = ({
                       watch={watch}
                     />
                   ) : (
-                    <CellElementGenerator field={virtualColumn} row={row}/>
+                    <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
               )
@@ -392,7 +401,7 @@ const TableRow = ({
                     onClick={() =>
                       row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
                     }>
-                    <Delete color="error"/>
+                    <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
               </CTableCell>
@@ -432,7 +441,7 @@ const TableRow = ({
                 style={{
                   minWidth: "max-content",
                 }}>
-                <OpenInFullIcon/>
+                <OpenInFullIcon />
               </Button>
 
               <span className="data_table__row_number" style={{width: "35px"}}>
@@ -515,7 +524,7 @@ const TableRow = ({
                   },
                 });
               }}>
-              <Delete color="error"/>
+              <Delete color="error" />
             </RectangleIconButton>
           </PermissionWrapperV2>
         </CTableRow>

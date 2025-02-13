@@ -3,7 +3,13 @@ import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 
-function HFStatusField({field = {}, control, name, updateObject = () => {}, newUi}) {
+function HFStatusField({
+  field = {},
+  control,
+  name,
+  updateObject = () => {},
+  newUi,
+}) {
   return (
     <Box>
       <Controller
@@ -12,6 +18,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}, newU
         render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <Select
+              id="statusField"
               className={styles.statusSelect}
               sx={{
                 height: newUi ? "25px" : "41px",
@@ -61,6 +68,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}, newU
               </ListSubheader>
               {field?.attributes?.todo?.options?.map((el) => (
                 <MenuItem
+                  id={el?.label ?? "selectOptionTodo"}
                   style={{
                     background: `${el?.color}30`,
                     color: el?.color ? el?.color : "#000",
@@ -77,6 +85,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}, newU
               </ListSubheader>
               {field?.attributes?.progress?.options?.map((el) => (
                 <MenuItem
+                  id={el?.label ?? "selectOptionProgress"}
                   style={{
                     background: `${el?.color}30`,
                     color: el?.color ? el?.color : "#000",
@@ -93,6 +102,7 @@ function HFStatusField({field = {}, control, name, updateObject = () => {}, newU
               </ListSubheader>
               {field?.attributes?.complete?.options?.map((el) => (
                 <MenuItem
+                  id={el?.label ?? "selectOptionComplete"}
                   style={{
                     background: `${el?.color}30`,
                     color: el?.color ? el?.color : "#000",

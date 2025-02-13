@@ -1,7 +1,16 @@
 .footerImage {
   width: 100%;
-  height: 340px;
+  min-height: 340px;
   position: absolute;
   bottom: -45px;
   z-index: -1;
+
+  img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    left: 0;
+    object-fit: cover;
+  }
 }

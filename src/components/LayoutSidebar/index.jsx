@@ -1,7 +1,7 @@
 import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {forwardRef, useEffect, useState} from "react";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
@@ -31,34 +31,43 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
   Box,
+  Button,
   Flex,
+  HStack,
   Popover,
+  PopoverBody,
   PopoverContent,
   PopoverTrigger,
   useDisclosure,
+  useOutsideClick,
 } from "@chakra-ui/react";
 import {
   SidebarActionTooltip,
   SidebarAppTooltip,
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import NewProfilePanel from "@/components/ProfilePanel/NewProfileMenu";
 import {useCompanyListQuery} from "@/services/companyService";
-import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
+import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
 import {authActions} from "@/store/auth/auth.slice";
 import InlineSVG from "react-inlinesvg";
+import {Logout} from "@mui/icons-material";
+import {useTranslation} from "react-i18next";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {Fade, Modal, Typography} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const LayoutSidebar = ({appId}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -120,13 +129,16 @@ const LayoutSidebar = ({appId}) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: appId || menuItem?.id,
+      parent_id: menuItem?.id || appId,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(appId),
+      enabled:
+        Boolean(appId === "undefined" ? undefined : appId) ||
+        Boolean(menuItem?.id),
       onSuccess: (res) => {
         setChild(res.menus ?? []);
       },
@@ -473,7 +485,7 @@ const LayoutSidebar = ({appId}) => {
               {...getActionProps("ai-chat")}
             />
           </SidebarActionTooltip>
-          <Box
+          {/* <Box
             display={sidebarIsOpen ? "block" : "none"}
             w="1px"
             h={20}
@@ -484,7 +496,7 @@ const LayoutSidebar = ({appId}) => {
             setSidebarAnchor={setSidebarAnchor}
             handleMenuSettingModalOpen={handleMenuSettingModalOpen}
             handleTemplateModalOpen={handleTemplateModalOpen}
-          />
+          /> */}
         </Flex>
 
         {(modalType === "create" ||
@@ -696,7 +708,7 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
 
   return (
     <Popover
-      offset={[sidebarIsOpen ? 20 : 95, 5]}
+      offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
       onClose={handleClose}>
       <PopoverTrigger>
@@ -753,17 +765,245 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
         </Flex>
       </PopoverTrigger>
       <PopoverContent
-        w="240px"
+        w="300px"
         bg="#fff"
-        padding={6}
+        // padding={6}
         borderRadius={8}
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}>
-        <Companies onSelectEnvironment={onSelectEnvironment} />
+        <>
+          <ProfilePanel onClose={onClose} />
+          <Companies onSelectEnvironment={onSelectEnvironment} />
+          <ProfileBottom projectInfo={projectInfo} />
+        </>
       </PopoverContent>
     </Popover>
+  );
+};
+
+const ProfilePanel = ({onClose = () => {}}) => {
+  const navigate = useNavigate();
+  const state = useSelector((state) => state.auth);
+
+  return (
+    <Box p={"12px"} borderBottom={"1px solid #eee"}>
+      <Flex gap={10} alignItems={"center"}>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={36}
+          h={36}
+          style={{border: "1px solid #eee", fontSize: "24px"}}
+          borderRadius={"5px"}
+          bg={"#04ADD4"}
+          color={"white"}>
+          {state?.userInfo?.login?.slice(0, 1)}
+        </Box>
+        <Box>
+          <Box fontSize={"14px"} fontWeight={"bold"} color={"#475467"}>
+            {state?.userInfo?.login ?? ""}
+          </Box>
+          <Box fontSize={"12px"} color={"#475467"}>
+            {state?.clientType?.name ?? ""}
+          </Box>
+        </Box>
+      </Flex>
+
+      <Flex
+        _hover={{background: "#eeee"}}
+        alignItems={"center"}
+        h={25}
+        w={86}
+        border={"1px solid #eee"}
+        borderRadius={"5px"}
+        justifyContent={"center"}
+        gap={5}
+        mt={10}
+        cursor={"pointer"}
+        onClick={() => {
+          navigate(`/settings/auth/matrix/profile/crossed`);
+          onClose();
+        }}>
+        <SettingsIcon style={{color: "#475467"}} />
+        <Box color={"#475467"}>Settings</Box>
+      </Flex>
+    </Box>
+  );
+};
+
+const ProfileBottom = ({projectInfo}) => {
+  const dispatch = useDispatch();
+  const {isOpen, onOpen, onClose} = useDisclosure();
+
+  const popoverRef = useRef();
+  const {i18n} = useTranslation();
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const onCloseModal = () => setIsOpenModal(false);
+  const onOpenModal = () => setIsOpenModal(true);
+
+  useOutsideClick({
+    ref: popoverRef,
+    handler: () => onClose(),
+  });
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  const logoutClickHandler = () => {
+    store.dispatch(authActions.logout());
+    dispatch(companyActions.setCompanies([]));
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    // onOpenModal();
+    onClose();
+  };
+
+  return (
+    <Box p={8} ref={popoverRef}>
+      <Popover
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="right-start"
+        closeOnBlur={false}>
+        <PopoverTrigger>
+          <Box
+            sx={{
+              borderRadius: "5px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              paddingLeft: "8px",
+              height: "32px",
+              cursor: "pointer",
+              color: "#475467",
+            }}
+            _hover={{background: "#eeee"}}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}>
+            <GTranslateIcon style={{color: "#475467"}} />
+            <span>Languages</span>
+          </Box>
+        </PopoverTrigger>
+
+        <PopoverContent w="250px">
+          <Box
+            minH={50}
+            maxH={250}
+            bg={"white"}
+            p={4}
+            borderRadius={5}
+            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
+            <PopoverBody>
+              {languages?.map((item) => (
+                <Box
+                  key={item.slug}
+                  p={4}
+                  borderRadius="6px"
+                  cursor="pointer"
+                  color={item.slug === defaultLanguage ? "#000" : "#333"}
+                  bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
+                  _hover={{bg: "#F0F0F0"}}
+                  onClick={() => changeLanguage(item.slug)}>
+                  {item.title}
+                </Box>
+              ))}
+            </PopoverBody>
+          </Box>
+        </PopoverContent>
+      </Popover>
+
+      <Box
+        sx={{
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          paddingLeft: "8px",
+          height: "32px",
+          cursor: "pointer",
+          color: "#475467",
+        }}
+        _hover={{background: "#eeee"}}
+        onClick={onOpenModal}>
+        <Logout style={{color: "#475467"}} />
+        <span>Logout</span>
+      </Box>
+
+      <Modal open={isOpenModal} onClose={onCloseModal}>
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}>
+          <Box display="flex" justifyContent="center" mb={2}>
+            <LogoutIcon style={{width: "48", height: "28px"}} />
+          </Box>
+
+          <Box fontWeight={700} fontSize={"18px"}>
+            Log out of your account?
+          </Box>
+
+          <Box mt={5} fontWeight={400} fontSize={"12px"}>
+            You will need to log back in to access your workspace.
+          </Box>
+
+          <Box mt={20} display="flex" flexDirection="column" gap={1}>
+            <Button
+              cursor={"pointer"}
+              borderRadius={8}
+              border="none"
+              fontSize={14}
+              fullWidth
+              bg={"#a63431"}
+              color="#fff"
+              _hover={{bg: "#a63400"}}
+              style={{height: "40px"}}
+              onClick={logoutClickHandler}>
+              Log out
+            </Button>
+            <Button
+              mt={5}
+              cursor={"pointer"}
+              borderRadius={8}
+              fontSize={14}
+              fullWidth
+              bg={"#fff"}
+              _hover={{bg: "#eee"}}
+              border="2px solid #eee"
+              style={{height: "40px"}}
+              onClick={onCloseModal}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </Box>
   );
 };
 
@@ -776,7 +1016,7 @@ const Companies = ({onSelectEnvironment}) => {
   const companies = companiesQuery.data?.companies ?? [];
 
   return (
-    <Box>
+    <Box p={8} borderBottom={"1px solid #eee"}>
       <Accordion allowToggle>
         {companies.map((company) => (
           <AccordionItem key={company.id}>
@@ -787,6 +1027,8 @@ const Companies = ({onSelectEnvironment}) => {
               alignItems="center"
               cursor="pointer"
               borderRadius={6}
+              background={"none"}
+              border={"none"}
               _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}
@@ -835,6 +1077,8 @@ const Projects = ({company, onSelectEnvironment}) => {
               alignItems="center"
               cursor="pointer"
               borderRadius={6}
+              background={"none"}
+              border={"none"}
               _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}

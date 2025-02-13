@@ -241,6 +241,16 @@ export const DynamicTable = ({
     setLimit(Number(value));
   };
 
+  const getLimitValue = (item) => {
+    setLimit(item);
+    dispatch(
+      paginationActions.setTablePages({
+        tableSlug: tableSlug,
+        pageLimit: item,
+      })
+    );
+  };
+
   return (
     <div className="CTableContainer">
       <div
@@ -294,7 +304,8 @@ export const DynamicTable = ({
               {!isRelationTable && (
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-                  type="add_field">
+                  type="add_field"
+                  id="addField">
                   <FieldButton
                     openFieldSettings={openFieldSettings}
                     view={view}
@@ -396,6 +407,7 @@ export const DynamicTable = ({
                     color: "#007aff",
                   }}>
                   <Flex
+                    id="addRowBtn"
                     h="30px"
                     alignItems="center"
                     justifyContent="center"
@@ -438,10 +450,13 @@ export const DynamicTable = ({
                   width: "150px",
                 }),
               }}
-              value={{value: limit, label: `${limit} rows`}}
+              value={{
+                value: limit,
+                label: `${limit} rows`,
+              }}
               options={limitOptions}
               menuPlacement="top"
-              onChange={({value}) => setLimit(value)}
+              onChange={({value}) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>

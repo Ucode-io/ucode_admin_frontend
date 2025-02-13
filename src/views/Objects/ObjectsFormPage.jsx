@@ -234,7 +234,7 @@ const ObjectsFormPage = ({
       .create(tableSlug, {
         data: {
           ...data,
-          folder_id: state?.folder_id ?? undefined,
+          folder_id: undefined,
         },
       })
       .then((res) => {

@@ -43,7 +43,7 @@ const RecursiveBlock = ({
       {
         [`${tableSlug}_id`]: row.guid,
         isTreeView: true,
-        folder_id,
+        // folder_id,
       },
       menuId
     );

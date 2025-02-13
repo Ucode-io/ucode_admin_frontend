@@ -33,7 +33,7 @@ $main-color: #0365f2;
     margin: 10px;
     border-radius: 8px;
 
-    &>div>div {
+    & > div > div {
       background-color: #f7f7f7;
       border-radius: 6px;
       width: 100%;
@@ -224,10 +224,8 @@ $main-color: #0365f2;
       background: #c0c0c01c;
     }
 
-
-
     &::-webkit-scrollbar-thumb {
-      background: #D4DAE2;
+      background: #d4dae2;
       border-radius: 10px;
     }
 
@@ -293,7 +291,6 @@ $main-color: #0365f2;
           border: 0;
           column-gap: 5px;
 
-
           &:hover {
             background-color: #a8a8a81a;
 
@@ -306,8 +303,6 @@ $main-color: #0365f2;
           &.active {
             background-color: #0365f2;
             color: #fff;
-
-
 
             .extra_icon {
               display: none;
@@ -323,7 +318,6 @@ $main-color: #0365f2;
             color: #0365f2;
             background-color: #fff;
             border-radius: 8px;
-
 
             &:hover {
               background-color: #a8a8a81a !important;

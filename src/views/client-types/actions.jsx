@@ -220,6 +220,14 @@ const Form = ({form}) => {
         />
       </Field>
 
+      <Field label="User type" isInvalid={errors?.client_type_id}>
+        <UserType control={form.control} />
+      </Field>
+
+      <Field label="Role" isInvalid={errors?.role_id}>
+        <Role control={form.control} />
+      </Field>
+
       <Accordion allowToggle border="1px solid #E2E8F0" borderRadius={6}>
         <AccordionItem border="none">
           <AccordionButton
@@ -294,12 +302,7 @@ const Form = ({form}) => {
                 )}
               />
             </Field>
-            <Field label="User type" isInvalid={errors?.client_type_id}>
-              <UserType control={form.control} />
-            </Field>
-            <Field label="Role" isInvalid={errors?.role_id}>
-              <Role control={form.control} />
-            </Field>
+
             <FormControlLabel
               control={
                 <Checkbox

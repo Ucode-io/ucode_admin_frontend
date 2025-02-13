@@ -1,10 +1,10 @@
 import {Controller} from "react-hook-form";
-import {NumericFormat} from "react-number-format";
+import {NumericFormat, PatternFormat} from "react-number-format";
 import style from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 
-const HFNumberField = ({
+const HFCardField = ({
   control,
   name = "",
   disabledHelperText = false,
@@ -13,7 +13,6 @@ const HFNumberField = ({
   required = false,
   updateObject = () => {},
   isNewTableView = false,
-  fullWidth = false,
   isTransparent = false,
   withTrim = false,
   rules = {},
@@ -21,27 +20,13 @@ const HFNumberField = ({
   tabIndex,
   disabled,
   newColumn,
+  format = "",
   field,
   type = "text",
   newUi,
   error = {},
   ...props
 }) => {
-  const handleChange = (event, onChange) => {
-    const inputValue = event.target.value.replace(/\s+/g, "");
-    const parsedValue = inputValue ? parseFloat(inputValue) : "";
-
-    if (parsedValue || parsedValue === 0) {
-      onChange(parsedValue);
-    } else {
-      onChange("");
-    }
-
-    if (isNewTableView) {
-      updateObject();
-    }
-  };
-
   const regexValidation = field?.attributes?.validation;
 
   const styles = isTransparent
@@ -102,21 +87,18 @@ const HFNumberField = ({
                       position: "relative",
                     }
             }>
-            <NumericFormat
-              maxLength={19}
-              format="#### #### #### ####" // Groups numbers in sets of four
-              mask="_" // Shows underscores for missing digits
+            <PatternFormat
+              format={format}
+              mask="_"
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
               decimalSeparator="."
               displayType="input"
-              isNumericString={true}
               autoComplete="off"
               id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
               allowNegative
-              fullWidth={fullWidth}
               value={typeof value === "number" ? value : ""}
-              onChange={(e) => handleChange(e, onChange)}
+              onValueChange={(e) => onChange(e.value)}
               className={`${isFormEdit ? "custom_textfield" : ""} ${
                 style.numberField
               }`}
@@ -155,4 +137,4 @@ const HFNumberField = ({
   );
 };
 
-export default HFNumberField;
+export default HFCardField;

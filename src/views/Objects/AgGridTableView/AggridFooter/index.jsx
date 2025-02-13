@@ -82,7 +82,9 @@ function AggridFooter({
             </RectangleIconButton>
           )}
 
-          {Boolean(selectedRows?.length === 1) && (
+          {Boolean(
+            selectedRows?.length === 1 && view?.attributes?.treeData
+          ) && (
             <Button variant="outlined" onClick={createChild}>
               Add Child
             </Button>

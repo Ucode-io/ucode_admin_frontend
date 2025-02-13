@@ -1,12 +1,9 @@
 import {Box, Button, Tooltip} from "@mui/material";
 import React, {useState} from "react";
-import IconGenerator from "../../../IconPicker/IconGenerator";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {BsThreeDots} from "react-icons/bs";
-import EnvironmentModal from "../EnvironmentMenu/EnvironmentModal";
-import {useNavigate, useParams} from "react-router-dom";
-import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {useDispatch} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import EnvironmentModal from "../EnvironmentMenu/EnvironmentModal";
 
 function RecursiveBlock({level = 1, menuStyle, menuItem}) {
   const [open, setOpen] = useState(false);
@@ -84,6 +81,26 @@ function RecursiveBlock({level = 1, menuStyle, menuItem}) {
           <div className="label" style={{padding: "0 10px", fontSize: "13px"}}>
             <Tooltip title="Project Settings" placement="top">
               <p>Versions</p>
+            </Tooltip>
+          </div>
+          <Box className="icon_group">
+            <Tooltip title="Resource settings" placement="top">
+              <Box className="extra_icon">
+                <BsThreeDots size={13} />
+              </Box>
+            </Tooltip>
+          </Box>
+        </Button>
+        <Button
+          style={styles}
+          className="nav-element"
+          onClick={(e) => {
+            e?.stopPropagation();
+            navigate(`/main/${appId}/language-control`);
+          }}>
+          <div className="label" style={{padding: "0 10px", fontSize: "13px"}}>
+            <Tooltip title="Project Settings" placement="top">
+              <p>Language Control</p>
             </Tooltip>
           </div>
           <Box className="icon_group">

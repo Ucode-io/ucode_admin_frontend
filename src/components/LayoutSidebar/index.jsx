@@ -827,7 +827,7 @@ const ProfilePanel = ({onClose = () => {}}) => {
           navigate(`/settings/auth/matrix/profile/crossed`);
           onClose();
         }}>
-        <SettingsIcon />
+        <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>Settings</Box>
       </Flex>
     </Box>
@@ -897,7 +897,7 @@ const ProfileBottom = ({projectInfo}) => {
               e.stopPropagation();
               onOpen();
             }}>
-            <GTranslateIcon style={{color: "#000"}} />
+            <GTranslateIcon style={{color: "#475467"}} />
             <span>Languages</span>
           </Box>
         </PopoverTrigger>
@@ -942,7 +942,7 @@ const ProfileBottom = ({projectInfo}) => {
         }}
         _hover={{background: "#eeee"}}
         onClick={onOpenModal}>
-        <Logout style={{color: "#000"}} />
+        <Logout style={{color: "#475467"}} />
         <span>Logout</span>
       </Box>
 

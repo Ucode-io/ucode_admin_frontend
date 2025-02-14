@@ -49,6 +49,7 @@ const tableHeads = [
   "Date",
   "Project",
   "Payment Type",
+  "Type",
   "Status",
   "Currency",
   "Amount",
@@ -217,7 +218,10 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                       {project?.title}
                     </TableCell>
                     <TableCell sx={{fontSize: "14px"}}>
-                      {row.creator_type === "transfer" && "Bank"}
+                      {row.payment_type ?? ""}
+                    </TableCell>
+                    <TableCell sx={{fontSize: "14px"}}>
+                      {row.transaction_type ?? ""}
                     </TableCell>
                     <TableCell sx={{fontSize: "14px"}}>
                       {row.payment_status === "accepted" ? (

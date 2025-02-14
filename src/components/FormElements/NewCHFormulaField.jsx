@@ -1,9 +1,9 @@
-import { numberWithSpaces } from "@/utils/formatNumbers";
+import {numberWithSpaces} from "@/utils/formatNumbers";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import {IconButton, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 
 const parser = new Parser();
@@ -28,7 +28,7 @@ const NewCHFFormulaField = ({
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   let formula = field?.attributes?.formula ?? "";
-  
+
   const currentValue = useWatch({
     control,
     name,
@@ -42,21 +42,21 @@ const NewCHFFormulaField = ({
   const updateValue = () => {
     let value;
     const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+      : [];
     fieldsListSorted?.forEach((field) => {
-       value = values?.[field?.slug] ?? 0;
+      value = values?.[field?.slug] ?? 0;
       if (typeof value === "string") value = `${value}`;
-      const regex = new RegExp(`\\b${field.slug}\\b`, 'g');
+      const regex = new RegExp(`\\b${field.slug}\\b`, "g");
       formula = formula.replace(regex, value);
     });
     const {error, result} = parser?.parse(formula);
 
     let newValue = result;
     if (newValue !== currentValue) setFormValue(name, newValue);
-};
+  };
 
   useDebouncedWatch(updateValue, [values], 300);
-
 
   return (
     <Controller
@@ -74,8 +74,8 @@ const NewCHFFormulaField = ({
             formulaIsVisible
               ? formula
               : typeof value === "number"
-              ? numberWithSpaces(value)
-              : value
+                ? numberWithSpaces(value)
+                : value
           }
           onChange={(e) => {
             const val = e.target.value;
@@ -87,9 +87,10 @@ const NewCHFFormulaField = ({
                   ? Number(valueWithoutSpaces)
                   : ""
               );
-              updateObject();
+            updateObject();
           }}
           name={name}
+          disabled={disabled}
           error={error}
           fullWidth
           sx={
@@ -108,19 +109,17 @@ const NewCHFFormulaField = ({
               background: isTransparent ? "transparent" : "#fff",
               border: "0",
               borderWidth: "0px",
-              height: newUi ? '25px' : undefined,
+              height: newUi ? "25px" : undefined,
             },
             endAdornment: (
               <InputAdornment position="end">
                 <Tooltip
-                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                >
+                  title={formulaIsVisible ? "Hide formula" : "Show formula"}>
                   <IconButton
                     edge="end"
                     color={formulaIsVisible ? "primary" : "default"}
                     onClick={() => setFormulaIsVisible((prev) => !prev)}
-                    style={newUi ? {padding: 2} : {}}
-                  >
+                    style={newUi ? {padding: 2} : {}}>
                     <FunctionsIcon />
                   </IconButton>
                 </Tooltip>
@@ -129,8 +128,7 @@ const NewCHFFormulaField = ({
           }}
           {...props}
         />
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

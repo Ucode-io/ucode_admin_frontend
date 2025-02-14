@@ -105,7 +105,7 @@ const HFLinkField = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039",
+                    background: "#f8f8f8",
                     padding: "0px",
                   }
                 : isNewTableView

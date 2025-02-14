@@ -31,6 +31,7 @@ function MultiImageUpload({
   isTableView,
   updateObject,
   newUi,
+  disabled,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
@@ -86,7 +87,9 @@ function MultiImageUpload({
         <>
           {isTableView ? (
             <Box
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               id="multi_image"
               sx={{
                 width: "100%",
@@ -134,7 +137,9 @@ function MultiImageUpload({
 
               <Box
                 id="multi_image_2"
-                onClick={handleClick}
+                onClick={() => {
+                  !disabled && handleClick();
+                }}
                 sx={{
                   position: "absolute",
                   width: "100%",
@@ -159,7 +164,9 @@ function MultiImageUpload({
           {isTableView ? (
             <Box
               id="multi_images"
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 width: "100%",
                 height: "100%",
@@ -187,7 +194,9 @@ function MultiImageUpload({
           ) : (
             <Box
               id="multi_images_2"
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",

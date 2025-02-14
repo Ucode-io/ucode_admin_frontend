@@ -9,7 +9,7 @@ const HFMultiImage = ({
   required,
   rules,
   disabledHelperText = false,
-  disabled,
+  disabled = false,
   field,
   isTableView,
   updateObject = () => {},

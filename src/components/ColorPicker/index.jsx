@@ -3,7 +3,7 @@ import {Card, CircularProgress, IconButton, Popover} from "@mui/material";
 import {colorList} from "./colorList";
 import {useState} from "react";
 
-const ColorPicker = ({value, onChange, loading}) => {
+const ColorPicker = ({value, onChange, loading, disabled}) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (e) => {
@@ -29,7 +29,7 @@ const ColorPicker = ({value, onChange, loading}) => {
         id="round"
         className="round"
         style={{backgroundColor: value ?? "#fff"}}
-        onClick={handleClick}></div>
+        onClick={() => !disabled && handleClick}></div>
 
       <Popover
         open={open}

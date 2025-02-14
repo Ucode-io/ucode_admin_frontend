@@ -101,6 +101,7 @@ export default function RelationFieldForm({
             name="view_fields"
             control={control}
             fullWidth
+            isClearable
             required
             placeholder="View fields"
             className={style.input}

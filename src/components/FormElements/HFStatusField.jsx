@@ -9,6 +9,7 @@ function HFStatusField({
   name,
   updateObject = () => {},
   newUi,
+  disabled = false,
 }) {
   return (
     <Box>
@@ -18,6 +19,7 @@ function HFStatusField({
         render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <Select
+              disabled={disabled}
               id="statusField"
               className={styles.statusSelect}
               sx={{

@@ -10,6 +10,7 @@ import {useSelector} from "react-redux";
 
 function HFMoneyField({
   name,
+  field,
   watch,
   control,
   disabled = false,
@@ -19,7 +20,7 @@ function HFMoneyField({
   newUi,
 }) {
   const value = watch(name);
-
+  console.log("fieldfield", disabled);
   const [anchorEl, setAnchorEl] = useState(null);
   const [valueArray, setValueArray] = useState([
     value?.[0],
@@ -57,6 +58,7 @@ function HFMoneyField({
               height: newUi ? 25 : undefined,
             }}>
             <NumericFormat
+              disabled={disabled}
               id="moneyField"
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
@@ -72,28 +74,9 @@ function HFMoneyField({
                 onChange([newValue, value[1]]);
                 inputChangeHandler();
               }}
-              style={
-                isTransparent
-                  ? {
-                      background: "transparent",
-                      border: "none",
-                      borderRadius: "0",
-                      outline: "none",
-                    }
-                  : disabled
-                    ? {
-                        background: "#c0c0c039",
-                        borderRight: 0,
-                        outline: "none",
-                      }
-                    : {
-                        background: isBlackBg ? "#2A2D34" : "",
-                        color: isBlackBg ? "#fff" : "",
-                        outline: "none",
-                        border:
-                          error?.type === "required" ? "1px solid red" : "",
-                      }
-              }
+              // style={
+
+              // }
             />
             <button
               id="currency_field"

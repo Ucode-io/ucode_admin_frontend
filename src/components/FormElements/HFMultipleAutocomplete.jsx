@@ -225,6 +225,7 @@ const AutoCompleteElement = ({
                 right: 0,
               },
             }}
+            disabled={disabled}
             InputProps={{
               ...params.InputProps,
               classes: {
@@ -269,9 +270,7 @@ const AutoCompleteElement = ({
           />
         )}
         noOptionsText={"No options"}
-        disabled={
-          appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
-        }
+        disabled={disabled}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (

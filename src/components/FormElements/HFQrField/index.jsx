@@ -13,6 +13,7 @@ function HFQrFieldComponent({
   required,
   isTableView,
   newColumn,
+  disabled = false,
 }) {
   const [openMenu, setMenu] = useState(false);
   const qrRef = useRef(null);
@@ -39,6 +40,7 @@ function HFQrFieldComponent({
         <Box>
           {switchInput ? (
             <HFQrForTableView
+              disabled={disabled}
               control={control}
               name={name}
               defaultValue={defaultValue}
@@ -53,6 +55,7 @@ function HFQrFieldComponent({
             />
           ) : (
             <HFQrField
+              disabled={disabled}
               control={control}
               name={name}
               defaultValue={defaultValue}

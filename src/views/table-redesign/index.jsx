@@ -606,6 +606,7 @@ const FieldButton = ({
     },
   });
   const onSubmit = (values) => {
+    console.log("valuesvalues", values);
     const data = {
       ...values,
       slug: slug,
@@ -635,7 +636,7 @@ const FieldButton = ({
       },
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
-      type: values.relation_type ? values.relation_type : values.type,
+      type: "Many2One",
       required: false,
       multiple_insert: false,
       show_label: true,

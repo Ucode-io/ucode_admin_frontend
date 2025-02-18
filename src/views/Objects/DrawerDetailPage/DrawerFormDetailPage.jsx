@@ -34,6 +34,7 @@ import HFMultipleAutocomplete from "./ElementGenerator/hf-multiselectField";
 import HFPhotoUpload from "../../../components/FormElements/HFPhotoUpload";
 import HFMultiImage from "../../../components/FormElements/HFMultiImage";
 import HFLinkField from "../../../components/FormElements/HFLinkField";
+import {NumericFormat} from "react-number-format";
 
 function DrawerFormDetailPage({
   tableSlugFromProps,
@@ -474,6 +475,12 @@ function DrawerFormDetailPage({
                           name={field?.slug}
                           field={field}
                         />
+                      ) : field?.type === "NUMBER" ? (
+                        <NumberField
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                        />
                       ) : (
                         <InputField control={control} name={field?.slug} />
                       )}
@@ -519,6 +526,50 @@ const InputField = ({control, name = "", type = "text"}) => {
         );
       }}
     />
+  );
+};
+
+const NumberField = ({control, name, field, disabled = false}) => {
+  const handleChange = (event, onChange = () => {}) => {
+    const inputValue = event.target.value.replace(/\s+/g, "");
+    const parsedValue = inputValue ? parseFloat(inputValue) : "";
+
+    if (parsedValue || parsedValue === 0) {
+      onChange(parsedValue);
+    } else {
+      onChange("");
+    }
+  };
+  return (
+    <>
+      <Controller
+        control={control}
+        name={name}
+        render={({field: {onChange, value}}) => {
+          return (
+            <NumericFormat
+              maxLength={19}
+              format="#### #### #### ####"
+              mask="_"
+              thousandsGroupStyle="thousand"
+              thousandSeparator=" "
+              decimalSeparator="."
+              displayType="input"
+              isNumericString={true}
+              autoComplete="off"
+              id={"numberField"}
+              allowNegative
+              style={{width: "320px", padding: "0 0px", outline: "none"}}
+              value={typeof value === "number" ? value : ""}
+              onChange={(e) => handleChange(e, onChange)}
+              className={"custom_textfield"}
+              name={name}
+              readOnly={disabled}
+            />
+          );
+        }}
+      />
+    </>
   );
 };
 

@@ -23,6 +23,7 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
 
 const TableView = ({
   filterVisible,
@@ -565,7 +566,7 @@ const TableView = ({
         />
 
         {open && (
-          <ModalDetailPage
+          <DrawerDetailPage
             open={open}
             setOpen={setOpen}
             selectedRow={selectedRow}

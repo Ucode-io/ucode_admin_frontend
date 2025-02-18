@@ -66,11 +66,14 @@ const iconsPaths = {
   EMAIL: "/table-icons/email.svg",
   PASSWORD: "/table-icons/password.svg",
   BUTTON: "/table-icons/password.svg",
+  PERSON: "/table-icons/person.svg",
 };
 
 export const getColumnIcon = ({column}) => {
   if (column.table_slug === "person") {
     return <img src="/table-icons/person.svg" alt="Person" />;
+  } else if (column?.type === "Many2One") {
+    return <img src="/table-icons/lookup.svg" alt="Person" />;
   }
   return icons[column.type];
 };

@@ -11,7 +11,8 @@ const HFMultiImage = ({
   disabledHelperText = false,
   disabled = false,
   field,
-  isTableView,
+  isTableView = false,
+  drawerDetail = false,
   updateObject = () => {},
   newUi,
   ...props
@@ -29,6 +30,7 @@ const HFMultiImage = ({
         <>
           <MultiImageUpload
             name={name}
+            drawerDetail={drawerDetail}
             value={value}
             tabIndex={tabIndex}
             onChange={onChange}

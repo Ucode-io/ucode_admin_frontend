@@ -85,7 +85,7 @@ const HFLinkField = ({
               isNewTableView && updateObject();
             }}
             sx={{
-              width: "100%",
+              width: "335px",
               padding: "0px",
               margin: "0px",
               border: "none",
@@ -99,7 +99,10 @@ const HFLinkField = ({
             autoFocus={tabIndex === 1}
             InputProps={{
               readOnly: disabled,
-              inputProps: {tabIndex, style: {height: inputHeight}},
+              inputProps: {
+                tabIndex,
+                style: {height: inputHeight, color: "blue"},
+              },
               classes: {
                 input: isBlackBg ? classes.input : "",
               },

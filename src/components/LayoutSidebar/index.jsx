@@ -69,7 +69,7 @@ import {languagesActions} from "../../store/globalLanguages/globalLanguages.slic
 import {Fade, Modal, Typography} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const LayoutSidebar = ({appId}) => {
+const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -321,6 +321,7 @@ const LayoutSidebar = ({appId}) => {
   return (
     <>
       <Flex
+        id="layoutSidebar"
         position="relative"
         w={sidebarIsOpen ? 240 : 52}
         flexDirection="column"
@@ -357,7 +358,12 @@ const LayoutSidebar = ({appId}) => {
           h={45}
           borderBottom="1px solid #EAECF0"
           alignItems="center">
-          <Header sidebarIsOpen={sidebarIsOpen} projectInfo={projectInfo} />
+          <Header
+            sidebarIsOpen={sidebarIsOpen}
+            toggleDarkMode={toggleDarkMode}
+            darkMode={darkMode}
+            projectInfo={projectInfo}
+          />
         </Flex>
 
         <Box
@@ -675,7 +681,7 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   );
 });
 
-const Header = ({sidebarIsOpen, projectInfo}) => {
+const Header = ({sidebarIsOpen, projectInfo, toggleDarkMode, darkMode}) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -774,7 +780,11 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}>
         <>
-          <ProfilePanel onClose={onClose} />
+          <ProfilePanel
+            toggleDarkMode={toggleDarkMode}
+            darkMode={darkMode}
+            onClose={onClose}
+          />
           <Companies onSelectEnvironment={onSelectEnvironment} />
           <ProfileBottom projectInfo={projectInfo} />
         </>
@@ -783,7 +793,7 @@ const Header = ({sidebarIsOpen, projectInfo}) => {
   );
 };
 
-const ProfilePanel = ({onClose = () => {}}) => {
+const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
 
@@ -830,6 +840,11 @@ const ProfilePanel = ({onClose = () => {}}) => {
         <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>Settings</Box>
       </Flex>
+      <Box sx={{position: "absolute", top: 10, right: 10}}>
+        <Button onClick={toggleDarkMode} variant="contained">
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </Button>
+      </Box>
     </Box>
   );
 };

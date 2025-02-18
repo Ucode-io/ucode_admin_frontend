@@ -3,22 +3,23 @@ import {useId} from "react";
 import {Controller} from "react-hook-form";
 
 const HFSwitch = ({
-                    control,
-                    name,
-                    label,
-                    disabledHelperText,
-                    tabIndex,
-                    updateObject,
-                    isNewTableView = false,
-                    isBlackBg,
-                    onChange = () => {},
-                    labelProps,
-                    defaultValue = false,
-                    field,
-                    isShowLable = true,
-                    newColumn,
-                    ...props
-                  }) => {
+  control,
+  name,
+  label,
+  disabledHelperText,
+  tabIndex,
+  updateObject,
+  isNewTableView = false,
+  isBlackBg,
+  onChange = () => {},
+  labelProps,
+  defaultValue = false,
+  field,
+  isShowLable = true,
+  newColumn,
+  drawer = false,
+  ...props
+}) => {
   const id = useId();
   return (
     <Controller
@@ -26,15 +27,16 @@ const HFSwitch = ({
       name={name}
       defaultValue={defaultValue}
       render={({
-                 field: {onChange: formOnChange, value},
-                 fieldState: {error},
-               }) => {
+        field: {onChange: formOnChange, value},
+        fieldState: {error},
+      }) => {
         return (
           <div
             style={{
               background: isBlackBg ? "#2A2D34" : "",
               color: isBlackBg ? "#fff" : "",
-              paddingLeft: "4px"
+              paddingLeft: "4px",
+              width: drawer ? "320px" : "",
             }}>
             <ChakraProvider>
               <Switch

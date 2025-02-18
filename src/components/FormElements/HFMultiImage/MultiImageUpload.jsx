@@ -108,7 +108,11 @@ function MultiImageUpload({
                   padding: "0 0 0 0",
                 }}>
                 <img
-                  style={{width: "100%", height: "100%", objectFit: "cover"}}
+                  style={{
+                    width: drawerDetail ? "320px" : "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                   src={value?.[0]}
                 />
               </Box>
@@ -169,10 +173,12 @@ function MultiImageUpload({
                 !disabled && handleClick();
               }}
               sx={{
-                width: "100%",
+                width: drawerDetail ? "330px" : "100%",
                 height: "100%",
                 display: "flex",
                 cursor: "pointer",
+                justifyContent: "flex-end",
+                paddingRight: drawerDetail ? "8px" : "",
               }}>
               <Box
                 sx={{
@@ -185,8 +191,8 @@ function MultiImageUpload({
                 }}>
                 <UploadFileIcon
                   style={{
-                    width: "25px",
-                    height: "25px",
+                    width: "24px",
+                    height: "24px",
                     color: "rgb(116, 116, 116)",
                   }}
                 />

@@ -22,6 +22,7 @@ export const HFDatePickerField = ({
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
+            placeholder="Empty"
             id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"
@@ -67,6 +68,7 @@ export const HFDateTimePickerField = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            placeholder="__.__.____ __.__"
             id="dateTimeField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"

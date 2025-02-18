@@ -35,6 +35,11 @@ import HFPhotoUpload from "../../../components/FormElements/HFPhotoUpload";
 import HFMultiImage from "../../../components/FormElements/HFMultiImage";
 import HFLinkField from "../../../components/FormElements/HFLinkField";
 import {NumericFormat} from "react-number-format";
+import HFFileUpload from "../../../components/FormElements/HFFileUpload";
+import HFMoneyField from "./ElementGenerator/hf-moneyField";
+import HFModalMap from "../../../components/FormElements/HFModalMap";
+import HFPolygonField from "../../../components/FormElements/HFPolygonField";
+import PolygonFieldTable from "../../../components/ElementGenerators/PolygonFieldTable";
 
 function DrawerFormDetailPage({
   tableSlugFromProps,
@@ -397,6 +402,7 @@ function DrawerFormDetailPage({
                         />
                       ) : field?.type === "MULTI_LINE" ? (
                         <MultiLineInput
+                          placeholder={"Empty"}
                           control={control}
                           name={field?.slug}
                           field={field}
@@ -453,6 +459,7 @@ function DrawerFormDetailPage({
                           control={control}
                           name={field?.slug}
                           field={field}
+                          placeholder={"Empty"}
                         />
                       ) : field?.type === "PHOTO" ? (
                         <HFPhotoUpload
@@ -474,11 +481,42 @@ function DrawerFormDetailPage({
                           control={control}
                           name={field?.slug}
                           field={field}
+                          placeholder={"Empty"}
                         />
-                      ) : field?.type === "NUMBER" ? (
+                      ) : field?.type === "NUMBER" ||
+                        field?.type === "FLOAT" ? (
                         <NumberField
                           control={control}
                           name={field?.slug}
+                          field={field}
+                          placeholder="Empty"
+                        />
+                      ) : field?.type === "FILE" ? (
+                        <HFFileUpload
+                          drawerDetail={true}
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                        />
+                      ) : field?.type === "MONEY" ? (
+                        <HFMoneyField
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                          watch={watch}
+                        />
+                      ) : field?.type === "MAP" ? (
+                        <HFModalMap
+                          drawerDetail={true}
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                        />
+                      ) : field?.type === "POLYGON" ? (
+                        <PolygonFieldTable
+                          drawerDetail={true}
+                          control={control}
+                          computedSlug={field?.slug}
                           field={field}
                         />
                       ) : (
@@ -529,7 +567,13 @@ const InputField = ({control, name = "", type = "text"}) => {
   );
 };
 
-const NumberField = ({control, name, field, disabled = false}) => {
+const NumberField = ({
+  control,
+  name,
+  field,
+  disabled = false,
+  placeholder = "",
+}) => {
   const handleChange = (event, onChange = () => {}) => {
     const inputValue = event.target.value.replace(/\s+/g, "");
     const parsedValue = inputValue ? parseFloat(inputValue) : "";
@@ -549,6 +593,7 @@ const NumberField = ({control, name, field, disabled = false}) => {
           return (
             <NumericFormat
               maxLength={19}
+              placeholder={placeholder}
               format="#### #### #### ####"
               mask="_"
               thousandsGroupStyle="thousand"
@@ -559,7 +604,13 @@ const NumberField = ({control, name, field, disabled = false}) => {
               autoComplete="off"
               id={"numberField"}
               allowNegative
-              style={{width: "320px", padding: "0 0px", outline: "none"}}
+              style={{
+                width: "320px",
+                padding: "0 0px",
+                outline: "none",
+                color: "#787774",
+                fontSize: "11px",
+              }}
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
               className={"custom_textfield"}
@@ -581,6 +632,7 @@ const MultiLineInput = ({
   isWrapField = false,
   watch,
   props,
+  placeholder = "",
 }) => {
   const value = useWatch({
     control,
@@ -607,7 +659,7 @@ const MultiLineInput = ({
       <Box
         sx={{
           display: "flex",
-          width: "328px",
+          width: "325px",
           color: "#787774",
           padding: "5px",
           borderRadius: "4px",
@@ -620,11 +672,11 @@ const MultiLineInput = ({
           onClick={(e) => {
             !isDisabled && handleClick(e);
           }}
-          styles={{}}>
+          style={{fontSize: "11px"}}>
           {stripHtmlTags(
             value
               ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
-              : ""
+              : "Empty"
           )}
         </Box>
 

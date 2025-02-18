@@ -22,16 +22,17 @@ function PolygonFieldTable({
   field,
   updateObject,
   computedSlug,
-  isNewTableView,
+  isNewTableView = false,
   row,
-  newColumn,
+  newColumn = false,
+  drawerDetail = false,
 }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const updatePolygon = () => {
-    Boolean(!newColumn && isNewTableView) && updateObject();
+    // Boolean(!!newColumn && isNewTableView) && updateObject();
     handleClose();
   };
 
@@ -44,11 +45,18 @@ function PolygonFieldTable({
         sx={{
           display: "flex",
           alignItems: "center",
-          padding: "0 20px",
+          padding: "0 10px",
+          height: "32px",
           columnGap: "16px",
+          width: "320px",
+          borderRadius: drawerDetail ? "6px" : "",
+          justifyContent: drawerDetail ? "flex-end" : "",
+          "&:hover": {
+            background: "#f7f7f7",
+          },
         }}
         onClick={handleOpen}>
-        <span style={{overflow: "visible"}}>Polygon</span>
+        {/* <span style={{overflow: "visible"}}>Polygon</span> */}
         <img src="/table-icons/polygon.svg" alt="Polygon" />
       </Box>
       <Modal open={open} onClose={handleClose}>

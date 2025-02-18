@@ -31,7 +31,8 @@ const filter = createFilterOptions();
 const useStyles = makeStyles((theme) => ({
   input: {
     "&::placeholder": {
-      color: "#fff",
+      color: "#787774",
+      fontSize: "11px",
     },
   },
 }));
@@ -180,7 +181,7 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <Box sx={{width: "325px", height: "32px", overflow: "hidden"}}>
+    <Box sx={{width: "335px", height: "32px", overflow: "hidden"}}>
       <FormControl style={{width}}>
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
@@ -217,7 +218,6 @@ const AutoCompleteElement = ({
             <TextField
               {...params}
               placeholder={computedValue?.length ? "" : placeholder}
-              // autoFocus={tabIndex === 1}
               sx={{
                 "&.MuiInputAdornment-root": {
                   position: "absolute",

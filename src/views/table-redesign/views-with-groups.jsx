@@ -1852,7 +1852,7 @@ const ExcelExportButton = ({fieldsMap}) => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent minW="432px" w="432px">
+        <ModalContent zIndex={2} minW="602px" w="602px">
           <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose} />
         </ModalContent>
       </Modal>

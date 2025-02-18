@@ -1,21 +1,16 @@
 import {Box, Menu, MenuItem} from "@mui/material";
-import {makeStyles} from "@mui/styles";
 import React, {useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 import {NumericFormat} from "react-number-format";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import useDebounce from "../../hooks/useDebounce";
 import {useSelector} from "react-redux";
 
 function HFMoneyField({
   name,
-  field,
   watch,
   control,
   disabled = false,
-  isBlackBg = false,
-  isTransparent = false,
   updateObject = () => {},
   newUi,
 }) {
@@ -43,8 +38,6 @@ function HFMoneyField({
     }
   };
 
-  const inputChangeHandler = useDebounce((val) => updateObject(), 500);
-
   return (
     <Controller
       name={name}
@@ -55,9 +48,16 @@ function HFMoneyField({
             sx={{
               display: "flex",
               alignItems: "center",
-              height: newUi ? 25 : undefined,
+              height: "32px",
+              width: "325px",
             }}>
             <NumericFormat
+              style={{
+                height: "32px",
+                fontSize: "11px",
+                color: "#787774",
+                outline: "none",
+              }}
               disabled={disabled}
               id="moneyField"
               thousandsGroupStyle="thousand"
@@ -72,7 +72,6 @@ function HFMoneyField({
                 const newValue = event.target.value;
                 setValueArray([newValue, valueArray[1]]);
                 onChange([newValue, value[1]]);
-                inputChangeHandler();
               }}
               // style={
 
@@ -83,8 +82,8 @@ function HFMoneyField({
               className={styles.moneyBtn}
               onClick={handleMenuClick}
               style={{cursor: "pointer", paddingLeft: "5px"}}>
-              <div>{value?.[1]}</div>
-              <ArrowDropDownIcon style={{fontSize: "20px"}} />
+              <div style={{fontSize: "11px"}}>{value?.[1]}</div>
+              <ArrowDropDownIcon style={{fontSize: "15px"}} />
             </button>
             <Menu
               id="basic-menu"
@@ -96,6 +95,7 @@ function HFMoneyField({
               }}>
               {currencies?.map((el) => (
                 <MenuItem
+                  sx={{fontSize: "11px"}}
                   onClick={() => {
                     handleMenuClose(el?.label);
                     onChange([value?.[0], el?.label]);

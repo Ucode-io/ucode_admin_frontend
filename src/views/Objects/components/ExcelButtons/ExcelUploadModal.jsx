@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {
   CloseIcon,
   PointerIcon,
@@ -10,16 +10,16 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import excelService from "../../../../services/excelService";
 import fileService from "../../../../services/fileService";
 import styles from "./style.module.scss";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import listToOptions from "../../../../utils/listToOptions";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 
-const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
+const ExcelUploadModal = ({fieldsMap, handleClose}) => {
   const inputFIle = useRef();
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const queryClient = useQueryClient();
 
   const [rows, setRows] = useState();
@@ -28,10 +28,10 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const [visible, setVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
   const excelFieldOptions = useMemo(() => {
-    return rows?.map((el) => ({ label: el, value: el }));
+    return rows?.map((el) => ({label: el, value: el}));
   }, [rows]);
 
-  const { reset, control, watch, handleSubmit } = useForm();
+  const {reset, control, watch, handleSubmit} = useForm();
 
   const fields = watch("fields");
 
@@ -78,7 +78,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
         table_slug: tableSlug,
       })
       .then((res) => {
-        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
       })
       .catch((err) => {
         console.log("onSubmit error", err);
@@ -120,7 +120,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
               <span>Подтверждения</span>
             </Tab>
             <button onClick={handleClose} className={styles.tabs_close}>
-              <CloseIcon style={{ color: "#6E8BB7" }} />
+              <CloseIcon style={{color: "#6E8BB7"}} />
             </button>
           </TabList>
 
@@ -132,7 +132,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                 </div>
               ) : (
                 <div className={styles.dialog_upload_section}>
-                  <div style={{ display: "flex", justifyContent: "center" }}>
+                  <div style={{display: "flex", justifyContent: "center"}}>
                     <UploadIcon />
                   </div>
                   <p>Drag and drop files here</p>
@@ -140,10 +140,12 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                     type="file"
                     id="file"
                     ref={inputFIle}
-                    style={{ display: "none" }}
+                    style={{display: "none"}}
                     onChange={onUpload}
                   />
-                  <button onClick={fileUpload} style={{ width: "fit-content" }}>Browse</button>
+                  <button onClick={fileUpload} style={{width: "fit-content"}}>
+                    Browse
+                  </button>
                 </div>
               )}
             </div>
@@ -209,14 +211,12 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                 <div className={styles.control_btns}>
                   <button
                     className={styles.control_clear}
-                    onClick={() => clearBtn()}
-                  >
+                    onClick={() => clearBtn()}>
                     Сбросить
                   </button>
                   <button
                     className={styles.control_upload}
-                    onClick={handleSubmit(onSubmit)}
-                  >
+                    onClick={handleSubmit(onSubmit)}>
                     {btnLoader ? (
                       <span className={styles.btn_loader}>
                         <RippleLoader size="btn_size" height="20px" />

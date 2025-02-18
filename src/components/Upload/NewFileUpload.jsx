@@ -14,6 +14,7 @@ export default function NewFileUpload({
   disabled,
   tabIndex,
   field,
+  drawerDetail = false,
 }) {
   const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -67,7 +68,9 @@ export default function NewFileUpload({
     <div className={`Gallery ${className}`}>
       {value && (
         <>
-          <Box className="uploadedFile">
+          <Box
+            sx={{width: drawerDetail ? "330px" : ""}}
+            className="uploadedFile">
             <Button
               id="file_upload"
               aria-describedby={id}

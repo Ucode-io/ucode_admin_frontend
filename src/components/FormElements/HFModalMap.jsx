@@ -15,6 +15,7 @@ function HFModalMap({
   isFormEdit,
   name,
   required,
+  drawerDetail = false,
 }) {
   const [open, setOpen] = useState(false);
   const value = useWatch({
@@ -31,7 +32,10 @@ function HFModalMap({
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        width: drawerDetail ? "325px" : "",
+      }}>
       <TextField
         id={`map_field`}
         value={

@@ -10,6 +10,7 @@ const HFFileUpload = ({
   required,
   tabIndex,
   disabled,
+  drawerDetail = false,
   isNewTableView = false,
   updateObject = () => {},
   disabledHelperText = false,
@@ -29,6 +30,7 @@ const HFFileUpload = ({
           <NewFileUpload
             name={name}
             value={value}
+            drawerDetail={drawerDetail}
             tabIndex={tabIndex}
             field={field}
             onChange={(val) => {

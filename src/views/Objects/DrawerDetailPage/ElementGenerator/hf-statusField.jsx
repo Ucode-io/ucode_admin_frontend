@@ -47,7 +47,7 @@ function HFStatusField({field = {}, control, name, newUi, disabled = false}) {
                 return (
                   <Box
                     sx={{
-                      height: "10px",
+                      height: "18px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",

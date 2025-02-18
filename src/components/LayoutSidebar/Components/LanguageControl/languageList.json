@@ -1,6 +1,5 @@
 {
   "staticData": [
-    // MENU LANGUAGE ELEMENTS //
     {
       "key": "Settings",
       "translations": {
@@ -158,7 +157,6 @@
       }
     },
 
-    //   TABLE LANGUAGE ELEMENTS //
     {
       "key": "Name",
       "translations": {
@@ -208,7 +206,6 @@
       }
     },
 
-    // CLIENT TYPE CREATE //
     {
       "key": "Create folder",
       "translations": {
@@ -340,7 +337,6 @@
       }
     },
 
-    //   PERMISSIONSSSSSSS /////
     {
       "key": "Record Permission",
       "translations": {
@@ -431,7 +427,6 @@
       }
     },
 
-    //   RESOURCE SETTINGS ///
     {
       "key": "Resource settings",
       "translations": {
@@ -457,7 +452,6 @@
       }
     },
 
-    // API KEYS ///
     {
       "key": "API keys",
       "translations": {
@@ -507,8 +501,6 @@
       }
     },
 
-    //   CUSTOM END POINT ////
-
     {
       "key": "Redirects",
       "translations": {
@@ -543,8 +535,6 @@
       }
     },
 
-    //   MODELS ///
-
     {
       "key": "Create new",
       "translations": {
@@ -553,8 +543,6 @@
         "en": "Create new"
       }
     },
-
-    //   FUNCTIONS ///
 
     {
       "key": "Faas functions",
@@ -581,8 +569,6 @@
       }
     },
 
-    //   MICROFRONTED ///
-
     {
       "key": "Microfrontend",
       "translations": {
@@ -607,8 +593,6 @@
         "en": "Framework type"
       }
     },
-
-    // ACTIVITY LOGS ////
 
     {
       "key": "Activity Logs",
@@ -676,7 +660,6 @@
       }
     },
 
-    // USER TABLE ////
     {
       "key": "Наименование",
       "translations": {
@@ -783,8 +766,6 @@
       }
     },
 
-    // CREATE MENU DROPDOWN ///
-
     {
       "key": "Create table",
       "translations": {
@@ -828,8 +809,6 @@
         "en": "Add folder"
       }
     },
-
-    // CREATE TABLE ////
 
     {
       "key": "Create table",
@@ -889,7 +868,6 @@
       }
     },
 
-    // ADD TABLE ////
     {
       "key": "Attach to table",
       "translations": {
@@ -898,7 +876,6 @@
         "en": "Attach to table"
       }
     },
-    // ADD MICROFRONTEND ////
     {
       "key": "Attach to microfrontend",
       "translations": {
@@ -916,7 +893,6 @@
       }
     },
 
-    // ADD WEBSITE ////
     {
       "key": "Website Link",
       "translations": {
@@ -934,7 +910,6 @@
       }
     },
 
-    // TABLE VIEW ////
     {
       "key": "View",
       "translations": {
@@ -960,7 +935,6 @@
       }
     },
 
-    // TABLE SETTINGS ////
     {
       "key": "Details",
       "translations": {
@@ -1010,8 +984,6 @@
       }
     },
 
-    // LAYOUTS
-
     {
       "key": "Default",
       "translations": {
@@ -1037,7 +1009,6 @@
       }
     },
 
-    // FIELDS ///
     {
       "key": "Field Label",
       "translations": {
@@ -1063,7 +1034,6 @@
       }
     },
 
-    // RELATIONS ///
     {
       "key": "Table from",
       "translations": {
@@ -1089,7 +1059,6 @@
       }
     },
 
-    // CUSTOM ERRORS ///
     {
       "key": "Action type",
       "translations": {
@@ -1107,7 +1076,6 @@
       }
     },
 
-    // FIELD SETTINGS
     {
       "key": "Field create",
       "translations": {
@@ -1608,7 +1576,6 @@
       }
     },
 
-    // LAYOUT SETTINGS
     {
       "key": "Add fields",
       "translations": {
@@ -1667,7 +1634,6 @@
       }
     },
 
-    // VIEW OPTION
     {
       "key": "View options",
       "translations": {
@@ -1831,7 +1797,6 @@
       }
     },
 
-    // TIME LINE VIEW
     {
       "key": "Today",
       "translations": {

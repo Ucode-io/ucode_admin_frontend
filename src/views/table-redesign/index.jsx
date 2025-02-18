@@ -113,8 +113,6 @@ export const DynamicTable = ({
     (state) => state.main.tableViewFiltersOpen
   );
 
-  const filterHeight =
-    document.querySelector("#filterHeight")?.offsetHeight ?? 0;
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const [limitOptions, setLimitOptions] = useState([
     {value: 10, label: "10 rows"},
@@ -268,7 +266,7 @@ export const DynamicTable = ({
               borderBottom: "1px solid #EAECF0",
               position: "sticky",
               top: 0,
-              zIndex: 10,
+              zIndex: 2,
             }}>
             <tr>
               <IndexTh

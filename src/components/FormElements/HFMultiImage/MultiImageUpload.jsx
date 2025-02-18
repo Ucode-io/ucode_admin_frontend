@@ -32,6 +32,7 @@ function MultiImageUpload({
   updateObject,
   newUi,
   disabled,
+  drawerDetail = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
@@ -92,7 +93,7 @@ function MultiImageUpload({
               }}
               id="multi_image"
               sx={{
-                width: "100%",
+                width: drawerDetail ? "320px" : "100%",
                 height: newUi ? "25px" : "36px",
                 display: "flex",
                 alignItems: "center",

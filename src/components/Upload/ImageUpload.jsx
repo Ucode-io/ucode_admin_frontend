@@ -32,6 +32,7 @@ const ImageUpload = ({
   isNewTableView = false,
   tabIndex,
   field,
+  drawerDetail = false,
 }) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -115,6 +116,7 @@ const ImageUpload = ({
       {value && (
         <>
           <div
+            style={{width: drawerDetail ? "320px" : ""}}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}

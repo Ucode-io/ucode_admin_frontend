@@ -16,12 +16,13 @@ import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import {useQueryClient} from "react-query";
 import listToOptions from "../../../../utils/listToOptions";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
+import Select from "react-select";
+import HFSelectField from "../../../../components/FormElements/HFSelectField";
 
 const ExcelUploadModal = ({fieldsMap, handleClose}) => {
   const inputFIle = useRef();
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
-
   const [rows, setRows] = useState();
   const [fileName, setFileName] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
@@ -196,11 +197,17 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
                               <PointerIcon />
                             </div>
                             <div className={styles.select_options}>
-                              <HFSelect
+                              {/* <HFSelect
                                 name={`fields[${index}].excelSlug`}
                                 control={control}
                                 options={excelFieldOptions}
                                 width={"264px"}
+                              /> */}
+
+                              <HFSelectField
+                                control={control}
+                                name={`fields[${index}].excelSlug`}
+                                options={excelFieldOptions}
                               />
                             </div>
                           </div>

@@ -566,7 +566,7 @@ const TableView = ({
         />
 
         {open && (
-          <DrawerDetailPage
+          <ModalDetailPage
             open={open}
             setOpen={setOpen}
             selectedRow={selectedRow}

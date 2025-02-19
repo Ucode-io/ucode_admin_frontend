@@ -10,7 +10,6 @@ const HFSelectField = ({
   options = [],
   disabledHelperText,
   placeholder,
-  required = false,
   onChange = () => {},
   onOpen = () => {},
   getOnchangeField = () => {},
@@ -19,6 +18,7 @@ const HFSelectField = ({
   rules = {},
   id,
   isClearable = true,
+  required = false,
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -29,20 +29,45 @@ const HFSelectField = ({
   };
 
   return (
-    <Box width={"150px"}>
+    <Box
+      width={width ? width : "120px"}
+      display={"flex"}
+      alignItems={"center"}
+      flexDirection={"column"}>
       <Controller
         control={control}
+        rules={{
+          required: required ? "This is required field" : false,
+        }}
         name={name}
-        render={({field: {onChange, value}}) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
-            <Select
-              w={"100%"}
-              onChange={(e) => onChange(e.target.value)}
-              options={options}>
-              {options?.map((option) => (
-                <option>{option?.label}</option>
-              ))}
-            </Select>
+            <>
+              <Select
+                required={required}
+                w={"100%"}
+                onChange={(e) => onChange(e.target.value)}
+                options={options}>
+                <option defaultChecked disabled>
+                  Choose value
+                </option>
+                {options?.map((option) => (
+                  <option>{option?.label}</option>
+                ))}
+              </Select>
+
+              {name === error?.ref?.name && (
+                <span
+                  style={{
+                    fontSize: "10px",
+                    width: "100%",
+                    color: "red",
+                    marginLeft: "15px",
+                  }}>
+                  {error?.message}
+                </span>
+              )}
+            </>
           );
         }}
       />

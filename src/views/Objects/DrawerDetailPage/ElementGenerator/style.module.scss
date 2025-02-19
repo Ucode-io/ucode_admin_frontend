@@ -95,7 +95,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-  height: 20px;
+  height: 18px;
   overflow: auto;
   font-size: 11px;
 }
@@ -111,5 +111,53 @@
 
   .value {
     margin-right: 4px;
+  }
+}
+
+.iconWrapper {
+  width: 26px;
+  height: 26px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+  color: #0067f4;
+
+  &.rectangle {
+    border-radius: 6px;
+    margin-top: 7px;
+  }
+
+  &.error {
+    border-color: red !important;
+  }
+}
+
+.menuList {
+  padding: 10px;
+  width: 300px;
+}
+
+.iconsBlock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.popupIconWrapper {
+  width: 30px;
+  height: 30px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
   }
 }

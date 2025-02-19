@@ -1,7 +1,7 @@
-import { FormHelperText } from '@mui/material';
-import React from 'react'
-import { Controller } from 'react-hook-form';
-import ImageUpload from '../Upload/ImageUpload';
+import {FormHelperText} from "@mui/material";
+import React from "react";
+import {Controller} from "react-hook-form";
+import ImageUpload from "../Upload/ImageUpload";
 
 export default function HFPhotoUpload({
   control,
@@ -14,6 +14,7 @@ export default function HFPhotoUpload({
   disabledHelperText = false,
   disabled,
   field,
+  drawerDetail = false,
   ...props
 }) {
   return (
@@ -25,9 +26,10 @@ export default function HFPhotoUpload({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <ImageUpload
+            drawerDetail={drawerDetail}
             name={name}
             value={value}
             tabIndex={tabIndex}
@@ -44,7 +46,6 @@ export default function HFPhotoUpload({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 }

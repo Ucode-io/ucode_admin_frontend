@@ -113,8 +113,6 @@ export const DynamicTable = ({
     (state) => state.main.tableViewFiltersOpen
   );
 
-  const filterHeight =
-    document.querySelector("#filterHeight")?.offsetHeight ?? 0;
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const [limitOptions, setLimitOptions] = useState([
     {value: 10, label: "10 rows"},
@@ -268,7 +266,7 @@ export const DynamicTable = ({
               borderBottom: "1px solid #EAECF0",
               position: "sticky",
               top: 0,
-              zIndex: 10,
+              zIndex: 2,
             }}>
             <tr>
               <IndexTh
@@ -606,6 +604,7 @@ const FieldButton = ({
     },
   });
   const onSubmit = (values) => {
+    console.log("valuesvalues", values);
     const data = {
       ...values,
       slug: slug,
@@ -635,7 +634,7 @@ const FieldButton = ({
       },
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
-      type: values.relation_type ? values.relation_type : values.type,
+      type: "Many2One",
       required: false,
       multiple_insert: false,
       show_label: true,

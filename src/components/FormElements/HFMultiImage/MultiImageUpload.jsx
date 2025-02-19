@@ -31,6 +31,8 @@ function MultiImageUpload({
   isTableView,
   updateObject,
   newUi,
+  disabled,
+  drawerDetail = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
@@ -86,10 +88,12 @@ function MultiImageUpload({
         <>
           {isTableView ? (
             <Box
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               id="multi_image"
               sx={{
-                width: "100%",
+                width: drawerDetail ? "320px" : "100%",
                 height: newUi ? "25px" : "36px",
                 display: "flex",
                 alignItems: "center",
@@ -104,7 +108,11 @@ function MultiImageUpload({
                   padding: "0 0 0 0",
                 }}>
                 <img
-                  style={{width: "100%", height: "100%", objectFit: "cover"}}
+                  style={{
+                    width: drawerDetail ? "320px" : "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                   src={value?.[0]}
                 />
               </Box>
@@ -134,7 +142,9 @@ function MultiImageUpload({
 
               <Box
                 id="multi_image_2"
-                onClick={handleClick}
+                onClick={() => {
+                  !disabled && handleClick();
+                }}
                 sx={{
                   position: "absolute",
                   width: "100%",
@@ -159,12 +169,16 @@ function MultiImageUpload({
           {isTableView ? (
             <Box
               id="multi_images"
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
-                width: "100%",
+                width: drawerDetail ? "330px" : "100%",
                 height: "100%",
                 display: "flex",
                 cursor: "pointer",
+                justifyContent: "flex-end",
+                paddingRight: drawerDetail ? "8px" : "",
               }}>
               <Box
                 sx={{
@@ -177,8 +191,8 @@ function MultiImageUpload({
                 }}>
                 <UploadFileIcon
                   style={{
-                    width: "25px",
-                    height: "25px",
+                    width: "24px",
+                    height: "24px",
                     color: "rgb(116, 116, 116)",
                   }}
                 />
@@ -187,7 +201,9 @@ function MultiImageUpload({
           ) : (
             <Box
               id="multi_images_2"
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",

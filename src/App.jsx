@@ -18,8 +18,8 @@ import {LicenseManager} from "ag-grid-enterprise";
 import {ModuleRegistry} from "ag-grid-community";
 import {RowApiModule} from "ag-grid-community";
 import {ClientSideRowModelApiModule} from "ag-grid-community";
-import { MantineProvider } from '@mantine/core';
-import '@mantine/core/styles.css';
+import {MantineProvider} from "@mantine/core";
+import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 
 LicenseManager.setLicenseKey(

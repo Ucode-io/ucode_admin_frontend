@@ -9,31 +9,30 @@ import {
   createFilterOptions,
   Tooltip,
   InputAdornment,
+  Box,
 } from "@mui/material";
 import {useEffect, useState} from "react";
 import {useMemo} from "react";
 import {Controller, useForm, useWatch} from "react-hook-form";
-import IconGenerator from "../IconPicker/IconGenerator";
-import HFColorPicker from "./HFColorPicker";
-import HFIconPicker from "./HFIconPicker";
-import styles from "./style.module.scss";
-import HFTextField from "./HFTextField";
-import PrimaryButton from "../Buttons/PrimaryButton";
 import AddIcon from "@mui/icons-material/Add";
-import constructorFieldService from "../../services/constructorFieldService";
-import {generateGUID} from "../../utils/generateID";
-import RippleLoader from "../Loaders/RippleLoader";
-import FRow from "./FRow";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {useParams} from "react-router-dom";
+import HFColorPicker from "../../../../components/FormElements/HFColorPicker";
+import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
+import HFTextField from "../../../../components/FormElements/HFTextField";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import RippleLoader from "../../../../components/Loaders/RippleLoader";
+import styles from "./style.module.scss";
+import FRow from "../../../../components/FormElements/FRow";
 
 const filter = createFilterOptions();
 
 const useStyles = makeStyles((theme) => ({
   input: {
     "&::placeholder": {
-      color: "#fff",
+      color: "#787774",
+      fontSize: "11px",
     },
   },
 }));
@@ -42,7 +41,6 @@ const HFMultipleAutocomplete = ({
   control,
   name,
   label,
-  updateObject,
   isNewTableView = false,
   isFormEdit = false,
   isBlackBg = false,
@@ -87,7 +85,6 @@ const HFMultipleAutocomplete = ({
             placeholder={placeholder}
             width={width}
             label={label}
-            // tabIndex={tabIndex}
             required={required}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
@@ -95,7 +92,6 @@ const HFMultipleAutocomplete = ({
             onFormChange={(el) => {
               onFormChange(el);
               onChange(el);
-              isNewTableView && updateObject();
             }}
             disabledHelperText={disabledHelperText}
             error={error}
@@ -117,14 +113,11 @@ const AutoCompleteElement = ({
   width,
   label,
   hasColor,
-  // tabIndex,
   hasIcon,
-  required,
   classes,
   placeholder,
   onFormChange,
   disabledHelperText,
-  isFormEdit,
   error,
   isMultiSelect,
   disabled,
@@ -184,149 +177,142 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <FormControl style={{width}}>
-      <InputLabel size="small">{label}</InputLabel>
-      <Autocomplete
-        multiple
-        id={`multiselectField`}
-        value={computedValue}
-        options={localOptions}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{color: "#fff"}} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
-        disableCloseOnSelect
-        getOptionLabel={(option) => option?.label ?? option?.value}
-        isOptionEqualToValue={(option, value) => option?.value === value?.value}
-        onChange={changeHandler}
-        filterOptions={(options, params) => {
-          const filtered = filter(options, params);
-          if (params.inputValue !== "" && field?.attributes?.creatable) {
-            filtered.push({
-              value: "NEW",
-              inputValue: params.inputValue,
-              label: `Add "${params.inputValue}"`,
-            });
+    <Box
+      sx={{
+        width: "330px",
+        paddingLeft: "4px",
+        height: "32px",
+        overflow: "hidden",
+      }}>
+      <FormControl style={{width}}>
+        <InputLabel size="small">{label}</InputLabel>
+        <Autocomplete
+          multiple
+          id={`multiselectField`}
+          value={computedValue}
+          options={localOptions}
+          popupIcon={
+            isBlackBg ? (
+              <ArrowDropDownIcon style={{color: "#fff"}} />
+            ) : (
+              <ArrowDropDownIcon />
+            )
           }
+          disableCloseOnSelect
+          getOptionLabel={(option) => option?.label ?? option?.value}
+          isOptionEqualToValue={(option, value) =>
+            option?.value === value?.value
+          }
+          onChange={changeHandler}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            if (params.inputValue !== "" && field?.attributes?.creatable) {
+              filtered.push({
+                value: "NEW",
+                inputValue: params.inputValue,
+                label: `Add "${params.inputValue}"`,
+              });
+            }
 
-          return filtered;
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder={computedValue?.length ? "" : placeholder}
-            // autoFocus={tabIndex === 1}
-            sx={{
-              "&.MuiInputAdornment-root": {
-                position: "absolute",
-                right: 0,
-              },
-            }}
-            disabled={disabled}
-            InputProps={{
-              ...params.InputProps,
-              classes: {
-                input: isBlackBg ? classes.input : "",
-              },
-              inputProps: isNewTableView
-                ? {
-                    ...params.inputProps,
-                    style: computedValue?.length > 0 ? {height: 0} : undefined,
-                  }
-                : params.inputProps,
-              style: disabled
-                ? {
-                    background: "inherit",
-                  }
-                : {
-                    padding: newUi ? "0" : undefined,
-                    background: "inherit",
-                    color: isBlackBg ? "#fff" : "inherit",
-                    border: error?.message ? "1px solid red" : "",
-                  },
-
-              endAdornment: Boolean(
-                appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
-              ) && (
-                <Tooltip
-                  title="This field is disabled for this role!"
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                  }}>
-                  <InputAdornment position="start">
-                    <Lock style={{fontSize: "20px"}} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
-            }}
-            className={`${
-              isFormEdit ? "custom_textfield" : ""
-            } multiSelectInput`}
-            size="small"
-          />
-        )}
-        noOptionsText={"No options"}
-        disabled={disabled}
-        renderTags={(values, getTagProps) => (
-          <div className={styles.valuesWrapper}>
-            {values?.map((el, index) => (
-              <div
-                key={el?.value}
-                className={styles.multipleAutocompleteTags}
-                style={
-                  hasColor
-                    ? {color: el?.color, background: `${el?.color}30`}
-                    : {}
-                }>
-                {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p
-                  className={styles.value}
+            return filtered;
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder={computedValue?.length ? "" : placeholder}
+              sx={{
+                "&.MuiInputAdornment-root": {
+                  position: "absolute",
+                  right: 0,
+                },
+                paddingLeft: "0",
+              }}
+              disabled={disabled}
+              InputProps={{
+                ...params.InputProps,
+                classes: {
+                  input: classes.input,
+                },
+                inputProps: isNewTableView
+                  ? {
+                      ...params.inputProps,
+                      style:
+                        computedValue?.length > 0 ? {height: 0} : undefined,
+                    }
+                  : params.inputProps,
+                endAdornment: Boolean(
+                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+                ) && (
+                  <Tooltip
+                    title="This field is disabled for this role!"
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                    }}>
+                    <InputAdornment position="start">
+                      <Lock style={{fontSize: "20px"}} />
+                    </InputAdornment>
+                  </Tooltip>
+                ),
+              }}
+              className={"custom_textfield"}
+              size="small"
+            />
+          )}
+          noOptionsText={"No options"}
+          disabled={disabled}
+          renderTags={(values, getTagProps) => (
+            <div className={styles.valuesWrapper}>
+              {values?.map((el, index) => (
+                <div
+                  key={el?.value}
+                  className={styles.multipleAutocompleteTags}
                   style={
-                    isNewTableView
-                      ? {
-                          maxWidth: "150px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }
-                      : undefined
+                    hasColor
+                      ? {color: el?.color, background: `${el?.color}30`}
+                      : {}
                   }>
-                  {el?.label ?? el?.value}
-                </p>
-                {field?.attributes?.disabled === false && editPermission && (
-                  <Close
-                    fontSize="10"
-                    style={{cursor: "pointer"}}
-                    onClick={() => {
-                      getTagProps({index})?.onDelete();
-                    }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      />
-      {!disabledHelperText && error?.message && (
-        <FormHelperText error>{error?.message}</FormHelperText>
-      )}
-
-      {/* {Boolean(!value?.length && required) && (
-        <FormHelperText error>{"This field is required"}</FormHelperText>
-      )} */}
-      <Dialog open={!!dialogState} onClose={handleClose}>
-        <AddOptionBlock
-          dialogState={dialogState}
-          addNewOption={addNewOption}
-          handleClose={handleClose}
-          field={field}
+                  {hasIcon && <IconGenerator icon={el?.icon} />}
+                  <p
+                    className={styles.value}
+                    style={{
+                      maxWidth: "100px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      borderRadius: "6px",
+                      fontSize: "11px",
+                      overflow: "hidden",
+                    }}>
+                    {el?.label ?? el?.value}
+                  </p>
+                  {field?.attributes?.disabled === false && editPermission && (
+                    <Close
+                      fontSize="10"
+                      style={{cursor: "pointer"}}
+                      onClick={() => {
+                        getTagProps({index})?.onDelete();
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         />
-      </Dialog>
-    </FormControl>
+        {!disabledHelperText && error?.message && (
+          <FormHelperText error>{error?.message}</FormHelperText>
+        )}
+        <Dialog open={!!dialogState} onClose={handleClose}>
+          <AddOptionBlock
+            dialogState={dialogState}
+            addNewOption={addNewOption}
+            handleClose={handleClose}
+            field={field}
+          />
+        </Dialog>
+      </FormControl>
+    </Box>
   );
 };
 

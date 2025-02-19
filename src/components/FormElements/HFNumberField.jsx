@@ -104,8 +104,8 @@ const HFNumberField = ({
             }>
             <NumericFormat
               maxLength={19}
-              format="#### #### #### ####" // Groups numbers in sets of four
-              mask="_" // Shows underscores for missing digits
+              format="#### #### #### ####"
+              mask="_"
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
               decimalSeparator="."

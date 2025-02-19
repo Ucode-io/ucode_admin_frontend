@@ -220,6 +220,7 @@ const CellElementGeneratorForTableView = ({
           name={computedSlug}
           updateObject={updateObject}
           newUi={newUi}
+          disabled={isDisabled}
         />
       );
 
@@ -608,6 +609,7 @@ const CellElementGeneratorForTableView = ({
       return (
         <HFIconPicker
           isFormEdit
+          disabled={isDisabled}
           control={control}
           updateObject={updateObject}
           isNewTableView={true}
@@ -634,6 +636,7 @@ const CellElementGeneratorForTableView = ({
     case "QR":
       return (
         <HFQrFieldComponent
+          disabled={isDisabled}
           isTransparent={true}
           control={control}
           updateObject={updateObject}
@@ -753,6 +756,7 @@ const CellElementGeneratorForTableView = ({
     case "COLOR":
       return (
         <HFColorPicker
+          disabled={isDisabled}
           control={control}
           updateObject={updateObject}
           isNewTableView={true}

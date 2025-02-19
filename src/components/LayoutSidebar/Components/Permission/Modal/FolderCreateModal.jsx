@@ -81,6 +81,8 @@ const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const onSubmit = (values) => {
     const data = {
       ...values,
+      session_limit: values?.session_limit ? values?.session_limit : 50,
+
       "project-id": company.projectId,
     };
     const params = {

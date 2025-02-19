@@ -1,21 +1,7 @@
 import React from "react";
 import HFTextEditor from "../FormElements/HFTextEditor";
-import {Box, Button, Modal, Popover} from "@mui/material";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import {Box, Popover} from "@mui/material";
 import {useWatch} from "react-hook-form";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "none",
-  borderRadius: "8px",
-  boxShadow: 24,
-  p: 4,
-};
 
 export default function MultiLineCellFormElement({
   control,
@@ -61,7 +47,9 @@ export default function MultiLineCellFormElement({
         }}>
         <p
           id="textAreaInput"
-          onClick={handleClick}
+          onClick={() => {
+            !isDisabled && handleClick();
+          }}
           style={
             isWrapField
               ? {

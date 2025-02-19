@@ -1846,13 +1846,13 @@ const ExcelExportButton = ({fieldsMap}) => {
         cursor="pointer"
         onClick={onOpen}>
         <Image src="/img/file-download.svg" alt="Docs" />
-        <ViewOptionTitle>Export</ViewOptionTitle>
+        <ViewOptionTitle>Import</ViewOptionTitle>
         <ChevronRightIcon ml="auto" fontSize={22} />
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent minW="432px" w="432px">
+        <ModalContent zIndex={2} minW="602px" w="602px">
           <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose} />
         </ModalContent>
       </Modal>
@@ -1901,7 +1901,7 @@ const ExcelImportButton = ({
       ) : (
         <Image src="/img/file-download.svg" alt="Docs" />
       )}
-      <ViewOptionTitle>Import</ViewOptionTitle>
+      <ViewOptionTitle>Export</ViewOptionTitle>
       <ChevronRightIcon ml="auto" fontSize={22} />
     </Flex>
   );

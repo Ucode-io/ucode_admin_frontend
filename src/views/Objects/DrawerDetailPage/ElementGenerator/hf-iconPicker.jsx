@@ -1,20 +1,19 @@
 import {FormHelperText} from "@mui/material";
 import {Controller} from "react-hook-form";
-import MultiImageUpload from "./MultiImageUpload";
+import IconPickerField from "./IconPickerField";
 
-const HFMultiImage = ({
+const HFIconPicker = ({
   control,
-  name,
   tabIndex,
-  required,
-  rules,
+  name,
   disabledHelperText = false,
+  required = false,
+  rules = {},
+  updateObject,
+  isNewTableView = false,
   disabled = false,
-  field,
-  isTableView = false,
-  drawerDetail = false,
-  updateObject = () => {},
-  newUi,
+  customeClick = false,
+  clickItself = () => {},
   ...props
 }) => {
   return (
@@ -28,20 +27,20 @@ const HFMultiImage = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
-          <MultiImageUpload
-            name={name}
-            drawerDetail={drawerDetail}
+          <IconPickerField
+            id="icon_field"
+            disabled={disabled}
+            error={error}
             value={value}
             tabIndex={tabIndex}
-            onChange={onChange}
-            updateObject={updateObject}
-            disabled={disabled}
-            field={field}
-            isTableView={isTableView}
-            newUi={newUi}
+            onChange={(val) => {
+              onChange(val);
+            }}
+            customeClick={customeClick}
+            clickItself={clickItself}
             {...props}
           />
-          {!disabledHelperText && error?.message && (
+          {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
@@ -49,4 +48,4 @@ const HFMultiImage = ({
   );
 };
 
-export default HFMultiImage;
+export default HFIconPicker;

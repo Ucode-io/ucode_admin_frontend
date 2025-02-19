@@ -73,6 +73,7 @@ import UsersList from "../views/Users/UsersList";
 import WebPage from "../views/WebPage";
 import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
 import {ClientTypes} from "@/views/client-types";
+import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -196,7 +197,7 @@ const Router = () => {
       <Route
         path="/"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
-        <Route path='client-types' element={<ClientTypes />} />
+        <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="main">
           <Route
@@ -355,6 +356,9 @@ const Router = () => {
           </Route>
           <Route path=":appId/project-setting">
             <Route index element={<ProjectSettingPage />} />
+          </Route>
+          <Route path=":appId/language-control">
+            <Route index element={<LanguageControl />} />
           </Route>
           <Route path=":appId/function">
             <Route path=":functionId" element={<FunctionsDetail />} />

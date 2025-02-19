@@ -51,9 +51,7 @@ const SubMenu = ({
 
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
-  const addPermission =
-    selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a280" ||
-    selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b";
+
   const handleClick = () => {
     navigator.clipboard.writeText(
       `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`

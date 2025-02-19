@@ -3,16 +3,9 @@ import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 
-function HFStatusField({
-  field = {},
-  control,
-  name,
-  updateObject = () => {},
-  newUi,
-  disabled = false,
-}) {
+function HFStatusField({field = {}, control, name, newUi, disabled = false}) {
   return (
-    <Box>
+    <Box sx={{width: "326px"}}>
       <Controller
         name={name}
         control={control}
@@ -23,7 +16,8 @@ function HFStatusField({
               id="statusField"
               className={styles.statusSelect}
               sx={{
-                height: newUi ? "25px" : "41px",
+                width: "100%",
+                height: newUi ? "25px" : "15px",
                 border: "none",
                 backgroundColor: "inherit",
                 "& .MuiSelect-select": {
@@ -36,7 +30,6 @@ function HFStatusField({
               value={value || ""}
               onChange={(e) => {
                 onChange(e.target.value);
-                updateObject();
               }}
               fullWidth
               renderValue={(selected) => {
@@ -54,12 +47,17 @@ function HFStatusField({
                 return (
                   <Box
                     sx={{
+                      height: "18px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                       background: selectedOption
                         ? `${selectedOption.color}30`
                         : "transparent",
                       color: selectedOption?.color || "#000",
                       padding: "4px 8px",
                       borderRadius: "4px",
+                      fontSize: "11px",
                     }}>
                     {selected}
                   </Box>

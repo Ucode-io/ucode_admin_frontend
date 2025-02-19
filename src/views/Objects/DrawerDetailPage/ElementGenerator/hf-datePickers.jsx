@@ -1,13 +1,13 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import {format, isValid, parse} from "date-fns";
+import {Box} from "@mui/material";
 
-export const HFDatePicker = ({
+export const HFDatePickerField = ({
   control,
   name,
   defaultValue = "",
   required,
-  updateObject = () => {},
   disabled,
 }) => {
   return (
@@ -22,15 +22,24 @@ export const HFDatePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
+            placeholder="Empty"
             id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"
             rightSection={<img src="/table-icons/date.svg" alt="" />}
             onChange={(value) => {
               onChange(value);
-              updateObject();
             }}
-            styles={{input: {background: "inherit", border: "none"}}}
+            styles={{
+              input: {
+                background: "inherit",
+                border: "none",
+                width: "330px",
+                "&:hover": {
+                  background: "red",
+                },
+              },
+            }}
             highlightToday
             disabled={disabled}
           />
@@ -40,12 +49,11 @@ export const HFDatePicker = ({
   );
 };
 
-export const HFDateTimePicker = ({
+export const HFDateTimePickerField = ({
   control,
   name,
   defaultValue = "",
   required,
-  updateObject,
   disabled,
 }) => {
   return (
@@ -60,15 +68,17 @@ export const HFDateTimePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
+            placeholder="__.__.____ __.__"
             id="dateTimeField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={<img src="/table-icons/date-time.svg" alt="" />}
             onChange={(value) => {
               onChange(value);
-              updateObject();
             }}
-            styles={{input: {background: "inherit", border: "none"}}}
+            styles={{
+              input: {background: "inherit", border: "none", width: "330px"},
+            }}
             highlightToday
             disabled={disabled}
           />
@@ -78,12 +88,11 @@ export const HFDateTimePicker = ({
   );
 };
 
-export const HFDateDatePickerWithoutTimeZoneTable = ({
+export const HFDateDatePickerWithoutTimeZoneTableField = ({
   control,
   name,
   defaultValue = "",
   required,
-  updateObject,
   disabled,
 }) => {
   return (
@@ -106,9 +115,10 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({
               onChange(
                 value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
               );
-              updateObject();
             }}
-            styles={{input: {background: "inherit", border: "none"}}}
+            styles={{
+              input: {background: "inherit", border: "none", width: "330px"},
+            }}
             highlightToday
             disabled={disabled}
           />
@@ -118,13 +128,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = ({
   );
 };
 
-export const HFTimePicker = ({
-  control,
-  name,
-  required,
-  updateObject,
-  disabled,
-}) => {
+export const HFTimePickerField = ({control, name, required, disabled}) => {
   return (
     <Controller
       control={control}
@@ -141,9 +145,10 @@ export const HFTimePicker = ({
             rightSection={<img src="/table-icons/time.svg" alt="" />}
             onChange={(value) => {
               onChange(value);
-              updateObject();
             }}
-            styles={{input: {background: "inherit", border: "none"}}}
+            styles={{
+              input: {background: "inherit", border: "none", width: "330px"},
+            }}
             disabled={disabled}
           />
         );

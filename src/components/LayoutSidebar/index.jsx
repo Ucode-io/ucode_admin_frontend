@@ -840,11 +840,11 @@ const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
         <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>Settings</Box>
       </Flex>
-      <Box sx={{position: "absolute", top: 10, right: 10}}>
+      {/* <Box sx={{position: "absolute", top: 10, right: 10}}>
         <Button onClick={toggleDarkMode} variant="contained">
           {darkMode ? "Light Mode" : "Dark Mode"}
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

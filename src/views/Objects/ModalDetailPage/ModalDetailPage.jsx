@@ -155,7 +155,7 @@ export const getColumnIcon = (column) => {
   if (column.icon === "SidePeek") {
     return (
       <img
-        src="/public/img/drawerPeek.svg"
+        src="/img/drawerPeek.svg"
         width={"18px"}
         height={"18px"}
         alt="drawer svg"
@@ -164,7 +164,7 @@ export const getColumnIcon = (column) => {
   } else if (column?.icon === "CenterPeek") {
     return (
       <img
-        src="/public/img/centerPeek.svg"
+        src="/img/centerPeek.svg"
         width={"18px"}
         height={"18px"}
         alt="drawer svg"
@@ -173,7 +173,7 @@ export const getColumnIcon = (column) => {
   } else
     return (
       <img
-        src="/public/img/fullpagePeek.svg"
+        src="/img/fullpagePeek.svg"
         width={"18px"}
         height={"18px"}
         alt="drawer svg"

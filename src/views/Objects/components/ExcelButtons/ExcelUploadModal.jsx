@@ -6,7 +6,6 @@ import {
   PointerIcon,
   UploadIcon,
 } from "../../../../assets/icons/icon";
-import HFSelect from "../../../../components/FormElements/HFSelect";
 import excelService from "../../../../services/excelService";
 import fileService from "../../../../services/fileService";
 import styles from "./style.module.scss";
@@ -14,9 +13,6 @@ import {useParams} from "react-router-dom";
 import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import {useQueryClient} from "react-query";
-import listToOptions from "../../../../utils/listToOptions";
-import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
-import Select from "react-select";
 import HFSelectField from "../../../../components/FormElements/HFSelectField";
 
 const ExcelUploadModal = ({fieldsMap, handleClose}) => {
@@ -172,7 +168,7 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
                           <div className={styles.select_body_item}>
                             {item?.type === "LOOKUP" ||
                             item?.type === "LOOKUPS" ? (
-                              <HFMultipleSelect
+                              <HFSelectField
                                 name={`fields[${index}].viewFieldSlug`}
                                 placeholder={item.label}
                                 control={control}
@@ -205,9 +201,11 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
                               /> */}
 
                               <HFSelectField
+                                required={true}
                                 control={control}
                                 name={`fields[${index}].excelSlug`}
                                 options={excelFieldOptions}
+                                width="200px"
                               />
                             </div>
                           </div>

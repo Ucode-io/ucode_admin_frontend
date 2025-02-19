@@ -14,7 +14,15 @@ import layoutService from "../../../services/layoutService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {Controller, useForm, useWatch} from "react-hook-form";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
-import {Box, Popover, TextField, Typography} from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  Popover,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {Input} from "@chakra-ui/react";
 import {getColumnIcon} from "../../table-redesign/icons";
@@ -38,20 +46,20 @@ import {NumericFormat} from "react-number-format";
 import HFFileUpload from "../../../components/FormElements/HFFileUpload";
 import HFMoneyField from "./ElementGenerator/hf-moneyField";
 import HFModalMap from "../../../components/FormElements/HFModalMap";
-import HFPolygonField from "../../../components/FormElements/HFPolygonField";
 import PolygonFieldTable from "../../../components/ElementGenerators/PolygonFieldTable";
+import HFIconPicker from "./ElementGenerator/hf-iconPicker";
+import HFColorPicker from "./ElementGenerator/hf-colorPicker";
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
+import {numberWithSpaces} from "../../../utils/formatNumbers";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import {Parser} from "hot-formula-parser";
 
 function DrawerFormDetailPage({
   tableSlugFromProps,
-  handleClose,
-  fieldsMap,
-  modal = false,
-  refetch = () => {},
   selectedRow,
-  dateInfo,
-  fullScreen,
-  menuItem,
-  setFullScreen = () => {},
+  control,
+  watch,
+  reset,
 }) {
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
@@ -63,42 +71,17 @@ function DrawerFormDetailPage({
     return tableSlugFromProps || tableSlugFromParam;
   }, [tableSlugFromParam, tableSlugFromProps]);
 
-  const [editAcces, setEditAccess] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const {state = {}} = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
-  const queryClient = useQueryClient();
-  const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
-  const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const menu = store.getState().menu;
-  const isInvite = menu.invite;
   const {i18n} = useTranslation();
   const [layout, setLayout] = useState({});
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setValue: setFormValue,
-    watch,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {
-      ...state,
-      ...dateInfo,
-      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-    },
-  });
 
   const getAllData = async () => {
     setLoader(true);
@@ -239,86 +222,6 @@ function DrawerFormDetailPage({
       setSelectTab(relations[selectedTabIndex]);
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const update = (data) => {
-    delete data.invite;
-    setBtnLoader(true);
-    constructorObjectService
-      .update(tableSlug, {data})
-      .then(() => {
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-            user_id: isUserId,
-          }
-        );
-        dispatch(showAlert("Successfully updated", "success"));
-        if (modal) {
-          handleClose();
-          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-        } else {
-          navigate(-1);
-        }
-      })
-      .catch((e) => console.log("ERROR: ", e))
-      .finally(() => {
-        setBtnLoader(false);
-        refetch();
-      });
-  };
-  const create = (data) => {
-    setBtnLoader(true);
-
-    constructorObjectService
-      .create(tableSlug, {data})
-      .then((res) => {
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-          }
-        );
-        queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
-          table_slug: tableSlug,
-          user_id: isUserId,
-        });
-        if (modal) {
-          handleClose();
-          queryClient.refetchQueries(
-            "GET_OBJECTS_LIST_WITH_RELATIONS",
-            tableSlug,
-            {
-              table_slug: tableSlug,
-            }
-          );
-          queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-        } else {
-          navigate(-1);
-          handleClose();
-          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
-        }
-
-        dispatch(showAlert("Successfully updated!", "success"));
-      })
-      .catch((e) => console.log("ERROR: ", e))
-      .finally(() => {
-        setBtnLoader(false);
-        refetch();
-      });
-  };
-
-  const onSubmit = (data) => {
-    if (id) {
-      update(data);
-    } else {
-      create(data);
     }
   };
 
@@ -511,12 +414,31 @@ function DrawerFormDetailPage({
                           control={control}
                           name={field?.slug}
                           field={field}
+                          placeholder="Empty"
                         />
                       ) : field?.type === "POLYGON" ? (
                         <PolygonFieldTable
                           drawerDetail={true}
                           control={control}
                           computedSlug={field?.slug}
+                          field={field}
+                        />
+                      ) : field?.type === "ICON" ? (
+                        <HFIconPicker
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                        />
+                      ) : field?.type === "COLOR" ? (
+                        <HFColorPicker
+                          control={control}
+                          name={field?.slug}
+                          field={field}
+                        />
+                      ) : field?.type === "FORMULA_FRONTEND" ? (
+                        <FormulaField
+                          control={control}
+                          name={field?.slug}
                           field={field}
                         />
                       ) : (
@@ -710,6 +632,129 @@ const MultiLineInput = ({
         </Popover>
       </Box>
     </>
+  );
+};
+
+const FormulaField = ({
+  control,
+  name,
+  isTableView = false,
+  tabIndex,
+  rules = {},
+  setFormValue = () => {},
+  required,
+  disabledHelperText,
+  fieldsList,
+  isNewTableView = false,
+  disabled,
+  defaultValue,
+  field,
+  ...props
+}) => {
+  const parser = new Parser();
+  const [formulaIsVisible, setFormulaIsVisible] = useState(false);
+  const formula = field?.attributes?.formula ?? "";
+  const values = useWatch({
+    control,
+  });
+
+  const updateValue = () => {
+    let computedFormula = formula;
+    const fieldsListSorted = fieldsList
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+      : [];
+    fieldsListSorted?.forEach((field) => {
+      let value = values[field.slug] ?? 0;
+
+      if (typeof value === "string") value = `'${value}'`;
+      if (typeof value === "object") value = `"${value}"`;
+      if (typeof value === "boolean")
+        value = JSON.stringify(value).toUpperCase();
+      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+    });
+
+    const {error, result} = parser.parse(computedFormula);
+
+    let newValue = error ?? result;
+    const prevValue = values[name];
+    if (newValue !== prevValue) setFormValue(name, newValue);
+  };
+
+  useDebouncedWatch(updateValue, [values], 300);
+
+  useEffect(() => {
+    updateValue();
+  }, []);
+  return (
+    <Controller
+      control={control}
+      name={name}
+      disabled={disabled}
+      defaultValue={defaultValue}
+      rules={{
+        required: required ? "This is required field" : false,
+        ...rules,
+      }}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <TextField
+          className="formulaField"
+          size="small"
+          value={
+            formulaIsVisible
+              ? formula
+              : typeof value === "number"
+                ? numberWithSpaces(parseFloat(value).toFixed(2))
+                : value
+          }
+          name={name}
+          onChange={(e) => {
+            const val = e.target.value;
+            const valueWithoutSpaces = val.replaceAll(" ", "");
+
+            if (!valueWithoutSpaces) onChange("");
+            else
+              onChange(
+                !isNaN(Number(valueWithoutSpaces))
+                  ? Number(valueWithoutSpaces)
+                  : ""
+              );
+          }}
+          error={error}
+          fullWidth
+          disabled={disabled}
+          autoFocus={tabIndex === 1}
+          helperText={!disabledHelperText && error?.message}
+          InputProps={{
+            inputProps: {tabIndex},
+            readOnly: disabled,
+
+            endAdornment: (
+              <InputAdornment position="end">
+                <Box
+                  style={{display: "flex", alignItems: "center", gap: "10px"}}>
+                  <Tooltip
+                    title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                    <IconButton
+                      edge="end"
+                      color={formulaIsVisible ? "primary" : "default"}
+                      onClick={() => setFormulaIsVisible((prev) => !prev)}>
+                      <FunctionsIcon />
+                    </IconButton>
+                  </Tooltip>
+                  {disabled && (
+                    <Tooltip title="This field is disabled for this role!">
+                      <InputAdornment position="start">
+                        <Lock style={{fontSize: "20px"}} />
+                      </InputAdornment>
+                    </Tooltip>
+                  )}
+                </Box>
+              </InputAdornment>
+            ),
+          }}
+          {...props}
+        />
+      )}></Controller>
   );
 };
 

@@ -1846,7 +1846,7 @@ const ExcelExportButton = ({fieldsMap}) => {
         cursor="pointer"
         onClick={onOpen}>
         <Image src="/img/file-download.svg" alt="Docs" />
-        <ViewOptionTitle>Export</ViewOptionTitle>
+        <ViewOptionTitle>Import</ViewOptionTitle>
         <ChevronRightIcon ml="auto" fontSize={22} />
       </Flex>
 
@@ -1901,7 +1901,7 @@ const ExcelImportButton = ({
       ) : (
         <Image src="/img/file-download.svg" alt="Docs" />
       )}
-      <ViewOptionTitle>Import</ViewOptionTitle>
+      <ViewOptionTitle>Export</ViewOptionTitle>
       <ChevronRightIcon ml="auto" fontSize={22} />
     </Flex>
   );

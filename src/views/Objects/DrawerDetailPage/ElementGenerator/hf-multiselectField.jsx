@@ -85,7 +85,6 @@ const HFMultipleAutocomplete = ({
             placeholder={placeholder}
             width={width}
             label={label}
-            // tabIndex={tabIndex}
             required={required}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
@@ -114,14 +113,11 @@ const AutoCompleteElement = ({
   width,
   label,
   hasColor,
-  // tabIndex,
   hasIcon,
-  required,
   classes,
   placeholder,
   onFormChange,
   disabledHelperText,
-  isFormEdit,
   error,
   isMultiSelect,
   disabled,
@@ -181,7 +177,13 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <Box sx={{width: "335px", height: "32px", overflow: "hidden"}}>
+    <Box
+      sx={{
+        width: "330px",
+        paddingLeft: "4px",
+        height: "32px",
+        overflow: "hidden",
+      }}>
       <FormControl style={{width}}>
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
@@ -223,12 +225,13 @@ const AutoCompleteElement = ({
                   position: "absolute",
                   right: 0,
                 },
+                paddingLeft: "0",
               }}
               disabled={disabled}
               InputProps={{
                 ...params.InputProps,
                 classes: {
-                  input: isBlackBg ? classes.input : "",
+                  input: classes.input,
                 },
                 inputProps: isNewTableView
                   ? {
@@ -237,17 +240,6 @@ const AutoCompleteElement = ({
                         computedValue?.length > 0 ? {height: 0} : undefined,
                     }
                   : params.inputProps,
-                style: disabled
-                  ? {
-                      background: "inherit",
-                    }
-                  : {
-                      padding: newUi ? "0" : undefined,
-                      background: "inherit",
-                      color: isBlackBg ? "#fff" : "inherit",
-                      border: error?.message ? "1px solid red" : "",
-                    },
-
                 endAdornment: Boolean(
                   appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
                 ) && (

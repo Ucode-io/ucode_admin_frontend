@@ -2,64 +2,65 @@ import {
   Box,
   Button,
   Drawer,
-  DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
   Flex,
-  Text,
 } from "@chakra-ui/react";
-import React, {useMemo, useState} from "react";
-import {ChevronRightIcon} from "@chakra-ui/icons";
-import DrawerFormDetailPage from "./DrawerFormDetailPage";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import {store} from "../../../store";
 import {useForm} from "react-hook-form";
+import {Check} from "@mui/icons-material";
+import {useQueryClient} from "react-query";
+import {Menu, MenuItem} from "@mui/material";
+import React, {useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
-import constructorObjectService from "../../../services/constructorObjectService";
-import {useQueryClient} from "react-query";
-import {store} from "../../../store";
+import DrawerFormDetailPage from "./DrawerFormDetailPage";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import constructorObjectService from "../../../services/constructorObjectService";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 function DrawerDetailPage({
   open,
-  setOpen,
-  selectedRow,
-  menuItem,
   layout,
-  fieldsMap,
   refetch,
+  setOpen,
+  menuItem,
+  fieldsMap,
+  selectedRow,
   dateInfo = {},
+  selectedViewType,
   fullScreen = false,
+  setLayoutType = () => {},
   setFullScreen = () => {},
+  navigateToEditPage = () => {},
+  setSelectedViewType = () => {},
 }) {
-  const {tableSlug} = useParams();
-  const handleClose = () => setOpen(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
-  const [btnLoader, setBtnLoader] = useState(false);
-  const queryClient = useQueryClient();
-  const isUserId = useSelector((state) => state?.auth?.userId);
+  const {tableSlug} = useParams();
   const {state = {}} = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
-
+  const queryClient = useQueryClient();
   const {id: idFromParam} = useParams();
+  const handleClose = () => setOpen(false);
+  const {navigateToForm} = useTabRouter();
+  const [btnLoader, setBtnLoader] = useState(false);
+  const isUserId = useSelector((state) => state?.auth?.userId);
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
   }, [idFromParam, selectedRow]);
 
   const {
-    handleSubmit,
-    control,
     reset,
-    setValue: setFormValue,
     watch,
+    control,
+    handleSubmit,
     formState: {errors},
+    setValue: setFormValue,
   } = useForm({
     defaultValues: {
       ...state,
@@ -79,7 +80,6 @@ function DrawerDetailPage({
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        handleClose();
         setBtnLoader(false);
       });
   };
@@ -163,7 +163,27 @@ function DrawerDetailPage({
                   justifyContent="center"
                   width="24px"
                   height="24px">
-                  <KeyboardDoubleArrowRightIcon w={6} h={6} />
+                  <KeyboardDoubleArrowRightIcon
+                    style={{color: "rgba(55, 53, 47, 0.45)"}}
+                    w={6}
+                    h={6}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: "1px",
+                    height: "14px",
+                    margin: "0 6px",
+                    background: "rgba(55, 53, 47, 0.16)",
+                  }}></Box>
+                <Box>
+                  <ScreenOptions
+                    selectedViewType={selectedViewType}
+                    setSelectedViewType={setSelectedViewType}
+                    setLayoutType={setLayoutType}
+                    selectedRow={selectedRow}
+                    navigateToEditPage={navigateToEditPage}
+                  />
                 </Box>
               </Flex>
 
@@ -203,5 +223,103 @@ function DrawerDetailPage({
     </Drawer>
   );
 }
+
+const ScreenOptions = ({
+  selectedViewType,
+  selectedRow,
+  setSelectedViewType = () => {},
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const options = [
+    {label: "Side peek", icon: "SidePeek"},
+    {label: "Center peek", icon: "CenterPeek"},
+    {label: "Full page", icon: "FullPage"},
+  ];
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    if (option?.icon === "FullPage") {
+      setLayoutType("SimpleLayout");
+      navigateToEditPage(selectedRow);
+    }
+
+    if (option) setSelectedViewType(option);
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Button onClick={handleClick} variant="outlined">
+        <span>{getColumnIcon(selectedViewType)}</span>
+      </Button>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "220px", padding: "4px 0"}}>
+          {options.map((option) => (
+            <MenuItem
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "6px",
+                color: "#37352f",
+              }}
+              key={option.label}
+              onClick={() => handleClose(option)}>
+              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+                <span>{getColumnIcon(option)}</span>
+                {option.label}
+              </Box>
+
+              <Box>
+                {option.label === selectedViewType?.label ? <Check /> : ""}
+              </Box>
+            </MenuItem>
+          ))}
+        </Box>
+      </Menu>
+    </Box>
+  );
+};
+
+export const getColumnIcon = (column) => {
+  if (column.icon === "SidePeek") {
+    return (
+      <img
+        src="/public/img/drawerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else if (column?.icon === "CenterPeek") {
+    return (
+      <img
+        src="/public/img/centerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else
+    return (
+      <img
+        src="/public/img/fullpagePeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+};
 
 export default DrawerDetailPage;

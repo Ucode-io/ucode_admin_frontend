@@ -159,7 +159,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: field?.attributes?.[`label_${i18n?.language}`] ?? "",
+      label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
       show_label: true,
     };
     if (id || menuItem?.table_id) {

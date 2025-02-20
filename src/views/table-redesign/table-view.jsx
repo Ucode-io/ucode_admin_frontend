@@ -570,23 +570,7 @@ const TableView = ({
           {...props}
         />
 
-        {open && (
-          <ModalDetailPage
-            open={open}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
-        )}
-
-        {/* {open && selectedViewType?.icon === "SidePeek" ? (
+        {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
             setOpen={setOpen}
@@ -614,7 +598,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null} */}
+        ) : null}
 
         <Drawer
           open={drawerState}

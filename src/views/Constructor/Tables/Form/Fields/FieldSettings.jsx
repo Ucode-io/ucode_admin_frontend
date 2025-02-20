@@ -156,7 +156,6 @@ const FieldSettings = ({
     });
 
   const createField = (field) => {
-    console.log("fielddddddddddd", field);
     const data = {
       ...field,
       id: generateGUID(),
@@ -166,12 +165,12 @@ const FieldSettings = ({
         field?.label,
       show_label: true,
     };
-    // if (id || menuItem?.table_id) {
-    //   createNewField({data, tableSlug: slug || tableSlug});
-    // } else {
-    //   prepandFieldInForm(data);
-    //   closeSettingsBlock();
-    // }
+    if (id || menuItem?.table_id) {
+      createNewField({data, tableSlug: slug || tableSlug});
+    } else {
+      prepandFieldInForm(data);
+      closeSettingsBlock();
+    }
   };
 
   const addColumnToView = (data) => {

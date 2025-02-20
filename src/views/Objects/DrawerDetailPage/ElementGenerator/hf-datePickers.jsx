@@ -1,7 +1,6 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import {format, isValid, parse} from "date-fns";
-import {Box} from "@mui/material";
 
 export const HFDatePickerField = ({
   control,
@@ -9,6 +8,7 @@ export const HFDatePickerField = ({
   defaultValue = "",
   required,
   disabled,
+  drawerDetail = false,
 }) => {
   return (
     <Controller
@@ -26,7 +26,9 @@ export const HFDatePickerField = ({
             id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"
-            rightSection={<img src="/table-icons/date.svg" alt="" />}
+            rightSection={
+              drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
+            }
             onChange={(value) => {
               onChange(value);
             }}
@@ -55,6 +57,7 @@ export const HFDateTimePickerField = ({
   defaultValue = "",
   required,
   disabled,
+  drawerDetail = false,
 }) => {
   return (
     <Controller
@@ -68,11 +71,17 @@ export const HFDateTimePickerField = ({
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
-            placeholder="__.__.____ __.__"
+            placeholder="Empty"
             id="dateTimeField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY HH:mm"
-            rightSection={<img src="/table-icons/date-time.svg" alt="" />}
+            rightSection={
+              drawerDetail ? (
+                ""
+              ) : (
+                <img src="/table-icons/date-time.svg" alt="" />
+              )
+            }
             onChange={(value) => {
               onChange(value);
             }}
@@ -94,6 +103,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
   defaultValue = "",
   required,
   disabled,
+  drawerDetail = false,
 }) => {
   return (
     <Controller
@@ -108,9 +118,15 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
         return (
           <DateTimePicker
             id="dateTimeZoneField"
-            value={getNoTimezoneValue(value)}
+            value={value ? getNoTimezoneValue(value) : new Date()}
             valueFormat="DD.MM.YYYY HH:mm"
-            rightSection={<img src="/table-icons/date-time.svg" alt="" />}
+            rightSection={
+              drawerDetail ? (
+                ""
+              ) : (
+                <img src="/table-icons/date-time.svg" alt="" />
+              )
+            }
             onChange={(value) => {
               onChange(
                 value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
@@ -128,7 +144,13 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
   );
 };
 
-export const HFTimePickerField = ({control, name, required, disabled}) => {
+export const HFTimePickerField = ({
+  control,
+  name,
+  required,
+  disabled,
+  drawerDetail = false,
+}) => {
   return (
     <Controller
       control={control}
@@ -142,7 +164,9 @@ export const HFTimePickerField = ({control, name, required, disabled}) => {
           <TimeInput
             id="timeField"
             value={value}
-            rightSection={<img src="/table-icons/time.svg" alt="" />}
+            rightSection={
+              drawerDetail ? "" : <img src="/table-icons/time.svg" alt="" />
+            }
             onChange={(value) => {
               onChange(value);
             }}
@@ -187,16 +211,16 @@ const getValue = (value) => {
     return null;
   }
 };
-
 const getNoTimezoneValue = (value) => {
-  if (!value) return "";
+  if (!value) return null;
   if (value instanceof Date && isValid(value)) return value;
 
   try {
-    if (value.includes("Z")) return new Date(value);
+    if (typeof value === "string" && value.includes("Z"))
+      return new Date(value);
     const parsedDate = parse(value, "dd.MM.yyyy HH:mm", new Date());
-    return isValid(parsedDate) ? parsedDate : "";
+    return isValid(parsedDate) ? parsedDate : null;
   } catch (e) {
-    return "";
+    return null;
   }
 };

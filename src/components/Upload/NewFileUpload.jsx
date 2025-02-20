@@ -69,7 +69,10 @@ export default function NewFileUpload({
       {value && (
         <>
           <Box
-            sx={{width: drawerDetail ? "330px" : ""}}
+            sx={{
+              width: drawerDetail ? "290px" : "",
+              margin: drawerDetail ? "0 auto" : "",
+            }}
             className="uploadedFile">
             <Button
               id="file_upload"
@@ -174,33 +177,35 @@ export default function NewFileUpload({
         </>
       )}
 
-      {!value && (
-        <Button
-          id="file_upload_btn"
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: 40,
-            width: 40,
-            height: 27,
-          }}>
-          <input
-            id="file_upload"
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-          />
-          <img
-            src="/img/file-docs.svg"
-            alt="Upload"
-            style={{width: 24, height: 24}}
-          />
-        </Button>
-      )}
+      <Box sx={{width: drawerDetail ? "330px" : ""}}>
+        {!value && (
+          <Button
+            id="file_upload_btn"
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            <input
+              id="file_upload"
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+            />
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 24, height: 24}}
+            />
+          </Button>
+        )}
+      </Box>
     </div>
   );
 }

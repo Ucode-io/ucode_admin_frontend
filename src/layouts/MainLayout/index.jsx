@@ -50,7 +50,7 @@ const MainLayout = ({setFavicon, favicon}) => {
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? "dark" : "light",
+      mode: "light",
     },
   });
 

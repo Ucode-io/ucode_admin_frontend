@@ -28,6 +28,7 @@ export const HFVideoUpload = ({
   rules,
   disabledHelperText = false,
   disabled,
+  drawerDetail = false,
   ...props
 }) => {
   return (
@@ -42,6 +43,7 @@ export const HFVideoUpload = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <VideoUpload
+            drawerDetail={drawerDetail}
             name={name}
             value={value}
             onChange={(val) => {
@@ -61,7 +63,14 @@ export const HFVideoUpload = ({
   );
 };
 
-const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
+const VideoUpload = ({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  tabIndex,
+  drawerDetail = false,
+}) => {
   const inputRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -117,7 +126,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               display: "flex",
               alignItems: "center",
               columnGap: 5,
-              width: "320px",
+              width: drawerDetail ? "310px" : "100%",
+              margin: drawerDetail ? "0 auto" : "0",
             }}>
             <div className="video-block">
               <video ref={videoRef} src={value} />
@@ -127,27 +137,28 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             </div>
           </div>
         )}
-
-        {!value && (
-          <Button
-            id="video_button_field"
-            onClick={() => inputRef.current.click()}
-            sx={{
-              padding: 0,
-              minWidth: 40,
-              width: 40,
-              height: 27,
-            }}>
-            {!loading && (
-              <img
-                src="/img/file-docs.svg"
-                alt="Upload"
-                style={{width: 24, height: 24}}
-              />
-            )}
-            {loading && <CircularProgress size={20} />}
-          </Button>
-        )}
+        <Box sx={{width: drawerDetail ? "330px" : ""}}>
+          {!value && (
+            <Button
+              id="video_button_field"
+              onClick={() => inputRef.current.click()}
+              sx={{
+                padding: 0,
+                minWidth: 40,
+                width: 40,
+                height: 27,
+              }}>
+              {!loading && (
+                <img
+                  src="/img/newUpload.svg"
+                  alt="Upload"
+                  style={{width: 24, height: 24}}
+                />
+              )}
+              {loading && <CircularProgress size={20} />}
+            </Button>
+          )}
+        </Box>
       </div>
 
       <Popover

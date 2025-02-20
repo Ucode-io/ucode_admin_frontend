@@ -163,16 +163,15 @@ const FieldSettings = ({
       label:
         field?.attributes?.[`label_${i18n?.language}`] ??
         field?.attributes?.label ??
-        field?.label ??
-        " ",
+        field?.label,
       show_label: true,
     };
-    if (id || menuItem?.table_id) {
-      createNewField({data, tableSlug: slug || tableSlug});
-    } else {
-      prepandFieldInForm(data);
-      closeSettingsBlock();
-    }
+    // if (id || menuItem?.table_id) {
+    //   createNewField({data, tableSlug: slug || tableSlug});
+    // } else {
+    //   prepandFieldInForm(data);
+    //   closeSettingsBlock();
+    // }
   };
 
   const addColumnToView = (data) => {

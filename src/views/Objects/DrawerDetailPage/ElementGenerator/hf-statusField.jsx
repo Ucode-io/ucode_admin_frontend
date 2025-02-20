@@ -3,7 +3,14 @@ import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 
-function HFStatusField({field = {}, control, name, newUi, disabled = false}) {
+function HFStatusField({
+  field = {},
+  control,
+  name,
+  newUi,
+  disabled = false,
+  drawerDetail = false,
+}) {
   return (
     <Box sx={{width: "326px"}}>
       <Controller
@@ -12,6 +19,7 @@ function HFStatusField({field = {}, control, name, newUi, disabled = false}) {
         render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <Select
+              placeholder="Empty"
               disabled={disabled}
               id="statusField"
               className={styles.statusSelect}
@@ -47,7 +55,7 @@ function HFStatusField({field = {}, control, name, newUi, disabled = false}) {
                 return (
                   <Box
                     sx={{
-                      height: "18px",
+                      height: "16px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",

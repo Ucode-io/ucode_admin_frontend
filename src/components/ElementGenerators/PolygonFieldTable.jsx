@@ -1,8 +1,6 @@
 import {Box, Button, Modal} from "@mui/material";
-import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import {useState} from "react";
 import HFPolygonField from "../FormElements/HFPolygonField";
-import CloseIcon from "@mui/icons-material/Close";
 import {get} from "@ngard/tiny-get";
 
 const style = {
@@ -24,7 +22,6 @@ function PolygonFieldTable({
   computedSlug,
   isNewTableView = false,
   row,
-  newColumn = false,
   drawerDetail = false,
 }) {
   const [open, setOpen] = useState(false);
@@ -32,11 +29,8 @@ function PolygonFieldTable({
   const handleClose = () => setOpen(false);
 
   const updatePolygon = () => {
-    // Boolean(!!newColumn && isNewTableView) && updateObject();
     handleClose();
   };
-
-  const value = get(row, field.slug, "");
 
   return (
     <Box id="polygon_field">
@@ -48,15 +42,15 @@ function PolygonFieldTable({
           padding: "0 10px",
           height: "32px",
           columnGap: "16px",
-          width: "320px",
+          width: "330px",
           borderRadius: drawerDetail ? "6px" : "",
-          justifyContent: drawerDetail ? "flex-end" : "",
+          justifyContent: drawerDetail ? "space-between" : "",
           "&:hover": {
             background: "#f7f7f7",
           },
         }}
         onClick={handleOpen}>
-        {/* <span style={{overflow: "visible"}}>Polygon</span> */}
+        <Box sx={{fontSize: "11px", color: "#787774"}}>Polygon</Box>
         <img src="/table-icons/polygon.svg" alt="Polygon" />
       </Box>
       <Modal open={open} onClose={handleClose}>

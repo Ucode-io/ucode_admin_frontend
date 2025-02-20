@@ -116,7 +116,10 @@ const ImageUpload = ({
       {value && (
         <>
           <div
-            style={{width: drawerDetail ? "320px" : ""}}
+            style={{
+              width: drawerDetail ? "260px" : "",
+              margin: drawerDetail ? "0 auto" : "",
+            }}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
@@ -297,34 +300,36 @@ const ImageUpload = ({
         </>
       )}
 
-      {!value && (
-        <Button
-          id="imageUploadBtn"
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: 40,
-            width: 40,
-            height: 27,
-          }}>
-          <input
-            id="img_upload"
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-            accept=".jpg, .jpeg, .png, .gif"
-          />
-          <img
-            src="/img/file-docs.svg"
-            alt="Upload"
-            style={{width: 24, height: 24}}
-          />
-        </Button>
-      )}
+      <Box sx={{width: drawerDetail ? "330px" : ""}}>
+        {!value && (
+          <Button
+            id="imageUploadBtn"
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            <input
+              id="img_upload"
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+              accept=".jpg, .jpeg, .png, .gif"
+            />
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 24, height: 24}}
+            />
+          </Button>
+        )}
+      </Box>
     </div>
   );
 };

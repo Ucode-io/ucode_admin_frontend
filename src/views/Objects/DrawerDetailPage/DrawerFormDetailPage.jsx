@@ -255,197 +255,211 @@ function DrawerFormDetailPage({
             <Box mt="10px">
               {data?.tabs?.[0]?.sections?.map((section, secIndex) => (
                 <Box key={secIndex}>
-                  {section?.fields?.map((field, fieldIndex) => (
-                    <Box
-                      key={fieldIndex}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      height={"32px"}
-                      py="8px">
+                  {section?.fields?.map((field, fieldIndex) => {
+                    return (
                       <Box
+                        key={fieldIndex}
                         display="flex"
                         alignItems="center"
-                        justifyContent={"space-between"}
-                        padding="5px"
-                        borderRadius={"4px"}
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "#F7F7F7",
-                          },
-                        }}>
+                        justifyContent="space-between"
+                        {...(Boolean(field?.type === "MULTISELECT")
+                          ? {minHeight: "30px"}
+                          : {height: "34px"})}
+                        py="8px">
                         <Box
-                          width="14px"
-                          height="16px"
-                          mr="8px"
                           display="flex"
                           alignItems="center"
-                          justifyContent="center">
-                          {getColumnIcon({
-                            column: {
-                              type: field?.type ?? field?.relation_type,
-                              table_slug: field?.table_slug ?? field?.slug,
+                          justifyContent={"space-between"}
+                          // padding="5px"
+                          borderRadius={"4px"}
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#F7F7F7",
                             },
-                          })}
+                          }}>
+                          <Box
+                            width="14px"
+                            height="16px"
+                            mr="8px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center">
+                            {getColumnIcon({
+                              column: {
+                                type: field?.type ?? field?.relation_type,
+                                table_slug: field?.table_slug ?? field?.slug,
+                              },
+                            })}
+                          </Box>
+                          <Box
+                            fontSize="12px"
+                            color="#787774"
+                            fontWeight="500"
+                            minWidth="150px">
+                            {field?.attributes?.[`label_${i18n?.language}`] ||
+                              field?.label}
+                          </Box>
                         </Box>
-                        <Box
-                          fontSize="12px"
-                          color="#787774"
-                          fontWeight="500"
-                          minWidth="150px">
-                          {field?.attributes?.[`label_${i18n?.language}`] ||
-                            field?.label}
-                        </Box>
+                        {field?.relation_type === "Many2One" ? (
+                          <RelationField
+                            field={field}
+                            control={control}
+                            name={field?.slug}
+                          />
+                        ) : field?.type === "MULTI_LINE" ? (
+                          <MultiLineInput
+                            placeholder={"Empty"}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            watch={watch}
+                          />
+                        ) : field?.type === "DATE" ? (
+                          <HFDatePickerField
+                            field={field}
+                            control={control}
+                            name={field?.slug}
+                            drawerDetail={true}
+                          />
+                        ) : field?.type === "DATE_TIME" ? (
+                          <HFDateTimePickerField
+                            field={field}
+                            control={control}
+                            name={field?.slug}
+                            drawerDetail={true}
+                          />
+                        ) : field?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
+                          <HFDateDatePickerWithoutTimeZoneTableField
+                            field={field}
+                            control={control}
+                            name={field?.slug}
+                            drawerDetail={true}
+                          />
+                        ) : field?.type === "TIME" ? (
+                          <HFTimePickerField
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            drawerDetail={true}
+                          />
+                        ) : field?.type === "PASSWORD" ? (
+                          <InputField
+                            type="password"
+                            control={control}
+                            name={field?.slug}
+                          />
+                        ) : field?.type === "SWITCH" ? (
+                          <HFSwitch
+                            drawer={true}
+                            control={control}
+                            name={field?.slug}
+                          />
+                        ) : field?.type === "VIDEO" ? (
+                          <HFVideoUpload
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                          />
+                        ) : field?.type === "CHECKBOX" ? (
+                          <HFCheckbox control={control} name={field?.slug} />
+                        ) : field?.type === "STATUS" ? (
+                          <HFStatusField
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "MULTISELECT" ? (
+                          <HFMultipleAutocomplete
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            placeholder={"Empty"}
+                          />
+                        ) : field?.type === "PHOTO" ? (
+                          <HFPhotoUpload
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "MULTI_IMAGE" ? (
+                          <HFMultiImage
+                            drawerDetail={true}
+                            isTableView={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "LINK" ? (
+                          <HFLinkField
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            placeholder={"Empty"}
+                          />
+                        ) : field?.type === "NUMBER" ||
+                          field?.type === "FLOAT" ? (
+                          <NumberField
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            placeholder="Empty"
+                          />
+                        ) : field?.type === "FILE" ? (
+                          <HFFileUpload
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "MONEY" ? (
+                          <HFMoneyField
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            watch={watch}
+                          />
+                        ) : field?.type === "MAP" ? (
+                          <HFModalMap
+                            drawerDetail={true}
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                            placeholder="Empty"
+                          />
+                        ) : field?.type === "POLYGON" ? (
+                          <PolygonFieldTable
+                            drawerDetail={true}
+                            control={control}
+                            computedSlug={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "ICON" ? (
+                          <HFIconPicker
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "COLOR" ? (
+                          <HFColorPicker
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : field?.type === "FORMULA_FRONTEND" ? (
+                          <FormulaField
+                            control={control}
+                            name={field?.slug}
+                            field={field}
+                          />
+                        ) : (
+                          <InputField control={control} name={field?.slug} />
+                        )}
                       </Box>
-                      {field?.relation_type === "Many2One" ? (
-                        <RelationField
-                          field={field}
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "MULTI_LINE" ? (
-                        <MultiLineInput
-                          placeholder={"Empty"}
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          watch={watch}
-                        />
-                      ) : field?.type === "DATE" ? (
-                        <HFDatePickerField
-                          field={field}
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "DATE_TIME" ? (
-                        <HFDateTimePickerField
-                          field={field}
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
-                        <HFDateDatePickerWithoutTimeZoneTableField
-                          field={field}
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "TIME" ? (
-                        <HFTimePickerField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "PASSWORD" ? (
-                        <InputField
-                          type="password"
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "SWITCH" ? (
-                        <HFSwitch
-                          drawer={true}
-                          control={control}
-                          name={field?.slug}
-                        />
-                      ) : field?.type === "VIDEO" ? (
-                        <HFVideoUpload control={control} name={field?.slug} />
-                      ) : field?.type === "CHECKBOX" ? (
-                        <HFCheckbox control={control} name={field?.slug} />
-                      ) : field?.type === "STATUS" ? (
-                        <HFStatusField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "MULTISELECT" ? (
-                        <HFMultipleAutocomplete
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          placeholder={"Empty"}
-                        />
-                      ) : field?.type === "PHOTO" ? (
-                        <HFPhotoUpload
-                          drawerDetail={true}
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "MULTI_IMAGE" ? (
-                        <HFMultiImage
-                          drawerDetail={true}
-                          isTableView={true}
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "LINK" ? (
-                        <HFLinkField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          placeholder={"Empty"}
-                        />
-                      ) : field?.type === "NUMBER" ||
-                        field?.type === "FLOAT" ? (
-                        <NumberField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          placeholder="Empty"
-                        />
-                      ) : field?.type === "FILE" ? (
-                        <HFFileUpload
-                          drawerDetail={true}
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "MONEY" ? (
-                        <HFMoneyField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          watch={watch}
-                        />
-                      ) : field?.type === "MAP" ? (
-                        <HFModalMap
-                          drawerDetail={true}
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                          placeholder="Empty"
-                        />
-                      ) : field?.type === "POLYGON" ? (
-                        <PolygonFieldTable
-                          drawerDetail={true}
-                          control={control}
-                          computedSlug={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "ICON" ? (
-                        <HFIconPicker
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "COLOR" ? (
-                        <HFColorPicker
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : field?.type === "FORMULA_FRONTEND" ? (
-                        <FormulaField
-                          control={control}
-                          name={field?.slug}
-                          field={field}
-                        />
-                      ) : (
-                        <InputField control={control} name={field?.slug} />
-                      )}
-                    </Box>
-                  ))}
+                    );
+                  })}
                 </Box>
               ))}
             </Box>

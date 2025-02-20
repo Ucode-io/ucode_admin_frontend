@@ -321,6 +321,13 @@ div {
   padding-right: 0 !important;
   color: #007aff;
 
+  input {
+    &::placeholder {
+      font-size: 11px;
+      color: #787774;
+    }
+  }
+
   div fieldset {
     border: none;
   }
@@ -991,4 +998,13 @@ div:has(.chakra-tooltip) {
 
 #multiselectField {
   padding-left: 0px !important;
+}
+
+.mapField {
+  input {
+    &::placeholder {
+      color: #787774;
+      font-size: 12px;
+    }
+  }
 }

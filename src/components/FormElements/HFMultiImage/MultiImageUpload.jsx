@@ -49,7 +49,6 @@ function MultiImageUpload({
     setFullScreen(imgSrc);
   };
   const handleCloseFullScreen = () => setFullScreen(null);
-
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -173,11 +172,12 @@ function MultiImageUpload({
                 !disabled && handleClick();
               }}
               sx={{
-                width: drawerDetail ? "330px" : "100%",
+                width: drawerDetail ? "320px" : "100%",
                 height: "100%",
                 display: "flex",
                 cursor: "pointer",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
+                alignItems: "center",
                 paddingRight: drawerDetail ? "8px" : "",
               }}>
               <Box
@@ -189,13 +189,18 @@ function MultiImageUpload({
                   fontSize: "10px",
                   gap: "5px",
                 }}>
-                <UploadFileIcon
+                <img
+                  src="/img/newUpload.svg"
+                  alt="Upload"
+                  style={{width: 24, height: 24}}
+                />
+                {/* <UploadFileIcon
                   style={{
                     width: "24px",
                     height: "24px",
                     color: "rgb(116, 116, 116)",
                   }}
-                />
+                /> */}
               </Box>
             </Box>
           ) : (

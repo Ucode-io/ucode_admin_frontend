@@ -38,6 +38,7 @@ function HFModalMap({
         width: drawerDetail ? "325px" : "",
       }}>
       <TextField
+        className="mapField"
         placeholder={placeholder}
         id={`map_field`}
         value={

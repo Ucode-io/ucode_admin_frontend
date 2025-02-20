@@ -95,9 +95,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-  height: 18px;
-  overflow: auto;
   font-size: 11px;
+  height: 22px;
 }
 
 .multipleAutocompleteTags {
@@ -108,6 +107,7 @@
   border-radius: 4px;
   color: #000;
   background-color: #c0c0c039;
+  height: 22px;
 
   .value {
     margin-right: 4px;

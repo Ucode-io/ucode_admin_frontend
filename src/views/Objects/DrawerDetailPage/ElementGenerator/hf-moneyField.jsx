@@ -13,6 +13,7 @@ function HFMoneyField({
   disabled = false,
   updateObject = () => {},
   newUi,
+  drawerDetail = false,
 }) {
   const value = watch(name);
 
@@ -66,7 +67,9 @@ function HFMoneyField({
               displayType="input"
               isNumericString={true}
               autoComplete="off"
-              className="customMoneyField"
+              className={
+                drawerDetail ? "customMoneyFieldDrawer" : "customMoneyField"
+              }
               value={value?.[0] || 0}
               onChange={(event) => {
                 const newValue = event.target.value;

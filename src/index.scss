@@ -330,15 +330,8 @@ div {
 
   div fieldset {
     border: none;
+    padding-right: 0px;
   }
-}
-
-.customMoneyField {
-  width: 100%;
-  border: none !important;
-  height: 41px;
-  padding: 0 0 0 5px;
-  // background-color: inherit;
 }
 
 .custom_textfield_new {
@@ -369,12 +362,37 @@ div {
   }
 }
 
+.customLinkFieldDrawer {
+  padding-right: 0 !important;
+  color: #007aff;
+
+  input {
+    padding: 0 9.6px;
+
+    &::placeholder {
+      font-size: 11.5px;
+      color: #787774;
+    }
+  }
+  div fieldset {
+    border: none;
+  }
+}
+
 .customMoneyField {
   width: 100%;
   height: 100%;
   border: none !important;
   height: 41px;
   padding: 0 0 0 5px;
+}
+
+.customMoneyFieldDrawer {
+  width: 100%;
+  height: 100%;
+  border: none !important;
+  height: 41px;
+  padding: 0 9.6px 0px;
 }
 
 .custom_number_field {
@@ -714,11 +732,13 @@ u {
   .ql-toolbar {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    border: none !important;
   }
 
   .ql-container {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    border-left: none;
   }
 }
 
@@ -1006,5 +1026,26 @@ div:has(.chakra-tooltip) {
       color: #787774;
       font-size: 12px;
     }
+  }
+}
+
+.formulaField {
+  input {
+    &::placeholder {
+      font-size: 11.5px;
+      color: #787774;
+    }
+
+    padding-left: 10px;
+  }
+}
+#drawerMultiLine {
+  .ql-toolbar {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .ql-container {
+    border: none !important;
   }
 }

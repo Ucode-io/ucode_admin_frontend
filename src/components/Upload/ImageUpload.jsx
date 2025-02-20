@@ -116,10 +116,7 @@ const ImageUpload = ({
       {value && (
         <>
           <div
-            style={{
-              width: drawerDetail ? "260px" : "",
-              margin: drawerDetail ? "0 auto" : "",
-            }}
+            style={{padding: drawerDetail ? "0 10px" : 0}}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
@@ -300,7 +297,7 @@ const ImageUpload = ({
         </>
       )}
 
-      <Box sx={{width: drawerDetail ? "330px" : ""}}>
+      <Box>
         {!value && (
           <Button
             id="imageUploadBtn"
@@ -325,7 +322,7 @@ const ImageUpload = ({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 24, height: 24}}
+              style={{width: 22, height: 22}}
             />
           </Button>
         )}

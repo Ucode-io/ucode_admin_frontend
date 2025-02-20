@@ -13,6 +13,7 @@ const HFCheckbox = ({
   labelClassName,
   defaultValue = false,
   isShowLable = true,
+  drawerDetail = false,
   id = "",
   newUi,
   ...props
@@ -28,7 +29,7 @@ const HFCheckbox = ({
           style={{
             background: isBlackBg ? "#2A2D34" : "",
             color: isBlackBg ? "#fff" : "",
-            width: "325px",
+            paddingLeft: drawerDetail ? "3px" : "0px",
           }}>
           <Checkbox
             id={`checkbox${id}`}

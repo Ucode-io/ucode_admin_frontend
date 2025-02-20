@@ -18,13 +18,13 @@ export const HFDatePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      defaultValue={new Date()}
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
             placeholder="Empty"
             id="dateField"
-            value={getValue(value)}
+            value={getValue(value) ?? new Date()}
             valueFormat="DD.MM.YYYY"
             rightSection={
               drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
@@ -36,7 +36,6 @@ export const HFDatePickerField = ({
               input: {
                 background: "inherit",
                 border: "none",
-                width: "330px",
                 "&:hover": {
                   background: "red",
                 },
@@ -67,13 +66,13 @@ export const HFDateTimePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      defaultValue={new Date()}
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
             placeholder="Empty"
             id="dateTimeField"
-            value={getValue(value)}
+            value={getValue(value) ?? new Date()}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={
               drawerDetail ? (
@@ -113,7 +112,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      defaultValue={new Date()}
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker

@@ -40,7 +40,7 @@ export const useChatwoot = () => {
     closeButton.style.background = "none";
     closeButton.style.border = "none";
     closeButton.style.cursor = "pointer";
-    originalButton.appendChild(closeButton);
+    Boolean(originalButton) && originalButton.appendChild(closeButton);
 
     const closeButtonImage = document.createElement("img");
     closeButtonImage.src = "/img/close.svg";

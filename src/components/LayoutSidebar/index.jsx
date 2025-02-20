@@ -852,6 +852,7 @@ const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
 const ProfileBottom = ({projectInfo}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const projectId = useSelector((state) => state.company.projectId);
 
   const popoverRef = useRef();
   const {i18n} = useTranslation();
@@ -887,6 +888,12 @@ const ProfileBottom = ({projectInfo}) => {
     // onOpenModal();
     onClose();
   };
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectId, dispatch]);
 
   return (
     <Box p={8} ref={popoverRef}>

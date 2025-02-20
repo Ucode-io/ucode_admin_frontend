@@ -14,6 +14,7 @@ const HFIconPicker = ({
   disabled = false,
   customeClick = false,
   clickItself = () => {},
+  drawerDetail = false,
   ...props
 }) => {
   return (
@@ -28,6 +29,7 @@ const HFIconPicker = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <IconPickerField
+            drawerDetail={drawerDetail}
             id="icon_field"
             disabled={disabled}
             error={error}

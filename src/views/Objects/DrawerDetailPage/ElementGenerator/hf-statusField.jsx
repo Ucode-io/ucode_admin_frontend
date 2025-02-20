@@ -12,7 +12,7 @@ function HFStatusField({
   drawerDetail = false,
 }) {
   return (
-    <Box sx={{width: "326px"}}>
+    <Box sx={{width: "100%"}}>
       <Controller
         name={name}
         control={control}
@@ -27,6 +27,7 @@ function HFStatusField({
                 width: "100%",
                 height: newUi ? "25px" : "15px",
                 border: "none",
+                padding: drawerDetail ? "0 2.6px" : "0",
                 backgroundColor: "inherit",
                 "& .MuiSelect-select": {
                   display: "flex",

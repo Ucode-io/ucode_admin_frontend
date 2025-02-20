@@ -15,6 +15,7 @@ const HFColorPicker = ({
   customeClick = false,
   clickItself = () => {},
   disabled = false,
+  drawerDetail = false,
   ...props
 }) => {
   return (
@@ -29,6 +30,7 @@ const HFColorPicker = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <ColorPicker
+            drawerDetail={drawerDetail}
             disabled={disabled}
             error={error}
             value={value}
@@ -45,7 +47,13 @@ const HFColorPicker = ({
   );
 };
 
-const ColorPicker = ({value, onChange, loading, disabled}) => {
+const ColorPicker = ({
+  value,
+  onChange,
+  loading,
+  disabled,
+  drawerDetail = false,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -64,7 +72,7 @@ const ColorPicker = ({value, onChange, loading, disabled}) => {
 
   return (
     <div
-      style={{width: "318px"}}
+      style={{width: "318px", padding: drawerDetail ? "0 10px" : "0"}}
       className="ColorPicker"
       onClick={(e) => e.stopPropagation()}>
       <div

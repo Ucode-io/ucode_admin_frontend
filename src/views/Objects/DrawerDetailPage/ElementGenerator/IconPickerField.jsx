@@ -22,6 +22,7 @@ const IconPickerField = ({
   loading = false,
   shape = "circle",
   disabled,
+  drawerDetail = false,
   ...props
 }) => {
   const buttonRef = useRef();
@@ -59,10 +60,11 @@ const IconPickerField = ({
   return (
     <div
       style={{
-        width: "270px",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
+        padding: drawerDetail ? "0 9.6px" : "0",
       }}
       onClick={(e) => e.stopPropagation()}
       {...props}>

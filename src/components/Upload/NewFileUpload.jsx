@@ -68,12 +68,7 @@ export default function NewFileUpload({
     <div className={`Gallery ${className}`}>
       {value && (
         <>
-          <Box
-            sx={{
-              width: drawerDetail ? "290px" : "",
-              margin: drawerDetail ? "0 auto" : "",
-            }}
-            className="uploadedFile">
+          <Box sx={{}} className="uploadedFile">
             <Button
               id="file_upload"
               aria-describedby={id}
@@ -177,7 +172,13 @@ export default function NewFileUpload({
         </>
       )}
 
-      <Box sx={{width: drawerDetail ? "330px" : ""}}>
+      <Box
+        sx={{
+          padding: drawerDetail ? "0 0px" : 0,
+          width: "40px",
+          display: "flex",
+          alignItems: "center",
+        }}>
         {!value && (
           <Button
             id="file_upload_btn"
@@ -201,7 +202,7 @@ export default function NewFileUpload({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 24, height: 24}}
+              style={{width: 22, height: 22}}
             />
           </Button>
         )}

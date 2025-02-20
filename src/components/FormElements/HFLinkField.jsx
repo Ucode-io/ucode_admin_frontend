@@ -139,7 +139,9 @@ const HFLinkField = ({
               ),
             }}
             helperText={!disabledHelperText && error?.message}
-            className={"customLinkField"}
+            className={
+              drawerDetail ? "customLinkFieldDrawer" : "customLinkField"
+            }
             {...props}
           />
         );

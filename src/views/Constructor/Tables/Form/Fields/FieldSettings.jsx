@@ -159,10 +159,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label:
-        fieldType === "TEXT"
-          ? field?.label
-          : field?.attributes?.[`label_${i18n?.language}`],
+      label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
       show_label: true,
     };
     if (id || menuItem?.table_id) {
@@ -207,7 +204,6 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
-    console.log("valueeeeeeeee", values);
     const data = {
       ...values,
       attributes: {
@@ -215,7 +211,6 @@ const FieldSettings = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-    console.log("datadatadatadatadata", data);
     if (formType === "CREATE") createField(data);
     else updateField(data);
   };

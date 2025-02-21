@@ -12,7 +12,7 @@ import {useForm} from "react-hook-form";
 import {Check} from "@mui/icons-material";
 import {useQueryClient} from "react-query";
 import {Menu, MenuItem} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
 import DrawerFormDetailPage from "./DrawerFormDetailPage";
@@ -29,6 +29,7 @@ import layoutService from "../../../services/layoutService";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {useTranslation} from "react-i18next";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 
 function DrawerDetailPage({
   open,
@@ -298,8 +299,8 @@ function DrawerDetailPage({
 
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
-      <Tabs>
-        <Box position={"relative"} zIndex={9} bg={"red"} maxW="650px">
+      <Tabs selectedIndex={selectedTabIndex}>
+        <Box position={"relative"} zIndex={9} maxW="850px">
           <form onSubmit={handleSubmit(onSubmit)}>
             <DrawerContent
               boxShadow="
@@ -309,7 +310,8 @@ function DrawerDetailPage({
       "
               zIndex={9}
               bg={"white"}
-              maxW="650px">
+              maxW="650px"
+              position={"relative"}>
               <DrawerHeader
                 px="12px"
                 bg="white"
@@ -357,41 +359,43 @@ function DrawerDetailPage({
                       background: "rgba(55, 53, 47, 0.16)",
                     }}></Box>
 
-                  <Box sx={{marginLeft: "10px"}}>
-                    <TabList style={{borderBottom: "none"}}>
-                      {data?.tabs
-                        ?.filter((item) => item?.type === "section")
-                        .map((el, index) => (
-                          <Tab
-                            key={index}
-                            style={{
-                              height: "24px",
-                              padding: "0 10px",
-                              fontSize: "11px",
-                              fontWeight: "500",
-                            }}>
-                            {el?.label}
-                          </Tab>
-                        ))}
-                    </TabList>
-                  </Box>
+                  <TabList style={{borderBottom: "none"}}>
+                    {data?.tabs?.map((el, index) => (
+                      <Tab
+                        onClick={(e) => {
+                          setSelectTab(el);
+                          setSelectedTabIndex(index);
+                        }}
+                        key={index}
+                        style={{
+                          height: "24px",
+                          padding: "0 10px",
+                          fontSize: "11px",
+                          fontWeight: "500",
+                        }}>
+                        {el?.label}
+                      </Tab>
+                    ))}
+                  </TabList>
                 </Flex>
 
-                <Button
-                  isLoading={btnLoader}
-                  disabled={btnLoader}
-                  type="submit"
-                  rounded={4}
-                  bg={"#007aff"}
-                  color={"#fff"}
-                  w={100}
-                  h={10}>
-                  Save
-                </Button>
+                {selectedTabIndex === 0 && (
+                  <Button
+                    isLoading={btnLoader}
+                    disabled={btnLoader}
+                    type="submit"
+                    rounded={4}
+                    bg={"#007aff"}
+                    color={"#fff"}
+                    w={100}
+                    h={10}>
+                    Save
+                  </Button>
+                )}
               </DrawerHeader>
 
-              <DrawerBody p="0px 50px" overflow={"auto"}>
-                <TabPanel>
+              <TabPanel>
+                <DrawerBody p="0px 50px" overflow={"auto"}>
                   <DrawerFormDetailPage
                     menuItem={menuItem}
                     data={data}
@@ -406,8 +410,36 @@ function DrawerDetailPage({
                     watch={watch}
                     reset={reset}
                   />
-                </TabPanel>
-              </DrawerBody>
+                </DrawerBody>
+              </TabPanel>
+              <TabPanel>
+                <DrawerBody p="0px 0px" overflow={"auto"}>
+                  <DrawerRelationTable
+                    getAllData={getAllData}
+                    selectedTabIndex={selectedTabIndex}
+                    setSelectedTabIndex={setSelectedTabIndex}
+                    relations={tableRelations}
+                    control={control}
+                    handleSubmit={handleSubmit}
+                    onSubmit={onSubmit}
+                    reset={reset}
+                    setFormValue={setFormValue}
+                    tableSlug={tableSlug}
+                    watch={watch}
+                    loader={loader}
+                    setSelectTab={setSelectTab}
+                    selectedTab={selectedTab}
+                    errors={errors}
+                    relatedTable={
+                      tableRelations[selectedTabIndex]?.relatedTable
+                    }
+                    id={id}
+                    fieldsMap={fieldsMap}
+                    data={data}
+                    setData={setData}
+                  />
+                </DrawerBody>
+              </TabPanel>
             </DrawerContent>
           </form>
         </Box>

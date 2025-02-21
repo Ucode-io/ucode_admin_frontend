@@ -17,7 +17,11 @@ function DrawerFormDetailPage({
   const {i18n} = useTranslation();
   return (
     <>
-      <Box mt="10px">
+      <Box
+        mt="10px"
+        sx={{height: "calc(100vh - 44px)"}}
+        pb={"10px"}
+        overflow={"auto"}>
         {data?.tabs?.[0]?.sections?.map((section, secIndex) => (
           <Box key={secIndex}>
             {section?.fields?.map((field, fieldIndex) => {

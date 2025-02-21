@@ -38,7 +38,7 @@ import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
 
 function DrawerFieldGenerator({field, control, watch}) {
-  switch (field?.type) {
+  switch (field?.relation_type ?? field?.type) {
     case "Many2One":
       return (
         <RelationField field={field} control={control} name={field?.slug} />

@@ -428,7 +428,7 @@ const AutoCompleteElement = ({
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
-
+  console.log("allOptionsallOptions", allOptions, field);
   return (
     <Box sx={{width: "330px", height: "32px"}}>
       <Select

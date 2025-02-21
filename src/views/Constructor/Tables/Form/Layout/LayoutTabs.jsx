@@ -104,7 +104,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-
+  console.log("allTabsallTabs", allTabs);
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -150,7 +150,7 @@ function LayoutTabs({
                       {tab?.type === "relation"
                         ? tab?.relation?.attributes?.[
                             `label_to_${i18n?.language}`
-                          ]
+                          ] || tab?.relation?.attributes?.label
                         : mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_to_${i18n.language}`
                           ) ||

@@ -175,7 +175,7 @@ const AutoCompleteElement = ({
     if (isMultiSelect) onFormChange(values?.map((el) => el.value));
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
-  console.log("valuevalue", value);
+
   return (
     <Box
       sx={{

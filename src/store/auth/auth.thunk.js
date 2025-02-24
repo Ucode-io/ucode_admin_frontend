@@ -26,6 +26,17 @@ export const loginAction = createAsyncThunk(
       dispatch(companyActions.setDefaultPage(data?.default_page));
       dispatch(permissionsActions.setPermissions(res?.permissions));
 
+      await languageService.getLanguageList().then((res) => {
+        const grouped = {};
+        for (const field of res?.languages) {
+          if (!grouped[field.category]) {
+            grouped[field.category] = [];
+          }
+          grouped[field.category].push(field);
+        }
+        saveGroupedToDB(grouped);
+      });
+
       await authService
         .updateToken({
           refresh_token: res.token.access_token,
@@ -39,17 +50,6 @@ export const loginAction = createAsyncThunk(
           console.log(err);
         });
 
-      await languageService.getLanguageList().then((res) => {
-        const grouped = {};
-        for (const field of res?.languages) {
-          if (!grouped[field.category]) {
-            grouped[field.category] = [];
-          }
-          grouped[field.category].push(field);
-        }
-        console.log("groupedgrouped", grouped);
-        saveGroupedToDB(grouped);
-      });
       const fcmToken = localStorage.getItem("fcmToken");
       // if (res.user.id)
       //   await authService.sendFcmToken({

@@ -23,7 +23,6 @@ export const saveGroupedToDB = async (groupedData) => {
   }
 
   await tx.done;
-  console.log("Grouped Data Saved:", groupedData);
 };
 
 export const getAllFromDB = async () => {
@@ -36,5 +35,4 @@ export const clearDB = async () => {
   const tx = db.transaction(STORE_NAME, "readwrite");
   await tx.objectStore(STORE_NAME).clear();
   await tx.done;
-  console.log("Database cleared.");
 };

@@ -892,6 +892,34 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     }));
   }, [projectInfo]);
 
+  const getDefaultLanguage = () => {
+    const isLanguageExist = languages?.some(
+      (item) => defaultLanguage === item?.slug
+    );
+
+    if (languages?.length) {
+      if (languages?.length === 1) {
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        i18n.changeLanguage(languages?.[0]?.slug);
+      } else if (languages?.length > 1) {
+        if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        } else if (defaultLanguage && isLanguageExist) {
+          dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          i18n.changeLanguage(defaultLanguage);
+        } else {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    getDefaultLanguage();
+  }, [languages?.length]);
+
   const logoutClickHandler = () => {
     clearDB();
     store.dispatch(authActions.logout());
@@ -901,7 +929,6 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
-    // onOpenModal();
     onClose();
   };
 
@@ -989,8 +1016,8 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
         onClick={onOpenModal}>
         <Logout style={{color: "#475467"}} />
         <span>
-          {generateLangaugeText(menuLanguages, i18n?.language, "Logout") ||
-            "Logout"}
+          {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
+            "Log out"}
         </span>
       </Box>
 

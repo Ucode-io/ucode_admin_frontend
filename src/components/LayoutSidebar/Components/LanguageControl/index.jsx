@@ -6,6 +6,7 @@ import {useForm, useFieldArray} from "react-hook-form";
 import HFTextField from "../../../FormElements/HFTextField";
 import {useSelector} from "react-redux";
 import {getAllFromDB} from "../../../../utils/languageDB";
+import HFTextFieldLanguage from "../../../FormElements/HFTextFieldLanguage";
 
 function LanguageControl() {
   const {control, handleSubmit, reset} = useForm();
@@ -27,7 +28,6 @@ function LanguageControl() {
           ...item,
           translations: item.translations || {},
         }));
-        console.log("formattedDataformattedData", formattedData);
         reset({translations: formattedData});
       }
     });
@@ -145,11 +145,12 @@ const CategoryLanguage = ({
       </Box>
       <Flex w={"100%"} gap={10} justifyContent={"space-between"}>
         {languages?.map((item) => (
-          <HFTextField
+          <HFTextFieldLanguage
             key={`${field.id}-${item.slug}`}
             inputHeight={"20px"}
             name={`translations.${categoryIndex}.values.${index}.translations.${item.slug}`}
             control={control}
+            field={field}
           />
         ))}
       </Flex>

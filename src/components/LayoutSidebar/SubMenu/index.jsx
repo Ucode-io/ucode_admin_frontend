@@ -23,6 +23,7 @@ import {useSearchParams} from "react-router-dom";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
 import ProjectSettings from "../Components/ProjectSettings";
 import ApiMenu from "../Components/ApiMenu/Index";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -41,6 +42,8 @@ const SubMenu = ({
   setSelectedApp,
   setLinkedTableModal,
   menuItem,
+  menuLanguages,
+  languageData = [],
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -51,6 +54,8 @@ const SubMenu = ({
 
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
+
+  const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
 
   const handleClick = () => {
     navigator.clipboard.writeText(
@@ -207,10 +212,12 @@ const SubMenu = ({
                     menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
+                    projectSettingLan={projectSettingLan}
                   />
                 )}
                 {selectedApp?.id === adminId && (
                   <Permissions
+                    projectSettingLan={projectSettingLan}
                     menuStyle={{
                       ...menuStyles,
                       background: "#fff",
@@ -220,6 +227,7 @@ const SubMenu = ({
                 )}
                 {selectedApp?.id === adminId && (
                   <Resources
+                    projectSettingLan={projectSettingLan}
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
@@ -228,6 +236,7 @@ const SubMenu = ({
                 )}
                 {selectedApp?.id === adminId && (
                   <ApiMenu
+                    projectSettingLan={projectSettingLan}
                     handleOpenNotify={handleOpenNotify}
                     menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
@@ -236,6 +245,7 @@ const SubMenu = ({
                 )}
                 {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
                   <Users
+                    projectSettingLan={projectSettingLan}
                     menuStyle={menuStyleNew}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     child={child}
@@ -250,6 +260,7 @@ const SubMenu = ({
                       onDrop={onDrop}>
                       {child?.map((element, index) => (
                         <RecursiveBlock
+                          projectSettingLan={projectSettingLan}
                           key={element.id}
                           element={element}
                           openFolderCreateModal={openFolderCreateModal}
@@ -280,6 +291,7 @@ const SubMenu = ({
                   )}
                   {selectedApp?.id === adminId && (
                     <ActivityFeedButton
+                      projectSettingLan={projectSettingLan}
                       menuStyle={menuStyleNew}
                       menuItem={menuItem}
                       level={2}
@@ -321,7 +333,11 @@ const SubMenu = ({
                       cursor: "pointer",
                     }}>
                     <img src="/img/plus-icon.svg" alt="Add" />
-                    Create
+                    {generateLangaugeText(
+                      menuLanguages,
+                      i18n?.language,
+                      "Create"
+                    )}
                   </div>
                 </Button>
               </div>

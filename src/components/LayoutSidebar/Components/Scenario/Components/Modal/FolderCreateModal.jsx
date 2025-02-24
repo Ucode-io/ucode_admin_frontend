@@ -1,22 +1,22 @@
-import { Card, Modal, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Card, Modal, Typography} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   useScenarioCategoryCreateMutation,
   useScenarioCategoryUpdateMutation,
 } from "../../../../../../services/scenarioCategory";
-import { store } from "../../../../../../store";
+import {store} from "../../../../../../store";
 import CreateButton from "../../../../../Buttons/CreateButton";
 import SaveButton from "../../../../../Buttons/SaveButton";
 import HFTextField from "../../../../../FormElements/HFTextField";
 
-const FolderCreateModal = ({ closeModal, modalType, folder }) => {
+const FolderCreateModal = ({closeModal, modalType, folder}) => {
   const createType = modalType === "CREATE";
   const company = store.getState().company;
   const queryClient = useQueryClient();
 
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: createType
       ? {
           project_id: company.projectId,
@@ -28,7 +28,7 @@ const FolderCreateModal = ({ closeModal, modalType, folder }) => {
         },
   });
 
-  const { mutate: create, isLoading: createLoading } =
+  const {mutate: create, isLoading: createLoading} =
     useScenarioCategoryCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["SCENARIO_CATEGORIES"]);
@@ -36,7 +36,7 @@ const FolderCreateModal = ({ closeModal, modalType, folder }) => {
       },
     });
 
-  const { mutate: update, isLoading: updateLoading } =
+  const {mutate: update, isLoading: updateLoading} =
     useScenarioCategoryUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["SCENARIO_CATEGORIES"]);

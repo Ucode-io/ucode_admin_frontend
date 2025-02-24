@@ -43,7 +43,6 @@ import {
   Box,
   Button,
   Flex,
-  HStack,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -66,8 +65,10 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {Fade, Modal, Typography} from "@mui/material";
+import {Modal} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -97,11 +98,13 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-
   const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
-  const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const [menuLanguages, setMenuLanguages] = useState(null);
+  const [profileSettingLan, setProfileSettingLan] = useState(null);
+  const [languageData, setLanguageData] = useState(null);
+  const {i18n} = useTranslation();
 
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
@@ -175,15 +178,11 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
   const closeMicrofrontendModal = () => {
     setMicrofrontendModalOpen(null);
   };
-  const handleMenuSettingModalOpen = () => {
-    setMenuSettingModalOpen(true);
-  };
+
   const closeMenuSettingModal = () => {
     setMenuSettingModalOpen(null);
   };
-  const handleTemplateModalOpen = () => {
-    setTemplateModalOpen(true);
-  };
+
   const closeTemplateModal = () => {
     setTemplateModalOpen(null);
   };
@@ -318,6 +317,23 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
             dispatch(mainActions.setSidebarHighlightedAction(id)),
         };
 
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setProfileSettingLan(
+          formattedData?.find((item) => item?.key === "Profile Setting")
+        );
+        setMenuLanguages(formattedData?.find((item) => item?.key === "Menu"));
+        setLanguageData(formattedData);
+      }
+    });
+  }, []);
+
   return (
     <>
       <Flex
@@ -363,6 +379,8 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
             toggleDarkMode={toggleDarkMode}
             darkMode={darkMode}
             projectInfo={projectInfo}
+            menuLanguages={menuLanguages}
+            profileSettingLan={profileSettingLan}
           />
         </Flex>
 
@@ -394,6 +412,7 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
                     setSelectedApp={setSelectedApp}
                     selectedApp={selectedApp}
                     menuTemplate={menuTemplate}
+                    menuLanguages={menuLanguages}
                   />
                 ))}
               </Container>
@@ -430,7 +449,11 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
                       }
                       pl={48}
                       fontSize={14}>
-                      Create
+                      {generateLangaugeText(
+                        menuLanguages,
+                        i18n?.language,
+                        "Create"
+                      ) || "Create"}
                     </Box>
                   </Flex>
                 </SidebarAppTooltip>
@@ -491,18 +514,6 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
               {...getActionProps("ai-chat")}
             />
           </SidebarActionTooltip>
-          {/* <Box
-            display={sidebarIsOpen ? "block" : "none"}
-            w="1px"
-            h={20}
-            bg="#D0D5DD"
-          />
-          <NewProfilePanel
-            sidebarAnchorEl={sidebarAnchorEl}
-            setSidebarAnchor={setSidebarAnchor}
-            handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-            handleTemplateModalOpen={handleTemplateModalOpen}
-          /> */}
         </Flex>
 
         {(modalType === "create" ||
@@ -566,6 +577,7 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
       </Flex>
 
       <SubMenu
+        menuLanguages={menuLanguages}
         child={child}
         subMenuIsOpen={subMenuIsOpen}
         setSubMenuIsOpen={setSubMenuIsOpen}
@@ -582,10 +594,12 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
         setChild={setChild}
         setSelectedApp={setSelectedApp}
         menuItem={menuItem}
+        languageData={languageData}
       />
 
       {menu?.type?.length ? (
         <ButtonsMenu
+          menuLanguages={menuLanguages}
           element={element}
           menu={menu?.event}
           openMenu={openSidebarMenu}
@@ -681,7 +695,12 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   );
 });
 
-const Header = ({sidebarIsOpen, projectInfo, toggleDarkMode, darkMode}) => {
+const Header = ({
+  sidebarIsOpen,
+  projectInfo,
+  menuLanguages,
+  profileSettingLan,
+}) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -773,29 +792,28 @@ const Header = ({sidebarIsOpen, projectInfo, toggleDarkMode, darkMode}) => {
       <PopoverContent
         w="300px"
         bg="#fff"
-        // padding={6}
         borderRadius={8}
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}>
         <>
-          <ProfilePanel
-            toggleDarkMode={toggleDarkMode}
-            darkMode={darkMode}
-            onClose={onClose}
-          />
+          <ProfilePanel menuLanguages={menuLanguages} onClose={onClose} />
           <Companies onSelectEnvironment={onSelectEnvironment} />
-          <ProfileBottom projectInfo={projectInfo} />
+          <ProfileBottom
+            projectInfo={projectInfo}
+            menuLanguages={profileSettingLan}
+          />
         </>
       </PopoverContent>
     </Popover>
   );
 };
 
-const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
+const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
+  const {i18n} = useTranslation();
 
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
@@ -826,7 +844,8 @@ const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
         _hover={{background: "#eeee"}}
         alignItems={"center"}
         h={25}
-        w={86}
+        minW={86}
+        maxW={130}
         border={"1px solid #eee"}
         borderRadius={"5px"}
         justifyContent={"center"}
@@ -838,18 +857,15 @@ const ProfilePanel = ({onClose = () => {}, toggleDarkMode, darkMode}) => {
           onClose();
         }}>
         <SettingsIcon style={{color: "#475467"}} />
-        <Box color={"#475467"}>Settings</Box>
+        <Box color={"#475467"}>
+          {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
+        </Box>
       </Flex>
-      {/* <Box sx={{position: "absolute", top: 10, right: 10}}>
-        <Button onClick={toggleDarkMode} variant="contained">
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </Button>
-      </Box> */}
     </Box>
   );
 };
 
-const ProfileBottom = ({projectInfo}) => {
+const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
 
@@ -876,7 +892,36 @@ const ProfileBottom = ({projectInfo}) => {
     }));
   }, [projectInfo]);
 
+  const getDefaultLanguage = () => {
+    const isLanguageExist = languages?.some(
+      (item) => defaultLanguage === item?.slug
+    );
+
+    if (languages?.length) {
+      if (languages?.length === 1) {
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        i18n.changeLanguage(languages?.[0]?.slug);
+      } else if (languages?.length > 1) {
+        if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        } else if (defaultLanguage && isLanguageExist) {
+          dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          i18n.changeLanguage(defaultLanguage);
+        } else {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          i18n.changeLanguage(languages?.[0]?.slug);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    getDefaultLanguage();
+  }, [languages?.length]);
+
   const logoutClickHandler = () => {
+    clearDB();
     store.dispatch(authActions.logout());
     dispatch(companyActions.setCompanies([]));
   };
@@ -884,9 +929,14 @@ const ProfileBottom = ({projectInfo}) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
-    // onOpenModal();
     onClose();
   };
+
+  useEffect(() => {
+    if (projectInfo?.project_id) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectInfo?.project_id, dispatch]);
 
   return (
     <Box p={8} ref={popoverRef}>
@@ -913,7 +963,14 @@ const ProfileBottom = ({projectInfo}) => {
               onOpen();
             }}>
             <GTranslateIcon style={{color: "#475467"}} />
-            <span>Languages</span>
+            <span>
+              {" "}
+              {generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Languages"
+              ) || "Languages"}
+            </span>
           </Box>
         </PopoverTrigger>
 
@@ -958,7 +1015,10 @@ const ProfileBottom = ({projectInfo}) => {
         _hover={{background: "#eeee"}}
         onClick={onOpenModal}>
         <Logout style={{color: "#475467"}} />
-        <span>Logout</span>
+        <span>
+          {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
+            "Log out"}
+        </span>
       </Box>
 
       <Modal open={isOpenModal} onClose={onCloseModal}>
@@ -981,11 +1041,19 @@ const ProfileBottom = ({projectInfo}) => {
           </Box>
 
           <Box fontWeight={700} fontSize={"18px"}>
-            Log out of your account?
+            {generateLangaugeText(
+              menuLanguages,
+              i18n?.language,
+              "Log out of your account"
+            ) || "Log out of your account"}
           </Box>
 
           <Box mt={5} fontWeight={400} fontSize={"12px"}>
-            You will need to log back in to access your workspace.
+            {generateLangaugeText(
+              menuLanguages,
+              i18n?.language,
+              "You will need to log back in to access your workspace."
+            )}
           </Box>
 
           <Box mt={20} display="flex" flexDirection="column" gap={1}>
@@ -1000,7 +1068,8 @@ const ProfileBottom = ({projectInfo}) => {
               _hover={{bg: "#a63400"}}
               style={{height: "40px"}}
               onClick={logoutClickHandler}>
-              Log out
+              {generateLangaugeText(menuLanguages, i18n?.language, "Logout") ||
+                "Logout"}
             </Button>
             <Button
               mt={5}
@@ -1013,7 +1082,8 @@ const ProfileBottom = ({projectInfo}) => {
               border="2px solid #eee"
               style={{height: "40px"}}
               onClick={onCloseModal}>
-              Cancel
+              {generateLangaugeText(menuLanguages, i18n?.language, "Cancel") ||
+                "Cancel"}
             </Button>
           </Box>
         </Box>

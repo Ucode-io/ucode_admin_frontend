@@ -4,6 +4,9 @@ import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import "../../style.scss";
 import {useNavigate, useParams} from "react-router-dom";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import IconGenerator from "../../../IconPicker/IconGenerator";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const activityFeedData = {
@@ -28,34 +31,12 @@ const ActivityFeedButton = ({
   menuItem,
   setSubMenuIsOpen,
   pinIsEnabled,
+  projectSettingLan,
 }) => {
   const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const activeStyle = {
-    backgroundColor:
-      activityFeedData?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      activityFeedData?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-    height: "32px"
-  };
-
-  const labelStyle = {
-    paddingLeft: "25px",
-    color:
-      activityFeedData?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
+  const {i18n} = useTranslation();
 
   const clickHandler = () => {
     navigate(`/main/${appId}/activity`);
@@ -76,7 +57,12 @@ const ActivityFeedButton = ({
           }}>
           <div className="label">
             <InventoryIcon size={18} />
-            {activityFeedData?.label}
+            <IconGenerator icon={"lock.svg"} size={18} />
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Activity logs"
+            ) ?? "Activity logs"}
           </div>
         </Button>
       </div>

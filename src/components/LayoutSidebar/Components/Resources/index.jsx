@@ -20,6 +20,8 @@ import {useQuery, useQueryClient} from "react-query";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {useDispatch, useSelector} from "react-redux";
 import activeStyles from "../MenuUtils/activeStyles";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBases = {
@@ -44,10 +46,11 @@ const Resources = ({
   setSubMenuIsOpen,
   handleOpenNotify,
   pinIsEnabled,
+  projectSettingLan,
 }) => {
   const navigate = useNavigate();
   const {appId} = useParams();
-
+  const {i18n} = useTranslation();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const company = store.getState().company;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -176,7 +179,11 @@ const Resources = ({
               <KeyboardArrowRightIcon />
             )}
             <IconGenerator icon={"database.svg"} size={18} />
-            {dataBases?.label}
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Resources"
+            ) || "Resources"}
           </div>
 
           {dataBases?.id === "15" && (

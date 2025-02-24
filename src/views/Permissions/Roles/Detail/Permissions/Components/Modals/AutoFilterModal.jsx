@@ -5,6 +5,7 @@ import {useFieldArray, useWatch} from "react-hook-form";
 import {store} from "../../../../../../../store";
 import {useRelationsListQuery} from "../../../../../../../services/relationService";
 import {useObjectsListQuery} from "../../../../../../../services/constructorObjectService";
+import {useTranslation} from "react-i18next";
 
 const AutoFilterModal = ({
   control,
@@ -13,11 +14,12 @@ const AutoFilterModal = ({
   type,
   setValue,
   watch,
+  permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.automatic_filters.${type}`;
   const projectId = store.getState().company.projectId;
   const envId = store.getState().company.environmentId;
-
+  const {i18n} = useTranslation();
   const tableSlug = useWatch({
     control,
     name: `data.tables.${tableIndex}.slug`,
@@ -98,7 +100,13 @@ const AutoFilterModal = ({
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Relation permissions</Typography>
+            <Typography variant="h4">
+              {generateLangaugeText(
+                projectSettingLan,
+                i18n?.language,
+                "Relation permissions"
+              ) ?? "Relation permissions"}
+            </Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -124,13 +132,21 @@ const AutoFilterModal = ({
             ))}
             <Box p={1}>
               <Button onClick={addFilter} variant="contained" fullWidth>
-                Add filter
+                {generateLangaugeText(
+                  projectSettingLan,
+                  i18n?.language,
+                  "Add filter"
+                ) ?? "Add filter"}
               </Button>
             </Box>
             <div className="modal-header silver-bottom-border">
               <div></div>
               <Button variant="contained" onClick={closeModal}>
-                Save
+                {generateLangaugeText(
+                  projectSettingLan,
+                  i18n?.language,
+                  "Save"
+                ) ?? "Save"}
               </Button>
             </div>
           </Box>

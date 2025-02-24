@@ -12,6 +12,8 @@ import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
 import PermissionSidebarRecursiveBlock from "./PermissionSidebarRecursiveBlock";
 import activeStyles from "../MenuUtils/activeStyles";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -31,14 +33,14 @@ const permissionFolder = {
   },
 };
 
-const Permissions = ({level = 1, menuStyle, setElement}) => {
+const Permissions = ({level = 1, menuStyle, setElement, projectSettingLan}) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [selectedUserFolder, setSelectedUserFolder] = useState(null);
   const [userFolderModalType, setUserFolderModalType] = useState(null);
   const closeUserFolderModal = () => setSelectedUserFolder(null);
-  const menuItem = useSelector((state) => state.menu.menuItem);
+  const {i18n} = useTranslation();
 
   const openUserFolderModal = (folder, type) => {
     setSelectedUserFolder(folder);
@@ -98,7 +100,11 @@ const Permissions = ({level = 1, menuStyle, setElement}) => {
               <KeyboardArrowRightIcon />
             )}
             <IconGenerator icon={"lock.svg"} size={18} />
-            Permissions
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Permissions"
+            ) ?? "Permissions"}
           </div>
           <Box className="icon_group">
             <Tooltip title="Create folder" placement="top">

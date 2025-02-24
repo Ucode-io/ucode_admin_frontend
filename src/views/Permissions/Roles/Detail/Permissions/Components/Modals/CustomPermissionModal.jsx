@@ -9,6 +9,7 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import PermissionCheckbox from "../PermissionCheckbox";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 
 const CustomPermissionModal = ({
   closeModal,
@@ -16,9 +17,10 @@ const CustomPermissionModal = ({
   tableIndex,
   setValue,
   watch,
+  permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.custom_permission`;
-
+  const {i18n} = useTranslation();
   const fields = [
     {
       guid: "1",
@@ -151,9 +153,19 @@ const CustomPermissionModal = ({
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
-                    <CTableCell w={250}>Label</CTableCell>
+                    <CTableCell w={250}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Label"
+                      ) || "Label"}
+                    </CTableCell>
                     <CTableCell w={150}>
-                      Permission
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Permission"
+                      ) || "Permission"}
                       <Checkbox
                         checked={allYes ? true : false}
                         onChange={(e) => updateView(e.target.checked)}

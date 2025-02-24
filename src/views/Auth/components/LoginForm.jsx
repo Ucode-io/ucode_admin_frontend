@@ -403,14 +403,6 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
     }
   }, [connectionCheck, getFormValue?.tables]);
 
-  const selectedProject = useMemo(() => {
-    const computedProject = companies[0]?.projects?.find(
-      (item) => item?.id === selectedProjectID
-    );
-
-    return computedProject?.resource_environments ?? [];
-  }, [selectedProjectID, companies]);
-
   return (
     <>
       {formType === "RESET_PASSWORD" ? (

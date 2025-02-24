@@ -1,38 +1,37 @@
-import {Box, Button, Flex} from "@chakra-ui/react";
-import React, {useMemo} from "react";
+import {Box, Button, Flex, Text} from "@chakra-ui/react";
+import React, {useEffect, useMemo} from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {useNavigate} from "react-router-dom";
 import {useForm, useFieldArray} from "react-hook-form";
 import HFTextField from "../../../FormElements/HFTextField";
 import {useSelector} from "react-redux";
-import {useProjectGetByIdQuery} from "../../../../services/projectService";
-import {staticData} from "./mockData";
+import {getAllFromDB} from "../../../../utils/languageDB";
+import HFTextFieldLanguage from "../../../FormElements/HFTextFieldLanguage";
 
 function LanguageControl() {
-  const {control, handleSubmit} = useForm({
-    defaultValues: {
-      translations: staticData,
-    },
-  });
+  const {control, handleSubmit, reset} = useForm();
+  const languages = useSelector((state) => state.languages.list);
 
   const {fields} = useFieldArray({
     control,
     name: "translations",
   });
 
-  const projectId = useSelector((state) => state.company.projectId);
-  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
-
-  const languages = useMemo(() => {
-    return projectInfo?.language?.map((lang) => ({
-      title: lang?.name,
-      slug: lang?.short_name,
-    }));
-  }, [projectInfo]);
-
   const onSubmit = (values) => {
     console.log("Submitted values:", values);
   };
+
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        reset({translations: formattedData});
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -46,9 +45,6 @@ function LanguageControl() {
               languages={languages}
             />
           </Box>
-          {/* <Button type="submit" mt={4}>
-            Save
-          </Button> */}
         </form>
       </Box>
     </>
@@ -92,44 +88,73 @@ const Header = () => {
 const LanguageKey = ({fields, control, languages}) => {
   return (
     <Box>
-      <Flex position={"sticky"} top={0} zIndex={999} bg={"white"} mb={15}>
-        <Box borderBottom={"1px solid #eee"} fontSize={12} w={300}></Box>
+      <Flex position="sticky" top={0} zIndex={999} bg="white" mb={15}>
+        <Box borderBottom="1px solid #eee" fontSize={12} w={300}></Box>
         <Flex
-          w={"100%"}
-          justifyContent={"space-between"}
-          borderBottom={"1px solid #eee"}
+          w="100%"
+          justifyContent="space-between"
+          borderBottom="1px solid #eee"
           pt={10}
           pb={10}>
           {languages?.map((el) => (
-            <Box key={el.slug} pl={10} fontSize={14} w={"100%"}>
-              {el?.title ?? ""}
+            <Box key={el.slug} pl={10} fontSize={14} w="100%">
+              {el?.slug.toUpperCase() ?? ""}
             </Box>
           ))}
         </Flex>
       </Flex>
-      {fields.map((field, index) => (
-        <Flex
-          key={field.id}
-          my={10}
-          px={20}
-          alignItems={"center"}
-          overflowX={"auto"}>
-          <Box fontSize={12} w={150}>
-            {field.key}:
-          </Box>
-          <Flex w={"100%"} gap={10} justifyContent={"space-between"}>
-            {languages?.map((item) => (
-              <HFTextField
-                key={`${field.id}-${item.slug}`}
-                inputHeight={"20px"}
-                name={`translations.${index}.translations.${item.slug}`}
-                control={control}
-              />
-            ))}
-          </Flex>
-        </Flex>
+
+      {fields?.map((categoryItem, categoryIndex) => (
+        <Box key={categoryItem?.id} borderBottom="1px solid #eee" py={15}>
+          <Text fontWeight="bold" ml={20} fontSize="14px">
+            {categoryItem?.key}
+          </Text>
+          {categoryItem?.values.map((el, index) => (
+            <CategoryLanguage
+              categoryIndex={categoryIndex}
+              key={el.id || index}
+              index={index}
+              field={el}
+              control={control}
+              languages={languages}
+            />
+          ))}
+        </Box>
       ))}
     </Box>
+  );
+};
+
+const CategoryLanguage = ({
+  languages,
+  control,
+  categoryIndex,
+  index,
+  field,
+}) => {
+  return (
+    <Flex
+      minHeight={40}
+      key={field.id}
+      my={10}
+      px={20}
+      alignItems={"center"}
+      overflowX={"auto"}>
+      <Box fontSize={12} w={150}>
+        {field.key}:
+      </Box>
+      <Flex w={"100%"} gap={10} justifyContent={"space-between"}>
+        {languages?.map((item) => (
+          <HFTextFieldLanguage
+            key={`${field.id}-${item.slug}`}
+            inputHeight={"20px"}
+            name={`translations.${categoryIndex}.values.${index}.translations.${item.slug}`}
+            control={control}
+            field={field}
+          />
+        ))}
+      </Flex>
+    </Flex>
   );
 };
 

@@ -23,16 +23,17 @@ export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
 const USERS_MENU_ITEM_ID = "9e988322-cffd-484c-9ed6-460d8701551b";
 
 const AppSidebar = ({
-                      index,
-                      element,
-                      sidebarIsOpen,
-                      setElement,
-                      setSubMenuIsOpen,
-                      handleOpenNotify,
-                      setSelectedApp,
-                      selectedApp,
-                      menuTemplate,
-                    }) => {
+  index,
+  element,
+  sidebarIsOpen,
+  setElement,
+  setSubMenuIsOpen,
+  handleOpenNotify,
+  setSelectedApp,
+  selectedApp,
+  menuTemplate,
+  menuLanguages,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
@@ -49,7 +50,7 @@ const AppSidebar = ({
 
   const clickHandler = () => {
     if (element?.id === USERS_MENU_ITEM_ID) {
-      return navigate('/client-types');
+      return navigate("/client-types");
     }
 
     dispatch(menuActions.setMenuItem(element));
@@ -104,7 +105,10 @@ const AppSidebar = ({
   };
   const menuStyle = {
     ...menuTemplate?.menu_template,
-    text: menuTemplate?.menu_template?.text === "#A8A8A8" ? "" : menuTemplate?.menu_template?.text
+    text:
+      menuTemplate?.menu_template?.text === "#A8A8A8"
+        ? ""
+        : menuTemplate?.menu_template?.text,
   };
 
   const [searchParams] = useSearchParams();
@@ -130,18 +134,26 @@ const AppSidebar = ({
     return;
   }
 
-  const title = element?.attributes?.[`label_${i18n.language}`] ||
+  const title =
+    element?.attributes?.[`label_${i18n.language}`] ||
     element?.label ||
     element?.data?.microfrontend?.name ||
     element?.data?.webpage?.title;
-  const icon = element?.icon || element?.data?.microfrontend?.icon || element?.data?.webpage?.icon
-  const iconSize = menuStyle?.icon_size === "SMALL"
-    ? 10 : menuStyle?.icon_size === "MEDIUM"
-      ? 15 : 20
+  const icon =
+    element?.icon ||
+    element?.data?.microfrontend?.icon ||
+    element?.data?.webpage?.icon;
+  const iconSize =
+    menuStyle?.icon_size === "SMALL"
+      ? 10
+      : menuStyle?.icon_size === "MEDIUM"
+        ? 15
+        : 20;
 
   const conditionalProps = {};
   if (!sidebarIsOpen) {
-    conditionalProps.onMouseEnter = () => dispatch(mainActions.setSidebarHighlightedMenu(element?.id));
+    conditionalProps.onMouseEnter = () =>
+      dispatch(mainActions.setSidebarHighlightedMenu(element?.id));
   }
 
   return (
@@ -158,39 +170,53 @@ const AppSidebar = ({
           h={32}
           mx={8}
           mb={4}
-          alignItems='center'
+          alignItems="center"
           whiteSpace="nowrap"
           borderRadius={6}
           _hover={{bg: "#EAECF0"}}
-          cursor='pointer'
+          cursor="pointer"
           className="parent-folder column-drag-handle"
-          bg={activeMenu
-            ? (`${menuStyle?.active_background ?? "#EAECF0"} !important`)
-            : menuStyle?.background}
-          color={Boolean(
-            appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-            appId === element?.id
-          ) || menuItem === element?.id
-            ? "#fff"
-            : "#A8A8A8"}
-          {...conditionalProps}
-        >
+          bg={
+            activeMenu
+              ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
+              : menuStyle?.background
+          }
+          color={
+            Boolean(
+              appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                appId === element?.id
+            ) || menuItem === element?.id
+              ? "#fff"
+              : "#A8A8A8"
+          }
+          {...conditionalProps}>
           <Flex
             position="absolute"
             w={36}
             h={36}
             alignItems="center"
-            justifyContent="center"
-          >
+            justifyContent="center">
             <IconGenerator
-              icon={(!icon || icon === 'folder.svg') ? "folder-new.svg" : icon}
+              icon={!icon || icon === "folder.svg" ? "folder-new.svg" : icon}
               size={iconSize}
-              style={{color: (icon && icon !== 'folder.svg') ? (menuStyle?.text || "#475467") : "#fff"}}
+              style={{
+                color:
+                  icon && icon !== "folder.svg"
+                    ? menuStyle?.text || "#475467"
+                    : "#fff",
+              }}
             />
           </Flex>
 
-          <Box color={activeMenu ? menuStyle?.active_text : (menuStyle?.text || "#475467")} pl={48} fontSize={14}
-               mr='auto' overflow='hidden' textOverflow='ellipsis'>
+          <Box
+            color={
+              activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467"
+            }
+            pl={48}
+            fontSize={14}
+            mr="auto"
+            overflow="hidden"
+            textOverflow="ellipsis">
             {title}
           </Box>
 
@@ -318,7 +344,7 @@ const AppSidebar = ({
                   : menuStyle?.text || "",
                 transform: selectedApp?.id === element.id && "rotate(-90deg)",
                 transition: "transform 250ms ease-out",
-                marginRight: 4
+                marginRight: 4,
               }}
             />
           ) : (

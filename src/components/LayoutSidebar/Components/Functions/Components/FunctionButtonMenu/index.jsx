@@ -1,9 +1,9 @@
-import { Box, Menu } from "@mui/material";
-import { RiPencilFill } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import {Box, Menu} from "@mui/material";
+import {RiPencilFill} from "react-icons/ri";
+import {useNavigate} from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 
 const FunctionButtonMenu = ({
@@ -42,8 +42,7 @@ const FunctionButtonMenu = ({
               padding: 0,
             },
           },
-        }}
-      >
+        }}>
         {menuType === "FOLDER" ? (
           <>
             <Box className="menu">

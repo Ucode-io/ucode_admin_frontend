@@ -7,7 +7,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, {useState} from "react";
-import {updateLevel} from "../../../../utils/level";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import {useDispatch} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
@@ -15,6 +14,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import FileUploadWithDraggable from "./FileUploadDraggable";
 import erdService from "../../../../services/erdService";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const functionFolder = {
@@ -33,9 +34,10 @@ const functionFolder = {
   },
 };
 
-function FileUploadMenu({level = 1, menuStyle, menuItem}) {
+function FileUploadMenu({projectSettingLan}) {
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
   const handleOpen = () => setOpenModal(true);
@@ -62,29 +64,6 @@ function FileUploadMenu({level = 1, menuStyle, menuItem}) {
       .finally(() => setLoader(false));
   };
 
-  const activeStyle = {
-    backgroundColor:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-
-  const labelStyle = {
-    paddingLeft: "15px",
-    color:
-      functionFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
   return (
     <Box>
       <div className="parent-block column-drag-handle">
@@ -96,7 +75,11 @@ function FileUploadMenu({level = 1, menuStyle, menuItem}) {
           }}>
           <div className="label" style={{color: "#475467", fontSize: "13px"}}>
             <IconGenerator icon={"upload.svg"} size={18} />
-            Upload ERD
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Upload ERD"
+            ) || "Upload ERD"}
           </div>
         </Button>
       </div>

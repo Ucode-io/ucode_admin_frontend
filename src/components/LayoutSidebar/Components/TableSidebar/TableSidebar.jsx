@@ -1,10 +1,11 @@
 import {Box, Button} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import {useNavigate, useParams} from "react-router-dom";
-import {updateLevel} from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -23,34 +24,11 @@ const projectFolder = {
   },
 };
 
-const TableSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
+const TableSettingSidebar = ({level = 1, projectSettingLan}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {appId} = useParams();
-
-  const activeStyle = {
-    backgroundColor:
-      projectFolder?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      projectFolder?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-
-  const labelStyle = {
-    paddingLeft: "15px",
-    color:
-      projectFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
+  const {i18n} = useTranslation();
 
   const clickHandler = (e) => {
     navigate(`/main/${appId}/tables`);
@@ -68,7 +46,11 @@ const TableSettingSidebar = ({level = 1, menuStyle, menuItem}) => {
           }}>
           <div className="label" style={{fontSize: "13px"}}>
             <IconGenerator icon={projectFolder?.icon} size={18} />
-            {projectFolder?.label}
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Models"
+            ) ?? "Models"}
           </div>
         </Button>
       </div>

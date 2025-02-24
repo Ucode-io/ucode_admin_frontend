@@ -28,7 +28,7 @@ const projectSettings = {
   },
 };
 
-function ApiMenu({level = 1, menuStyle}) {
+function ApiMenu({level = 1, menuStyle, projectSettingLan}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
@@ -63,8 +63,18 @@ function ApiMenu({level = 1, menuStyle}) {
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-        <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+        <ApiKeyButton
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          level={2}
+          projectSettingLan={projectSettingLan}
+        />
+        <RedirectButton
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          level={2}
+          projectSettingLan={projectSettingLan}
+        />
       </Collapse>
     </Box>
   );

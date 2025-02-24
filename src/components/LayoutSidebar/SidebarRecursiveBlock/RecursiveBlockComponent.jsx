@@ -42,9 +42,9 @@ const RecursiveBlock = ({
   selectedApp,
   userType = false,
   buttonProps,
+  projectSettingLan,
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
-  const activeStyle = activeStyles({menuItem, element, menuStyle, level});
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
   const {appId} = useParams();
@@ -299,6 +299,7 @@ const RecursiveBlock = ({
                 level={2}
               /> */}
               <TableSettingSidebar
+                projectSettingLan={projectSettingLan}
                 menuStyle={menuStyle}
                 menuItem={menuItem}
                 level={2}
@@ -331,18 +332,21 @@ const RecursiveBlock = ({
               /> */}
 
               <FunctionSidebar
+                projectSettingLan={projectSettingLan}
                 menuStyle={menuStyle}
                 menuItem={menuItem}
                 level={2}
                 integrated={false}
               />
               <MicrofrontendSettingSidebar
+                projectSettingLan={projectSettingLan}
                 menuStyle={menuStyle}
                 menuItem={menuItem}
                 element={element}
                 level={2}
               />
               <FileUploadMenu
+                projectSettingLan={projectSettingLan}
                 menuStyle={menuStyle}
                 setSubMenuIsOpen={setSubMenuIsOpen}
                 menuItem={menuItem}

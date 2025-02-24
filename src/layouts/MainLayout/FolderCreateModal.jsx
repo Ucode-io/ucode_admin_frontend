@@ -10,6 +10,7 @@ import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
 import {useSelector} from "react-redux";
 import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
+import {useTranslation} from "react-i18next";
 
 const FolderCreateModal = ({
   closeModal,
@@ -21,6 +22,7 @@ const FolderCreateModal = ({
 }) => {
   const {projectId} = useParams();
   const queryClient = useQueryClient();
+  const {i18n} = useTranslation();
 
   const onSubmit = (data) => {
     if (modalType === "create") {

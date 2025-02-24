@@ -1,49 +1,46 @@
-import {Box, Dialog} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
+import LoginTab from "./LoginTab";
+import EspLogin from "./EspLogin";
+import EmailAuth from "./EmailAuth";
 import {useQuery} from "react-query";
+import PhoneLogin from "./PhoneLogin";
+import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
+import {Box, Dialog} from "@mui/material";
+import classes from "./style.module.scss";
+import {useTranslation} from "react-i18next";
+import ForgotPassword from "./ForgotPassword";
+import {useEffect, useMemo, useState} from "react";
+import LoginCompaniesList from "./LoginCompaniesList";
+import PhoneOtpInput from "./PhoneLogin/PhoneOtpInput";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import connectionServiceV2 from "../../../../services/auth/connectionService";
 import listToOptions from "../../../../utils/listToOptions";
+import {loginAction} from "../../../../store/auth/auth.thunk";
+import {authActions} from "../../../../store/auth/auth.slice";
+import RegisterFormPageDesign from "../RegisterFormPageDesign";
 import authService from "../../../../services/auth/authService";
 import companyService from "../../../../services/companyService";
-import {authActions} from "../../../../store/auth/auth.slice";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
-import classes from "./style.module.scss";
-import LoginTab from "./LoginTab";
-import {loginAction} from "../../../../store/auth/auth.thunk";
-import PhoneLogin from "./PhoneLogin";
-import PhoneOtpInput from "./PhoneLogin/PhoneOtpInput";
-import EmailAuth from "./EmailAuth";
-import RegisterFormPageDesign from "../RegisterFormPageDesign";
-import LoginCompaniesList from "./LoginCompaniesList";
-import EspLogin from "./EspLogin";
-import ForgotPassword from "./ForgotPassword";
-import {firebaseCloudMessaging} from "../../../../firebase/config";
+import connectionServiceV2 from "../../../../services/auth/connectionService";
 
 const LoginFormDesign = ({
-  setIndex,
   index,
-  setFormType,
+  setIndex,
   formType,
+  setFormType,
   selectedTabIndex,
   setSelectedTabIndex,
 }) => {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [isUserId, setIsUserId] = useState();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [connectionCheck, setConnectionCheck] = useState(false);
-  const [isUserId, setIsUserId] = useState();
-  const [selectedCollection, setSelectedCollection] = useState();
-  const [codeAppValue, setCodeAppValue] = useState({});
   const [googleAuth, setGoogleAuth] = useState(null);
-
-  const [open, setOpen] = useState(false);
-
-  const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
+  const [codeAppValue, setCodeAppValue] = useState({});
+  const [connectionCheck, setConnectionCheck] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState();
+  const {control, handleSubmit, watch, setValue} = useForm();
 
   const handleClickOpen = () => {
     setOpen(true);

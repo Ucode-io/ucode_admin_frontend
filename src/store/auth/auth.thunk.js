@@ -4,6 +4,8 @@ import {authActions} from "./auth.slice";
 import {store} from "..";
 import {companyActions} from "../company/company.slice";
 import {permissionsActions} from "../permissions/permissions.slice";
+import languageService from "../../services/languageService";
+import {saveGroupedToDB} from "../../utils/languageDB";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
@@ -36,6 +38,18 @@ export const loginAction = createAsyncThunk(
         .catch((err) => {
           console.log(err);
         });
+
+      await languageService.getLanguageList().then((res) => {
+        const grouped = {};
+        for (const field of res?.languages) {
+          if (!grouped[field.category]) {
+            grouped[field.category] = [];
+          }
+          grouped[field.category].push(field);
+        }
+        console.log("groupedgrouped", grouped);
+        saveGroupedToDB(grouped);
+      });
       const fcmToken = localStorage.getItem("fcmToken");
       // if (res.user.id)
       //   await authService.sendFcmToken({

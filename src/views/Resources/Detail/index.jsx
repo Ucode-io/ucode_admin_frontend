@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {
   useLocation,
   useNavigate,
@@ -16,7 +16,6 @@ import resourceService, {
   useResourceCreateMutationV2,
   useResourceEnvironmentGetByIdQuery,
   useResourceGetByIdClickHouse,
-  useResourceGetByIdQueryV1,
   useResourceGetByIdQueryV2,
   useResourceReconnectMutation,
   useResourceUpdateMutation,
@@ -31,15 +30,15 @@ import {resourceTypes} from "../../../utils/resourceConstants";
 import resourceVariableService from "../../../services/resourceVariableService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
-import {
-  useGithubLoginMutation,
-  useGithubUserQuery,
-} from "@/services/githubService";
+import {useGithubLoginMutation} from "@/services/githubService";
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
 import {useQuery} from "react-query";
 import {useGitlabLoginMutation} from "../../../services/githubService";
 import GitLabForm from "./GitlabForm";
+import {useTranslation} from "react-i18next";
+import {getAllFromDB} from "../../../utils/languageDB";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const headerStyle = {
   width: "100%",
@@ -47,7 +46,6 @@ const headerStyle = {
   borderBottom: "1px solid #e5e9eb",
   display: "flex",
   alignItems: "center",
-  // gap: '20px',
   padding: "15px",
   justifyContent: "space-between",
 };
@@ -64,6 +62,8 @@ const ResourceDetail = () => {
   const company = store.getState().company;
   const authStore = store.getState().auth;
   const dispatch = useDispatch();
+  const {i18n} = useTranslation();
+  const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
 
@@ -402,10 +402,6 @@ const ResourceDetail = () => {
       database: "",
     });
     setValue("default", false);
-    // setValue(
-    //   "resource_type",
-    //   resourceTypes.find((item) => item?.label === variables?.type).value
-    // );
   }, [selectedEnvironment]);
 
   useEffect(() => {
@@ -422,6 +418,19 @@ const ResourceDetail = () => {
     }
   }, [variables]);
 
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+  }, []);
+
   return (
     <Box sx={{background: "#fff"}}>
       <form flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -434,7 +443,13 @@ const ResourceDetail = () => {
               sx={{cursor: "pointer", width: "16px", height: "30px"}}>
               <KeyboardBackspaceIcon style={{fontSize: "26px"}} />
             </Button>
-            <h2>Resource settings</h2>
+            <h2>
+              {generateLangaugeText(
+                settingLan,
+                i18n?.language,
+                "Resource settings"
+              ) || "Resource settings"}
+            </h2>
           </Box>
           <Box>
             {(resourceType === "CLICK_HOUSE"
@@ -448,7 +463,11 @@ const ResourceDetail = () => {
                 type="submit"
                 sx={{fontSize: "14px", margin: "0 10px"}}
                 isLoading={createLoading}>
-                Save changes
+                {generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Save changes"
+                ) || "Save changes"}
               </Button>
             )}
 
@@ -464,7 +483,11 @@ const ResourceDetail = () => {
                 variant="contained"
                 onClick={() => reconnectResource({id: resourceId})}
                 isLoading={reconnectLoading}>
-                Reconnect
+                {generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Reconnect"
+                ) || "Reconnect"}
               </Button>
             )}
           </Box>
@@ -483,6 +506,7 @@ const ResourceDetail = () => {
             <h2>Loader</h2>
           ) : resourceType === "GITHUB" ? (
             <GitForm
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}
@@ -493,6 +517,7 @@ const ResourceDetail = () => {
             />
           ) : resourceType === "CLICK_HOUSE" ? (
             <ClickHouseForm
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}
@@ -502,6 +527,7 @@ const ResourceDetail = () => {
             />
           ) : resourceType === "GITLAB" ? (
             <GitLabForm
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}
@@ -512,6 +538,7 @@ const ResourceDetail = () => {
             />
           ) : (
             <Form
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}

@@ -44,6 +44,7 @@ import styles from "./style.module.scss";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import ButtonFieldComponents from "./ButtonFieldComponents";
 import StatusFieldSettings from "./StatusFieldSettings";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -57,6 +58,7 @@ const FieldSettings = ({
   getRelationFields,
   slug,
   menuItem,
+  tableLan,
 }) => {
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
@@ -337,7 +339,8 @@ const FieldSettings = ({
                 drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
               }
               onClick={() => setDrawerType("ATTRIBUTES")}>
-              Field
+              {generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Field"}
             </Button>
           }
         />
@@ -346,7 +349,13 @@ const FieldSettings = ({
       <Box className={styles.form}>
         <div className={styles.settingsBlockHeader}>
           <Typography variant="h4">
-            {formType === "CREATE" ? "Create field" : "Edit field"}
+            {formType === "CREATE"
+              ? generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Create field" ||
+                "Create field"
+              : generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Edit field" ||
+                "Edit field"}
           </Typography>
           <IconButton onClick={closeSettingsBlock}>
             <Close />
@@ -360,7 +369,13 @@ const FieldSettings = ({
             <Card>
               {drawerType === "SCHEMA" && (
                 <Box className="p-2">
-                  <FRow label="Type" required classname={styles.custom_label}>
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Type") ||
+                      "Type"
+                    }
+                    required
+                    classname={styles.custom_label}>
                     <HFSelect
                       disabledHelperText
                       name="type"
@@ -374,7 +389,16 @@ const FieldSettings = ({
                     />
                   </FRow>
                   {fieldType !== "TEXT" && (
-                    <FRow label="Name" classname={styles.custom_label} required>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Name"
+                        ) || "Name"
+                      }
+                      classname={styles.custom_label}
+                      required>
                       <Box style={{display: "flex", gap: "6px"}}>
                         <HFTextFieldWithMultiLanguage
                           control={control}
@@ -391,7 +415,13 @@ const FieldSettings = ({
 
                   {fieldType === "TEXT" && (
                     <FRow
-                      label="Value"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Value"
+                        ) || "Value"
+                      }
                       classname={styles.custom_label}
                       required>
                       <Box style={{display: "flex", gap: "6px"}}>
@@ -407,7 +437,13 @@ const FieldSettings = ({
                       </Box>
                     </FRow>
                   )}
-                  <FRow label="Key" required classname={styles.custom_label}>
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Key") ||
+                      "Key"
+                    }
+                    required
+                    classname={styles.custom_label}>
                     <HFTextField
                       className={styles.input}
                       disabledHelperText
@@ -443,7 +479,12 @@ const FieldSettings = ({
                       extra={
                         <>
                           <Typography variant="h6">
-                            Selected folder: {folder}
+                            {generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Selected folder"
+                            ) || "Selected folder"}
+                            : {folder}
                           </Typography>
                         </>
                       }>
@@ -499,7 +540,13 @@ const FieldSettings = ({
                         />
                       </FRow>
                       <FRow
-                        label="Error message"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Error message"
+                          ) || "Error message"
+                        }
                         classname={styles.custom_label}>
                         <HFTextField
                           className={styles.input}
@@ -513,19 +560,37 @@ const FieldSettings = ({
                       <HFCheckbox
                         control={control}
                         name="attributes.disabled"
-                        label="Disabled"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Disabled"
+                          ) || "Disabled"
+                        }
                         labelClassName={styles.custom_label}
                       />
                       <HFCheckbox
                         control={control}
                         name="required"
-                        label="Required"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Required"
+                          ) || "Required"
+                        }
                         labelClassName={styles.custom_label}
                       />
                       <HFCheckbox
                         control={control}
                         name="unique"
-                        label="Duplicate"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Duplicate"
+                          ) || "Duplicate"
+                        }
                         labelClassName={styles.custom_label}
                       />
                     </Box>
@@ -536,7 +601,13 @@ const FieldSettings = ({
                 <div className="p-2">
                   <Box mt={1}>
                     <FRow
-                      label="Autofill table"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Autofill table"
+                        ) || "Autofill table"
+                      }
                       classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
@@ -549,7 +620,13 @@ const FieldSettings = ({
                     </FRow>
 
                     <FRow
-                      label="Autofill field"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Autofill field"
+                        ) || "Autofill field"
+                      }
                       classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
@@ -563,7 +640,13 @@ const FieldSettings = ({
                     <HFCheckbox
                       control={control}
                       name="automatic"
-                      label="Automatic"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Automatic"
+                        ) || "Automatic"
+                      }
                       labelClassName={styles.custom_label}
                     />
                   </Box>
@@ -574,7 +657,13 @@ const FieldSettings = ({
                 <div className="p-2">
                   <Box mt={1}>
                     <FRow
-                      label="Hide Field From"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Hide Field from"
+                        ) || "Hide Field From"
+                      }
                       classname={styles.custom_label}>
                       <HFSelect
                         id="hide_fields"
@@ -610,7 +699,14 @@ const FieldSettings = ({
                       />
                     ) : selectedField?.type === "NUMBER" ? (
                       <>
-                        <FRow label="Hide Value">
+                        <FRow
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Hide Value"
+                            ) || "Hide Value"
+                          }>
                           <HFNumberField
                             id="hide_path_field"
                             type={"number"}
@@ -621,7 +717,14 @@ const FieldSettings = ({
                             className={styles.input}
                           />
                         </FRow>
-                        <FRow label="Number range">
+                        <FRow
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Number Range"
+                            ) || "Number Range"
+                          }>
                           <HFSelect
                             id="hide_type_field"
                             options={numberTypeOptions}
@@ -657,7 +760,7 @@ const FieldSettings = ({
               style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || createLoading || updateLoading}>
-              Save
+              {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
             </PrimaryButton>
           </div>
         </div>

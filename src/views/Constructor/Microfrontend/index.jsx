@@ -19,6 +19,9 @@ import TableRowButton from "../../../components/TableRowButton";
 import useDebounce from "../../../hooks/useDebounce";
 import microfrontendService from "../../../services/microfrontendService";
 import StatusPipeline from "./StatusPipeline";
+import {useTranslation} from "react-i18next";
+import {getAllFromDB} from "../../../utils/languageDB";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
@@ -28,6 +31,8 @@ const MicrofrontendPage = () => {
   const [list, setList] = useState([]);
   const [debounceValue, setDebouncedValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const {i18n} = useTranslation();
+  const [microLan, setMicroLan] = useState(null);
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -54,21 +59,34 @@ const MicrofrontendPage = () => {
       });
   };
 
-  const navigateToGithub = () => {
-    window.location.assign(
-      `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&redirect_uri=${window.location.origin}/main/${appId}/microfrontend/github/create&scope=read:user,repo`
-    );
-  };
-
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   useEffect(() => {
     getMicrofrontendList();
   }, [debounceValue, currentPage]);
 
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setMicroLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+  }, []);
+
   return (
     <div>
-      <HeaderSettings title={"Микрофронтенд"} backButtonLink={-1} />
+      <HeaderSettings
+        title={
+          generateLangaugeText(microLan, i18n?.language, "Microfrontend") ||
+          "Microfrontend"
+        }
+        backButtonLink={-1}
+      />
 
       <FiltersBlock>
         <div className="p-1">
@@ -86,11 +104,27 @@ const MicrofrontendPage = () => {
           removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Name</CTableCell>
-            <CTableCell>Status</CTableCell>
-            <CTableCell>Description</CTableCell>
-            <CTableCell>Link</CTableCell>
-            <CTableCell>Framework type</CTableCell>
+            <CTableCell>
+              {generateLangaugeText(microLan, i18n?.language, "Name") || "Name"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(microLan, i18n?.language, "Status") ||
+                "Status"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(microLan, i18n?.language, "Description") ||
+                "Description"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(microLan, i18n?.language, "Link") || "Link"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(
+                microLan,
+                i18n?.language,
+                "Framework type"
+              ) || "Framework type"}
+            </CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

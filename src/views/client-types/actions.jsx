@@ -48,12 +48,20 @@ import {AccordionButton, AccordionIcon} from "@chakra-ui/icons";
 import sessionService from "../../services/sessionService";
 import {format} from "date-fns";
 import {pageToOffset} from "../../utils/pageToOffset";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 const templateColumns =
   "minmax(45px, 30px) minmax(180px, 1fr) minmax(100px, 1fr) minmax(150px, 1fr) minmax(20px, 1fr) ";
 
-export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
+export const CreateDrawer = ({
+  isOpen,
+  onClose,
+  clientTypeId,
+  userInviteLan,
+}) => {
   const form = useForm();
+  const {i18n} = useTranslation();
   const project_id = useSelector((state) => state.company.projectId);
   const createMutation = useUserCreateMutation({
     onSuccess: onClose,
@@ -91,7 +99,11 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
             fontSize={18}
             fontWeight={600}
             color="#344054">
-            Invite user
+            {generateLangaugeText(
+              userInviteLan,
+              i18n?.language,
+              "Invite user"
+            ) || "Invite user"}
           </DrawerHeader>
           <Form form={form} />
           <DrawerFooter borderTopWidth="1px">
@@ -100,7 +112,8 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
               size="lg"
               type="submit"
               isLoading={createMutation.isLoading}>
-              Save
+              {generateLangaugeText(userInviteLan, i18n?.language, "Save") ||
+                "Save"}
             </Button>
           </DrawerFooter>
         </DrawerContent>
@@ -109,10 +122,11 @@ export const CreateDrawer = ({isOpen, onClose, clientTypeId}) => {
   );
 };
 
-export const EditDrawer = ({guid, client_type_id, onClose}) => {
+export const EditDrawer = ({guid, client_type_id, onClose, userInviteLan}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [offset, setOffset] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const {i18n} = useTranslation();
 
   const userQuery = useUserGetByIdQuery({
     userId: guid,
@@ -154,8 +168,20 @@ export const EditDrawer = ({guid, client_type_id, onClose}) => {
               fontWeight={600}
               color="#344054">
               <TabList borderBottom={0}>
-                <Tab> Edit User</Tab>
-                <Tab> Sessions</Tab>
+                <Tab>
+                  {generateLangaugeText(
+                    userInviteLan,
+                    i18n?.language,
+                    "Edit user"
+                  ) || "Edit User"}
+                </Tab>
+                <Tab>
+                  {generateLangaugeText(
+                    userInviteLan,
+                    i18n?.language,
+                    "Sessions"
+                  ) || "Sessions"}
+                </Tab>
               </TabList>
             </DrawerHeader>
             <DrawerBody px={0} py="20px" pt={0}>
@@ -171,7 +197,11 @@ export const EditDrawer = ({guid, client_type_id, onClose}) => {
             <DrawerFooter borderTopWidth="1px">
               {selectedTab === 0 ? (
                 <Button w="100%" size="lg" type="submit">
-                  Save
+                  {generateLangaugeText(
+                    userInviteLan,
+                    i18n?.language,
+                    "Save"
+                  ) || "Save"}
                 </Button>
               ) : (
                 <Flex

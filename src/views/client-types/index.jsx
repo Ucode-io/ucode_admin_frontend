@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
   Box,
   Tabs,
@@ -29,6 +29,9 @@ import {useClientTypesQuery} from "./utils";
 import {useNavigate} from "react-router-dom";
 import {useUserDeleteMutation} from "@/services/auth/userService";
 import {useRoleListQuery} from "@/services/roleServiceV2";
+import {getAllFromDB} from "../../utils/languageDB";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const templateColumns =
   "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
@@ -47,6 +50,8 @@ export const ClientTypes = () => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const [userInviteLan, setUserInviteLan] = useState(null);
+  const {i18n} = useTranslation();
 
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
@@ -76,9 +81,25 @@ export const ClientTypes = () => {
     setPage(1);
   };
 
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setUserInviteLan(
+          formattedData?.find((item) => item?.key === "UserInvite")
+        );
+      }
+    });
+  }, []);
+
   return (
     <ChakraProvider theme={chakraUITheme}>
       <CreateDrawer
+        userInviteLan={userInviteLan}
         isOpen={createDrawer.isOpen}
         onClose={() => {
           createDrawer.onClose();
@@ -87,6 +108,7 @@ export const ClientTypes = () => {
         clientTypeId={clientTypeId}
       />
       <EditDrawer
+        userInviteLan={userInviteLan}
         guid={editUserGuid}
         client_type_id={
           users.find((user) => user.id === editUserGuid)?.client_type_id
@@ -123,7 +145,8 @@ export const ClientTypes = () => {
               borderRadius={6}
               color="#344054"
               fontWeight={500}>
-              Users
+              {generateLangaugeText(userInviteLan, i18n?.language, "Users") ||
+                "Users"}
             </Box>
           </Flex>
 
@@ -133,7 +156,8 @@ export const ClientTypes = () => {
             rightIcon={<ChevronDownIcon fontSize={20} />}
             borderRadius={8}
             onClick={createDrawer.onOpen}>
-            Invite
+            {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
+              "Invite"}
           </Button>
         </Flex>
         <Box pt="10px">
@@ -155,11 +179,26 @@ export const ClientTypes = () => {
             <Th justifyContent="center">
               <img src="/img/hash.svg" alt="index" />
             </Th>
-            <Th type="text">Наименование</Th>
-            <Th type="text">Роль</Th>
-            <Th type="text">Логин</Th>
-            <Th type="text">Почта</Th>
-            <Th type="phone">Phone</Th>
+            <Th type="text">
+              {generateLangaugeText(userInviteLan, i18n?.language, "Name") ||
+                "Name"}
+            </Th>
+            <Th type="text">
+              {generateLangaugeText(userInviteLan, i18n?.language, "Role") ||
+                "Role"}
+            </Th>
+            <Th type="text">
+              {generateLangaugeText(userInviteLan, i18n?.language, "Login") ||
+                "Login"}
+            </Th>
+            <Th type="text">
+              {generateLangaugeText(userInviteLan, i18n?.language, "Mail") ||
+                "Mail"}
+            </Th>
+            <Th type="phone">
+              {generateLangaugeText(userInviteLan, i18n?.language, "Phone") ||
+                "Phone"}
+            </Th>
             <Th></Th>
           </Grid>
 
@@ -201,7 +240,8 @@ export const ClientTypes = () => {
             fontSize={14}
             fontWeight={600}
             color="#344054">
-            Show
+            {generateLangaugeText(userInviteLan, i18n?.language, "Show") ||
+              "Show"}
             <Select
               value={{value: limit, label: `${limit} rows`}}
               options={limitOptions}

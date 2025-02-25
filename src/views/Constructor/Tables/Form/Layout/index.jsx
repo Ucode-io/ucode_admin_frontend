@@ -7,12 +7,14 @@ import NewLayoutSettings from "./NewLayoutSettings";
 import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 const Layout = ({
   mainForm,
   getRelationFields,
   getData,
   setSelectedTabLayout = () => {},
+  tableLan,
 }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({mode: "onChange"});
@@ -91,6 +93,7 @@ const Layout = ({
     <>
       {selectedLayout.id ? (
         <NewLayoutSettings
+          tableLan={tableLan}
           mainForm={mainForm}
           selectedLayout={selectedLayout}
           selectedTab={selectedTab}
@@ -109,6 +112,7 @@ const Layout = ({
         />
       ) : (
         <NewlayoutList
+          tableLan={tableLan}
           setSelectedLayout={setSelectedLayout}
           mainForm={mainForm}
           getData={getData}

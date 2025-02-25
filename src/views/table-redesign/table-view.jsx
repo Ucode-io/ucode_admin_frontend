@@ -444,7 +444,6 @@ const TableView = ({
   };
 
   const navigateToDetailPage = (row) => {
-    console.log("rowwwwwwwwww", row);
     if (
       view?.attributes?.navigate?.params?.length ||
       view?.attributes?.navigate?.url

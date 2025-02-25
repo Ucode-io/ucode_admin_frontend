@@ -12,6 +12,7 @@ import NewSectionsBlock from "./NewSectionsBlock";
 import styles from "./style.module.scss";
 
 function LayoutTabs({
+  tableLan,
   mainForm,
   layoutForm,
   openFieldsBlock,
@@ -104,7 +105,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-  console.log("allTabsallTabs", allTabs);
+
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -197,6 +198,7 @@ function LayoutTabs({
             return tab?.type === "section" ? (
               <div className={styles.sections_wrapper}>
                 <NewSectionsBlock
+                  tableLan={tableLan}
                   index={index}
                   mainForm={mainForm}
                   layoutForm={layoutForm}

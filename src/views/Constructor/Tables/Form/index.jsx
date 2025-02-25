@@ -33,6 +33,8 @@ import {createConstructorTableAction} from "../../../../store/constructorTable/c
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../../../services/constructorTableService";
+import {getAllFromDB} from "../../../../utils/languageDB";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -47,6 +49,7 @@ const ConstructorTablesFormPage = () => {
   const [exist, setExist] = useState(false);
   const [authInfo, setAuthInfo] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [tableLan, setTableLan] = useState(null);
   const [menuItem, setMenuItem] = useState(null);
   const permissions = useSelector((state) =>
     Object.entries(state.permissions?.permissions).map(([key, value]) => ({
@@ -299,6 +302,19 @@ const ConstructorTablesFormPage = () => {
   };
 
   useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setTableLan(formattedData?.find((item) => item?.key === "Table"));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
@@ -312,25 +328,66 @@ const ConstructorTablesFormPage = () => {
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
               <HeaderSettings
-                title="Objects"
+                title={
+                  generateLangaugeText(tableLan, i18n?.language, "Objects") ||
+                  "Objects"
+                }
                 subtitle={id ? mainForm.getValues("label") : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
                 sticky>
                 <TabList>
-                  <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
-                  <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
-                  <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
-                  {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
-                  {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
+                  <Tab onClick={() => setSelectedTab(0)}>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Details"
+                    ) || "Details"}
+                  </Tab>
+                  <Tab onClick={() => setSelectedTab(1)}>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Layouts"
+                    ) || "Layouts"}
+                  </Tab>
+                  <Tab onClick={() => setSelectedTab(2)}>
+                    {generateLangaugeText(tableLan, i18n?.language, "Fields") ||
+                      "Fields"}
+                  </Tab>
                   {id && (
-                    <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>
+                    <Tab onClick={() => setSelectedTab(3)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Relations"
+                      ) || "Relations"}
+                    </Tab>
+                  )}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(4)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Actions"
+                      ) || "Actions"}
+                    </Tab>
+                  )}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(5)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Custom errors"
+                      ) || "Custom errors"}
+                    </Tab>
                   )}
                 </TabList>
               </HeaderSettings>
 
               <TabPanel>
                 <MainInfo
+                  tableLan={tableLan}
                   authData={authInfo}
                   control={mainForm.control}
                   watch={mainForm.watch}
@@ -339,6 +396,7 @@ const ConstructorTablesFormPage = () => {
 
               <TabPanel>
                 <Layout
+                  tableLan={tableLan}
                   mainForm={mainForm}
                   getRelationFields={getRelationFields}
                   getData={getData}
@@ -348,6 +406,7 @@ const ConstructorTablesFormPage = () => {
 
               <TabPanel>
                 <Fields
+                  tableLan={tableLan}
                   getRelationFields={getRelationFields}
                   mainForm={mainForm}
                   slug={tableSlug}
@@ -357,6 +416,7 @@ const ConstructorTablesFormPage = () => {
               {id && (
                 <TabPanel>
                   <Relations
+                    tableLan={tableLan}
                     mainForm={mainForm}
                     getRelationFields={getRelationFields}
                   />
@@ -401,13 +461,16 @@ const ConstructorTablesFormPage = () => {
           extra={
             <>
               <SecondaryButton onClick={() => navigate(-1)} color="error">
-                Close
+                {generateLangaugeText(tableLan, i18n?.language, "Close") ||
+                  "Close"}
               </SecondaryButton>
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
                 loading={btnLoader}>
-                <Save /> Save
+                <Save />{" "}
+                {generateLangaugeText(tableLan, i18n?.language, "Save") ||
+                  "Save"}
               </PrimaryButton>
             </>
           }

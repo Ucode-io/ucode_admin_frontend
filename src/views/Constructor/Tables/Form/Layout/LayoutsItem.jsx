@@ -8,6 +8,8 @@ import RectangleIconButton from "../../../../../components/Buttons/RectangleIcon
 import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 export default function LayoutsItem({
   createLayout,
@@ -16,6 +18,7 @@ export default function LayoutsItem({
   getData,
   mainForm,
   allMenus,
+  tableLan,
   menus,
   remove,
   setModal,
@@ -25,7 +28,7 @@ export default function LayoutsItem({
   languages,
 }) {
   const {tableSlug} = useParams();
-
+  const {i18n} = useTranslation();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -118,7 +121,10 @@ export default function LayoutsItem({
                     checked={element.is_default ?? false}
                   />
                 }
-                label={"Default"}
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Default") ||
+                  "Default"
+                }
               />
               <FormControlLabel
                 control={
@@ -130,7 +136,10 @@ export default function LayoutsItem({
                     checked={element.type === "SimpleLayout" ? false : true}
                   />
                 }
-                label={"Modal"}
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Modal") ||
+                  "Modal"
+                }
               />
               <FormControlLabel
                 control={
@@ -142,7 +151,13 @@ export default function LayoutsItem({
                     checked={element?.is_visible_section ?? false}
                   />
                 }
-                label={"Remove Tabs"}
+                label={
+                  generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Remove Tabs"
+                  ) || "Remove Tabs"
+                }
               />
             </Box>
 

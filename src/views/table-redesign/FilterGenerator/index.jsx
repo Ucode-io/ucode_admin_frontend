@@ -1,4 +1,3 @@
-import {InputAdornment, TextField} from "@mui/material";
 import {useMemo, useState} from "react";
 import BooleanFilter from "./BooleanFilter";
 import DateFilter from "./DateFilter";
@@ -6,7 +5,6 @@ import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
-import {getColumnIcon} from "../icons";
 
 const FilterGenerator = ({
   field,

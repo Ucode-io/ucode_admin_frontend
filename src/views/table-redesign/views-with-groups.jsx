@@ -80,6 +80,8 @@ import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
+import {getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -105,8 +107,6 @@ export const NewUiViewsWithGroups = ({
   const visibleForm = useForm();
   const dispatch = useDispatch();
   const {filters} = useFilters(tableSlug, view.id);
-  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
-  const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
@@ -118,7 +118,7 @@ export const NewUiViewsWithGroups = ({
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
-
+  const [tableLan, setTableLan] = useState();
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -246,6 +246,19 @@ export const NewUiViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
+
+  useEffect(() => {
+    getAllFromDB().then((storedData) => {
+      if (storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+
+        setTableLan(formattedData?.find((item) => item?.key === "Table"));
+      }
+    });
+  }, []);
 
   if (view?.type === "WEBSITE") {
     return (
@@ -442,7 +455,11 @@ export const NewUiViewsWithGroups = ({
               color="#344054"
               leftIcon={<Image src="/img/settings.svg" alt="settings" />}
               borderRadius="8px">
-              Table Settings
+              {generateLangaugeText(
+                tableLan,
+                i18n?.language,
+                "Table Settings"
+              ) || "Table Settings"}
             </Button>
           </PermissionWrapperV2>
         </Flex>
@@ -489,7 +506,7 @@ export const NewUiViewsWithGroups = ({
               colorScheme="gray"
               color="#475467"
               onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-              View
+              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
             </Button>
           </PermissionWrapperV2>
 
@@ -525,7 +542,10 @@ export const NewUiViewsWithGroups = ({
               <Input
                 id="search_input"
                 defaultValue={searchText}
-                placeholder="Search"
+                placeholder={
+                  generateLangaugeText(tableLan, i18n?.language, "Search") ||
+                  "Search"
+                }
                 onChange={(ev) => inputChangeHandler(ev.target.value)}
               />
 
@@ -587,6 +607,7 @@ export const NewUiViewsWithGroups = ({
           </Popover>
 
           <FilterPopover
+            tableLan={tableLan}
             view={view}
             visibleColumns={visibleColumns}
             refetchViews={refetchViews}>
@@ -606,11 +627,13 @@ export const NewUiViewsWithGroups = ({
                   searchParams.get("menuId")
                 )
               }>
-              Create item
+              {generateLangaugeText(tableLan, i18n?.language, "Create item") ||
+                "Create item"}
             </Button>
           </PermissionWrapperV2>
 
           <ViewOptions
+            tableLan={tableLan}
             view={view}
             viewName={viewName}
             refetchViews={refetchViews}
@@ -625,6 +648,7 @@ export const NewUiViewsWithGroups = ({
 
         {view?.attributes?.quick_filters?.length > 0 && (
           <FiltersList
+            tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
             visibleColumns={visibleColumns}
@@ -830,9 +854,16 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   );
 });
 
-const FilterPopover = ({view, visibleColumns, refetchViews, children}) => {
+const FilterPopover = ({
+  view,
+  visibleColumns,
+  refetchViews,
+  children,
+  tableLan,
+}) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
+  const {i18n} = useTranslation();
 
   return (
     <Popover>
@@ -843,7 +874,13 @@ const FilterPopover = ({view, visibleColumns, refetchViews, children}) => {
             <Image src="/img/search-lg.svg" alt="search" />
           </InputLeftElement>
           <Input
-            placeholder="Search by filled name"
+            placeholder={
+              generateLangaugeText(
+                tableLan,
+                i18n?.language,
+                "Search by filled name"
+              ) || "Search by filled name"
+            }
             value={search}
             onChange={(ev) => setSearch(ev.target.value)}
           />
@@ -859,13 +896,20 @@ const FilterPopover = ({view, visibleColumns, refetchViews, children}) => {
   );
 };
 
-const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
+const FiltersList = ({
+  view,
+  fieldsMap,
+  visibleColumns,
+  refetchViews,
+  tableLan,
+}) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
   const {filters} = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
+  const {i18n} = useTranslation();
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -934,6 +978,7 @@ const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
       flexWrap="wrap"
       id="filterHeight">
       <FilterPopover
+        tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
         refetchViews={refetchViews}>
@@ -953,7 +998,10 @@ const FiltersList = ({view, fieldsMap, visibleColumns, refetchViews}) => {
             height={14}
             color="#909EAB"
           />
-          <Box color="#909EAB">Add filter</Box>
+          <Box color="#909EAB">
+            {generateLangaugeText(tableLan, i18n?.language, "Add filter") ||
+              "Add filter"}
+          </Box>
         </Flex>
       </FilterPopover>
 
@@ -1078,8 +1126,10 @@ const ViewOptions = ({
   checkedColumns,
   onDocsClick,
   computedVisibleFields,
+  tableLan,
 }) => {
   const {appId, tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1152,7 +1202,11 @@ const ViewOptions = ({
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
               <Box color="#475467" fontSize={16} fontWeight={600}>
-                View options
+                {generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "View options"
+                ) || "View options"}
               </Box>
               <Flex mt="12px" columnGap="4px">
                 <Flex
@@ -1202,7 +1256,10 @@ const ViewOptions = ({
                     height={18}
                   />
                 </Flex>
-                <ViewOptionTitle>Layout</ViewOptionTitle>
+                <ViewOptionTitle>
+                  {generateLangaugeText(tableLan, i18n?.language, "Layout") ||
+                    "Layout"}
+                </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
                     {viewName}
@@ -1223,12 +1280,23 @@ const ViewOptions = ({
                   cursor="pointer"
                   onClick={() => setOpenedMenu("columns-visibility")}>
                   <Image src="/img/eye.svg" alt="Visibility" />
-                  <ViewOptionTitle>Columns</ViewOptionTitle>
+                  <ViewOptionTitle>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Columns"
+                    ) || "Columns"}
+                  </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(visibleColumnsCount) &&
                       visibleColumnsCount > 0 && (
                         <ViewOptionSubtitle>
-                          {visibleColumnsCount} shown
+                          {visibleColumnsCount}{" "}
+                          {generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Shown"
+                          ) || "Shown"}
                         </ViewOptionSubtitle>
                       )}
                     <ChevronRightIcon fontSize={22} />
@@ -1247,11 +1315,19 @@ const ViewOptions = ({
                   cursor="pointer"
                   onClick={() => setOpenedMenu("group")}>
                   <Image src="/img/copy-01.svg" alt="Group by" />
-                  <ViewOptionTitle>Group</ViewOptionTitle>
+                  <ViewOptionTitle>
+                    {generateLangaugeText(tableLan, i18n?.language, "Group") ||
+                      "Group"}
+                  </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(groupByColumnsCount) && (
                       <ViewOptionSubtitle>
-                        {groupByColumnsCount} group
+                        {groupByColumnsCount}{" "}
+                        {generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Group"
+                        ) || "Group"}
                       </ViewOptionSubtitle>
                     )}
                     <ChevronRightIcon fontSize={22} />
@@ -1269,11 +1345,22 @@ const ViewOptions = ({
                   cursor="pointer"
                   onClick={() => setOpenedMenu("tab-group")}>
                   <Image src="/img/browser.svg" alt="Group by" />
-                  <ViewOptionTitle>Tab group</ViewOptionTitle>
+                  <ViewOptionTitle>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Tab Group"
+                    ) || "Tab Group"}
+                  </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(tabGroupColumnsCount) && (
                       <ViewOptionSubtitle>
-                        {tabGroupColumnsCount} group
+                        {tabGroupColumnsCount}{" "}
+                        {generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Group"
+                        ) || "Group"}
                       </ViewOptionSubtitle>
                     )}
                     <ChevronRightIcon fontSize={22} />
@@ -1291,11 +1378,22 @@ const ViewOptions = ({
                   cursor="pointer"
                   onClick={() => setOpenedMenu("fix-column")}>
                   <Image src="/img/layout-left.svg" alt="Fix columns" />
-                  <ViewOptionTitle>Fix Column</ViewOptionTitle>
+                  <ViewOptionTitle>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Fix Column"
+                    ) || "Fix Column"}
+                  </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(fixedColumnsCount) && (
                       <ViewOptionSubtitle>
-                        {fixedColumnsCount} fixed
+                        {fixedColumnsCount}{" "}
+                        {generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Fixed"
+                        ) || "Fixed"}
                       </ViewOptionSubtitle>
                     )}
                     <ChevronRightIcon fontSize={22} />
@@ -1314,24 +1412,33 @@ const ViewOptions = ({
                 cursor="pointer"
                 onClick={onDocsClick}>
                 <Image src="/img/file-docs.svg" alt="Docs" />
-                <ViewOptionTitle>Docs</ViewOptionTitle>
+                <ViewOptionTitle>
+                  {generateLangaugeText(tableLan, i18n?.language, "Docs") ||
+                    "Docs"}
+                </ViewOptionTitle>
                 <ChevronRightIcon ml="auto" fontSize={22} />
               </Flex>
-              <ExcelExportButton fieldsMap={fieldsMap} />
+              <ExcelExportButton tableLan={tableLan} fieldsMap={fieldsMap} />
               <ExcelImportButton
+                tableLan={tableLan}
                 searchText={searchText}
                 checkedColumns={checkedColumns}
                 computedVisibleFields={computedVisibleFields}
               />
             </Box>
             <Box px="8px" py="4px">
-              <DeleteViewButton view={view} refetchViews={refetchViews} />
+              <DeleteViewButton
+                view={view}
+                refetchViews={refetchViews}
+                tableLan={tableLan}
+              />
             </Box>
           </>
         )}
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
@@ -1341,6 +1448,7 @@ const ViewOptions = ({
 
         {openedMenu === "group" && (
           <Group
+            tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
@@ -1350,6 +1458,7 @@ const ViewOptions = ({
 
         {openedMenu === "tab-group" && (
           <TabGroup
+            tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
@@ -1360,6 +1469,7 @@ const ViewOptions = ({
 
         {openedMenu === "fix-column" && (
           <FixColumns
+            tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
@@ -1371,7 +1481,13 @@ const ViewOptions = ({
   );
 };
 
-const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
+const ColumnsVisibility = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  onBackClick,
+  tableLan,
+}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
@@ -1470,7 +1586,11 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
           w="fit-content"
           onClick={onBackClick}>
           <Box color="#475467" fontSize={16} fontWeight={600}>
-            Visible columns
+            {generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "Visible columns"
+            ) || "Visible columns"}
           </Box>
         </Button>
 
@@ -1479,7 +1599,8 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
             isChecked={allColumns?.length === visibleFields?.length}
             onChange={(ev) => onShowAllChange(ev.target.checked)}
           />
-          Show all
+          {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
+            "Show all"}
         </Flex>
       </Flex>
       <InputGroup mt="10px">
@@ -1487,7 +1608,13 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
           <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
         <Input
-          placeholder="Search by filled name"
+          placeholder={
+            generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "Search by filled name"
+            ) || "Search by filled name"
+          }
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}
         />
@@ -1526,7 +1653,7 @@ const ColumnsVisibility = ({view, fieldsMap, refetchViews, onBackClick}) => {
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
+const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
@@ -1587,7 +1714,8 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
         w="fit-content"
         onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          Group columns
+          {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
+            "Group columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -1595,7 +1723,13 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick}) => {
           <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
         <Input
-          placeholder="Search by filled name"
+          placeholder={
+            generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "Search by filled name"
+            ) || "Search by filled name"
+          }
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}
         />
@@ -1635,6 +1769,7 @@ const TabGroup = ({
   refetchViews,
   visibleRelationColumns,
   onBackClick,
+  tableLan,
 }) => {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
@@ -1687,7 +1822,11 @@ const TabGroup = ({
         w="fit-content"
         onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          Tab group columns
+          {generateLangaugeText(
+            tableLan,
+            i18n?.language,
+            "Tab group columns"
+          ) || "Tab group columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -1695,7 +1834,13 @@ const TabGroup = ({
           <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
         <Input
-          placeholder="Search by filled name"
+          placeholder={
+            generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "Search by filled name"
+            ) || "Search by filled name"
+          }
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}
         />
@@ -1729,9 +1874,10 @@ const TabGroup = ({
   );
 };
 
-const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
+const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
   const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
+  const {i18n} = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1789,7 +1935,8 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
         w="fit-content"
         onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          Fix columns
+          {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
+            "Fix columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -1797,7 +1944,13 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
           <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
         <Input
-          placeholder="Search by filled name"
+          placeholder={
+            generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "Search by filled name"
+            ) || "Search by filled name"
+          }
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}
         />
@@ -1831,9 +1984,9 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick}) => {
   );
 };
 
-const ExcelExportButton = ({fieldsMap}) => {
+const ExcelExportButton = ({fieldsMap, tableLan}) => {
   const {isOpen, onOpen, onClose} = useDisclosure();
-
+  const {i18n} = useTranslation();
   return (
     <>
       <Flex
@@ -1846,7 +1999,9 @@ const ExcelExportButton = ({fieldsMap}) => {
         cursor="pointer"
         onClick={onOpen}>
         <Image src="/img/file-download.svg" alt="Docs" />
-        <ViewOptionTitle>Import</ViewOptionTitle>
+        <ViewOptionTitle>
+          {generateLangaugeText(tableLan, i18n?.language, "Import") || "Import"}
+        </ViewOptionTitle>
         <ChevronRightIcon ml="auto" fontSize={22} />
       </Flex>
 
@@ -1864,6 +2019,7 @@ const ExcelImportButton = ({
   searchText,
   checkedColumns,
   computedVisibleFields,
+  tableLan,
 }) => {
   const {tableSlug} = useParams();
   const {download} = useDownloader();
@@ -1901,14 +2057,17 @@ const ExcelImportButton = ({
       ) : (
         <Image src="/img/file-download.svg" alt="Docs" />
       )}
-      <ViewOptionTitle>Export</ViewOptionTitle>
+      <ViewOptionTitle>
+        {generateLangaugeText(tableLan, i18n?.language, "Export") || "Export"}
+      </ViewOptionTitle>
       <ChevronRightIcon ml="auto" fontSize={22} />
     </Flex>
   );
 };
 
-const DeleteViewButton = ({view, refetchViews}) => {
+const DeleteViewButton = ({view, refetchViews, tableLan}) => {
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
     onSuccess: () => refetchViews(),
@@ -1929,7 +2088,9 @@ const DeleteViewButton = ({view, refetchViews}) => {
       ) : (
         <Image src="/img/trash.svg" alt="Delete" />
       )}
-      <ViewOptionTitle>Delete</ViewOptionTitle>
+      <ViewOptionTitle>
+        {generateLangaugeText(tableLan, i18n?.language, "Delete") || "Delete"}
+      </ViewOptionTitle>
     </Flex>
   );
 };

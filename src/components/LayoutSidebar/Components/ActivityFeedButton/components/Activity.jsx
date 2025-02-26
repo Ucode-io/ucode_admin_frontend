@@ -15,19 +15,25 @@ const ActivityFeedPage = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setActivityLan(
           formattedData?.find((item) => item?.key === "Activity Logs")
         );
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
   return (
     <>
       <Box className={style.activity}>

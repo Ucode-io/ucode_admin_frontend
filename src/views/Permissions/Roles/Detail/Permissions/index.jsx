@@ -72,18 +72,23 @@ const Permissions = ({
   }, [allMenu]);
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setPermissionLan(
           formattedData?.find((item) => item?.key === "Permission")
         );
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

@@ -302,16 +302,21 @@ const ConstructorTablesFormPage = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setTableLan(formattedData?.find((item) => item?.key === "Table"));
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {

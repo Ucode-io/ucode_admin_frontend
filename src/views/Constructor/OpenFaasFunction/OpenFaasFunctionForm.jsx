@@ -229,18 +229,23 @@ export default function OpenFaasFunctionForm() {
     : listToOptions(repositoriesGitlab, "name", "name");
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setFunctionLan(formattedData?.find((item) => item?.key === "Fuctions"));
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-  console.log("functionLan", functionLan);
+
   if (isLoading) return <PageFallback />;
 
   return (

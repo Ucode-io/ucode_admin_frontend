@@ -69,7 +69,7 @@ export default function NewFileUpload({
       {value && (
         <>
           <Box
-            sx={{width: drawerDetail ? "330px" : ""}}
+            sx={{width: drawerDetail ? "330px" : "100%"}}
             className="uploadedFile">
             <Button
               id="file_upload"

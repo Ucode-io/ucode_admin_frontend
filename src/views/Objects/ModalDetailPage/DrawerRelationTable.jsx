@@ -1,29 +1,12 @@
-import {InsertDriveFile} from "@mui/icons-material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import {
-  Backdrop,
-  Box,
-  Button,
-  Card,
-  Divider,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray} from "react-hook-form";
-import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import styles from "./style.module.scss";
-import constructorTableService from "../../../services/constructorTableService";
-import layoutService from "../../../services/layoutService";
-import RelationTable from "../RelationSection/RelationTable";
+import {Box, Divider} from "@mui/material";
+import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
+import {useFieldArray} from "react-hook-form";
 import {listToMap} from "../../../utils/listToMap";
+import {useEffect, useMemo, useRef, useState} from "react";
+import RelationTable from "../RelationSection/RelationTable";
+import constructorTableService from "../../../services/constructorTableService";
 import FixColumnsRelationSection from "../RelationSection/FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "../RelationSection/VisibleColumnsButtonRelationSection";
 
@@ -31,7 +14,6 @@ const DrawerRelationTable = ({
   selectedTabIndex,
   relations,
   loader,
-  tableSlug: tableSlugFromProps,
   id: idFromProps,
   control,
   reset,
@@ -40,19 +22,20 @@ const DrawerRelationTable = ({
   selectedTab,
   getAllData,
   data,
+  tableSlug: tableSlugFromProps,
 }) => {
-  const {i18n} = useTranslation();
-  const [selectedObjects, setSelectedObjects] = useState([]);
-  const [formVisible, setFormVisible] = useState(false);
-  const [type, setType] = useState(null);
   const myRef = useRef();
+  const {i18n} = useTranslation();
+  const [type, setType] = useState(null);
+  const [formVisible, setFormVisible] = useState(false);
+  const [selectedObjects, setSelectedObjects] = useState([]);
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
-  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
-  const id = idFromProps ?? idFromParams;
-
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+
+  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
+  const id = idFromProps ?? idFromParams;
 
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);

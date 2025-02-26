@@ -572,6 +572,8 @@ const TableView = ({
         {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
+            selecte
+            setFormValue={setFormValue}
             setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}

@@ -1,11 +1,11 @@
 import {Box, Button, Stack} from "@mui/material";
-import React, {useEffect} from "react";
+import React from "react";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import {resources} from "../../../utils/resourceConstants";
-import {useWatch} from "react-hook-form";
-import githubService from "../../../services/githubService";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const headerStyle = {
   width: "100",
@@ -19,18 +19,19 @@ const GitLabForm = ({
   control,
   btnLoading,
   selectedEnvironment,
-  setSelectedEnvironment,
-  projectEnvironments,
-  isEditPage,
   watch,
+  settingLan,
 }) => {
-  console.log("watchwatchwatch", watch());
+  const {i18n} = useTranslation();
   return (
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
+        <h2 variant="h6">
+          {generateLangaugeText(settingLan, i18n?.language, "Resource info") ||
+            "Resource info"}
+        </h2>
       </Box>
 
       <Box
@@ -43,7 +44,10 @@ const GitLabForm = ({
               padding: "15px",
               fontWeight: "bold",
             }}>
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>
+              {generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                "Name"}
+            </Box>
             <HFTextField
               control={control}
               required
@@ -60,7 +64,8 @@ const GitLabForm = ({
                 marginTop: "10px",
                 marginBottom: "10px",
               }}>
-              Type
+              {generateLangaugeText(settingLan, i18n?.language, "Type") ||
+                "Type"}
             </Box>
             <HFSelect
               options={resources}
@@ -75,7 +80,11 @@ const GitLabForm = ({
                 marginTop: "10px",
                 marginBottom: "15px",
               }}>
-              Gitlab username
+              {generateLangaugeText(
+                settingLan,
+                i18n?.language,
+                "Gitlab username"
+              ) || "Gitlab username"}
             </Box>
             <HFTextField
               control={control}
@@ -93,7 +102,8 @@ const GitLabForm = ({
                 marginTop: "10px",
                 marginBottom: "15px",
               }}>
-              Token
+              {generateLangaugeText(settingLan, i18n?.language, "Token") ||
+                "Token"}
             </Box>
             <HFTextField
               control={control}
@@ -112,7 +122,7 @@ const GitLabForm = ({
       <Footer>
         {selectedEnvironment?.length && (
           <Button type="submit" variant="contained" disabled={btnLoading}>
-            Save
+            {generateLangaugeText(settingLan, i18n?.language, "Save") || "Save"}
           </Button>
         )}
       </Footer>

@@ -444,7 +444,6 @@ const TableView = ({
   };
 
   const navigateToDetailPage = (row) => {
-    console.log("rowwwwwwwwww", row);
     if (
       view?.attributes?.navigate?.params?.length ||
       view?.attributes?.navigate?.url
@@ -573,6 +572,8 @@ const TableView = ({
         {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
+            selecte
+            setFormValue={setFormValue}
             setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}

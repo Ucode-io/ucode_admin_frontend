@@ -68,7 +68,9 @@ export default function NewFileUpload({
     <div className={`Gallery ${className}`}>
       {value && (
         <>
-          <Box sx={{}} className="uploadedFile">
+          <Box
+            sx={{width: drawerDetail ? "330px" : "100%"}}
+            className="uploadedFile">
             <Button
               id="file_upload"
               aria-describedby={id}

@@ -2,23 +2,26 @@ import {Box, Card} from "@mui/material";
 import Header from "../../components/Header";
 import {useParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import FRow from "../../components/FormElements/FRow";
 import HFTextField from "../../components/FormElements/HFTextField";
 import {useForm} from "react-hook-form";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import {useQuery} from "react-query";
 import RolePage from "./Roles";
-import FormCard from "../../components/FormCard";
 import ConnectionPage from "./Connections";
 import styles from "./style.module.scss";
-import connectionServiceV2 from "../../services/auth/connectionService";
+import {getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 const PermissionDetail = () => {
   const {clientId} = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
   const {control, reset} = useForm();
   const [connections, setConnections] = useState([]);
+  const [settingLan, setSettingLan] = useState();
+  const {i18n} = useTranslation();
 
   const {isLoading} = useQuery(
     ["GET_CLIENT_TYPE_BY_ID", clientId],
@@ -34,9 +37,33 @@ const PermissionDetail = () => {
     }
   );
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <Box className={styles.permission}>
-      <Header title="Matrix details" backButtonLink={-1} />
+      <Header
+        title={
+          generateLangaugeText(settingLan, i18n?.language, "Matrix Details") ||
+          "Matrix Details"
+        }
+        backButtonLink={-1}
+      />
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
@@ -44,20 +71,30 @@ const PermissionDetail = () => {
         className={styles.tabs}>
         <Card style={{paddingBottom: "0px", borderRadius: "0"}}>
           <TabList>
-            <Tab>Role</Tab>
-            <Tab>Connection</Tab>
+            <Tab>
+              {generateLangaugeText(settingLan, i18n?.language, "Role") ||
+                "Role"}
+            </Tab>
+            <Tab>
+              {generateLangaugeText(settingLan, i18n?.language, "Connection") ||
+                "Connection"}
+            </Tab>
           </TabList>
 
           <TabPanel style={{marginTop: "8px"}}>
             <div style={{padding: "10px 10px 0 10px", maxWidth: "30%"}}>
-              <FRow label="Name">
+              <FRow
+                label={
+                  generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                  "Name"
+                }>
                 <HFTextField control={control} name="name" fullWidth />
               </FRow>
             </div>
             <RolePage />
           </TabPanel>
           <TabPanel>
-            <ConnectionPage connections={connections} />
+            <ConnectionPage settingLan={settingLan} connections={connections} />
           </TabPanel>
         </Card>
       </Tabs>

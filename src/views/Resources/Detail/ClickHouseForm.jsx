@@ -8,6 +8,8 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const headerStyle = {
   width: "100",
@@ -21,54 +23,24 @@ const ClickHouseForm = ({
   control,
   btnLoading,
   selectedEnvironment,
-  setSelectedEnvironment,
-  projectEnvironments,
-  isEditPage,
+  settingLan,
 }) => {
-  const environments = useMemo(() => {
-    return projectEnvironments?.map((item) => ({
-      value: item.id,
-      label: item.name,
-      name: item.name,
-      project_id: item.project_id,
-      description: item.description,
-      display_color: item.display_color,
-      is_configured: item.is_configured,
-      id: item.id,
-    }));
-  }, [projectEnvironments]);
-
   const resurceType = useWatch({
     control,
     name: "resource_type",
   });
+  const {i18n} = useTranslation();
 
-  const type = useWatch({
-    control,
-    name: "type",
-  });
-
-  const onResourceTypeChange = (value) => {
-    if (value !== 5) return;
-
-    const queryParams = {
-      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-      redirect_uri: window.location.href,
-      scope: "read:user,repo",
-    };
-
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?" +
-        stringifyQueryParams(queryParams)
-    );
-  };
   // host, port, username, password, database
   return (
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
+        <h2 variant="h6">
+          {generateLangaugeText(settingLan, i18n?.language, "Resource info") ||
+            "Resource info"}
+        </h2>
       </Box>
 
       <Box
@@ -82,7 +54,10 @@ const ClickHouseForm = ({
               padding: "15px",
               fontWeight: "bold",
             }}>
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Host</Box>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>
+              {generateLangaugeText(settingLan, i18n?.language, "Host") ||
+                "Host"}
+            </Box>
             <HFTextField
               control={control}
               required
@@ -96,7 +71,8 @@ const ClickHouseForm = ({
 
             <Box
               sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
-              Port
+              {generateLangaugeText(settingLan, i18n?.language, "Port") ||
+                "Port"}
             </Box>
 
             <HFTextField
@@ -112,7 +88,8 @@ const ClickHouseForm = ({
 
             <Box
               sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
-              username
+              {generateLangaugeText(settingLan, i18n?.language, "Username") ||
+                "Username"}
             </Box>
 
             <HFTextField
@@ -128,7 +105,8 @@ const ClickHouseForm = ({
 
             <Box
               sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
-              password
+              {generateLangaugeText(settingLan, i18n?.language, "Password") ||
+                "Password"}
             </Box>
 
             <HFTextField
@@ -144,7 +122,8 @@ const ClickHouseForm = ({
 
             <Box
               sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
-              database
+              {generateLangaugeText(settingLan, i18n?.language, "Database") ||
+                "Database"}
             </Box>
 
             <HFTextField
@@ -165,7 +144,7 @@ const ClickHouseForm = ({
       <Footer>
         {selectedEnvironment?.length && (
           <Button type="submit" variant="contained" disabled={btnLoading}>
-            Save
+            {generateLangaugeText(settingLan, i18n?.language, "Save") || "Save"}
           </Button>
         )}
       </Footer>

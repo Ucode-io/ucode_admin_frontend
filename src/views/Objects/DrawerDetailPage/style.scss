@@ -1,0 +1,45 @@
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-handle {
+  left: 50px !important;
+}
+
+.rowColumn {
+  .icon {
+    display: block;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+
+  &:hover {
+    .icon {
+      display: none;
+    }
+
+    .drag {
+      display: block;
+    }
+  }
+}
+
+.headingText {
+  div {
+    fieldset {
+      display: none;
+    }
+  }
+
+  input {
+    font-weight: 700;
+    height: 25px;
+    font-size: 32px;
+  }
+}

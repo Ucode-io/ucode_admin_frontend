@@ -31,7 +31,7 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
@@ -70,10 +70,11 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 
-const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
+const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-
+  const {appId} = useParams();
+  console.log("appIdappId", appId);
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -135,13 +136,11 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: menuItem?.id || appId,
+      parent_id: appId || menuItem?.id,
       search: subSearchText,
     },
     queryParams: {
-      enabled:
-        Boolean(appId === "undefined" ? undefined : appId) ||
-        Boolean(menuItem?.id),
+      enabled: Boolean(appId) || Boolean(menuItem?.id),
       onSuccess: (res) => {
         setChild(res.menus ?? []);
       },
@@ -291,17 +290,15 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
+  const {loader: menuLoader} = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    },
+  });
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
@@ -318,13 +315,14 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
         };
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setProfileSettingLan(
           formattedData?.find((item) => item?.key === "Profile Setting")
         );
@@ -332,6 +330,10 @@ const LayoutSidebar = ({appId, toggleDarkMode = () => {}, darkMode}) => {
         setLanguageData(formattedData);
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

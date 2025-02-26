@@ -33,6 +33,7 @@ import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 
 function DrawerDetailPage({
   open,
+  layout,
   refetch,
   setOpen,
   menuItem,
@@ -134,6 +135,7 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
+
       if (!selectedTab?.relation_id) {
         reset(data?.response ?? {});
       }
@@ -233,6 +235,7 @@ function DrawerDetailPage({
     constructorObjectService
       .update(tableSlug, {data})
       .then(() => {
+        updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
       })
@@ -247,6 +250,7 @@ function DrawerDetailPage({
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
+        updateLayout();
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -283,6 +287,27 @@ function DrawerDetailPage({
         refetch();
       });
   };
+
+  function updateLayout() {
+    const updatedTabs = layout.tabs.map((tab, index) =>
+      index === selectedTabIndex
+        ? {
+            ...tab,
+            attributes: {
+              ...tab?.attributes,
+              layout_heading: watch("attributes.layout_heading"),
+            },
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...layout,
+      tabs: updatedTabs,
+    };
+
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  }
 
   const onSubmit = (data) => {
     if (id) {
@@ -340,7 +365,8 @@ function DrawerDetailPage({
                       height: "14px",
                       margin: "0 6px",
                       background: "rgba(55, 53, 47, 0.16)",
-                    }}></Box>
+                    }}
+                  />
                   <Box>
                     <ScreenOptions
                       selectedViewType={selectedViewType}
@@ -357,7 +383,17 @@ function DrawerDetailPage({
                       height: "14px",
                       margin: "0 6px",
                       background: "rgba(55, 53, 47, 0.16)",
-                    }}></Box>
+                    }}
+                  />
+
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
 
                   <TabList style={{borderBottom: "none"}}>
                     {data?.tabs?.map((el, index) => (
@@ -397,6 +433,10 @@ function DrawerDetailPage({
               <TabPanel>
                 <DrawerBody p="0px 50px" overflow={"auto"}>
                   <DrawerFormDetailPage
+                    setFormValue={setFormValue}
+                    layout={layout}
+                    selectedTab={selectedTab}
+                    selectedTabIndex={selectedTabIndex}
                     menuItem={menuItem}
                     data={data}
                     selectedRow={selectedRow}
@@ -412,34 +452,38 @@ function DrawerDetailPage({
                   />
                 </DrawerBody>
               </TabPanel>
-              <TabPanel>
-                <DrawerBody p="0px 0px" overflow={"auto"}>
-                  <DrawerRelationTable
-                    getAllData={getAllData}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    relations={tableRelations}
-                    control={control}
-                    handleSubmit={handleSubmit}
-                    onSubmit={onSubmit}
-                    reset={reset}
-                    setFormValue={setFormValue}
-                    tableSlug={tableSlug}
-                    watch={watch}
-                    loader={loader}
-                    setSelectTab={setSelectTab}
-                    selectedTab={selectedTab}
-                    errors={errors}
-                    relatedTable={
-                      tableRelations[selectedTabIndex]?.relatedTable
-                    }
-                    id={id}
-                    fieldsMap={fieldsMap}
-                    data={data}
-                    setData={setData}
-                  />
-                </DrawerBody>
-              </TabPanel>
+              {data?.tabs
+                ?.filter((tab) => tab?.type !== "section")
+                .map(() => (
+                  <TabPanel>
+                    <DrawerBody p="0px 0px" overflow={"auto"}>
+                      <DrawerRelationTable
+                        getAllData={getAllData}
+                        selectedTabIndex={selectedTabIndex}
+                        setSelectedTabIndex={setSelectedTabIndex}
+                        relations={tableRelations}
+                        control={control}
+                        handleSubmit={handleSubmit}
+                        onSubmit={onSubmit}
+                        reset={reset}
+                        setFormValue={setFormValue}
+                        tableSlug={tableSlug}
+                        watch={watch}
+                        loader={loader}
+                        setSelectTab={setSelectTab}
+                        selectedTab={selectedTab}
+                        errors={errors}
+                        relatedTable={
+                          tableRelations[selectedTabIndex]?.relatedTable
+                        }
+                        id={id}
+                        fieldsMap={fieldsMap}
+                        data={data}
+                        setData={setData}
+                      />
+                    </DrawerBody>
+                  </TabPanel>
+                ))}
             </DrawerContent>
           </form>
         </Box>
@@ -480,7 +524,7 @@ const ScreenOptions = ({
   return (
     <Box>
       <Button onClick={handleClick} variant="outlined">
-        <span>{getColumnIcon(selectedViewType)}</span>
+        <span>{getColumnFieldIcon(selectedViewType)}</span>
       </Button>
 
       <Menu
@@ -501,7 +545,7 @@ const ScreenOptions = ({
               key={option.label}
               onClick={() => handleClose(option)}>
               <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-                <span>{getColumnIcon(option)}</span>
+                <span>{getColumnFieldIcon(option)}</span>
                 {option.label}
               </Box>
 
@@ -516,7 +560,7 @@ const ScreenOptions = ({
   );
 };
 
-export const getColumnIcon = (column) => {
+export const getColumnFieldIcon = (column) => {
   if (column.icon === "SidePeek") {
     return (
       <img

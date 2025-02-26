@@ -144,17 +144,23 @@ const ProjectSettingPage = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     getAllFromDB().then((storedData) => {
-      if (storedData && Array.isArray(storedData)) {
+      if (isMounted && storedData && Array.isArray(storedData)) {
         const formattedData = storedData.map((item) => ({
           ...item,
           translations: item.translations || {},
         }));
-
         setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
   return (
     <div
       style={{

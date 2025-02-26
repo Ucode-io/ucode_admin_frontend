@@ -6,9 +6,18 @@ import {useState} from "react";
 import {customStyles} from "../../../../Status";
 import Select from "react-select";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
-const ActivityFeedHeader = ({histories, setDateFilters, dateFilters}) => {
+const ActivityFeedHeader = ({
+  histories,
+  setDateFilters,
+  dateFilters,
+  activityLan,
+}) => {
   const [inputValue, setInputValue] = useState("");
+  const {i18n} = useTranslation();
+
   return (
     <>
       <Box className={style.header}>
@@ -16,11 +25,19 @@ const ActivityFeedHeader = ({histories, setDateFilters, dateFilters}) => {
           <div className={style.foldericon}>
             <InventoryIcon />
           </div>
-          <Typography variant="h3">Activity Logs</Typography>
+          <Typography variant="h3">
+            {generateLangaugeText(
+              activityLan,
+              i18n?.language,
+              "Activity Logs"
+            ) || "Activity Logs"}
+          </Typography>
         </Box>
         <Box className={style.rightside}>
           <Typography variant="h5" className={style.itemtitle}>
-            {histories?.length || "0"} Items
+            {histories?.length || "0"}{" "}
+            {generateLangaugeText(activityLan, i18n?.language, "Items") ||
+              "Items"}
           </Typography>
         </Box>
       </Box>

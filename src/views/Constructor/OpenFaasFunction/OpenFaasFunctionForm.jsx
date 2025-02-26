@@ -28,7 +28,7 @@ import functionService, {
   useFunctionCreateMutation,
   useFunctionUpdateMutation,
 } from "../../../services/functionService";
-import {useQueryClient} from "react-query";
+
 import {Box} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import KnativeLogs from "./KnativeLogs";
@@ -36,6 +36,9 @@ import {
   useGitlabBranchesQuery,
   useGitlabRepositoriesQuery,
 } from "../../../services/githubService";
+import {getAllFromDB} from "../../../utils/languageDB";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 export default function OpenFaasFunctionForm() {
   const {functionId, appId} = useParams();
@@ -46,7 +49,8 @@ export default function OpenFaasFunctionForm() {
   const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
   const [logsList, setLogsList] = useState(null);
-
+  const [functionLan, setFunctionLan] = useState(null);
+  const {i18n} = useTranslation();
   const microfrontendListPageLink = `/main/${appId}/openfaas-functions`;
 
   const mainForm = useForm({
@@ -224,8 +228,26 @@ export default function OpenFaasFunctionForm() {
     ? repositories
     : listToOptions(repositoriesGitlab, "name", "name");
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setFunctionLan(formattedData?.find((item) => item?.key === "Fuctions"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   if (isLoading) return <PageFallback />;
-  console.log("resourcesOptions", resourcesOptions, repositories);
+
   return (
     <div>
       <Tabs>
@@ -234,8 +256,14 @@ export default function OpenFaasFunctionForm() {
           backButtonLink={-1}
           subtitle={functionId ? mainForm.watch("name") : "Новый"}>
           <TabList>
-            <Tab>Details</Tab>
-            <Tab>Logs</Tab>
+            <Tab>
+              {generateLangaugeText(functionLan, i18n?.language, "Details") ||
+                "Details"}
+            </Tab>
+            <Tab>
+              {generateLangaugeText(functionLan, i18n?.language, "Logs") ||
+                "Logs"}
+            </Tab>
           </TabList>
         </HeaderSettings>
 
@@ -246,7 +274,13 @@ export default function OpenFaasFunctionForm() {
             style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
             <FormCard title="Детали" maxWidth={500}>
               <FRow
-                label={"Ресурс"}
+                label={
+                  generateLangaugeText(
+                    functionLan,
+                    i18n?.language,
+                    "Resource"
+                  ) || "Resource"
+                }
                 componentClassName="flex gap-2 align-center"
                 required>
                 <HFSelect
@@ -261,7 +295,13 @@ export default function OpenFaasFunctionForm() {
               </FRow>
 
               <FRow
-                label={"Function type"}
+                label={
+                  generateLangaugeText(
+                    functionLan,
+                    i18n?.language,
+                    "Function type"
+                  ) || "Function type"
+                }
                 componentClassName="flex gap-2 align-center"
                 required>
                 <HFSelect
@@ -286,7 +326,15 @@ export default function OpenFaasFunctionForm() {
 
               {resourceId !== "ucode_gitlab" && (
                 <>
-                  <FRow label="Репозиторий" required>
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        functionLan,
+                        i18n?.language,
+                        "Repository"
+                      ) || "Repository"
+                    }
+                    required>
                     {functionId ? (
                       <HFTextField
                         disabled={true}
@@ -304,7 +352,15 @@ export default function OpenFaasFunctionForm() {
                     )}
                   </FRow>
 
-                  <FRow label="Ветка" required>
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        functionLan,
+                        i18n?.language,
+                        "Branch"
+                      ) || "Branch"
+                    }
+                    required>
                     {functionId ? (
                       <HFTextField
                         name="branch"
@@ -326,7 +382,13 @@ export default function OpenFaasFunctionForm() {
 
               {resourceId === "ucode_gitlab" && (
                 <FRow
-                  label={"Ссылка"}
+                  label={
+                    generateLangaugeText(
+                      functionLan,
+                      i18n?.language,
+                      "Ссылка"
+                    ) || "Ссылка"
+                  }
                   componentClassName="flex gap-2 align-center"
                   required>
                   <HFTextField
@@ -340,7 +402,10 @@ export default function OpenFaasFunctionForm() {
                 </FRow>
               )}
               <FRow
-                label={"Названия"}
+                label={
+                  generateLangaugeText(functionLan, i18n?.language, "Name") ||
+                  "Name"
+                }
                 componentClassName="flex gap-2 align-center"
                 required>
                 <HFTextField
@@ -357,7 +422,14 @@ export default function OpenFaasFunctionForm() {
                 />
               </FRow>
               {resourceId === "ucode_gitlab" && (
-                <FRow label="Описания">
+                <FRow
+                  label={
+                    generateLangaugeText(
+                      functionLan,
+                      i18n?.language,
+                      "Description"
+                    ) || "Description"
+                  }>
                   <HFTextField
                     name="description"
                     control={mainForm.control}

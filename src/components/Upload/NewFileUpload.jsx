@@ -61,6 +61,11 @@ export default function NewFileUpload({
     setAnchorEl(null);
   };
 
+  const valueGenerate = (value, separator = "_") => {
+    const splitted = value?.split(separator).slice(1, -1);
+    return splitted?.join(separator);
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -94,7 +99,7 @@ export default function NewFileUpload({
                 fontSize: "10px",
                 color: "#747474",
               }}>
-              {value?.split?.("_")?.[1] ?? ""}
+              {valueGenerate(value)}
             </Typography>
           </Box>
 

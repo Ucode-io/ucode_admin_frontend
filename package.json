@@ -151,6 +151,7 @@
     "react-input-mask": "^2.0.4",
     "react-json-editor-ajrm": "^2.5.14",
     "react-json-view": "^1.21.3",
+    "react-loader-spinner": "^6.1.6",
     "react-moveable": "^0.38.0",
     "react-multi-date-picker": "3.3.4",
     "react-number-format": "^5.1.4",

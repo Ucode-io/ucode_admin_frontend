@@ -81,26 +81,26 @@ export const ClientTypes = () => {
     setPage(1);
   };
 
-  useEffect(() => {
-    let isMounted = true;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const storedData = await getAllFromDB(); // Await the async function
+  //     if (storedData && Array.isArray(storedData)) {
+  //       const formattedData = storedData.map((item) => ({
+  //         ...item,
+  //         translations: item.translations || {},
+  //       }));
 
-    getAllFromDB().then((storedData) => {
-      if (isMounted && storedData && Array.isArray(storedData)) {
-        const formattedData = storedData.map((item) => ({
-          ...item,
-          translations: item.translations || {},
-        }));
+  //       const foundData = formattedData?.find(
+  //         (item) => item?.key === "UserInvite"
+  //       );
+  //       if (foundData) {
+  //         setUserInviteLan(foundData); // Ensure this does not trigger a re-render loop
+  //       }
+  //     }
+  //   };
 
-        setUserInviteLan(
-          formattedData?.find((item) => item?.key === "UserInvite")
-        );
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <ChakraProvider theme={chakraUITheme}>

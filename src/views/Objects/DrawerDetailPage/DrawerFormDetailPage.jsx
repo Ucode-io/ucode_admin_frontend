@@ -26,6 +26,8 @@ function DrawerFormDetailPage({
   layout,
   fieldsMap,
   selectedTab = {},
+  getValues,
+  selectedRow,
   selectedTabIndex = 0,
   setFormValue = () => {},
 }) {
@@ -77,9 +79,9 @@ function DrawerFormDetailPage({
   useEffect(() => {
     setFormValue(
       "attributes.layout_heading",
-      selectedTab?.attributes?.layout_heading
+      selectedRow?.[selectedTab?.attributes?.layout_heading]
     );
-  }, [selectedTab]);
+  }, [selectedTab, selectedRow]);
 
   return (
     <>
@@ -89,8 +91,10 @@ function DrawerFormDetailPage({
         pb={"10px"}
         overflow={"auto"}>
         <HeadingOptions
+          selectedRow={selectedRow}
           watch={watch}
           control={control}
+          getValues={getValues}
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
           setFormValue={setFormValue}
@@ -103,70 +107,75 @@ function DrawerFormDetailPage({
               dragHandleSelector=".drag-handle"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-              {section?.fields?.map((field, fieldIndex) => (
-                <Draggable className="drag-handle" key={field?.id}>
-                  <Box
-                    className="rowColumn"
-                    key={fieldIndex}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    {...(Boolean(field?.type === "MULTISELECT")
-                      ? {minHeight: "30px"}
-                      : {height: "34px"})}
-                    py="8px">
+              {section?.fields
+                ?.filter(
+                  (el) => el?.slug !== watch("attributes.layout_heading")
+                )
+                .map((field, fieldIndex) => (
+                  <Draggable className="drag-handle" key={field?.id}>
                     <Box
+                      className="rowColumn"
+                      key={fieldIndex}
                       display="flex"
                       alignItems="center"
-                      justifyContent={"space-between"}
-                      padding="5px"
-                      borderRadius={"4px"}
-                      width="40%"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "#F7F7F7",
-                        },
-                      }}>
+                      justifyContent="space-between"
+                      {...(Boolean(field?.type === "MULTISELECT")
+                        ? {minHeight: "30px"}
+                        : {height: "34px"})}
+                      py="8px">
                       <Box
-                        width="14px"
-                        height="16px"
-                        mr="8px"
                         display="flex"
                         alignItems="center"
-                        justifyContent="center">
-                        <span className="drag">
-                          <DragIndicatorIcon
-                            style={{width: "16px", height: "16px"}}
-                          />
-                        </span>
-                        <span className="icon">
-                          {getColumnIcon({
-                            column: {
-                              type: field?.type ?? field?.relation_type,
-                              table_slug: field?.table_slug ?? field?.slug,
-                            },
-                          })}
-                        </span>
+                        justifyContent={"space-between"}
+                        padding="5px"
+                        borderRadius={"4px"}
+                        width="40%"
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#F7F7F7",
+                          },
+                        }}>
+                        <Box
+                          width="18px"
+                          height="16px"
+                          mr="8px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          sx={{color: "#787774"}}>
+                          <span className="drag">
+                            <DragIndicatorIcon
+                              style={{width: "16px", height: "16px"}}
+                            />
+                          </span>
+                          <span style={{color: "#787774"}} className="icon">
+                            {getColumnIcon({
+                              column: {
+                                type: field?.type ?? field?.relation_type,
+                                table_slug: field?.table_slug ?? field?.slug,
+                              },
+                            })}
+                          </span>
+                        </Box>
+                        <Box
+                          fontSize="12px"
+                          color="#787774"
+                          fontWeight="500"
+                          width="100%">
+                          {field?.attributes?.[`label_${i18n?.language}`] ||
+                            field?.label}
+                        </Box>
                       </Box>
-                      <Box
-                        fontSize="12px"
-                        color="#787774"
-                        fontWeight="500"
-                        width="100%">
-                        {field?.attributes?.[`label_${i18n?.language}`] ||
-                          field?.label}
+                      <Box sx={{width: "60%"}}>
+                        <DrawerFieldGenerator
+                          control={control}
+                          field={field}
+                          watch={watch}
+                        />
                       </Box>
                     </Box>
-                    <Box sx={{width: "60%"}}>
-                      <DrawerFieldGenerator
-                        control={control}
-                        field={field}
-                        watch={watch}
-                      />
-                    </Box>
-                  </Box>
-                </Draggable>
-              ))}
+                  </Draggable>
+                ))}
             </Container>
           </Box>
         ))}
@@ -178,18 +187,39 @@ function DrawerFormDetailPage({
 const HeadingOptions = ({
   watch,
   control,
+  getValues,
   fieldsMap,
   selectedTab,
+  selectedRow,
   setFormValue = () => {},
 }) => {
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const selectedFieldSlug =
+    watch("attributes.layout_heading") ||
+    selectedTab?.attributes?.layout_heading ||
+    "";
+
+  const selectedField = Object.values(fieldsMap).find(
+    (field) => field?.slug === selectedFieldSlug
+  );
+
+  const fieldValue = selectedField
+    ? (selectedRow?.[selectedField.slug] ?? "")
+    : "";
+
+  useEffect(() => {
+    if (selectedFieldSlug) {
+      setFormValue("attributes.layout_heading", selectedFieldSlug);
+    }
+  }, [selectedFieldSlug, setFormValue]);
+
   const fieldsList = Object.values(fieldsMap).map((field) => ({
     label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
-    value: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
+    value: field?.slug,
     type: field?.type,
-    table_slug: field?.table_slug || field?.slug,
+    table_slug: field?.slug,
   }));
 
   const handleClick = (event) => {
@@ -197,7 +227,9 @@ const HeadingOptions = ({
   };
 
   const handleClose = (option) => {
-    setFormValue("attributes.layout_heading", option?.label);
+    if (option) {
+      setFormValue("attributes.layout_heading", option.table_slug);
+    }
     setAnchorEl(null);
   };
 
@@ -210,7 +242,7 @@ const HeadingOptions = ({
           paddingLeft: "3px",
           gap: "10px",
         }}>
-        {!Boolean(watch("attributes.layout_heading")) && (
+        {Boolean(selectedFieldSlug) && (
           <span style={{cursor: "pointer"}} onClick={handleClick}>
             <img
               src="/img/text-column.svg"
@@ -220,10 +252,12 @@ const HeadingOptions = ({
             />
           </span>
         )}
+
         <CHTextField
-          defaultValue={selectedTab?.attributes?.layout_heading}
           control={control}
-          name={"attributes.layout_heading"}
+          name={selectedField?.slug || "attributes.layout_heading"}
+          defaultValue={fieldValue}
+          key={selectedField?.slug}
         />
       </Box>
 
@@ -233,10 +267,10 @@ const HeadingOptions = ({
         onClose={() => handleClose(null)}>
         <Box sx={{width: "220px", padding: "4px 0"}}>
           {fieldsList
-            ?.filter(
+            .filter(
               (field) => field?.type === "SINGLE_LINE" || field?.type === "TEXT"
             )
-            ?.map((option) => (
+            .map((option) => (
               <MenuItem
                 style={{
                   display: "flex",
@@ -248,7 +282,12 @@ const HeadingOptions = ({
                 }}
                 key={option.label}
                 onClick={() => handleClose(option)}>
-                <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}>
                   <span>
                     {getColumnIcon({
                       column: {
@@ -261,7 +300,7 @@ const HeadingOptions = ({
                 </Box>
 
                 <Box>
-                  {option.label === selectedTab?.attributes?.layout_heading ? (
+                  {option.table_slug === watch("attributes.layout_heading") ? (
                     <Check />
                   ) : (
                     ""
@@ -281,15 +320,13 @@ const CHTextField = ({control, name, defaultValue = ""}) => {
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
-        return (
-          <TextField
-            onChange={(e) => onChange(e.target.value)}
-            className="headingText"
-            value={value}
-          />
-        );
-      }}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <TextField
+          onChange={(e) => onChange(e.target.value)}
+          className="headingText"
+          value={value ?? ""}
+        />
+      )}
     />
   );
 };

@@ -61,6 +61,7 @@ const TableView = ({
   setFormValue,
   currentView,
   watch,
+  tableLan,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -513,6 +514,7 @@ const TableView = ({
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
+          tableLan={tableLan}
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}
@@ -569,7 +571,7 @@ const TableView = ({
           {...props}
         />
 
-        {/* {open && selectedViewType?.icon === "SidePeek" ? (
+        {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
             setFormValue={setFormValue}
@@ -598,9 +600,9 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null} */}
+        ) : null}
 
-        {open && (
+        {/* {open && (
           <ModalDetailPage
             open={open}
             setOpen={setOpen}
@@ -614,7 +616,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        )}
+        )} */}
 
         <Drawer
           open={drawerState}

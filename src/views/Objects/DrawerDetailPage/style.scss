@@ -30,6 +30,18 @@
   }
 }
 
+.rowColumnDrag {
+  .icon {
+    display: block;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
+
 .headingText {
   div {
     fieldset {
@@ -42,5 +54,15 @@
     height: 25px;
     font-size: 32px;
     padding-left: 0;
+  }
+}
+
+.drag-item {
+  .icon {
+    display: none;
+  }
+
+  .drag {
+    display: block;
   }
 }

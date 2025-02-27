@@ -52,8 +52,10 @@ import SummaryRow from "@/components/DataTable/SummaryRow";
 import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 export const DynamicTable = ({
+  tableLan,
   dataCount,
   tableView,
   data = [],
@@ -100,6 +102,7 @@ export const DynamicTable = ({
   menuItem,
   getAllData = () => {},
 }) => {
+  const {i18n} = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -305,6 +308,7 @@ export const DynamicTable = ({
                   type="add_field"
                   id="addField">
                   <FieldButton
+                    tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
                     view={view}
                     mainForm={mainForm}
@@ -439,7 +443,7 @@ export const DynamicTable = ({
           fontSize={14}
           fontWeight={600}
           color="#344054">
-          Show
+          {generateLangaugeText(tableLan, i18n?.language, "Show") || "Show"}
           <ChakraProvider>
             <CreatableSelect
               chakraStyles={{
@@ -458,7 +462,8 @@ export const DynamicTable = ({
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
-          out of {dataCount}
+          {generateLangaugeText(tableLan, i18n?.language, "out of") || "out of"}{" "}
+          {dataCount}
         </Flex>
 
         <Pagination
@@ -477,7 +482,11 @@ export const DynamicTable = ({
         {selectedObjectsForDelete?.length > 0 && (
           <RectangleIconButton color="error" onClick={multipleDelete}>
             <Button variant="outlined" color="error">
-              Delete all selected
+              {generateLangaugeText(
+                tableLan,
+                i18n?.language,
+                "Delete all selected"
+              ) || "Delete all selected"}
             </Button>
           </RectangleIconButton>
         )}
@@ -524,6 +533,7 @@ const IndexTh = ({items, selectedItems, onSelectAll}) => {
 };
 
 const FieldButton = ({
+  tableLan,
   view,
   setFieldCreateAnchor,
   fieldCreateAnchor,
@@ -706,6 +716,7 @@ const FieldButton = ({
         <AddRoundedIcon style={{marginTop: "3px"}} />
       </Box>
       <FieldOptionModal
+        tableLan={tableLan}
         anchorEl={fieldOptionAnchor}
         setAnchorEl={setFieldOptionAnchor}
         setFieldCreateAnchor={setFieldCreateAnchor}
@@ -714,6 +725,7 @@ const FieldButton = ({
       />
       {fieldCreateAnchor && (
         <FieldCreateModal
+          tableLan={tableLan}
           anchorEl={fieldCreateAnchor}
           setAnchorEl={setFieldCreateAnchor}
           watch={watch}

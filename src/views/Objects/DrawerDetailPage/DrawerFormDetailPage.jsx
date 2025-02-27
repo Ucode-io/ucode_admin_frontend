@@ -25,6 +25,7 @@ function DrawerFormDetailPage({
 }) {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
+  const [dragAction, setDragAction] = useState(false);
 
   const [sections, setSections] = useState(
     data?.tabs?.[selectedTabIndex]?.sections || []
@@ -95,7 +96,10 @@ function DrawerFormDetailPage({
           <Box sx={{margin: "12px 0 0 0"}} key={secIndex}>
             <Container
               style={{width: "100%"}}
+              onDragStart={() => setDragAction(true)}
+              onDragEnd={() => setDragAction(false)}
               dragHandleSelector=".drag-handle"
+              dragClass="drag-item"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields
@@ -105,7 +109,7 @@ function DrawerFormDetailPage({
                 .map((field, fieldIndex) => (
                   <Draggable className="drag-handle" key={field?.id}>
                     <Box
-                      className="rowColumn"
+                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
                       key={fieldIndex}
                       display="flex"
                       alignItems="center"

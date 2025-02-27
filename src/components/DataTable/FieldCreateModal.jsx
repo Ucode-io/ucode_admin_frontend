@@ -33,8 +33,10 @@ import style from "./field.module.scss";
 import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 export default function FieldCreateModal({
+  tableLan,
   anchorEl,
   setAnchorEl,
   watch,
@@ -253,7 +255,8 @@ export default function FieldCreateModal({
       }}>
       <div className={style.field}>
         <Typography variant="h6" className={style.title}>
-          ADD COLUMN
+          {generateLangaugeText(tableLan, i18n?.language, "ADD COLUMN") ||
+            "ADD COLUMN"}
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
@@ -268,7 +271,13 @@ export default function FieldCreateModal({
                 width: "100%",
               }}>
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
-                <FRow label="Label" classname={style.custom_label} required>
+                <FRow
+                  label={
+                    generateLangaugeText(tableLan, i18n?.language, "Label") ||
+                    "Label"
+                  }
+                  classname={style.custom_label}
+                  required>
                   <Box style={{display: "flex", gap: "6px"}}>
                     <HFTextFieldWithMultiLanguage
                       control={control}
@@ -284,7 +293,9 @@ export default function FieldCreateModal({
               ) : null}
             </Box>
             <FRow
-              label={"Type"}
+              label={
+                generateLangaugeText(tableLan, i18n?.language, "Type") || "Type"
+              }
               componentClassName="flex gap-2 align-center"
               required
               classname={style.custom_label}>
@@ -317,7 +328,10 @@ export default function FieldCreateModal({
           <Box sx={{padding: "0 5px"}}>
             {formatIncludes?.includes(format) ? (
               <FRow
-                label={"Format"}
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Format") ||
+                  "Format"
+                }
                 componentClassName="flex gap-2 align-center"
                 required
                 classname={style.custom_label}>
@@ -330,7 +344,13 @@ export default function FieldCreateModal({
                   disabled={fieldData}
                   fullWidth
                   required
-                  placeholder="Select type"
+                  placeholder={
+                    generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Select type"
+                    ) || "Select type"
+                  }
                 />
               </FRow>
             ) : null}
@@ -343,7 +363,11 @@ export default function FieldCreateModal({
                   closeAllDrawer();
                 }}>
                 <SettingsIcon />
-                Advanced settings
+                {generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Advanced settings"
+                ) || "Advanced settings"}
               </Button>
             )}
           </Box>
@@ -386,7 +410,11 @@ export default function FieldCreateModal({
                               endAdornment={
                                 <Box className={style.adornment}>
                                   <p onClick={(e) => handleOpenColor(e, index)}>
-                                    Add color
+                                    {generateLangaugeText(
+                                      tableLan,
+                                      i18n?.language,
+                                      "Add color"
+                                    ) || "Add color"}
                                   </p>
                                   <CloseIcon
                                     onClick={() => dropdownRemove(index)}
@@ -458,7 +486,12 @@ export default function FieldCreateModal({
                         value: "",
                       });
                     }}>
-                    +Add option
+                    +
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Add option"
+                    ) || "Add option"}
                   </Button>
                 )}
 
@@ -481,10 +514,23 @@ export default function FieldCreateModal({
                       fullWidth
                       id="formula_textarea"
                       required
-                      placeholder="Formula"
+                      placeholder={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Formula"
+                        ) || "Formula"
+                      }
                     />
                   </Box>
-                  <h2>Fields list:</h2>
+                  <h2>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Fields list"
+                    ) || "Fields list"}
+                    :
+                  </h2>
                   {fields.map((field) => (
                     <div>
                       {field.label} - <strong>{field.value}</strong>{" "}
@@ -502,7 +548,13 @@ export default function FieldCreateModal({
                     fullWidth
                     id="variable"
                     required
-                    placeholder="Select variable"
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Select variable"
+                      ) || "Select variable"
+                    }
                   />
 
                   <span
@@ -520,7 +572,13 @@ export default function FieldCreateModal({
                     control={control}
                     fullWidth
                     required
-                    placeholder="Select variable"
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Select variable"
+                      ) || "Select variable"
+                    }
                   />
 
                   <Menu
@@ -566,7 +624,11 @@ export default function FieldCreateModal({
                   control={control}
                   name="attributes.advanced_type"
                 />
-                Advanced Editor
+                {generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Advanced Editor"
+                ) || "Advanced Editor"}
               </Box>
             </>
           )}
@@ -582,10 +644,21 @@ export default function FieldCreateModal({
           ) : null}
           <Box className={style.button_group} sx={{padding: "0 5px"}}>
             <Button variant="contained" color="error" onClick={handleClick}>
-              Cancel
+              {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
+                "Cancel"}
             </Button>
             <Button variant="contained" type="submit">
-              {fieldData ? "Save column" : "Add column"}
+              {fieldData
+                ? generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Save colmn"
+                  ) || "Save column"
+                : generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Add column"
+                  ) || "Add column"}
             </Button>
           </Box>
         </form>

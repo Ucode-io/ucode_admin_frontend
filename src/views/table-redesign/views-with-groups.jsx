@@ -687,6 +687,7 @@ export const NewUiViewsWithGroups = ({
                 <>
                   {view.type === "TABLE" && groupTable?.length ? (
                     <GroupTableView
+                      tableLan={tableLan}
                       selectedTabIndex={selectedTabIndex}
                       reset={reset}
                       sortedDatas={sortedDatas}
@@ -722,6 +723,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        tableLan={tableLan}
                         isVertical
                         setCurrentPage={setCurrentPage}
                         currentPage={currentPage}
@@ -768,6 +770,7 @@ export const NewUiViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      tableLan={tableLan}
                       visibleColumns={visibleColumns}
                       setCurrentPage={setCurrentPage}
                       currentPage={currentPage}

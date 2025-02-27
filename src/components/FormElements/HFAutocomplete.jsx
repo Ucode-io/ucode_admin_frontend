@@ -56,7 +56,6 @@ const HFAutocomplete = ({
               disabled={disabled}
               isBlackBg={isBlackBg}
               onChange={(val) => {
-                console.log("sdsdsdsdsdsdsd", val);
                 onChange(val?.value);
                 onFormChange(val?.value);
                 customChange(val);

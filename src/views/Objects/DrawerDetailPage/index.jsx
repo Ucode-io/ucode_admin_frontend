@@ -73,6 +73,9 @@ function DrawerDetailPage({
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const drawerRef = useRef();
+  const [drawerWidth, setDrawerWidth] = useState(650);
+  const [isResizing, setIsResizing] = useState(false);
 
   const getAllData = async () => {
     setLoader(true);
@@ -326,7 +329,7 @@ function DrawerDetailPage({
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>
-        <Box position={"relative"} zIndex={9} maxW="850px">
+        <Box position={"relative"} zIndex={9}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DrawerContent
               boxShadow="
@@ -336,7 +339,8 @@ function DrawerDetailPage({
       "
               zIndex={9}
               bg={"white"}
-              maxW="650px"
+              maxW={`${drawerWidth}px`}
+              resize={"both"}
               position={"relative"}>
               <DrawerHeader
                 px="12px"
@@ -387,15 +391,6 @@ function DrawerDetailPage({
                     }}
                   />
 
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
-
                   <TabList style={{borderBottom: "none"}}>
                     {data?.tabs?.map((el, index) => (
                       <Tab
@@ -432,7 +427,10 @@ function DrawerDetailPage({
               </DrawerHeader>
 
               <TabPanel>
-                <DrawerBody p="0px 50px" overflow={"auto"}>
+                <DrawerBody
+                  position={"relative"}
+                  p="0px 50px"
+                  overflow={"auto"}>
                   <DrawerFormDetailPage
                     getValues={getValues}
                     setFormValue={setFormValue}
@@ -488,6 +486,18 @@ function DrawerDetailPage({
                 ))}
             </DrawerContent>
           </form>
+
+          <Box
+            // onClick={handleMouseMove}
+            sx={{
+              position: "absolute",
+              height: "calc(100vh - 150px)",
+              width: "100px",
+              left: 0,
+              top: 0,
+              cursor: "col-resize",
+              background: "red",
+            }}></Box>
         </Box>
       </Tabs>
     </Drawer>

@@ -462,7 +462,7 @@ export const DynamicTable = ({
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
-          {generateLangaugeText(tableLan, i18n?.language, "out of") || "out of"}
+          {generateLangaugeText(tableLan, i18n?.language, "out of") || "out of"}{" "}
           {dataCount}
         </Flex>
 

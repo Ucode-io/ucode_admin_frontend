@@ -49,7 +49,6 @@ function MultiImageUpload({
     setFullScreen(imgSrc);
   };
   const handleCloseFullScreen = () => setFullScreen(null);
-
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -93,11 +92,12 @@ function MultiImageUpload({
               }}
               id="multi_image"
               sx={{
-                width: drawerDetail ? "320px" : "100%",
+                width: "100%",
                 height: newUi ? "25px" : "36px",
                 display: "flex",
                 alignItems: "center",
                 gap: "10px",
+                padding: drawerDetail ? "0 9.6px" : "0",
               }}>
               <Box
                 sx={{
@@ -109,7 +109,7 @@ function MultiImageUpload({
                 }}>
                 <img
                   style={{
-                    width: drawerDetail ? "320px" : "100%",
+                    width: "100%",
                     height: "100%",
                     objectFit: "cover",
                   }}
@@ -173,12 +173,12 @@ function MultiImageUpload({
                 !disabled && handleClick();
               }}
               sx={{
-                width: drawerDetail ? "330px" : "100%",
+                width: "100%",
                 height: "100%",
                 display: "flex",
                 cursor: "pointer",
-                justifyContent: "flex-end",
-                paddingRight: drawerDetail ? "8px" : "",
+                justifyContent: "flex-start",
+                alignItems: "center",
               }}>
               <Box
                 sx={{
@@ -188,14 +188,20 @@ function MultiImageUpload({
                   color: "#777",
                   fontSize: "10px",
                   gap: "5px",
+                  padding: "0 8px",
                 }}>
-                <UploadFileIcon
+                <img
+                  src="/img/newUpload.svg"
+                  alt="Upload"
+                  style={{width: 22, height: 22}}
+                />
+                {/* <UploadFileIcon
                   style={{
                     width: "24px",
                     height: "24px",
                     color: "rgb(116, 116, 116)",
                   }}
-                />
+                /> */}
               </Box>
             </Box>
           ) : (

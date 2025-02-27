@@ -12,6 +12,8 @@ import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import AddIcon from "@mui/icons-material/Add";
 import SVG from "react-inlinesvg";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const ButtonsMenu = ({
   element,
@@ -27,8 +29,10 @@ const ButtonsMenu = ({
   setMicrofrontendModal,
   setLinkedTableModal,
   setWebsiteModalLink,
+  menuLanguages,
 }) => {
   const navigate = useNavigate();
+  const {i18n} = useTranslation();
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
@@ -56,7 +60,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Edit folder"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Edit folder"
+                ) || "Edit folder"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseNotify();
@@ -81,7 +91,13 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<BsFillTrashFill size={13} />}
-                title="Delete folder"
+                title={
+                  generateLangaugeText(
+                    menuLanguages,
+                    i18n?.language,
+                    "Delete folder"
+                  ) || "Delete folder"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element);
@@ -93,7 +109,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Move folder"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Move folder"
+                ) || "Move folder"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -107,7 +129,13 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Create table"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Create table"
+              ) || "Create table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -116,7 +144,13 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<SyncAltIcon size={13} />}
-            title="Add table"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add table"
+              ) || "Add table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setTableModal(element);
@@ -125,7 +159,13 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<DeveloperBoardIcon size={13} />}
-            title="Add microfrontend"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add microfrontend"
+              ) || "Add microfrontend"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -134,8 +174,14 @@ const ButtonsMenu = ({
           />
 
           <MenuItemComponent
-            icon={<img src="/img/terminal-browser.svg" alt="table"/>}
-            title="Add Website"
+            icon={<img src="/img/terminal-browser.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add Website"
+              ) || "Add Website"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -150,7 +196,13 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Add folder"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add folder"
+              ) || "Add folder"
+            }
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -165,7 +217,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Move table"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Move table"
+                ) || "Move table"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -177,7 +235,13 @@ const ButtonsMenu = ({
             <>
               <MenuItemComponent
                 icon={<DriveFileMoveIcon size={13} />}
-                title="Move table"
+                title={
+                  generateLangaugeText(
+                    menuLanguages,
+                    i18n?.language,
+                    "Move table"
+                  ) || "Move table"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   setFolderModalType("folder", element);
@@ -186,7 +250,13 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Edit table"
+                title={
+                  generateLangaugeText(
+                    menuLanguages,
+                    i18n?.language,
+                    "Edit table"
+                  ) || "Edit table"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   setTableModal(element);
@@ -201,7 +271,13 @@ const ButtonsMenu = ({
           permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Edit table"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Edit tables"
+                ) || "Edit tables"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setTableModal(element);
@@ -222,7 +298,13 @@ const ButtonsMenu = ({
               />
               <MenuItemComponent
                 icon={<BsFillTrashFill size={13} />}
-                title="Delete table"
+                title={
+                  generateLangaugeText(
+                    menuLanguages,
+                    i18n?.language,
+                    "Delete table"
+                  ) || "Delete table"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   deleteFolder(element);
@@ -249,7 +331,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<DriveFileMoveIcon size={13} />}
-              title="Move table"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Move table"
+                ) || "Move table"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -260,7 +348,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Edit Website"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Edit Website"
+                ) || "Edit Website"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setWebsiteModalLink(element);
@@ -277,7 +371,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Delete Website"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Delete Website"
+                ) || "Delete Website"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -292,7 +392,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.menu_settings && (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Move microfrontend"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Move microfrontend"
+                ) || "Move microfrontend"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setFolderModalType("folder", element);
@@ -304,7 +410,13 @@ const ButtonsMenu = ({
             <>
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
-                title="Edit microfrontend"
+                title={
+                  generateLangaugeText(
+                    menuLanguages,
+                    i18n?.language,
+                    "Edit microfrontend"
+                  ) || "Edit microfrontend"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   setMicrofrontendModal(element);
@@ -323,7 +435,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Delete microfrontend"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Delete microfrontend"
+                ) || "Delete microfrontend"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -338,7 +456,13 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Add folder"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add folder"
+              ) || "Add folder"
+            }
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", {
@@ -351,10 +475,16 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "ROOT" && (
-        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
+        <Box className="menu" style={{width: 224, rowGap: 4}}>
           <MenuItemComponent
-            icon={<SVG src='/img/layout-alt-01.svg' color='#475467' />}
-            title="Create table"
+            icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Create table"
+              ) || "Create table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -362,8 +492,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/layout-alt-03.svg" alt="table"/>}
-            title="Add table"
+            icon={<img src="/img/layout-alt-03.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add table"
+              ) || "Add table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setTableModal(element);
@@ -377,8 +513,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/cpu-chip.svg" alt="table"/>}
-            title="Add microfrontend"
+            icon={<img src="/img/cpu-chip.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add micrfrontend"
+              ) || "Add microfrontend"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal(element);
@@ -392,8 +534,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/folder-plus.svg" alt="table"/>}
-            title="Add folder"
+            icon={<img src="/img/folder-plus.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add folder"
+              ) || "Add folder"
+            }
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -407,7 +555,13 @@ const ButtonsMenu = ({
           {element?.data?.permission?.delete || permissionButton ? (
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Delete folder"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Delete folder"
+                ) || "Delete folder"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -418,10 +572,16 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "CREATE" && (
-        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
+        <Box className="menu" style={{width: 224, rowGap: 4}}>
           <MenuItemComponent
-            icon={<SVG src='/img/layout-alt-01.svg' color='#475467' />}
-            title="Create table"
+            icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Create table"
+              ) || "Create table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`, {
@@ -433,8 +593,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/layout-alt-03.svg" alt="table"/>}
-            title="Add table"
+            icon={<img src="/img/layout-alt-03.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add table"
+              ) || "Add table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setTableModal({id: "c57eedc3-a954-4262-a0af-376c65b5a284"});
@@ -448,8 +614,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/cpu-chip.svg" alt="table"/>}
-            title="Add microfrontend"
+            icon={<img src="/img/cpu-chip.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add microfrontend"
+              ) || "Add microfrontend"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setMicrofrontendModal({
@@ -459,8 +631,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/terminal-browser.svg" alt="table"/>}
-            title="Add Website"
+            icon={<img src="/img/terminal-browser.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add Website"
+              ) || "Add Website"
+            }
             onClick={(e) => {
               e.stopPropagation();
               setWebsiteModalLink({
@@ -476,8 +654,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/folder-plus.svg" alt="table"/>}
-            title="Add folder"
+            icon={<img src="/img/folder-plus.svg" alt="table" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add folder"
+              ) || "Add folder"
+            }
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", {
@@ -494,7 +678,13 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<CreateNewFolderIcon size={13} />}
-            title="Add folder"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Add folder"
+              ) || "Add folder"
+            }
             onClick={(e) => {
               e.stopPropagation();
               openFolderCreateModal("create", element);
@@ -503,7 +693,10 @@ const ButtonsMenu = ({
           />
           <MenuItemComponent
             icon={<AddIcon size={13} />}
-            title="Add Wiki"
+            title={
+              generateLangaugeText(menuLanguages, i18n?.language, "Add Wiki") ||
+              "Add Wiki"
+            }
             onClick={(e) => {
               e.stopPropagation();
               navigate(
@@ -518,7 +711,13 @@ const ButtonsMenu = ({
         <Box className="menu">
           <MenuItemComponent
             icon={<TableChartIcon size={13} />}
-            title="Create table"
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Create table"
+              ) || "Create table"
+            }
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/settings/constructor/apps/${appId}/objects/create`);
@@ -532,7 +731,13 @@ const ButtonsMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
-              title="Delete Wiki"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Delete Wiki"
+                ) || "Delete Wiki"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
@@ -543,7 +748,13 @@ const ButtonsMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Edit Wiki"
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Edit Wiki"
+                ) || "Edit Wiki"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 openFolderCreateModal("WIKI_UPDATE", element);

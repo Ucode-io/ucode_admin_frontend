@@ -15,8 +15,16 @@ import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HF
 import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import style from "./main.module.scss";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 
-const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
+const MainInfo = ({
+  control,
+  watch,
+  exist,
+  authData,
+  getData = () => {},
+  tableLan,
+}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const languages = useSelector((state) => state.languages.list);
@@ -94,8 +102,14 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
 
   return (
     <div className="p-2">
-      <FormCard title="General">
-        <FRow label="Name">
+      <FormCard
+        title={
+          generateLangaugeText(tableLan, i18n?.language, "General") || "General"
+        }>
+        <FRow
+          label={
+            generateLangaugeText(tableLan, i18n?.language, "Name") || "Name"
+          }>
           <Box style={{display: "flex", gap: "6px"}}>
             <HFTextFieldWithMultiLanguage
               control={control}
@@ -108,7 +122,10 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
             />
           </Box>
         </FRow>
-        <FRow label="Key">
+        <FRow
+          label={
+            generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"
+          }>
           <HFTextField
             control={control}
             name="slug"
@@ -129,7 +146,10 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
             control={control}
             name="is_login_table"
             required
-            label="Login Table"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Login Table") ||
+              "Login Table"
+            }
           />
           <HFCheckbox
             control={control}
@@ -141,7 +161,10 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
             control={control}
             name="soft_delete"
             required
-            label="Soft delete"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Soft delete") ||
+              "Soft delete"
+            }
           />
           <HFCheckbox control={control} name="order_by" required label="Sort" />
         </Box>
@@ -157,7 +180,15 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="User type" />
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "User type"
+                      ) || "User type"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.client_type_id"
@@ -174,7 +205,12 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="Roles" />
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Roles") ||
+                      "Roles"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.role_id"
@@ -191,7 +227,12 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="Login" />
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Login") ||
+                      "Login"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.login"
@@ -207,7 +248,15 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="Password" />
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Password"
+                      ) || "Password"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.password"
@@ -224,7 +273,12 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="Почта" />
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Email") ||
+                      "Email"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.email"
@@ -240,7 +294,12 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                     alignItems: "center",
                     margin: "10px 0",
                   }}>
-                  <FRow label="Телефон" />
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Phone") ||
+                      "Phone"
+                    }
+                  />
                   <HFSelect
                     control={control}
                     name="attributes.auth_info.phone"
@@ -259,7 +318,15 @@ const MainInfo = ({control, watch, exist, authData, getData = () => {}}) => {
                 alignItems: "center",
                 margin: "10px 0",
               }}>
-              <FRow label="Login strategy" />
+              <FRow
+                label={
+                  generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Login strategy"
+                  ) || "Login strategy"
+                }
+              />
               <HFMultipleSelect
                 id="login_strategy"
                 control={control}

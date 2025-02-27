@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -12,20 +12,26 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import {
   useEnvironmentDeleteMutation,
   useEnvironmentListQuery,
 } from "../../services/environmentService";
-import { store } from "../../store";
-import { useQueryClient } from "react-query";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {store} from "../../store";
+import {useQueryClient} from "react-query";
+import {showAlert} from "../../store/alert/alert.thunk";
+import {useEffect, useState} from "react";
+import {getAllFromDB} from "../../utils/languageDB";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const EnvironmentPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
   const projectId = store.getState().company.projectId;
+  const {i18n} = useTranslation();
+  const [settingLan, setSettingLan] = useState(null);
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -35,14 +41,14 @@ const EnvironmentPage = () => {
     navigate(`${location.pathname}/create`);
   };
 
-  const { data: environments, isLoading: environmentLoading } =
+  const {data: environments, isLoading: environmentLoading} =
     useEnvironmentListQuery({
       params: {
         project_id: projectId,
       },
     });
 
-  const { mutateAsync: deleteEnv, isLoading: createLoading } =
+  const {mutateAsync: deleteEnv, isLoading: createLoading} =
     useEnvironmentDeleteMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["ENVIRONMENT"]);
@@ -53,9 +59,33 @@ const EnvironmentPage = () => {
   const deleteEnvironment = (id) => {
     deleteEnv(id);
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div>
-      <HeaderSettings title={"Environments"} />
+      <HeaderSettings
+        title={
+          generateLangaugeText(settingLan, i18n.language, "Environments") ||
+          "Environments"
+        }
+      />
 
       <FiltersBlock>
         <div className="p-1">{/* <SearchInput /> */}</div>
@@ -65,20 +95,28 @@ const EnvironmentPage = () => {
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Name</CTableCell>
-            <CTableCell>Description</CTableCell>
+            <CTableCell>
+              {generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                "Name"}
+            </CTableCell>
+            <CTableCell>
+              {" "}
+              {generateLangaugeText(
+                settingLan,
+                i18n?.language,
+                "Description"
+              ) || "Description"}{" "}
+            </CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
             loader={environmentLoading}
             columnsCount={4}
-            dataLength={environments?.environments?.length}
-          >
+            dataLength={environments?.environments?.length}>
             {environments?.environments?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
-              >
+                onClick={() => navigateToEditForm(element.id)}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>
                   <div
@@ -86,8 +124,7 @@ const EnvironmentPage = () => {
                       display: "flex",
                       alignItems: "center",
                       columnGap: "8px",
-                    }}
-                  >
+                    }}>
                     <span
                       style={{
                         background: element.display_color,
@@ -95,8 +132,7 @@ const EnvironmentPage = () => {
                         height: "10px",
                         display: "block",
                         borderRadius: "50%",
-                      }}
-                    ></span>
+                      }}></span>
                     {element?.name}
                   </div>
                 </CTableCell>
@@ -106,15 +142,21 @@ const EnvironmentPage = () => {
                     color="error"
                     onClick={() => {
                       deleteEnvironment(element.id);
-                    }}
-                  >
+                    }}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
               </CTableRow>
             ))}
             <PermissionWrapperV2 tabelSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+              <TableRowButton
+                title={
+                  generateLangaugeText(settingLan, i18n?.language, "Add") ||
+                  "Add"
+                }
+                colSpan={4}
+                onClick={navigateToCreateForm}
+              />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

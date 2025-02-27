@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
-import { useFieldArray } from "react-hook-form";
+import {Box, Card, Modal, Typography} from "@mui/material";
+import {useFieldArray} from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,11 +10,18 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 
-const TableViewPermission = ({ closeModal, control, tableIndex }) => {
+const TableViewPermission = ({
+  closeModal,
+  control,
+  tableIndex,
+  permissionLan,
+}) => {
   const basePath = `data.tables.${tableIndex}.table_view_permissions`;
-
-  const { fields } = useFieldArray({
+  const {i18n} = useTranslation();
+  const {fields} = useFieldArray({
     control,
     name: basePath,
     keyName: "key",
@@ -25,7 +32,13 @@ const TableViewPermission = ({ closeModal, control, tableIndex }) => {
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Tableview permissions</Typography>
+            <Typography variant="h4">
+              {generateLangaugeText(
+                permissionLan,
+                i18n?.language,
+                "Tableview permissions"
+              )}
+            </Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -40,15 +53,38 @@ const TableViewPermission = ({ closeModal, control, tableIndex }) => {
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}
-              >
+                }}>
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
-                    <CTableCell w={250}>Label</CTableCell>
-                    <CTableCell w={150}>View</CTableCell>
-                    <CTableCell w={150}>Edit</CTableCell>
-                    <CTableCell w={150}>Delete</CTableCell>
+                    <CTableCell w={250}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Label"
+                      ) ?? "Label"}
+                    </CTableCell>
+                    <CTableCell w={150}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "View"
+                      ) ?? "View"}
+                    </CTableCell>
+                    <CTableCell w={150}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Edit"
+                      ) ?? "Edit"}
+                    </CTableCell>
+                    <CTableCell w={150}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Delete"
+                      ) ?? "Delete"}
+                    </CTableCell>
                   </CTableHeadRow>
                 </CTableHead>
                 <CTableBody columnsCount={3} dataLength={fields?.length}>

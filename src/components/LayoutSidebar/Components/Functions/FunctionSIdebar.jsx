@@ -1,10 +1,10 @@
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {Box, Button, Collapse} from "@mui/material";
 import {useMemo, useState} from "react";
+import {BsThreeDots} from "react-icons/bs";
 import {FaFolder} from "react-icons/fa";
 import {HiOutlineCodeBracket} from "react-icons/hi2";
-import {useDispatch, useSelector} from "react-redux";
+import {useQueryClient} from "react-query";
+import {useDispatch} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {
   useFunctionFolderDeleteMutation,
@@ -18,14 +18,12 @@ import {store} from "../../../../store";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import FunctionRecursive from "./RecursiveBlock";
-import AddIcon from "@mui/icons-material/Add";
 import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
-import {BsThreeDots} from "react-icons/bs";
-import {useQueryClient} from "react-query";
 import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
-import {updateLevel} from "../../../../utils/level";
+import FunctionRecursive from "./RecursiveBlock";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const functionFolder = {
@@ -50,6 +48,7 @@ const FunctionSidebar = ({
   menuStyle,
   menuItem,
   integrated = false,
+  projectSettingLan,
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -57,11 +56,10 @@ const FunctionSidebar = ({
   const navigate = useNavigate();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [menu, setMenu] = useState({event: "", type: ""});
   const openMenu = Boolean(menu?.event);
   const queryClient = useQueryClient();
-
+  const {i18n} = useTranslation();
   const [folderModalIsOpen, setFolderModalIsOpen] = useState(false);
   const [functionModalIsOpen, setFunctionModalIsOpen] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState();
@@ -206,7 +204,11 @@ const FunctionSidebar = ({
           }}>
           <div className="label" style={{color: "#475467", fontSize: "13px"}}>
             <IconGenerator icon={"key.svg"} size={18} />
-            Functions
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Functions"
+            ) ?? "Functions"}
           </div>
         </Button>
       </div>

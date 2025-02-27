@@ -36,6 +36,7 @@ const HFLinkField = ({
   defaultValue = "",
   checkRequiredField,
   isFormEdit = false,
+  drawerDetail = false,
   isNewTableView = false,
   updateObject = () => {},
   customOnChange = () => {},
@@ -123,18 +124,24 @@ const HFLinkField = ({
 
               endAdornment: (
                 <InputAdornment position="start">
-                  <button
-                    disabled={Boolean(!value)}
-                    className={styles.linkBtn}
-                    onClick={() => navigateToNewPage(value)}
-                    sx={{cursor: "pointer"}}>
-                    <LaunchIcon style={{fontSize: "20px"}} />
-                  </button>
+                  {Boolean(value) ? (
+                    <button
+                      disabled={Boolean(!value)}
+                      className={styles.linkBtn}
+                      onClick={() => navigateToNewPage(value)}
+                      sx={{cursor: "pointer"}}>
+                      <LaunchIcon style={{fontSize: "20px"}} />
+                    </button>
+                  ) : (
+                    ""
+                  )}
                 </InputAdornment>
               ),
             }}
             helperText={!disabledHelperText && error?.message}
-            className={"customLinkField"}
+            className={
+              drawerDetail ? "customLinkFieldDrawer" : "customLinkField"
+            }
             {...props}
           />
         );

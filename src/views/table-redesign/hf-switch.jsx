@@ -17,7 +17,7 @@ const HFSwitch = ({
   field,
   isShowLable = true,
   newColumn,
-  drawer = false,
+  drawerDetail = false,
   ...props
 }) => {
   const id = useId();
@@ -35,8 +35,7 @@ const HFSwitch = ({
             style={{
               background: isBlackBg ? "#2A2D34" : "",
               color: isBlackBg ? "#fff" : "",
-              paddingLeft: "4px",
-              width: drawer ? "320px" : "",
+              paddingLeft: drawerDetail ? "10px" : "4px",
             }}>
             <ChakraProvider>
               <Switch

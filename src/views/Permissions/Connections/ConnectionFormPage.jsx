@@ -19,10 +19,18 @@ import {
   useConnectionGetByIdQuery,
   useConnectionUpdateMutation,
 } from "../../../services/auth/connectionService";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
-const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
+const ConnectionCreateModal = ({
+  closeModal,
+  modalType,
+  connectionId,
+  settingLan,
+}) => {
   const queryClient = useQueryClient();
   const {clientId} = useParams();
+  const {i18n} = useTranslation();
   const envId = store.getState().company.environmentId;
   const projectId = store.getState().company.projectId;
   const [relations, setRelations] = useState([]);
@@ -155,7 +163,17 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
-              {modalType === "NEW" ? "Create connection" : "Edit connection"}
+              {modalType === "NEW"
+                ? generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Create connection"
+                  ) || '"Create connection"'
+                : generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Edit connection"
+                  ) || "Edit connection"}
             </Typography>
             <ClearIcon
               color="primary"
@@ -168,7 +186,14 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
           </div>
 
           <form action="" className="form">
-            <FRow label="Table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
               <HFTextField
                 fullWidth
                 label="Value"
@@ -177,7 +202,14 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
                 required
               />
             </FRow>
-            <FRow label="Main table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Main table slug"
+                ) || "Main table slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -187,7 +219,14 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
                 required
               />
             </FRow>
-            <FRow label="Table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -197,7 +236,14 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
                 required
               />
             </FRow>
-            <FRow label="Field slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Field slug"
+                ) || "Field slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -211,11 +257,19 @@ const ConnectionCreateModal = ({closeModal, modalType, connectionId}) => {
             <div className="btns-row">
               {modalType === "NEW" ? (
                 <CreateButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Add") ||
+                    "Add"
+                  }
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Save") ||
+                    "Save"
+                  }
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />

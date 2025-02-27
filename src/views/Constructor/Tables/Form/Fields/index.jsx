@@ -12,8 +12,9 @@ import {generateGUID} from "../../../../../utils/generateID";
 import FieldSettings from "./FieldSettings";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
-const Fields = ({mainForm, getRelationFields}) => {
+const Fields = ({mainForm, getRelationFields, tableLan}) => {
   const {id, tableSlug} = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
@@ -119,7 +120,6 @@ const Fields = ({mainForm, getRelationFields}) => {
         dataLength={1}
         setSelectedField={setSelectedField}
         tableSlug={"app"}
-        setSelectedField={setSelectedField}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         additionalRow={
@@ -129,7 +129,10 @@ const Fields = ({mainForm, getRelationFields}) => {
                 className={styles.createButton}
                 onClick={() => setDrawerState("CREATE")}>
                 <Add color="primary" />
-                <p>Add</p>
+                <p>
+                  {generateLangaugeText(tableLan, i18n?.language, "Add") ||
+                    "Add"}
+                </p>
               </div>
             </CTableCell>
           </CTableRow>
@@ -142,6 +145,7 @@ const Fields = ({mainForm, getRelationFields}) => {
         onClose={() => setDrawerState(null)}
         orientation="horizontal">
         <FieldSettings
+          tableLan={tableLan}
           closeSettingsBlock={() => setDrawerState(null)}
           onSubmit={(index, field) => update(index, field)}
           field={drawerState}

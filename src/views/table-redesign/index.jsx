@@ -604,7 +604,6 @@ const FieldButton = ({
     },
   });
   const onSubmit = (values) => {
-    console.log("valuesvalues", values);
     const data = {
       ...values,
       slug: slug,
@@ -631,9 +630,19 @@ const FieldButton = ({
       attributes: {
         ...values.attributes,
         label: values?.table_to?.split("/")?.[0],
+        ...Object.fromEntries(
+          languages.map((lang) => [
+            `label_${lang.slug}`,
+            values?.table_to?.split("/")?.[0],
+          ])
+        ),
+        ...Object.fromEntries(
+          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+        ),
       },
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
+      label: values?.table_from,
       type: "Many2One",
       required: false,
       multiple_insert: false,

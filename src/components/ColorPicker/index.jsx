@@ -29,7 +29,7 @@ const ColorPicker = ({value, onChange, loading, disabled}) => {
         id="round"
         className="round"
         style={{backgroundColor: value ?? "#fff"}}
-        onClick={() => !disabled && handleClick}></div>
+        onClick={(e) => !disabled && handleClick(e)}></div>
 
       <Popover
         open={open}

@@ -26,6 +26,7 @@ import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import RelationDefault from "./RelationDefault.jsx";
 import styles from "./style.module.scss";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const relationViewTypes = [
   {
@@ -44,6 +45,7 @@ const RelationSettings = ({
   getRelationFields,
   formType,
   height,
+  tableLan,
 }) => {
   const {tableSlug} = useParams();
   const [loader, setLoader] = useState(false);
@@ -325,7 +327,19 @@ const RelationSettings = ({
             borderBottom: "1px solid #e0e0e0",
             paddingBottom: "16px",
           }}>
-          <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
+          <h2>
+            {formType === "CREATE"
+              ? generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Create relation"
+                ) || "Create relation"
+              : generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Edit relation"
+                ) || "Edit relation"}
+          </h2>
 
           <IconButton onClick={closeSettingsBlock}>
             <Close />
@@ -346,7 +360,15 @@ const RelationSettings = ({
                         gridTemplateColumns: "1fr 1fr",
                         gap: "10px",
                       }}>
-                      <FRow label="Label From" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Label From"
+                          ) || "Label From"
+                        }
+                        required>
                         <Box
                           style={{
                             display: "flex",
@@ -365,7 +387,15 @@ const RelationSettings = ({
                         </Box>
                       </FRow>
 
-                      <FRow label="Label To" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Label To"
+                          ) || "Label To"
+                        }
+                        required>
                         <Box
                           style={{
                             display: "flex",
@@ -385,7 +415,15 @@ const RelationSettings = ({
                       </FRow>
                     </div>
 
-                    <FRow label="Table from" required>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Table From"
+                        ) || "Table From"
+                      }
+                      required>
                       <HFSelect
                         name="table_from"
                         control={control}
@@ -397,7 +435,15 @@ const RelationSettings = ({
                     </FRow>
 
                     {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
-                      <FRow label="Table to" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Table to"
+                          ) || "Table to"
+                        }
+                        required>
                         <HFSelect
                           name="table_to"
                           control={control}
@@ -408,7 +454,15 @@ const RelationSettings = ({
                       </FRow>
                     )}
 
-                    <FRow label="Relation type" required>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Relation type"
+                        ) || "Relation type"
+                      }
+                      required>
                       <HFSelect
                         name="type"
                         control={control}
@@ -419,7 +473,15 @@ const RelationSettings = ({
                     </FRow>
 
                     {values.type === "Many2Many" && (
-                      <FRow label="Relate field type" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Relate field type"
+                          ) || "Relate field type"
+                        }
+                        required>
                         <HFSelect
                           name="view_type"
                           control={control}
@@ -428,7 +490,14 @@ const RelationSettings = ({
                         />
                       </FRow>
                     )}
-                    <FRow label="View fields">
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "View fields"
+                        ) || "View fields"
+                      }>
                       <HFMultipleSelect
                         name="view_fields"
                         control={control}
@@ -463,7 +532,14 @@ const RelationSettings = ({
                       {watch().multiple_insert && (
                         <div className={styles.sectionBody}>
                           <div className={styles.formRow}>
-                            <FRow label="Multiple insert field">
+                            <FRow
+                              label={
+                                generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Multiple insert field"
+                                ) || "Multiple insert field"
+                              }>
                               <HFSelect
                                 options={computedColumns}
                                 control={control}
@@ -471,7 +547,14 @@ const RelationSettings = ({
                               />
                             </FRow>
 
-                            <FRow label="Fixed fields">
+                            <FRow
+                              label={
+                                generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Fixed fields"
+                                ) || "Fixed fields"
+                              }>
                               <HFMultipleSelect
                                 options={computedColumns}
                                 control={control}
@@ -611,7 +694,8 @@ const RelationSettings = ({
                 style={{width: "100%", fontSize: "14px"}}
                 onClick={handleSubmit(submitHandler)}
                 loader={formLoader || loader}>
-                Save
+                {generateLangaugeText(tableLan, i18n?.language, "Save") ||
+                  "Save"}
               </PrimaryButton>
             </div>
           </form>

@@ -22,7 +22,14 @@ import {
 import {useTranslation} from "react-i18next";
 import styles from "../../../style.module.scss";
 
-const TableRow = ({table, tableIndex, control, setValue, watch}) => {
+const TableRow = ({
+  table,
+  tableIndex,
+  control,
+  setValue,
+  watch,
+  permissionLan,
+}) => {
   const [type, setType] = useState("");
   const {i18n} = useTranslation();
 
@@ -71,8 +78,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
               onClick={() => {
                 setType("read");
                 openAutoFiltersModal();
-              }}
-            >
+              }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
             </RectangleIconButton>
           </Box>
@@ -89,8 +95,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
               onClick={() => {
                 setType("update");
                 openAutoFiltersModal();
-              }}
-            >
+              }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
             </RectangleIconButton>
           </Box>
@@ -102,8 +107,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
               onClick={() => {
                 setType("delete");
                 openAutoFiltersModal();
-              }}
-            >
+              }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
             </RectangleIconButton>
           </Box>
@@ -131,8 +135,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           <Box sx={{justifyContent: "center", display: "flex"}}>
             <RectangleIconButton
               size="lg"
-              onClick={openRelationPermissionModal}
-            >
+              onClick={openRelationPermissionModal}>
               <RelationPermissionIcon w={"26px"} h={"26px"} />
             </RectangleIconButton>
           </Box>
@@ -141,8 +144,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           <Box sx={{justifyContent: "center", display: "flex"}}>
             <RectangleIconButton
               size="lg"
-              onClick={openTableViewPermissionModal}
-            >
+              onClick={openTableViewPermissionModal}>
               <BiTable width={"34px"} height={"34px"} />
             </RectangleIconButton>
           </Box>
@@ -158,6 +160,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
 
       {autoFiltersModalIsOpen && (
         <AutoFilterModal
+          permissionLan={permissionLan}
           control={control}
           closeModal={closeAutoFiltersModal}
           tableIndex={tableIndex}
@@ -168,6 +171,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
       )}
       {fieldPermissionModalIsOpen && (
         <FieldPermissions
+          permissionLan={permissionLan}
           control={control}
           tableIndex={tableIndex}
           closeModal={closeFieldPermissionModal}
@@ -177,6 +181,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
       )}
       {actionPermissionsModalIsOpen && (
         <ActionPermissionModal
+          permissionLan={permissionLan}
           control={control}
           closeModal={closeOpenActionPermissionsModal}
           tableIndex={tableIndex}
@@ -185,6 +190,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
       )}
       {tableViewPermissionModalIsOpen && (
         <TableViewPermission
+          permissionLan={permissionLan}
           control={control}
           closeModal={closeTableViewPermissionModal}
           tableIndex={tableIndex}
@@ -193,6 +199,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
       )}
       {relationPermissionModalIsOpen && (
         <RelationPermissionModal
+          permissionLan={permissionLan}
           control={control}
           tableIndex={tableIndex}
           closeModal={closeRelationPermissionModal}
@@ -200,6 +207,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
       )}
       {customPermissionModalIsOpen && (
         <CustomPermissionModal
+          permissionLan={permissionLan}
           control={control}
           closeModal={closeCustomPermissionModal}
           tableIndex={tableIndex}

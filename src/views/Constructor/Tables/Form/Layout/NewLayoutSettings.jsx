@@ -10,9 +10,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import layoutService from "../../../../../services/layoutService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../../store/alert/alert.thunk";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 function NewLayoutSettings({
   mainForm,
+  tableLan,
   layoutForm,
   selectedLayout,
   setSelectedTab,
@@ -30,6 +33,7 @@ function NewLayoutSettings({
 }) {
   const navigate = useNavigate();
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
   const watchLayout = mainForm
@@ -88,6 +92,7 @@ function NewLayoutSettings({
       </div>
       <div className={styles.tabs_section}>
         <LayoutTabs
+          tableLan={tableLan}
           mainForm={mainForm}
           selectedLayout={selectedLayout}
           setSelectedLayout={setSelectedLayout}
@@ -115,10 +120,12 @@ function NewLayoutSettings({
                 navigate(-1);
               }}
               color="error">
-              Close
+              {generateLangaugeText(tableLan, i18n?.language, "Close") ||
+                "Close"}
             </SecondaryButton>
             <PrimaryButton loader={loader} onClick={updateSelectedLayout}>
-              <Save /> Save
+              <Save />{" "}
+              {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
             </PrimaryButton>
           </>
         }

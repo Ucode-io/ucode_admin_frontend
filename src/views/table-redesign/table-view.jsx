@@ -85,6 +85,10 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const [selectedViewType, setSelectedViewType] = useState({
+    label: "Side peek",
+    icon: "SidePeek",
+  });
 
   const mainForm = useForm({
     defaultValues: {
@@ -565,6 +569,37 @@ const TableView = ({
           {...props}
         />
 
+        {/* {open && selectedViewType?.icon === "SidePeek" ? (
+          <DrawerDetailPage
+            open={open}
+            setFormValue={setFormValue}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : selectedViewType?.icon === "CenterPeek" ? (
+          <ModalDetailPage
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : null} */}
+
         {open && (
           <ModalDetailPage
             open={open}
@@ -574,6 +609,10 @@ const TableView = ({
             layout={layout}
             fieldsMap={fieldsMap}
             refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
           />
         )}
 

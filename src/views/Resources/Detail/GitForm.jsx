@@ -1,11 +1,9 @@
 import {Box, Button, Stack} from "@mui/material";
-import React, {useEffect} from "react";
+import React from "react";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import {resources} from "../../../utils/resourceConstants";
-import {useWatch} from "react-hook-form";
-import githubService from "../../../services/githubService";
 
 const headerStyle = {
   width: "100",
@@ -15,14 +13,7 @@ const headerStyle = {
   padding: "15px",
 };
 
-const GitForm = ({
-  control,
-  btnLoading,
-  selectedEnvironment,
-  setSelectedEnvironment,
-  projectEnvironments,
-  isEditPage,
-}) => {
+const GitForm = ({control, btnLoading, selectedEnvironment, settingLan}) => {
   return (
     <Box
       flex={1}
@@ -41,14 +32,22 @@ const GitForm = ({
               padding: "15px",
               fontWeight: "bold",
             }}>
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>
+              {generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                "Name"}
+            </Box>
             <HFTextField
               control={control}
               required
               name="name"
               fullWidth
               inputProps={{
-                placeholder: "Resource name",
+                placeholder:
+                  generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Resource name"
+                  ) || "Resource name",
               }}
             />
 
@@ -73,7 +72,11 @@ const GitForm = ({
                 marginTop: "10px",
                 marginBottom: "15px",
               }}>
-              Gihub username
+              {generateLangaugeText(
+                settingLan,
+                i18n?.language,
+                "Github username"
+              ) || "Github username"}
             </Box>
             <HFTextField
               control={control}
@@ -82,7 +85,12 @@ const GitForm = ({
               fullWidth
               disabled
               inputProps={{
-                placeholder: "Github username",
+                placeholder:
+                  generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Github username"
+                  ) || "Github username",
               }}
             />
             <Box
@@ -91,7 +99,8 @@ const GitForm = ({
                 marginTop: "10px",
                 marginBottom: "15px",
               }}>
-              Token
+              {generateLangaugeText(settingLan, i18n?.language, "Token") ||
+                "Token"}
             </Box>
             <HFTextField
               control={control}
@@ -110,6 +119,7 @@ const GitForm = ({
       <Footer>
         {selectedEnvironment?.length && (
           <Button type="submit" variant="contained" disabled={btnLoading}>
+            {generateLangaugeText(settingLan, i18n?.language, "Save") || "Save"}
             Save
           </Button>
         )}

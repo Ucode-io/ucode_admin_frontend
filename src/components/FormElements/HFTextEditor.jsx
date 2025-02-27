@@ -22,6 +22,7 @@ const HFTextEditor = ({
   rules = {},
   field,
   label,
+  drawerDetail = false,
   ...props
 }) => {
   const value = useWatch({
@@ -82,7 +83,7 @@ const HFTextEditor = ({
         render={({field: {onChange}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
-              id="multilineField"
+              id={drawerDetail ? "drawerMultiLine" : "multilineField"}
               theme="snow"
               value={value}
               modules={modules}
@@ -97,8 +98,9 @@ const HFTextEditor = ({
                 backgroundColor: isTransparent ? "transparent" : "",
                 minWidth: "200px",
                 width: "100%",
-                border: "1px solid #FFF",
+                overflow: "hidden",
                 fontFamily: "sans-serif",
+                borderRadius: "12px",
               }}
             />
           </Suspense>

@@ -2,64 +2,226 @@ import {
   Box,
   Button,
   Drawer,
-  DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
   Flex,
-  Text,
 } from "@chakra-ui/react";
-import React, {useMemo, useState} from "react";
-import {ChevronRightIcon} from "@chakra-ui/icons";
-import DrawerFormDetailPage from "./DrawerFormDetailPage";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import {store} from "../../../store";
 import {useForm} from "react-hook-form";
+import {Check} from "@mui/icons-material";
+import {useQueryClient} from "react-query";
+import {Menu, MenuItem} from "@mui/material";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
-import constructorObjectService from "../../../services/constructorObjectService";
-import {useQueryClient} from "react-query";
-import {store} from "../../../store";
+import DrawerFormDetailPage from "./DrawerFormDetailPage";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import constructorObjectService from "../../../services/constructorObjectService";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import layoutService from "../../../services/layoutService";
+import {sortSections} from "../../../utils/sectionsOrderNumber";
+import {useTranslation} from "react-i18next";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 
 function DrawerDetailPage({
   open,
-  setOpen,
-  selectedRow,
-  menuItem,
   layout,
-  fieldsMap,
   refetch,
+  setOpen,
+  menuItem,
+  fieldsMap,
+  selectedRow,
   dateInfo = {},
+  selectedViewType,
   fullScreen = false,
+  setLayoutType = () => {},
   setFullScreen = () => {},
+  navigateToEditPage = () => {},
+  setSelectedViewType = () => {},
 }) {
-  const {tableSlug} = useParams();
-  const handleClose = () => setOpen(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
-  const [btnLoader, setBtnLoader] = useState(false);
-  const queryClient = useQueryClient();
-  const isUserId = useSelector((state) => state?.auth?.userId);
   const {state = {}} = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
+  const queryClient = useQueryClient();
+  const handleClose = () => setOpen(false);
+  const {navigateToForm} = useTabRouter();
+  const [btnLoader, setBtnLoader] = useState(false);
+  const isUserId = useSelector((state) => state?.auth?.userId);
 
-  const {id: idFromParam} = useParams();
-
+  const {id: idFromParam, tableSlug, appId} = useParams();
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
   }, [idFromParam, selectedRow]);
 
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [loader, setLoader] = useState(true);
+  const [sections, setSections] = useState([]);
+  const [tableRelations, setTableRelations] = useState([]);
+  const [summary, setSummary] = useState([]);
+  const [selectedTab, setSelectTab] = useState();
+  const {i18n} = useTranslation();
+  const [data, setData] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+
+  const getAllData = async () => {
+    setLoader(true);
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    });
+    const getFormData = constructorObjectService.getById(tableSlug, id);
+
+    try {
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+
+      const layout1 = {
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      };
+      const layout2 = {
+        ...layout1,
+        tabs: layout1?.tabs?.map((tab) => {
+          return {
+            ...tab,
+            sections: tab?.sections?.map((section) => {
+              return {
+                ...section,
+                fields: section?.fields?.map((field) => {
+                  if (field?.is_visible_layout === undefined) {
+                    return {
+                      ...field,
+                      is_visible_layout: true,
+                    };
+                  } else {
+                    return field;
+                  }
+                }),
+              };
+            }),
+          };
+        }),
+      };
+      setData(layout2);
+      setSections(sortSections(sections));
+      setSummary(layout?.summary_fields ?? []);
+
+      const relations =
+        layout?.tabs?.map((el) => ({
+          ...el,
+          ...el.relation,
+        })) ?? [];
+
+      setTableRelations(
+        relations.map((relation) => ({
+          ...relation,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
+        }))
+      );
+
+      if (!selectedTab?.relation_id) {
+        reset(data?.response ?? {});
+      }
+      setSelectTab(relations[selectedTabIndex]);
+
+      setLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getFields = async () => {
+    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+      "table-slug": tableSlug,
+      language_setting: i18n?.language,
+    });
+
+    try {
+      const [layout] = await Promise.all([getLayout]);
+
+      const layout1 = {
+        ...layout,
+        tabs: layout?.tabs?.filter(
+          (tab) =>
+            tab?.relation?.permission?.view_permission === true ||
+            tab?.type === "section"
+        ),
+      };
+      const layout2 = {
+        ...layout1,
+        tabs: layout1?.tabs?.map((tab) => {
+          return {
+            ...tab,
+            sections: tab?.sections?.map((section) => {
+              return {
+                ...section,
+                fields: section?.fields?.map((field) => {
+                  if (field?.is_visible_layout === undefined) {
+                    return {
+                      ...field,
+                      is_visible_layout: true,
+                    };
+                  } else {
+                    return field;
+                  }
+                }),
+              };
+            }),
+          };
+        }),
+      };
+      setData(layout2);
+      setSections(sortSections(sections));
+
+      const relations =
+        layout?.tabs?.map((el) => ({
+          ...el,
+          ...el.relation,
+        })) ?? [];
+
+      setTableRelations(
+        relations.map((relation) => ({
+          ...relation,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
+        }))
+      );
+      if (!id) {
+        setLoader(false);
+      }
+      setSelectTab(relations[selectedTabIndex]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const {
-    handleSubmit,
-    control,
     reset,
-    setValue: setFormValue,
     watch,
+    control,
+    handleSubmit,
     formState: {errors},
+    setValue: setFormValue,
+    getValues,
   } = useForm({
     defaultValues: {
       ...state,
@@ -74,12 +236,12 @@ function DrawerDetailPage({
     constructorObjectService
       .update(tableSlug, {data})
       .then(() => {
+        updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        handleClose();
         setBtnLoader(false);
       });
   };
@@ -89,6 +251,7 @@ function DrawerDetailPage({
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
+        updateLayout();
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -126,6 +289,27 @@ function DrawerDetailPage({
       });
   };
 
+  function updateLayout() {
+    const updatedTabs = layout.tabs.map((tab, index) =>
+      index === selectedTabIndex
+        ? {
+            ...tab,
+            attributes: {
+              ...tab?.attributes,
+              layout_heading: watch("attributes.layout_heading"),
+            },
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...layout,
+      tabs: updatedTabs,
+    };
+
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  }
+
   const onSubmit = (data) => {
     if (id) {
       update(data);
@@ -134,74 +318,278 @@ function DrawerDetailPage({
     }
   };
 
+  useEffect(() => {
+    if (id) getAllData();
+    else getFields();
+  }, [id]);
+
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
-      <Box position={"relative"} zIndex={9} bg={"red"} maxW="650px">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DrawerContent
-            boxShadow="
+      <Tabs selectedIndex={selectedTabIndex}>
+        <Box position={"relative"} zIndex={9} maxW="850px">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <DrawerContent
+              boxShadow="
         rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
         rgba(15, 15, 15, 0.03) 0px 3px 6px,
         rgba(15, 15, 15, 0.06) 0px 9px 24px
       "
-            zIndex={9}
-            bg={"white"}
-            maxW="650px">
-            <DrawerHeader
-              px="12px"
-              bg="white"
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              pr={10}>
-              <Flex h={"44px"} align="center" justify="space-between">
-                <Box
-                  onClick={handleClose}
-                  cursor="pointer"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  width="24px"
-                  height="24px">
-                  <KeyboardDoubleArrowRightIcon w={6} h={6} />
-                </Box>
-              </Flex>
+              zIndex={9}
+              bg={"white"}
+              maxW="650px"
+              position={"relative"}>
+              <DrawerHeader
+                px="12px"
+                bg="white"
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                pr={10}>
+                <Flex h={"44px"} align="center" justify="space-between">
+                  <Box
+                    onClick={handleClose}
+                    cursor="pointer"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    width="24px"
+                    height="24px">
+                    <KeyboardDoubleArrowRightIcon
+                      style={{color: "rgba(55, 53, 47, 0.45)"}}
+                      w={6}
+                      h={6}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
+                  <Box>
+                    <ScreenOptions
+                      selectedViewType={selectedViewType}
+                      setSelectedViewType={setSelectedViewType}
+                      setLayoutType={setLayoutType}
+                      selectedRow={selectedRow}
+                      navigateToEditPage={navigateToEditPage}
+                    />
+                  </Box>
 
-              <Button
-                isLoading={btnLoader}
-                disabled={btnLoader}
-                type="submit"
-                rounded={4}
-                bg={"#007aff"}
-                color={"#fff"}
-                w={100}
-                h={10}>
-                Save
-              </Button>
-            </DrawerHeader>
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
 
-            <DrawerBody p="0px 50px" overflow={"auto"}>
-              <DrawerFormDetailPage
-                menuItem={menuItem}
-                layout={layout}
-                selectedRow={selectedRow}
-                tableSlugFromProps={tableSlug}
-                handleClose={handleClose}
-                modal={true}
-                dateInfo={dateInfo}
-                setFullScreen={setFullScreen}
-                fullScreen={fullScreen}
-                fieldsMap={fieldsMap}
-                control={control}
-                watch={watch}
-                reset={reset}
-              />
-            </DrawerBody>
-          </DrawerContent>
-        </form>
-      </Box>
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
+
+                  <TabList style={{borderBottom: "none"}}>
+                    {data?.tabs?.map((el, index) => (
+                      <Tab
+                        onClick={(e) => {
+                          setSelectTab(el);
+                          setSelectedTabIndex(index);
+                        }}
+                        key={index}
+                        style={{
+                          height: "24px",
+                          padding: "0 10px",
+                          fontSize: "11px",
+                          fontWeight: "500",
+                        }}>
+                        {el?.label}
+                      </Tab>
+                    ))}
+                  </TabList>
+                </Flex>
+
+                {selectedTabIndex === 0 && (
+                  <Button
+                    isLoading={btnLoader}
+                    disabled={btnLoader}
+                    type="submit"
+                    rounded={4}
+                    bg={"#007aff"}
+                    color={"#fff"}
+                    w={100}
+                    h={10}>
+                    Save
+                  </Button>
+                )}
+              </DrawerHeader>
+
+              <TabPanel>
+                <DrawerBody p="0px 50px" overflow={"auto"}>
+                  <DrawerFormDetailPage
+                    getValues={getValues}
+                    setFormValue={setFormValue}
+                    layout={layout}
+                    selectedTab={selectedTab}
+                    selectedTabIndex={selectedTabIndex}
+                    menuItem={menuItem}
+                    data={data}
+                    selectedRow={selectedRow}
+                    handleClose={handleClose}
+                    modal={true}
+                    dateInfo={dateInfo}
+                    setFullScreen={setFullScreen}
+                    fullScreen={fullScreen}
+                    fieldsMap={fieldsMap}
+                    control={control}
+                    watch={watch}
+                    reset={reset}
+                  />
+                </DrawerBody>
+              </TabPanel>
+              {data?.tabs
+                ?.filter((tab) => tab?.type !== "section")
+                .map(() => (
+                  <TabPanel>
+                    <DrawerBody p="0px 0px" overflow={"auto"}>
+                      <DrawerRelationTable
+                        getAllData={getAllData}
+                        selectedTabIndex={selectedTabIndex}
+                        setSelectedTabIndex={setSelectedTabIndex}
+                        relations={tableRelations}
+                        control={control}
+                        handleSubmit={handleSubmit}
+                        onSubmit={onSubmit}
+                        reset={reset}
+                        setFormValue={setFormValue}
+                        tableSlug={tableSlug}
+                        watch={watch}
+                        loader={loader}
+                        setSelectTab={setSelectTab}
+                        selectedTab={selectedTab}
+                        errors={errors}
+                        relatedTable={
+                          tableRelations[selectedTabIndex]?.relatedTable
+                        }
+                        id={id}
+                        fieldsMap={fieldsMap}
+                        data={data}
+                        setData={setData}
+                      />
+                    </DrawerBody>
+                  </TabPanel>
+                ))}
+            </DrawerContent>
+          </form>
+        </Box>
+      </Tabs>
     </Drawer>
   );
 }
+
+const ScreenOptions = ({
+  selectedViewType,
+  selectedRow,
+  setSelectedViewType = () => {},
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const options = [
+    {label: "Side peek", icon: "SidePeek"},
+    {label: "Center peek", icon: "CenterPeek"},
+    {label: "Full page", icon: "FullPage"},
+  ];
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    if (option?.icon === "FullPage") {
+      setLayoutType("SimpleLayout");
+      navigateToEditPage(selectedRow);
+    }
+
+    if (option) setSelectedViewType(option);
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Button onClick={handleClick} variant="outlined">
+        <span>{getColumnFieldIcon(selectedViewType)}</span>
+      </Button>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "220px", padding: "4px 0"}}>
+          {options.map((option) => (
+            <MenuItem
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "6px",
+                color: "#37352f",
+              }}
+              key={option.label}
+              onClick={() => handleClose(option)}>
+              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+                <span>{getColumnFieldIcon(option)}</span>
+                {option.label}
+              </Box>
+
+              <Box>
+                {option.label === selectedViewType?.label ? <Check /> : ""}
+              </Box>
+            </MenuItem>
+          ))}
+        </Box>
+      </Menu>
+    </Box>
+  );
+};
+
+export const getColumnFieldIcon = (column) => {
+  if (column.icon === "SidePeek") {
+    return (
+      <img
+        src="/img/drawerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else if (column?.icon === "CenterPeek") {
+    return (
+      <img
+        src="/img/centerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else
+    return (
+      <img
+        src="/img/fullpagePeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+};
 
 export default DrawerDetailPage;

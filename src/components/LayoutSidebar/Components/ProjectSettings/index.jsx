@@ -8,6 +8,8 @@ import activeStyles from "../MenuUtils/activeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import RecursiveBlock from "./RecursiveBlock";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 const projectSettings = {
@@ -26,11 +28,11 @@ const projectSettings = {
   },
 };
 
-function ProjectSettings({level = 1, menuStyle}) {
+function ProjectSettings({level = 1, menuStyle, projectSettingLan}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
-
+  const {i18n} = useTranslation();
   const clickHandler = (e) => {
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
@@ -53,13 +55,22 @@ function ProjectSettings({level = 1, menuStyle}) {
               <KeyboardArrowRightIcon />
             )}
             <IconGenerator icon={"lock.svg"} size={18} />
-            Project Settings
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Project Settings"
+            ) ?? "Project Settings"}
           </div>
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <RecursiveBlock level={2} menuStyle={menuStyle} menuItem={menuItem} />
+        <RecursiveBlock
+          level={2}
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          projectSettingLan={projectSettingLan}
+        />
       </Collapse>
     </Box>
   );

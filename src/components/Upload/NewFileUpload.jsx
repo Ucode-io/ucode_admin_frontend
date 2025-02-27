@@ -61,6 +61,11 @@ export default function NewFileUpload({
     setAnchorEl(null);
   };
 
+  const valueGenerate = (value, separator = "_") => {
+    const splitted = value?.split(separator).slice(1, -1);
+    return splitted?.join(separator);
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -94,7 +99,7 @@ export default function NewFileUpload({
                 fontSize: "10px",
                 color: "#747474",
               }}>
-              {value?.split?.("_")?.[1] ?? ""}
+              {valueGenerate(value)}
             </Typography>
           </Box>
 
@@ -174,33 +179,41 @@ export default function NewFileUpload({
         </>
       )}
 
-      {!value && (
-        <Button
-          id="file_upload_btn"
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: 40,
-            width: 40,
-            height: 27,
-          }}>
-          <input
-            id="file_upload"
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-          />
-          <img
-            src="/img/file-docs.svg"
-            alt="Upload"
-            style={{width: 24, height: 24}}
-          />
-        </Button>
-      )}
+      <Box
+        sx={{
+          padding: drawerDetail ? "0 0px" : 0,
+          width: "40px",
+          display: "flex",
+          alignItems: "center",
+        }}>
+        {!value && (
+          <Button
+            id="file_upload_btn"
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            <input
+              id="file_upload"
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+            />
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 22, height: 22}}
+            />
+          </Button>
+        )}
+      </Box>
     </div>
   );
 }

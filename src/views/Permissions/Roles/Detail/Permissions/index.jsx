@@ -17,6 +17,9 @@ import styles from "../../../style.module.scss";
 import {permissions, recordPermission} from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
 import {GoInfo} from "react-icons/go";
+import {getAllFromDB} from "../../../../../utils/languageDB";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const Permissions = ({
   control,
@@ -28,6 +31,8 @@ const Permissions = ({
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
   const [modalData, setModalData] = useState(null);
+  const [permissionLan, setPermissionLan] = useState(null);
+  const {i18n} = useTranslation();
 
   const closeModal = () => {
     setModalData(null);
@@ -66,6 +71,26 @@ const Permissions = ({
     setCheckBoxValues((prev) => ({...prev, ...obj}));
   }, [allMenu]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setPermissionLan(
+          formattedData?.find((item) => item?.key === "Permission")
+        );
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <>
       <Tabs
@@ -75,9 +100,21 @@ const Permissions = ({
         <div>
           <Card style={{boxShadow: "none"}}>
             <TabList>
-              <Tab>Table</Tab>
-              <Tab>Menu</Tab>
-              <Tab>Global Permission</Tab>
+              <Tab>
+                {generateLangaugeText(permissionLan, i18n?.language, "Table") ||
+                  "Table"}
+              </Tab>
+              <Tab>
+                {generateLangaugeText(permissionLan, i18n?.language, "Menu") ||
+                  "Menu"}
+              </Tab>
+              <Tab>
+                {generateLangaugeText(
+                  permissionLan,
+                  i18n?.language,
+                  "Global Permission"
+                ) || "Global Permission"}
+              </Tab>
             </TabList>
 
             <TabPanel>
@@ -90,7 +127,11 @@ const Permissions = ({
                           rowSpan={2}
                           w={200}
                           className={styles.sticky_header}>
-                          Objects
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Objects"
+                          ) || "Objects"}
                         </CTableCell>
                         <CTableCell colSpan={5}>
                           <Box
@@ -98,7 +139,11 @@ const Permissions = ({
                             alignItems={"center"}
                             justifyContent="center"
                             columnGap={"4px"}>
-                            Record permissions{" "}
+                            {generateLangaugeText(
+                              permissionLan,
+                              i18n?.language,
+                              "Record Permission"
+                            ) || "Record Permission"}
                             <GoInfo
                               size={18}
                               style={{cursor: "pointer"}}
@@ -126,7 +171,11 @@ const Permissions = ({
                       </CTableHeadRow>
                       <CTableHeadRow>
                         <CTableCell>
-                          Reading
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Reading"
+                          ) || "Reading"}
                           <Checkbox
                             checked={allReadTrue ? true : false}
                             onChange={(e) => {
@@ -144,7 +193,11 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Adding
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Adding"
+                          ) || "Adding"}
                           <Checkbox
                             checked={allWriteTrue ? true : false}
                             onChange={(e) => {
@@ -162,7 +215,11 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Editing
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Editing"
+                          ) || "Editing"}
                           <Checkbox
                             checked={allUpdateTrue ? true : false}
                             onChange={(e) => {
@@ -180,7 +237,11 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Deleting
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Deleting"
+                          ) || "Deleting"}
                           <Checkbox
                             checked={allDeleteTrue ? true : false}
                             onChange={(e) => {
@@ -198,7 +259,11 @@ const Permissions = ({
                           />
                         </CTableCell>
                         <CTableCell>
-                          Public
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Public"
+                          ) || "Public"}
                           <Checkbox
                             checked={allPublicTrue ? true : false}
                             onChange={(e) => {
@@ -229,6 +294,7 @@ const Permissions = ({
                           control={control}
                           setValue={setValue}
                           watch={watch}
+                          permissionLan={permissionLan}
                         />
                       ))}
                     </CTableBody>
@@ -243,20 +309,58 @@ const Permissions = ({
                     <CTableHead>
                       <CTableHeadRow>
                         <CTableCell rowSpan={2} w={200}>
-                          Objects
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Objects"
+                          ) || "Objects"}
                         </CTableCell>
                         <CTableCell colSpan={5} tex>
                           <Box sx={{justifyContent: "center", display: "flex"}}>
-                            Menu permissions
+                            {generateLangaugeText(
+                              permissionLan,
+                              i18n?.language,
+                              "Menu permissions"
+                            ) || " Menu permissions"}
                           </Box>
                         </CTableCell>
                       </CTableHeadRow>
                       <CTableHeadRow>
-                        <CTableCell>Read</CTableCell>
-                        <CTableCell>Add</CTableCell>
-                        <CTableCell>Edit</CTableCell>
-                        <CTableCell>Delete</CTableCell>
-                        <CTableCell>Settings</CTableCell>
+                        <CTableCell>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Read"
+                          ) || "Read"}
+                        </CTableCell>
+                        <CTableCell>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Add"
+                          ) || "Add"}
+                        </CTableCell>
+                        <CTableCell>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Edit"
+                          ) || "Edit"}
+                        </CTableCell>
+                        <CTableCell>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Delete"
+                          ) || "Delete"}
+                        </CTableCell>
+                        <CTableCell>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Settings"
+                          ) || " Settings"}
+                        </CTableCell>
                       </CTableHeadRow>
                     </CTableHead>
                     <CTableBody columnsCount={6} dataLength={allMenu?.length}>
@@ -285,7 +389,13 @@ const Permissions = ({
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
-                        <CTableCell width={"50%"}>Global permission</CTableCell>
+                        <CTableCell width={"50%"}>
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Global Permissions"
+                          ) || "Global Permissions"}
+                        </CTableCell>
                         <CTableCell></CTableCell>
                       </CTableHeadRow>
                     </CTableHead>

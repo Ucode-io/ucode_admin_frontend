@@ -35,9 +35,10 @@ function HFModalMap({
   return (
     <Box
       sx={{
-        width: drawerDetail ? "325px" : "",
+        padding: drawerDetail ? "0 4.6px" : "0",
       }}>
       <TextField
+        className="mapField"
         placeholder={placeholder}
         id={`map_field`}
         value={

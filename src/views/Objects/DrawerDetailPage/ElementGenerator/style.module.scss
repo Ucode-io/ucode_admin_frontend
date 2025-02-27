@@ -1,6 +1,7 @@
 .selectGroup {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
+  color: #787774;
   height: 20px;
   display: flex;
   align-items: center;
@@ -17,6 +18,12 @@
   background: #eee;
   width: fit-content;
   margin-left: 15px;
+  height: 24px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0;
 
   &:hover {
     background: #eee;
@@ -95,9 +102,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-  height: 18px;
-  overflow: auto;
   font-size: 11px;
+  height: 22px;
 }
 
 .multipleAutocompleteTags {
@@ -108,6 +114,7 @@
   border-radius: 4px;
   color: #000;
   background-color: #c0c0c039;
+  height: 22px;
 
   .value {
     margin-right: 4px;

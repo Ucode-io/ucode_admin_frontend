@@ -5,6 +5,8 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import {useNavigate, useParams} from "react-router-dom";
 import {updateLevel} from "../../../../utils/level";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const apiKeyButton = {
@@ -23,34 +25,11 @@ const apiKeyButton = {
   },
 };
 
-const ApiKeyButton = ({level = 1, menuStyle, menuItem}) => {
+const ApiKeyButton = ({projectSettingLan}) => {
   const {appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const activeStyle = {
-    backgroundColor:
-      apiKeyButton?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      apiKeyButton?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    borderRadius: "8px",
-    display:
-      menuItem?.id === "0" ||
-      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-
-  const labelStyle = {
-    paddingLeft: "15px",
-    color:
-      apiKeyButton?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
+  const {i18n} = useTranslation();
 
   const clickHandler = () => {
     navigate(`/main/${appId}/api-key`);
@@ -72,7 +51,11 @@ const ApiKeyButton = ({level = 1, menuStyle, menuItem}) => {
           }}>
           <div className="label" style={{fontSize: "13px"}}>
             <IconGenerator icon={apiKeyButton?.icon} size={18} />
-            {apiKeyButton?.label}
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Api keys"
+            ) || "Api keys"}
           </div>
         </Button>
       </div>

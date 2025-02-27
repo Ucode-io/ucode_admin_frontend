@@ -181,8 +181,8 @@ const AutoCompleteElement = ({
       sx={{
         width: "330px",
         paddingLeft: "4px",
-        height: "32px",
         overflow: "hidden",
+        ...(value?.length > 2 ? {minHeight: "30px"} : {height: "34px"}),
       }}>
       <FormControl style={{width}}>
         <InputLabel size="small">{label}</InputLabel>

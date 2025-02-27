@@ -11,14 +11,18 @@ import {
   InputLeftElement,
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 export default function FieldOptionModal({
+  tableLan,
   anchorEl,
   setAnchorEl,
   setFieldCreateAnchor,
   setValue,
   target,
 }) {
+  const {i18n} = useTranslation();
   const open = Boolean(anchorEl);
   const [searchValue, setSearchValue] = useState();
 
@@ -95,14 +99,24 @@ export default function FieldOptionModal({
         }}>
         <div className={style.field}>
           <Typography variant="h6" className={style.title}>
-            CREATE NEW FIELD
+            {generateLangaugeText(
+              tableLan,
+              i18n?.language,
+              "CREATE NEW FIELD"
+            ) || "CREATE NEW FIELD"}
           </Typography>
           <InputGroup mb="8px" width={"95%"} mt={2} mx={"auto"}>
             <InputLeftElement>
               <Image src="/img/search-lg.svg" alt="search" />
             </InputLeftElement>
             <Input
-              placeholder="Search by filled name"
+              placeholder={
+                generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Search by filled name"
+                ) || "Search by filled name"
+              }
               value={searchValue}
               onChange={(ev) => setSearchValue(ev.target.value)}
             />

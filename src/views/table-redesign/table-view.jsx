@@ -61,6 +61,7 @@ const TableView = ({
   setFormValue,
   currentView,
   watch,
+  tableLan,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -513,6 +514,7 @@ const TableView = ({
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
+          tableLan={tableLan}
           custom_events={custom_events}
           dataCount={dataCount}
           refetch={refetch}

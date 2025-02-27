@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Menu,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import {Box, Menu, MenuItem, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
@@ -26,7 +19,6 @@ function DrawerFormDetailPage({
   layout,
   fieldsMap,
   selectedTab = {},
-  getValues,
   selectedRow,
   selectedTabIndex = 0,
   setFormValue = () => {},
@@ -79,7 +71,7 @@ function DrawerFormDetailPage({
   useEffect(() => {
     setFormValue(
       "attributes.layout_heading",
-      selectedRow?.[selectedTab?.attributes?.layout_heading]
+      selectedTab?.attributes?.layout_heading
     );
   }, [selectedTab, selectedRow]);
 
@@ -94,7 +86,6 @@ function DrawerFormDetailPage({
           selectedRow={selectedRow}
           watch={watch}
           control={control}
-          getValues={getValues}
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
           setFormValue={setFormValue}
@@ -148,7 +139,7 @@ function DrawerFormDetailPage({
                               style={{width: "16px", height: "16px"}}
                             />
                           </span>
-                          <span style={{color: "#787774"}} className="icon">
+                          <span styley={{color: "#787774"}} className="icon">
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -187,7 +178,6 @@ function DrawerFormDetailPage({
 const HeadingOptions = ({
   watch,
   control,
-  getValues,
   fieldsMap,
   selectedTab,
   selectedRow,
@@ -198,8 +188,7 @@ const HeadingOptions = ({
 
   const selectedFieldSlug =
     watch("attributes.layout_heading") ||
-    selectedTab?.attributes?.layout_heading ||
-    "";
+    selectedTab?.attributes?.layout_heading;
 
   const selectedField = Object.values(fieldsMap).find(
     (field) => field?.slug === selectedFieldSlug
@@ -208,12 +197,6 @@ const HeadingOptions = ({
   const fieldValue = selectedField
     ? (selectedRow?.[selectedField.slug] ?? "")
     : "";
-
-  useEffect(() => {
-    if (selectedFieldSlug) {
-      setFormValue("attributes.layout_heading", selectedFieldSlug);
-    }
-  }, [selectedFieldSlug, setFormValue]);
 
   const fieldsList = Object.values(fieldsMap).map((field) => ({
     label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
@@ -242,20 +225,18 @@ const HeadingOptions = ({
           paddingLeft: "3px",
           gap: "10px",
         }}>
-        {Boolean(selectedFieldSlug) && (
-          <span style={{cursor: "pointer"}} onClick={handleClick}>
-            <img
-              src="/img/text-column.svg"
-              width={"22px"}
-              height={"22px"}
-              alt="heading text"
-            />
-          </span>
-        )}
+        <span style={{cursor: "pointer"}} onClick={handleClick}>
+          <img
+            src="/img/text-column.svg"
+            width={"22px"}
+            height={"22px"}
+            alt="heading text"
+          />
+        </span>
 
         <CHTextField
           control={control}
-          name={selectedField?.slug || "attributes.layout_heading"}
+          name={selectedField?.slug || ""}
           defaultValue={fieldValue}
           key={selectedField?.slug}
         />
@@ -300,11 +281,7 @@ const HeadingOptions = ({
                 </Box>
 
                 <Box>
-                  {option.table_slug === watch("attributes.layout_heading") ? (
-                    <Check />
-                  ) : (
-                    ""
-                  )}
+                  {option.table_slug === selectedFieldSlug ? <Check /> : ""}
                 </Box>
               </MenuItem>
             ))}
@@ -314,7 +291,7 @@ const HeadingOptions = ({
   );
 };
 
-const CHTextField = ({control, name, defaultValue = ""}) => {
+const CHTextField = ({control, name = "", defaultValue = ""}) => {
   return (
     <Controller
       control={control}

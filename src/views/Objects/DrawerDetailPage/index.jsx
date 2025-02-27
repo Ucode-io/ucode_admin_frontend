@@ -387,15 +387,6 @@ function DrawerDetailPage({
                     }}
                   />
 
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
-
                   <TabList style={{borderBottom: "none"}}>
                     {data?.tabs?.map((el, index) => (
                       <Tab

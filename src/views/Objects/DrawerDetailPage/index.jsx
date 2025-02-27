@@ -73,9 +73,15 @@ function DrawerDetailPage({
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const drawerRef = useRef();
-  const [drawerWidth, setDrawerWidth] = useState(650);
-  const [isResizing, setIsResizing] = useState(false);
+
+  const drawerRef = useRef(null);
+  const startX = useRef(0);
+  const startWidth = useRef(0);
+
+  const [drawerWidth, setDrawerWidth] = useState(() => {
+    const savedWidth = localStorage.getItem("drawerWidth");
+    return savedWidth ? parseInt(savedWidth, 10) : 650;
+  });
 
   const getAllData = async () => {
     setLoader(true);
@@ -326,6 +332,46 @@ function DrawerDetailPage({
     else getFields();
   }, [id]);
 
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+
+    startX.current = e.clientX;
+    startWidth.current = drawerRef.current
+      ? drawerRef.current.offsetWidth
+      : drawerWidth;
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    const deltaX = e.clientX - startX.current;
+    let newWidth = startWidth.current - deltaX;
+
+    if (newWidth < 650) newWidth = 650;
+    if (newWidth > 1050) newWidth = 1050;
+
+    if (drawerRef.current) {
+      drawerRef.current.style.width = `${newWidth}px`;
+    }
+  };
+
+  const handleMouseUp = () => {
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+
+    const finalWidth = drawerRef.current.offsetWidth;
+    if (drawerRef.current) {
+      localStorage.setItem("drawerWidth", finalWidth);
+      setDrawerWidth(drawerRef.current.offsetWidth);
+    }
+  };
+
+  useEffect(() => {
+    if (drawerRef.current) {
+      drawerRef.current.style.width = `${drawerWidth}px`;
+    }
+  }, [drawerRef.current]);
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>
@@ -338,8 +384,8 @@ function DrawerDetailPage({
         rgba(15, 15, 15, 0.06) 0px 9px 24px
       "
               zIndex={9}
+              ref={drawerRef}
               bg={"white"}
-              maxW={`${drawerWidth}px`}
               resize={"both"}
               position={"relative"}>
               <DrawerHeader
@@ -432,6 +478,7 @@ function DrawerDetailPage({
                   p="0px 50px"
                   overflow={"auto"}>
                   <DrawerFormDetailPage
+                    handleMouseDown={handleMouseDown}
                     getValues={getValues}
                     setFormValue={setFormValue}
                     layout={layout}
@@ -487,17 +534,22 @@ function DrawerDetailPage({
             </DrawerContent>
           </form>
 
-          <Box
-            // onClick={handleMouseMove}
-            sx={{
+          {/* <div
+            className="drawer-resize-handle"
+            onMouseDown={handleMouseDown}
+            style={{
               position: "absolute",
-              height: "calc(100vh - 150px)",
-              width: "100px",
-              left: 0,
-              top: 0,
-              cursor: "col-resize",
+              top: "120px",
+              right: 0,
+              height: "220px",
+              width: "15px",
+              cursor: "ew-resize",
               background: "red",
-            }}></Box>
+              border: "4px solid red",
+            }}>
+            dsadasdasdasdsa Lorem ipsum dolor sit amet consectetur adipisicing
+            elit. Doloremque, natus!
+          </div> */}
         </Box>
       </Tabs>
     </Drawer>

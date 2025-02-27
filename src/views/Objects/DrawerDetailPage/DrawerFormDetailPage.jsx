@@ -21,6 +21,7 @@ function DrawerFormDetailPage({
   selectedTab = {},
   selectedRow,
   selectedTabIndex = 0,
+  handleMouseDown,
   setFormValue = () => {},
 }) {
   const {i18n} = useTranslation();
@@ -175,6 +176,20 @@ function DrawerFormDetailPage({
           </Box>
         ))}
       </Box>
+
+      <Box
+        onMouseDown={handleMouseDown}
+        sx={{
+          position: "absolute",
+          height: "calc(100vh - 50px)",
+          width: "2px",
+          left: 0,
+          top: 0,
+          cursor: "col-resize",
+          "&:hover": {
+            background: "#007aff",
+          },
+        }}></Box>
     </>
   );
 }

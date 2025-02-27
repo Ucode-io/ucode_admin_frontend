@@ -62,6 +62,13 @@ const ActionSettings = ({
     },
   });
 
+  const returnUniqueObjects = (arr) => {
+    const uniqueObjects = Array.from(new Set(arr?.map(JSON.stringify))).map(
+      JSON.parse
+    );
+    return uniqueObjects ?? [];
+  };
+
   const action_type = watch("action_type");
 
   const {data: functions = []} = useQuery(
@@ -76,7 +83,9 @@ const ActionSettings = ({
         console.log("ERR =>", err);
       },
       select: (res) => {
-        return listToOptions(res.functions, "name", "id");
+        const newArr = [...res?.functions, action?.functions?.[0]];
+        const updateFunctions = returnUniqueObjects(newArr);
+        return listToOptions(updateFunctions, "name", "id");
       },
     }
   );

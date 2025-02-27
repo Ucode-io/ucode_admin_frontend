@@ -188,7 +188,7 @@ const DataTable = ({
 
   const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
-
+  console.log("datadatadata", data);
   return (
     <CTable
       disablePagination={disablePagination}
@@ -355,9 +355,9 @@ const DataTable = ({
                       : "",
                   }}>
                   {column.slug === "label" ? (
-                    row?.attributes?.[`label_${defaultLanguage}`] ?? (
+                    (row?.attributes?.[`label_${defaultLanguage}`] ?? (
                       <CellElementGenerator field={column} row={row} />
-                    )
+                    ))
                   ) : column.render ? (
                     column.render(get(row, column.slug, row), row, column)
                   ) : (

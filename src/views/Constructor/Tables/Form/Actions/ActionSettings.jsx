@@ -62,13 +62,6 @@ const ActionSettings = ({
     },
   });
 
-  const returnUniqueObjects = (arr) => {
-    const uniqueObjects = Array.from(new Set(arr?.map(JSON.stringify))).map(
-      JSON.parse
-    );
-    return uniqueObjects ?? [];
-  };
-
   const action_type = watch("action_type");
 
   const {data: functions = []} = useQuery(
@@ -76,6 +69,7 @@ const ActionSettings = ({
     () => {
       return constructorFunctionService.getListV2({
         search: debounceValue,
+        function_id: action?.functions?.[0]?.id,
       });
     },
     {
@@ -83,9 +77,7 @@ const ActionSettings = ({
         console.log("ERR =>", err);
       },
       select: (res) => {
-        const newArr = [...res?.functions, action?.functions?.[0]];
-        const updateFunctions = returnUniqueObjects(newArr);
-        return listToOptions(updateFunctions, "name", "id");
+        return listToOptions(res.functions, "name", "id");
       },
     }
   );

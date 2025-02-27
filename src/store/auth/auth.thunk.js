@@ -26,16 +26,38 @@ export const loginAction = createAsyncThunk(
       dispatch(companyActions.setDefaultPage(data?.default_page));
       dispatch(permissionsActions.setPermissions(res?.permissions));
 
-      await languageService.getLanguageList().then((res) => {
-        const grouped = {};
-        for (const field of res?.languages) {
-          if (!grouped[field.category]) {
-            grouped[field.category] = [];
+      await languageService
+        .getLanguageList()
+        .then((res) => {
+          const grouped = {};
+
+          if (Array.isArray(res?.languages) && res.languages.length > 0) {
+            for (const field of res.languages) {
+              if (!grouped[field.category]) {
+                grouped[field.category] = [];
+              }
+              grouped[field.category].push(field);
+            }
           }
-          grouped[field.category].push(field);
-        }
-        saveGroupedToDB(grouped);
-      });
+
+          saveGroupedToDB(grouped);
+        })
+        .catch((err) => {
+          saveGroupedToDB({});
+        });
+
+      await authService
+        .updateToken({
+          refresh_token: res.token.access_token,
+          env_id: res.environment_id,
+          project_id: data.project_id,
+        })
+        .then((res) => {
+          store.dispatch(authActions.setTokens(res));
+        })
+        .catch((err) => {
+          console.log("Error updating token:", err);
+        });
 
       await authService
         .updateToken({

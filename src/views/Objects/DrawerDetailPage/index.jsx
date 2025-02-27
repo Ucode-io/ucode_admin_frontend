@@ -221,6 +221,7 @@ function DrawerDetailPage({
     handleSubmit,
     formState: {errors},
     setValue: setFormValue,
+    getValues,
   } = useForm({
     defaultValues: {
       ...state,
@@ -433,6 +434,7 @@ function DrawerDetailPage({
               <TabPanel>
                 <DrawerBody p="0px 50px" overflow={"auto"}>
                   <DrawerFormDetailPage
+                    getValues={getValues}
                     setFormValue={setFormValue}
                     layout={layout}
                     selectedTab={selectedTab}

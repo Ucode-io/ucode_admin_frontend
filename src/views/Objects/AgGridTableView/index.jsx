@@ -151,10 +151,11 @@ function AgGridTableView(props) {
   );
 
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA"],
+    ["GET_OBJECTS_TREEDATA", filters],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
+        ...filters,
       }),
     {
       enabled: !!tableSlug && view?.attributes?.treeData,

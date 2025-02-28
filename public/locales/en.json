@@ -190,5 +190,15 @@
   "register.with.google": "Register with Google",
   "already.have.account": "Already have an account?",
   "signin": "Sign In",
-  "support": "Support"
+  "support": "Support",
+  "confirm.email": "We sent confirmation code to your email",
+  "send.code": "Send code",
+
+  "confirm": "Confirm",
+  "sent.code.after": "Sent code after",
+  "sent.email": "Sent email",
+  "enter.code": "Enter email",
+  "to.login": "To login",
+  "to.phone.number": "Sent to phone number",
+  "send.again": "Send again"
 }

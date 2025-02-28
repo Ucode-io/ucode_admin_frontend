@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import OtpInput from "react-otp-input";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import styles from "../style.module.scss";
+import {useTranslation} from "react-i18next";
 
 function PhoneOtpInput({
   watch,
@@ -13,6 +14,7 @@ function PhoneOtpInput({
   setValue = () => {},
 }) {
   const [otp, setOtp] = useState("");
+  const {t} = useTranslation();
 
   const getOtpVal = (val) => {
     setOtp(val);
@@ -29,7 +31,7 @@ function PhoneOtpInput({
   return (
     <>
       <Box className={styles.otpBackBtn} onClick={backToLogin}>
-        Ко входу
+        {t("to.login")}
       </Box>
       <Box
         sx={{
@@ -43,7 +45,7 @@ function PhoneOtpInput({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Enter code
+          {}
         </h3>
         <p
           style={{
@@ -51,7 +53,7 @@ function PhoneOtpInput({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Sent to phone number
+          {t("to.phone.number")}
         </p>
         <p
           style={{
@@ -93,7 +95,7 @@ function PhoneOtpInput({
             color: "#475467",
             cursor: "pointer",
           }}>
-          Sent again
+          {t("send.again")}
         </p>
         <PrimaryButton
           size="large"
@@ -103,7 +105,7 @@ function PhoneOtpInput({
             borderRadius: "8px",
           }}
           loader={loading}>
-          Confirm
+          {t("confirm")}
         </PrimaryButton>
       </Box>
     </>

@@ -100,7 +100,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
       return billingService.getTransactionList();
     },
     {
-      enabled: Boolean(!project?.fare_id),
+      enabled: Boolean(project?.fare_id),
       select: (res) => res?.transactions ?? [],
     }
   );
@@ -143,7 +143,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                       <Typography variant="h5">Balance</Typography>
                       <Typography variant="h5" color="primary">
                         {numberWithSpaces(project?.balance)}{" "}
-                        {data?.currency?.toUpperCase()}
+                        {data?.currency && data?.currency?.toUpperCase()}
                       </Typography>
                       <Typography variant="subtitle1" color="error">
                         (-{numberWithSpaces(project?.credit_limit)})
@@ -165,7 +165,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                       <Typography variant="h5" color="success.main">
                         {data?.name}
                         <Typography variant="h6" sx={{color: "#000"}}>
-                          {data?.price} {data?.currency.toUpperCase()}
+                          {data?.price} {data?.currency?.toUpperCase()}
                         </Typography>
                       </Typography>
                     </Box>

@@ -94,8 +94,9 @@ function DrawerFormDetailPage({
         />
 
         {sections?.map((section, secIndex) => (
-          <Box sx={{margin: "12px 0 0 0"}} key={secIndex}>
+          <Box sx={{margin: "12px 0 0 0", overflow: "hidden"}} key={secIndex}>
             <Container
+              behaviour="contain"
               style={{width: "100%"}}
               onDragStart={() => setDragAction(true)}
               onDragEnd={() => setDragAction(false)}
@@ -114,7 +115,6 @@ function DrawerFormDetailPage({
                       key={fieldIndex}
                       display="flex"
                       alignItems="center"
-                      justifyContent="space-between"
                       {...(Boolean(field?.type === "MULTISELECT")
                         ? {minHeight: "30px"}
                         : {height: "34px"})}
@@ -125,7 +125,7 @@ function DrawerFormDetailPage({
                         justifyContent={"space-between"}
                         padding="5px"
                         borderRadius={"4px"}
-                        width="40%"
+                        width="150px"
                         sx={{
                           "&:hover": {
                             backgroundColor: "#F7F7F7",
@@ -144,7 +144,7 @@ function DrawerFormDetailPage({
                               style={{width: "16px", height: "16px"}}
                             />
                           </span>
-                          <span styley={{color: "#787774"}} className="icon">
+                          <span style={{color: "#787774"}} className="icon">
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -154,7 +154,7 @@ function DrawerFormDetailPage({
                           </span>
                         </Box>
                         <Box
-                          fontSize="12px"
+                          fontSize="13px"
                           color="#787774"
                           fontWeight="500"
                           width="100%">
@@ -182,14 +182,12 @@ function DrawerFormDetailPage({
         sx={{
           position: "absolute",
           height: "calc(100vh - 50px)",
-          width: "2px",
+          width: "3px",
           left: 0,
           top: 0,
           cursor: "col-resize",
-          "&:hover": {
-            background: "#007aff",
-          },
-        }}></Box>
+        }}
+      />
     </>
   );
 }

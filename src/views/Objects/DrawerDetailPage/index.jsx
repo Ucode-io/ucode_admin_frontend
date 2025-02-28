@@ -505,6 +505,7 @@ function DrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        handleMouseDown={handleMouseDown}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
                         setSelectedTabIndex={setSelectedTabIndex}
@@ -533,23 +534,6 @@ function DrawerDetailPage({
                 ))}
             </DrawerContent>
           </form>
-
-          {/* <div
-            className="drawer-resize-handle"
-            onMouseDown={handleMouseDown}
-            style={{
-              position: "absolute",
-              top: "120px",
-              right: 0,
-              height: "220px",
-              width: "15px",
-              cursor: "ew-resize",
-              background: "red",
-              border: "4px solid red",
-            }}>
-            dsadasdasdasdsa Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Doloremque, natus!
-          </div> */}
         </Box>
       </Tabs>
     </Drawer>

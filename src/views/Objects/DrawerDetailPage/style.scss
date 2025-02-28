@@ -9,8 +9,11 @@
 }
 
 .rowColumn {
+  cursor: pointer;
   .icon {
     display: block;
+    width: 16px;
+    height: 16px;
   }
   .drag {
     width: 16px;
@@ -31,8 +34,11 @@
 }
 
 .rowColumnDrag {
+  cursor: pointer;
   .icon {
     display: block;
+    width: 16px;
+    height: 16px;
   }
   .drag {
     width: 16px;

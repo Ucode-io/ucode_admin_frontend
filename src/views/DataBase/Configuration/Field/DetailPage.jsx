@@ -1,14 +1,14 @@
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
-import { store } from "../../../../store";
-import { generateGUID } from "../../../../utils/generateID";
+import {useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {store} from "../../../../store";
+import {generateGUID} from "../../../../utils/generateID";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import { fieldTypes } from "./FieldTypes";
+import {fieldTypes} from "./FieldTypes";
 import DrawerCard from "../../../../components/DrawerCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFTextField from "../../../../components/FormElements/HFTextField";
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 const FieldDrawer = ({
   open,
@@ -17,10 +17,10 @@ const FieldDrawer = ({
   createField,
   updateField,
 }) => {
-  const { tableId, resourceId } = useParams();
+  const {tableId, resourceId} = useParams();
   const envId = store.getState().company.environmentId;
 
-  const { control, handleSubmit, reset } = useForm({
+  const {control, handleSubmit, reset} = useForm({
     defaultValues: {
       ...(selectedField ?? {}),
       attributes: {},
@@ -51,8 +51,7 @@ const FieldDrawer = ({
       title={!selectedField ? "Create field" : "Edit field"}
       onClose={closeDrawer}
       open={open}
-      onSaveButtonClick={handleSubmit(onSubmit)}
-    >
+      onSaveButtonClick={handleSubmit(onSubmit)}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FRow label="Field slug">
           <HFTextField control={control} name="slug" autoFocus fullWidth />

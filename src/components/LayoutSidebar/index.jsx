@@ -870,6 +870,7 @@ const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
 const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const projectId = useSelector((state) => state.company.projectId);
 
   const popoverRef = useRef();
   const {i18n} = useTranslation();

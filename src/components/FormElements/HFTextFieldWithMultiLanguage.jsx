@@ -39,7 +39,10 @@ export default function HFTextFieldWithMultiLanguage({
   const watch = useWatch({
     control,
   });
-
+  console.log("selectedLanguage", selectedLanguage);
+  console.log("languages", languages);
+  console.log("fieldNamefieldName", fieldName);
+  console.log("nameeeeeeeee", name);
   const defaultValue = useMemo(
     () => watch[fieldName] ?? "",
     [watch, fieldName]
